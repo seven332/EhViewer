@@ -246,7 +246,10 @@
     <string name="new_label_title">New label</string>
     <string name="label_text_is_empty">Label text is empty</string>
     <string name="label_text_is_invalid">\"Default\" is an invalid label</string>
-    <string name="label_text_exist">Label text exists</string>
+    <string name="label_text_exist">Label exists</string>
+    <string name="rename_label_title">Rename label</string>
+    <string name="delete_label_title">Delete label</string>
+    <string name="delete_label_text">Delete label \"%s\"</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>

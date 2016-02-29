@@ -560,6 +560,23 @@ public class DownloadScene extends ToolbarScene
     }
 
     @Override
+    public void onRenameLabel(String from, String to) {
+        if (!ObjectUtils.equal(mLabel, from)) {
+            return;
+        }
+
+        mLabel = to;
+        updateForLabel();
+        if (mViewTransition != null) {
+            if (mList == null || mList.size() == 0) {
+                mViewTransition.showView(1);
+            } else {
+                mViewTransition.showView(0);
+            }
+        }
+    }
+
+    @Override
     public void onRemove(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
         if (mList != list) {
             return;

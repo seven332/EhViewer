@@ -418,6 +418,11 @@ public class EhDB {
         return raw;
     }
 
+    public static synchronized void updateDownloadLabel(DownloadLabelRaw raw) {
+        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
+        dao.update(raw);
+    }
+
     public static synchronized void moveDownloadLabel(int fromPosition, int toPosition) {
         if (fromPosition == toPosition) {
             return;
@@ -441,5 +446,10 @@ public class EhDB {
         list.get(start).setTime(toTime);
 
         dao.updateInTx(list);
+    }
+
+    public static synchronized void removeDownloadLabel(DownloadLabelRaw raw) {
+        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
+        dao.delete(raw);
     }
 }

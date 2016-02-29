@@ -21,6 +21,24 @@
     android:layout_height="wrap_content"
     android:clipChildren="false">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <com.hippo.widget.SimpleImageView
+            android:id="@+id/delete"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_delete_red_x24"/>
+
+    </LinearLayout>
+
     <com.hippo.widget.ShadowLinearLayout
         android:id="@+id/swipe_handler"
         android:layout_width="match_parent"
@@ -43,7 +61,8 @@
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:ellipsize="end"
-                android:textSize="@dimen/text_little_small"/>
+                android:textSize="@dimen/text_little_small"
+                android:textColor="@color/primary_text_light"/>
 
             <View
                 android:id="@+id/drag_handler"

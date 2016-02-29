@@ -197,7 +197,19 @@
     <string name="stat_download_action_stop_all">全部停止</string>
     <string name="drawer_download_label_title">标签</string>
     <string name="default_download_label_name">默认</string>
+    <string name="download_move_dialog_title">移动</string>
     <string name="label">标签</string>
+
+    <!-- Download label -->
+    <string name="no_download_label">无标签</string>
+    <string name="add">添加</string>
+    <string name="new_label_title">新标签</string>
+    <string name="label_text_is_empty">标签文本为空</string>
+    <string name="label_text_is_invalid">“默认”是无效标签</string>
+    <string name="label_text_exist">标签已存在</string>
+    <string name="rename_label_title">重命名标签</string>
+    <string name="delete_label_title">删除标签</string>
+    <string name="delete_label_text">删除标签“%s”</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>

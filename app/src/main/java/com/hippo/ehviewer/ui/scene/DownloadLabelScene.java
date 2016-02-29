@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui.scene;
 import android.content.DialogInterface;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +41,8 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionDefault;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionMoveToSwipedDirection;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 import com.hippo.app.EditTextDialogBuilder;
@@ -53,7 +56,9 @@ import com.hippo.view.ViewTransition;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.ViewUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DownloadLabelScene extends ToolbarScene {
 
@@ -67,6 +72,9 @@ public class DownloadLabelScene extends ToolbarScene {
 
     @Nullable
     public List<DownloadLabelRaw> mList = null;
+
+    @NonNull
+    public final Map<DownloadLabelRaw, Boolean> mPinState = new HashMap<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -179,6 +187,55 @@ public class DownloadLabelScene extends ToolbarScene {
         }
     }
 
+    private boolean isPinned(int position) {
+        if (mList != null) {
+            Boolean pinned = mPinState.get(mList.get(position));
+            if (pinned != null) {
+                return pinned;
+            }
+        }
+        return false;
+    }
+
+    private void setPinned(int position, boolean pinned) {
+        if (mList != null) {
+            mPinState.put(mList.get(position), pinned);
+        }
+    }
+
+    private class DeleteLabelDialogHelper implements DialogInterface.OnClickListener {
+
+        private final int mIndex;
+
+        public DeleteLabelDialogHelper(int index) {
+            mIndex = index;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which != DialogInterface.BUTTON_POSITIVE) {
+                return;
+            }
+            if (mList == null) {
+                return;
+            }
+
+            DownloadLabelRaw raw = mList.get(mIndex);
+            EhApplication.getDownloadManager(getContext()).deleteLabel(raw.getLabel());
+            mPinState.remove(raw);
+            if (mAdapter != null) {
+                mAdapter.notifyItemRemoved(mIndex);
+            }
+            if (mViewTransition != null) {
+                if (mList != null && mList.size() > 0) {
+                    mViewTransition.showView(0);
+                } else {
+                    mViewTransition.showView(1);
+                }
+            }
+        }
+    }
+
     private class NewLabelDialogHelper implements View.OnClickListener {
 
         private final EditTextDialogBuilder mBuilder;
@@ -220,9 +277,49 @@ public class DownloadLabelScene extends ToolbarScene {
         }
     }
 
+    private class RenameLabelDialogHelper implements View.OnClickListener {
+
+        private final EditTextDialogBuilder mBuilder;
+        private final AlertDialog mDialog;
+        private final String mOriginalLabel;
+        private final int mPosition;
+
+        public RenameLabelDialogHelper(EditTextDialogBuilder builder, AlertDialog dialog,
+                String originalLabel, int position) {
+            mBuilder = builder;
+            mDialog = dialog;
+            mOriginalLabel = originalLabel;
+            mPosition = position;
+            Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            if (button != null) {
+                button.setOnClickListener(this);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            String text = mBuilder.getText();
+            if (TextUtils.isEmpty(text)) {
+                mBuilder.setError(getString(R.string.label_text_is_empty));
+            } else if (getString(R.string.default_download_label_name).equals(text)) {
+                mBuilder.setError(getString(R.string.label_text_is_invalid));
+            } else if (EhApplication.getDownloadManager(getContext()).containLabel(text)) {
+                mBuilder.setError(getString(R.string.label_text_exist));
+            } else {
+                mBuilder.setError(null);
+                mDialog.dismiss();
+                EhApplication.getDownloadManager(getContext()).renameLabel(mOriginalLabel, text);
+                if (mAdapter != null) {
+                    mAdapter.notifyItemChanged(mPosition);
+                }
+            }
+        }
+    }
+
     private class LabelHolder extends AbstractDraggableSwipeableItemViewHolder
             implements View.OnClickListener {
 
+        public final View delete;
         public final View swipeHandler;
         public final TextView label;
         public final View dragHandler;
@@ -230,16 +327,42 @@ public class DownloadLabelScene extends ToolbarScene {
         public LabelHolder(View itemView) {
             super(itemView);
 
+            delete = itemView.findViewById(R.id.delete);
             swipeHandler = itemView.findViewById(R.id.swipe_handler);
             label = (TextView) itemView.findViewById(R.id.label);
             dragHandler = itemView.findViewById(R.id.drag_handler);
 
+            delete.setOnClickListener(this);
             label.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            // TODO
+            if (mList == null || mRecyclerView == null) {
+                return;
+            }
+
+            int index = mRecyclerView.getChildAdapterPosition(itemView);
+            if (index < 0 || index >= mList.size()) {
+                return;
+            }
+
+            if (delete == v) {
+                DeleteLabelDialogHelper helper = new DeleteLabelDialogHelper(index);
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.delete_label_title)
+                        .setMessage(getString(R.string.delete_label_text, mList.get(index).getLabel()))
+                        .setPositiveButton(android.R.string.ok, helper)
+                        .show();
+            } else if (label == v) {
+                DownloadLabelRaw raw = mList.get(index);
+                EditTextDialogBuilder builder = new EditTextDialogBuilder(
+                        getContext(), raw.getLabel(), getString(R.string.label));
+                builder.setTitle(R.string.rename_label_title);
+                builder.setPositiveButton(android.R.string.ok, null);
+                AlertDialog dialog = builder.show();
+                new RenameLabelDialogHelper(builder, dialog, raw.getLabel(), index);
+            }
         }
 
         @Override
@@ -252,7 +375,6 @@ public class DownloadLabelScene extends ToolbarScene {
             implements DraggableItemAdapter<LabelHolder>,
             SwipeableItemAdapter<LabelHolder> {
 
-
         @Override
         public LabelHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new LabelHolder(getActivity().getLayoutInflater()
@@ -264,6 +386,11 @@ public class DownloadLabelScene extends ToolbarScene {
             if (mList != null) {
                 holder.label.setText(mList.get(position).getLabel());
             }
+
+            // set swiping properties
+            holder.setMaxLeftSwipeAmount(-0.5f);
+            holder.setMaxRightSwipeAmount(0);
+            holder.setSwipeItemHorizontalSlideAmount(isPinned(position) ? -0.5f : 0);
         }
 
         @Override
@@ -300,7 +427,11 @@ public class DownloadLabelScene extends ToolbarScene {
 
         @Override
         public int onGetSwipeReactionType(LabelHolder holder, int position, int x, int y) {
-            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
+            if (ViewUtils.isViewUnder(holder.getSwipeableContainerView(), x, y, 0)) {
+                return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
+            } else {
+                return SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_BOTH_H;
+            }
         }
 
         @Override
@@ -311,13 +442,62 @@ public class DownloadLabelScene extends ToolbarScene {
         @Override
         public SwipeResultAction onSwipeItem(LabelHolder holder, int position, int result) {
             switch (result) {
-                // swipe right
-                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
+                // swipe left --- pin
                 case SwipeableItemConstants.RESULT_SWIPED_LEFT:
-                    return null;
+                    return new SwipeLeftResultAction(position);
+                // other --- do nothing
+                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
                 case SwipeableItemConstants.RESULT_CANCELED:
                 default:
-                    return null;
+                    if (position >= 0) {
+                        return new UnpinResultAction(position);
+                    } else {
+                        return null;
+                    }
+            }
+        }
+    }
+
+    private class SwipeLeftResultAction extends SwipeResultActionMoveToSwipedDirection {
+
+        private final int mPosition;
+
+        public SwipeLeftResultAction(int position) {
+            mPosition = position;
+        }
+
+        @Override
+        protected void onPerformAction() {
+            super.onPerformAction();
+
+            if (!isPinned(mPosition)) {
+                setPinned(mPosition, true);
+
+                if (mAdapter != null) {
+                    mAdapter.notifyItemChanged(mPosition);
+                }
+            }
+        }
+    }
+
+    private class UnpinResultAction extends SwipeResultActionDefault {
+
+        private final int mPosition;
+
+        public UnpinResultAction(int position) {
+            mPosition = position;
+        }
+
+        @Override
+        protected void onPerformAction() {
+            super.onPerformAction();
+
+            if (isPinned(mPosition)) {
+                setPinned(mPosition, false);
+
+                if (mAdapter != null) {
+                    mAdapter.notifyItemChanged(mPosition);
+                }
             }
         }
     }

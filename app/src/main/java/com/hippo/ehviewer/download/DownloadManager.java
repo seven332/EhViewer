@@ -617,6 +617,80 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
+    public void renameLabel(@NonNull String from, @NonNull String to) {
+        // Find in label list
+        boolean found = false;
+        for (DownloadLabelRaw raw: mLabelList) {
+            if (from.equals(raw.getLabel())) {
+                found = true;
+                raw.setLabel(to);
+                // Update in DB
+                EhDB.updateDownloadLabel(raw);
+                break;
+            }
+        }
+        if (!found) {
+            return;
+        }
+
+        LinkedList<DownloadInfo> list = mMap.remove(from);
+        if (list == null) {
+            return;
+        }
+
+        // Update info label
+        for (DownloadInfo info: list) {
+            info.label = to;
+            // Update in DB
+            EhDB.updateDownloadInfo(info);
+        }
+        // Put list back with new label
+        mMap.put(to, list);
+
+        // Notify listener
+        if (mDownloadInfoListener != null) {
+            mDownloadInfoListener.onRenameLabel(from, to);
+        }
+    }
+
+    public void deleteLabel(@NonNull String label) {
+        // Find in label list and remove
+        boolean found = false;
+        for (Iterator<DownloadLabelRaw> iterator = mLabelList.iterator(); iterator.hasNext();) {
+            DownloadLabelRaw raw = iterator.next();
+            if (label.equals(raw.getLabel())) {
+                found = true;
+                iterator.remove();
+                EhDB.removeDownloadLabel(raw);
+                break;
+            }
+        }
+        if (!found) {
+            return;
+        }
+
+        LinkedList<DownloadInfo> list = mMap.remove(label);
+        if (list == null) {
+            return;
+        }
+
+        // Update info label
+        for (DownloadInfo info: list) {
+            info.label = null;
+            // Update in DB
+            EhDB.updateDownloadInfo(info);
+            mDefaultInfoList.add(info);
+        }
+
+        // Sort
+        Collections.sort(mDefaultInfoList, sDateAscComparator);
+
+        // Notify listener
+        if (mDownloadInfoListener != null) {
+            mDownloadInfoListener.onChange();
+        }
+    }
+
     boolean isIdle() {
         return mCurrentTask == null && mWaitList.isEmpty();
     }
@@ -929,9 +1003,14 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         void onReload();
 
         /**
-         * The list is gone
+         * The list is gone, use default list please
          */
         void onChange();
+
+        /**
+         * Rename label
+         */
+        void onRenameLabel(String from, String to);
 
         /**
          * Remove the special info from the special position
