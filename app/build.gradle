@@ -36,6 +36,10 @@ android {
     // noinspection GroovyAssignabilityCheck
     task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
         def ndkDir = project.plugins.findPlugin('com.android.application').sdkHandler.getNdkFolder()
+        if (ndkDir == null) {
+            ndkDir = System.getenv('NDK_HOME')
+        }
+        assert ndkDir != null
         def ndkBuilder
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             ndkBuilder = 'ndk-build.cmd'
