@@ -68,6 +68,13 @@
     <!-- Switch padding -->
     <dimen name="switch_padding">8dp</dimen>
 
+    <!-- FabLayout -->
+    <dimen name="fab_layout_primary_margin">24dp</dimen>
+    <dimen name="fab_layout_secondary_margin">16dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="fab_min_size">40dp</dimen>
+
+
     <dimen name="corner_fab_margin">16dp</dimen>
 
     <dimen name="gallery_detail_thumb_width">128dp</dimen>

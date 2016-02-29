@@ -30,6 +30,7 @@ import android.view.animation.Interpolator;
 import com.hippo.anani.AnimationUtils;
 import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
+import com.hippo.yorozuya.AssertUtils;
 
 public class FabLayout extends ViewGroup implements View.OnClickListener {
 
@@ -39,10 +40,12 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
     private static final String STATE_KEY_AUTO_CANCEL = "auto_cancel";
     private static final String STATE_KEY_EXPANDED = "expanded";
 
-    private int mInterval;
+    private int mFabSize;
+    private int mFabMiniSize;
+    private int mIntervalPrimary;
+    private int mIntervalSecondary;
 
-    private boolean mFirst = true;
-    private boolean mExpanded = false;
+    private boolean mExpanded = true;
     private boolean mAutoCancel = true;
     private boolean mHidePrimaryFab = false;
     private float mMainFabCenterY = -1f;
@@ -67,7 +70,11 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
 
     private void init(Context context) {
         setSoundEffectsEnabled(false);
-        mInterval = context.getResources().getDimensionPixelOffset(R.dimen.keyline_margin);
+        setClipToPadding(false);
+        mFabSize = context.getResources().getDimensionPixelOffset(R.dimen.fab_size);
+        mFabMiniSize = context.getResources().getDimensionPixelOffset(R.dimen.fab_min_size);
+        mIntervalPrimary = context.getResources().getDimensionPixelOffset(R.dimen.fab_layout_primary_margin);
+        mIntervalSecondary = context.getResources().getDimensionPixelOffset(R.dimen.fab_layout_secondary_margin);
     }
 
     @Override
@@ -99,74 +106,29 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         return (FloatingActionButton) getChildAt(index);
     }
 
-    private int getChildMeasureSpec(int parentMeasureSpec) {
-        int parentMode = MeasureSpec.getMode(parentMeasureSpec);
-        int parentSize = MeasureSpec.getSize(parentMeasureSpec);
-        int childMode;
-        int childSize;
-        switch (parentMode) {
-            default:
-            case MeasureSpec.AT_MOST:
-            case MeasureSpec.EXACTLY:
-                childMode = MeasureSpec.AT_MOST;
-                childSize = parentSize;
-                break;
-            case MeasureSpec.UNSPECIFIED:
-                childMode = MeasureSpec.UNSPECIFIED;
-                childSize = parentSize;
-        }
-        return MeasureSpec.makeMeasureSpec(childSize, childMode);
-    }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mFirst) {
-            mFirst = false;
-            boolean expanded = mExpanded;
-            int count = getChildCount() - (mHidePrimaryFab ? 0 : 1);
-            for (int i = 0; i < count; i++) {
-                getChildAt(i).setVisibility(expanded ? View.VISIBLE : View.INVISIBLE);
-            }
-        }
+        AssertUtils.assertEquals("Measure mode must be MeasureSpec.EXACTLY",
+                MeasureSpec.getMode(widthMeasureSpec), MeasureSpec.EXACTLY);
+        AssertUtils.assertEquals("Measure mode must be MeasureSpec.EXACTLY",
+                MeasureSpec.getMode(heightMeasureSpec), MeasureSpec.EXACTLY);
 
-        int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec);
-        int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec);
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+
+        int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
+                width - getPaddingLeft() - getPaddingRight(), MeasureSpec.AT_MOST);
+        int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                height - getPaddingTop() - getPaddingBottom(), MeasureSpec.AT_MOST);
         measureChildren(childWidthMeasureSpec, childHeightMeasureSpec);
 
-        int maxWidth = 0;
-        int maxHeight = 0;
-        boolean firstChild = true;
-        int count = getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = getChildAt(i);
-            if (child.getVisibility() == View.GONE) {
-                continue;
-            }
-
-            maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
-            maxHeight = maxHeight + child.getMeasuredHeight();
-            if (firstChild) {
-                firstChild = false;
-            } else {
-                maxHeight += mInterval;
-            }
-        }
-
-        // Account for padding too
-        maxWidth += getPaddingLeft() + getPaddingRight();
-        maxHeight += getPaddingTop() + getPaddingBottom();
-
-        // Check against minimum height and width
-        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-
-        setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, 0),
-                resolveSizeAndState(maxHeight, heightMeasureSpec, 0));
+        setMeasuredDimension(width, height);
     }
 
+    // For pre-L, FloatActionButton use padding to show shadow, so its position looks wrong.
+    // We use it default size to make it position right
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int interval = mInterval;
         int centerX = 0;
         int bottom = getMeasuredHeight() - getPaddingBottom();
         int count = getChildCount();
@@ -179,20 +141,20 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
 
             int childWidth = child.getMeasuredWidth();
             int childHeight = child.getMeasuredHeight();
-            int right;
+            int layoutBottom;
+            int layoutRight;
             if (i == count - 1) {
-                right = getMeasuredWidth() - getPaddingRight();
+                layoutBottom = bottom + ((childHeight - mFabSize) / 2);
+                layoutRight = getMeasuredWidth() - getPaddingRight() + ((childWidth - mFabSize) / 2);
+                bottom -= mFabSize + mIntervalPrimary;
+                centerX = layoutRight - (childWidth / 2);
+                mMainFabCenterY = layoutBottom - (childHeight / 2f);
             } else {
-                right = centerX + (childWidth / 2);
+                layoutBottom = bottom + ((childHeight - mFabMiniSize) / 2);
+                layoutRight = centerX + (childWidth / 2);
+                bottom -= mFabMiniSize + mIntervalSecondary;
             }
-            child.layout(right - childWidth, bottom - childHeight, right, bottom);
-
-            if (i == count - 1) {
-                centerX = right - (childWidth / 2);
-                mMainFabCenterY = bottom - (childHeight / 2f);
-            }
-
-            bottom -= (childHeight + interval);
+            child.layout(layoutRight - childWidth, layoutBottom - childHeight, layoutRight, layoutBottom);
         }
     }
 
