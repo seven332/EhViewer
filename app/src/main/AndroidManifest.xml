@@ -76,7 +76,7 @@
         <service
             android:name="com.hippo.ehviewer.download.DownloadService"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/download"/>
+            android:label="@string/download_service_label"/>
 
     </application>
 </manifest>

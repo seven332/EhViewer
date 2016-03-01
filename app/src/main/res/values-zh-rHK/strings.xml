@@ -199,6 +199,9 @@
     <string name="default_download_label_name">默認</string>
     <string name="download_move_dialog_title">移動</string>
     <string name="label">標籤</string>
+    <string name="download_start_all">全部開始</string>
+    <string name="download_stop_all">全部停止</string>
+    <string name="download_service_label">EhViewer 下載服務</string>
 
     <!-- Download label -->
     <string name="no_download_label">無標籤</string>
@@ -246,6 +249,20 @@
     <string name="settings_read_show_clock_title">顯示時鐘</string>
     <string name="settings_read_show_battery_title">顯示電量</string>
     <string name="settings_read_volume_page_title">使用音量鍵翻頁</string>
+
+    <string name="settings_download_title">下載</string>
+    <string name="settings_download_download_location_title">下載路徑</string>
+    <string name="settings_download_invalid_download_location">無效的下載路徑</string>
+    <string name="settings_download_cant_get_download_location">無法獲取下載路徑</string>
+    <string name="settings_download_pick_dir_kk">在 KitKat 中你無法把數據寫入外置 SD 卡，除非你做了奇怪的事情</string>
+    <string name="settings_download_pick_dir_l">Lollipop 提供了新的寫入外置 SD 卡的 API。如果你想把下載路徑設置到外置 SD 卡上，點擊 \"文檔\" 按鈕</string>
+    <string name="settings_download_document">文檔</string>
+
+    <string name="settings_about_title">關於</string>
+
+    <!-- Dir Picker-->
+    <string name="dir_picker">選擇文件夾</string>
+    <string name="directory_not_writable">該文件夾不可寫</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">被玩壞了</string>
