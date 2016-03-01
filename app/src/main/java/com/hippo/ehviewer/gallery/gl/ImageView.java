@@ -20,11 +20,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.IntDef;
 
-import com.hippo.anani.AnimationUtils;
 import com.hippo.gl.anim.AlphaAnimation;
 import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.glrenderer.Texture;
 import com.hippo.gl.view.GLView;
+import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
 
 import java.lang.annotation.Retention;

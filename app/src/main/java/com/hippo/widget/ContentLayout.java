@@ -35,7 +35,6 @@ import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.LayoutManagerUtils;
 import com.hippo.ehviewer.R;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.IntIdGenerator;
@@ -92,14 +91,11 @@ public class ContentLayout extends FrameLayout {
         mRecyclerView = (EasyRecyclerView) mRefreshLayout.findViewById(R.id.recycler_view);
         mImageView = mTipView.getChildAt(0);
         mTextView = (TextView) mTipView.getChildAt(1);
-        SimpleImageView imageView = (SimpleImageView) findViewById(R.id.empty_image);
 
         mFastScroller.attachToRecyclerView(mRecyclerView);
         HandlerDrawable drawable = new HandlerDrawable();
         drawable.setColor(ResourcesUtils.getAttrColor(context, R.attr.colorAccent));
         mFastScroller.setHandlerDrawable(drawable);
-
-        imageView.setDrawable(VectorDrawable.create(context, R.xml.sadpanda_head));
 
         mRefreshLayout.setHeaderColorSchemeResources(
                 R.color.loading_indicator_red,

@@ -239,6 +239,8 @@
     <string name="default_download_label_name">Default</string>
     <string name="download_move_dialog_title">Move</string>
     <string name="label">Label</string>
+    <string name="download_start_all">Start all</string>
+    <string name="download_stop_all">Stop all</string>
 
     <!-- Download label -->
     <string name="no_download_label">No labels</string>

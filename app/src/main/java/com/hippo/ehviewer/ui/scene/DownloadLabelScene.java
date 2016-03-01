@@ -51,9 +51,7 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dao.DownloadLabelRaw;
 import com.hippo.util.ActivityHelper;
-import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
-import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.HashMap;
@@ -97,8 +95,6 @@ public class DownloadLabelScene extends ToolbarScene {
 
         mRecyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
         View tip = view.findViewById(R.id.tip);
-        SimpleImageView tipImage = (SimpleImageView) tip.findViewById(R.id.tip_image);
-        tipImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
         if (mRecyclerView != null) {
@@ -143,7 +139,7 @@ public class DownloadLabelScene extends ToolbarScene {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.label);
-        setNavigationIcon(VectorDrawable.create(getContext(), R.xml.ic_arrow_left_dark_x24));
+        setNavigationIcon(R.drawable.ic_arrow_left_dark_x24);
 
         // Clear nav checked item
         setNavCheckedItem(0);

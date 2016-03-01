@@ -17,6 +17,7 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/card_background">
@@ -75,31 +76,31 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/thumb"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="8dp"
+        android:paddingRight="8dp"
         android:orientation="horizontal">
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/start"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="8dp"
-            android:src="@drawable/ic_play_x24"/>
+            app:srcCompat="@drawable/v_play_x24"/>
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/stop"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:padding="8dp"
-            android:src="@drawable/ic_pause_x24"/>
+            app:srcCompat="@drawable/v_pause_x24"/>
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/delete"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="8dp"
-            android:src="@drawable/ic_close_x24"/>
+            app:srcCompat="@drawable/v_close_x24"/>
 
     </LinearLayout>
 
@@ -110,7 +111,7 @@
         android:layout_above="@id/actions"
         android:layout_marginBottom="4dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="16dp"
+        android:paddingRight="16dp"
         android:textColor="?attr/colorAccent"/>
 
     <ProgressBar

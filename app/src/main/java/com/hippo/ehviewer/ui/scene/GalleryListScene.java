@@ -48,8 +48,6 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hippo.anani.AnimationUtils;
-import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
@@ -76,12 +74,14 @@ import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
-import com.hippo.vector.VectorDrawable;
+import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.OffsetLayout;
+import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.lang.annotation.Retention;
@@ -218,7 +218,7 @@ public final class GalleryListScene extends BaseScene
 
     private void setSearchBarHint(Context context, SearchBar searchBar) {
         Resources resources = context.getResources();
-        Drawable searchImage = VectorDrawable.create(context, R.xml.ic_magnify_x24);
+        Drawable searchImage = DrawableManager.getDrawable(context, R.drawable.v_magnify_x24);
         SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
         ssb.append(resources.getString(R.string.gallery_list_search_bar_hint));
         int textSize = (int) (searchBar.getEditTextTextSize() * 1.25);
@@ -311,8 +311,6 @@ public final class GalleryListScene extends BaseScene
 
         mSearchLayout.setHelper(this);
 
-        Drawable searchDrawable = VectorDrawable.create(getContext(), R.xml.ic_magnify_dark_x24);
-        mFab.setImageDrawable(searchDrawable);
         mFab.setOnClickListener(this);
 
         mSearchBarMoveHelper = new SearchBarMoveHelper();

@@ -22,7 +22,7 @@
     <item
         android:id="@+id/action_go_to"
         android:title="@string/go_to"
-        android:icon="@drawable/ic_go_to_dark_x24"
+        android:icon="@drawable/v_go_to_dark_x24"
         app:showAsAction="ifRoom"/>
 
 </menu>

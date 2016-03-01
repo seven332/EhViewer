@@ -106,7 +106,8 @@
                 android:textAllCaps="true"
                 android:textStyle="bold"/>
 
-            <com.hippo.widget.SimpleImageView
+            <ImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/other_actions"
                 android:layout_width="48dp"
                 android:layout_height="56dp"
@@ -115,7 +116,8 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:paddingTop="16dp"
-                android:paddingBottom="16dp"/>
+                android:paddingBottom="16dp"
+                app:srcCompat="@drawable/v_dots_vertical_secondary_dark_x24"/>
 
         </RelativeLayout>
 

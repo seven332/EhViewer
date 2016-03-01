@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -29,8 +28,6 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.util.ActivityHelper;
-import com.hippo.vector.VectorDrawable;
-import com.hippo.widget.SimpleImageView;
 
 public final class WarningScene extends BaseScene implements View.OnClickListener {
 
@@ -43,12 +40,8 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_warning, container, false);
 
-        SimpleImageView alert = (SimpleImageView) view.findViewById(R.id.icon_alert);
         mCancel = view.findViewById(R.id.cancel);
         mOk = view.findViewById(R.id.ok);
-
-        Drawable drawable = VectorDrawable.create(getContext(), R.xml.ic_alert_red_x48);
-        alert.setDrawable(drawable);
 
         mCancel.setOnClickListener(this);
         mOk.setOnClickListener(this);

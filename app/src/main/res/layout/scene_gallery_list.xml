@@ -56,6 +56,7 @@
         android:layout_gravity="right|bottom"
         android:layout_marginRight="@dimen/corner_fab_margin"
         android:layout_marginBottom="@dimen/corner_fab_margin"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        app:srcCompat="@drawable/v_magnify_dark_x24"/>
 
 </com.hippo.ehviewer.widget.FitPaddingLayout>

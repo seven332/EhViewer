@@ -18,7 +18,6 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
@@ -34,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
@@ -41,7 +41,6 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.RadioGridGroup;
-import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.lang.annotation.Retention;
@@ -86,7 +85,7 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
     private View mNormalView;
     private CategoryTable mCategoryTable;
     private RadioGridGroup mNormalSearchMode;
-    private SimpleImageView mNormalSearchModeHelp;
+    private ImageView mNormalSearchModeHelp;
     private View mSearchTagHelp;
     private SwitchCompat mEnableAdvanceSwitch;
 
@@ -133,10 +132,8 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         mNormalView = normalView;
         mCategoryTable = (CategoryTable) normalView.findViewById(R.id.search_category_table);
         mNormalSearchMode = (RadioGridGroup) normalView.findViewById(R.id.normal_search_mode);
-        mNormalSearchModeHelp = (SimpleImageView) normalView.findViewById(R.id.normal_search_mode_help);
+        mNormalSearchModeHelp = (ImageView) normalView.findViewById(R.id.normal_search_mode_help);
         mEnableAdvanceSwitch = (SwitchCompat) normalView.findViewById(R.id.search_enable_advance);
-        Drawable helpDrawable = com.hippo.vector.VectorDrawable.create(context, R.xml.ic_help_circle_x24);
-        mNormalSearchModeHelp.setDrawable(helpDrawable);
         mNormalSearchModeHelp.setOnClickListener(this);
         RippleSalon.addRipple(mNormalSearchModeHelp, false);
         mEnableAdvanceSwitch.setOnCheckedChangeListener(SearchLayout.this);

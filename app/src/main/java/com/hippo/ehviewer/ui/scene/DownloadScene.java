@@ -69,11 +69,9 @@ import com.hippo.scene.TransitionHelper;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
-import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
-import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.ObjectUtils;
@@ -182,8 +180,6 @@ public class DownloadScene extends ToolbarScene
         mRecyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
         mFabLayout = (FabLayout) view.findViewById(R.id.fab_layout);
         View tip = view.findViewById(R.id.tip);
-        SimpleImageView tipImage = (SimpleImageView) tip.findViewById(R.id.tip_image);
-        tipImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
         if (mRecyclerView != null) {
@@ -210,6 +206,7 @@ public class DownloadScene extends ToolbarScene
         }
 
         if (mFabLayout != null) {
+            mFabLayout.setExpanded(false, false);
             mFabLayout.setHidePrimaryFab(true);
             mFabLayout.setAutoCancel(false);
             mFabLayout.setOnClickFabListener(this);
@@ -228,7 +225,7 @@ public class DownloadScene extends ToolbarScene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         updateTitle();
-        setNavigationIcon(VectorDrawable.create(getContext(), R.xml.ic_arrow_left_dark_x24));
+        setNavigationIcon(R.drawable.ic_arrow_left_dark_x24);
 
         // Clear nav checked item
         setNavCheckedItem(R.id.nav_download);

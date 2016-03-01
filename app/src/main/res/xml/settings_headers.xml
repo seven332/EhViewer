@@ -21,11 +21,11 @@
     <header
         android:fragment="com.hippo.ehviewer.ui.fragment.EhFragment"
         android:title="@string/settings_eh_title"
-        android:icon="@drawable/ic_settings_eh"/>
+        android:icon="@drawable/v_sad_panda_primary_x24"/>
 
     <header
         android:fragment="com.hippo.ehviewer.ui.fragment.ReadFragment"
         android:title="@string/settings_read_title"
-        android:icon="@drawable/ic_settings_read"/>
+        android:icon="@drawable/v_book_open_primary_x24"/>
 
 </preference-headers>

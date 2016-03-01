@@ -36,7 +36,6 @@ import com.hippo.app.AppCompatPreferenceActivity;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.fragment.EhFragment;
 import com.hippo.ehviewer.ui.fragment.ReadFragment;
-import com.hippo.vector.VectorDrawable;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -133,10 +132,11 @@ public final class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setActionBarUpIndicator(VectorDrawable.create(this, R.xml.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
 
         replaceHeaderLayoutResId();
     }

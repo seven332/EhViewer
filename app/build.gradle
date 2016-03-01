@@ -12,6 +12,7 @@ android {
         targetSdkVersion 23
         versionCode 48
         versionName "0.9.0"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -28,8 +29,6 @@ android {
             jni.srcDirs = []
             // Set new jni lib dir
             jniLibs.srcDir 'src/main/libs'
-            // Vector res dir
-            res.srcDirs += 'src/main/res-vector'
         }
     }
 
@@ -62,7 +61,6 @@ clean {
 }
 
 dependencies {
-    compile project(':anani')
     compile project(':beerbelly')
     compile project(':conaco')
     compile project(':easyrecyclerview')
@@ -70,7 +68,6 @@ dependencies {
     compile project(':okhttp3')
     compile project(':rippleold')
     compile project(':unifile')
-    compile project(':vector')
     compile project(':yorozuya')
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'

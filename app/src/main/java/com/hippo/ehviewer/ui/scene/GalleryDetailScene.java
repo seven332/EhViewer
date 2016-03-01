@@ -40,6 +40,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -72,16 +73,14 @@ import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
+import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.ReadableTime;
-import com.hippo.vector.AnimatedVectorDrawable;
-import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.ProgressiveRatingBar;
 import com.hippo.widget.SimpleGridLayout;
-import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.lang.annotation.Retention;
@@ -126,7 +125,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private TextView mTitle;
     private TextView mUploader;
     private TextView mCategory;
-    private SimpleImageView mOtherActions;
+    private ImageView mOtherActions;
     private ViewGroup mActionGroup;
     private View mDownload;
     private View mRead;
@@ -164,8 +163,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private ViewTransition mViewTransition2;
 
-    private AnimatedVectorDrawable mHeartDrawable;
-    private AnimatedVectorDrawable mHeartOutlineDrawable;
     private PopupMenu mPopupMenu;
 
     @Nullable
@@ -316,10 +313,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         View mainView = main.findViewById(R.id.scroll_view);
         View progressView = main.findViewById(R.id.progress_view);
         mFailedView = (ViewGroup) main.findViewById(R.id.tip);
-        SimpleImageView mFailedImage = (SimpleImageView) mFailedView.getChildAt(0);
         mFailedText = (TextView) mFailedView.getChildAt(1);
         mFailedView.setOnClickListener(this);
-        mFailedImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
         mViewTransition = new ViewTransition(mainView, progressView, mFailedView);
 
         mHeader = mainView.findViewById(R.id.header);
@@ -328,11 +323,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mTitle = (TextView) mHeader.findViewById(R.id.title);
         mUploader = (TextView) mHeader.findViewById(R.id.uploader);
         mCategory = (TextView) mHeader.findViewById(R.id.category);
-        mOtherActions = (SimpleImageView) mHeader.findViewById(R.id.other_actions);
+        mOtherActions = (ImageView) mHeader.findViewById(R.id.other_actions);
         mActionGroup = (ViewGroup) mHeader.findViewById(R.id.action_card);
         mDownload = mActionGroup.findViewById(R.id.download);
         mRead = mActionGroup.findViewById(R.id.read);
-        mOtherActions.setDrawable(VectorDrawable.create(getContext(), R.xml.ic_dots_vertical_secondary_dark_x24));
         RippleSalon.addRipple(mOtherActions, false);
         RippleSalon.addRipple(mDownload, false);
         RippleSalon.addRipple(mRead, false);
@@ -341,6 +335,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mOtherActions.setOnClickListener(this);
         mDownload.setOnClickListener(this);
         mRead.setOnClickListener(this);
+
 
         mBelowHeader = mainView.findViewById(R.id.below_header);
         View belowHeader = mBelowHeader;
@@ -371,6 +366,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mTorrent.setOnClickListener(this);
         mShare.setOnClickListener(this);
         mRate.setOnClickListener(this);
+        ensureActionDrawable();
 
         mTags = (LinearLayout) belowHeader.findViewById(R.id.tags);
         mNoTags = (TextView) mTags.findViewById(R.id.no_tags);
@@ -472,8 +468,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         mViewTransition2 = null;
 
-        mHeartDrawable = null;
-        mHeartOutlineDrawable = null;
         mPopupMenu = null;
     }
 
@@ -519,6 +513,24 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         EhApplication.getEhClient(getContext()).execute(request);
 
         return true;
+    }
+
+    private void setActionDrawable(TextView text, Drawable drawable) {
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        text.setCompoundDrawables(null, drawable, null, null);
+    }
+
+    private void ensureActionDrawable() {
+        Drawable heart = DrawableManager.getDrawable(getContext(), R.drawable.v_heart_primary_x48);
+        setActionDrawable(mHeart, heart);
+        Drawable heartOutline = DrawableManager.getDrawable(getContext(), R.drawable.v_heart_outline_primary_x48);
+        setActionDrawable(mHeartOutline, heartOutline);
+        Drawable torrent = DrawableManager.getDrawable(getContext(), R.drawable.v_utorrent_primary_x48);
+        setActionDrawable(mTorrent, torrent);
+        Drawable share = DrawableManager.getDrawable(getContext(), R.drawable.v_share_primary_x48);
+        setActionDrawable(mShare, share);
+        Drawable rate = DrawableManager.getDrawable(getContext(), R.drawable.v_thumb_up_primary_x48);
+        setActionDrawable(mRate, rate);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -597,32 +609,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    private void setActionDrawable(TextView text, Drawable drawable) {
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        text.setCompoundDrawables(null, drawable, null, null);
-    }
-
-    private void ensureActionDrawable() {
-        if (mHeartDrawable != null) {
-            return;
-        }
-
-        mHeartDrawable = AnimatedVectorDrawable.create(getContext(), R.xml.ic_heart_animated);
-        setActionDrawable(mHeart, mHeartDrawable);
-
-        mHeartOutlineDrawable = AnimatedVectorDrawable.create(getContext(), R.xml.ic_heart_outline_animated);
-        setActionDrawable(mHeartOutline, mHeartOutlineDrawable);
-
-        VectorDrawable torrent = VectorDrawable.create(getContext(), R.xml.ic_utorrent_primary_x48);
-        setActionDrawable(mTorrent, torrent);
-
-        VectorDrawable share = VectorDrawable.create(getContext(), R.xml.ic_share_primary_x48);
-        setActionDrawable(mShare, share);
-
-        VectorDrawable rate = VectorDrawable.create(getContext(), R.xml.ic_thumb_up_primary_x48);
-        setActionDrawable(mRate, rate);
-    }
-
     private void bindViewSecond() {
         GalleryDetail gd = mGalleryDetail;
 
@@ -648,7 +634,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mRatingText.setText(getAllRatingText(gd.rating, gd.ratedTimes));
         mRating.setRating(gd.rating);
 
-        ensureActionDrawable();
         if (gd.isFavored) {
             mHeart.setVisibility(View.VISIBLE);
             mHeartOutline.setVisibility(View.GONE);

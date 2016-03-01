@@ -20,6 +20,8 @@
 
     <dimen name="single_max_width">260dp</dimen>
 
+    <dimen name="drawer_max_width">280dp</dimen>
+
     <!-- Text size -->
     <dimen name="text_super_large">24sp</dimen>
     <dimen name="text_large">22sp</dimen>
@@ -74,6 +76,9 @@
     <dimen name="fab_size">56dp</dimen>
     <dimen name="fab_min_size">40dp</dimen>
 
+    <!-- Slider -->
+    <dimen name="slider_bubble_width">26dp</dimen>
+    <dimen name="slider_bubble_height">32dp</dimen>
 
     <dimen name="corner_fab_margin">16dp</dimen>
 

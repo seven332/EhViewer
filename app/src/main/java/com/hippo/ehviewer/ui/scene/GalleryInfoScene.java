@@ -39,7 +39,6 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ActivityHelper;
-import com.hippo.vector.VectorDrawable;
 import com.hippo.yorozuya.LayoutUtils;
 
 import java.util.ArrayList;
@@ -170,7 +169,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_info);
-        setNavigationIcon(VectorDrawable.create(getContext(), R.xml.ic_arrow_left_dark_x24));
+        setNavigationIcon(R.drawable.ic_arrow_left_dark_x24);
 
         // Clear nav checked item
         setNavCheckedItem(0);

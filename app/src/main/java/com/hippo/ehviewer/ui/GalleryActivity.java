@@ -33,8 +33,6 @@ import android.view.WindowManager;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.hippo.anani.AnimationUtils;
-import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -51,7 +49,9 @@ import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.widget.Slider;
+import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.ConcurrentPool;
+import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;

@@ -4,12 +4,6 @@
 [submodule "hotspot"]
 	path = hotspot
 	url = https://github.com/seven332/Hotspot
-[submodule "vector"]
-	path = vector
-	url = https://github.com/seven332/Vector
-[submodule "anani"]
-	path = anani
-	url = https://github.com/seven332/Anani
 [submodule "easyrecyclerview"]
 	path = easyrecyclerview
 	url = https://github.com/seven332/EasyRecyclerView

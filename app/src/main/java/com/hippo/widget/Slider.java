@@ -19,13 +19,17 @@ package com.hippo.widget;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -34,9 +38,8 @@ import android.view.ViewConfiguration;
 import android.widget.AbsoluteLayout;
 import android.widget.PopupWindow;
 
-import com.hippo.anani.AnimationUtils;
 import com.hippo.ehviewer.R;
-import com.hippo.vector.VectorDrawable;
+import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleHandler;
@@ -116,8 +119,9 @@ public class Slider extends View {
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextAlign(Paint.Align.CENTER);
 
-        mBubbleMinWidth = LayoutUtils.dp2pix(context, BUBBLE_WIDTH);
-        mBubbleMinHeight = LayoutUtils.dp2pix(context, BUBBLE_HEIGHT);
+        Resources resources = context.getResources();
+        mBubbleMinWidth = resources.getDimensionPixelOffset(R.dimen.slider_bubble_width);
+        mBubbleMinHeight = resources.getDimensionPixelOffset(R.dimen.slider_bubble_height);
 
         mBubble = new BubbleView(context, textPaint);
         mBubble.setScaleX(0.0f);
@@ -460,11 +464,11 @@ public class Slider extends View {
     }
 
     @SuppressLint("ViewConstructor")
-    private static class BubbleView extends View {
+    private static class BubbleView extends AppCompatImageView {
 
         private static final float TEXT_CENTER = (float) BUBBLE_WIDTH / 2.0f / BUBBLE_HEIGHT;
 
-        private final VectorDrawable mVectorDrawable;
+        private final Drawable mDrawable;
 
         private final Paint mTextPaint;
 
@@ -475,16 +479,14 @@ public class Slider extends View {
         @SuppressWarnings("deprecation")
         public BubbleView(Context context, Paint paint) {
             super(context);
-            mVectorDrawable = VectorDrawable.create(context, R.xml.slider_bubble);
-            setBackgroundDrawable(mVectorDrawable);
+            setImageResource(R.drawable.v_slider_bubble);
+            mDrawable = DrawableCompat.wrap(getDrawable());
+            setImageDrawable(mDrawable);
             mTextPaint = paint;
         }
 
         public void setColor(int color) {
-            Object obj = mVectorDrawable.getTargetByName("bubble");
-            if (obj instanceof VectorDrawable.VFullPath) {
-                ((VectorDrawable.VFullPath) obj).setFillColor(color);
-            }
+            DrawableCompat.setTint(mDrawable, color);
         }
 
         public void setProgress(int progress) {
@@ -505,6 +507,8 @@ public class Slider extends View {
 
         @Override
         protected void onDraw(@NonNull Canvas canvas) {
+            super.onDraw(canvas);
+
             int width = getWidth();
             int height = getHeight();
             int x = width / 2;

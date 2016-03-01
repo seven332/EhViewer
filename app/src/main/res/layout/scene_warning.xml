@@ -17,17 +17,18 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/keyline_margin"
     android:orientation="vertical">
 
-    <com.hippo.widget.SimpleImageView
-        android:id="@+id/icon_alert"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:padding="@dimen/keyline_margin"/>
+        android:padding="@dimen/keyline_margin"
+        app:srcCompat="@drawable/v_alert_red_x48"/>
 
     <com.hippo.widget.MaxSizeContainer
         xmlns:app="http://schemas.android.com/apk/res-auto"

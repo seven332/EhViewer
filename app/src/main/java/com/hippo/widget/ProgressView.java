@@ -27,13 +27,13 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import com.hippo.anani.PathInterpolator;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -51,13 +51,13 @@ public class ProgressView extends View {
         trimStartPath.moveTo(0.0f, 0.0f);
         trimStartPath.lineTo(0.5f, 0.0f);
         trimStartPath.cubicTo(0.7f, 0.0f, 0.6f, 1f, 1f, 1f);
-        TRIM_START_INTERPOLATOR = PathInterpolator.build(trimStartPath);
+        TRIM_START_INTERPOLATOR = PathInterpolatorCompat.create(trimStartPath);
 
         Path trimEndPath = new Path();
         trimEndPath.moveTo(0.0f, 0.0f);
         trimEndPath.cubicTo(0.2f, 0.0f, 0.1f, 1f, 0.5f, 1f);
         trimEndPath.lineTo(1f, 1f);
-        TRIM_END_INTERPOLATOR = PathInterpolator.build(trimEndPath);
+        TRIM_END_INTERPOLATOR = PathInterpolatorCompat.create(trimEndPath);
     }
 
     private final ArrayList<Animator> mAnimators = new ArrayList<>();

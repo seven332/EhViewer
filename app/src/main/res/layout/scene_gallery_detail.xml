@@ -47,11 +47,12 @@
         android:layout_gravity="center"
         android:orientation="vertical">
 
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/empty_image"
+        <ImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="168dp"
             android:layout_height="168dp"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@drawable/sad_panda"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.Medium"

@@ -16,6 +16,7 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -27,7 +28,6 @@
         android:layout_marginBottom="@dimen/search_item_interval"/>
 
     <com.hippo.widget.RadioGridGroup
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/normal_search_mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,11 +67,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
             android:id="@+id/normal_search_mode_help"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:padding="6dp"/>
+            android:padding="6dp"
+            app:srcCompat="@drawable/v_help_circle_x24"/>
 
         <Space
             android:layout_width="0dp"

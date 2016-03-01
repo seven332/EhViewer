@@ -20,11 +20,11 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.view.View;
 
-import com.hippo.anani.SimpleAnimatorListener;
+import com.hippo.yorozuya.SimpleAnimatorListener;
 
 public class ViewTransition {
 
-    private static long ANIMATE_TIME = 300L;
+    private static final long ANIMATE_TIME = 300L;
 
     private final View[] mViews;
 

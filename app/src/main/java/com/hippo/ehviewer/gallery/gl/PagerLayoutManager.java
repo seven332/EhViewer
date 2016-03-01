@@ -23,13 +23,13 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.animation.Interpolator;
 
-import com.hippo.anani.AnimationUtils;
 import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.gl.anim.Animation;
 import com.hippo.gl.view.GLView;
 import com.hippo.gl.widget.GLEdgeView;
 import com.hippo.gl.widget.GLProgressView;
 import com.hippo.gl.widget.GLTextureView;
+import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.MathUtils;

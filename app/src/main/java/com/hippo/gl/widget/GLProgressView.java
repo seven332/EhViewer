@@ -18,10 +18,10 @@ package com.hippo.gl.widget;
 
 import android.graphics.Color;
 import android.graphics.Path;
+import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import com.hippo.anani.PathInterpolator;
 import com.hippo.gl.anim.Animation;
 import com.hippo.gl.anim.FloatAnimation;
 import com.hippo.gl.glrenderer.GLCanvas;
@@ -43,16 +43,16 @@ public class GLProgressView extends GLView {
         trimStartPath.moveTo(0.0f, 0.0f);
         trimStartPath.lineTo(0.5f, 0.0f);
         trimStartPath.cubicTo(0.7f, 0.0f, 0.6f, 1f, 1f, 1f);
-        TRIM_START_INTERPOLATOR = PathInterpolator.build(trimStartPath);
+        TRIM_START_INTERPOLATOR = PathInterpolatorCompat.create(trimStartPath);
 
         Path trimEndPath = new Path();
         trimEndPath.moveTo(0.0f, 0.0f);
         trimEndPath.cubicTo(0.2f, 0.0f, 0.1f, 1f, 0.5f, 1f);
         trimEndPath.lineTo(1f, 1f);
-        TRIM_END_INTERPOLATOR = PathInterpolator.build(trimEndPath);
+        TRIM_END_INTERPOLATOR = PathInterpolatorCompat.create(trimEndPath);
     }
 
-    private GLPaint mGLPaint;
+    private final GLPaint mGLPaint;
 
     private float mCx;
     private float mCy;

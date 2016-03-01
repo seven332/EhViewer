@@ -39,11 +39,12 @@
         android:layout_gravity="center"
         android:orientation="vertical">
 
-        <com.hippo.widget.SimpleImageView
-            android:id="@+id/tip_image"
+        <ImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="168dp"
             android:layout_height="168dp"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@drawable/sad_panda"/>
 
         <TextView
             style="@style/TextAppearance.AppCompat.Medium"
@@ -87,11 +88,12 @@
                 android:gravity="left|top"
                 android:inputType="textMultiLine"/>
 
-            <com.hippo.widget.SimpleImageView
+            <ImageView
                 android:id="@+id/send"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:padding="16dp"/>
+                android:padding="16dp"
+                app:srcCompat="@drawable/v_send_dark_x24"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -103,6 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:layout_marginRight="@dimen/corner_fab_margin"
-        android:layout_marginBottom="@dimen/corner_fab_margin"/>
+        android:layout_marginBottom="@dimen/corner_fab_margin"
+        app:srcCompat="@drawable/v_reply_dark_x24"/>
 
 </com.hippo.ehviewer.widget.FitPaddingLayout>

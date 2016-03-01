@@ -34,9 +34,7 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
-import com.hippo.widget.SimpleImageView;
 
 /**
  * Only show a progress with jobs in background
@@ -154,11 +152,9 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
         View view = inflater.inflate(R.layout.scene_progress, container, false);
         View progress = view.findViewById(R.id.progress);
         mTip = view.findViewById(R.id.tip);
-        SimpleImageView tipImage = (SimpleImageView) mTip.findViewById(R.id.tip_image);
         mTipText = (TextView) mTip.findViewById(R.id.tip_text);
 
         mTip.setOnClickListener(this);
-        tipImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
         mTipText.setText(mError);
 
         mViewTransition = new ViewTransition(progress, mTip);

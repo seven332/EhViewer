@@ -33,12 +33,12 @@ import android.view.View.OnClickListener;
 import android.view.animation.Interpolator;
 import android.widget.TextView;
 
-import com.hippo.anani.AnimationUtils;
-import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
 import com.hippo.hotspot.HotspotTouchHelper;
 import com.hippo.hotspot.Hotspotable;
+import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.SimpleAnimatorListener;
 
 public class CheckTextView extends TextView implements OnClickListener, Hotspotable {
 

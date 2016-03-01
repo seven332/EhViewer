@@ -41,11 +41,11 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;

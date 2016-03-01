@@ -35,16 +35,15 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hippo.anani.AnimationUtils;
-import com.hippo.anani.SimpleAnimatorListener;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
@@ -57,11 +56,11 @@ import com.hippo.text.URLImageGetter;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUrl;
-import com.hippo.vector.VectorDrawable;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.LinkifyTextView;
-import com.hippo.widget.SimpleImageView;
+import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.SimpleAnimatorListener;
 
 public final class GalleryCommentsScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
@@ -77,7 +76,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private FloatingActionButton mFab;
     private View mEditPanel;
-    private SimpleImageView mSendImage;
+    private ImageView mSendImage;
     private EditText mEditText;
 
     private CommentAdapter mAdapter;
@@ -137,9 +136,8 @@ public final class GalleryCommentsScene extends ToolbarScene
         View view = inflater.inflate(R.layout.scene_gallery_comments, container, false);
         EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
         View tip = view.findViewById(R.id.tip);
-        SimpleImageView tipImage = (SimpleImageView) tip.findViewById(R.id.tip_image);
         mEditPanel = view.findViewById(R.id.edit_panel);
-        mSendImage = (SimpleImageView) mEditPanel.findViewById(R.id.send);
+        mSendImage = (ImageView) mEditPanel.findViewById(R.id.send);
         mEditText = (EditText) mEditPanel.findViewById(R.id.edit_text);
         mFab = (FloatingActionButton) view.findViewById(R.id.fab);
 
@@ -157,12 +155,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         recyclerView.setOnItemClickListener(this);
         recyclerView.setOnItemLongClickListener(this);
 
-        tipImage.setDrawable(VectorDrawable.create(getContext(), R.xml.sadpanda_head));
-
-        mSendImage.setDrawable(VectorDrawable.create(getContext(), R.xml.ic_send_dark_x24));
         mSendImage.setOnClickListener(this);
-
-        mFab.setImageDrawable(VectorDrawable.create(getContext(), R.xml.ic_reply_dark_x24));
         mFab.setOnClickListener(this);
 
         mViewTransition = new ViewTransition(recyclerView, tip);
@@ -187,7 +180,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_comments);
-        setNavigationIcon(VectorDrawable.create(getContext(), R.xml.ic_arrow_left_dark_x24));
+        setNavigationIcon(R.drawable.ic_arrow_left_dark_x24);
 
         // Clear nav checked item
         setNavCheckedItem(0);

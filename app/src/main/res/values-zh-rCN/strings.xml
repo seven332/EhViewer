@@ -199,6 +199,8 @@
     <string name="default_download_label_name">默认</string>
     <string name="download_move_dialog_title">移动</string>
     <string name="label">标签</string>
+    <string name="download_start_all">全部开始</string>
+    <string name="download_stop_all">全部停止</string>
 
     <!-- Download label -->
     <string name="no_download_label">无标签</string>

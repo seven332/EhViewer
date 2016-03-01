@@ -15,11 +15,17 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="@drawable/sadpanda_low_poly">
+    android:layout_height="160dp">
 
-</LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/sadpanda_low_poly"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null"/>
+
+</FrameLayout>
