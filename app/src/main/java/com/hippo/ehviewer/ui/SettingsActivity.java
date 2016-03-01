@@ -36,6 +36,7 @@ import com.hippo.app.AppCompatPreferenceActivity;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.fragment.EhFragment;
 import com.hippo.ehviewer.ui.fragment.ReadFragment;
+import com.hippo.util.DrawableManager;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -136,7 +137,7 @@ public final class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setActionBarUpIndicator(getResources().getDrawable(R.drawable.ic_arrow_left_dark_x24));
+        setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
 
         replaceHeaderLayoutResId();
     }

@@ -54,6 +54,7 @@ import com.hippo.scene.StageActivity;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
 import com.hippo.util.ActivityHelper;
+import com.hippo.util.DrawableManager;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUrl;
 import com.hippo.view.ViewTransition;
@@ -180,7 +181,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_comments);
-        setNavigationIcon(R.drawable.ic_arrow_left_dark_x24);
+        setNavigationIcon(DrawableManager.getDrawable(getContext(), R.drawable.v_arrow_left_dark_x24));
 
         // Clear nav checked item
         setNavCheckedItem(0);

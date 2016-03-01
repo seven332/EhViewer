@@ -51,6 +51,7 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dao.DownloadLabelRaw;
 import com.hippo.util.ActivityHelper;
+import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -139,7 +140,7 @@ public class DownloadLabelScene extends ToolbarScene {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.label);
-        setNavigationIcon(R.drawable.ic_arrow_left_dark_x24);
+        setNavigationIcon(DrawableManager.getDrawable(getContext(), R.drawable.v_arrow_left_dark_x24));
 
         // Clear nav checked item
         setNavCheckedItem(0);
