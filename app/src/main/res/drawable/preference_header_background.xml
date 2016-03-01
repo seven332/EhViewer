@@ -17,7 +17,7 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_activated="true" android:drawable="@drawable/grey_500"/>
+    <item android:state_activated="true" android:drawable="@drawable/grey_200"/>
     <item android:drawable="@drawable/transparent"/>
 
 </selector>

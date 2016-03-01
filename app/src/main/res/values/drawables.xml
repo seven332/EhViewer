@@ -16,7 +16,7 @@
   -->
 <resources>
 
-    <drawable name="grey_500">@color/grey_500</drawable>
+    <drawable name="grey_200">@color/grey_200</drawable>
     <drawable name="transparent">@android:color/transparent</drawable>
 
 </resources>
