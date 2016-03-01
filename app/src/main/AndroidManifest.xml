@@ -67,11 +67,16 @@
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme"/>
 
+        <activity
+            android:name="com.hippo.ehviewer.ui.DirPickerActivity"
+            android:configChanges="screenSize|uiMode"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/dir_picker"/>
+
         <service
             android:name="com.hippo.ehviewer.download.DownloadService"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/download"/>
 
     </application>
-
 </manifest>

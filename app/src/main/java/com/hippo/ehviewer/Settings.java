@@ -259,7 +259,7 @@ public class Settings {
         return dir != null ? dir : UniFile.fromFile(AppConfig.getDefaultDownloadDir());
     }
 
-    public static void putImageSaveLocation(@NonNull UniFile location) {
+    public static void putDownloadLocation(@NonNull UniFile location) {
         Uri uri = location.getUri();
         putString(KEY_DOWNLOAD_SAVE_SCHEME, uri.getScheme());
         putString(KEY_DOWNLOAD_SAVE_AUTHORITY, uri.getEncodedAuthority());

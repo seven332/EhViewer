@@ -28,4 +28,14 @@
         android:title="@string/settings_read_title"
         android:icon="@drawable/v_book_open_primary_x24"/>
 
+    <header
+        android:fragment="com.hippo.ehviewer.ui.fragment.DownloadFragment"
+        android:title="@string/settings_download_title"
+        android:icon="@drawable/v_download_primary_x24"/>
+
+    <header
+        android:fragment="com.hippo.ehviewer.ui.fragment.AboutFragment"
+        android:title="@string/settings_about_title"
+        android:icon="@drawable/v_info_primary_x24"/>
+
 </preference-headers>

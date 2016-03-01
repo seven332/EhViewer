@@ -34,6 +34,8 @@ import android.widget.ListAdapter;
 
 import com.hippo.app.AppCompatPreferenceActivity;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.ui.fragment.AboutFragment;
+import com.hippo.ehviewer.ui.fragment.DownloadFragment;
 import com.hippo.ehviewer.ui.fragment.EhFragment;
 import com.hippo.ehviewer.ui.fragment.ReadFragment;
 import com.hippo.util.DrawableManager;
@@ -48,11 +50,13 @@ public final class SettingsActivity extends AppCompatPreferenceActivity {
     private static final String[] ENTRY_FRAGMENTS = {
             EhFragment.class.getName(),
             ReadFragment.class.getName(),
+            DownloadFragment.class.getName(),
+            AboutFragment.class.getName(),
     };
 
     private class FakeLayoutInflater extends LayoutInflater {
 
-        private LayoutInflater mInflater;
+        private final LayoutInflater mInflater;
 
         protected FakeLayoutInflater(LayoutInflater inflater) {
             super(null);
@@ -141,7 +145,6 @@ public final class SettingsActivity extends AppCompatPreferenceActivity {
 
         replaceHeaderLayoutResId();
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
