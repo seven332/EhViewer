@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -78,7 +77,7 @@ import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
-import com.hippo.widget.OffsetLayout;
+import com.hippo.widget.SearchBarMover;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
@@ -90,7 +89,7 @@ import java.lang.annotation.RetentionPolicy;
 public final class GalleryListScene extends BaseScene
         implements EasyRecyclerView.OnItemClickListener, EasyRecyclerView.OnItemLongClickListener,
         SearchBar.Helper, SearchBar.OnStateChangeListener, FastScroller.OnDragHandlerListener,
-        SearchLayout.Helper, View.OnClickListener {
+        SearchLayout.Helper, View.OnClickListener, SearchBarMover.Helper {
 
     @IntDef({STATE_NORMAL, STATE_SIMPLE_SEARCH, STATE_SEARCH, STATE_SEARCH_SHOW_LIST})
     @Retention(RetentionPolicy.SOURCE)
@@ -130,7 +129,7 @@ public final class GalleryListScene extends BaseScene
     private DrawerArrowDrawable mLeftDrawable;
     private AddDeleteDrawable mRightDrawable;
 
-    private SearchBarMoveHelper mSearchBarMoveHelper;
+    private SearchBarMover mSearchBarMover;
 
     private ListUrlBuilder mUrlBuilder;
     @State
@@ -180,7 +179,7 @@ public final class GalleryListScene extends BaseScene
         onUpdateUrlBuilder();
         mHelper.refresh();
         setState(STATE_NORMAL);
-        mSearchBarMoveHelper.showSearchBar();
+        mSearchBarMover.showSearchBar();
     }
 
     @Override
@@ -274,7 +273,7 @@ public final class GalleryListScene extends BaseScene
 
         Resources resources = getContext().getResources();
 
-        mFitPaddingLayout = (FitPaddingLayout) view.findViewById(R.id.search_bar_layout);
+        mFitPaddingLayout = (FitPaddingLayout) view.findViewById(R.id.main_layout);
         ContentLayout contentLayout = (ContentLayout) mFitPaddingLayout.findViewById(R.id.content_layout);
         mRecyclerView = contentLayout.getRecyclerView();
         mSearchLayout = (SearchLayout) mFitPaddingLayout.findViewById(R.id.search_layout);
@@ -313,9 +312,7 @@ public final class GalleryListScene extends BaseScene
 
         mFab.setOnClickListener(this);
 
-        mSearchBarMoveHelper = new SearchBarMoveHelper();
-        mRecyclerView.addOnScrollListener(mSearchBarMoveHelper);
-        mSearchLayout.addOnScrollListener(mSearchBarMoveHelper);
+        mSearchBarMover = new SearchBarMover(this, mSearchBar, mRecyclerView, mSearchLayout);
 
         // Update list url builder
         onUpdateUrlBuilder();
@@ -350,7 +347,7 @@ public final class GalleryListScene extends BaseScene
         super.onDestroyView();
 
         // End animation
-        mSearchBarMoveHelper.cancelAnimation();
+        mSearchBarMover.cancelAnimation();
 
         mFitPaddingLayout = null;
         mRecyclerView = null;
@@ -362,7 +359,7 @@ public final class GalleryListScene extends BaseScene
         mHelper = null;
         mLeftDrawable = null;
         mRightDrawable = null;
-        mSearchBarMoveHelper = null;
+        mSearchBarMover = null;
         mFabAnimatorListener = null;
     }
 
@@ -523,67 +520,67 @@ public final class GalleryListScene extends BaseScene
                 case STATE_NORMAL:
                     if (state == STATE_SIMPLE_SEARCH) {
                         mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                         showFab();
                     } else if (state == STATE_SEARCH) {
                         mViewTransition.showView(1, animation);
                         mSearchLayout.scrollSearchContainerToTop();
                         mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                         showFab();
                     } else if (state == STATE_SEARCH_SHOW_LIST) {
                         mViewTransition.showView(1, animation);
                         mSearchLayout.scrollSearchContainerToTop();
                         mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                         showFab();
                     }
                     break;
                 case STATE_SIMPLE_SEARCH:
                     if (state == STATE_NORMAL) {
                         mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                         hideFab();
                     } else if (state == STATE_SEARCH) {
                         mViewTransition.showView(1, animation);
                         mSearchLayout.scrollSearchContainerToTop();
                         mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                     } else if (state == STATE_SEARCH_SHOW_LIST) {
                         mViewTransition.showView(1, animation);
                         mSearchLayout.scrollSearchContainerToTop();
                         mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                     }
                     break;
                 case STATE_SEARCH:
                     if (state == STATE_NORMAL) {
                         mViewTransition.showView(0, animation);
                         mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                         hideFab();
                     } else if (state == STATE_SIMPLE_SEARCH) {
                         mViewTransition.showView(0, animation);
                         mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                     } else if (state == STATE_SEARCH_SHOW_LIST) {
                         mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                     }
                     break;
                 case STATE_SEARCH_SHOW_LIST:
                     if (state == STATE_NORMAL) {
                         mViewTransition.showView(0, animation);
                         mSearchBar.setState(SearchBar.STATE_NORMAL, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                         hideFab();
                     } else if (state == STATE_SIMPLE_SEARCH) {
                         mViewTransition.showView(0, animation);
                         mSearchBar.setState(SearchBar.STATE_SEARCH_LIST, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                     } else if (state == STATE_SEARCH) {
                         mSearchBar.setState(SearchBar.STATE_SEARCH, animation);
-                        mSearchBarMoveHelper.returnSearchBarPosition();
+                        mSearchBarMover.returnSearchBarPosition();
                     }
                     break;
             }
@@ -673,7 +670,7 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public void onEndDragHandler() {
-        mSearchBarMoveHelper.returnSearchBarPosition();
+        mSearchBarMover.returnSearchBarPosition();
     }
 
     @Override
@@ -707,219 +704,30 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public void onChangeSearchMode() {
-        mSearchBarMoveHelper.showSearchBar();
+        mSearchBarMover.showSearchBar();
     }
 
-    private class SearchBarMoveHelper extends RecyclerView.OnScrollListener {
+    // SearchBarMover.Helper
+    @Override
+    public boolean isValidView(RecyclerView recyclerView) {
+        return (mState == STATE_NORMAL && recyclerView == mRecyclerView) ||
+                (mState == STATE_SEARCH && recyclerView == mSearchLayout);
+    }
 
-        private boolean mShow;
-        private ValueAnimator mSearchBarMoveAnimator;
-
-        public void cancelAnimation() {
-            if (mSearchBarMoveAnimator != null) {
-                mSearchBarMoveAnimator.cancel();
-            }
+    // SearchBarMover.Helper
+    @Override
+    public RecyclerView getValidRecyclerView() {
+        if (mState == STATE_NORMAL || mState == STATE_SIMPLE_SEARCH) {
+            return mRecyclerView;
+        } else {
+            return mSearchLayout;
         }
+    }
 
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState){
-            if (newState == RecyclerView.SCROLL_STATE_IDLE && isValidView(recyclerView)) {
-                returnSearchBarPosition();
-            }
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            if (isValidView(recyclerView)) {
-
-                int oldBottom = mSearchBar.getBottom();
-                OffsetLayout.LayoutParams sbLayoutParams = (OffsetLayout.LayoutParams) mSearchBar.getLayoutParams();
-                int offsetYStep = MathUtils.clamp(-dy, -mSearchBar.getBottom(), -sbLayoutParams.offsetY);
-                mSearchBar.offsetTopAndBottom(offsetYStep);
-                sbLayoutParams.offsetY += offsetYStep;
-                int newBottom = mSearchBar.getBottom();
-
-                // Sometimes if it is out of screen than go into again, it do not show,
-                // so I need to requestLayout
-                if (oldBottom <= 0 && newBottom > 0) {
-                    mSearchBar.requestLayout();
-                }
-            }
-        }
-
-        private boolean isValidView(RecyclerView view) {
-            return (mState == STATE_NORMAL && view == mRecyclerView) ||
-                    (mState == STATE_SEARCH && view == mSearchLayout);
-        }
-
-        private RecyclerView getValidRecyclerView() {
-            if (mState == STATE_NORMAL || mState == STATE_SIMPLE_SEARCH) {
-                return mRecyclerView;
-            } else {
-                return mSearchLayout;
-            }
-        }
-
-        private int getSearchBarOriginalBottom() {
-            return mSearchBar.getBottom() - ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY;
-        }
-
-        private void returnSearchBarPosition() {
-            returnSearchBarPosition(true);
-        }
-
-        @SuppressWarnings("SimplifiableIfStatement")
-        private void returnSearchBarPosition(boolean animation) {
-            if (mSearchBar.getHeight() == 0) {
-                // Layout not called
-                return;
-            }
-
-            boolean show;
-            if (mState == STATE_SIMPLE_SEARCH || mState == STATE_SEARCH_SHOW_LIST) {
-                show = true;
-            } else {
-                RecyclerView recyclerView = getValidRecyclerView();
-                if (!recyclerView.isShown()) {
-                    show = true;
-                } else if (recyclerView.computeVerticalScrollOffset() < getSearchBarOriginalBottom()){
-                    show = true;
-                } else {
-                    show = mSearchBar.getBottom() > (mSearchBar.getHeight()) / 2;
-                }
-            }
-
-            int offset;
-            if (show) {
-                offset = -((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY;
-            } else {
-                offset = -mSearchBar.getBottom();
-            }
-
-            if (offset == 0) {
-                // No need to scroll
-                return;
-            }
-
-            if (animation) {
-                if (mSearchBarMoveAnimator != null) {
-                    if (mShow == show) {
-                        // The same target, no need to do animation
-                        return;
-                    } else {
-                        // Cancel it
-                        mSearchBarMoveAnimator.cancel();
-                        mSearchBarMoveAnimator = null;
-                    }
-                }
-
-                mShow = show;
-                final boolean needRequestLayout = mSearchBar.getBottom() <= 0 && offset > 0;
-                final ValueAnimator va = ValueAnimator.ofInt(0, offset);
-                va.setDuration(ANIMATE_TIME);
-                va.addListener(new SimpleAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mSearchBarMoveAnimator = null;
-                    }
-                });
-                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    int lastValue;
-                    boolean hasRequestLayout;
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        if (mSearchBar == null) {
-                            return;
-                        }
-                        int value = (Integer) animation.getAnimatedValue();
-                        int offsetStep = value - lastValue;
-                        lastValue = value;
-                        mSearchBar.offsetTopAndBottom(offsetStep);
-                        ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetStep;
-
-                        if (!hasRequestLayout && needRequestLayout && mSearchBar.getBottom() > 0) {
-                            hasRequestLayout = true;
-                            mSearchBar.requestLayout();
-                        }
-                    }
-                });
-                mSearchBarMoveAnimator = va;
-                va.start();
-            } else {
-                if (mSearchBarMoveAnimator != null) {
-                    mSearchBarMoveAnimator.cancel();
-                }
-                mSearchBar.offsetTopAndBottom(offset);
-                ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offset;
-            }
-        }
-
-        private void showSearchBar() {
-            showSearchBar(true);
-        }
-
-        private void showSearchBar(boolean animation) {
-            if (mSearchBar.getHeight() == 0) {
-                // Layout not called
-                return;
-            }
-
-            int offset = -((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY;
-
-            if (offset == 0) {
-                // No need to scroll
-                return;
-            }
-
-            if (animation) {
-                if (mSearchBarMoveAnimator != null) {
-                    if (mShow) {
-                        // The same target, no need to do animation
-                        return;
-                    } else {
-                        // Cancel it
-                        mSearchBarMoveAnimator.cancel();
-                        mSearchBarMoveAnimator = null;
-                    }
-                }
-
-                mShow = true;
-                final boolean needRequestLayout = mSearchBar.getBottom() <= 0 && offset > 0;
-                final ValueAnimator va = ValueAnimator.ofInt(0, offset);
-                va.setDuration(ANIMATE_TIME);
-                va.addListener(new SimpleAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mSearchBarMoveAnimator = null;
-                    }
-                });
-                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    int lastValue;
-                    boolean hasRequestLayout;
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        int value = (Integer) animation.getAnimatedValue();
-                        int offsetStep = value - lastValue;
-                        lastValue = value;
-                        mSearchBar.offsetTopAndBottom(offsetStep);
-                        ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offsetStep;
-
-                        if (!hasRequestLayout && needRequestLayout && mSearchBar.getBottom() > 0) {
-                            hasRequestLayout = true;
-                            mSearchBar.requestLayout();
-                        }
-                    }
-                });
-                mSearchBarMoveAnimator = va;
-                va.start();
-            } else {
-                if (mSearchBarMoveAnimator != null) {
-                    mSearchBarMoveAnimator.cancel();
-                }
-                mSearchBar.offsetTopAndBottom(offset);
-                ((OffsetLayout.LayoutParams) mSearchBar.getLayoutParams()).offsetY += offset;
-            }
-        }
+    // SearchBarMover.Helper
+    @Override
+    public boolean forceShowSearchBar() {
+        return mState == STATE_SIMPLE_SEARCH || mState == STATE_SEARCH_SHOW_LIST;
     }
 
     public static void startScene(SceneFragment scene, ListUrlBuilder lub) {
@@ -1040,26 +848,26 @@ public final class GalleryListScene extends BaseScene
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
                 public void run() {
-                    mSearchBarMoveHelper.returnSearchBarPosition();
+                    mSearchBarMover.returnSearchBarPosition();
                 }
             });
         }
     }
 
     private void onGetGalleryListSuccess(GalleryListParser.Result result, int taskId) {
-        if (mHelper != null && mSearchBarMoveHelper != null &&
+        if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.setPages(taskId, result.pages);
             mHelper.onGetPageData(taskId, result.galleryInfos);
-            mSearchBarMoveHelper.returnSearchBarPosition();
+            mSearchBarMover.returnSearchBarPosition();
         }
     }
 
     private void onGetGalleryListFailure(Exception e, int taskId) {
-        if (mHelper != null && mSearchBarMoveHelper != null &&
+        if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.onGetExpection(taskId, e);
-            mSearchBarMoveHelper.returnSearchBarPosition();
+            mSearchBarMover.returnSearchBarPosition();
         }
     }
 
