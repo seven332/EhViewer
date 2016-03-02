@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -67,7 +68,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
     private int mState = STATE_NORMAL;
 
-    private Path mPath = new Path();
+    private final Path mPath = new Path();
     private int mWidth;
     private int mHeight;
     private int mBaseHeight;
@@ -79,7 +80,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     private SearchEditText mEditText;
     private ListView mList;
     private View mListHeader;
-    private boolean mHeaderAttached = false;
+    private boolean mHeaderAttached;
 
     private ViewTransition mViewTransition;
 
@@ -90,7 +91,9 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     private Helper mHelper;
     private OnStateChangeListener mOnStateChangeListener;
 
-    private boolean mInAnimation = false;
+    private boolean mAllowEmptySearch = true;
+
+    private boolean mInAnimation;
 
     public SearchBar(Context context) {
         super(context);
@@ -187,6 +190,10 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
         mSuggestionAdapter.notifyDataSetChanged();
     }
 
+    public void setAllowEmptySearch(boolean allowEmptySearch) {
+        mAllowEmptySearch = allowEmptySearch;
+    }
+
     public float getEditTextTextSize() {
         return mEditText.getTextSize();
     }
@@ -245,6 +252,11 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
     public void applySearch() {
         String query = mEditText.getText().toString().trim();
+
+        if (!mAllowEmptySearch && TextUtils.isEmpty(query)) {
+            return;
+        }
+
         // Put it into db
         mSearchDatabase.addQuery(query);
         // Callback

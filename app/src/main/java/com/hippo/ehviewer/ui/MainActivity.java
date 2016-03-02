@@ -38,6 +38,7 @@ import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.DownloadScene;
+import com.hippo.ehviewer.ui.scene.FavoritesScene;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.LoginScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
@@ -272,7 +273,7 @@ public final class MainActivity extends StageActivity
         } else if (id == R.id.nav_whats_hot) {
 
         } else if (id == R.id.nav_favourite) {
-
+            startScene(new Announcer(FavoritesScene.class));
         } else if (id == R.id.nav_history) {
 
         } else if (id == R.id.nav_download) {

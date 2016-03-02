@@ -69,7 +69,6 @@ import com.hippo.scene.TransitionHelper;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
-import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
@@ -226,7 +225,7 @@ public class DownloadScene extends ToolbarScene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         updateTitle();
-        setNavigationIcon(DrawableManager.getDrawable(getContext(), R.drawable.v_arrow_left_dark_x24));
+        setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
 
         // Clear nav checked item
         setNavCheckedItem(R.id.nav_download);
@@ -286,7 +285,7 @@ public class DownloadScene extends ToolbarScene
     @Override
     public View onCreateDrawerView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.drawer_download, container, false);
+        View view = inflater.inflate(R.layout.drawer_list, container, false);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.drawer_download_label_title);
@@ -883,7 +882,7 @@ public class DownloadScene extends ToolbarScene
         @Override
         public boolean onTransition(Context context, FragmentTransaction transaction,
                 Fragment exit, Fragment enter) {
-            if (!(enter instanceof GalleryDetailScene)) {
+            if (mHolder == null || !(enter instanceof GalleryDetailScene)) {
                 return false;
             }
 

@@ -303,6 +303,15 @@
     <string name="dir_picker">Dir picker</string>
     <string name="directory_not_writable">The directory is not writable</string>
 
+    <!-- Favorite -->
+    <string name="all_favorites">All Favorites</string>
+    <string name="favorites_search_bar_hint">Search %s</string>
+    <string name="favorites_title">%s</string>
+    <string name="favorites_title_2">%1$s - %2$s</string>
+    <string name="delete_favorites_dialog_title">Delete favorites</string>
+    <string name="delete_favorites_dialog_message">Delete %d items from favorites</string>
+    <string name="move_favorites_dialog_title">Move favorites</string>
+
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">Something wrong happened</string>
 

@@ -427,7 +427,7 @@ public final class GalleryListScene extends BaseScene
         @Override
         public boolean onTransition(Context context, FragmentTransaction transaction,
                 Fragment exit, Fragment enter) {
-            if (!(enter instanceof GalleryDetailScene)) {
+            if (mHolder == null || !(enter instanceof GalleryDetailScene)) {
                 return false;
             }
 

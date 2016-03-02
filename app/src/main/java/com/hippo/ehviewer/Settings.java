@@ -24,9 +24,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.ehviewer.client.data.FavListUrlBuilder;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.NumberUtils;
 
 public class Settings {
@@ -115,17 +117,6 @@ public class Settings {
 
     public static void putShowWarning(boolean value) {
         putBoolean(KEY_SHOW_WARNING, value);
-    }
-
-    private static final String KEY_RECENT_DOWNLOAD_LABEL = "recent_download_label";
-    private static final String DEFAULT_RECENT_DOWNLOAD_LABEL = null;
-
-    public static String getRecentDownloadLabel() {
-        return getString(KEY_RECENT_DOWNLOAD_LABEL, DEFAULT_RECENT_DOWNLOAD_LABEL);
-    }
-
-    public static void putRecentDownloadLabel(String value) {
-        putString(KEY_RECENT_DOWNLOAD_LABEL, value);
     }
 
     private static final String KEY_REMOVE_IMAGE_FILES = "include_pic";
@@ -236,6 +227,9 @@ public class Settings {
         putBoolean(KEY_VOLUME_PAGE, value);
     }
 
+    /********************
+     ****** Download
+     ********************/
     public static final String KEY_DOWNLOAD_SAVE_SCHEME = "image_scheme";
     public static final String KEY_DOWNLOAD_SAVE_AUTHORITY = "image_authority";
     public static final String KEY_DOWNLOAD_SAVE_PATH = "image_path";
@@ -266,5 +260,82 @@ public class Settings {
         putString(KEY_DOWNLOAD_SAVE_PATH, uri.getEncodedPath());
         putString(KEY_DOWNLOAD_SAVE_QUERY, uri.getEncodedQuery());
         putString(KEY_DOWNLOAD_SAVE_FRAGMENT, uri.getEncodedFragment());
+    }
+
+    private static final String KEY_RECENT_DOWNLOAD_LABEL = "recent_download_label";
+    private static final String DEFAULT_RECENT_DOWNLOAD_LABEL = null;
+
+    public static String getRecentDownloadLabel() {
+        return getString(KEY_RECENT_DOWNLOAD_LABEL, DEFAULT_RECENT_DOWNLOAD_LABEL);
+    }
+
+    public static void putRecentDownloadLabel(String value) {
+        putString(KEY_RECENT_DOWNLOAD_LABEL, value);
+    }
+
+    /********************
+     ****** Favorites
+     ********************/
+    public static final String KEY_FAV_CAT_0 = "fav_cat_0";
+    public static final String KEY_FAV_CAT_1 = "fav_cat_1";
+    public static final String KEY_FAV_CAT_2 = "fav_cat_2";
+    public static final String KEY_FAV_CAT_3 = "fav_cat_3";
+    public static final String KEY_FAV_CAT_4 = "fav_cat_4";
+    public static final String KEY_FAV_CAT_5 = "fav_cat_5";
+    public static final String KEY_FAV_CAT_6 = "fav_cat_6";
+    public static final String KEY_FAV_CAT_7 = "fav_cat_7";
+    public static final String KEY_FAV_CAT_8 = "fav_cat_8";
+    public static final String KEY_FAV_CAT_9 = "fav_cat_9";
+    public static final String DEFAULT_FAV_CAT_0 = "Favorites 0";
+    public static final String DEFAULT_FAV_CAT_1 = "Favorites 1";
+    public static final String DEFAULT_FAV_CAT_2 = "Favorites 2";
+    public static final String DEFAULT_FAV_CAT_3 = "Favorites 3";
+    public static final String DEFAULT_FAV_CAT_4 = "Favorites 4";
+    public static final String DEFAULT_FAV_CAT_5 = "Favorites 5";
+    public static final String DEFAULT_FAV_CAT_6 = "Favorites 6";
+    public static final String DEFAULT_FAV_CAT_7 = "Favorites 7";
+    public static final String DEFAULT_FAV_CAT_8 = "Favorites 8";
+    public static final String DEFAULT_FAV_CAT_9 = "Favorites 9";
+
+    public static String[] getFavCat() {
+        String[] favCat = new String[10];
+        favCat[0] = sSettingsPre.getString(KEY_FAV_CAT_0, DEFAULT_FAV_CAT_0);
+        favCat[1] = sSettingsPre.getString(KEY_FAV_CAT_1, DEFAULT_FAV_CAT_1);
+        favCat[2] = sSettingsPre.getString(KEY_FAV_CAT_2, DEFAULT_FAV_CAT_2);
+        favCat[3] = sSettingsPre.getString(KEY_FAV_CAT_3, DEFAULT_FAV_CAT_3);
+        favCat[4] = sSettingsPre.getString(KEY_FAV_CAT_4, DEFAULT_FAV_CAT_4);
+        favCat[5] = sSettingsPre.getString(KEY_FAV_CAT_5, DEFAULT_FAV_CAT_5);
+        favCat[6] = sSettingsPre.getString(KEY_FAV_CAT_6, DEFAULT_FAV_CAT_6);
+        favCat[7] = sSettingsPre.getString(KEY_FAV_CAT_7, DEFAULT_FAV_CAT_7);
+        favCat[8] = sSettingsPre.getString(KEY_FAV_CAT_8, DEFAULT_FAV_CAT_8);
+        favCat[9] = sSettingsPre.getString(KEY_FAV_CAT_9, DEFAULT_FAV_CAT_9);
+        return favCat;
+    }
+
+    public static void putFavCat(String[] value) {
+        AssertUtils.assertEquals(10, value.length);
+        sSettingsPre.edit()
+                .putString(KEY_FAV_CAT_0, value[0])
+                .putString(KEY_FAV_CAT_1, value[1])
+                .putString(KEY_FAV_CAT_2, value[2])
+                .putString(KEY_FAV_CAT_3, value[3])
+                .putString(KEY_FAV_CAT_4, value[4])
+                .putString(KEY_FAV_CAT_5, value[5])
+                .putString(KEY_FAV_CAT_6, value[6])
+                .putString(KEY_FAV_CAT_7, value[7])
+                .putString(KEY_FAV_CAT_8, value[8])
+                .putString(KEY_FAV_CAT_9, value[9])
+                .apply();
+    }
+
+    private static final String KEY_RECENT_FAV_CAT = "recent_fav_cat";
+    private static final int DEFAULT_RECENT_FAV_CAT = FavListUrlBuilder.FAV_CAT_ALL;
+
+    public static int getRecentFavCat() {
+        return getInt(KEY_RECENT_FAV_CAT, DEFAULT_RECENT_FAV_CAT);
+    }
+
+    public static void putRecentFavCat(int value) {
+        putInt(KEY_RECENT_FAV_CAT, value);
     }
 }

@@ -32,6 +32,8 @@ public class EhUrl {
 
     public static final String API_EX = HOST_EX + "api.php";
 
+    public static final String URL_FAVORITES = HOST_EX + "favorites.php";
+
     public static String getGalleryDetailUrl(int gid, String token) {
         return getGalleryDetailUrl(gid, token, 0, false);
     }

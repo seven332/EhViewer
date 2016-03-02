@@ -25,9 +25,9 @@ import com.hippo.scene.StageActivity;
 
 public abstract class EhCallback<E extends SceneFragment, T> implements EhClient.Callback<T>  {
 
-    private EhApplication mApplication;
-    private int mStageId;
-    private String mSceneTag;
+    private final EhApplication mApplication;
+    private final int mStageId;
+    private final String mSceneTag;
 
     public EhCallback(Context context, int stageId, String sceneTag) {
         mApplication = (EhApplication) context.getApplicationContext();

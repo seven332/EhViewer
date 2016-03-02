@@ -20,6 +20,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
+import com.hippo.ehviewer.GetText;
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -27,6 +29,7 @@ import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.ehviewer.client.parser.FavoritesParser;
 import com.hippo.ehviewer.client.parser.GalleryApiParser;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
@@ -34,6 +37,7 @@ import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.network.StatusCodeException;
+import com.hippo.yorozuya.IntList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -76,8 +80,12 @@ public class EhEngine {
             throw new EhException("Sad Panda");
         }
 
-        if (e instanceof ParseException && body != null && !body.contains("<")) {
-            throw new EhException(body);
+        if (e instanceof ParseException) {
+            if (body != null && !body.contains("<")){
+                throw new EhException(body);
+            } else {
+                throw new EhException(GetText.getString(R.string.error_parse_error));
+            }
         }
 
         if (code >= 400) {
@@ -348,5 +356,84 @@ public class EhEngine {
             throwException(call, code, headers, body, e);
             throw e;
         }
+    }
+
+    public static FavoritesParser.Result getFavorites(EhClient.Task task, OkHttpClient okHttpClient,
+            String url, boolean callApi) throws Exception {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        FavoritesParser.Result result;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            result = FavoritesParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+
+        if (callApi && result.galleryInfoList.size() > 0) {
+            fillGalleryListByApi(task, okHttpClient, result.galleryInfoList);
+        }
+
+        return result;
+    }
+
+    public static FavoritesParser.Result modifyFavorites(EhClient.Task task, OkHttpClient okHttpClient,
+            String url, IntList gidList, int dstCat, boolean callApi) throws Exception {
+        String catStr;
+        if (dstCat == -1) {
+            catStr = "delete";
+        } else if (dstCat >= 0 && dstCat <= 9) {
+            catStr = "fav" + dstCat;
+        } else {
+            Log.w(TAG, "Invalid dstCat: " + dstCat);
+            return null;
+        }
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("ddact", catStr);
+        for (int i = 0, n = gidList.size(); i < n; i++) {
+            builder.add("modifygids[]", Integer.toString(gidList.get(i)));
+        }
+        builder.add("apply", "Apply");
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig())
+                .post(builder.build())
+                .build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        FavoritesParser.Result result;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            result = FavoritesParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+
+        if (callApi && result.galleryInfoList.size() > 0) {
+            fillGalleryListByApi(task, okHttpClient, result.galleryInfoList);
+        }
+
+        return result;
     }
 }

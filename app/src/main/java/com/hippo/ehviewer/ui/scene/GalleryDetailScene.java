@@ -996,7 +996,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public boolean onTransition(Context context,
                 FragmentTransaction transaction, Fragment exit, Fragment enter) {
-            if (!(enter instanceof GalleryListScene) && !(enter instanceof DownloadScene)) {
+            if (!(enter instanceof GalleryListScene) && !(enter instanceof DownloadScene) &&
+                    !(enter instanceof FavoritesScene)) {
                 return false;
             }
 

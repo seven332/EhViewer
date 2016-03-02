@@ -240,7 +240,7 @@ public class ContentLayout extends FrameLayout {
 
         private String mEmptyString = "No hint";
 
-        private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (!mRefreshLayout.isRefreshing() && mRefreshLayout.isAlmostBottom() && mEndPage < mPages) {
@@ -251,7 +251,7 @@ public class ContentLayout extends FrameLayout {
             }
         };
 
-        private RefreshLayout.OnRefreshListener mOnRefreshListener = new RefreshLayout.OnRefreshListener() {
+        private final RefreshLayout.OnRefreshListener mOnRefreshListener = new RefreshLayout.OnRefreshListener() {
             @Override
             public void onHeaderRefresh() {
                 if (mStartPage > 0) {
@@ -284,7 +284,7 @@ public class ContentLayout extends FrameLayout {
             }
         };
 
-        private LayoutManagerUtils.OnScrollToPositionListener mOnScrollToPositionListener =
+        private final LayoutManagerUtils.OnScrollToPositionListener mOnScrollToPositionListener =
                 new LayoutManagerUtils.OnScrollToPositionListener() {
                     @Override
                     public void onScrollToPosition() {
@@ -318,7 +318,6 @@ public class ContentLayout extends FrameLayout {
             });
         }
 
-
         /**
          * Call {@link #onGetPageData(int, List)} when get data
          *
@@ -338,10 +337,11 @@ public class ContentLayout extends FrameLayout {
         protected void onScrollToPosition() {
         }
 
-        protected void onShowProgress() {
+        protected void onHideRecyclerView() {
         }
 
-        protected void onShowText() {
+        public void setRefreshLayoutEnable(boolean enable) {
+            mRefreshLayout.setEnabled(enable);
         }
 
         public void setEnable(boolean enable) {
@@ -565,24 +565,24 @@ public class ContentLayout extends FrameLayout {
             mViewTransition.showView(0);
         }
 
-        private boolean isContentShowning() {
+        private boolean isContentShowing() {
             return mViewTransition.getShownViewIndex() == 0;
         }
 
         public void showProgressBar() {
-            mViewTransition.showView(1, false);
+            showProgressBar(true);
         }
 
         public void showProgressBar(boolean animation) {
             if (mViewTransition.showView(1, animation)) {
-                onShowProgress();
+                onHideRecyclerView();
             }
         }
 
         public void showText(CharSequence text) {
             mTextView.setText(text);
             if (mViewTransition.showView(2)) {
-                onShowText();
+                onHideRecyclerView();
             }
         }
 
@@ -642,6 +642,14 @@ public class ContentLayout extends FrameLayout {
             doRefresh();
         }
 
+        /**
+         * Refresh header and refresh
+         */
+        public void justRefresh() {
+            mRefreshLayout.setHeaderRefreshing(true);
+            doRefresh();
+        }
+
         private void cancelCurrentTask() {
             mCurrentTaskId = mIdGenerator.nextId();
             mRefreshLayout.setHeaderRefreshing(false);
@@ -684,7 +692,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         public boolean canGoTo() {
-            return isContentShowning();
+            return isContentShowing();
         }
 
         /**

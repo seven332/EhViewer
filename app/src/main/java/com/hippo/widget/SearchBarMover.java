@@ -18,6 +18,7 @@ package com.hippo.widget;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -82,6 +83,9 @@ public class SearchBarMover extends RecyclerView.OnScrollListener {
             show = true;
         } else {
             RecyclerView recyclerView = mHelper.getValidRecyclerView();
+            if (recyclerView == null) {
+                return;
+            }
             if (!recyclerView.isShown()) {
                 show = true;
             } else if (recyclerView.computeVerticalScrollOffset() < mSearchBar.getBottom()){
@@ -206,6 +210,7 @@ public class SearchBarMover extends RecyclerView.OnScrollListener {
 
         boolean isValidView(RecyclerView recyclerView);
 
+        @Nullable
         RecyclerView getValidRecyclerView();
 
         boolean forceShowSearchBar();
