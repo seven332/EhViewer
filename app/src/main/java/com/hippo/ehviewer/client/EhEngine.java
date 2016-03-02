@@ -27,19 +27,17 @@ import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.ehviewer.client.parser.GalleryApiParser;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
-import com.hippo.ehviewer.client.parser.ParserUtils;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.network.StatusCodeException;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,24 +85,24 @@ public class EhEngine {
         }
     }
 
-    public static Call prepareSignIn(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String username, String password) throws MalformedURLException {
+    public static String signIn(EhClient.Task task, OkHttpClient okHttpClient,
+            String username, String password) throws Exception {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("UserName", username)
                 .add("PassWord", password)
                 .add("submit", "Log me in")
                 .add("CookieDate", "1")
                 .add("temporary_https", "off");
-
         String url = EhUrl.API_SIGN_IN;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, ehConfig)
+        Request request = new EhRequestBuilder(url, task.getEhConfig())
                 .post(builder.build())
                 .build();
-        return okHttpClient.newCall(request);
-    }
+        Call call = okHttpClient.newCall(request);
 
-    public static String doSignIn(Call call) throws Exception {
+        // Put call
+        task.setCall(call);
+
         String body = null;
         Headers headers = null;
         int code = -1;
@@ -120,53 +118,60 @@ public class EhEngine {
         }
     }
 
-    public static Call prepareGetGalleryList(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String url) throws MalformedURLException {
+    public static GalleryListParser.Result getGalleryList(EhClient.Task task, OkHttpClient okHttpClient,
+            String url, boolean callApi) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, ehConfig).build();
-        return okHttpClient.newCall(request);
+        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        GalleryListParser.Result result;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            result = GalleryListParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+
+        if (callApi && result.galleryInfos.size() > 0) {
+            fillGalleryListByApi(task, okHttpClient, result.galleryInfos);
+        }
+
+        return result;
     }
 
-    private static GalleryInfo getGalleryInfoByGid(List<GalleryInfo> galleryInfos, int gid) {
-        for (int i = 0, size = galleryInfos.size(); i < size; i++) {
-            GalleryInfo gi = galleryInfos.get(i);
-            if (gi.gid == gid) {
-                return gi;
+    // At least, GalleryInfo contain valid gid and token
+    public static Void fillGalleryListByApi(EhClient.Task task, OkHttpClient okHttpClient,
+            List<GalleryInfo> galleryInfoList) throws Exception {
+        // We can only request 25 items one time at most
+        final int MAX_REQUEST_SIZE = 25;
+        List<GalleryInfo> requestItems = new ArrayList<>(MAX_REQUEST_SIZE);
+        for (int i = 0, size = galleryInfoList.size(); i < size; i++) {
+            requestItems.add(galleryInfoList.get(i));
+            if (requestItems.size() == MAX_REQUEST_SIZE || i == size - 1) {
+                doFillGalleryListByApi(task, okHttpClient, requestItems);
+                requestItems.clear();
             }
         }
         return null;
     }
 
-    private static void parseGalleryApi(String body, List<GalleryInfo> galleryInfos) throws JSONException {
-        JSONObject jo = new JSONObject(body);
-        JSONArray ja = jo.getJSONArray("gmetadata");
-
-        for (int i = 0, length = ja.length(); i < length; i++) {
-            JSONObject g = ja.getJSONObject(i);
-            int gid = g.getInt("gid");
-            GalleryInfo gi = getGalleryInfoByGid(galleryInfos, gid);
-            if (gi == null) {
-                continue;
-            }
-            gi.titleJpn = ParserUtils.trim(g.getString("title_jpn"));
-            // tags
-            JSONArray tagJa = g.getJSONArray("tags");
-            int tagLength = tagJa.length();
-            String[] tags = new String[tagLength];
-            for (int j = 0; j < tagLength; j++) {
-                tags[j] = tagJa.getString(j);
-            }
-            gi.simpleTags = tags;
-        }
-    }
-
-    private static void doRequestGalleryApi(List<GalleryInfo> galleryInfos, OkHttpClient okHttpClient)
-            throws Exception {
+    private static void doFillGalleryListByApi(EhClient.Task task, OkHttpClient okHttpClient,
+            List<GalleryInfo> galleryInfoList) throws Exception {
         JSONObject json = new JSONObject();
         json.put("method", "gdata");
         JSONArray ja = new JSONArray();
-        for (int i = 0, size = galleryInfos.size(); i < size; i++) {
-            GalleryInfo gi = galleryInfos.get(i);
+        for (int i = 0, size = galleryInfoList.size(); i < size; i++) {
+            GalleryInfo gi = galleryInfoList.get(i);
             JSONArray g = new JSONArray();
             g.put(gi.gid);
             g.put(gi.token);
@@ -174,15 +179,16 @@ public class EhEngine {
         }
         json.put("gidlist", ja);
         json.put("namespace", 1);
-
         String url = EhUrl.API_EX;
         Log.d(TAG, url);
-
         Request request = new EhRequestBuilder(url)
                 .post(RequestBody.create(JSON, json.toString()))
                 .build();
         Call call = okHttpClient.newCall(request);
 
+        // Put call
+        task.setCall(call);
+
         String body = null;
         Headers headers = null;
         int code = -1;
@@ -191,55 +197,22 @@ public class EhEngine {
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            parseGalleryApi(body, galleryInfos);
+            GalleryApiParser.parse(body, galleryInfoList);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;
         }
     }
 
-    private static void requestGalleryApi(List<GalleryInfo> galleryInfos,
-            OkHttpClient okHttpClient) throws Exception {
-        final int MAX_REQUEST_SIZE = 25;
-        List<GalleryInfo> requestItems = new ArrayList<>(MAX_REQUEST_SIZE);
-        for (int i = 0, size = galleryInfos.size(); i < size; i++) {
-            requestItems.add(galleryInfos.get(i));
-            if (requestItems.size() == MAX_REQUEST_SIZE || i == size - 1) {
-                doRequestGalleryApi(requestItems, okHttpClient);
-                requestItems.clear();
-            }
-        }
-    }
-
-    public static GalleryListParser.Result doGetGalleryList(Call call, boolean callApi,
-            OkHttpClient okHttpClient) throws Exception {
-        String body = null;
-        Headers headers = null;
-        int code = -1;
-        try {
-            Response response = call.execute();
-            code = response.code();
-            headers = response.headers();
-            body = response.body().string();
-            GalleryListParser.Result result = GalleryListParser.parse(body);
-            if (callApi && result.galleryInfos.size() > 0) {
-                requestGalleryApi(result.galleryInfos, okHttpClient);
-            }
-            return result;
-        } catch (Exception e) {
-            throwException(call, code, headers, body, e);
-            throw e;
-        }
-    }
-
-    public static Call prepareGetGalleryDetail(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String url) throws MalformedURLException {
+    public static GalleryDetail getGalleryDetail(EhClient.Task task, OkHttpClient okHttpClient,
+            String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, ehConfig).build();
-        return okHttpClient.newCall(request);
-    }
+        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
 
-    public static GalleryDetail doGetGalleryDetail(Call call) throws Exception {
+        // Put call
+        task.setCall(call);
+
         String body = null;
         Headers headers = null;
         int code = -1;
@@ -255,14 +228,16 @@ public class EhEngine {
         }
     }
 
-    public static Call prepareGetLargePreviewSet(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String url) throws MalformedURLException {
-        Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, ehConfig).build();
-        return okHttpClient.newCall(request);
-    }
 
-    public static Pair<LargePreviewSet, Integer> doGetLargePreviewSet(Call call) throws Exception {
+    public static Pair<LargePreviewSet, Integer> getLargePreviewSet(
+            EhClient.Task task, OkHttpClient okHttpClient, String url) throws Exception {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
         String body = null;
         Headers headers = null;
         int code = -1;
@@ -271,16 +246,16 @@ public class EhEngine {
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            return Pair.create(GalleryDetailParser.parseLargePreview(body),GalleryDetailParser.parsePreviewPages(body));
+            return Pair.create(GalleryDetailParser.parseLargePreview(body),
+                    GalleryDetailParser.parsePreviewPages(body));
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;
         }
     }
 
-    // rating 0.0 - 0.5
-    public static Call prepareRateGallery(OkHttpClient okHttpClient,
-            EhConfig ehConfig, int gid, String token, float rating) throws JSONException, MalformedURLException {
+    public static RateGalleryParser.Result rateGallery(EhClient.Task task,
+            OkHttpClient okHttpClient, int gid, String token, float rating) throws Exception {
         final JSONObject json = new JSONObject();
         json.put("method", "rategallery");
         json.put("apiuid", APIUID);
@@ -288,19 +263,17 @@ public class EhEngine {
         json.put("gid", gid);
         json.put("token", token);
         json.put("rating", (int) Math.ceil(rating * 2));
-
-        final RequestBody body = RequestBody.create(JSON, json.toString());
-
+        final RequestBody requestBody = RequestBody.create(JSON, json.toString());
         String url = EhUrl.API_EX;
         Log.d(TAG, url);
-
-        Request request = new EhRequestBuilder(url, ehConfig)
-                .post(body)
+        Request request = new EhRequestBuilder(url, task.getEhConfig())
+                .post(requestBody)
                 .build();
-        return okHttpClient.newCall(request);
-    }
+        Call call = okHttpClient.newCall(request);
 
-    public static RateGalleryParser.Result doRateGallery(Call call) throws Exception {
+        // Put call
+        task.setCall(call);
+
         String body = null;
         Headers headers = null;
         int code = -1;
@@ -316,20 +289,20 @@ public class EhEngine {
         }
     }
 
-    public static Call prepareCommentGallery(OkHttpClient okHttpClient,
-            EhConfig ehConfig, String url, String comment) throws MalformedURLException {
+    public static GalleryComment[] commentGallery(EhClient.Task task,
+            OkHttpClient okHttpClient, String url, String comment) throws Exception {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("commenttext", comment)
                 .add("postcomment", "Post New");
-
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, ehConfig)
+        Request request = new EhRequestBuilder(url, task.getEhConfig())
                 .post(builder.build())
                 .build();
-        return okHttpClient.newCall(request);
-    }
+        Call call = okHttpClient.newCall(request);
 
-    public static GalleryComment[] doCommentGallery(Call call) throws Exception {
+        // Put call
+        task.setCall(call);
+
         String body = null;
         Headers headers = null;
         int code = -1;
@@ -345,33 +318,23 @@ public class EhEngine {
         }
     }
 
-    /**
-     *
-     * {
-     *  "method": "gtoken",
-     *  "pagelist": [
-     *   [902127,"5a4ee2caff",3]
-     *  ]
-     * }
-     */
-    public static Call prepareGetGalleryToken(OkHttpClient okHttpClient,
-            EhConfig ehConfig, int gid, String gtoken, int page) throws JSONException, MalformedURLException {
+    public static String getGalleryToken(EhClient.Task task, OkHttpClient okHttpClient,
+            int gid, String gtoken, int page) throws Exception {
         JSONObject json = new JSONObject()
                 .put("method", "gtoken")
                 .put("pagelist", new JSONArray().put(
                         new JSONArray().put(gid).put(gtoken).put(page + 1)));
-        final RequestBody body = RequestBody.create(JSON, json.toString());
-
+        final RequestBody requestBody = RequestBody.create(JSON, json.toString());
         String url = EhUrl.API_EX;
         Log.d(TAG, url);
-
-        Request request = new EhRequestBuilder(url, ehConfig)
-                .post(body)
+        Request request = new EhRequestBuilder(url, task.getEhConfig())
+                .post(requestBody)
                 .build();
-        return okHttpClient.newCall(request);
-    }
+        Call call = okHttpClient.newCall(request);
 
-    public static String doGetGalleryToken(Call call) throws Exception {
+        // Put call
+        task.setCall(call);
+
         String body = null;
         Headers headers = null;
         int code = -1;
@@ -386,6 +349,4 @@ public class EhEngine {
             throw e;
         }
     }
-
-    // TODO Add get gallery api info
 }

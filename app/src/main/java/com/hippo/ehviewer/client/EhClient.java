@@ -20,15 +20,19 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -39,11 +43,12 @@ public class EhClient {
 
     public static final int METHOD_SIGN_IN = 0;
     public static final int METHOD_GET_GALLERY_LIST = 1;
-    public static final int METHOD_GET_GALLERY_DETAIL = 2;
-    public static final int METHOD_GET_LARGE_PREVIEW_SET = 3;
-    public static final int METHOD_GET_RATE_GALLERY = 4;
-    public static final int METHOD_GET_COMMENT_GALLERY = 5;
-    public static final int METHOD_GET_GALLERY_TOKEN = 6;
+    public static final int METHOD_GET_FILL_GALLERY_LIST_BY_API = 2;
+    public static final int METHOD_GET_GALLERY_DETAIL = 3;
+    public static final int METHOD_GET_LARGE_PREVIEW_SET = 4;
+    public static final int METHOD_GET_RATE_GALLERY = 5;
+    public static final int METHOD_GET_COMMENT_GALLERY = 6;
+    public static final int METHOD_GET_GALLERY_TOKEN = 7;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -70,12 +75,12 @@ public class EhClient {
 
     public class Task extends AsyncTask<Object, Void, Object> {
 
-        private int mMethod;
+        private final int mMethod;
         private Callback mCallback;
         private EhConfig mEhConfig;
 
-        private Call mCall;
-        private boolean mStop;
+        private final AtomicReference<Call> mCall = new AtomicReference<>();
+        private final AtomicBoolean mStop = new AtomicBoolean();
 
         public Task(int method, Callback callback, EhConfig ehConfig) {
             mMethod = method;
@@ -83,11 +88,26 @@ public class EhClient {
             mEhConfig = ehConfig;
         }
 
+        // Called in Job thread
+        public void setCall(Call call) throws CancelledException {
+            if (mStop.get()) {
+                // Stopped Job thread
+                throw new CancelledException();
+            } else {
+                mCall.lazySet(call);
+            }
+        }
+
+        public EhConfig getEhConfig() {
+            return mEhConfig;
+        }
+
         public void stop() {
-            if (!mStop) {
-                mStop = true;
+            if (!mStop.get()) {
+                mStop.lazySet(true);
 
                 if (mCallback != null) {
+                    // TODO Avoid new runnable
                     final Callback finalCallback = mCallback;
                     SimpleHandler.getInstance().post(new Runnable() {
                         @Override
@@ -101,108 +121,41 @@ public class EhClient {
                 if (status == Status.PENDING) {
                     cancel(false);
                 } else if (status == Status.RUNNING) {
-                    if (mCall != null) {
-                        mCall.cancel();
+                    // It is running, cancel call if it is created
+                    Call call = mCall.get();
+                    if (call != null) {
+                        call.cancel();
                     }
                 }
 
                 // Clear
-                mCall = null;
                 mCallback = null;
-            }
-        }
-
-        private Object signIn(EhConfig ehConfig, Object... params) throws Exception {
-            Call call = EhEngine.prepareSignIn(mOkHttpClient, ehConfig, (String) params[0], (String) params[1]);
-            if (!mStop) {
-                mCall = call;
-                return EhEngine.doSignIn(call);
-            } else {
-                throw new CancelledException();
-            }
-        }
-
-        private Object getGalleryList(EhConfig ehConfig, Object... params) throws Exception {
-            Call call = EhEngine.prepareGetGalleryList(mOkHttpClient, ehConfig, (String) params[0]);
-            if (!mStop) {
-                mCall = call;
-                return EhEngine.doGetGalleryList(call, (Boolean) params[1], mOkHttpClient);
-            } else {
-                throw new CancelledException();
-            }
-        }
-
-        private Object getGalleryDetail(EhConfig ehConfig, Object... params) throws Exception {
-            Call call = EhEngine.prepareGetGalleryDetail(mOkHttpClient, ehConfig, (String) params[0]);
-            if (!mStop) {
-                mCall = call;
-                return EhEngine.doGetGalleryDetail(call);
-            } else {
-                throw new CancelledException();
-            }
-        }
-
-        private Object getLargePreviewSet(EhConfig ehConfig, Object... params) throws Exception {
-            Call call = EhEngine.prepareGetLargePreviewSet(mOkHttpClient, ehConfig, (String) params[0]);
-            if (!mStop) {
-                mCall = call;
-                return EhEngine.doGetLargePreviewSet(call);
-            } else {
-                throw new CancelledException();
-            }
-        }
-
-        private Object rateGallery(EhConfig ehConfig, Object... params) throws Exception {
-            Call call = EhEngine.prepareRateGallery(mOkHttpClient, ehConfig,
-                    (Integer) params[0], (String) params[1], (Float) params[2]);
-            if (!mStop) {
-                mCall = call;
-                return EhEngine.doRateGallery(call);
-            } else {
-                throw new CancelledException();
-            }
-        }
-
-        private Object commentGallery(EhConfig ehConfig, Object... params) throws Exception {
-            Call call = EhEngine.prepareCommentGallery(mOkHttpClient, ehConfig,
-                    (String) params[0], (String) params[1]);
-            if (!mStop) {
-                mCall = call;
-                return EhEngine.doCommentGallery(call);
-            } else {
-                throw new CancelledException();
-            }
-        }
-
-        private Object getGalleryToken(EhConfig ehConfig, Object... params) throws Exception {
-            Call call = EhEngine.prepareGetGalleryToken(mOkHttpClient, ehConfig,
-                    (Integer) params[0], (String) params[1], (Integer) params[2]);
-            if (!mStop) {
-                mCall = call;
-                return EhEngine.doGetGalleryToken(call);
-            } else {
-                throw new CancelledException();
+                mEhConfig = null;
+                mCall.lazySet(null);
             }
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         protected Object doInBackground(Object... params) {
             try {
                 switch (mMethod) {
                     case METHOD_SIGN_IN:
-                        return signIn(mEhConfig, params);
+                        return EhEngine.signIn(this, mOkHttpClient, (String) params[0], (String) params[1]);
                     case METHOD_GET_GALLERY_LIST:
-                        return getGalleryList(mEhConfig, params);
+                        return EhEngine.getGalleryList(this, mOkHttpClient, (String) params[0], (Boolean) params[1]);
+                    case METHOD_GET_FILL_GALLERY_LIST_BY_API:
+                        return EhEngine.fillGalleryListByApi(this, mOkHttpClient, (List<GalleryInfo>) params[0]);
                     case METHOD_GET_GALLERY_DETAIL:
-                        return getGalleryDetail(mEhConfig, params);
+                        return EhEngine.getGalleryDetail(this, mOkHttpClient, (String) params[0]);
                     case METHOD_GET_LARGE_PREVIEW_SET:
-                        return getLargePreviewSet(mEhConfig, params);
+                        return EhEngine.getLargePreviewSet(this, mOkHttpClient, (String) params[0]);
                     case METHOD_GET_RATE_GALLERY:
-                        return rateGallery(mEhConfig, params);
+                        return EhEngine.rateGallery(this, mOkHttpClient, (Integer) params[0], (String) params[1], (Float) params[2]);
                     case METHOD_GET_COMMENT_GALLERY:
-                        return commentGallery(mEhConfig, params);
+                        return EhEngine.commentGallery(this, mOkHttpClient, (String) params[0], (String) params[1]);
                     case METHOD_GET_GALLERY_TOKEN:
-                        return getGalleryToken(mEhConfig, params);
+                        return EhEngine.getGalleryToken(this, mOkHttpClient, (Integer) params[0], (String) params[1], (Integer) params[2]);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }
@@ -228,8 +181,9 @@ public class EhClient {
             }
 
             // Clear
-            mCall = null;
             mCallback = null;
+            mEhConfig = null;
+            mCall.lazySet(null);
         }
     }
 
