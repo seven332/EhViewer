@@ -477,7 +477,7 @@ public final class GalleryListScene extends BaseScene
                                 intent.putExtra(DownloadService.KEY_GALLERY_INFO, gi);
                                 getActivity().startService(intent);
                                 break;
-                            case 1: // Favorite
+                            case 1: // Favorites
                                 // TODO
                                 break;
                         }

@@ -104,10 +104,10 @@ public class FavoritesScene extends BaseScene implements
 
     @Nullable
     @ViewLifeCircle
-    private FavoriteAdapter mAdapter;
+    private FavoritesAdapter mAdapter;
     @Nullable
     @ViewLifeCircle
-    private FavoriteHelper mHelper;
+    private FavoritesHelper mHelper;
     @Nullable
     @ViewLifeCircle
     private SearchBarMover mSearchBarMover;
@@ -207,7 +207,7 @@ public class FavoritesScene extends BaseScene implements
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Resources resources = getResources();
 
-        View view = inflater.inflate(R.layout.scene_favorite, container, false);
+        View view = inflater.inflate(R.layout.scene_favorites, container, false);
         ContentLayout contentLayout = (ContentLayout) view.findViewById(R.id.content_layout);
         mRecyclerView = contentLayout.getRecyclerView();
         AssertUtils.assertNotNull(mRecyclerView);
@@ -216,12 +216,12 @@ public class FavoritesScene extends BaseScene implements
         mFabLayout = (FabLayout) view.findViewById(R.id.fab_layout);
         AssertUtils.assertNotNull(mFabLayout);
 
-        mHelper = new FavoriteHelper();
+        mHelper = new FavoritesHelper();
         mHelper.setEmptyString(getString(R.string.gallery_list_empty_hit)); // TODO wrong string
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
-        mAdapter = new FavoriteAdapter();
+        mAdapter = new FavoritesAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
@@ -392,7 +392,7 @@ public class FavoritesScene extends BaseScene implements
             args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
             Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
             if (ApiHelper.SUPPORT_TRANSITION) {
-                FavoriteHolder holder = (FavoriteHolder) mRecyclerView.getChildViewHolder(view);
+                FavoritesHolder holder = (FavoritesHolder) mRecyclerView.getChildViewHolder(view);
                 announcer.setTranHelper(new EnterGalleryDetailTransaction(holder));
             }
             startScene(announcer);
@@ -710,9 +710,9 @@ public class FavoritesScene extends BaseScene implements
 
     private static class EnterGalleryDetailTransaction implements TransitionHelper {
 
-        private final FavoriteHolder mHolder;
+        private final FavoritesHolder mHolder;
 
-        public EnterGalleryDetailTransaction(FavoriteHolder holder) {
+        public EnterGalleryDetailTransaction(FavoritesHolder holder) {
             mHolder = holder;
         }
 
@@ -740,7 +740,7 @@ public class FavoritesScene extends BaseScene implements
         }
     }
 
-    private class FavoriteHolder extends RecyclerView.ViewHolder {
+    private class FavoritesHolder extends RecyclerView.ViewHolder {
 
         private final LoadImageView thumb;
         private final TextView title;
@@ -750,7 +750,7 @@ public class FavoritesScene extends BaseScene implements
         private final TextView posted;
         private final TextView simpleLanguage;
 
-        public FavoriteHolder(View itemView) {
+        public FavoritesHolder(View itemView) {
             super(itemView);
 
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
@@ -763,17 +763,17 @@ public class FavoritesScene extends BaseScene implements
         }
     }
 
-    private class FavoriteAdapter extends RecyclerView.Adapter<FavoriteHolder> {
+    private class FavoritesAdapter extends RecyclerView.Adapter<FavoritesHolder> {
 
         @Override
-        public FavoriteHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new FavoriteHolder(getActivity().getLayoutInflater()
+        public FavoritesHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new FavoritesHolder(getActivity().getLayoutInflater()
                     .inflate(R.layout.item_gallery_list, parent, false));
         }
 
         @Override
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public void onBindViewHolder(FavoriteHolder holder, int position) {
+        public void onBindViewHolder(FavoritesHolder holder, int position) {
             if (mHelper == null) {
                 return;
             }
@@ -808,7 +808,7 @@ public class FavoritesScene extends BaseScene implements
         }
     }
 
-    private class FavoriteHelper extends ContentLayout.ContentHelper<GalleryInfo> {
+    private class FavoritesHelper extends ContentLayout.ContentHelper<GalleryInfo> {
 
         @Override
         protected void getPageData(final int taskId, int type, int page) {

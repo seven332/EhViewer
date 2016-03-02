@@ -108,7 +108,7 @@
     </plurals>
     <string name="favored_times">\u2665 %d</string>
     <string name="rating_text">%1$s (%2$.2f, %3$d)</string>
-    <string name="favorite">收藏</string>
+    <string name="favorites">收藏</string>
     <string name="torrent_count">種子 (%d)</string>
     <string name="share">分享</string>
     <string name="rate">評分</string>

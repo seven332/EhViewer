@@ -43,7 +43,7 @@ public class EhDaoGenerator {
         addDownloadDirname(schema);
         addHistoryInfo(schema);
         addQuickSearch(schema);
-        addLocalFavorite(schema);
+        addLocalFavorites(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
     }
 
@@ -113,10 +113,10 @@ public class EhDaoGenerator {
         entity.addLongProperty("date");
     }
 
-    private static void addLocalFavorite(Schema schema) {
-        Entity entity = schema.addEntity("LocalFavoriteRaw");
-        entity.setTableName("LOCAL_FAVORITE");
-        entity.setClassNameDao("LocalFavoriteDao");
+    private static void addLocalFavorites(Schema schema) {
+        Entity entity = schema.addEntity("LocalFavoritesRaw");
+        entity.setTableName("LOCAL_FAVORITES");
+        entity.setClassNameDao("LocalFavoritesDao");
         entity.addLongProperty("gid").primaryKey();
         entity.addLongProperty("date");
     }

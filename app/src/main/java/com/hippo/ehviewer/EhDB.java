@@ -38,8 +38,8 @@ import com.hippo.ehviewer.dao.GalleryInfoDao;
 import com.hippo.ehviewer.dao.GalleryInfoRaw;
 import com.hippo.ehviewer.dao.HistoryInfoDao;
 import com.hippo.ehviewer.dao.HistoryInfoRaw;
-import com.hippo.ehviewer.dao.LocalFavoriteDao;
-import com.hippo.ehviewer.dao.LocalFavoriteRaw;
+import com.hippo.ehviewer.dao.LocalFavoritesDao;
+import com.hippo.ehviewer.dao.LocalFavoritesRaw;
 import com.hippo.ehviewer.dao.QuickSearchDao;
 import com.hippo.ehviewer.dao.QuickSearchRaw;
 import com.hippo.ehviewer.download.DownloadInfo;
@@ -150,15 +150,15 @@ public class EhDB {
             // Ignore
         }
 
-        // Merge local favorite
+        // Merge local favorites
         try {
             Cursor cursor = oldDB.rawQuery("select * from " + OldDBHelper.TABLE_LOCAL_FAVOURITE, null);
             if (cursor != null) {
-                LocalFavoriteDao dao = sDaoSession.getLocalFavoriteDao();
+                LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
                 if (cursor.moveToFirst()) {
                     long i = 0L;
                     while (!cursor.isAfterLast()) {
-                        LocalFavoriteRaw raw = new LocalFavoriteRaw();
+                        LocalFavoritesRaw raw = new LocalFavoritesRaw();
                         raw.setGid((long) cursor.getInt(0));
                         raw.setDate(i);
                         dao.insert(raw);
