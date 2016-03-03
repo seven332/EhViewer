@@ -36,6 +36,7 @@ import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
+import com.hippo.ehviewer.client.parser.TorrentParser;
 import com.hippo.network.StatusCodeException;
 import com.hippo.yorozuya.AssertUtils;
 
@@ -486,6 +487,33 @@ public class EhEngine {
 
         if (callApi && result.galleryInfoList.size() > 0) {
             fillGalleryListByApi(task, okHttpClient, result.galleryInfoList);
+        }
+
+        return result;
+    }
+
+    public static Pair<String, String>[] getTorrentList(EhClient.Task task, OkHttpClient okHttpClient,
+            String url) throws Exception {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        Pair<String, String>[] result;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            result = TorrentParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
         }
 
         return result;

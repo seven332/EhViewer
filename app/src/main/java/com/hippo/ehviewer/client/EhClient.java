@@ -53,6 +53,7 @@ public class EhClient {
     public static final int METHOD_ADD_FAVORITES = 9;
     public static final int METHOD_ADD_FAVORITES_RANGE = 10;
     public static final int METHOD_MODIFY_FAVORITES = 11;
+    public static final int METHOD_GET_TORRENT_LIST = 12;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -168,6 +169,8 @@ public class EhClient {
                         return EhEngine.addFavoritesRange(this, mOkHttpClient, (int[]) params[0], (String[]) params[1], (Integer) params[2]);
                     case METHOD_MODIFY_FAVORITES:
                         return EhEngine.modifyFavorites(this, mOkHttpClient, (String) params[0], (int[]) params[1], (Integer) params[2], (Boolean) params[3]);
+                    case METHOD_GET_TORRENT_LIST:
+                        return EhEngine.getTorrentList(this, mOkHttpClient, (String) params[0]);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

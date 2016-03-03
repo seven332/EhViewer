@@ -163,6 +163,8 @@
     <string name="open_in_other_app">Open in other app</string>
     <string name="rate_successfully">Rate successfully</string>
     <string name="rate_failed">Rate failed</string>
+    <string name="no_torrents">No torrents</string>
+    <string name="torrents">Torrents</string>
 
     <!-- Rating -->
     <string name="rating10">MASTERPIECE</string>

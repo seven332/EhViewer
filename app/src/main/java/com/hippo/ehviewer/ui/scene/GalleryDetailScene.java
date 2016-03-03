@@ -18,13 +18,17 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
@@ -34,14 +38,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.transition.TransitionInflater;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +72,7 @@ import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.ui.GalleryActivity;
+import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -79,15 +88,16 @@ import com.hippo.util.ReadableTime;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
+import com.hippo.widget.ProgressView;
 import com.hippo.widget.ProgressiveRatingBar;
 import com.hippo.widget.SimpleGridLayout;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Locale;
 
-// TODO Update drawer checked item
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener {
 
     @IntDef({STATE_INIT, STATE_NORMAL, STATE_REFRESH, STATE_REFRESH_HEADER, STATE_FAILED})
@@ -114,55 +124,129 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private static final String KEY_GALLERY_DETAIL = "gallery_detail";
     private static final String KEY_REQUEST_ID = "request_id";
 
+    @Nullable
+    @ViewLifeCircle
     private ViewGroup mFailedView;
+    @Nullable
+    @ViewLifeCircle
     private TextView mFailedText;
+    @Nullable
+    @ViewLifeCircle
     private ViewTransition mViewTransition;
 
     // Header
+    @Nullable
+    @ViewLifeCircle
     private View mHeader;
+    @Nullable
+    @ViewLifeCircle
     private View mColorBg;
+    @Nullable
+    @ViewLifeCircle
     private LoadImageView mThumb;
+    @Nullable
+    @ViewLifeCircle
     private TextView mTitle;
+    @Nullable
+    @ViewLifeCircle
     private TextView mUploader;
+    @Nullable
+    @ViewLifeCircle
     private TextView mCategory;
+    @Nullable
+    @ViewLifeCircle
     private ImageView mOtherActions;
+    @Nullable
+    @ViewLifeCircle
     private ViewGroup mActionGroup;
+    @Nullable
+    @ViewLifeCircle
     private View mDownload;
+    @Nullable
+    @ViewLifeCircle
     private View mRead;
     // Below header
+    @Nullable
+    @ViewLifeCircle
     private View mBelowHeader;
     // Info
+    @Nullable
+    @ViewLifeCircle
     private View mInfo;
+    @Nullable
+    @ViewLifeCircle
     private TextView mLanguage;
+    @Nullable
+    @ViewLifeCircle
     private TextView mPages;
+    @Nullable
+    @ViewLifeCircle
     private TextView mSize;
+    @Nullable
+    @ViewLifeCircle
     private TextView mPosted;
+    @Nullable
+    @ViewLifeCircle
     private TextView mFavoredTimes;
     // Actions
+    @Nullable
+    @ViewLifeCircle
     private View mActions;
+    @Nullable
+    @ViewLifeCircle
     private TextView mRatingText;
+    @Nullable
+    @ViewLifeCircle
     private RatingBar mRating;
+    @Nullable
+    @ViewLifeCircle
     private View mHeartGroup;
+    @Nullable
+    @ViewLifeCircle
     private TextView mHeart;
+    @Nullable
+    @ViewLifeCircle
     private TextView mHeartOutline;
+    @Nullable
+    @ViewLifeCircle
     private TextView mTorrent;
+    @Nullable
+    @ViewLifeCircle
     private TextView mShare;
+    @Nullable
+    @ViewLifeCircle
     private TextView mRate;
     // Tags
+    @Nullable
+    @ViewLifeCircle
     private LinearLayout mTags;
+    @Nullable
+    @ViewLifeCircle
     private TextView mNoTags;
     // Comments
+    @Nullable
+    @ViewLifeCircle
     private LinearLayout mComments;
+    @Nullable
+    @ViewLifeCircle
     private TextView mCommentsText;
     // Previews
     private View mPreviews;
+    @Nullable
+    @ViewLifeCircle
     private SimpleGridLayout mGridLayout;
+    @Nullable
+    @ViewLifeCircle
     private TextView mPreviewText;
     // Progress
+    @Nullable
+    @ViewLifeCircle
     private View mProgress;
-
+    @Nullable
+    @ViewLifeCircle
     private ViewTransition mViewTransition2;
-
+    @Nullable
+    @ViewLifeCircle
     private PopupMenu mPopupMenu;
 
     @Nullable
@@ -175,6 +259,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     @Nullable
     private GalleryDetail mGalleryDetail;
     private int mRequestId;
+
+    private Pair<String, String>[] mTorrentList;
 
     @State
     private int mState = STATE_INIT;
@@ -309,24 +395,24 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_detail, container, false);
 
-        ViewGroup main = (ViewGroup) view.findViewById(R.id.main);
-        View mainView = main.findViewById(R.id.scroll_view);
-        View progressView = main.findViewById(R.id.progress_view);
-        mFailedView = (ViewGroup) main.findViewById(R.id.tip);
-        mFailedText = (TextView) mFailedView.getChildAt(1);
+        ViewGroup main = (ViewGroup) ViewUtils.$$(view, R.id.main);
+        View mainView = ViewUtils.$$(main, R.id.scroll_view);
+        View progressView = ViewUtils.$$(main, R.id.progress_view);
+        mFailedView = (ViewGroup) ViewUtils.$$(main, R.id.tip);
+        mFailedText = (TextView) ViewUtils.$$(mFailedView, R.id.tip_text);
         mFailedView.setOnClickListener(this);
         mViewTransition = new ViewTransition(mainView, progressView, mFailedView);
 
-        mHeader = mainView.findViewById(R.id.header);
-        mColorBg = mainView.findViewById(R.id.color_bg);
-        mThumb = (LoadImageView) mHeader.findViewById(R.id.thumb);
-        mTitle = (TextView) mHeader.findViewById(R.id.title);
-        mUploader = (TextView) mHeader.findViewById(R.id.uploader);
-        mCategory = (TextView) mHeader.findViewById(R.id.category);
-        mOtherActions = (ImageView) mHeader.findViewById(R.id.other_actions);
-        mActionGroup = (ViewGroup) mHeader.findViewById(R.id.action_card);
-        mDownload = mActionGroup.findViewById(R.id.download);
-        mRead = mActionGroup.findViewById(R.id.read);
+        mHeader = ViewUtils.$$(mainView, R.id.header);
+        mColorBg = ViewUtils.$$(mHeader, R.id.color_bg);
+        mThumb = (LoadImageView) ViewUtils.$$(mHeader, R.id.thumb);
+        mTitle = (TextView) ViewUtils.$$(mHeader, R.id.title);
+        mUploader = (TextView) ViewUtils.$$(mHeader, R.id.uploader);
+        mCategory = (TextView) ViewUtils.$$(mHeader, R.id.category);
+        mOtherActions = (ImageView) ViewUtils.$$(mHeader, R.id.other_actions);
+        mActionGroup = (ViewGroup) ViewUtils.$$(mHeader, R.id.action_card);
+        mDownload = ViewUtils.$$(mActionGroup, R.id.download);
+        mRead = ViewUtils.$$(mActionGroup, R.id.read);
         RippleSalon.addRipple(mOtherActions, false);
         RippleSalon.addRipple(mDownload, false);
         RippleSalon.addRipple(mRead, false);
@@ -336,28 +422,27 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mDownload.setOnClickListener(this);
         mRead.setOnClickListener(this);
 
-
         mBelowHeader = mainView.findViewById(R.id.below_header);
         View belowHeader = mBelowHeader;
 
-        mInfo = belowHeader.findViewById(R.id.info);
-        mLanguage = (TextView) mInfo.findViewById(R.id.language);
-        mPages = (TextView) mInfo.findViewById(R.id.pages);
-        mSize = (TextView) mInfo.findViewById(R.id.size);
-        mPosted = (TextView) mInfo.findViewById(R.id.posted);
-        mFavoredTimes = (TextView) mInfo.findViewById(R.id.favoredTimes);
+        mInfo = ViewUtils.$$(belowHeader, R.id.info);
+        mLanguage = (TextView) ViewUtils.$$(mInfo, R.id.language);
+        mPages = (TextView) ViewUtils.$$(mInfo, R.id.pages);
+        mSize = (TextView) ViewUtils.$$(mInfo, R.id.size);
+        mPosted = (TextView) ViewUtils.$$(mInfo, R.id.posted);
+        mFavoredTimes = (TextView) ViewUtils.$$(mInfo, R.id.favoredTimes);
         RippleSalon.addRipple(mInfo, false);
         mInfo.setOnClickListener(this);
 
-        mActions = belowHeader.findViewById(R.id.actions);
-        mRatingText = (TextView) mActions.findViewById(R.id.rating_text);
-        mRating = (RatingBar) mActions.findViewById(R.id.rating);
-        mHeartGroup = mActions.findViewById(R.id.heart_group);
-        mHeart = (TextView) mHeartGroup.findViewById(R.id.heart);
-        mHeartOutline = (TextView) mHeartGroup.findViewById(R.id.heart_outline);
-        mTorrent = (TextView) mActions.findViewById(R.id.torrent);
-        mShare = (TextView) mActions.findViewById(R.id.share);
-        mRate = (TextView) mActions.findViewById(R.id.rate);
+        mActions = ViewUtils.$$(belowHeader, R.id.actions);
+        mRatingText = (TextView) ViewUtils.$$(mActions, R.id.rating_text);
+        mRating = (RatingBar) ViewUtils.$$(mActions, R.id.rating);
+        mHeartGroup = ViewUtils.$$(mActions, R.id.heart_group);
+        mHeart = (TextView) ViewUtils.$$(mHeartGroup, R.id.heart);
+        mHeartOutline = (TextView) ViewUtils.$$(mHeartGroup, R.id.heart_outline);
+        mTorrent = (TextView) ViewUtils.$$(mActions, R.id.torrent);
+        mShare = (TextView) ViewUtils.$$(mActions, R.id.share);
+        mRate = (TextView) ViewUtils.$$(mActions, R.id.rate);
         RippleSalon.addRipple(mHeartGroup, false);
         RippleSalon.addRipple(mTorrent, false);
         RippleSalon.addRipple(mShare, false);
@@ -368,21 +453,21 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mRate.setOnClickListener(this);
         ensureActionDrawable();
 
-        mTags = (LinearLayout) belowHeader.findViewById(R.id.tags);
-        mNoTags = (TextView) mTags.findViewById(R.id.no_tags);
+        mTags = (LinearLayout) ViewUtils.$$(belowHeader, R.id.tags);
+        mNoTags = (TextView) ViewUtils.$$(mTags, R.id.no_tags);
 
-        mComments = (LinearLayout) belowHeader.findViewById(R.id.comments);
-        mCommentsText = (TextView) mComments.findViewById(R.id.comments_text);
+        mComments = (LinearLayout) ViewUtils.$$(belowHeader, R.id.comments);
+        mCommentsText = (TextView) ViewUtils.$$(mComments, R.id.comments_text);
         RippleSalon.addRipple(mComments, false);
         mComments.setOnClickListener(this);
 
-        mPreviews = belowHeader.findViewById(R.id.previews);
-        mGridLayout = (SimpleGridLayout) mPreviews.findViewById(R.id.grid_layout);
-        mPreviewText = (TextView) mPreviews.findViewById(R.id.preview_text);
+        mPreviews = ViewUtils.$$(belowHeader, R.id.previews);
+        mGridLayout = (SimpleGridLayout) ViewUtils.$$(mPreviews, R.id.grid_layout);
+        mPreviewText = (TextView) ViewUtils.$$(mPreviews, R.id.preview_text);
         RippleSalon.addRipple(mPreviews, false);
         mPreviews.setOnClickListener(this);
 
-        mProgress = mainView.findViewById(R.id.progress);
+        mProgress = ViewUtils.$$(mainView, R.id.progress);
 
         mViewTransition2 = new ViewTransition(mBelowHeader, mProgress);
 
@@ -535,6 +620,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private boolean createCircularReveal() {
+        if (mColorBg == null) {
+            return false;
+        }
+
         int w = mColorBg.getWidth();
         int h = mColorBg.getHeight();
         if (mColorBg.isAttachedToWindow() && w != 0 && h != 0) {
@@ -546,9 +635,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-
     private void adjustViewVisibility(int state, boolean animation) {
         if (state == mState) {
+            return;
+        }
+        if (mViewTransition == null || mViewTransition2 == null) {
             return;
         }
 
@@ -598,6 +689,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         if (mGalleryDetail != null) {
             return;
         }
+        if (mThumb == null || mTitle == null || mUploader == null || mCategory == null) {
+            return;
+        }
 
         if (ACTION_GALLERY_INFO.equals(mAction) && mGalleryInfo != null) {
             GalleryInfo gi = mGalleryInfo;
@@ -611,8 +705,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private void bindViewSecond() {
         GalleryDetail gd = mGalleryDetail;
-
         if (gd == null) {
+            return;
+        }
+        if (mThumb == null || mTitle == null || mUploader == null || mCategory == null ||
+                mLanguage == null || mPages == null || mSize == null || mPosted == null ||
+                mFavoredTimes == null || mRatingText == null || mRating == null ||
+                mHeart == null || mHeartOutline == null || mTorrent == null) {
             return;
         }
 
@@ -650,6 +749,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @SuppressWarnings("deprecation")
     private void bindTags(GalleryTagGroup[] tagGroups) {
+        if (mTags == null || mNoTags == null) {
+            return;
+        }
+
         mTags.removeViews(1, mTags.getChildCount() - 1);
         if (tagGroups == null || tagGroups.length == 0) {
             mNoTags.setVisibility(View.VISIBLE);
@@ -661,9 +764,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         LayoutInflater inflater = getActivity().getLayoutInflater();
         int colorTag = getResources().getColor(R.color.colorPrimary);
         int colorName = getResources().getColor(R.color.purple_a400);
-        for (int i = 0, s = tagGroups.length; i < s; i++) {
-            GalleryTagGroup tg = tagGroups[i];
-
+        for (GalleryTagGroup tg : tagGroups) {
             LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.gallery_tag_group, mTags, false);
             ll.setOrientation(LinearLayout.HORIZONTAL);
             mTags.addView(ll);
@@ -688,6 +789,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private void bindComments(GalleryComment[] comments) {
+        if (mComments == null || mCommentsText == null) {
+            return;
+        }
+
         mComments.removeViews(0, mComments.getChildCount() - 1);
 
         final int maxShowCount = 2;
@@ -718,6 +823,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private void bindPreviews(GalleryDetail gd) {
+        if (mGridLayout == null || mPreviewText == null) {
+            return;
+        }
+
         mGridLayout.removeAllViews();
         LargePreviewSet previewSet = gd.previewSet;
         if (gd.previewPages <= 0 || previewSet == null || previewSet.size() == 0) {
@@ -791,7 +900,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private void setTransitionName() {
         int gid = getGid();
 
-        if (gid != -1 && ApiHelper.SUPPORT_TRANSITION) {
+        if (gid != -1 && ApiHelper.SUPPORT_TRANSITION && mThumb != null &&
+                mTitle != null && mUploader != null && mCategory != null) {
             mThumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
             mTitle.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
             mUploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));
@@ -837,7 +947,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             }
         } else if (mOtherActions == v) {
             ensurePopMenu();
-            mPopupMenu.show();
+            if (mPopupMenu != null) {
+                mPopupMenu.show();
+            }
         } else if (mUploader == v) {
             String uploader = getUploader();
             if (TextUtils.isEmpty(uploader)) {
@@ -891,6 +1003,16 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             if (url != null) {
                 ActivityHelper.share(getActivity(), url);
             }
+        } else if (mTorrent == v) {
+            if (mGalleryDetail != null) {
+                TorrentListDialogHelper helper = new TorrentListDialogHelper(mGalleryDetail.torrentUrl);
+                Dialog dialog = new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.torrents)
+                        .setView(helper.getView())
+                        .setOnDismissListener(helper)
+                        .show();
+                helper.setDialog(dialog);
+            }
         } else if (mRate == v) {
             if (mGalleryDetail == null) {
                 return;
@@ -938,7 +1060,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @Override
     public void onBackPressed() {
-        if (mViewTransition.getShownViewIndex() == 0 && ApiHelper.SUPPORT_TRANSITION && mThumb.isShown()) {
+        if (ApiHelper.SUPPORT_TRANSITION && mViewTransition != null && mThumb != null &&
+                mViewTransition.getShownViewIndex() == 0 && mThumb.isShown()) {
             int[] location = new int[2];
             mThumb.getLocationInWindow(location);
             // Only show transaction when thumb can be seen
@@ -1029,8 +1152,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         e.printStackTrace();
         if (isViewCreated()) {
             String error = ExceptionUtils.getReadableString(getContext(), e);
-            mFailedText.setText(error);
-            adjustViewVisibility(STATE_FAILED, true);
+            if (mFailedText != null) {
+                mFailedText.setText(error);
+                adjustViewVisibility(STATE_FAILED, true);
+            }
         }
     }
 
@@ -1041,9 +1166,121 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         // Update UI
-        if (isViewCreated()) {
+        if (mRatingText != null && mRating != null) {
             mRatingText.setText(getAllRatingText(result.rating, result.ratedTimes));
             mRating.setRating(result.rating);
+        }
+    }
+
+    private class TorrentListDialogHelper implements AdapterView.OnItemClickListener,
+            DialogInterface.OnDismissListener, EhClient.Callback<Pair<String, String>[]> {
+
+        private final View mView;
+        private final ProgressView mProgressView;
+        private final TextView mErrorText;
+        private final ListView mListView;
+
+        private EhRequest mRequest;
+        private Dialog mDialog;
+
+        @SuppressLint("InflateParams")
+        public TorrentListDialogHelper(String url) {
+            mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_torrent_list, null);
+            mProgressView = (ProgressView) ViewUtils.$$(mView, R.id.progress);
+            mErrorText = (TextView) ViewUtils.$$(mView, R.id.text);
+            mListView = (ListView) ViewUtils.$$(mView, R.id.list_view);
+            mListView.setOnItemClickListener(this);
+
+            if (mTorrentList == null) {
+                mErrorText.setVisibility(View.GONE);
+                mListView.setVisibility(View.GONE);
+                mRequest = new EhRequest().setMethod(EhClient.METHOD_GET_TORRENT_LIST)
+                        .setArgs(url)
+                        .setCallback(this);
+                EhApplication.getEhClient(getContext()).execute(mRequest);
+            } else {
+                bind(mTorrentList);
+            }
+        }
+
+        public void setDialog(Dialog dialog) {
+            mDialog = dialog;
+        }
+
+        private void bind(Pair<String, String>[] data) {
+            if (0 == data.length) {
+                mProgressView.setVisibility(View.GONE);
+                mErrorText.setVisibility(View.VISIBLE);
+                mListView.setVisibility(View.GONE);
+                mErrorText.setText(R.string.no_torrents);
+            } else {
+                String[] nameArray = new String[data.length];
+                for (int i = 0, n = data.length; i < n; i++) {
+                    nameArray[i] = data[i].second;
+                }
+                mProgressView.setVisibility(View.GONE);
+                mErrorText.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
+                mListView.setAdapter(new ArrayAdapter<>(getContext(), R.layout.item_simple_list, nameArray));
+            }
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (mTorrentList != null && position < mTorrentList.length) {
+                String url = mTorrentList[position].first;
+                String name = mTorrentList[position].second;
+                // Use system download service
+                DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
+                r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, name + ".torrent");
+                r.allowScanningByMediaScanner();
+                r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                DownloadManager dm = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                dm.enqueue(r);
+            }
+
+            if (mDialog != null) {
+                mDialog.dismiss();
+                mDialog = null;
+            }
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            if (mRequest != null) {
+                mRequest.cancel();
+                mRequest = null;
+            }
+            mDialog = null;
+        }
+
+        @Override
+        public void onSuccess(Pair<String, String>[] result) {
+            if (mRequest != null) {
+                mRequest = null;
+                mTorrentList = result;
+                bind(result);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            if (mRequest != null) {
+                mRequest = null;
+                mProgressView.setVisibility(View.GONE);
+                mErrorText.setVisibility(View.VISIBLE);
+                mListView.setVisibility(View.GONE);
+                mErrorText.setText(ExceptionUtils.getReadableString(getContext(), e));
+            }
+        }
+
+        @Override
+        public void onCancel() {
+            mRequest = null;
         }
     }
 
@@ -1094,8 +1331,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             DialogInterface.OnClickListener {
 
         public View view;
-        private ProgressiveRatingBar mRatingBar;
-        private TextView mRatingText;
+        private final ProgressiveRatingBar mRatingBar;
+        private final TextView mRatingText;
 
         @SuppressLint("InflateParams")
         private RateDialogHelper(float rating) {
@@ -1129,7 +1366,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private static class RateGalleryListener extends EhCallback<GalleryDetailScene, RateGalleryParser.Result> {
 
-        private int mGid;
+        private final int mGid;
 
         public RateGalleryListener(Context context, int stageId, String sceneTag, int gid) {
             super(context, stageId, sceneTag);

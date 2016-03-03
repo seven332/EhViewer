@@ -55,6 +55,7 @@
             app:srcCompat="@drawable/sad_panda"/>
 
         <TextView
+            android:id="@+id/tip_text"
             style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
