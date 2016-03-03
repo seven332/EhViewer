@@ -462,6 +462,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     private void onLongPressInternal(float x, float y) {
+        if (mScale) {
+            return;
+        }
+
         if (mLayoutManager == null) {
             return;
         }
