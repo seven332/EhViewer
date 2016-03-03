@@ -20,10 +20,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.hippo.easyrecyclerview.EasyRecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <com.hippo.easyrecyclerview.EasyRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.hippo.easyrecyclerview.FastScroller
+            android:id="@+id/fast_scroller"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:paddingLeft="20dp"
+            android:paddingRight="4dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/tip"

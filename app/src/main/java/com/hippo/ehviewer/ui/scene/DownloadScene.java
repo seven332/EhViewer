@@ -49,6 +49,8 @@ import android.widget.TextView;
 
 import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
+import com.hippo.easyrecyclerview.FastScroller;
+import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -62,6 +64,8 @@ import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.ehviewer.ui.GalleryActivity;
+import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
+import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
@@ -75,6 +79,8 @@ import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.ObjectUtils;
+import com.hippo.yorozuya.ResourcesUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -89,18 +95,24 @@ public class DownloadScene extends ToolbarScene
     private static final String KEY_LABEL = "label";
 
     @Nullable
+    @ViewLifeCircle
     private EasyRecyclerView mRecyclerView;
     @Nullable
+    @ViewLifeCircle
     private ViewTransition mViewTransition;
     @Nullable
+    @ViewLifeCircle
     private FabLayout mFabLayout;
 
     @Nullable
+    @ViewLifeCircle
     private DownloadAdapter mAdapter;
 
     @Nullable
+    @WholeLifeCircle
     private String mLabel;
     @Nullable
+    @WholeLifeCircle
     private List<DownloadInfo> mList;
 
     // TODO Only single instance
@@ -177,40 +189,44 @@ public class DownloadScene extends ToolbarScene
     public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_download, container, false);
-        mRecyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
-        mFabLayout = (FabLayout) view.findViewById(R.id.fab_layout);
-        View tip = view.findViewById(R.id.tip);
-        mViewTransition = new ViewTransition(mRecyclerView, tip);
 
-        if (mRecyclerView != null) {
-            mAdapter = new DownloadAdapter();
-            mAdapter.setHasStableIds(true);
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
-            mRecyclerView.setDrawSelectorOnTop(true);
-            mRecyclerView.hasFixedSize();
-            mRecyclerView.setClipToPadding(false);
-            mRecyclerView.setOnItemClickListener(this);
-            mRecyclerView.setOnItemLongClickListener(this);
-            mRecyclerView.setChoiceMode(EasyRecyclerView.CHOICE_MODE_MULTIPLE_CUSTOM);
-            mRecyclerView.setCustomCheckedListener(new DownloadChoiceListener());
-            // Cancel change animation
-            RecyclerView.ItemAnimator itemAnimator = mRecyclerView.getItemAnimator();
-            if (itemAnimator instanceof SimpleItemAnimator) {
-                ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
-            }
-            int paddingH = getResources().getDimensionPixelOffset(R.dimen.list_content_margin_h);
-            int paddingV = getResources().getDimensionPixelOffset(R.dimen.list_content_margin_v);
-            mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
-        }
+        View content = ViewUtils.$$(view, R.id.content);
+        mRecyclerView = (EasyRecyclerView) ViewUtils.$$(content, R.id.recycler_view);
+        FastScroller fastScroller = (FastScroller) ViewUtils.$$(content, R.id.fast_scroller);
+        mFabLayout = (FabLayout) ViewUtils.$$(view, R.id.fab_layout);
+        View tip = ViewUtils.$$(view, R.id.tip);
+        mViewTransition = new ViewTransition(content, tip);
 
-        if (mFabLayout != null) {
-            mFabLayout.setExpanded(false, false);
-            mFabLayout.setHidePrimaryFab(true);
-            mFabLayout.setAutoCancel(false);
-            mFabLayout.setOnClickFabListener(this);
+        mAdapter = new DownloadAdapter();
+        mAdapter.setHasStableIds(true);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setDrawSelectorOnTop(true);
+        mRecyclerView.hasFixedSize();
+        mRecyclerView.setClipToPadding(false);
+        mRecyclerView.setOnItemClickListener(this);
+        mRecyclerView.setOnItemLongClickListener(this);
+        mRecyclerView.setChoiceMode(EasyRecyclerView.CHOICE_MODE_MULTIPLE_CUSTOM);
+        mRecyclerView.setCustomCheckedListener(new DownloadChoiceListener());
+        // Cancel change animation
+        RecyclerView.ItemAnimator itemAnimator = mRecyclerView.getItemAnimator();
+        if (itemAnimator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
         }
+        int paddingH = getResources().getDimensionPixelOffset(R.dimen.list_content_margin_h);
+        int paddingV = getResources().getDimensionPixelOffset(R.dimen.list_content_margin_v);
+        mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+
+        fastScroller.attachToRecyclerView(mRecyclerView);
+        HandlerDrawable drawable = new HandlerDrawable();
+        drawable.setColor(ResourcesUtils.getAttrColor(getContext(), R.attr.colorAccent));
+        fastScroller.setHandlerDrawable(drawable);
+
+        mFabLayout.setExpanded(false, false);
+        mFabLayout.setHidePrimaryFab(true);
+        mFabLayout.setAutoCancel(false);
+        mFabLayout.setOnClickFabListener(this);
 
         if (mList == null || mList.isEmpty()) {
             mViewTransition.showView(1);
