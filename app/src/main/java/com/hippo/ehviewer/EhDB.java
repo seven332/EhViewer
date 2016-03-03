@@ -44,6 +44,7 @@ import com.hippo.ehviewer.dao.QuickSearchDao;
 import com.hippo.ehviewer.dao.QuickSearchRaw;
 import com.hippo.ehviewer.download.DownloadInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.dao.query.LazyList;
@@ -451,5 +452,56 @@ public class EhDB {
     public static synchronized void removeDownloadLabel(DownloadLabelRaw raw) {
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
         dao.delete(raw);
+    }
+
+    public static synchronized List<GalleryInfo> getAllLocalFavorites() {
+        LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
+        List<LocalFavoritesRaw> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Date).list();
+        List<GalleryInfo> result = new ArrayList<>(list.size());
+        for (LocalFavoritesRaw raw: list) {
+            GalleryInfo gi = getGalleryInfo((int) (long) raw.getGid());
+            if (null == gi) {
+                continue;
+            }
+            result.add(gi);
+        }
+        return result;
+    }
+
+    public static synchronized List<GalleryInfo> searchLocalFavorites(String query) {
+        LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
+        List<LocalFavoritesRaw> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Date).list();
+        List<GalleryInfo> result = new ArrayList<>(list.size());
+        for (LocalFavoritesRaw raw: list) {
+            GalleryInfo gi = getGalleryInfo((int) (long) raw.getGid());
+            if (null == gi || !gi.title.toLowerCase().contains(query.toLowerCase())) {
+                continue;
+            }
+            result.add(gi);
+        }
+        return result;
+    }
+
+    public static synchronized void removeLocalFavorites(int[] gidArray) {
+        LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
+        for (int gid: gidArray) {
+            dao.deleteByKey((long) gid);
+        }
+    }
+
+    public static synchronized void addLocalFavorites(List<GalleryInfo> galleryInfoList) {
+        LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
+        for (GalleryInfo gi: galleryInfoList) {
+            if (null != dao.load((long) gi.gid)) {
+                // Contained
+                continue;
+            }
+
+            addGalleryInfo(gi);
+            LocalFavoritesRaw raw = new LocalFavoritesRaw();
+            raw.setGid((long) gi.gid);
+            raw.setDate(System.currentTimeMillis());
+            dao.insert(raw);
+        }
     }
 }

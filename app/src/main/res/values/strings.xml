@@ -304,7 +304,8 @@
     <string name="directory_not_writable">The directory is not writable</string>
 
     <!-- Favorites -->
-    <string name="all_favorites">All Favorites</string>
+    <string name="cloud_favorites">Cloud Favorites</string>
+    <string name="local_favorites">Local Favorites</string>
     <string name="favorites_search_bar_hint">Search %s</string>
     <string name="favorites_title">%s</string>
     <string name="favorites_title_2">%1$s - %2$s</string>

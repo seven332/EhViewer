@@ -37,7 +37,7 @@ import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.network.StatusCodeException;
-import com.hippo.yorozuya.IntList;
+import com.hippo.yorozuya.AssertUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -389,21 +389,75 @@ public class EhEngine {
         return result;
     }
 
+    /**
+     * @param dstCat -1 for delete, 0 - 9 for cloud favorite, others throw Exception
+     * @param note max 250 characters
+     */
+    public static Void addFavorites(EhClient.Task task, OkHttpClient okHttpClient,
+            int gid, String token, int dstCat, String note) throws Exception {
+        String catStr;
+        if (dstCat == -1) {
+            catStr = "favdel";
+        } else if (dstCat >= 0 && dstCat <= 9) {
+            catStr = String.valueOf(dstCat);
+        } else {
+            throw new EhException("Invalid dstCat: " + dstCat);
+        }
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("favcat", catStr);
+        builder.add("favnote", note != null ? note : "");
+        // submit=Add+to+Favorites is not necessary, just use submit=Apply+Changes all the time
+        builder.add("submit", "Apply Changes");
+        String url = EhUrl.getAddFavorites(gid, token);
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig())
+                .post(builder.build())
+                .build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            throwException(call, code, headers, body, null);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+
+        return null;
+    }
+
+    public static Void addFavoritesRange(EhClient.Task task, OkHttpClient okHttpClient,
+            int[] gidArray, String[] tokenArray, int dstCat) throws Exception {
+        AssertUtils.assertEqualsEx(gidArray.length, tokenArray.length);
+        for (int i = 0, n = gidArray.length; i < n; i++) {
+            addFavorites(task, okHttpClient, gidArray[i], tokenArray[i], dstCat, null);
+        }
+        return null;
+    }
+
     public static FavoritesParser.Result modifyFavorites(EhClient.Task task, OkHttpClient okHttpClient,
-            String url, IntList gidList, int dstCat, boolean callApi) throws Exception {
+            String url, int[] gidArray, int dstCat, boolean callApi) throws Exception {
         String catStr;
         if (dstCat == -1) {
             catStr = "delete";
         } else if (dstCat >= 0 && dstCat <= 9) {
             catStr = "fav" + dstCat;
         } else {
-            Log.w(TAG, "Invalid dstCat: " + dstCat);
-            return null;
+            throw new EhException("Invalid dstCat: " + dstCat);
         }
         FormBody.Builder builder = new FormBody.Builder();
         builder.add("ddact", catStr);
-        for (int i = 0, n = gidList.size(); i < n; i++) {
-            builder.add("modifygids[]", Integer.toString(gidList.get(i)));
+        for (int gid : gidArray) {
+            builder.add("modifygids[]", Integer.toString(gid));
         }
         builder.add("apply", "Apply");
         Log.d(TAG, url);

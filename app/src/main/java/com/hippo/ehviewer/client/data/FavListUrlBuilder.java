@@ -31,6 +31,7 @@ public class FavListUrlBuilder implements Parcelable {
 
     private static final String TAG = FavListUrlBuilder.class.getSimpleName();
     public static final int FAV_CAT_ALL = -1;
+    public static final int FAV_CAT_LOCAL = -2;
 
     private int mIndex;
     private String mKeyword;
@@ -58,6 +59,10 @@ public class FavListUrlBuilder implements Parcelable {
 
     public static boolean isValidFavCat(int favCat) {
         return favCat >= 0 && favCat <= 9;
+    }
+
+    public boolean isLocalFavCat() {
+        return mFavCat == FAV_CAT_LOCAL;
     }
 
     public String build() {

@@ -22,7 +22,6 @@ import android.os.AsyncTask;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.CancelledException;
-import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
 
@@ -51,7 +50,9 @@ public class EhClient {
     public static final int METHOD_GET_COMMENT_GALLERY = 6;
     public static final int METHOD_GET_GALLERY_TOKEN = 7;
     public static final int METHOD_GET_FAVORITES = 8;
-    public static final int METHOD_MODIFY_FAVORITES = 9;
+    public static final int METHOD_ADD_FAVORITES = 9;
+    public static final int METHOD_ADD_FAVORITES_RANGE = 10;
+    public static final int METHOD_MODIFY_FAVORITES = 11;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -161,8 +162,12 @@ public class EhClient {
                         return EhEngine.getGalleryToken(this, mOkHttpClient, (Integer) params[0], (String) params[1], (Integer) params[2]);
                     case METHOD_GET_FAVORITES:
                         return EhEngine.getFavorites(this, mOkHttpClient, (String) params[0], (Boolean) params[1]);
+                    case METHOD_ADD_FAVORITES:
+                        return EhEngine.addFavorites(this, mOkHttpClient, (Integer) params[0], (String) params[1], (Integer) params[2], (String) params[3]);
+                    case METHOD_ADD_FAVORITES_RANGE:
+                        return EhEngine.addFavoritesRange(this, mOkHttpClient, (int[]) params[0], (String[]) params[1], (Integer) params[2]);
                     case METHOD_MODIFY_FAVORITES:
-                        return EhEngine.modifyFavorites(this, mOkHttpClient, (String) params[0], (IntList) params[1], (Integer) params[2], (Boolean) params[3]);
+                        return EhEngine.modifyFavorites(this, mOkHttpClient, (String) params[0], (int[]) params[1], (Integer) params[2], (Boolean) params[3]);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

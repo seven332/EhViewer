@@ -52,4 +52,8 @@ public class EhUrl {
     public static String getPageUrl(int gid, int index, String pToken) {
         return HOST_EX + "s/" + pToken + '/' + gid + '-' + (index + 1);
     }
+
+    public static String getAddFavorites(int gid, String token) {
+        return HOST_EX + "gallerypopups.php?gid=" + gid + "&t=" + token + "&act=addfav";
+    }
 }

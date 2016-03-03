@@ -264,6 +264,16 @@
     <string name="dir_picker">選擇資料夾</string>
     <string name="directory_not_writable">該資料夾不可寫</string>
 
+    <!-- Favorites -->
+    <string name="cloud_favorites">雲端收藏</string>
+    <string name="local_favorites">本地收藏</string>
+    <string name="favorites_search_bar_hint">搜尋 %s</string>
+    <string name="favorites_title">%s</string>
+    <string name="favorites_title_2">%1$s - %2$s</string>
+    <string name="delete_favorites_dialog_title">刪除收藏</string>
+    <string name="delete_favorites_dialog_message">刪除 %d 項收藏</string>
+    <string name="move_favorites_dialog_title">移動收藏</string>
+
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">被玩壞了</string>
 

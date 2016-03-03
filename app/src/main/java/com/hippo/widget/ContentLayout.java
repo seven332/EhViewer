@@ -642,14 +642,6 @@ public class ContentLayout extends FrameLayout {
             doRefresh();
         }
 
-        /**
-         * Refresh header and refresh
-         */
-        public void justRefresh() {
-            mRefreshLayout.setHeaderRefreshing(true);
-            doRefresh();
-        }
-
         private void cancelCurrentTask() {
             mCurrentTaskId = mIdGenerator.nextId();
             mRefreshLayout.setHeaderRefreshing(false);
