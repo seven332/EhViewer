@@ -274,7 +274,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         }
 
         ensure509Builder();
-
+        m509dBuilder.setWhen(System.currentTimeMillis());
         m509Delay.show();
     }
 
@@ -288,7 +288,9 @@ public class DownloadService extends Service implements DownloadManager.Download
 
         mDownloadingBuilder.setContentTitle(info.galleryInfo.title)
                 .setContentText(null)
-                .setProgress(0, 0, true);
+                .setContentInfo(null)
+                .setProgress(0, 0, true)
+                .setWhen(System.currentTimeMillis());
 
         mDownloadingDelay.startForeground();
     }
@@ -306,6 +308,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         String text = FileUtils.humanReadableByteCount(speed, false) + "/S";
         mDownloadingBuilder.setContentTitle(info.galleryInfo.title)
                 .setContentText(text)
+                .setContentInfo(info.total == -1 || info.download == -1 ? null : info.download + "/" + info.total)
                 .setProgress(info.total, info.download, false);
 
         mDownloadingDelay.startForeground();
@@ -411,6 +414,7 @@ public class DownloadService extends Service implements DownloadManager.Download
 
         mDownloadedBuilder.setContentText(text)
                 .setStyle(style)
+                .setWhen(System.currentTimeMillis())
                 .setNumber(mDownloadedCount);
 
         mDownloadedDelay.show();
