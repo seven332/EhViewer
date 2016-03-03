@@ -202,6 +202,8 @@
     <string name="download_start_all">全部開始</string>
     <string name="download_stop_all">全部停止</string>
     <string name="download_service_label">EhViewer 下載服務</string>
+    <string name="download_speed_text">%s</string>
+    <string name="download_speed_text_2">%1$s，%2$s</string>
 
     <!-- Download label -->
     <string name="no_download_label">無標籤</string>

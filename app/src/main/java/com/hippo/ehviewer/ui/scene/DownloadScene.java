@@ -640,14 +640,14 @@ public class DownloadScene extends ToolbarScene
         holder.percent.setVisibility(View.VISIBLE);
         holder.speed.setVisibility(View.VISIBLE);
 
-        if (info.total <= 0 || info.download < 0) {
+        if (info.total <= 0 || info.finished < 0) {
             holder.percent.setText(null);
             holder.progressBar.setIndeterminate(true);
         } else {
-            holder.percent.setText(info.download + "/" + info.total);
+            holder.percent.setText(info.finished + "/" + info.total);
             holder.progressBar.setIndeterminate(false);
             holder.progressBar.setMax(info.total);
-            holder.progressBar.setProgress(info.download);
+            holder.progressBar.setProgress(info.finished);
         }
         long speed = info.speed;
         if (speed < 0) {

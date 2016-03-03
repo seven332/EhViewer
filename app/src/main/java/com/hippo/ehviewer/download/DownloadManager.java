@@ -30,8 +30,10 @@ import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.ConcurrentPool;
 import com.hippo.yorozuya.IntList;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.sparse.SparseIJArray;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,7 +42,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 import de.greenrobot.dao.query.LazyList;
 
@@ -211,8 +212,10 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             spider.addOnSpiderListener(this);
             info.state = DownloadInfo.STATE_DOWNLOAD;
             info.speed = -1;
+            info.remaining = -1;
             info.total = -1;
-            info.download = 0;
+            info.finished = 0;
+            info.downloaded = 0;
             info.legacy = -1;
             // Update in DB
             EhDB.updateDownloadInfo(info);
@@ -726,22 +729,22 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     }
 
     @Override
-    public void onPageSuccess(int index, int downloaded, int total) {
+    public void onPageSuccess(int index, int finished, int downloaded, int total) {
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
             task = new NotifyTask();
         }
-        task.setOnPageSuccessData(index, downloaded, total);
+        task.setOnPageSuccessData(index, finished, downloaded, total);
         SimpleHandler.getInstance().post(task);
     }
 
     @Override
-    public void onPageFailure(int index, String error, int downloaded, int total) {
+    public void onPageFailure(int index, String error, int finished, int downloaded, int total) {
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
             task = new NotifyTask();
         }
-        task.setOnPageFailureDate(index, error, downloaded, total);
+        task.setOnPageFailureDate(index, error, finished, downloaded, total);
         SimpleHandler.getInstance().post(task);
     }
 
@@ -781,6 +784,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         private long mReceivedSize;
         private int mBytesRead;
         private String mError;
+        private int mFinished;
         private int mDownloaded;
         private int mTotal;
 
@@ -802,17 +806,19 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             mBytesRead = bytesRead;
         }
 
-        public void setOnPageSuccessData(int index, int downloaded, int total) {
+        public void setOnPageSuccessData(int index, int finished, int downloaded, int total) {
             mType = TYPE_ON_PAGE_SUCCESS;
             mIndex = index;
+            mFinished = finished;
             mDownloaded = downloaded;
             mTotal = total;
         }
 
-        public void setOnPageFailureDate(int index, String error, int downloaded, int total) {
+        public void setOnPageFailureDate(int index, String error, int finished, int downloaded, int total) {
             mType = TYPE_ON_PAGE_FAILURE;
             mIndex = index;
             mError = error;
+            mFinished = finished;
             mDownloaded = downloaded;
             mTotal = total;
         }
@@ -846,15 +852,17 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                     break;
                 }
                 case TYPE_ON_PAGE_DOWNLOAD: {
-                    mSpeedReminder.up(mBytesRead);
+                    mSpeedReminder.onDownload(mIndex, mContentLength, mReceivedSize, mBytesRead);
                     break;
                 }
                 case TYPE_ON_PAGE_SUCCESS: {
+                    mSpeedReminder.onDone(mIndex);
                     DownloadInfo info = mCurrentTask;
                     if (info == null) {
                         Log.e(TAG, "Current task is null, but it should not be");
                     } else {
-                        info.download = mDownloaded;
+                        info.finished = mFinished;
+                        info.downloaded = mDownloaded;
                         info.total = mTotal;
                         if (mDownloadListener != null) {
                             mDownloadListener.onGetPage(info);
@@ -867,11 +875,13 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                     break;
                 }
                 case TYPE_ON_PAGE_FAILURE: {
+                    mSpeedReminder.onDone(mIndex);
                     DownloadInfo info = mCurrentTask;
                     if (info == null) {
                         Log.e(TAG, "Current task is null, but it should not be");
                     } else {
-                        info.download = mDownloaded;
+                        info.finished = mFinished;
+                        info.downloaded = mDownloaded;
                         info.total = mTotal;
                         List<DownloadInfo> list = getInfoListForLabel(info.label);
                         if (list != null && mDownloadInfoListener != null) {
@@ -881,6 +891,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                     break;
                 }
                 case TYPE_ON_FINISH: {
+                    mSpeedReminder.onFinish();
                     // Download done
                     DownloadInfo info = mCurrentTask;
                     mCurrentTask = null;
@@ -899,9 +910,10 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                     // Stop speed count
                     mSpeedReminder.stop();
                     // Update state
-                    info.download = mDownloaded;
+                    info.finished = mFinished;
+                    info.downloaded = mDownloaded;
                     info.total = mTotal;
-                    info.legacy = mTotal - mDownloaded;
+                    info.legacy = mTotal - mFinished;
                     if (info.legacy == 0) {
                         info.state = DownloadInfo.STATE_FINISH;
                     } else {
@@ -932,7 +944,11 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
 
         private boolean mStop = true;
 
-        private final AtomicLong mBytesRead = new AtomicLong();
+        private long mBytesRead;
+        private long oldSpeed = -1;
+
+        private final SparseIJArray mContentLengthMap = new SparseIJArray();
+        private final SparseIJArray mReceivedSizeMap = new SparseIJArray();
 
         public void start() {
             if (mStop) {
@@ -944,20 +960,62 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         public void stop() {
             if (!mStop) {
                 mStop = true;
-                mBytesRead.lazySet(0L);
+                mBytesRead = 0;
+                oldSpeed = -1;
+                mContentLengthMap.clear();
+                mReceivedSizeMap.clear();
                 SimpleHandler.getInstance().removeCallbacks(this);
             }
         }
 
-        public void up(int bytesRead) {
-            mBytesRead.addAndGet(bytesRead);
+        public void onDownload(int index, long contentLength, long receivedSize, int bytesRead) {
+            mContentLengthMap.put(index, contentLength);
+            mReceivedSizeMap.put(index, receivedSize);
+            mBytesRead += bytesRead;
+        }
+
+        public void onDone(int index) {
+            mContentLengthMap.delete(index);
+            mReceivedSizeMap.delete(index);
+        }
+
+        public void onFinish() {
+            mContentLengthMap.clear();
+            mReceivedSizeMap.clear();
         }
 
         @Override
         public void run() {
             DownloadInfo info = mCurrentTask;
             if (info != null) {
-                info.speed = mBytesRead.getAndSet(0) / 2;
+                long newSpeed = mBytesRead / 2;
+                if (oldSpeed != -1) {
+                    newSpeed = (long) MathUtils.lerp(oldSpeed, newSpeed, 0.75f);
+                }
+                oldSpeed = newSpeed;
+                info.speed = newSpeed;
+
+                // Calculate remaining
+                if (info.total <= 0) {
+                    info.remaining = -1;
+                } else if (newSpeed == 0) {
+                    info.remaining = 300L * 24L * 60L * 60L * 1000L; // 300 days
+                } else {
+                    int downloadingCount = 0;
+                    long downloadingContentLengthSum = 0;
+                    long totalSize = 0;
+                    for (int i = 0, n = Math.max(mContentLengthMap.size(), mReceivedSizeMap.size()); i < n; i++) {
+                        long contentLength = mContentLengthMap.valueAt(i);
+                        long receivedSize = mReceivedSizeMap.valueAt(i);
+                        downloadingCount++;
+                        downloadingContentLengthSum += contentLength;
+                        totalSize += contentLength - receivedSize;
+                    }
+                    if (downloadingCount != 0) {
+                        totalSize += downloadingContentLengthSum * (info.total - info.downloaded - downloadingCount) / downloadingCount;
+                        info.remaining = totalSize / newSpeed * 1000;
+                    }
+                }
                 if (mDownloadListener != null) {
                     mDownloadListener.onDownload(info);
                 }
@@ -966,6 +1024,8 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                     mDownloadInfoListener.onUpdate(info, list);
                 }
             }
+
+            mBytesRead = 0;
 
             if (!mStop) {
                 SimpleHandler.getInstance().postDelayed(this, 2000);

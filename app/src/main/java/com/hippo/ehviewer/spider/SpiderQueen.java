@@ -212,7 +212,7 @@ public class SpiderQueen implements Runnable {
         }
         synchronized (mSpiderListeners) {
             for (OnSpiderListener listener : mSpiderListeners) {
-                listener.onPageSuccess(index, mFinishedPages.get(), size);
+                listener.onPageSuccess(index, mFinishedPages.get(), mDownloadedPages.get(), size);
             }
         }
     }
@@ -225,7 +225,7 @@ public class SpiderQueen implements Runnable {
         }
         synchronized (mSpiderListeners) {
             for (OnSpiderListener listener : mSpiderListeners) {
-                listener.onPageFailure(index, error, mFinishedPages.get(), size);
+                listener.onPageFailure(index, error, mFinishedPages.get(), mDownloadedPages.get(), size);
             }
         }
     }
@@ -1210,9 +1210,9 @@ public class SpiderQueen implements Runnable {
          */
         void onPageDownload(int index, long contentLength, long receivedSize, int bytesRead);
 
-        void onPageSuccess(int index, int downloaded, int total);
+        void onPageSuccess(int index, int finished, int downloaded, int total);
 
-        void onPageFailure(int index, String error, int downloaded, int total);
+        void onPageFailure(int index, String error, int finished, int downloaded, int total);
 
         /**
          * All workers end

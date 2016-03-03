@@ -34,6 +34,7 @@ import android.util.SparseBooleanArray;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.SimpleHandler;
@@ -306,10 +307,16 @@ public class DownloadService extends Service implements DownloadManager.Download
             speed = 0;
         }
         String text = FileUtils.humanReadableByteCount(speed, false) + "/S";
+        long remaining = info.remaining;
+        if (remaining >= 0) {
+            text = getString(R.string.download_speed_text_2, text, ReadableTime.getShortTimeInterval(remaining));
+        } else {
+            text = getString(R.string.download_speed_text, text);
+        }
         mDownloadingBuilder.setContentTitle(info.galleryInfo.title)
                 .setContentText(text)
-                .setContentInfo(info.total == -1 || info.download == -1 ? null : info.download + "/" + info.total)
-                .setProgress(info.total, info.download, false);
+                .setContentInfo(info.total == -1 || info.finished == -1 ? null : info.finished + "/" + info.total)
+                .setProgress(info.total, info.finished, false);
 
         mDownloadingDelay.startForeground();
     }

@@ -31,8 +31,12 @@ public class DownloadInfo {
     public int state = STATE_NONE;
     // byte/second, -1 for can't get speed now
     public long speed;
+    // Remain time millis
+    public long remaining;
     // -1 for unknown
-    public int download = 0;
+    public int finished = 0;
+    // -1 for unknown
+    public int downloaded = 0;
     // -1 for unknown
     public int total = -1;
     // -1 for unknown

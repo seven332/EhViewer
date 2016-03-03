@@ -133,12 +133,12 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     }
 
     @Override
-    public void onPageSuccess(int index, int downloaded, int total) {
+    public void onPageSuccess(int index, int finished, int downloaded, int total) {
         notifyDataChanged(index);
     }
 
     @Override
-    public void onPageFailure(int index, String error, int downloaded, int total) {
+    public void onPageFailure(int index, String error, int finished, int downloaded, int total) {
         notifyPageFailed(index, error);
     }
 

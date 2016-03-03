@@ -170,6 +170,24 @@ public final class ReadableTime {
         return sb.toString();
     }
 
+    public static String getShortTimeInterval(long time) {
+        StringBuilder sb = new StringBuilder();
+        Resources resources = sResources;
+
+        for (int i = 0; i < SIZE; i++) {
+            long multiple = MULTIPLES[i];
+            long quotient = time / multiple;
+            if (time > multiple * 1.5 || i == SIZE - 1) {
+                sb.append(quotient)
+                        .append(" ")
+                        .append(resources.getQuantityString(UNITS[i], (int) quotient));
+                break;
+            }
+        }
+
+        return sb.toString();
+    }
+
     public static String getFilenamableTime(long time) {
         synchronized (sDateFormatLock2) {
             return FILENAMABLE_DATE_FORMAT.format(new Date(time));
