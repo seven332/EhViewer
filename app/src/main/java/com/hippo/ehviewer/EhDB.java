@@ -482,11 +482,34 @@ public class EhDB {
         return result;
     }
 
+    public static synchronized void removeLocalFavorites(int gid) {
+        sDaoSession.getLocalFavoritesDao().deleteByKey((long) gid);
+    }
+
     public static synchronized void removeLocalFavorites(int[] gidArray) {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
         for (int gid: gidArray) {
             dao.deleteByKey((long) gid);
         }
+    }
+
+    public static synchronized boolean containLocalFavorites(int gid) {
+        LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
+        return null != dao.load((long) gid);
+    }
+
+    public static synchronized void addLocalFavorites(GalleryInfo galleryInfo) {
+        LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
+        if (null != dao.load((long) galleryInfo.gid)) {
+            // Contained
+            return;
+        }
+
+        addGalleryInfo(galleryInfo);
+        LocalFavoritesRaw raw = new LocalFavoritesRaw();
+        raw.setGid((long) galleryInfo.gid);
+        raw.setDate(System.currentTimeMillis());
+        dao.insert(raw);
     }
 
     public static synchronized void addLocalFavorites(List<GalleryInfo> galleryInfoList) {

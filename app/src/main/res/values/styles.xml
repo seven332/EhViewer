@@ -120,12 +120,12 @@
         <item name="dark">true</item>
     </style>
 
-    <style name="IndicatingScrollView">
+    <style name="Indicating">
         <item name="indicatorHeight">1dp</item>
         <item name="indicatorColor">@color/divider</item>
     </style>
 
-    <style name="IndicatingScrollView.Dark">
+    <style name="Indicating.Dark">
         <item name="indicatorColor">@color/divider_dark</item>
     </style>
 

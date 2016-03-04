@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2015 Hippo Seven
+ * Copyright 2016 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,28 +24,28 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.widget.ScrollView;
+import android.widget.ListView;
 
 import com.hippo.ehviewer.R;
 
-public class IndicatingScrollView extends ScrollView {
+public class IndicatingListView extends ListView {
 
     private int mIndicatorHeight;
 
     private final Paint mPaint = new Paint();
     private final Rect mTemp = new Rect();
 
-    public IndicatingScrollView(Context context) {
+    public IndicatingListView(Context context) {
         super(context);
         init(context, null);
     }
 
-    public IndicatingScrollView(Context context, AttributeSet attrs) {
+    public IndicatingListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public IndicatingScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public IndicatingListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }

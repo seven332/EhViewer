@@ -338,4 +338,17 @@ public class Settings {
     public static void putRecentFavCat(int value) {
         putInt(KEY_RECENT_FAV_CAT, value);
     }
+
+    // -1 for local, 0 - 9 for cloud favorite, other for no default fav slot
+    private static final String KEY_DEFAULT_FAV_SLOT = "default_favorite";
+    public static final int INVALID_DEFAULT_FAV_SLOT = -2;
+    private static final int DEFAULT_DEFAULT_FAV_SLOT = INVALID_DEFAULT_FAV_SLOT;
+
+    public static int getDefaultFavSlot() {
+        return getInt(KEY_DEFAULT_FAV_SLOT, DEFAULT_DEFAULT_FAV_SLOT);
+    }
+
+    public static void putDefaultFavSlot(int value) {
+        putInt(KEY_DEFAULT_FAV_SLOT, value);
+    }
 }

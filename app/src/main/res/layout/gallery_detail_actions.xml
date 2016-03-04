@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/favorites"
+                    android:text="@string/favorited"
                     android:drawablePadding="8dp"
                     android:textColor="@color/primary_text_light"/>
 
@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/favorites"
+                    android:text="@string/unfavorited"
                     android:drawablePadding="8dp"
                     android:textColor="@color/primary_text_light"/>
 

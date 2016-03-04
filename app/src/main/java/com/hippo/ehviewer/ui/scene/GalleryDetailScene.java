@@ -56,6 +56,7 @@ import android.widget.Toast;
 
 import com.hippo.drawable.RoundSideRectDrawable;
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
@@ -71,6 +72,7 @@ import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.download.DownloadService;
+import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.rippleold.RippleSalon;
@@ -264,6 +266,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @State
     private int mState = STATE_INIT;
+
+    private boolean mModifingFavorites;
 
     private void handleArgs(Bundle args) {
         if (args == null) {
@@ -703,6 +707,24 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    private void updateFavoriteDrawable() {
+        GalleryDetail gd = mGalleryDetail;
+        if (gd == null) {
+            return;
+        }
+        if (mHeart == null || mHeartOutline == null ) {
+            return;
+        }
+
+        if (gd.isFavored || EhDB.containLocalFavorites(gd.gid)) {
+            mHeart.setVisibility(View.VISIBLE);
+            mHeartOutline.setVisibility(View.GONE);
+        } else {
+            mHeart.setVisibility(View.GONE);
+            mHeartOutline.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void bindViewSecond() {
         GalleryDetail gd = mGalleryDetail;
         if (gd == null) {
@@ -710,8 +732,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
         if (mThumb == null || mTitle == null || mUploader == null || mCategory == null ||
                 mLanguage == null || mPages == null || mSize == null || mPosted == null ||
-                mFavoredTimes == null || mRatingText == null || mRating == null ||
-                mHeart == null || mHeartOutline == null || mTorrent == null) {
+                mFavoredTimes == null || mRatingText == null || mRating == null || mTorrent == null) {
             return;
         }
 
@@ -733,13 +754,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mRatingText.setText(getAllRatingText(gd.rating, gd.ratedTimes));
         mRating.setRating(gd.rating);
 
-        if (gd.isFavored) {
-            mHeart.setVisibility(View.VISIBLE);
-            mHeartOutline.setVisibility(View.GONE);
-        } else {
-            mHeart.setVisibility(View.GONE);
-            mHeartOutline.setVisibility(View.VISIBLE);
-        }
+        updateFavoriteDrawable();
+
         mTorrent.setText(resources.getString(R.string.torrent_count, gd.torrentCount));
 
         bindTags(gd.tags);
@@ -998,6 +1014,29 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             Bundle args = new Bundle();
             args.putParcelable(GalleryInfoScene.KEY_GALLERY_DETAIL, mGalleryDetail);
             startScene(new Announcer(GalleryInfoScene.class).setArgs(args));
+        } else if (mHeartGroup == v) {
+            if (mGalleryDetail != null && !mModifingFavorites) {
+                boolean remove = false;
+                if (EhDB.containLocalFavorites(mGalleryDetail.gid)) {
+                    EhDB.removeLocalFavorites(mGalleryDetail.gid);
+                    remove = true;
+                }
+                if (mGalleryDetail.isFavored) {
+                    mModifingFavorites = true;
+                    CommonOperations.removeFromFavorites(getActivity(), mGalleryDetail,
+                            new ModifyFavoritesListener(getContext(),
+                                    ((StageActivity) getActivity()).getStageId(), getTag(), true));
+                    remove = true;
+                }
+                if (!remove) {
+                    mModifingFavorites = true;
+                    CommonOperations.addToFavorites(getActivity(), mGalleryDetail,
+                            new ModifyFavoritesListener(getContext(),
+                                    ((StageActivity) getActivity()).getStageId(), getTag(), false));
+                }
+                // Update UI
+                updateFavoriteDrawable();
+            }
         } else if (mShare == v) {
             String url = getGalleryDetailUrl(false);
             if (url != null) {
@@ -1169,6 +1208,51 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         if (mRatingText != null && mRating != null) {
             mRatingText.setText(getAllRatingText(result.rating, result.ratedTimes));
             mRating.setRating(result.rating);
+        }
+    }
+
+    private void onModifyFavoritesSuccess(boolean addOrRemove) {
+        mModifingFavorites = false;
+        if (mGalleryDetail != null) {
+            mGalleryDetail.isFavored = !addOrRemove;
+            updateFavoriteDrawable();
+        }
+    }
+
+    private class ModifyFavoritesListener extends EhCallback<GalleryDetailScene, Void> {
+
+        private final boolean mAddOrRemove;
+
+        /**
+         * @param addOrRemove false for add, true for remove
+         */
+        public ModifyFavoritesListener(Context context, int stageId, String sceneTag, boolean addOrRemove) {
+            super(context, stageId, sceneTag);
+            mAddOrRemove = addOrRemove;
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            Toast.makeText(getContext(), mAddOrRemove ? R.string.remove_from_favorite_success :
+                    R.string.add_to_favorite_success, Toast.LENGTH_SHORT).show();
+            GalleryDetailScene scene = getScene();
+            if (scene != null) {
+                scene.onModifyFavoritesSuccess(mAddOrRemove);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            Toast.makeText(getContext(), mAddOrRemove ? R.string.remove_from_favorite_failure :
+                    R.string.add_to_favorite_failure, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancel() {}
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryDetailScene;
         }
     }
 

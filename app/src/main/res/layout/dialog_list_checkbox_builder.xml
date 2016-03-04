@@ -17,33 +17,32 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <com.hippo.widget.IndicatingScrollView
-        style="@style/Indicating"
+    <com.hippo.widget.IndicatingListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/message"
-            style="@style/TextAppearance.AppCompat.Subhead"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="?attr/dialogPreferredPadding"
-            android:paddingTop="@dimen/abc_dialog_padding_top_material"
-            android:paddingRight="?attr/dialogPreferredPadding"/>
-
-    </com.hippo.widget.IndicatingScrollView>
+        android:layout_weight="1"
+        android:cacheColorHint="@null"
+        android:divider="?attr/listDividerAlertDialog"
+        android:scrollbars="vertical"
+        android:overScrollMode="ifContentScrolls"
+        android:fadingEdge="none"
+        android:paddingTop="@dimen/abc_dialog_list_padding_vertical_material"
+        android:paddingBottom="@dimen/abc_dialog_list_padding_vertical_material"
+        android:clipToPadding="false"
+        style="@style/Indicating"/>
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="?attr/dialogPreferredPadding"
-        android:layout_marginTop="@dimen/abc_dialog_padding_top_material"
-        android:layout_marginRight="?attr/dialogPreferredPadding"/>
+        android:layout_marginRight="?attr/dialogPreferredPadding"
+        android:layout_marginBottom="@dimen/abc_dialog_padding_top_material"/>
 
 </LinearLayout>

@@ -157,8 +157,8 @@
     <string name="key_pages">页数</string>
     <string name="key_size">大小</string>
     <string name="key_resize">压缩情况</string>
-    <string name="key_favourites">收藏次数</string>
-    <string name="key_favourited">收藏</string>
+    <string name="key_favorites">收藏次数</string>
+    <string name="key_favorited">收藏</string>
     <string name="key_rates">评价次数</string>
     <string name="key_rating">评分</string>
     <string name="key_torrents">种子个数</string>

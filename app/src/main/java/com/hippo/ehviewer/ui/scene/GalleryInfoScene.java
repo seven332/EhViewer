@@ -110,9 +110,9 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         mValues.add(gd.size);
         mKeys.add(resources.getString(R.string.key_resize));
         mValues.add(gd.resize);
-        mKeys.add(resources.getString(R.string.key_favourites));
+        mKeys.add(resources.getString(R.string.key_favorites));
         mValues.add(Integer.toString(gd.favoredTimes));
-        mKeys.add(resources.getString(R.string.key_favourited));
+        mKeys.add(resources.getString(R.string.key_favorited));
         mValues.add(Boolean.toString(gd.isFavored));
         mKeys.add(resources.getString(R.string.key_rates));
         mValues.add(Integer.toString(gd.ratedTimes));
