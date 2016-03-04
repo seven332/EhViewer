@@ -143,7 +143,7 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     }
 
     @Override
-    public void onFinish(int downloaded, int total) {
+    public void onFinish(int finished, int downloaded, int total) {
     }
 
     @Override

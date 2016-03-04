@@ -749,12 +749,12 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     }
 
     @Override
-    public void onFinish(int downloaded, int total) {
+    public void onFinish(int finished, int downloaded, int total) {
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
             task = new NotifyTask();
         }
-        task.setOnFinishDate(downloaded, total);
+        task.setOnFinishDate(finished, downloaded, total);
         SimpleHandler.getInstance().post(task);
     }
 
@@ -823,8 +823,9 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             mTotal = total;
         }
 
-        public void setOnFinishDate(int downloaded, int total) {
+        public void setOnFinishDate(int finished, int downloaded, int total) {
             mType = TYPE_ON_FINISH;
+            mFinished = finished;
             mDownloaded = downloaded;
             mTotal = total;
         }
