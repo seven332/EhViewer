@@ -35,14 +35,13 @@ import java.util.List;
 
 public class SceneFragment extends Fragment {
 
-    @IntDef({LAUNCH_MODE_STANDARD, LAUNCH_MODE_SINGLE_TOP})
+    @IntDef({LAUNCH_MODE_STANDARD, LAUNCH_MODE_SINGLE_TOP, LAUNCH_MODE_SINGLE_TASK})
     @Retention(RetentionPolicy.SOURCE)
-    private @interface LaunchMode {}
+    public @interface LaunchMode {}
 
     public static final int LAUNCH_MODE_STANDARD = 0;
     public static final int LAUNCH_MODE_SINGLE_TOP = 1;
-
-    public static final int FLAG_REMOVE_ALL_THE_OTHER_SCENES = 0x1;
+    public static final int LAUNCH_MODE_SINGLE_TASK = 2;
 
     /** Standard scene result: operation canceled. */
     public static final int RESULT_CANCELED  = 0;
@@ -54,16 +53,6 @@ public class SceneFragment extends Fragment {
 
     List<String> mRequestSceneTagList = new ArrayList<>(0);
     IntList mRequestCodeList = new IntList(0);
-
-    @LaunchMode
-    public int getLaunchMode() {
-        return LAUNCH_MODE_STANDARD;
-    }
-
-    public int getSoftInputMode() {
-        return 0; // WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED |
-                  // WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED
-    }
 
     public void onNewArguments(@NonNull Bundle args) {}
 

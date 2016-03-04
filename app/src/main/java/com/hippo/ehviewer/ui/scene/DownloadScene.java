@@ -115,12 +115,6 @@ public class DownloadScene extends ToolbarScene
     @WholeLifeCircle
     private List<DownloadInfo> mList;
 
-    // TODO Only single instance
-    @Override
-    public int getLaunchMode() {
-        return LAUNCH_MODE_SINGLE_TOP;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -27,7 +27,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -64,12 +63,6 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     private TextView mSkipSigningIn;
 
     private int mRequestId;
-
-    @Override
-    public int getSoftInputMode() {
-        return WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE |
-                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

@@ -37,10 +37,16 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.ui.scene.BaseScene;
+import com.hippo.ehviewer.ui.scene.DownloadLabelScene;
 import com.hippo.ehviewer.ui.scene.DownloadScene;
 import com.hippo.ehviewer.ui.scene.FavoritesScene;
+import com.hippo.ehviewer.ui.scene.GalleryCommentsScene;
+import com.hippo.ehviewer.ui.scene.GalleryDetailScene;
+import com.hippo.ehviewer.ui.scene.GalleryInfoScene;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
+import com.hippo.ehviewer.ui.scene.GalleryPreviewsScene;
 import com.hippo.ehviewer.ui.scene.LoginScene;
+import com.hippo.ehviewer.ui.scene.ProgressScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -61,6 +67,20 @@ public final class MainActivity extends StageActivity
     @Nullable
     private FrameLayout mRightDrawer;
     private int mNavCheckedItem = 0;
+
+    static {
+        registerLaunchMode(WarningScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
+        registerLaunchMode(LoginScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
+        registerLaunchMode(GalleryListScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TOP);
+        registerLaunchMode(GalleryDetailScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
+        registerLaunchMode(GalleryInfoScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
+        registerLaunchMode(GalleryCommentsScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
+        registerLaunchMode(GalleryPreviewsScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
+        registerLaunchMode(DownloadScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
+        registerLaunchMode(DownloadLabelScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
+        registerLaunchMode(FavoritesScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
+        registerLaunchMode(ProgressScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
+    }
 
     @Override
     public int getContainerViewId() {
@@ -267,9 +287,8 @@ public final class MainActivity extends StageActivity
         if (id == R.id.nav_homepage) {
             Bundle args = new Bundle();
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-            startScene(new Announcer(GalleryListScene.class)
-                    .setArgs(args)
-                    .setFlag(SceneFragment.FLAG_REMOVE_ALL_THE_OTHER_SCENES));
+            startSceneFirstly(new Announcer(GalleryListScene.class)
+                    .setArgs(args));
         } else if (id == R.id.nav_whats_hot) {
 
         } else if (id == R.id.nav_favourite) {

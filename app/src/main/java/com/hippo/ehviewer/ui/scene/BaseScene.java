@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
 
-public class BaseScene extends SceneFragment {
+public abstract class BaseScene extends SceneFragment {
 
     private boolean mViewCreated;
 

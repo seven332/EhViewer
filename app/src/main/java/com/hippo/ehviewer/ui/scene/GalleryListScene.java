@@ -43,7 +43,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -143,17 +142,6 @@ public final class GalleryListScene extends BaseScene
     private boolean mHasFirstRefresh = false;
 
     private int mNavCheckedId = 0;
-
-    @Override
-    public int getLaunchMode() {
-        return LAUNCH_MODE_SINGLE_TOP;
-    }
-
-    @Override
-    public int getSoftInputMode() {
-        return WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN |
-                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
-    }
 
     private void handleArgs(Bundle args) {
         if (args == null) {
