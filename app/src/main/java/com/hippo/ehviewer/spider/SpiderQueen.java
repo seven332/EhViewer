@@ -827,10 +827,6 @@ public class SpiderQueen implements Runnable {
                 mDownloadedPages.decrementAndGet();
             }
             if (oldState != STATE_FINISHED && state == STATE_FINISHED) {
-
-
-                Log.d("TAG", "mFinishedPages.incrementAndGet()");
-
                 mFinishedPages.incrementAndGet();
             } else if (oldState == STATE_FINISHED && state != STATE_FINISHED) {
                 mFinishedPages.decrementAndGet();
@@ -1039,9 +1035,6 @@ public class SpiderQueen implements Runnable {
 
             // Check exist for not force request
             if (!force && mSpiderDen.contain(index)) {
-
-                Log.d("TAG", "!force && mSpiderDen.contain(index)");
-
                 updatePageState(index , STATE_FINISHED);
                 return true;
             }
