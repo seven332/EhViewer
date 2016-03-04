@@ -30,6 +30,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -38,6 +39,7 @@ import android.transition.TransitionInflater;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -82,6 +84,7 @@ import com.hippo.widget.SearchBarMover;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -333,7 +336,34 @@ public class FavoritesScene extends BaseScene implements
     public View onCreateDrawerView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.drawer_list, container, false);
+        Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
         ListView listView = (ListView) view.findViewById(R.id.list_view);
+
+        toolbar.inflateMenu(R.menu.drawer_favorites);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.action_default_favorites_slot:
+                        String[] items = new String[12];
+                        items[0] = getString(R.string.let_me_select_favorites_slot);
+                        items[1] = getString(R.string.local_favorites);
+                        String[] favCat = Settings.getFavCat();
+                        System.arraycopy(favCat, 0, items, 2, 10);
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.default_favorites_slot)
+                                .setItems(items, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Settings.putDefaultFavSlot(which - 2);
+                                    }
+                                }).show();
+                        return true;
+                }
+                return false;
+            }
+        });
 
         mDrawerList = new ArrayList<>(12);
         mDrawerList.add(getString(R.string.local_favorites));
