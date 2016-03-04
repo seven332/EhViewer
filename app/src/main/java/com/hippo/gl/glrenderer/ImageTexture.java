@@ -73,7 +73,7 @@ public class ImageTexture implements Texture, Animatable {
     private final Image mImage;
     private int mUploadIndex = 0;
     private final Tile[] mTiles;  // Can be modified in different threads.
-                                  // Should be protected by "synchronized."
+    // Should be protected by "synchronized."
 
     private final int mWidth;
     private final int mHeight;
@@ -327,7 +327,7 @@ public class ImageTexture implements Texture, Animatable {
                 mImageBusy = false;
             }
 
-            if (interrupted || mNeedRecycle.get() || frameCount < 1) {
+            if (interrupted || mNeedRecycle.get() || frameCount <= 1) {
                 return;
             }
 
@@ -470,7 +470,7 @@ public class ImageTexture implements Texture, Animatable {
 
         mTiles = list.toArray(new Tile[list.size()]);
 
-        if (!mImage.isCompleted() || mImage.getFrameCount() >= 1) {
+        if (!mImage.isCompleted() || mImage.getFrameCount() > 1) {
             Thread thread = sThreadFactory.newThread(new AnimateRunnable());
             mAnimateThread.lazySet(thread);
             thread.start();
@@ -497,7 +497,7 @@ public class ImageTexture implements Texture, Animatable {
 
     @Override
     public void start() {
-        if (mImage.isRecycled() || (mImage.isCompleted() && mImage.getFrameCount() < 1)) {
+        if (mImage.isRecycled() || (mImage.isCompleted() && mImage.getFrameCount() <= 1)) {
             return;
         }
 
@@ -511,7 +511,7 @@ public class ImageTexture implements Texture, Animatable {
 
     @Override
     public void stop() {
-        if (!mImage.isRecycled() && (mImage.isCompleted() && mImage.getFrameCount() >= 1)) {
+        if (!mImage.isRecycled() && (mImage.isCompleted() && mImage.getFrameCount() > 1)) {
             Thread thread = mAnimateThread.getAndSet(null);
             if (null != thread) {
                 thread.interrupt();
