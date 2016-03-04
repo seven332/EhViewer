@@ -328,6 +328,7 @@
     <string name="move_favorites_dialog_title">Move favorites</string>
     <string name="default_favorites_slot">Default favorites slot</string>
     <string name="let_me_select">Let me select</string>
+    <string name="favorites_info">Favorites info</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">Something wrong happened</string>

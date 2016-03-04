@@ -89,6 +89,7 @@ import com.hippo.yorozuya.ViewUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO Bug for FavoritesScene and GalleryListScene, if list view of SearchBar expand first, RecyclerView padding top will be wrong
 // TODO Get favorite, modify favorite, add favorite, what a mess!
 public class FavoritesScene extends BaseScene implements
         EasyRecyclerView.OnItemClickListener, EasyRecyclerView.OnItemLongClickListener,
@@ -98,6 +99,11 @@ public class FavoritesScene extends BaseScene implements
     private static final long ANIMATE_TIME = 300L;
 
     private static final String KEY_URL_BUILDER = "url_builder";
+    private static final String KEY_SEARCH_MODE = "search_mode";
+    private static final String KEY_HAS_FIRST_REFRESH = "has_first_refresh";
+    private static final String KEY_FAV_COUNT_ARRAY = "fav_count_array";
+    private static final String KEY_ALL_COUNT = "all_count";
+    private static final String KEY_ALL_LIMIT = "all_limit";
 
     @Nullable
     @ViewLifeCircle
@@ -134,10 +140,19 @@ public class FavoritesScene extends BaseScene implements
     private EhClient mClient;
     @Nullable
     @WholeLifeCircle
-    private String[] mFavCat;
+    private String[] mFavCatArray;
     @Nullable
     @WholeLifeCircle
     private FavListUrlBuilder mUrlBuilder;
+
+    public int[] countArray; // Size 10
+    public int current; // -1 for error
+    public int limit; // -1 for error
+
+    @Nullable
+    private int[] mFavCountArray;
+    private int mAllCount = -1;
+    private int mAllLimit = -1;
 
     private boolean mHasFirstRefresh;
     private boolean mSearchMode;
@@ -168,7 +183,7 @@ public class FavoritesScene extends BaseScene implements
         super.onCreate(savedInstanceState);
 
         mClient = EhApplication.getEhClient(getContext());
-        mFavCat = Settings.getFavCat();
+        mFavCatArray = Settings.getFavCat();
 
         if (savedInstanceState == null) {
             onInit();
@@ -180,6 +195,7 @@ public class FavoritesScene extends BaseScene implements
     private void onInit() {
         mUrlBuilder = new FavListUrlBuilder();
         mUrlBuilder.setFavCat(Settings.getRecentFavCat());
+        mSearchMode = false;
     }
 
     private void onRestore(Bundle savedInstanceState) {
@@ -187,12 +203,22 @@ public class FavoritesScene extends BaseScene implements
         if (mUrlBuilder == null) {
             mUrlBuilder = new FavListUrlBuilder();
         }
+        mSearchMode = savedInstanceState.getBoolean(KEY_SEARCH_MODE);
+        mHasFirstRefresh = savedInstanceState.getBoolean(KEY_HAS_FIRST_REFRESH);
+        mFavCountArray = savedInstanceState.getIntArray(KEY_FAV_COUNT_ARRAY);
+        mAllCount = savedInstanceState.getInt(KEY_ALL_COUNT);
+        mAllLimit = savedInstanceState.getInt(KEY_ALL_LIMIT);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_URL_BUILDER, mUrlBuilder);
+        outState.putBoolean(KEY_SEARCH_MODE, mSearchMode);
+        outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
+        outState.putIntArray(KEY_FAV_COUNT_ARRAY, mFavCountArray);
+        outState.putInt(KEY_ALL_COUNT, mAllCount);
+        outState.putInt(KEY_ALL_LIMIT, mAllLimit);
     }
 
     @Override
@@ -200,7 +226,7 @@ public class FavoritesScene extends BaseScene implements
         super.onDestroy();
 
         mClient = null;
-        mFavCat = null;
+        mFavCatArray = null;
         mUrlBuilder = null;
     }
 
@@ -251,6 +277,12 @@ public class FavoritesScene extends BaseScene implements
         mFabLayout.setHidePrimaryFab(true);
         mFabLayout.setOnClickFabListener(this);
 
+        // Restore search mode
+        if (mSearchMode) {
+            mSearchMode = false;
+            enterSearchMode(false);
+        }
+
         // Only refresh for the first time
         if (!mHasFirstRefresh) {
             mHasFirstRefresh = true;
@@ -260,10 +292,10 @@ public class FavoritesScene extends BaseScene implements
         return view;
     }
 
-    // keyword of mUrlBuilder, fav cat of mUrlBuilder, mFavCat.
+    // keyword of mUrlBuilder, fav cat of mUrlBuilder, mFavCatArray.
     // They changed, call it
     private void updateSearchBar() {
-        if (mUrlBuilder == null || mSearchBar == null || mFavCat == null) {
+        if (mUrlBuilder == null || mSearchBar == null || mFavCatArray == null) {
             return;
         }
 
@@ -271,7 +303,7 @@ public class FavoritesScene extends BaseScene implements
         int favCat = mUrlBuilder.getFavCat();
         String favCatName;
         if (favCat >= 0 && favCat < 10) {
-            favCatName = mFavCat[favCat];
+            favCatName = mFavCatArray[favCat];
         } else if (favCat == FavListUrlBuilder.FAV_CAT_LOCAL) {
             favCatName = getString(R.string.local_favorites);
         } else {
@@ -331,6 +363,22 @@ public class FavoritesScene extends BaseScene implements
         mOldKeyword = null;
     }
 
+    private void showFavoritesInfoDialog() {
+        if (mFavCatArray == null || mFavCountArray == null) {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(mAllCount).append("/").append(mAllLimit).append("\n");
+        for (int i = 0, n = 10; i < n; i++) {
+            sb.append(mFavCatArray[i]).append(": ").append(mFavCountArray[i]).append("\n");
+        }
+
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.favorites_info)
+                .setMessage(sb.toString())
+                .show();
+    }
 
     @Override
     public View onCreateDrawerView(LayoutInflater inflater,
@@ -345,6 +393,9 @@ public class FavoritesScene extends BaseScene implements
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 switch (id) {
+                    case R.id.action_info:
+                        showFavoritesInfoDialog();
+                        return true;
                     case R.id.action_default_favorites_slot:
                         String[] items = new String[12];
                         items[0] = getString(R.string.let_me_select);
@@ -368,8 +419,8 @@ public class FavoritesScene extends BaseScene implements
         mDrawerList = new ArrayList<>(12);
         mDrawerList.add(getString(R.string.local_favorites));
         mDrawerList.add(getString(R.string.cloud_favorites));
-        if (mFavCat != null) {
-            for (String favCat: mFavCat) {
+        if (mFavCatArray != null) {
+            for (String favCat: mFavCatArray) {
                 mDrawerList.add(favCat);
             }
         }
@@ -686,15 +737,23 @@ public class FavoritesScene extends BaseScene implements
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId)) {
 
-            if (mFavCat != null && mDrawerList != null) {
+            if (mFavCatArray != null && mDrawerList != null) {
                 for (int i = 0; i < 10; i++) {
-                    mFavCat[i] = result.catArray[i];
+                    mFavCatArray[i] = result.catArray[i];
                     mDrawerList.set(i + 2, result.catArray[i]);
                 }
 
                 if (mDrawerAdapter != null) {
                     mDrawerAdapter.notifyDataSetChanged();
                 }
+            }
+
+            mFavCountArray = result.countArray;
+            if (result.current != -1) {
+                mAllCount = result.current;
+            }
+            if (result.limit != -1) {
+                mAllLimit = result.limit;
             }
 
             updateSearchBar();
