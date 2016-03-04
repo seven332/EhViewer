@@ -223,6 +223,17 @@ public final class Util {
     }
   }
 
+  /** Returns a SHA-256 hash of {@code s}. */
+  public static ByteString sha256(ByteString s) {
+    try {
+      MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+      byte[] sha1Bytes = messageDigest.digest(s.toByteArray());
+      return ByteString.of(sha1Bytes);
+    } catch (NoSuchAlgorithmException e) {
+      throw new AssertionError(e);
+    }
+  }
+
   /** Returns an immutable copy of {@code list}. */
   public static <T> List<T> immutableList(List<T> list) {
     return Collections.unmodifiableList(new ArrayList<>(list));
@@ -275,11 +286,13 @@ public final class Util {
     return result;
   }
 
-  public static String hostHeader(HttpUrl url) {
-    // TODO: square braces for IPv6 ?
-    return url.port() != HttpUrl.defaultPort(url.scheme())
-        ? url.host() + ":" + url.port()
+  public static String hostHeader(HttpUrl url, boolean includeDefaultPort) {
+    String host = url.host().contains(":")
+        ? "[" + url.host() + "]"
         : url.host();
+    return includeDefaultPort || url.port() != HttpUrl.defaultPort(url.scheme())
+        ? host + ":" + url.port()
+        : host;
   }
 
   /** Returns {@code s} with control characters and non-ASCII characters replaced with '?'. */
