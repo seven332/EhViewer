@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 
 import com.hippo.app.ListCheckBoxDialogBuilder;
@@ -27,6 +28,11 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.dao.DownloadLabelRaw;
+import com.hippo.ehviewer.download.DownloadManager;
+import com.hippo.ehviewer.download.DownloadService;
+
+import java.util.List;
 
 public final class CommonOperations {
 
@@ -63,10 +69,10 @@ public final class CommonOperations {
                         public void onItemClick(ListCheckBoxDialogBuilder builder, AlertDialog dialog, int position) {
                             int slot = position - 1;
                             doAddToFavorites(activity, galleryInfo, slot, listener);
-                            if (!builder.isChecked()) {
-                                Settings.putDefaultFavSlot(Settings.INVALID_DEFAULT_FAV_SLOT);
-                            } else {
+                            if (builder.isChecked()) {
                                 Settings.putDefaultFavSlot(slot);
+                            } else {
+                                Settings.putDefaultFavSlot(Settings.INVALID_DEFAULT_FAV_SLOT);
                             }
                         }
                     }, activity.getString(R.string.remember_favorite_slot), false)
@@ -83,5 +89,64 @@ public final class CommonOperations {
         request.setArgs(galleryInfo.gid, galleryInfo.token, -1, "");
         request.setCallback(listener);
         client.execute(request);
+    }
+
+    public static void startDownload(final Activity activity, final GalleryInfo galleryInfo) {
+        final DownloadManager dm = EhApplication.getDownloadManager(activity);
+
+        boolean justStart = dm.containDownloadInfo(galleryInfo.gid);
+        String label = null;
+        if (!justStart && Settings.getHasDefaultDownloadLabel()) {
+            label = Settings.getDefaultDownloadLabel();
+            justStart = label == null || dm.containLabel(label);
+        }
+
+        if (justStart) {
+            // Already in download list or get default label
+            Intent intent = new Intent(activity, DownloadService.class);
+            intent.setAction(DownloadService.ACTION_START);
+            intent.putExtra(DownloadService.KEY_LABEL, label);
+            intent.putExtra(DownloadService.KEY_GALLERY_INFO, galleryInfo);
+            activity.startService(intent);
+        } else {
+            // Let use chose label
+            List<DownloadLabelRaw> list = dm.getLabelList();
+            final String[] items = new String[list.size() + 1];
+            items[0] = activity.getString(R.string.default_download_label_name);
+            for (int i = 0, n = list.size(); i < n; i++) {
+                items[i + 1] = list.get(i).getLabel();
+            }
+
+            new ListCheckBoxDialogBuilder(activity, items,
+                    new ListCheckBoxDialogBuilder.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(ListCheckBoxDialogBuilder builder, AlertDialog dialog, int position) {
+                            String label;
+                            if (position == 0) {
+                                label = null;
+                            } else {
+                                label = items[position];
+                                if (!dm.containLabel(label)) {
+                                    label = null;
+                                }
+                            }
+                            // Start download
+                            Intent intent = new Intent(activity, DownloadService.class);
+                            intent.setAction(DownloadService.ACTION_START);
+                            intent.putExtra(DownloadService.KEY_LABEL, label);
+                            intent.putExtra(DownloadService.KEY_GALLERY_INFO, galleryInfo);
+                            activity.startService(intent);
+                            // Save settings
+                            if (builder.isChecked()) {
+                                Settings.putHasDefaultDownloadLabel(true);
+                                Settings.putDefaultDownloadLabel(label);
+                            } else {
+                                Settings.putHasDefaultDownloadLabel(false);
+                            }
+                        }
+                    }, activity.getString(R.string.remember_download_label), false)
+                    .setTitle(R.string.download)
+                    .show();
+        }
     }
 }

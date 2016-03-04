@@ -20,7 +20,6 @@ import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -60,7 +59,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
-import com.hippo.ehviewer.download.DownloadService;
+import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.widget.FitPaddingLayout;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
@@ -460,13 +459,10 @@ public final class GalleryListScene extends BaseScene
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0: // Download
-                                Intent intent = new Intent(getActivity(), DownloadService.class);
-                                intent.setAction(DownloadService.ACTION_START);
-                                intent.putExtra(DownloadService.KEY_GALLERY_INFO, gi);
-                                getActivity().startService(intent);
+                                CommonOperations.startDownload(getActivity(), gi);
                                 break;
                             case 1: // Favorites
-                                // TODO
+                                CommonOperations.addToFavorites(getActivity(), gi, new addToFavoriteListener());
                                 break;
                         }
                     }
@@ -891,5 +887,21 @@ public final class GalleryListScene extends BaseScene
         public boolean isInstance(SceneFragment scene) {
             return scene instanceof GalleryListScene;
         }
+    }
+
+    private class addToFavoriteListener implements EhClient.Callback<Void> {
+
+        @Override
+        public void onSuccess(Void result) {
+            Toast.makeText(getContext(), R.string.add_to_favorite_success, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            Toast.makeText(getContext(), R.string.add_to_favorite_failure, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancel() {}
     }
 }

@@ -71,7 +71,6 @@ import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
-import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
@@ -992,10 +991,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 galleryInfo = mGalleryDetail;
             }
             if (galleryInfo != null) {
-                Intent intent = new Intent(getActivity(), DownloadService.class);
-                intent.setAction(DownloadService.ACTION_START);
-                intent.putExtra(DownloadService.KEY_GALLERY_INFO, galleryInfo);
-                getActivity().startService(intent);
+                CommonOperations.startDownload(getActivity(), galleryInfo);
             }
         } else if (mRead == v) {
             GalleryInfo galleryInfo = null;

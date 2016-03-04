@@ -347,7 +347,7 @@ public class FavoritesScene extends BaseScene implements
                 switch (id) {
                     case R.id.action_default_favorites_slot:
                         String[] items = new String[12];
-                        items[0] = getString(R.string.let_me_select_favorites_slot);
+                        items[0] = getString(R.string.let_me_select);
                         items[1] = getString(R.string.local_favorites);
                         String[] favCat = Settings.getFavCat();
                         System.arraycopy(favCat, 0, items, 2, 10);

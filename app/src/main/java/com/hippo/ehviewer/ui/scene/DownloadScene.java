@@ -308,6 +308,35 @@ public class DownloadScene extends ToolbarScene
                     case R.id.action_settings:
                         startScene(new Announcer(DownloadLabelScene.class));
                         return true;
+                    case R.id.action_default_download_label:
+                        DownloadManager dm = EhApplication.getDownloadManager(getContext());
+                        List<DownloadLabelRaw> list = dm.getLabelList();
+                        final String[] items = new String[list.size() + 2];
+                        items[0] = getString(R.string.let_me_select);
+                        items[1] = getString(R.string.default_download_label_name);
+                        for (int i = 0, n = list.size(); i < n; i++) {
+                            items[i + 2] = list.get(i).getLabel();
+                        }
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.default_download_label)
+                                .setItems(items, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (which == 0) {
+                                            Settings.putHasDefaultDownloadLabel(false);
+                                        } else {
+                                            Settings.putHasDefaultDownloadLabel(true);
+                                            String label;
+                                            if (which == 1) {
+                                                label = null;
+                                            } else {
+                                                label = items[which];
+                                            }
+                                            Settings.putDefaultDownloadLabel(label);
+                                        }
+                                    }
+                                }).show();
+                        return true;
                 }
                 return false;
             }

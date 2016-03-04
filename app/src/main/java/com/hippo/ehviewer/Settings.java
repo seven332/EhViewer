@@ -273,6 +273,28 @@ public class Settings {
         putString(KEY_RECENT_DOWNLOAD_LABEL, value);
     }
 
+    private static final String KEY_HAS_DEFAULT_DOWNLOAD_LABEL = "has_default_download_label";
+    private static final boolean DEFAULT_HAS_DOWNLOAD_LABEL = false;
+
+    public static boolean getHasDefaultDownloadLabel() {
+        return getBoolean(KEY_HAS_DEFAULT_DOWNLOAD_LABEL, DEFAULT_HAS_DOWNLOAD_LABEL);
+    }
+
+    public static void putHasDefaultDownloadLabel(boolean hasDefaultDownloadLabel) {
+        putBoolean(KEY_HAS_DEFAULT_DOWNLOAD_LABEL, hasDefaultDownloadLabel);
+    }
+
+    private static final String KEY_DEFAULT_DOWNLOAD_LABEL = "default_download_label";
+    private static final String DEFAULT_DOWNLOAD_LABEL = null;
+
+    public static String getDefaultDownloadLabel() {
+        return getString(KEY_DEFAULT_DOWNLOAD_LABEL, DEFAULT_DOWNLOAD_LABEL);
+    }
+
+    public static void putDefaultDownloadLabel(String value) {
+        putString(KEY_DEFAULT_DOWNLOAD_LABEL, value);
+    }
+
     /********************
      ****** Favorites
      ********************/

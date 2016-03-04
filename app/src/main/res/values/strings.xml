@@ -254,6 +254,8 @@
     <string name="download_service_label">EhViewer Download Service</string>
     <string name="download_speed_text">%s</string>
     <string name="download_speed_text_2">%1$s, %2$s</string>
+    <string name="remember_download_label">Remember download label</string>
+    <string name="default_download_label">Default download label</string>
 
     <!-- Download label -->
     <string name="no_download_label">No labels</string>
@@ -325,7 +327,7 @@
     <string name="delete_favorites_dialog_message">Delete %d items from favorites</string>
     <string name="move_favorites_dialog_title">Move favorites</string>
     <string name="default_favorites_slot">Default favorites slot</string>
-    <string name="let_me_select_favorites_slot">Let me select when necessary</string>
+    <string name="let_me_select">Let me select</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">Something wrong happened</string>

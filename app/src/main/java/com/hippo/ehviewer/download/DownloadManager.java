@@ -174,6 +174,10 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         return false;
     }
 
+    public boolean containDownloadInfo(int gid) {
+        return mAllInfoMap.indexOfKey(gid) >= 0;
+    }
+
     @NonNull
     public List<DownloadLabelRaw> getLabelList() {
         return mLabelList;
