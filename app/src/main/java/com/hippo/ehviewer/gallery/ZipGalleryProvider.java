@@ -175,7 +175,7 @@ public class ZipGalleryProvider extends GalleryProvider implements Runnable {
                 ZipEntry zipEntry = zipFile.getEntry(filenames.get(index));
                 if (zipEntry != null) {
                     InputStream is = zipFile.getInputStream(zipEntry);
-                    Image image = Image.decode(is, false);
+                    Image image = Image.decode(is, true);
                     mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                     if (image != null) {
                         notifyPageSucceed(index, image);

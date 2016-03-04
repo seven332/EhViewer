@@ -126,19 +126,17 @@ public class GalleryPageView extends GLFrameLayout {
     }
 
     private void unbindImage() {
-        Texture texture = mImage.getTexture();
+        ImageTexture texture = mImage.getImageTexture();
         if (texture != null) {
-            mImage.setTexture(null);
-            if (texture instanceof ImageTexture) {
-                ((ImageTexture) texture).recycle();
-            }
+            mImage.setImageTexture(null);
+            texture.recycle();
         }
     }
 
     public void setImage(ImageTexture imageTexture) {
         unbindImage();
         if (imageTexture != null) {
-            mImage.setTexture(imageTexture);
+            mImage.setImageTexture(imageTexture);
         }
     }
 

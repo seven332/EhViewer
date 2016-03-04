@@ -148,7 +148,7 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
 
             try {
                 InputStream is = new FileInputStream(new File(mDir, files[index]));
-                Image image = Image.decode(is, false);
+                Image image = Image.decode(is, true);
                 mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                 if (image != null) {
                     notifyPageSucceed(index, image);

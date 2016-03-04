@@ -22,6 +22,7 @@ import android.support.annotation.IntDef;
 
 import com.hippo.gl.anim.AlphaAnimation;
 import com.hippo.gl.glrenderer.GLCanvas;
+import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.glrenderer.Texture;
 import com.hippo.gl.view.GLView;
 import com.hippo.yorozuya.AnimationUtils;
@@ -31,7 +32,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 
-public class ImageView extends GLView {
+public class ImageView extends GLView implements ImageTexture.Callback {
 
     @IntDef({SCALE_ORIGIN, SCALE_FIT_WIDTH, SCALE_FIT_HEIGHT, SCALE_FIT, SCALE_FIXED})
     @Retention(RetentionPolicy.SOURCE)
@@ -60,7 +61,7 @@ public class ImageView extends GLView {
 
     private static final long ALPHA_ANIMATION_DURING = 300L;
 
-    private Texture mTexture;
+    private ImageTexture mImageTexture;
     private int mTextureWidth;
     private int mTextureHeight;
 
@@ -115,18 +116,18 @@ public class ImageView extends GLView {
     @Override
     protected int getSuggestedMinimumWidth() {
         return Math.max(super.getSuggestedMinimumWidth(),
-                mTexture == null ? 0 : mTextureWidth);
+                mImageTexture == null ? 0 : mTextureWidth);
     }
 
     @Override
     protected int getSuggestedMinimumHeight() {
         return Math.max(super.getSuggestedMinimumHeight(),
-                mTexture == null ? 0 : mTextureHeight);
+                mImageTexture == null ? 0 : mTextureHeight);
     }
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
-        if (mTexture == null) {
+        if (mImageTexture == null) {
             super.onMeasure(widthSpec, heightSpec);
         } else {
             float ratio = (float) mTextureWidth / mTextureHeight;
@@ -172,10 +173,19 @@ public class ImageView extends GLView {
     @Override
     protected void onPositionInRootChanged(int x, int y, int oldX, int oldY) {
         mPositionInRootDirty = true;
+
+        if (mImageTexture != null) {
+            getValidRect(mValidRect);
+            if (!mValidRect.isEmpty()) {
+                mImageTexture.start();
+            } else {
+                mImageTexture.stop();
+            }
+        }
     }
 
     public void getScaleDefault(float[] scaleDefault) {
-        if (mTexture == null) {
+        if (mImageTexture == null) {
             return;
         }
 
@@ -192,12 +202,18 @@ public class ImageView extends GLView {
         Arrays.sort(scaleDefault);
     }
 
-    public void setTexture(Texture texture) {
-        mTexture = texture;
+    public void setImageTexture(ImageTexture imageTexture) {
+        // Remove callback
+        if (mImageTexture != null) {
+            mImageTexture.setCallback(null);
+        }
 
-        if (texture != null) {
-            mTextureWidth = texture.getWidth();
-            mTextureHeight = texture.getHeight();
+        mImageTexture = imageTexture;
+
+        if (imageTexture != null) {
+            imageTexture.setCallback(this);
+            mTextureWidth = imageTexture.getWidth();
+            mTextureHeight = imageTexture.getHeight();
             // Avoid zero and negative
             if (mTextureWidth <= 0) {
                 mTextureWidth = 1;
@@ -219,12 +235,12 @@ public class ImageView extends GLView {
         mPositionInRootDirty = true;
     }
 
-    public Texture getTexture() {
-        return mTexture;
+    public ImageTexture getImageTexture() {
+        return mImageTexture;
     }
 
     public boolean isLoaded() {
-        return mTexture != null;
+        return mImageTexture != null;
     }
 
     public boolean canFlingVertically() {
@@ -351,7 +367,7 @@ public class ImageView extends GLView {
         int screenWidth = getWidth();
         int screenHeight = getHeight();
 
-        if (mTexture == null || screenWidth == 0 || screenHeight == 0) {
+        if (mImageTexture == null || screenWidth == 0 || screenHeight == 0) {
             mScaleOffsetDirty = true;
             return;
         }
@@ -530,8 +546,8 @@ public class ImageView extends GLView {
         float left = (focusX - ((focusX - dst.left) * scale));
         float top = (focusY - ((focusY - dst.top) * scale));
         dst.set(left, top,
-                (left + (mTexture.getWidth() * newScale)),
-                (top + (mTexture.getHeight() * newScale)));
+                (left + (mImageTexture.getWidth() * newScale)),
+                (top + (mImageTexture.getHeight() * newScale)));
 
         // adjust position
         adjustPosition();
@@ -541,8 +557,8 @@ public class ImageView extends GLView {
     }
 
     private void applyPositionInRoot() {
-        int width = mTexture.getWidth();
-        int height = mTexture.getHeight();
+        int width = mImageTexture.getWidth();
+        int height = mImageTexture.getHeight();
         RectF dst = mDst;
         RectF dstActual = mDstActual;
         RectF srcActual = mSrcActual;
@@ -569,7 +585,7 @@ public class ImageView extends GLView {
 
     @Override
     public void onRender(GLCanvas canvas) {
-        Texture texture = mTexture;
+        Texture texture = mImageTexture;
         if (texture == null) {
             return;
         }
@@ -585,5 +601,10 @@ public class ImageView extends GLView {
         if (!mSrcActual.isEmpty()) {
             texture.draw(canvas, mSrcActual, mDstActual);
         }
+    }
+
+    @Override
+    public void invalidateImageTexture(ImageTexture who) {
+        invalidate();
     }
 }

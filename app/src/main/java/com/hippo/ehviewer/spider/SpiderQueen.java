@@ -1176,6 +1176,7 @@ public class SpiderQueen implements Runnable {
 
                 try {
                     pipe.obtain();
+                    // TODO how to keep stream open
                     Image image = Image.decode(pipe.open(), false);
                     if (image != null) {
                         mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);

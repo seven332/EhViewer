@@ -19,6 +19,7 @@ package com.hippo.gl.glrenderer;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
+import android.graphics.drawable.Animatable;
 import android.os.SystemClock;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -26,17 +27,18 @@ import android.support.annotation.NonNull;
 import com.hippo.gl.annotation.RenderThread;
 import com.hippo.gl.view.GLRoot;
 import com.hippo.image.Image;
-import com.hippo.yorozuya.InfiniteThreadExecutor;
 import com.hippo.yorozuya.PVLock;
 import com.hippo.yorozuya.PriorityThreadFactory;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.ref.WeakReference;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class ImageTexture implements Texture {
+public class ImageTexture implements Texture, Animatable {
 
     @IntDef({TILE_SMALL, TILE_LARGE})
     @Retention(RetentionPolicy.SOURCE)
@@ -61,7 +63,7 @@ public class ImageTexture implements Texture {
 
     private static final Bitmap sSmallUploadBitmap;
     private static final Bitmap sLargeUploadBitmap;
-    private static final InfiniteThreadExecutor sThreadExecutor;
+    private static final PriorityThreadFactory sThreadFactory;
     private static final PVLock sPVLock;
 
     private static Tile sSmallFreeTileHead = null;
@@ -79,15 +81,18 @@ public class ImageTexture implements Texture {
     private final RectF mSrcRect = new RectF();
     private final RectF mDestRect = new RectF();
 
-    private volatile boolean mFrameDirty = false;
+    private final AtomicBoolean mFrameDirty = new AtomicBoolean();
+    private boolean mImageBusy = false;
+    private final AtomicBoolean mNeedRecycle = new AtomicBoolean();
 
+    private final AtomicReference<Thread> mAnimateThread = new AtomicReference<>();
+
+    private WeakReference<Callback> mCallback;
 
     static {
         sSmallUploadBitmap = Bitmap.createBitmap(SMALL_TILE_SIZE, SMALL_TILE_SIZE, Bitmap.Config.ARGB_8888);
         sLargeUploadBitmap = Bitmap.createBitmap(LARGE_TILE_SIZE, LARGE_TILE_SIZE, Bitmap.Config.ARGB_8888);
-        sThreadExecutor = new InfiniteThreadExecutor(3000, new LinkedBlockingQueue<Runnable>(),
-                new PriorityThreadFactory(ImageTexture.class.getSimpleName(),
-                        android.os.Process.THREAD_PRIORITY_BACKGROUND));
+        sThreadFactory = new PriorityThreadFactory("ImageTexture$AnimateTask", android.os.Process.THREAD_PRIORITY_BACKGROUND);
         sPVLock = new PVLock(3);
     }
 
@@ -177,31 +182,29 @@ public class ImageTexture implements Texture {
         protected Bitmap onGetBitmap() {
             final Image image = this.image;
             if (image != null) {
-                synchronized (image) {
-                    int srcX;
-                    int dstX;
-                    if (offsetX - borderSize < 0) {
-                        srcX = 0;
-                        dstX = borderSize - offsetX;
-                    } else {
-                        srcX = offsetX - borderSize;
-                        dstX = 0;
-                    }
-                    int srcY;
-                    int dstY;
-                    if (offsetY - borderSize < 0) {
-                        srcY = 0;
-                        dstY = borderSize - offsetY;
-                    } else {
-                        srcY = offsetY - borderSize;
-                        dstY = 0;
-                    }
-
-                    image.render(srcX, srcY, uploadBitmap, dstX, dstY,
-                            Math.min(image.getWidth() - srcX, tileSize - dstX),
-                            Math.min(image.getHeight() - srcY, tileSize - dstY),
-                            true, Color.TRANSPARENT);
+                int srcX;
+                int dstX;
+                if (offsetX - borderSize < 0) {
+                    srcX = 0;
+                    dstX = borderSize - offsetX;
+                } else {
+                    srcX = offsetX - borderSize;
+                    dstX = 0;
                 }
+                int srcY;
+                int dstY;
+                if (offsetY - borderSize < 0) {
+                    srcY = 0;
+                    dstY = borderSize - offsetY;
+                } else {
+                    srcY = offsetY - borderSize;
+                    dstY = 0;
+                }
+
+                image.render(srcX, srcY, uploadBitmap, dstX, dstY,
+                        Math.min(image.getWidth() - srcX, tileSize - dstX),
+                        Math.min(image.getHeight() - srcY, tileSize - dstY),
+                        true, Color.TRANSPARENT);
             }
             return uploadBitmap;
         }
@@ -216,22 +219,10 @@ public class ImageTexture implements Texture {
             return false;
         }
 
-        private void invalidateInternal() {
+        private void invalidate() {
             invalidateContent();
             image = null;
             uploadBitmap = null;
-        }
-
-        @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-        public void invalidate() {
-            final Image image = this.image;
-            if (image != null) {
-                synchronized (image) {
-                    invalidateInternal();
-                }
-            } else {
-                invalidateInternal();
-            }
         }
 
         public void free() {
@@ -287,6 +278,131 @@ public class ImageTexture implements Texture {
                 result.nextFreeTile = null;
             }
             return result;
+        }
+    }
+
+    private class AnimateRunnable implements Runnable {
+
+        public void doRun() {
+            long lastTime = SystemClock.currentThreadTimeMillis();
+
+            synchronized (mImage) {
+                // Check recycled
+                if (mImage.isRecycled()) {
+                    return;
+                }
+                // Check image busy
+                if (mImageBusy) {
+                    // Image is busy, means it is recycling
+                    return;
+                }
+                if (mNeedRecycle.get()) {
+                    // Need recycle
+                    return;
+                }
+                // Obtain image
+                mImageBusy = true;
+            }
+
+            boolean interrupted = Thread.currentThread().isInterrupted();
+
+            if (!mImage.isCompleted()) {
+                if (!interrupted) {
+                    try {
+                        sPVLock.p();
+                    } catch (InterruptedException e) {
+                        interrupted = true;
+                    }
+                    if (!interrupted && !mNeedRecycle.get()) {
+                        mImage.complete();
+                    }
+                    sPVLock.v();
+                }
+            }
+
+            int frameCount = mImage.getFrameCount();
+
+            synchronized (mImage) {
+                // Release image
+                mImageBusy = false;
+            }
+
+            if (interrupted || mNeedRecycle.get() || frameCount < 1) {
+                return;
+            }
+
+            while (!Thread.currentThread().isInterrupted()) {
+                // Obtain
+                synchronized (mImage) {
+                    // Check recycled
+                    if (mImage.isRecycled()) {
+                        return;
+                    }
+                    // Check image busy
+                    if (mImageBusy) {
+                        // Image is busy, means it is recycling
+                        return;
+                    }
+                    if (mNeedRecycle.get()) {
+                        // Need recycle
+                        return;
+                    }
+                    // Obtain image
+                    mImageBusy = true;
+                }
+
+                mImage.advance();
+                long delay = mImage.getDelay();
+                long time = System.currentTimeMillis();
+                delay -= time - lastTime;
+                lastTime = time;
+                mFrameDirty.lazySet(true);
+                invalidateSelf();
+
+                synchronized (mImage) {
+                    // Release image
+                    mImageBusy = false;
+                }
+
+                if (delay > 0) {
+                    try {
+                        Thread.sleep(delay);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            doRun();
+
+            while (mNeedRecycle.get()) {
+                // Obtain
+                synchronized (mImage) {
+                    // Check recycled
+                    if (mImage.isRecycled()) {
+                        break;
+                    }
+                    // Check image busy
+                    if (mImageBusy) {
+                        // Image is busy, means it is recycling
+                        break;
+                    }
+                    // Obtain image
+                    mImageBusy = true;
+                }
+
+                mImage.recycle();
+
+                synchronized (mImage) {
+                    // Release image
+                    mImageBusy = false;
+                }
+            }
+
+            mAnimateThread.lazySet(null);
         }
     }
 
@@ -354,12 +470,60 @@ public class ImageTexture implements Texture {
 
         mTiles = list.toArray(new Tile[list.size()]);
 
-        /*
-        if (image instanceof AnimatedImage) {
-            sThreadExecutor.execute(new DecodeTask());
+        if (!mImage.isCompleted() || mImage.getFrameCount() >= 1) {
+            Thread thread = sThreadFactory.newThread(new AnimateRunnable());
+            mAnimateThread.lazySet(thread);
+            thread.start();
         }
-        */
     }
+
+    public final void setCallback(Callback cb) {
+        mCallback = new WeakReference<>(cb);
+    }
+
+    public Callback getCallback() {
+        if (mCallback != null) {
+            return mCallback.get();
+        }
+        return null;
+    }
+
+    public void invalidateSelf() {
+        final Callback callback = getCallback();
+        if (callback != null) {
+            callback.invalidateImageTexture(this);
+        }
+    }
+
+    @Override
+    public void start() {
+        if (mImage.isRecycled() || (mImage.isCompleted() && mImage.getFrameCount() < 1)) {
+            return;
+        }
+
+        Thread thread = mAnimateThread.get();
+        if (thread == null) {
+            thread = sThreadFactory.newThread(new AnimateRunnable());
+            mAnimateThread.set(thread);
+            thread.start();
+        }
+    }
+
+    @Override
+    public void stop() {
+        if (!mImage.isRecycled() && (mImage.isCompleted() && mImage.getFrameCount() >= 1)) {
+            Thread thread = mAnimateThread.getAndSet(null);
+            if (null != thread) {
+                thread.interrupt();
+            }
+        }
+    }
+
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
+
 
     private boolean uploadNextTile(GLCanvas canvas) {
         if (mUploadIndex == mTiles.length) return true;
@@ -417,12 +581,9 @@ public class ImageTexture implements Texture {
 
     @RenderThread
     private void syncFrame() {
-        if (mFrameDirty) {
-            mFrameDirty = false;
-
+        if (mFrameDirty.getAndSet(false)) {
             // invalid tiles
-            for (int i = 0, n = mTiles.length; i < n; i++) {
-                Tile tile = mTiles[i];
+            for (Tile tile : mTiles) {
                 int width = tile.mWidth;
                 int height = tile.mHeight;
                 tile.invalidateContent();
@@ -445,16 +606,13 @@ public class ImageTexture implements Texture {
         float scaleX = (float) w / mWidth;
         float scaleY = (float) h / mHeight;
 
-        synchronized (mImage) {
-            syncFrame();
-            for (int i = 0, n = mTiles.length; i < n; ++i) {
-                Tile t = mTiles[i];
-                src.set(0, 0, t.contentWidth, t.contentHeight);
-                src.offset(t.offsetX, t.offsetY);
-                mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
-                src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
-                canvas.drawTexture(t, src, dest);
-            }
+        syncFrame();
+        for (Tile t : mTiles) {
+            src.set(0, 0, t.contentWidth, t.contentHeight);
+            src.offset(t.offsetX, t.offsetY);
+            mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
+            src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
+            canvas.drawTexture(t, src, dest);
         }
     }
 
@@ -470,19 +628,16 @@ public class ImageTexture implements Texture {
         float scaleX = target.width() / source.width();
         float scaleY = target.height() / source.height();
 
-        synchronized (mImage) {
-            syncFrame();
-            for (int i = 0, n = mTiles.length; i < n; ++i) {
-                Tile t = mTiles[i];
-                src.set(0, 0, t.contentWidth, t.contentHeight);
-                src.offset(t.offsetX, t.offsetY);
-                if (!src.intersect(source)) {
-                    continue;
-                }
-                mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
-                src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
-                canvas.drawTexture(t, src, dest);
+        syncFrame();
+        for (Tile t : mTiles) {
+            src.set(0, 0, t.contentWidth, t.contentHeight);
+            src.offset(t.offsetX, t.offsetY);
+            if (!src.intersect(source)) {
+                continue;
             }
+            mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
+            src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
+            canvas.drawTexture(t, src, dest);
         }
     }
 
@@ -495,16 +650,13 @@ public class ImageTexture implements Texture {
         float scaleX = (float) width / mWidth;
         float scaleY = (float) height / mHeight;
 
-        synchronized (mImage) {
-            syncFrame();
-            for (int i = 0, n = mTiles.length; i < n; ++i) {
-                Tile t = mTiles[i];
-                src.set(0, 0, t.contentWidth, t.contentHeight);
-                src.offset(t.offsetX, t.offsetY);
-                mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
-                src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
-                canvas.drawMixed(t, color, ratio, src, dest);
-            }
+        syncFrame();
+        for (Tile t : mTiles) {
+            src.set(0, 0, t.contentWidth, t.contentHeight);
+            src.offset(t.offsetX, t.offsetY);
+            mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
+            src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
+            canvas.drawMixed(t, color, ratio, src, dest);
         }
     }
 
@@ -519,19 +671,16 @@ public class ImageTexture implements Texture {
         float scaleX = target.width() / source.width();
         float scaleY = target.height() / source.height();
 
-        synchronized (mImage) {
-            syncFrame();
-            for (int i = 0, n = mTiles.length; i < n; ++i) {
-                Tile t = mTiles[i];
-                src.set(0, 0, t.contentWidth, t.contentHeight);
-                src.offset(t.offsetX, t.offsetY);
-                if (!src.intersect(source)) {
-                    continue;
-                }
-                mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
-                src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
-                canvas.drawMixed(t, color, ratio, src, dest);
+        syncFrame();
+        for (Tile t : mTiles) {
+            src.set(0, 0, t.contentWidth, t.contentHeight);
+            src.offset(t.offsetX, t.offsetY);
+            if (!src.intersect(source)) {
+                continue;
             }
+            mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
+            src.offset(t.borderSize - t.offsetX, t.borderSize - t.offsetY);
+            canvas.drawMixed(t, color, ratio, src, dest);
         }
     }
 
@@ -545,11 +694,37 @@ public class ImageTexture implements Texture {
     }
 
     public void recycle() {
-        for (int i = 0, n = mTiles.length; i < n; ++i) {
-            mTiles[i].free();
+        for (Tile mTile : mTiles) {
+            mTile.free();
         }
+
+        boolean recycleNow;
+
         synchronized (mImage) {
-            mImage.recycle();
+            if (!mImageBusy) {
+                recycleNow = true;
+                mImageBusy = true;
+            } else {
+                recycleNow = false;
+            }
         }
+
+        if (recycleNow) {
+            mImage.recycle();
+            synchronized (mImage) {
+                mImageBusy = false;
+            }
+        } else {
+            mNeedRecycle.set(true);
+        }
+
+        Thread thread = mAnimateThread.getAndSet(null);
+        if (null != thread) {
+            thread.interrupt();
+        }
+    }
+
+    public interface Callback {
+        void invalidateImageTexture(ImageTexture who);
     }
 }
