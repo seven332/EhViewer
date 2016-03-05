@@ -68,7 +68,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
     private GalleryPreviewAdapter mAdapter;
     @Nullable
     private GalleryPreviewHelper mHelper;
-    private int mGid = -1;
+    private long mGid = -1;
     private String mToken = null;
     private boolean mHasFirstRefresh = false;
 
@@ -89,7 +89,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
             return;
         }
 
-        mGid = args.getInt(KEY_GID, -1);
+        mGid = args.getLong(KEY_GID, -1);
         mToken = args.getString(KEY_TOKEN, null);
     }
 
@@ -98,7 +98,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
     }
 
     private void onRestore(@NonNull Bundle savedInstanceState) {
-        mGid = savedInstanceState.getInt(KEY_GID, -1);
+        mGid = savedInstanceState.getLong(KEY_GID, -1);
         mToken = savedInstanceState.getString(KEY_TOKEN, null);
         mHasFirstRefresh = savedInstanceState.getBoolean(KEY_HAS_FIRST_REFRESH);
     }
@@ -106,7 +106,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_GID, mGid);
+        outState.putLong(KEY_GID, mGid);
         outState.putString(KEY_TOKEN, mToken);
         outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
     }
@@ -313,10 +313,10 @@ public class GalleryPreviewsScene extends ToolbarScene {
     private static class GetLargePreviewSetListener extends EhCallback<GalleryPreviewsScene, Pair<LargePreviewSet, Integer>> {
 
         private final int mTaskId;
-        private final int mGid;
+        private final long mGid;
         private final int mPage;
 
-        public GetLargePreviewSetListener(Context context, int stageId, String sceneTag, int taskId, int gid, int page) {
+        public GetLargePreviewSetListener(Context context, int stageId, String sceneTag, int taskId, long gid, int page) {
             super(context, stageId, sceneTag);
             mTaskId = taskId;
             mGid = gid;

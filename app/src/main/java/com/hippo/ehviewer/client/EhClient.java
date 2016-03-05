@@ -156,19 +156,19 @@ public class EhClient {
                     case METHOD_GET_LARGE_PREVIEW_SET:
                         return EhEngine.getLargePreviewSet(this, mOkHttpClient, (String) params[0]);
                     case METHOD_GET_RATE_GALLERY:
-                        return EhEngine.rateGallery(this, mOkHttpClient, (Integer) params[0], (String) params[1], (Float) params[2]);
+                        return EhEngine.rateGallery(this, mOkHttpClient, (Long) params[0], (String) params[1], (Float) params[2]);
                     case METHOD_GET_COMMENT_GALLERY:
                         return EhEngine.commentGallery(this, mOkHttpClient, (String) params[0], (String) params[1]);
                     case METHOD_GET_GALLERY_TOKEN:
-                        return EhEngine.getGalleryToken(this, mOkHttpClient, (Integer) params[0], (String) params[1], (Integer) params[2]);
+                        return EhEngine.getGalleryToken(this, mOkHttpClient, (Long) params[0], (String) params[1], (Integer) params[2]);
                     case METHOD_GET_FAVORITES:
                         return EhEngine.getFavorites(this, mOkHttpClient, (String) params[0], (Boolean) params[1]);
                     case METHOD_ADD_FAVORITES:
-                        return EhEngine.addFavorites(this, mOkHttpClient, (Integer) params[0], (String) params[1], (Integer) params[2], (String) params[3]);
+                        return EhEngine.addFavorites(this, mOkHttpClient, (Long) params[0], (String) params[1], (Integer) params[2], (String) params[3]);
                     case METHOD_ADD_FAVORITES_RANGE:
-                        return EhEngine.addFavoritesRange(this, mOkHttpClient, (int[]) params[0], (String[]) params[1], (Integer) params[2]);
+                        return EhEngine.addFavoritesRange(this, mOkHttpClient, (long[]) params[0], (String[]) params[1], (Integer) params[2]);
                     case METHOD_MODIFY_FAVORITES:
-                        return EhEngine.modifyFavorites(this, mOkHttpClient, (String) params[0], (int[]) params[1], (Integer) params[2], (Boolean) params[3]);
+                        return EhEngine.modifyFavorites(this, mOkHttpClient, (String) params[0], (long[]) params[1], (Integer) params[2], (Boolean) params[3]);
                     case METHOD_GET_TORRENT_LIST:
                         return EhEngine.getTorrentList(this, mOkHttpClient, (String) params[0]);
                     default:

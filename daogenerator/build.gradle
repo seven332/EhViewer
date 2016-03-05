@@ -24,4 +24,6 @@ task executeDaoGenerator(type:JavaExec) {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile('de.greenrobot:greendao-generator:2.0.0')
+    compile('org.jboss.forge.roaster:roaster-api:2.18.2.Final')
+    compile('org.jboss.forge.roaster:roaster-jdt:2.18.2.Final')
 }

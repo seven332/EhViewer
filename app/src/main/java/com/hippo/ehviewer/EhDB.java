@@ -30,10 +30,10 @@ import com.hippo.ehviewer.dao.DaoMaster;
 import com.hippo.ehviewer.dao.DaoSession;
 import com.hippo.ehviewer.dao.DownloadDirnameDao;
 import com.hippo.ehviewer.dao.DownloadDirnameRaw;
-import com.hippo.ehviewer.dao.DownloadInfoDao;
-import com.hippo.ehviewer.dao.DownloadInfoRaw;
+import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.dao.DownloadLabelDao;
 import com.hippo.ehviewer.dao.DownloadLabelRaw;
+import com.hippo.ehviewer.dao.DownloadsDao;
 import com.hippo.ehviewer.dao.GalleryInfoDao;
 import com.hippo.ehviewer.dao.GalleryInfoRaw;
 import com.hippo.ehviewer.dao.HistoryInfoDao;
@@ -42,14 +42,14 @@ import com.hippo.ehviewer.dao.LocalFavoritesDao;
 import com.hippo.ehviewer.dao.LocalFavoritesRaw;
 import com.hippo.ehviewer.dao.QuickSearchDao;
 import com.hippo.ehviewer.dao.QuickSearchRaw;
-import com.hippo.ehviewer.download.DownloadInfo;
+import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.dao.query.LazyList;
-
 public class EhDB {
+
+    private static final String TAG = EhDB.class.getSimpleName();
 
     private static DaoSession sDaoSession;
 
@@ -122,6 +122,34 @@ public class EhDB {
             oldDB = oldDBHelper.getReadableDatabase();
         } catch (Exception e) {
             return;
+        }
+
+        // Get GalleryInfo list
+        SparseJLArray<GalleryInfo> map = new SparseJLArray<>();
+        try {
+            Cursor cursor = oldDB.rawQuery("select * from " + OldDBHelper.TABLE_GALLERY, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    while (!cursor.isAfterLast()) {
+                        GalleryInfo gi = new GalleryInfo();
+                        gi.gid = cursor.getInt(0);
+                        gi.token = cursor.getString(1);
+                        gi.title = cursor.getString(2);
+                        gi.posted = cursor.getString(3);
+                        gi.category = cursor.getInt(4);
+                        gi.thumb = cursor.getString(5);
+                        gi.uploader = cursor.getString(5);
+                        gi.rating = cursor.getFloat(6);
+
+                        map.put(gi.gid, gi);
+
+                        cursor.moveToNext();
+                    }
+                }
+                cursor.close();
+            }
+        } catch (Exception e) {
+            // Ignore
         }
 
         // Merge gallery info
@@ -213,27 +241,33 @@ public class EhDB {
         try {
             Cursor cursor = oldDB.rawQuery("select * from " + OldDBHelper.TABLE_DOWNLOAD, null);
             if (cursor != null) {
-                DownloadInfoDao dao = sDaoSession.getDownloadInfoDao();
+                DownloadsDao dao = sDaoSession.getDownloadsDao();
                 if (cursor.moveToFirst()) {
                     long i = 0L;
                     while (!cursor.isAfterLast()) {
-                        DownloadInfoRaw raw = new DownloadInfoRaw();
+                        // Get GalleryInfo first
+                        long gid = cursor.getInt(0);
+                        GalleryInfo gi = map.get(gid);
+                        if (gi == null) {
+                            Log.e(TAG, "Can't get GalleryInfo with gid: " + gid);
+                            cursor.moveToNext();
+                            continue;
+                        }
 
+                        DownloadInfo info = new DownloadInfo(gi);
                         int state = cursor.getInt(2);
                         int legacy = cursor.getInt(3);
                         if (state == DownloadInfo.STATE_FINISH && legacy > 0) {
                             state = DownloadInfo.STATE_FAILED;
                         }
-
-                        raw.setGid((long) cursor.getInt(0));
-                        raw.setState(state);
-                        raw.setLegacy(legacy);
+                        info.setState(state);
+                        info.setLegacy(legacy);
                         if (cursor.getColumnCount() == 5) {
-                            raw.setDate(cursor.getLong(4));
+                            info.setTime(cursor.getLong(4));
                         } else {
-                            raw.setDate(i);
+                            info.setTime(i);
                         }
-                        dao.insert(raw);
+                        dao.insert(info);
                         cursor.moveToNext();
                         i++;
                     }
@@ -274,11 +308,11 @@ public class EhDB {
 
     private static synchronized void addGalleryInfo(GalleryInfo galleryInfo) {
         GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
-        GalleryInfoRaw raw = dao.load((long) galleryInfo.gid);
+        GalleryInfoRaw raw = dao.load(galleryInfo.gid);
         if (raw == null) {
             // add new item, set reference 1
             raw = new GalleryInfoRaw();
-            raw.setGid((long) galleryInfo.gid);
+            raw.setGid(galleryInfo.gid);
             raw.setToken(galleryInfo.token);
             raw.setTitle(galleryInfo.title);
             raw.setThumb(galleryInfo.thumb);
@@ -309,12 +343,12 @@ public class EhDB {
         }
     }
 
-    public static synchronized GalleryInfo getGalleryInfo(int gid) {
+    public static synchronized GalleryInfo getGalleryInfo(long gid) {
         GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
-        GalleryInfoRaw raw = dao.load((long) gid);
+        GalleryInfoRaw raw = dao.load(gid);
         if (raw != null) {
             GalleryInfo gi = new GalleryInfo();
-            gi.gid = (int) (long) raw.getGid();
+            gi.gid = raw.getGid();
             gi.token = raw.getToken();
             gi.title = raw.getTitle();
             gi.thumb = raw.getThumb();
@@ -329,52 +363,38 @@ public class EhDB {
         }
     }
 
-    public static synchronized LazyList<DownloadInfoRaw> getDownloadInfoLazyList() {
-        return sDaoSession.getDownloadInfoDao().queryBuilder()
-                .orderAsc(DownloadInfoDao.Properties.Date).listLazy();
+    public static synchronized List<DownloadInfo> getAllDownloadInfos() {
+        DownloadsDao dao = sDaoSession.getDownloadsDao();
+        List<DownloadInfo> list = dao.queryBuilder().orderAsc(DownloadsDao.Properties.Time).list();
+        // Fix state
+        for (DownloadInfo info: list) {
+            if (info.state == DownloadInfo.STATE_WAIT || info.state == DownloadInfo.STATE_DOWNLOAD) {
+                info.state = DownloadInfo.STATE_NONE;
+            }
+        }
+        return list;
     }
 
-    public static synchronized void addDownloadInfo(DownloadInfo info) {
-        // Add gallery info first
-        addGalleryInfo(info.galleryInfo);
-        // Add download info
-        DownloadInfoDao dao = sDaoSession.getDownloadInfoDao();
-        DownloadInfoRaw raw = new DownloadInfoRaw();
-        raw.setGid((long) info.galleryInfo.gid);
-        raw.setState(info.state);
-        raw.setLegacy(info.legacy);
-        raw.setDate(info.date);
-        raw.setLabel(info.label);
-        dao.insert(raw);
-    }
-
-    public static synchronized void updateDownloadInfo(DownloadInfo info) {
-        DownloadInfoDao dao = sDaoSession.getDownloadInfoDao();
-        DownloadInfoRaw raw = dao.load((long) info.galleryInfo.gid);
-        if (raw == null) {
-            Log.e("TAG", "Can't find download info: " + info.galleryInfo.gid);
-            addDownloadInfo(info);
+    // Insert or update
+    public static synchronized void putDownloadInfo(DownloadInfo downloadInfo) {
+        DownloadsDao dao = sDaoSession.getDownloadsDao();
+        if (null != dao.load(downloadInfo.gid)) {
+            // Update
+            dao.update(downloadInfo);
         } else {
-            raw.setState(info.state);
-            raw.setLegacy(info.legacy);
-            raw.setDate(info.date);
-            raw.setLabel(info.label);
-            dao.update(raw);
+            // Insert
+            dao.insert(downloadInfo);
         }
     }
 
-    public static synchronized void removeDownloadInfo(int gid) {
-        DownloadInfoDao dao = sDaoSession.getDownloadInfoDao();
-        if (null != dao.load((long) gid)) {
-            removeGalleryInfo(gid);
-            dao.deleteByKey((long) gid);
-        }
+    public static synchronized void removeDownloadInfo(long gid) {
+        sDaoSession.getDownloadsDao().deleteByKey(gid);
     }
 
     @Nullable
-    public static synchronized String getDownloadDirname(int gid) {
+    public static synchronized String getDownloadDirname(long gid) {
         DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
-        DownloadDirnameRaw raw = dao.load((long) gid);
+        DownloadDirnameRaw raw = dao.load(gid);
         if (raw != null) {
             return raw.getDirname();
         } else {
@@ -385,23 +405,23 @@ public class EhDB {
     /**
      * Insert or update
      */
-    public static synchronized void putDownloadDirname(int gid, String dirname) {
+    public static synchronized void putDownloadDirname(long gid, String dirname) {
         DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
-        DownloadDirnameRaw raw = dao.load((long) gid);
+        DownloadDirnameRaw raw = dao.load(gid);
         if (raw != null) { // Update
             raw.setDirname(dirname);
             dao.update(raw);
         } else { // Insert
             raw = new DownloadDirnameRaw();
-            raw.setGid((long) gid);
+            raw.setGid(gid);
             raw.setDirname(dirname);
             dao.insert(raw);
         }
     }
 
-    public static synchronized void removeDownloadDirname(int gid) {
+    public static synchronized void removeDownloadDirname(long gid) {
         DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
-        dao.deleteByKey((long) gid);
+        dao.deleteByKey(gid);
     }
 
     @NonNull
@@ -459,7 +479,7 @@ public class EhDB {
         List<LocalFavoritesRaw> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Date).list();
         List<GalleryInfo> result = new ArrayList<>(list.size());
         for (LocalFavoritesRaw raw: list) {
-            GalleryInfo gi = getGalleryInfo((int) (long) raw.getGid());
+            GalleryInfo gi = getGalleryInfo(raw.getGid());
             if (null == gi) {
                 continue;
             }
@@ -482,32 +502,32 @@ public class EhDB {
         return result;
     }
 
-    public static synchronized void removeLocalFavorites(int gid) {
-        sDaoSession.getLocalFavoritesDao().deleteByKey((long) gid);
+    public static synchronized void removeLocalFavorites(long gid) {
+        sDaoSession.getLocalFavoritesDao().deleteByKey(gid);
     }
 
-    public static synchronized void removeLocalFavorites(int[] gidArray) {
+    public static synchronized void removeLocalFavorites(long[] gidArray) {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
-        for (int gid: gidArray) {
-            dao.deleteByKey((long) gid);
+        for (long gid: gidArray) {
+            dao.deleteByKey(gid);
         }
     }
 
-    public static synchronized boolean containLocalFavorites(int gid) {
+    public static synchronized boolean containLocalFavorites(long gid) {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
-        return null != dao.load((long) gid);
+        return null != dao.load(gid);
     }
 
     public static synchronized void addLocalFavorites(GalleryInfo galleryInfo) {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
-        if (null != dao.load((long) galleryInfo.gid)) {
+        if (null != dao.load(galleryInfo.gid)) {
             // Contained
             return;
         }
 
         addGalleryInfo(galleryInfo);
         LocalFavoritesRaw raw = new LocalFavoritesRaw();
-        raw.setGid((long) galleryInfo.gid);
+        raw.setGid(galleryInfo.gid);
         raw.setDate(System.currentTimeMillis());
         dao.insert(raw);
     }
@@ -515,14 +535,14 @@ public class EhDB {
     public static synchronized void addLocalFavorites(List<GalleryInfo> galleryInfoList) {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
         for (GalleryInfo gi: galleryInfoList) {
-            if (null != dao.load((long) gi.gid)) {
+            if (null != dao.load(gi.gid)) {
                 // Contained
                 continue;
             }
 
             addGalleryInfo(gi);
             LocalFavoritesRaw raw = new LocalFavoritesRaw();
-            raw.setGid((long) gi.gid);
+            raw.setGid(gi.gid);
             raw.setDate(System.currentTimeMillis());
             dao.insert(raw);
         }

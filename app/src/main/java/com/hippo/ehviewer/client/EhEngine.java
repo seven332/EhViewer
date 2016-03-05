@@ -264,7 +264,7 @@ public class EhEngine {
     }
 
     public static RateGalleryParser.Result rateGallery(EhClient.Task task,
-            OkHttpClient okHttpClient, int gid, String token, float rating) throws Exception {
+            OkHttpClient okHttpClient, long gid, String token, float rating) throws Exception {
         final JSONObject json = new JSONObject();
         json.put("method", "rategallery");
         json.put("apiuid", APIUID);
@@ -328,7 +328,7 @@ public class EhEngine {
     }
 
     public static String getGalleryToken(EhClient.Task task, OkHttpClient okHttpClient,
-            int gid, String gtoken, int page) throws Exception {
+            long gid, String gtoken, int page) throws Exception {
         JSONObject json = new JSONObject()
                 .put("method", "gtoken")
                 .put("pagelist", new JSONArray().put(
@@ -395,7 +395,7 @@ public class EhEngine {
      * @param note max 250 characters
      */
     public static Void addFavorites(EhClient.Task task, OkHttpClient okHttpClient,
-            int gid, String token, int dstCat, String note) throws Exception {
+            long gid, String token, int dstCat, String note) throws Exception {
         String catStr;
         if (dstCat == -1) {
             catStr = "favdel";
@@ -437,7 +437,7 @@ public class EhEngine {
     }
 
     public static Void addFavoritesRange(EhClient.Task task, OkHttpClient okHttpClient,
-            int[] gidArray, String[] tokenArray, int dstCat) throws Exception {
+            long[] gidArray, String[] tokenArray, int dstCat) throws Exception {
         AssertUtils.assertEqualsEx(gidArray.length, tokenArray.length);
         for (int i = 0, n = gidArray.length; i < n; i++) {
             addFavorites(task, okHttpClient, gidArray[i], tokenArray[i], dstCat, null);
@@ -446,7 +446,7 @@ public class EhEngine {
     }
 
     public static FavoritesParser.Result modifyFavorites(EhClient.Task task, OkHttpClient okHttpClient,
-            String url, int[] gidArray, int dstCat, boolean callApi) throws Exception {
+            String url, long[] gidArray, int dstCat, boolean callApi) throws Exception {
         String catStr;
         if (dstCat == -1) {
             catStr = "delete";
@@ -457,8 +457,8 @@ public class EhEngine {
         }
         FormBody.Builder builder = new FormBody.Builder();
         builder.add("ddact", catStr);
-        for (int gid : gidArray) {
-            builder.add("modifygids[]", Integer.toString(gid));
+        for (long gid : gidArray) {
+            builder.add("modifygids[]", Long.toString(gid));
         }
         builder.add("apply", "Apply");
         Log.d(TAG, url);

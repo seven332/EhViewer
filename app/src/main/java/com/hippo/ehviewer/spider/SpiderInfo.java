@@ -37,7 +37,7 @@ public class SpiderInfo {
     static final String TOKEN_WAIT = "wait";
 
     int currentIndex = 0;
-    int gid = -1;
+    long gid = -1;
     String token = null;
     int pages = -1;
     int previewPages = -1;
@@ -58,7 +58,7 @@ public class SpiderInfo {
             // Current index
             spiderInfo.currentIndex = Integer.parseInt(IOUtils.readAsciiLine(is), 16);
             // Gid
-            spiderInfo.gid = Integer.parseInt(IOUtils.readAsciiLine(is));
+            spiderInfo.gid = Long.parseLong(IOUtils.readAsciiLine(is));
             // Token
             spiderInfo.token = IOUtils.readAsciiLine(is);
             // Deprecated, mode, only ex is support now, MUST be 1
@@ -106,7 +106,7 @@ public class SpiderInfo {
             writer = new OutputStreamWriter(os);
             writer.write(String.format("%08x", currentIndex));
             writer.write("\n");
-            writer.write(Integer.toString(gid));
+            writer.write(Long.toString(gid));
             writer.write("\n");
             writer.write(token);
             writer.write("\n");

@@ -70,7 +70,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     public static final String KEY_TOKEN = "token";
     public static final String KEY_COMMENTS = "comments";
 
-    private int mGid;
+    private long mGid;
     private String mToken;
     private GalleryComment[] mComments;
 
@@ -100,7 +100,7 @@ public final class GalleryCommentsScene extends ToolbarScene
             return;
         }
 
-        mGid = args.getInt(KEY_GID, -1);
+        mGid = args.getLong(KEY_GID, -1);
         mToken = args.getString(KEY_TOKEN, null);
         Parcelable[] parcelables = args.getParcelableArray(KEY_COMMENTS);
         if (parcelables instanceof GalleryComment[]) {
@@ -113,7 +113,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     }
 
     private void onRestore(@NonNull Bundle savedInstanceState) {
-        mGid = savedInstanceState.getInt(KEY_GID, -1);
+        mGid = savedInstanceState.getLong(KEY_GID, -1);
         mToken = savedInstanceState.getString(KEY_TOKEN, null);
         Parcelable[] parcelables = savedInstanceState.getParcelableArray(KEY_COMMENTS);
         if (parcelables instanceof GalleryComment[]) {
@@ -124,7 +124,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_GID, mGid);
+        outState.putLong(KEY_GID, mGid);
         outState.putString(KEY_TOKEN, mToken);
         outState.putParcelableArray(KEY_COMMENTS, mComments);
     }

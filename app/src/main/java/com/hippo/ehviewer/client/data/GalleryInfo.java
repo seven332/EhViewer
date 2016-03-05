@@ -18,6 +18,7 @@ package com.hippo.ehviewer.client.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import java.util.regex.Pattern;
 
@@ -77,7 +78,7 @@ public class GalleryInfo implements Parcelable {
             Pattern.compile("[(\\[]dutch[)\\]]", Pattern.CASE_INSENSITIVE),
     };
 
-    public int gid;
+    public long gid ;
     public String token;
     public String title;
     public String titleJpn;
@@ -86,6 +87,7 @@ public class GalleryInfo implements Parcelable {
     public String posted;
     public String uploader;
     public float rating;
+    @Nullable
     public String[] simpleTags;
 
     /**
@@ -110,7 +112,7 @@ public class GalleryInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.gid);
+        dest.writeLong(this.gid);
         dest.writeString(this.token);
         dest.writeString(this.title);
         dest.writeString(this.titleJpn);
@@ -120,12 +122,13 @@ public class GalleryInfo implements Parcelable {
         dest.writeString(this.uploader);
         dest.writeFloat(this.rating);
         dest.writeString(this.simpleLanguage);
+        dest.writeStringArray(this.simpleTags);
     }
 
     public GalleryInfo() {}
 
     protected GalleryInfo(Parcel in) {
-        this.gid = in.readInt();
+        this.gid = in.readLong();
         this.token = in.readString();
         this.title = in.readString();
         this.titleJpn = in.readString();
@@ -135,6 +138,7 @@ public class GalleryInfo implements Parcelable {
         this.uploader = in.readString();
         this.rating = in.readFloat();
         this.simpleLanguage = in.readString();
+        this.simpleTags = in.createStringArray();
     }
 
     public static final Parcelable.Creator<GalleryInfo> CREATOR = new Parcelable.Creator<GalleryInfo>() {

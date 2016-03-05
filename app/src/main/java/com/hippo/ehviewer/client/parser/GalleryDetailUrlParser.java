@@ -38,7 +38,7 @@ public final class GalleryDetailUrlParser {
         Matcher m = URL_PATTERN.matcher(url);
         if (m.find()) {
             Result result = new Result();
-            result.gid = Integer.parseInt(m.group(1));
+            result.gid = Long.parseLong(m.group(1));
             result.token = m.group(2);
             return result;
         } else {
@@ -47,7 +47,7 @@ public final class GalleryDetailUrlParser {
     }
 
     public static class Result {
-        public int gid;
+        public long gid;
         public String token;
     }
 }

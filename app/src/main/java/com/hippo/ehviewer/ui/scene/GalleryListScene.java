@@ -625,10 +625,10 @@ public final class GalleryListScene extends BaseScene
                     return;
                 }
 
-                int gid;
+                long gid;
                 String token;
                 try {
-                    gid = Integer.parseInt(query.substring(0, index));
+                    gid = Long.parseLong(query.substring(0, index));
                 } catch (NumberFormatException e) {
                     Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show(); // TODO
                     return;
@@ -637,7 +637,7 @@ public final class GalleryListScene extends BaseScene
 
                 Bundle args = new Bundle();
                 args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GID_TOKEN);
-                args.putInt(GalleryDetailScene.KEY_GID, gid);
+                args.putLong(GalleryDetailScene.KEY_GID, gid);
                 args.putString(GalleryDetailScene.KEY_TOKEN, token);
                 startScene(new Announcer(GalleryDetailScene.class).setArgs(args));
                 return;
@@ -785,7 +785,7 @@ public final class GalleryListScene extends BaseScene
 
             // Update transition name
             if (ApiHelper.SUPPORT_TRANSITION) {
-                int gid = gi.gid;
+                long gid = gi.gid;
                 holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
                 holder.title.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
                 holder.uploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));

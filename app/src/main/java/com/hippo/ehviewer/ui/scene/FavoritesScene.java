@@ -803,7 +803,7 @@ public class FavoritesScene extends BaseScene implements
             mRecyclerView.outOfCustomChoiceMode();
 
             if (mUrlBuilder.getFavCat() == FavListUrlBuilder.FAV_CAT_LOCAL) { // Delete local fav
-                int[] gidArray = new int[mModifyGiList.size()];
+                long[] gidArray = new long[mModifyGiList.size()];
                 for (int i = 0, n = mModifyGiList.size(); i < n; i++) {
                     gidArray[i] = mModifyGiList.get(i).gid;
                 }
@@ -847,7 +847,7 @@ public class FavoritesScene extends BaseScene implements
             mRecyclerView.outOfCustomChoiceMode();
 
             if (srcCat == FavListUrlBuilder.FAV_CAT_LOCAL) { // Move from local to cloud
-                int[] gidArray = new int[mModifyGiList.size()];
+                long[] gidArray = new long[mModifyGiList.size()];
                 for (int i = 0, n = mModifyGiList.size(); i < n; i++) {
                     gidArray[i] = mModifyGiList.get(i).gid;
                 }
@@ -962,7 +962,7 @@ public class FavoritesScene extends BaseScene implements
 
             // Update transition name
             if (ApiHelper.SUPPORT_TRANSITION) {
-                int gid = gi.gid;
+                long gid = gi.gid;
                 holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
                 holder.title.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
                 holder.uploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));
@@ -990,7 +990,7 @@ public class FavoritesScene extends BaseScene implements
                 boolean local = mUrlBuilder.getFavCat() == FavListUrlBuilder.FAV_CAT_LOCAL;
 
                 if (mModifyAdd) {
-                    int[] gidArray = new int[mModifyGiList.size()];
+                    long[] gidArray = new long[mModifyGiList.size()];
                     String[] tokenArray = new String[mModifyGiList.size()];
                     for (int i = 0, n = mModifyGiList.size(); i < n; i++) {
                         GalleryInfo gi = mModifyGiList.get(i);
@@ -1007,7 +1007,7 @@ public class FavoritesScene extends BaseScene implements
                     request.setArgs(gidArray, tokenArray, mModifyFavCat);
                     mClient.execute(request);
                 } else {
-                    int[] gidArray = new int[mModifyGiList.size()];
+                    long[] gidArray = new long[mModifyGiList.size()];
                     for (int i = 0, n = mModifyGiList.size(); i < n; i++) {
                         gidArray[i] = mModifyGiList.get(i).gid;
                     }

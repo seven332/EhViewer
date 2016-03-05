@@ -52,6 +52,7 @@ import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.io.InputStreamPipe;
 import com.hippo.yorozuya.io.OutputStreamPipe;
+import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -109,7 +110,7 @@ public class SpiderQueen implements Runnable {
             "/509s.gif"
     };
 
-    private static final SparseArray<SpiderQueen> sQueenMap = new SparseArray<>();
+    private static final SparseJLArray<SpiderQueen> sQueenMap = new SparseJLArray<>();
 
     private final OkHttpClient mHttpClient;
     private final GalleryInfo mGalleryInfo;
@@ -547,7 +548,7 @@ public class SpiderQueen implements Runnable {
         // Read from cache
         File dir = AppConfig.getSpiderInfoCacheDir();
         if (dir != null) {
-            UniFile file = UniFile.fromFile(new File(dir, Integer.toString(mGalleryInfo.gid)));
+            UniFile file = UniFile.fromFile(new File(dir, Long.toString(mGalleryInfo.gid)));
             SpiderInfo spiderInfo = SpiderInfo.readFromUniFile(file);
             if (spiderInfo != null && spiderInfo.gid == mGalleryInfo.gid &&
                     spiderInfo.token.equals(mGalleryInfo.token)) {
@@ -642,7 +643,7 @@ public class SpiderQueen implements Runnable {
         File dir = AppConfig.getSpiderInfoCacheDir();
         if (dir != null) {
             try {
-                spiderInfo.write(new FileOutputStream(new File(dir, Integer.toString(mGalleryInfo.gid))));
+                spiderInfo.write(new FileOutputStream(new File(dir, Long.toString(mGalleryInfo.gid))));
             } catch (Exception e) {
                 // Ignore
             }
@@ -799,7 +800,7 @@ public class SpiderQueen implements Runnable {
     private class SpiderWorker implements Runnable {
 
         private final int mWorkerIndex;
-        private final int mGid;
+        private final long mGid;
 
         public SpiderWorker(int workerIndex) {
             mWorkerIndex = workerIndex;
@@ -851,7 +852,7 @@ public class SpiderQueen implements Runnable {
             }
         }
 
-        private GalleryPageParser.Result getImageUrl(int gid, int index, String pToken,
+        private GalleryPageParser.Result getImageUrl(long gid, int index, String pToken,
                 String skipHathKey) throws IOException, ParseException, Image509Exception {
             String url = EhUrl.getPageUrl(gid, index, pToken);
             if (skipHathKey != null) {
@@ -874,7 +875,7 @@ public class SpiderQueen implements Runnable {
         }
 
         // false for stop
-        private boolean downloadImage(int gid, int index, String pToken, boolean force) {
+        private boolean downloadImage(long gid, int index, String pToken, boolean force) {
             String skipHathKey = null;
             String imageUrl;
             String error = null;

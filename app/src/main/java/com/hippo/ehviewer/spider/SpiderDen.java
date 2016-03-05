@@ -46,7 +46,7 @@ public final class SpiderDen {
     @Nullable
     private final UniFile mDownloadDir;
     private volatile int mMode = SpiderQueen.MODE_READ;
-    private final int mGid;
+    private final long mGid;
 
     @Nullable
     private static SimpleDiskCache sCache;

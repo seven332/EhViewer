@@ -28,16 +28,17 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
-import com.hippo.yorozuya.IntList;
+import com.hippo.yorozuya.LongList;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.sparse.SparseJBArray;
+import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -78,15 +79,15 @@ public class DownloadService extends Service implements DownloadManager.Download
     private NotificationDelay m509Delay;
 
     @Nullable
-    private SparseBooleanArray mItemStateArray;
+    private SparseJBArray mItemStateArray;
     @Nullable
-    private SparseArray<String> mItemTitleArray;
+    private SparseJLArray<String> mItemTitleArray;
 
     private int mFailedCount;
     private int mFinishedCount;
     private int mDownloadedCount;
 
-    public void init(SparseBooleanArray stateArray, SparseArray<String> titleArray,
+    public void init(SparseJBArray stateArray, SparseJLArray<String> titleArray,
             int failedCount, int finishedCount, int downloadedCount) {
         mItemStateArray = stateArray;
         mItemTitleArray = titleArray;
@@ -163,7 +164,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 mDownloadManager.startDownload(gi, label);
             }
         } else if (ACTION_START_RANGE.equals(action)) {
-            IntList gidList = intent.getParcelableExtra(KEY_GID_LIST);
+            LongList gidList = intent.getParcelableExtra(KEY_GID_LIST);
             if (gidList != null && mDownloadManager != null) {
                 mDownloadManager.startRangeDownload(gidList);
             }
@@ -172,7 +173,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 mDownloadManager.startAllDownload();
             }
         } else if (ACTION_STOP.equals(action)) {
-            int gid = intent.getIntExtra(KEY_GID, -1);
+            long gid = intent.getLongExtra(KEY_GID, -1);
             if (gid != -1 && mDownloadManager != null) {
                 mDownloadManager.stopDownload(gid);
             }
@@ -181,7 +182,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 mDownloadManager.stopCurrentDownload();
             }
         } else if (ACTION_STOP_RANGE.equals(action)) {
-            IntList gidList = intent.getParcelableExtra(KEY_GID_LIST);
+            LongList gidList = intent.getParcelableExtra(KEY_GID_LIST);
             if (gidList != null && mDownloadManager != null) {
                 mDownloadManager.stopRangeDownload(gidList);
             }
@@ -190,12 +191,12 @@ public class DownloadService extends Service implements DownloadManager.Download
                 mDownloadManager.stopAllDownload();
             }
         } else if (ACTION_DELETE.equals(action)) {
-            int gid = intent.getIntExtra(KEY_GID, -1);
+            long gid = intent.getLongExtra(KEY_GID, -1);
             if (gid != -1 && mDownloadManager != null) {
                 mDownloadManager.deleteDownload(gid);
             }
         } else if (ACTION_DELETE_RANGE.equals(action)) {
-            IntList gidList = intent.getParcelableExtra(KEY_GID_LIST);
+            LongList gidList = intent.getParcelableExtra(KEY_GID_LIST);
             if (gidList != null && mDownloadManager != null) {
                 mDownloadManager.deleteRangeDownload(gidList);
             }
@@ -287,7 +288,7 @@ public class DownloadService extends Service implements DownloadManager.Download
 
         ensureDownloadingBuilder();
 
-        mDownloadingBuilder.setContentTitle(info.galleryInfo.title)
+        mDownloadingBuilder.setContentTitle(info.title)
                 .setContentText(null)
                 .setContentInfo(null)
                 .setProgress(0, 0, true)
@@ -313,7 +314,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         } else {
             text = getString(R.string.download_speed_text, text);
         }
-        mDownloadingBuilder.setContentTitle(info.galleryInfo.title)
+        mDownloadingBuilder.setContentTitle(info.title)
                 .setContentText(text)
                 .setContentInfo(info.total == -1 || info.finished == -1 ? null : info.finished + "/" + info.total)
                 .setProgress(info.total, info.finished, false);
@@ -342,11 +343,11 @@ public class DownloadService extends Service implements DownloadManager.Download
         ensureDownloadedBuilder();
 
         boolean finish = info.state == DownloadInfo.STATE_FINISH;
-        int gid = info.galleryInfo.gid;
+        long gid = info.gid;
         int index = mItemStateArray.indexOfKey(gid);
         if (index < 0) { // Not contain
             mItemStateArray.put(gid, finish);
-            mItemTitleArray.put(gid, info.galleryInfo.title);
+            mItemTitleArray.put(gid, info.title);
             mDownloadedCount++;
             if (finish) {
                 mFinishedCount++;
@@ -356,7 +357,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         } else { // Contain
             boolean oldFinish = mItemStateArray.valueAt(index);
             mItemStateArray.put(gid, finish);
-            mItemTitleArray.put(gid, info.galleryInfo.title);
+            mItemTitleArray.put(gid, info.title);
             if (oldFinish && !finish) {
                 mFinishedCount--;
                 mFailedCount++;
@@ -403,10 +404,10 @@ public class DownloadService extends Service implements DownloadManager.Download
         if (needStyle) {
             style = new NotificationCompat.InboxStyle();
             style.setBigContentTitle(getString(R.string.stat_download_done_title));
-            SparseBooleanArray stateArray = mItemStateArray;
-            SparseArray<String> titleArray = mItemTitleArray;
+            SparseJBArray stateArray = mItemStateArray;
+            SparseJLArray<String> titleArray = mItemTitleArray;
             for (int i = 0, n = stateArray.size(); i < n; i++) {
-                int id = stateArray.keyAt(i);
+                long id = stateArray.keyAt(i);
                 boolean fin = stateArray.valueAt(i);
                 String title = titleArray.get(id);
                 if (title == null) {

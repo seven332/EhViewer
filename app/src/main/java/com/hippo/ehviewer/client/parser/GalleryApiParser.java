@@ -33,7 +33,7 @@ public class GalleryApiParser {
 
         for (int i = 0, length = ja.length(); i < length; i++) {
             JSONObject g = ja.getJSONObject(i);
-            int gid = g.getInt("gid");
+            long gid = g.getLong("gid");
             GalleryInfo gi = getGalleryInfoByGid(galleryInfoList, gid);
             if (gi == null) {
                 continue;
@@ -56,7 +56,7 @@ public class GalleryApiParser {
         }
     }
 
-    private static GalleryInfo getGalleryInfoByGid(List<GalleryInfo> galleryInfoList, int gid) {
+    private static GalleryInfo getGalleryInfoByGid(List<GalleryInfo> galleryInfoList, long gid) {
         for (int i = 0, size = galleryInfoList.size(); i < size; i++) {
             GalleryInfo gi = galleryInfoList.get(i);
             if (gi.gid == gid) {

@@ -37,7 +37,7 @@ public final class GalleryPageUrlParser {
         Matcher m = URL_PATTERN.matcher(url);
         if (m.find()) {
             Result result = new Result();
-            result.gid = Integer.parseInt(m.group(2));
+            result.gid = Long.parseLong(m.group(2));
             result.pToken = m.group(1);
             result.page = Integer.parseInt(m.group(3)) - 1;
             return result;
@@ -47,7 +47,7 @@ public final class GalleryPageUrlParser {
     }
 
     public static class Result {
-        public int gid;
+        public long gid;
         public String pToken;
         public int page;
     }

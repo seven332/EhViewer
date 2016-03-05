@@ -125,7 +125,7 @@ public class GalleryDetailParser {
             throw new ParseException("Parse gallery detail error", body);
         }
 
-        gd.gid = ParserUtils.parseInt(m.group(1));
+        gd.gid = ParserUtils.parseLong(m.group(1));
         gd.token = ParserUtils.trim(m.group(2));
         gd.thumb = ParserUtils.trim(m.group(3));
         gd.title = ParserUtils.trim(m.group(4));

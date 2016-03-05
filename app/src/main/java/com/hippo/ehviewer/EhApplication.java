@@ -22,7 +22,6 @@ import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 
 import com.hippo.beerbelly.LruCacheEx;
 import com.hippo.conaco.Conaco;
@@ -41,6 +40,8 @@ import com.hippo.text.Html;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.sparse.SparseJBArray;
+import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.io.File;
 import java.util.Comparator;
@@ -63,13 +64,13 @@ public class EhApplication extends SceneApplication {
     private OkHttpClient mOkHttpClient;
     private ImageWrapperHelper mImageWrapperHelper;
     private Conaco<ImageWrapper> mConaco;
-    private LruCacheEx<Integer, GalleryDetail> mGalleryDetailCache;
+    private LruCacheEx<Long, GalleryDetail> mGalleryDetailCache;
     private LruCacheEx<String, LargePreviewSet> mLargePreviewSetCache;
-    private LruCacheEx<Integer, Integer> mPreviewPagesCache;
+    private LruCacheEx<Long, Integer> mPreviewPagesCache;
     private DownloadManager mDownloadManager;
 
-    private SparseBooleanArray mItemStateArray;
-    private SparseArray<String> mItemTitleArray;
+    private SparseJBArray mItemStateArray;
+    private SparseJLArray<String> mItemTitleArray;
     private int mFailedCount;
     private int mFinishedCount;
     private int mDownloadedCount;
@@ -209,14 +210,14 @@ public class EhApplication extends SceneApplication {
     }
 
     @NonNull
-    public static LruCacheEx<Integer, GalleryDetail> getGalleryDetailCache(@NonNull Context context) {
+    public static LruCacheEx<Long, GalleryDetail> getGalleryDetailCache(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mGalleryDetailCache == null) {
             // Max size 25, 3 min timeout
-            application.mGalleryDetailCache = new LruCacheEx<>(25,  3 * 60 * 1000, new Comparator<Integer>() {
+            application.mGalleryDetailCache = new LruCacheEx<>(25,  3 * 60 * 1000, new Comparator<Long>() {
                 @Override
-                public int compare(Integer lhs, Integer rhs) {
-                    return lhs - rhs;
+                public int compare(Long lhs, Long rhs) {
+                    return lhs > rhs ? 1 : lhs > rhs ? -1 : 0;
                 }
             });
         }
@@ -239,14 +240,14 @@ public class EhApplication extends SceneApplication {
     }
 
     @NonNull
-    public static LruCacheEx<Integer, Integer> getPreviewPagesCache(@NonNull Context context) {
+    public static LruCacheEx<Long, Integer> getPreviewPagesCache(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mPreviewPagesCache == null) {
             // Max size 50, 3 min timeout
-            application.mPreviewPagesCache = new LruCacheEx<>(50,  3 * 60 * 1000, new Comparator<Integer>() {
+            application.mPreviewPagesCache = new LruCacheEx<>(50,  3 * 60 * 1000, new Comparator<Long>() {
                 @Override
-                public int compare(Integer lhs, Integer rhs) {
-                    return lhs - rhs;
+                public int compare(Long lhs, Long rhs) {
+                    return lhs > rhs ? 1 : lhs > rhs ? -1 : 0;
                 }
             });
         }
@@ -266,10 +267,10 @@ public class EhApplication extends SceneApplication {
     public static void initDownloadService(Context context, DownloadService service) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mItemStateArray == null) {
-            application.mItemStateArray = new SparseBooleanArray();
+            application.mItemStateArray = new SparseJBArray();
         }
         if (application.mItemTitleArray == null) {
-            application.mItemTitleArray = new SparseArray<>();
+            application.mItemTitleArray = new SparseJLArray<>();
         }
 
         service.init(application.mItemStateArray, application.mItemTitleArray,

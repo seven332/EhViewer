@@ -22,7 +22,7 @@ import android.support.annotation.Nullable;
 
 public class GalleryApiInfo implements Parcelable {
 
-    public int gid;
+    public long gid;
     public String token;
     public String archiverKey;
     public String title;
@@ -46,7 +46,7 @@ public class GalleryApiInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.gid);
+        dest.writeLong(this.gid);
         dest.writeString(this.token);
         dest.writeString(this.archiverKey);
         dest.writeString(this.title);
@@ -67,7 +67,7 @@ public class GalleryApiInfo implements Parcelable {
     }
 
     protected GalleryApiInfo(Parcel in) {
-        this.gid = in.readInt();
+        this.gid = in.readLong();
         this.token = in.readString();
         this.archiverKey = in.readString();
         this.title = in.readString();

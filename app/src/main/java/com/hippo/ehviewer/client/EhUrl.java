@@ -34,11 +34,11 @@ public class EhUrl {
 
     public static final String URL_FAVORITES = HOST_EX + "favorites.php";
 
-    public static String getGalleryDetailUrl(int gid, String token) {
+    public static String getGalleryDetailUrl(long gid, String token) {
         return getGalleryDetailUrl(gid, token, 0, false);
     }
 
-    public static String getGalleryDetailUrl(int gid, String token, int index, boolean allComment) {
+    public static String getGalleryDetailUrl(long gid, String token, int index, boolean allComment) {
         UrlBuilder builder = new UrlBuilder(HOST_EX + "g/" + gid + '/' + token + '/');
         if (index != 0) {
             builder.addQuery("p", index);
@@ -49,11 +49,11 @@ public class EhUrl {
         return builder.build();
     }
 
-    public static String getPageUrl(int gid, int index, String pToken) {
+    public static String getPageUrl(long gid, int index, String pToken) {
         return HOST_EX + "s/" + pToken + '/' + gid + '-' + (index + 1);
     }
 
-    public static String getAddFavorites(int gid, String token) {
+    public static String getAddFavorites(long gid, String token) {
         return HOST_EX + "gallerypopups.php?gid=" + gid + "&t=" + token + "&act=addfav";
     }
 }

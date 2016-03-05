@@ -90,7 +90,7 @@ public class GalleryListParser {
 
                 Matcher matcher = GalleryDetailUrlParser.URL_PATTERN.matcher(m.group(9));
                 if (matcher.find()) {
-                    gi.gid = ParserUtils.parseInt(matcher.group(1));
+                    gi.gid = ParserUtils.parseLong(matcher.group(1));
                     gi.token = ParserUtils.trim(matcher.group(2));
                 } else {
                     continue;

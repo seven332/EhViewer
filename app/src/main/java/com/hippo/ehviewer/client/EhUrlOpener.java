@@ -59,7 +59,7 @@ public class EhUrlOpener {
         if (result1 != null) {
             Bundle args = new Bundle();
             args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GID_TOKEN);
-            args.putInt(GalleryDetailScene.KEY_GID, result1.gid);
+            args.putLong(GalleryDetailScene.KEY_GID, result1.gid);
             args.putString(GalleryDetailScene.KEY_TOKEN, result1.token);
             intent = new Intent(activity, MainActivity.class);
             intent.putExtra(StageActivity.KEY_SCENE_NAME, GalleryDetailScene.class.getName());
@@ -72,9 +72,9 @@ public class EhUrlOpener {
         if (result2 != null) {
             Bundle args = new Bundle();
             args.putString(ProgressScene.KEY_ACTION, ProgressScene.ACTION_GALLERY_TOKEN);
-            args.putInt(ProgressScene.KEY_GID, result2.gid);
+            args.putLong(ProgressScene.KEY_GID, result2.gid);
             args.putString(ProgressScene.KEY_PTOKEN, result2.pToken);
-            args.putInt(ProgressScene.KEY_PAGE, result2.page);
+            args.putLong(ProgressScene.KEY_PAGE, result2.page);
             intent = new Intent(activity, MainActivity.class);
             intent.putExtra(StageActivity.KEY_SCENE_NAME, ProgressScene.class.getName());
             intent.putExtra(StageActivity.KEY_SCENE_ARGS, args);

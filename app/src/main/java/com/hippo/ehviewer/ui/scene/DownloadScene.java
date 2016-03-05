@@ -58,8 +58,8 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.dao.DownloadLabelRaw;
-import com.hippo.ehviewer.download.DownloadInfo;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.spider.SpiderDen;
@@ -77,7 +77,7 @@ import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.FileUtils;
-import com.hippo.yorozuya.IntList;
+import com.hippo.yorozuya.LongList;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
@@ -410,7 +410,7 @@ public class DownloadScene extends ToolbarScene
 
             Intent intent = new Intent(getActivity(), GalleryActivity.class);
             intent.setAction(GalleryActivity.ACTION_EH);
-            intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, list.get(position).galleryInfo);
+            intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, list.get(position));
             startActivity(intent);
             return true;
         }
@@ -453,17 +453,12 @@ public class DownloadScene extends ToolbarScene
                 return;
             }
 
-            IntList gidList = null;
-            List<GalleryInfo> galleryInfoList = null;
+            LongList gidList = null;
             List<DownloadInfo> downloadInfoList = null;
             boolean collectGid = position == 1 || position == 2 || position == 3; // Start, Stop, Delete
-            boolean collectGalleryInfo = position == 3; // Delete
-            boolean collectDownloadInfo = position == 4; // Move
+            boolean collectDownloadInfo = position == 3 || position == 4; // Delete or Move
             if (collectGid) {
-                gidList = new IntList();
-            }
-            if (collectGalleryInfo) {
-                galleryInfoList = new LinkedList<>();
+                gidList = new LongList();
             }
             if (collectDownloadInfo) {
                 downloadInfoList = new LinkedList<>();
@@ -476,12 +471,8 @@ public class DownloadScene extends ToolbarScene
                     if (collectDownloadInfo) {
                         downloadInfoList.add(info);
                     }
-                    GalleryInfo gi = info.galleryInfo;
-                    if (collectGalleryInfo) {
-                        galleryInfoList.add(gi);
-                    }
                     if (collectGid) {
-                        gidList.add(gi.gid);
+                        gidList.add(info.gid);
                     }
                 }
             }
@@ -511,7 +502,7 @@ public class DownloadScene extends ToolbarScene
                             getString(R.string.download_remove_dialog_check_text),
                             Settings.getRemoveImageFiles());
                     DeleteRangeDialogHelper helper = new DeleteRangeDialogHelper(
-                            galleryInfoList, gidList, builder);
+                            downloadInfoList, gidList, builder);
                     builder.setTitle(R.string.download_remove_dialog_title)
                             .setPositiveButton(android.R.string.ok, helper)
                             .show();
@@ -744,13 +735,13 @@ public class DownloadScene extends ToolbarScene
 
     private class DeleteRangeDialogHelper implements DialogInterface.OnClickListener {
 
-        private final List<GalleryInfo> mGalleryInfoList;
-        private final IntList mGidList;
+        private final List<DownloadInfo> mDownloadInfoList;
+        private final LongList mGidList;
         private final CheckBoxDialogBuilder mBuilder;
 
-        public DeleteRangeDialogHelper(List<GalleryInfo> galleryInfoList,
-                IntList gidList, CheckBoxDialogBuilder builder) {
-            mGalleryInfoList = galleryInfoList;
+        public DeleteRangeDialogHelper(List<DownloadInfo> downloadInfoList,
+                LongList gidList, CheckBoxDialogBuilder builder) {
+            mDownloadInfoList = downloadInfoList;
             mGidList = gidList;
             mBuilder = builder;
         }
@@ -776,13 +767,13 @@ public class DownloadScene extends ToolbarScene
             boolean checked = mBuilder.isChecked();
             Settings.putRemoveImageFiles(checked);
             if (checked) {
-                UniFile[] files = new UniFile[mGalleryInfoList.size()];
+                UniFile[] files = new UniFile[mDownloadInfoList.size()];
                 int i = 0;
-                for (GalleryInfo gi: mGalleryInfoList) {
+                for (DownloadInfo info: mDownloadInfoList) {
                     // Remove download path
-                    EhDB.removeDownloadDirname(gi.gid);
+                    EhDB.removeDownloadDirname(info.gid);
                     // Put file
-                    files[i] = SpiderDen.getGalleryDownloadDir(gi);
+                    files[i] = SpiderDen.getGalleryDownloadDir(info);
                     i++;
                 }
                 // Delete file
@@ -878,7 +869,7 @@ public class DownloadScene extends ToolbarScene
             if (thumb == v) {
                 Bundle args = new Bundle();
                 args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
-                args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, list.get(index).galleryInfo);
+                args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, list.get(index));
                 Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
                 if (ApiHelper.SUPPORT_TRANSITION) {
                     DownloadHolder holder = (DownloadHolder) recyclerView.getChildViewHolder(itemView);
@@ -888,15 +879,15 @@ public class DownloadScene extends ToolbarScene
             } else if (start == v) {
                 Intent intent = new Intent(getActivity(), DownloadService.class);
                 intent.setAction(DownloadService.ACTION_START);
-                intent.putExtra(DownloadService.KEY_GALLERY_INFO, list.get(index).galleryInfo);
+                intent.putExtra(DownloadService.KEY_GALLERY_INFO, list.get(index));
                 getActivity().startService(intent);
             } else if (stop == v) {
                 Intent intent = new Intent(getActivity(), DownloadService.class);
                 intent.setAction(DownloadService.ACTION_STOP);
-                intent.putExtra(DownloadService.KEY_GID, list.get(index).galleryInfo.gid);
+                intent.putExtra(DownloadService.KEY_GID, list.get(index).gid);
                 getActivity().startService(intent);
             } else if (delete == v) {
-                GalleryInfo galleryInfo = list.get(index).galleryInfo;
+                GalleryInfo galleryInfo = list.get(index);
                 CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(getContext(),
                         getString(R.string.download_remove_dialog_message, galleryInfo.title),
                         getString(R.string.download_remove_dialog_check_text),
@@ -948,7 +939,7 @@ public class DownloadScene extends ToolbarScene
             if (mList == null || position < 0 || position >= mList.size()) {
                 return 0;
             }
-            return mList.get(position).galleryInfo.gid;
+            return mList.get(position).gid;
         }
 
         @Override
@@ -963,22 +954,21 @@ public class DownloadScene extends ToolbarScene
                 return;
             }
             DownloadInfo info = mList.get(position);
-            GalleryInfo gi = info.galleryInfo;
-            holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb, true);
-            holder.title.setText(gi.title);
-            holder.uploader.setText(gi.uploader);
-            holder.rating.setRating(gi.rating);
+            holder.thumb.load(EhCacheKeyFactory.getThumbKey(info.gid), info.thumb, true);
+            holder.title.setText(info.title);
+            holder.uploader.setText(info.uploader);
+            holder.rating.setRating(info.rating);
             TextView category = holder.category;
-            String newCategoryText = EhUtils.getCategory(gi.category);
+            String newCategoryText = EhUtils.getCategory(info.category);
             if (!newCategoryText.equals(category.getText())) {
                 category.setText(newCategoryText);
-                category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
+                category.setBackgroundColor(EhUtils.getCategoryColor(info.category));
             }
             bindForState(holder, info);
 
             // Update transition name
             if (ApiHelper.SUPPORT_TRANSITION) {
-                int gid = gi.gid;
+                long gid = info.gid;
                 holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
                 holder.title.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
                 holder.uploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));

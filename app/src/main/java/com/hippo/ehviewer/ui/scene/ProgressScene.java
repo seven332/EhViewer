@@ -56,7 +56,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
 
     private String mAction;
 
-    private int mGid;
+    private long mGid;
     private String mPToken;
     private int mPage;
 
@@ -127,7 +127,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
 
         mAction = savedInstanceState.getString(KEY_ACTION);
 
-        mGid = savedInstanceState.getInt(KEY_GID, -1);
+        mGid = savedInstanceState.getLong(KEY_GID, -1);
         mPToken = savedInstanceState.getString(KEY_PTOKEN, null);
         mPage = savedInstanceState.getInt(KEY_PAGE, -1);
     }
@@ -140,7 +140,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
 
         outState.putString(KEY_ACTION, mAction);
 
-        outState.putInt(KEY_GID, mGid);
+        outState.putLong(KEY_GID, mGid);
         outState.putString(KEY_PTOKEN, mPToken);
         outState.putInt(KEY_PAGE, mPage);
     }
@@ -190,7 +190,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
     private void onGetGalleryTokenSuccess(String result) {
         Bundle arg = new Bundle();
         arg.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GID_TOKEN);
-        arg.putInt(GalleryDetailScene.KEY_GID, mGid);
+        arg.putLong(GalleryDetailScene.KEY_GID, mGid);
         arg.putString(GalleryDetailScene.KEY_TOKEN, result);
         arg.putInt(GalleryDetailScene.KEY_PAGE, mPage);
         startScene(new Announcer(GalleryDetailScene.class).setArgs(arg));

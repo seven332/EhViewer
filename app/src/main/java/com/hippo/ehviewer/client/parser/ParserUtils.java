@@ -31,4 +31,8 @@ public class ParserUtils {
     public static int parseInt(String str) {
         return Integer.parseInt(trim(str).replace(",", ""));
     }
+
+    public static long parseLong(String str) {
+        return Long.parseLong(trim(str).replace(",", ""));
+    }
 }
