@@ -37,6 +37,7 @@ public class EhDaoGenerator {
     private static final String DOWNLOAD_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/DownloadInfo.java";
     private static final String HISTORY_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/HistoryInfo.java";
     private static final String LOCAL_FAVORITE_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/LocalFavoriteInfo.java";
+    private static final String BOOKMARK_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/BookmarkInfo.java";
 
     public static void generate() throws Exception {
         Utilities.deleteContents(new File(DELETE_DIR));
@@ -51,11 +52,13 @@ public class EhDaoGenerator {
         addHistoryInfo(schema);
         addQuickSearch(schema);
         addLocalFavorites(schema);
+        addBookmarks(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
 
         adjustDownloadInfo();
         adjustHistoryInfo();
         adjustLocalFavoriteInfo();
+        adjustBookmarkInfo();
     }
 
     private static void addDownloads(Schema schema) {
@@ -150,6 +153,27 @@ public class EhDaoGenerator {
         entity.addFloatProperty("rating").notNull();
         entity.addStringProperty("simpleLanguage");
         // LocalFavoriteInfo data
+        entity.addLongProperty("time").notNull();
+    }
+
+    private static void addBookmarks(Schema schema) {
+        Entity entity = schema.addEntity("BookmarkInfo");
+        entity.setTableName("BOOKMARKS");
+        entity.setClassNameDao("BookmarksBao");
+        entity.setSuperclass("GalleryInfo");
+        // GalleryInfo data
+        entity.addLongProperty("gid").primaryKey().notNull();
+        entity.addStringProperty("token");
+        entity.addStringProperty("title");
+        entity.addStringProperty("titleJpn");
+        entity.addStringProperty("thumb");
+        entity.addIntProperty("category").notNull();
+        entity.addStringProperty("posted");
+        entity.addStringProperty("uploader");
+        entity.addFloatProperty("rating").notNull();
+        entity.addStringProperty("simpleLanguage");
+        // Bookmark data
+        entity.addIntProperty("page").notNull();
         entity.addLongProperty("time").notNull();
     }
 
@@ -358,6 +382,71 @@ public class EhDaoGenerator {
         javaClass.addImport("com.hippo.ehviewer.client.data.GalleryInfo");
 
         FileWriter fileWriter = new FileWriter(LOCAL_FAVORITE_INFO_PATH);
+        fileWriter.write(javaClass.toString());
+        fileWriter.close();
+    }
+
+    private static void adjustBookmarkInfo() throws Exception {
+        JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, new File(BOOKMARK_INFO_PATH));
+        // Remove field from GalleryInfo
+        javaClass.removeField(javaClass.getField("gid"));
+        javaClass.removeField(javaClass.getField("token"));
+        javaClass.removeField(javaClass.getField("title"));
+        javaClass.removeField(javaClass.getField("titleJpn"));
+        javaClass.removeField(javaClass.getField("thumb"));
+        javaClass.removeField(javaClass.getField("category"));
+        javaClass.removeField(javaClass.getField("posted"));
+        javaClass.removeField(javaClass.getField("uploader"));
+        javaClass.removeField(javaClass.getField("rating"));
+        javaClass.removeField(javaClass.getField("simpleLanguage"));
+        // Set all field public
+        javaClass.getField("page").setPublic();
+        javaClass.getField("time").setPublic();
+        // Add Parcelable stuff
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic int describeContents() {\n" +
+                "\t\treturn 0;\n" +
+                "\t}");
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic void writeToParcel(Parcel dest, int flags) {\n" +
+                "\t\tsuper.writeToParcel(dest, flags);\n" +
+                "\t\tdest.writeInt(this.page);\n" +
+                "\t\tdest.writeLong(this.time);\n" +
+                "\t}");
+        javaClass.addMethod("\tprotected BookmarkInfo(Parcel in) {\n" +
+                "\t\tsuper(in);\n" +
+                "\t\tthis.page = in.readInt();\n" +
+                "\t\tthis.time = in.readLong();\n" +
+                "\t}").setConstructor(true);
+        javaClass.addField("\tpublic static final Creator<BookmarkInfo> CREATOR = new Creator<BookmarkInfo>() {\n" +
+                "\t\t@Override\n" +
+                "\t\tpublic BookmarkInfo createFromParcel(Parcel source) {\n" +
+                "\t\t\treturn new BookmarkInfo(source);\n" +
+                "\t\t}\n" +
+                "\n" +
+                "\t\t@Override\n" +
+                "\t\tpublic BookmarkInfo[] newArray(int size) {\n" +
+                "\t\t\treturn new BookmarkInfo[size];\n" +
+                "\t\t}\n" +
+                "\t};");
+        javaClass.addImport("android.os.Parcel");
+        // Add from GalleryInfo constructor
+        javaClass.addMethod("\tpublic BookmarkInfo(GalleryInfo galleryInfo) {\n" +
+                "\t\tthis.gid = galleryInfo.gid;\n" +
+                "\t\tthis.token = galleryInfo.token;\n" +
+                "\t\tthis.title = galleryInfo.title;\n" +
+                "\t\tthis.titleJpn = galleryInfo.titleJpn;\n" +
+                "\t\tthis.thumb = galleryInfo.thumb;\n" +
+                "\t\tthis.category = galleryInfo.category;\n" +
+                "\t\tthis.posted = galleryInfo.posted;\n" +
+                "\t\tthis.uploader = galleryInfo.uploader;\n" +
+                "\t\tthis.rating = galleryInfo.rating;\n" +
+                "\t\tthis.simpleTags = galleryInfo.simpleTags;\n" +
+                "\t\tthis.simpleLanguage = galleryInfo.simpleLanguage;\n" +
+                "\t}").setConstructor(true);
+        javaClass.addImport("com.hippo.ehviewer.client.data.GalleryInfo");
+
+        FileWriter fileWriter = new FileWriter(BOOKMARK_INFO_PATH);
         fileWriter.write(javaClass.toString());
         fileWriter.close();
     }
