@@ -142,6 +142,15 @@ public final class GalleryListScene extends BaseScene
 
     private int mNavCheckedId = 0;
 
+    private final Runnable mReturnSearchBarRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mSearchBarMover != null) {
+                mSearchBarMover.returnSearchBarPosition();
+            }
+        }
+    };
+
     private void handleArgs(Bundle args) {
         if (args == null) {
             return;
@@ -826,15 +835,11 @@ public final class GalleryListScene extends BaseScene
         }
 
         @Override
-        protected void onScrollToPosition() {
-            super.onScrollToPosition();
-
-            SimpleHandler.getInstance().post(new Runnable() {
-                @Override
-                public void run() {
-                    mSearchBarMover.returnSearchBarPosition();
-                }
-            });
+        protected void onHideRecyclerView() {
+            super.onHideRecyclerView();
+            if (mSearchBarMover != null) {
+                mSearchBarMover.showSearchBar();
+            }
         }
     }
 
@@ -843,7 +848,7 @@ public final class GalleryListScene extends BaseScene
                 mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.setPages(taskId, result.pages);
             mHelper.onGetPageData(taskId, result.galleryInfos);
-            mSearchBarMover.returnSearchBarPosition();
+            SimpleHandler.getInstance().post(mReturnSearchBarRunnable);
         }
     }
 
@@ -851,7 +856,6 @@ public final class GalleryListScene extends BaseScene
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.onGetExpection(taskId, e);
-            mSearchBarMover.returnSearchBarPosition();
         }
     }
 
