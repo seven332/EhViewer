@@ -65,13 +65,9 @@ public final class SpiderDen {
             // Read from DB
             String dirname = EhDB.getDownloadDirname(galleryInfo.gid);
             if (dirname == null) {
-                GalleryInfo info = EhDB.getGalleryInfo(galleryInfo.gid);
-                if (info == null) {
-                    info = galleryInfo;
-                }
-                dirname = FileUtils.sanitizeFilename(info.gid + "-" + info.title);
+                dirname = FileUtils.sanitizeFilename(galleryInfo.gid + "-" + galleryInfo.title);
                 // Put into DB
-                EhDB.putDownloadDirname(info.gid, dirname);
+                EhDB.putDownloadDirname(galleryInfo.gid, dirname);
             }
             return dir.subFile(dirname);
         } else {

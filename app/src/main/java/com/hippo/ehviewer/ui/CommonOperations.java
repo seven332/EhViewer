@@ -28,7 +28,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.dao.DownloadLabelRaw;
+import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
 
@@ -39,7 +39,7 @@ public final class CommonOperations {
     private static void doAddToFavorites(Activity activity, GalleryInfo galleryInfo,
             int slot, EhClient.Callback<Void> listener) {
         if (slot == -1) {
-            EhDB.addLocalFavorites(galleryInfo);
+            EhDB.putLocalFavorites(galleryInfo);
             listener.onSuccess(null);
         } else if (slot >= 0 && slot <= 9) {
             EhClient client = EhApplication.getEhClient(activity);
@@ -110,7 +110,7 @@ public final class CommonOperations {
             activity.startService(intent);
         } else {
             // Let use chose label
-            List<DownloadLabelRaw> list = dm.getLabelList();
+            List<DownloadLabel> list = dm.getLabelList();
             final String[] items = new String[list.size() + 1];
             items[0] = activity.getString(R.string.default_download_label_name);
             for (int i = 0, n = list.size(); i < n; i++) {

@@ -28,20 +28,18 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.dao.DaoMaster;
 import com.hippo.ehviewer.dao.DaoSession;
+import com.hippo.ehviewer.dao.DownloadDirname;
 import com.hippo.ehviewer.dao.DownloadDirnameDao;
-import com.hippo.ehviewer.dao.DownloadDirnameRaw;
 import com.hippo.ehviewer.dao.DownloadInfo;
+import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.dao.DownloadLabelDao;
-import com.hippo.ehviewer.dao.DownloadLabelRaw;
 import com.hippo.ehviewer.dao.DownloadsDao;
-import com.hippo.ehviewer.dao.GalleryInfoDao;
-import com.hippo.ehviewer.dao.GalleryInfoRaw;
-import com.hippo.ehviewer.dao.HistoryInfoDao;
-import com.hippo.ehviewer.dao.HistoryInfoRaw;
+import com.hippo.ehviewer.dao.HistoryDao;
+import com.hippo.ehviewer.dao.HistoryInfo;
+import com.hippo.ehviewer.dao.LocalFavoriteInfo;
 import com.hippo.ehviewer.dao.LocalFavoritesDao;
-import com.hippo.ehviewer.dao.LocalFavoritesRaw;
+import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.dao.QuickSearchDao;
-import com.hippo.ehviewer.dao.QuickSearchRaw;
 import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.util.ArrayList;
@@ -152,33 +150,6 @@ public class EhDB {
             // Ignore
         }
 
-        // Merge gallery info
-        try {
-            Cursor cursor = oldDB.rawQuery("select * from " + OldDBHelper.TABLE_GALLERY, null);
-            if (cursor != null) {
-                GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
-                if (cursor.moveToFirst()) {
-                    while (!cursor.isAfterLast()) {
-                        GalleryInfoRaw raw = new GalleryInfoRaw();
-                        raw.setGid((long) cursor.getInt(0));
-                        raw.setToken(cursor.getString(1));
-                        raw.setTitle(cursor.getString(2));
-                        raw.setPosted(cursor.getString(3));
-                        raw.setCategory(cursor.getInt(4));
-                        raw.setThumb(cursor.getString(5));
-                        raw.setUploader(cursor.getString(6));
-                        raw.setRating(cursor.getFloat(7));
-                        raw.setReference(cursor.getInt(8));
-                        dao.insert(raw);
-                        cursor.moveToNext();
-                    }
-                }
-                cursor.close();
-            }
-        } catch (Exception e) {
-            // Ignore
-        }
-
         // Merge local favorites
         try {
             Cursor cursor = oldDB.rawQuery("select * from " + OldDBHelper.TABLE_LOCAL_FAVOURITE, null);
@@ -187,10 +158,18 @@ public class EhDB {
                 if (cursor.moveToFirst()) {
                     long i = 0L;
                     while (!cursor.isAfterLast()) {
-                        LocalFavoritesRaw raw = new LocalFavoritesRaw();
-                        raw.setGid((long) cursor.getInt(0));
-                        raw.setDate(i);
-                        dao.insert(raw);
+                        // Get GalleryInfo first
+                        long gid = cursor.getInt(0);
+                        GalleryInfo gi = map.get(gid);
+                        if (gi == null) {
+                            Log.e(TAG, "Can't get GalleryInfo with gid: " + gid);
+                            cursor.moveToNext();
+                            continue;
+                        }
+
+                        LocalFavoriteInfo info = new LocalFavoriteInfo(gi);
+                        info.setTime(i);
+                        dao.insert(info);
                         cursor.moveToNext();
                         i++;
                     }
@@ -209,7 +188,7 @@ public class EhDB {
                 QuickSearchDao dao = sDaoSession.getQuickSearchDao();
                 if (cursor.moveToFirst()) {
                     while (!cursor.isAfterLast()) {
-                        QuickSearchRaw raw = new QuickSearchRaw();
+                        QuickSearch quickSearch = new QuickSearch();
 
                         int mode = cursor.getInt(2);
                         String search = cursor.getString(4);
@@ -219,15 +198,15 @@ public class EhDB {
                             search = search.substring("uploader:".length());
                         }
 
-                        raw.setDate((long) cursor.getInt(0));
-                        raw.setName(cursor.getString(1));
-                        raw.setMode(mode);
-                        raw.setCategory(cursor.getInt(3));
-                        raw.setKeyword(mode == ListUrlBuilder.MODE_TAG ? tag : search);
-                        raw.setAdvanceSearch(cursor.getInt(5));
-                        raw.setMinRating(cursor.getInt(6));
+                        quickSearch.setDate((long) cursor.getInt(0));
+                        quickSearch.setName(cursor.getString(1));
+                        quickSearch.setMode(mode);
+                        quickSearch.setCategory(cursor.getInt(3));
+                        quickSearch.setKeyword(mode == ListUrlBuilder.MODE_TAG ? tag : search);
+                        quickSearch.setAdvanceSearch(cursor.getInt(5));
+                        quickSearch.setMinRating(cursor.getInt(6));
 
-                        dao.insert(raw);
+                        dao.insert(quickSearch);
                         cursor.moveToNext();
                     }
                 }
@@ -282,14 +261,22 @@ public class EhDB {
             // Merge history info
             Cursor cursor = oldDB.rawQuery("select * from " + OldDBHelper.TABLE_HISTORY, null);
             if (cursor != null) {
-                HistoryInfoDao dao = sDaoSession.getHistoryInfoDao();
+                HistoryDao dao = sDaoSession.getHistoryDao();
                 if (cursor.moveToFirst()) {
                     while (!cursor.isAfterLast()) {
-                        HistoryInfoRaw raw = new HistoryInfoRaw();
-                        raw.setGid((long) cursor.getInt(0));
-                        raw.setMode(cursor.getInt(1));
-                        raw.setDate(cursor.getLong(2));
-                        dao.insert(raw);
+                        // Get GalleryInfo first
+                        long gid = cursor.getInt(0);
+                        GalleryInfo gi = map.get(gid);
+                        if (gi == null) {
+                            Log.e(TAG, "Can't get GalleryInfo with gid: " + gid);
+                            cursor.moveToNext();
+                            continue;
+                        }
+
+                        HistoryInfo info = new HistoryInfo();
+                        info.setMode(cursor.getInt(1));
+                        info.setTime(cursor.getLong(2));
+                        dao.insert(info);
                         cursor.moveToNext();
                     }
                 }
@@ -303,63 +290,6 @@ public class EhDB {
             oldDBHelper.close();
         } catch (Exception e) {
             // Ignore
-        }
-    }
-
-    private static synchronized void addGalleryInfo(GalleryInfo galleryInfo) {
-        GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
-        GalleryInfoRaw raw = dao.load(galleryInfo.gid);
-        if (raw == null) {
-            // add new item, set reference 1
-            raw = new GalleryInfoRaw();
-            raw.setGid(galleryInfo.gid);
-            raw.setToken(galleryInfo.token);
-            raw.setTitle(galleryInfo.title);
-            raw.setThumb(galleryInfo.thumb);
-            raw.setCategory(galleryInfo.category);
-            raw.setPosted(galleryInfo.posted);
-            raw.setUploader(galleryInfo.uploader);
-            raw.setRating(galleryInfo.rating);
-            raw.setReference(1);
-            dao.insert(raw);
-        } else {
-            // already in db, add reference
-            raw.setReference(raw.getReference() + 1);
-            dao.update(raw);
-        }
-    }
-
-    private static synchronized void removeGalleryInfo(int gid) {
-        GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
-        GalleryInfoRaw raw = dao.load((long) gid);
-        int reference = raw.getReference();
-        if (reference <= 1) {
-            // No reference, delete it
-            dao.deleteByKey((long) gid);
-        } else {
-            // Still has reference, sub reference
-            raw.setReference(reference - 1);
-            dao.update(raw);
-        }
-    }
-
-    public static synchronized GalleryInfo getGalleryInfo(long gid) {
-        GalleryInfoDao dao = sDaoSession.getGalleryInfoDao();
-        GalleryInfoRaw raw = dao.load(gid);
-        if (raw != null) {
-            GalleryInfo gi = new GalleryInfo();
-            gi.gid = raw.getGid();
-            gi.token = raw.getToken();
-            gi.title = raw.getTitle();
-            gi.thumb = raw.getThumb();
-            gi.category = raw.getCategory();
-            gi.posted = raw.getPosted();
-            gi.uploader = raw.getUploader();
-            gi.rating = raw.getRating();
-            gi.generateSLang();
-            return gi;
-        } else {
-            return null;
         }
     }
 
@@ -394,7 +324,7 @@ public class EhDB {
     @Nullable
     public static synchronized String getDownloadDirname(long gid) {
         DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
-        DownloadDirnameRaw raw = dao.load(gid);
+        DownloadDirname raw = dao.load(gid);
         if (raw != null) {
             return raw.getDirname();
         } else {
@@ -407,12 +337,12 @@ public class EhDB {
      */
     public static synchronized void putDownloadDirname(long gid, String dirname) {
         DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
-        DownloadDirnameRaw raw = dao.load(gid);
+        DownloadDirname raw = dao.load(gid);
         if (raw != null) { // Update
             raw.setDirname(dirname);
             dao.update(raw);
         } else { // Insert
-            raw = new DownloadDirnameRaw();
+            raw = new DownloadDirname();
             raw.setGid(gid);
             raw.setDirname(dirname);
             dao.insert(raw);
@@ -425,21 +355,21 @@ public class EhDB {
     }
 
     @NonNull
-    public static synchronized List<DownloadLabelRaw> getAllDownloadLabelList() {
+    public static synchronized List<DownloadLabel> getAllDownloadLabelList() {
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
         return dao.queryBuilder().orderAsc(DownloadLabelDao.Properties.Time).list();
     }
 
-    public static synchronized DownloadLabelRaw addDownloadLabel(String label) {
+    public static synchronized DownloadLabel addDownloadLabel(String label) {
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
-        DownloadLabelRaw raw = new DownloadLabelRaw();
+        DownloadLabel raw = new DownloadLabel();
         raw.setLabel(label);
         raw.setTime(System.currentTimeMillis());
         raw.setId(dao.insert(raw));
         return raw;
     }
 
-    public static synchronized void updateDownloadLabel(DownloadLabelRaw raw) {
+    public static synchronized void updateDownloadLabel(DownloadLabel raw) {
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
         dao.update(raw);
     }
@@ -454,7 +384,7 @@ public class EhDB {
         int limit = reverse ? fromPosition - toPosition + 1 : toPosition - fromPosition + 1;
 
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
-        List<DownloadLabelRaw> list = dao.queryBuilder().orderAsc(DownloadLabelDao.Properties.Time)
+        List<DownloadLabel> list = dao.queryBuilder().orderAsc(DownloadLabelDao.Properties.Time)
                 .offset(offset).limit(limit).list();
 
         int step = reverse ? 1 : -1;
@@ -469,36 +399,25 @@ public class EhDB {
         dao.updateInTx(list);
     }
 
-    public static synchronized void removeDownloadLabel(DownloadLabelRaw raw) {
+    public static synchronized void removeDownloadLabel(DownloadLabel raw) {
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
         dao.delete(raw);
     }
 
     public static synchronized List<GalleryInfo> getAllLocalFavorites() {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
-        List<LocalFavoritesRaw> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Date).list();
-        List<GalleryInfo> result = new ArrayList<>(list.size());
-        for (LocalFavoritesRaw raw: list) {
-            GalleryInfo gi = getGalleryInfo(raw.getGid());
-            if (null == gi) {
-                continue;
-            }
-            result.add(gi);
-        }
+        List<LocalFavoriteInfo> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Time).list();
+        List<GalleryInfo> result = new ArrayList<>();
+        result.addAll(list);
         return result;
     }
 
     public static synchronized List<GalleryInfo> searchLocalFavorites(String query) {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
-        List<LocalFavoritesRaw> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Date).list();
-        List<GalleryInfo> result = new ArrayList<>(list.size());
-        for (LocalFavoritesRaw raw: list) {
-            GalleryInfo gi = getGalleryInfo((int) (long) raw.getGid());
-            if (null == gi || !gi.title.toLowerCase().contains(query.toLowerCase())) {
-                continue;
-            }
-            result.add(gi);
-        }
+        List<LocalFavoriteInfo> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Time)
+                .where(LocalFavoritesDao.Properties.Title.like("%" + query+ "%")).list();
+        List<GalleryInfo> result = new ArrayList<>();
+        result.addAll(list);
         return result;
     }
 
@@ -518,33 +437,23 @@ public class EhDB {
         return null != dao.load(gid);
     }
 
-    public static synchronized void addLocalFavorites(GalleryInfo galleryInfo) {
+    public static synchronized void putLocalFavorites(GalleryInfo galleryInfo) {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
-        if (null != dao.load(galleryInfo.gid)) {
-            // Contained
-            return;
+        if (null == dao.load(galleryInfo.gid)) {
+            LocalFavoriteInfo info;
+            if (galleryInfo instanceof LocalFavoriteInfo) {
+                info = (LocalFavoriteInfo) galleryInfo;
+            } else {
+                info = new LocalFavoriteInfo(galleryInfo);
+                info.time = System.currentTimeMillis();
+            }
+            dao.insert(info);
         }
-
-        addGalleryInfo(galleryInfo);
-        LocalFavoritesRaw raw = new LocalFavoritesRaw();
-        raw.setGid(galleryInfo.gid);
-        raw.setDate(System.currentTimeMillis());
-        dao.insert(raw);
     }
 
-    public static synchronized void addLocalFavorites(List<GalleryInfo> galleryInfoList) {
-        LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
+    public static synchronized void putLocalFavorites(List<GalleryInfo> galleryInfoList) {
         for (GalleryInfo gi: galleryInfoList) {
-            if (null != dao.load(gi.gid)) {
-                // Contained
-                continue;
-            }
-
-            addGalleryInfo(gi);
-            LocalFavoritesRaw raw = new LocalFavoritesRaw();
-            raw.setGid(gi.gid);
-            raw.setDate(System.currentTimeMillis());
-            dao.insert(raw);
+            putLocalFavorites(gi);
         }
     }
 }

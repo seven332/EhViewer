@@ -35,6 +35,8 @@ public class EhDaoGenerator {
     private static final int VERSION = 1;
 
     private static final String DOWNLOAD_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/DownloadInfo.java";
+    private static final String HISTORY_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/HistoryInfo.java";
+    private static final String LOCAL_FAVORITE_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/LocalFavoriteInfo.java";
 
     public static void generate() throws Exception {
         Utilities.deleteContents(new File(DELETE_DIR));
@@ -43,7 +45,6 @@ public class EhDaoGenerator {
         outDir.mkdirs();
 
         Schema schema = new Schema(VERSION, PACKAGE);
-        addGalleryInfo(schema);
         addDownloads(schema);
         addDownloadLabel(schema);
         addDownloadDirname(schema);
@@ -52,32 +53,17 @@ public class EhDaoGenerator {
         addLocalFavorites(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
 
-        adjustDownloads();
-    }
-
-    private static void addGalleryInfo(Schema schema) {
-        Entity entity = schema.addEntity("GalleryInfoRaw");
-        entity.setTableName("GALLERY_INFO");
-        entity.setClassNameDao("GalleryInfoDao");
-        entity.addLongProperty("gid").primaryKey();
-        entity.addStringProperty("token");
-        entity.addStringProperty("title");
-        entity.addStringProperty("posted");
-        entity.addIntProperty("category");
-        entity.addStringProperty("thumb");
-        entity.addStringProperty("uploader");
-        entity.addFloatProperty("rating");
-        entity.addIntProperty("reference");
+        adjustDownloadInfo();
+        adjustHistoryInfo();
+        adjustLocalFavoriteInfo();
     }
 
     private static void addDownloads(Schema schema) {
         Entity entity = schema.addEntity("DownloadInfo");
         entity.setTableName("DOWNLOADS");
         entity.setClassNameDao("DownloadsDao");
-
-        entity.setSuperclass("com.hippo.ehviewer.client.data.GalleryInfo");
-
-        // Gallery Info Data
+        entity.setSuperclass("GalleryInfo");
+        // GalleryInfo data
         entity.addLongProperty("gid").primaryKey().notNull();
         entity.addStringProperty("token");
         entity.addStringProperty("title");
@@ -88,7 +74,7 @@ public class EhDaoGenerator {
         entity.addStringProperty("uploader");
         entity.addFloatProperty("rating").notNull();
         entity.addStringProperty("simpleLanguage");
-        // Download Info Data
+        // DownloadInfo data
         entity.addIntProperty("state").notNull();
         entity.addIntProperty("legacy").notNull();
         entity.addLongProperty("time").notNull();
@@ -96,8 +82,8 @@ public class EhDaoGenerator {
     }
 
     private static void addDownloadLabel(Schema schema) {
-        Entity entity = schema.addEntity("DownloadLabelRaw");
-        entity.setTableName("DOWNLOAD_LABEL");
+        Entity entity = schema.addEntity("DownloadLabel");
+        entity.setTableName("DOWNLOAD_LABELS");
         entity.setClassNameDao("DownloadLabelDao");
         entity.addIdProperty();
         entity.addStringProperty("label");
@@ -105,7 +91,7 @@ public class EhDaoGenerator {
     }
 
     private static void addDownloadDirname(Schema schema) {
-        Entity entity = schema.addEntity("DownloadDirnameRaw");
+        Entity entity = schema.addEntity("DownloadDirname");
         entity.setTableName("DOWNLOAD_DIRNAME");
         entity.setClassNameDao("DownloadDirnameDao");
         entity.addLongProperty("gid").primaryKey();
@@ -113,16 +99,28 @@ public class EhDaoGenerator {
     }
 
     private static void addHistoryInfo(Schema schema) {
-        Entity entity = schema.addEntity("HistoryInfoRaw");
-        entity.setTableName("HISTORY_INFO");
-        entity.setClassNameDao("HistoryInfoDao");
-        entity.addLongProperty("gid").primaryKey();
-        entity.addIntProperty("mode");
-        entity.addLongProperty("date");
+        Entity entity = schema.addEntity("HistoryInfo");
+        entity.setTableName("HISTORY");
+        entity.setClassNameDao("HistoryDao");
+        entity.setSuperclass("GalleryInfo");
+        // GalleryInfo data
+        entity.addLongProperty("gid").primaryKey().notNull();
+        entity.addStringProperty("token");
+        entity.addStringProperty("title");
+        entity.addStringProperty("titleJpn");
+        entity.addStringProperty("thumb");
+        entity.addIntProperty("category").notNull();
+        entity.addStringProperty("posted");
+        entity.addStringProperty("uploader");
+        entity.addFloatProperty("rating").notNull();
+        entity.addStringProperty("simpleLanguage");
+        // HistoryInfo data
+        entity.addIntProperty("mode").notNull();
+        entity.addLongProperty("time").notNull();
     }
 
     private static void addQuickSearch(Schema schema) {
-        Entity entity = schema.addEntity("QuickSearchRaw");
+        Entity entity = schema.addEntity("QuickSearch");
         entity.setTableName("QUICK_SEARCH");
         entity.setClassNameDao("QuickSearchDao");
         entity.addIdProperty();
@@ -136,14 +134,26 @@ public class EhDaoGenerator {
     }
 
     private static void addLocalFavorites(Schema schema) {
-        Entity entity = schema.addEntity("LocalFavoritesRaw");
+        Entity entity = schema.addEntity("LocalFavoriteInfo");
         entity.setTableName("LOCAL_FAVORITES");
         entity.setClassNameDao("LocalFavoritesDao");
-        entity.addLongProperty("gid").primaryKey();
-        entity.addLongProperty("date");
+        entity.setSuperclass("GalleryInfo");
+        // GalleryInfo data
+        entity.addLongProperty("gid").primaryKey().notNull();
+        entity.addStringProperty("token");
+        entity.addStringProperty("title");
+        entity.addStringProperty("titleJpn");
+        entity.addStringProperty("thumb");
+        entity.addIntProperty("category").notNull();
+        entity.addStringProperty("posted");
+        entity.addStringProperty("uploader");
+        entity.addFloatProperty("rating").notNull();
+        entity.addStringProperty("simpleLanguage");
+        // LocalFavoriteInfo data
+        entity.addLongProperty("time").notNull();
     }
 
-    private static void adjustDownloads() throws Exception {
+    private static void adjustDownloadInfo() throws Exception {
         JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, new File(DOWNLOAD_INFO_PATH));
         // Remove field from GalleryInfo
         javaClass.removeField(javaClass.getField("gid"));
@@ -155,6 +165,7 @@ public class EhDaoGenerator {
         javaClass.removeField(javaClass.getField("posted"));
         javaClass.removeField(javaClass.getField("uploader"));
         javaClass.removeField(javaClass.getField("rating"));
+        javaClass.removeField(javaClass.getField("simpleLanguage"));
         // Set all field public
         javaClass.getField("state").setPublic();
         javaClass.getField("legacy").setPublic();
@@ -220,6 +231,133 @@ public class EhDaoGenerator {
         javaClass.addImport("com.hippo.ehviewer.client.data.GalleryInfo");
 
         FileWriter fileWriter = new FileWriter(DOWNLOAD_INFO_PATH);
+        fileWriter.write(javaClass.toString());
+        fileWriter.close();
+    }
+
+    private static void adjustHistoryInfo() throws Exception {
+        JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, new File(HISTORY_INFO_PATH));
+        // Remove field from GalleryInfo
+        javaClass.removeField(javaClass.getField("gid"));
+        javaClass.removeField(javaClass.getField("token"));
+        javaClass.removeField(javaClass.getField("title"));
+        javaClass.removeField(javaClass.getField("titleJpn"));
+        javaClass.removeField(javaClass.getField("thumb"));
+        javaClass.removeField(javaClass.getField("category"));
+        javaClass.removeField(javaClass.getField("posted"));
+        javaClass.removeField(javaClass.getField("uploader"));
+        javaClass.removeField(javaClass.getField("rating"));
+        javaClass.removeField(javaClass.getField("simpleLanguage"));
+        // Set all field public
+        javaClass.getField("mode").setPublic();
+        javaClass.getField("time").setPublic();
+        // Add Parcelable stuff
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic int describeContents() {\n" +
+                "\t\treturn 0;\n" +
+                "\t}");
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic void writeToParcel(Parcel dest, int flags) {\n" +
+                "\t\tsuper.writeToParcel(dest, flags);\n" +
+                "\t\tdest.writeInt(this.mode);\n" +
+                "\t\tdest.writeLong(this.time);\n" +
+                "\t}");
+        javaClass.addMethod("\tprotected HistoryInfo(Parcel in) {\n" +
+                "\t\tsuper(in);\n" +
+                "\t\tthis.mode = in.readInt();\n" +
+                "\t\tthis.time = in.readLong();\n" +
+                "\t}").setConstructor(true);
+        javaClass.addField("\tpublic static final Creator<HistoryInfo> CREATOR = new Creator<HistoryInfo>() {\n" +
+                "\t\t@Override\n" +
+                "\t\tpublic HistoryInfo createFromParcel(Parcel source) {\n" +
+                "\t\t\treturn new HistoryInfo(source);\n" +
+                "\t\t}\n" +
+                "\n" +
+                "\t\t@Override\n" +
+                "\t\tpublic HistoryInfo[] newArray(int size) {\n" +
+                "\t\t\treturn new HistoryInfo[size];\n" +
+                "\t\t}\n" +
+                "\t};");
+        javaClass.addImport("android.os.Parcel");
+        // Add from GalleryInfo constructor
+        javaClass.addMethod("\tpublic HistoryInfo(GalleryInfo galleryInfo) {\n" +
+                "\t\tthis.gid = galleryInfo.gid;\n" +
+                "\t\tthis.token = galleryInfo.token;\n" +
+                "\t\tthis.title = galleryInfo.title;\n" +
+                "\t\tthis.titleJpn = galleryInfo.titleJpn;\n" +
+                "\t\tthis.thumb = galleryInfo.thumb;\n" +
+                "\t\tthis.category = galleryInfo.category;\n" +
+                "\t\tthis.posted = galleryInfo.posted;\n" +
+                "\t\tthis.uploader = galleryInfo.uploader;\n" +
+                "\t\tthis.rating = galleryInfo.rating;\n" +
+                "\t\tthis.simpleTags = galleryInfo.simpleTags;\n" +
+                "\t\tthis.simpleLanguage = galleryInfo.simpleLanguage;\n" +
+                "\t}").setConstructor(true);
+        javaClass.addImport("com.hippo.ehviewer.client.data.GalleryInfo");
+
+        FileWriter fileWriter = new FileWriter(HISTORY_INFO_PATH);
+        fileWriter.write(javaClass.toString());
+        fileWriter.close();
+    }
+
+    private static void adjustLocalFavoriteInfo() throws Exception {
+        JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, new File(LOCAL_FAVORITE_INFO_PATH));
+        // Remove field from GalleryInfo
+        javaClass.removeField(javaClass.getField("gid"));
+        javaClass.removeField(javaClass.getField("token"));
+        javaClass.removeField(javaClass.getField("title"));
+        javaClass.removeField(javaClass.getField("titleJpn"));
+        javaClass.removeField(javaClass.getField("thumb"));
+        javaClass.removeField(javaClass.getField("category"));
+        javaClass.removeField(javaClass.getField("posted"));
+        javaClass.removeField(javaClass.getField("uploader"));
+        javaClass.removeField(javaClass.getField("rating"));
+        javaClass.removeField(javaClass.getField("simpleLanguage"));
+        // Set all field public
+        javaClass.getField("time").setPublic();
+        // Add Parcelable stuff
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic int describeContents() {\n" +
+                "\t\treturn 0;\n" +
+                "\t}");
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic void writeToParcel(Parcel dest, int flags) {\n" +
+                "\t\tsuper.writeToParcel(dest, flags);\n" +
+                "\t\tdest.writeLong(this.time);\n" +
+                "\t}");
+        javaClass.addMethod("\tprotected LocalFavoriteInfo(Parcel in) {\n" +
+                "\t\tsuper(in);\n" +
+                "\t\tthis.time = in.readLong();\n" +
+                "\t}").setConstructor(true);
+        javaClass.addField("\tpublic static final Creator<LocalFavoriteInfo> CREATOR = new Creator<LocalFavoriteInfo>() {\n" +
+                "\t\t@Override\n" +
+                "\t\tpublic LocalFavoriteInfo createFromParcel(Parcel source) {\n" +
+                "\t\t\treturn new LocalFavoriteInfo(source);\n" +
+                "\t\t}\n" +
+                "\n" +
+                "\t\t@Override\n" +
+                "\t\tpublic LocalFavoriteInfo[] newArray(int size) {\n" +
+                "\t\t\treturn new LocalFavoriteInfo[size];\n" +
+                "\t\t}\n" +
+                "\t};");
+        javaClass.addImport("android.os.Parcel");
+        // Add from GalleryInfo constructor
+        javaClass.addMethod("\tpublic LocalFavoriteInfo(GalleryInfo galleryInfo) {\n" +
+                "\t\tthis.gid = galleryInfo.gid;\n" +
+                "\t\tthis.token = galleryInfo.token;\n" +
+                "\t\tthis.title = galleryInfo.title;\n" +
+                "\t\tthis.titleJpn = galleryInfo.titleJpn;\n" +
+                "\t\tthis.thumb = galleryInfo.thumb;\n" +
+                "\t\tthis.category = galleryInfo.category;\n" +
+                "\t\tthis.posted = galleryInfo.posted;\n" +
+                "\t\tthis.uploader = galleryInfo.uploader;\n" +
+                "\t\tthis.rating = galleryInfo.rating;\n" +
+                "\t\tthis.simpleTags = galleryInfo.simpleTags;\n" +
+                "\t\tthis.simpleLanguage = galleryInfo.simpleLanguage;\n" +
+                "\t}").setConstructor(true);
+        javaClass.addImport("com.hippo.ehviewer.client.data.GalleryInfo");
+
+        FileWriter fileWriter = new FileWriter(LOCAL_FAVORITE_INFO_PATH);
         fileWriter.write(javaClass.toString());
         fileWriter.close();
     }

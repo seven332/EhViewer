@@ -857,7 +857,7 @@ public class FavoritesScene extends BaseScene implements
                 mModifyAdd = true;
                 mHelper.refresh();
             } else if (dstCat == FavListUrlBuilder.FAV_CAT_LOCAL) { // Move from cloud to local
-                EhDB.addLocalFavorites(mModifyGiList);
+                EhDB.putLocalFavorites(mModifyGiList);
                 mEnableModify = true;
                 mModifyFavCat = -1;
                 mModifyAdd = false;

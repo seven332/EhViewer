@@ -59,7 +59,7 @@ import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadInfo;
-import com.hippo.ehviewer.dao.DownloadLabelRaw;
+import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.spider.SpiderDen;
@@ -310,7 +310,7 @@ public class DownloadScene extends ToolbarScene
                         return true;
                     case R.id.action_default_download_label:
                         DownloadManager dm = EhApplication.getDownloadManager(getContext());
-                        List<DownloadLabelRaw> list = dm.getLabelList();
+                        List<DownloadLabel> list = dm.getLabelList();
                         final String[] items = new String[list.size() + 2];
                         items[0] = getString(R.string.let_me_select);
                         items[1] = getString(R.string.default_download_label_name);
@@ -342,11 +342,11 @@ public class DownloadScene extends ToolbarScene
             }
         });
 
-        List<DownloadLabelRaw> list = EhApplication.getDownloadManager(getContext()).getLabelList();
+        List<DownloadLabel> list = EhApplication.getDownloadManager(getContext()).getLabelList();
         final List<String> labels = new ArrayList<>(list.size() + 1);
         // Add default label name
         labels.add(getString(R.string.default_download_label_name));
-        for (DownloadLabelRaw raw: list) {
+        for (DownloadLabel raw: list) {
             labels.add(raw.getLabel());
         }
 
@@ -509,7 +509,7 @@ public class DownloadScene extends ToolbarScene
                     break;
                 }
                 case 4: {// Move
-                    List<DownloadLabelRaw> labelRawList = EhApplication.getDownloadManager(getContext()).getLabelList();
+                    List<DownloadLabel> labelRawList = EhApplication.getDownloadManager(getContext()).getLabelList();
                     List<String> labelList = new ArrayList<>(labelRawList.size() + 1);
                     labelList.add(getString(R.string.default_download_label_name));
                     for (int i = 0, n = labelRawList.size(); i < n; i++) {

@@ -49,7 +49,7 @@ import com.hippo.app.EditTextDialogBuilder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.dao.DownloadLabelRaw;
+import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.util.ActivityHelper;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.ViewUtils;
@@ -69,10 +69,10 @@ public class DownloadLabelScene extends ToolbarScene {
     private RecyclerView.Adapter mAdapter;
 
     @Nullable
-    public List<DownloadLabelRaw> mList = null;
+    public List<DownloadLabel> mList = null;
 
     @NonNull
-    public final Map<DownloadLabelRaw, Boolean> mPinState = new HashMap<>();
+    public final Map<DownloadLabel, Boolean> mPinState = new HashMap<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -216,7 +216,7 @@ public class DownloadLabelScene extends ToolbarScene {
                 return;
             }
 
-            DownloadLabelRaw raw = mList.get(mIndex);
+            DownloadLabel raw = mList.get(mIndex);
             EhApplication.getDownloadManager(getContext()).deleteLabel(raw.getLabel());
             mPinState.remove(raw);
             if (mAdapter != null) {
@@ -351,7 +351,7 @@ public class DownloadLabelScene extends ToolbarScene {
                         .setPositiveButton(android.R.string.ok, helper)
                         .show();
             } else if (label == v) {
-                DownloadLabelRaw raw = mList.get(index);
+                DownloadLabel raw = mList.get(index);
                 EditTextDialogBuilder builder = new EditTextDialogBuilder(
                         getContext(), raw.getLabel(), getString(R.string.label));
                 builder.setTitle(R.string.rename_label_title);
