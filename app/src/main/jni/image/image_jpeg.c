@@ -153,11 +153,11 @@ int JPEG_get_height(JPEG* jpeg)
   return jpeg->height;
 }
 
-bool JPEG_render(JPEG* jpeg, int src_x, int src_y,
+void JPEG_render(JPEG* jpeg, int src_x, int src_y,
     void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
     int width, int height, bool fill_blank, int default_color)
 {
-  return copy_pixels(jpeg->buffer, jpeg->width, jpeg->height, src_x, src_y,
+  copy_pixels(jpeg->buffer, jpeg->width, jpeg->height, src_x, src_y,
       dst, dst_w, dst_h, dst_x, dst_y,
       width, height, fill_blank, default_color);
 }

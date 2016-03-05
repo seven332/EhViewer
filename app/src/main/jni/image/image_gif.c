@@ -289,11 +289,11 @@ int GIF_get_height(GIF* gif)
   return gif->gif_file->SHeight;
 }
 
-bool GIF_render(GIF* gif, int src_x, int src_y,
+void GIF_render(GIF* gif, int src_x, int src_y,
     void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
     int width, int height, bool fill_blank, int default_color)
 {
-  return copy_pixels(gif->buffer, gif->gif_file->SWidth, gif->gif_file->SHeight, src_x, src_y,
+  copy_pixels(gif->buffer, gif->gif_file->SWidth, gif->gif_file->SHeight, src_x, src_y,
       dst, dst_w, dst_h, dst_x, dst_y,
       width, height, fill_blank, default_color);
 }

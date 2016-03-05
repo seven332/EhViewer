@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <android/bitmap.h>
+#include <GLES2/gl2.h>
 
 #include "java_wrapper.h"
 #include "input_stream.h"
@@ -27,6 +28,8 @@
 #include "../log.h"
 
 static JavaVM* jvm;
+
+static void* tile_buffer;
 
 JNIEnv *get_env()
 {
@@ -98,7 +101,7 @@ Java_com_hippo_image_Image_nativeIsCompleted(JNIEnv* env,
   return (jboolean) is_completed((void*) (intptr_t) ptr, format);
 }
 
-JNIEXPORT jboolean JNICALL
+JNIEXPORT void JNICALL
 Java_com_hippo_image_Image_nativeRender(JNIEnv* env,
     jclass clazz, jlong ptr, jint format,
     jint src_x, jint src_y, jobject dst, jint dst_x, jint dst_y,
@@ -106,22 +109,60 @@ Java_com_hippo_image_Image_nativeRender(JNIEnv* env,
 {
   AndroidBitmapInfo info;
   void *pixels = NULL;
-  bool result;
 
   AndroidBitmap_getInfo(env, dst, &info);
   AndroidBitmap_lockPixels(env, dst, &pixels);
   if (pixels == NULL) {
     LOGE(EMSG("Can't lock bitmap pixels"));
-    return JNI_FALSE;
+    return;
   }
 
-  result = render((void*) (intptr_t) ptr, format, src_x, src_y,
+  render((void*) (intptr_t) ptr, format, src_x, src_y,
       pixels, info.width, info.height, dst_x, dst_y,
       width, height, fill_blank, default_color);
 
   AndroidBitmap_unlockPixels(env, dst);
 
-  return (jboolean) result;
+  return;
+}
+
+JNIEXPORT void JNICALL
+Java_com_hippo_image_Image_nativeTexImage(JNIEnv* env,
+    jclass clazz, jlong ptr, jint format, jboolean init, jint tile_type,
+    jint offset_x, jint offset_y)
+{
+  // Check tile_buffer NULL
+  if (NULL == tile_buffer) {
+    return;
+  }
+
+  // Get border size and tile size
+  int border_size;
+  int tile_size;
+  switch (tile_type) {
+    case IMAGE_TILE_TYPE_SMALL:
+      border_size = IMAGE_SMALL_TILE_BORDER_SIZE;
+      tile_size = IMAGE_SMALL_TILE_SIZE;
+      break;
+    case IMAGE_TILE_TYPE_LARGE:
+      border_size = IMAGE_LARGE_TILE_BORDER_SIZE;
+      tile_size = IMAGE_LARGE_TILE_SIZE;
+      break;
+    default:
+      return;
+  }
+
+  render((void*) (intptr_t) ptr, format,
+      offset_x - border_size, offset_y - border_size,
+      tile_buffer, tile_size, tile_size, 0, 0,
+      tile_size, tile_size, true, 0);
+  if (init) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tile_size, tile_size,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, tile_buffer);
+  } else {
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tile_size, tile_size,
+        GL_RGBA, GL_UNSIGNED_BYTE, tile_buffer);
+  }
 }
 
 JNIEXPORT void JNICALL
@@ -162,12 +203,18 @@ Java_com_hippo_image_Image_nativeRecycle(JNIEnv* env,
 jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
   JNIEnv* env;
-  if ((*vm)->GetEnv(vm, (void**) (&env), JNI_VERSION_1_6) != JNI_OK)
+  if ((*vm)->GetEnv(vm, (void**) (&env), JNI_VERSION_1_6) != JNI_OK) {
     return -1;
+  }
   jvm = vm;
+
+  tile_buffer = malloc(IMAGE_LARGE_TILE_SIZE * IMAGE_LARGE_TILE_SIZE * 4);
+
   return JNI_VERSION_1_6;
 }
 
 void JNI_OnUnload(JavaVM *vm, void *reserved)
 {
+  free(tile_buffer);
+  tile_buffer = NULL;
 }

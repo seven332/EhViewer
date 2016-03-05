@@ -33,7 +33,7 @@ public class ImageWrapper implements Animatable, Runnable {
 
     private static final String TAG = ImageWrapper.class.getSimpleName();
 
-    private Image mImage;
+    private final Image mImage;
 
     private boolean mRunning = false;
 
@@ -51,9 +51,9 @@ public class ImageWrapper implements Animatable, Runnable {
         return mImage.getHeight();
     }
 
-    public boolean render(int srcX, int srcY, Bitmap dst, int dstX, int dstY,
+    public void render(int srcX, int srcY, Bitmap dst, int dstX, int dstY,
             int width, int height, boolean fillBlank, int defaultColor) {
-        return mImage.render(srcX, srcY, dst, dstX, dstY,
+        mImage.render(srcX, srcY, dst, dstX, dstY,
                 width, height, fillBlank, defaultColor);
     }
 

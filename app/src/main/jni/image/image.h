@@ -42,7 +42,7 @@ bool complete(void* image, int format);
 bool is_completed(void* image, int format);
 int get_width(void* image, int format);
 int get_height(void* image, int format);
-bool render(void* image, int format, int src_x, int src_y,
+void render(void* image, int format, int src_x, int src_y,
     void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
     int width, int height, bool fill_blank, int default_color);
 void advance(void* image, int format);

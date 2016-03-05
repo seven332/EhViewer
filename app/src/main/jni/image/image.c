@@ -195,32 +195,35 @@ int get_height(void* image, int format)
   }
 }
 
-bool render(void* image, int format, int src_x, int src_y,
+void render(void* image, int format, int src_x, int src_y,
     void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
     int width, int height, bool fill_blank, int default_color)
 {
   switch (format) {
 #ifdef IMAGE_SUPPORT_JPEG
     case IMAGE_FORMAT_JPEG:
-      return JPEG_render((JPEG*) image, src_x, src_y,
+      JPEG_render((JPEG*) image, src_x, src_y,
           dst, dst_w, dst_h, dst_x, dst_y,
           width, height, fill_blank, default_color);
+      break;
 #endif
 #ifdef IMAGE_SUPPORT_PNG
     case IMAGE_FORMAT_PNG:
-      return PNG_render((PNG*) image, src_x, src_y,
+      PNG_render((PNG*) image, src_x, src_y,
           dst, dst_w, dst_h, dst_x, dst_y,
           width, height, fill_blank, default_color);
+      break;
 #endif
 #ifdef IMAGE_SUPPORT_GIF
     case IMAGE_FORMAT_GIF:
-      return GIF_render((GIF*) image, src_x, src_y,
+      GIF_render((GIF*) image, src_x, src_y,
           dst, dst_w, dst_h, dst_x, dst_y,
           width, height, fill_blank, default_color);
+      break;
 #endif
     default:
       LOGE(EMSG("Can't detect format %d"), format);
-      return false;
+      break;
   }
 }
 

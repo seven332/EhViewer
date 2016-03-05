@@ -66,11 +66,16 @@ public class Image {
         return nativeIsCompleted(mNativePtr, mFormat);
     }
 
-    public boolean render(int srcX, int srcY, Bitmap dst, int dstX, int dstY,
+    public void render(int srcX, int srcY, Bitmap dst, int dstX, int dstY,
             int width, int height, boolean fillBlank, int defaultColor) {
         checkRecycled();
-        return nativeRender(mNativePtr, mFormat, srcX, srcY, dst, dstX, dstY,
+        nativeRender(mNativePtr, mFormat, srcX, srcY, dst, dstX, dstY,
                 width, height, fillBlank, defaultColor);
+    }
+
+    public void texImage(boolean init, int tileType, int offsetX, int offsetY) {
+        checkRecycled();
+        nativeTexImage(mNativePtr, mFormat, init, tileType, offsetX, offsetY);
     }
 
     public void advance() {
@@ -118,9 +123,12 @@ public class Image {
 
     private static native boolean nativeIsCompleted(long nativePtr, int format);
 
-    private static native boolean nativeRender(long nativePtr, int format,
+    private static native void nativeRender(long nativePtr, int format,
             int srcX, int srcY, Bitmap dst, int dstX, int dstY,
             int width, int height, boolean fillBlank, int defaultColor);
+
+    private static native void nativeTexImage(long nativePtr, int format,
+            boolean init, int tileType, int offsetX, int offsetY);
 
     private static native void nativeAdvance(long nativePtr, int format);
 

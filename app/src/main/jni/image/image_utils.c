@@ -68,30 +68,66 @@ static void memset_int(int* dst, int val, size_t size) {
     *ptr++ = val;
 }
 
-bool copy_pixels(const void* src, int src_w, int src_h, int src_x, int src_y,
+bool copy_pixels_internal(const void* src, int src_w, int src_h, int src_x, int src_y,
     void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
-    int width, int height, bool fill_blank, int default_color)
+    int width, int height, bool fill_blank, int color)
 {
+  int left;
   int line;
   size_t line_stride;
   int src_stride;
   int src_pos;
   int dst_pos;
   size_t dst_blank_length;
-  int color = 0;
 
-  // Check valid first
-  if (src_w < 0 || src_h < 0 || src_x < 0 || src_y < 0 ||
-      dst_w < 0 || dst_h < 0 || dst_x < 0 || dst_y < 0 ||
-      width < 0 || height < 0 ||
-      src_x + width > src_w || src_y + height > src_h ||
-      dst_x + width > dst_w || dst_y + height > dst_h) {
+  // Sanitize
+  if (src_x < 0) {
+    width -= src_x;
+    dst_x -= src_x;
+    src_x = 0;
+  }
+  if (dst_x < 0) {
+    width -= dst_x;
+    src_x -= dst_x;
+    dst_x = 0;
+  }
+  if (width <= 0) {
     return false;
   }
-
-  if (width == 0 || height == 0) {
-    // No need to copy pixels
-    return true;
+  if (src_y < 0) {
+    height -= src_y;
+    dst_y -= src_y;
+    src_y = 0;
+  }
+  if (dst_y < 0) {
+    height -= dst_y;
+    src_y -= dst_y;
+    dst_y = 0;
+  }
+  if (height <= 0) {
+    return false;
+  }
+  left = src_x + width - src_w;
+  if (left > 0) {
+    width -= left;
+  }
+  left = dst_x + width - dst_w;
+  if (left > 0) {
+    width -= left;
+  }
+  if (width <= 0) {
+    return false;
+  }
+  left = src_y + height - src_h;
+  if (left > 0) {
+    height -= left;
+  }
+  left = dst_y + height - dst_h;
+  if (left > 0) {
+    height -= left;
+  }
+  if (height <= 0) {
+    return false;
   }
 
   // Init
@@ -99,9 +135,6 @@ bool copy_pixels(const void* src, int src_w, int src_h, int src_x, int src_y,
   src_stride = src_w * 4;
   src_pos = src_y * src_stride + src_x * 4;
   dst_pos = 0;
-  if (fill_blank) {
-    color = convert_color(default_color);
-  }
 
   dst_blank_length = (size_t) (dst_y * dst_w + dst_x) * 4;
   // Fill start blank if necessary
@@ -133,4 +166,19 @@ bool copy_pixels(const void* src, int src_w, int src_h, int src_x, int src_y,
   }
 
   return true;
+}
+
+void copy_pixels(const void* src, int src_w, int src_h, int src_x, int src_y,
+    void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
+    int width, int height, bool fill_blank, int default_color)
+{
+  int color = 0;
+  if (fill_blank) {
+    color = convert_color(default_color);
+  }
+
+  if (!copy_pixels_internal(src, src_w, src_h, src_x, src_y, dst, dst_w, dst_h, dst_x,
+      dst_y, width, height, fill_blank, color) && fill_blank) {
+    memset_int(dst, color, (size_t) (dst_w * dst_h));
+  }
 }

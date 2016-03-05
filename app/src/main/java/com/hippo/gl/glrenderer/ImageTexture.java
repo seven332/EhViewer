@@ -16,8 +16,6 @@
 
 package com.hippo.gl.glrenderer;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.os.SystemClock;
@@ -61,8 +59,6 @@ public class ImageTexture implements Texture, Animatable {
     // In this 16ms, we use about 4~8 ms to upload tiles.
     private static final long UPLOAD_TILE_LIMIT = 4; // ms
 
-    private static final Bitmap sSmallUploadBitmap;
-    private static final Bitmap sLargeUploadBitmap;
     private static final PriorityThreadFactory sThreadFactory;
     private static final PVLock sPVLock;
 
@@ -90,8 +86,6 @@ public class ImageTexture implements Texture, Animatable {
     private WeakReference<Callback> mCallback;
 
     static {
-        sSmallUploadBitmap = Bitmap.createBitmap(SMALL_TILE_SIZE, SMALL_TILE_SIZE, Bitmap.Config.ARGB_8888);
-        sLargeUploadBitmap = Bitmap.createBitmap(LARGE_TILE_SIZE, LARGE_TILE_SIZE, Bitmap.Config.ARGB_8888);
         sThreadFactory = new PriorityThreadFactory("ImageTexture$AnimateTask", android.os.Process.THREAD_PRIORITY_BACKGROUND);
         sPVLock = new PVLock(3);
     }
@@ -142,7 +136,7 @@ public class ImageTexture implements Texture, Animatable {
         }
     }
 
-    private static class Tile extends UploadedTexture {
+    private static class Tile extends NativeTexture {
 
         @TileType
         private int mTileType;
@@ -153,76 +147,38 @@ public class ImageTexture implements Texture, Animatable {
         public int contentWidth;
         public int contentHeight;
         public int borderSize;
-        public int tileSize;
-        public Bitmap uploadBitmap;
 
         public void setSize(@TileType int tileType, int width, int height) {
             mTileType = tileType;
+            int tileSize;
             if (tileType == TILE_SMALL) {
                 borderSize = SMALL_BORDER_SIZE;
                 tileSize = SMALL_TILE_SIZE;
-                uploadBitmap = sSmallUploadBitmap;
             } else if (tileType == TILE_LARGE) {
                 borderSize = LARGE_BORDER_SIZE;
                 tileSize = LARGE_TILE_SIZE;
-                uploadBitmap = sLargeUploadBitmap;
             } else {
                 throw new IllegalStateException("Not support tile type: " + tileType);
             }
             contentWidth = width;
             contentHeight = height;
+
             mWidth = width + 2 * borderSize;
             mHeight = height + 2 * borderSize;
             mTextureWidth = tileSize;
             mTextureHeight = tileSize;
         }
 
-        @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
         @Override
-        protected Bitmap onGetBitmap() {
-            final Image image = this.image;
-            if (image != null) {
-                int srcX;
-                int dstX;
-                if (offsetX - borderSize < 0) {
-                    srcX = 0;
-                    dstX = borderSize - offsetX;
-                } else {
-                    srcX = offsetX - borderSize;
-                    dstX = 0;
-                }
-                int srcY;
-                int dstY;
-                if (offsetY - borderSize < 0) {
-                    srcY = 0;
-                    dstY = borderSize - offsetY;
-                } else {
-                    srcY = offsetY - borderSize;
-                    dstY = 0;
-                }
-
-                image.render(srcX, srcY, uploadBitmap, dstX, dstY,
-                        Math.min(image.getWidth() - srcX, tileSize - dstX),
-                        Math.min(image.getHeight() - srcY, tileSize - dstY),
-                        true, Color.TRANSPARENT);
+        protected void texImage(boolean init) {
+            if (image != null && !image.isRecycled()) {
+                image.texImage(init, mTileType, offsetX, offsetY);
             }
-            return uploadBitmap;
-        }
-
-        @Override
-        protected void onFreeBitmap(Bitmap bitmap) {
-            // Nothing
-        }
-
-        @Override
-        public boolean isOpaque() {
-            return false;
         }
 
         private void invalidate() {
             invalidateContent();
             image = null;
-            uploadBitmap = null;
         }
 
         public void free() {
@@ -584,11 +540,7 @@ public class ImageTexture implements Texture, Animatable {
         if (mFrameDirty.getAndSet(false)) {
             // invalid tiles
             for (Tile tile : mTiles) {
-                int width = tile.mWidth;
-                int height = tile.mHeight;
                 tile.invalidateContent();
-                tile.mWidth = width;
-                tile.mHeight = height;
             }
         }
     }
