@@ -44,7 +44,6 @@ import com.hippo.yorozuya.sparse.SparseJBArray;
 import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.io.File;
-import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -214,12 +213,7 @@ public class EhApplication extends SceneApplication {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mGalleryDetailCache == null) {
             // Max size 25, 3 min timeout
-            application.mGalleryDetailCache = new LruCacheEx<>(25,  3 * 60 * 1000, new Comparator<Long>() {
-                @Override
-                public int compare(Long lhs, Long rhs) {
-                    return lhs > rhs ? 1 : lhs > rhs ? -1 : 0;
-                }
-            });
+            application.mGalleryDetailCache = new LruCacheEx<>(25,  3 * 60 * 1000);
         }
         return application.mGalleryDetailCache;
     }
@@ -229,12 +223,7 @@ public class EhApplication extends SceneApplication {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mLargePreviewSetCache == null) {
             // Max size 50, 3 min timeout
-            application.mLargePreviewSetCache = new LruCacheEx<>(50,  3 * 60 * 1000, new Comparator<String>() {
-                @Override
-                public int compare(String lhs, String rhs) {
-                    return lhs.compareTo(rhs);
-                }
-            });
+            application.mLargePreviewSetCache = new LruCacheEx<>(50,  3 * 60 * 1000);
         }
         return application.mLargePreviewSetCache;
     }
@@ -244,12 +233,7 @@ public class EhApplication extends SceneApplication {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mPreviewPagesCache == null) {
             // Max size 50, 3 min timeout
-            application.mPreviewPagesCache = new LruCacheEx<>(50,  3 * 60 * 1000, new Comparator<Long>() {
-                @Override
-                public int compare(Long lhs, Long rhs) {
-                    return lhs > rhs ? 1 : lhs > rhs ? -1 : 0;
-                }
-            });
+            application.mPreviewPagesCache = new LruCacheEx<>(50,  3 * 60 * 1000);
         }
         return application.mPreviewPagesCache;
     }
