@@ -49,6 +49,7 @@ public class EhUrlOpener {
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_LIST_URL_BUILDER);
             args.putParcelable(GalleryListScene.KEY_LIST_URL_BUILDER, listUrlBuilder);
             intent = new Intent(activity, MainActivity.class);
+            intent.setAction(StageActivity.ACTION_START_SCENE);
             intent.putExtra(StageActivity.KEY_SCENE_NAME, GalleryListScene.class.getName());
             intent.putExtra(StageActivity.KEY_SCENE_ARGS, args);
             activity.startActivity(intent);
@@ -62,6 +63,7 @@ public class EhUrlOpener {
             args.putLong(GalleryDetailScene.KEY_GID, result1.gid);
             args.putString(GalleryDetailScene.KEY_TOKEN, result1.token);
             intent = new Intent(activity, MainActivity.class);
+            intent.setAction(StageActivity.ACTION_START_SCENE);
             intent.putExtra(StageActivity.KEY_SCENE_NAME, GalleryDetailScene.class.getName());
             intent.putExtra(StageActivity.KEY_SCENE_ARGS, args);
             activity.startActivity(intent);
@@ -76,6 +78,7 @@ public class EhUrlOpener {
             args.putString(ProgressScene.KEY_PTOKEN, result2.pToken);
             args.putLong(ProgressScene.KEY_PAGE, result2.page);
             intent = new Intent(activity, MainActivity.class);
+            intent.setAction(StageActivity.ACTION_START_SCENE);
             intent.putExtra(StageActivity.KEY_SCENE_NAME, ProgressScene.class.getName());
             intent.putExtra(StageActivity.KEY_SCENE_ARGS, args);
             activity.startActivity(intent);

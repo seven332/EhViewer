@@ -18,12 +18,12 @@ package com.hippo.scene;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.hippo.ehviewer.R;
@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class StageActivity extends AppCompatActivity {
 
     private static final String TAG = StageActivity.class.getSimpleName();
+
+    public static final String ACTION_START_SCENE = "start_scene";
 
     public static final String KEY_SCENE_NAME = "stage_activity_scene_name";
     public static final String KEY_SCENE_ARGS = "stage_activity_scene_args";
@@ -64,32 +66,74 @@ public abstract class StageActivity extends AppCompatActivity {
 
     public abstract int getContainerViewId();
 
+    /**
+     * @return {@code true} for start scene
+     */
+    private boolean startSceneFromIntent(Intent intent) {
+        String clazzStr = intent.getStringExtra(KEY_SCENE_NAME);
+        if (null == clazzStr) {
+            return false;
+        }
+
+        Class clazz;
+        try {
+            clazz = Class.forName(clazzStr);
+        } catch (ClassNotFoundException e) {
+            Log.e(TAG, "Can't find class " + clazzStr, e);
+            return false;
+        }
+
+        Bundle args = intent.getBundleExtra(KEY_SCENE_ARGS);
+
+        Announcer announcer = onStartSceneFromIntent(clazz, args);
+        if (announcer == null) {
+            return false;
+        }
+
+        startScene(announcer);
+        return true;
+    }
+
+    /**
+     * Start scene from {@code Intent}, it might be not safe,
+     * Correct it here.
+     *
+     * @return {@code null} for do not start scene
+     */
+    @Nullable
+    protected Announcer onStartSceneFromIntent(@NonNull Class<?> clazz, @Nullable Bundle args) {
+        return new Announcer(clazz).setArgs(args);
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (intent != null) {
-            String clazzStr = intent.getStringExtra(KEY_SCENE_NAME);
-            if (TextUtils.isEmpty(clazzStr)) {
-                return;
-            }
-
-            Class clazz;
-            try {
-                clazz = Class.forName(clazzStr);
-            } catch (ClassNotFoundException e) {
-                Log.e(TAG, "Can't find class " + clazzStr, e);
-                return;
-            }
-
-            Bundle args = intent.getBundleExtra(KEY_SCENE_ARGS);
-
-            startScene(new Announcer(clazz).setArgs(args));
+        if (intent == null || !ACTION_START_SCENE.equals(intent.getAction()) ||
+                !startSceneFromIntent(intent)) {
+            onUnrecognizedIntent(intent);
         }
     }
 
+    /**
+     * Called when launch with action {@code android.intent.action.MAIN}
+     */
+    @Nullable
+    protected abstract Announcer getLaunchAnnouncer();
+
+    /**
+     * Can't recognize intent in first time {@code onCreate} and {@code onNewIntent},
+     * null included.
+     */
+    protected void onUnrecognizedIntent(@Nullable Intent intent) {}
+
+    /**
+     * Call {@code setContentView} here. Do <b>NOT</b> call {@code startScene} here
+     */
+    protected abstract void onCreate2(@Nullable Bundle savedInstanceState);
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
@@ -103,6 +147,38 @@ public abstract class StageActivity extends AppCompatActivity {
         } else {
             ((SceneApplication) getApplicationContext()).registerStageActivity(this, mStageId);
         }
+
+        // Create layout
+        onCreate2(savedInstanceState);
+
+        Intent intent = getIntent();
+        if (savedInstanceState == null) {
+            if (intent != null) {
+                String action = intent.getAction();
+                if (Intent.ACTION_MAIN.equals(action)) {
+                    Announcer announcer = getLaunchAnnouncer();
+                    if (announcer != null) {
+                        startScene(announcer);
+                        return;
+                    }
+                } else if (ACTION_START_SCENE.equals(action)) {
+                    if (startSceneFromIntent(intent)) {
+                        return;
+                    }
+                }
+            }
+
+            // Can't recognize intent
+            onUnrecognizedIntent(intent);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_STAGE_ID, mStageId);
+        outState.putStringArrayList(KEY_SCENE_TAG_LIST, mSceneTagList);
+        outState.putInt(KEY_NEXT_ID, mIdGenerator.getAndIncrement());
     }
 
     @Override
@@ -126,6 +202,10 @@ public abstract class StageActivity extends AppCompatActivity {
 
     public int getStageId() {
         return mStageId;
+    }
+
+    public int getSceneCount() {
+        return mSceneTagList.size();
     }
 
     public int getSceneLaunchMode(Class<?> clazz) {
@@ -465,13 +545,5 @@ public abstract class StageActivity extends AppCompatActivity {
         } else {
             return null;
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(KEY_STAGE_ID, mStageId);
-        outState.putStringArrayList(KEY_SCENE_TAG_LIST, mSceneTagList);
-        outState.putInt(KEY_NEXT_ID, mIdGenerator.getAndIncrement());
     }
 }

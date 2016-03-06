@@ -33,6 +33,9 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadInfo;
+import com.hippo.ehviewer.ui.MainActivity;
+import com.hippo.ehviewer.ui.scene.DownloadsScene;
+import com.hippo.scene.StageActivity;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LongList;
@@ -222,13 +225,22 @@ public class DownloadService extends Service implements DownloadManager.Download
         Intent stopAllIntent = new Intent(this, DownloadService.class);
         stopAllIntent.setAction(ACTION_STOP_ALL);
         PendingIntent piStopAll = PendingIntent.getService(this, 0, stopAllIntent, 0);
+
+        Intent activityIntent = new Intent(this, MainActivity.class);
+        activityIntent.setAction(StageActivity.ACTION_START_SCENE);
+        activityIntent.putExtra(StageActivity.KEY_SCENE_NAME, DownloadsScene.class.getName());
+        PendingIntent piActivity = PendingIntent.getActivity(DownloadService.this, 0,
+                activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         mDownloadingBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setColor(getResources().getColor(R.color.colorPrimary))
-                .addAction(R.drawable.ic_pause_x24, getString(R.string.stat_download_action_stop_all), piStopAll);
+                .addAction(R.drawable.ic_pause_x24, getString(R.string.stat_download_action_stop_all), piStopAll)
+                .setShowWhen(false)
+                .setContentIntent(piActivity);
 
         mDownloadingDelay = new NotificationDelay(this, mNotifyManager, mDownloadingBuilder, ID_DOWNLOADING);
     }
@@ -241,13 +253,21 @@ public class DownloadService extends Service implements DownloadManager.Download
         Intent clearIntent = new Intent(this, DownloadService.class);
         clearIntent.setAction(ACTION_CLEAR);
         PendingIntent piClear = PendingIntent.getService(this, 0, clearIntent, 0);
+
+        Intent activityIntent = new Intent(this, MainActivity.class);
+        activityIntent.setAction(StageActivity.ACTION_START_SCENE);
+        activityIntent.putExtra(StageActivity.KEY_SCENE_NAME, DownloadsScene.class.getName());
+        PendingIntent piActivity = PendingIntent.getActivity(DownloadService.this, 0,
+                activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         mDownloadedBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(getString(R.string.stat_download_done_title))
                 .setDeleteIntent(piClear)
                 .setOngoing(false)
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setContentIntent(piActivity);
 
         mDownloadedDelay = new NotificationDelay(this, mNotifyManager, mDownloadedBuilder, ID_DOWNLOADED);
     }
@@ -291,8 +311,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         mDownloadingBuilder.setContentTitle(info.title)
                 .setContentText(null)
                 .setContentInfo(null)
-                .setProgress(0, 0, true)
-                .setWhen(System.currentTimeMillis());
+                .setProgress(0, 0, true);
 
         mDownloadingDelay.startForeground();
     }

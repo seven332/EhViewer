@@ -36,6 +36,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.DownloadLabelScene;
 import com.hippo.ehviewer.ui.scene.DownloadsScene;
@@ -52,6 +53,7 @@ import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.PermissionRequester;
+import com.hippo.yorozuya.ViewUtils;
 
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,11 +63,15 @@ public final class MainActivity extends StageActivity
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
 
     @Nullable
+    @WholeLifeCircle
     private DrawerLayout mDrawerLayout;
     @Nullable
+    @WholeLifeCircle
     private NavigationView mNavView;
     @Nullable
+    @WholeLifeCircle
     private FrameLayout mRightDrawer;
+
     private int mNavCheckedItem = 0;
 
     static {
@@ -87,33 +93,21 @@ public final class MainActivity extends StageActivity
         return R.id.fragment_container;
     }
 
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.draw_view);
-        mNavView = (NavigationView) findViewById(R.id.nav_view);
-        mRightDrawer = (FrameLayout) findViewById(R.id.right_drawer);
-
-        if (mNavView != null) {
-            mNavView.setNavigationItemSelectedListener(this);
-        }
-
-        if (savedInstanceState == null) {
-            onInit();
+    protected Announcer getLaunchAnnouncer() {
+        if (Settings.getShowWarning()) {
+            //setDrawerLayoutEnable(false);
+            return new Announcer(WarningScene.class);
+        } else if (!EhUtils.hasSignedIn(this)) {
+            //setDrawerLayoutEnable(false);
+            return new Announcer(LoginScene.class);
         } else {
-            onRestore(savedInstanceState);
+            //setDrawerLayoutEnable(true);
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            return new Announcer(GalleryListScene.class).setArgs(args);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        mDrawerLayout = null;
-        mNavView = null;
-        mRightDrawer = null;
     }
 
     private boolean handleIntent(Intent intent) {
@@ -130,36 +124,44 @@ public final class MainActivity extends StageActivity
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if (!handleIntent(intent) && intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
-            Toast.makeText(this, R.string.error_cannot_parse_the_url, Toast.LENGTH_SHORT).show();
+    protected void onUnrecognizedIntent(@Nullable Intent intent) {
+        if (!handleIntent(intent)) {
+            if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
+                Toast.makeText(this, R.string.error_cannot_parse_the_url, Toast.LENGTH_SHORT).show();
+            }
+            if (0 == getSceneCount()) {
+                finish();
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    protected Announcer onStartSceneFromIntent(@NonNull Class<?> clazz, @Nullable Bundle args) {
+        // TODO start login scene or warning scene
+        return super.onStartSceneFromIntent(clazz, args);
+    }
+
+    @Override
+    protected void onCreate2(@Nullable Bundle savedInstanceState) {
+        setContentView(R.layout.activity_main);
+
+        mDrawerLayout = (DrawerLayout) ViewUtils.$$(this, R.id.draw_view);
+        mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
+        mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
+
+        if (mNavView != null) {
+            mNavView.setNavigationItemSelectedListener(this);
+        }
+
+        if (savedInstanceState == null) {
+            onInit();
+        } else {
+            onRestore(savedInstanceState);
         }
     }
 
     private void onInit() {
-        Intent intent = getIntent();
-        if (!handleIntent(intent)) {
-            if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
-                Toast.makeText(this, R.string.error_cannot_parse_the_url, Toast.LENGTH_SHORT).show();
-                finish();
-                return;
-            } else {
-                if (Settings.getShowWarning()) {
-                    setDrawerLayoutEnable(false);
-                    startScene(new Announcer(WarningScene.class));
-                } else if (!EhUtils.hasSignedIn(this)) {
-                    setDrawerLayoutEnable(false);
-                    startScene(new Announcer(LoginScene.class));
-                } else {
-                    setDrawerLayoutEnable(true);
-                    Bundle args = new Bundle();
-                    args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-                    startScene(new Announcer(GalleryListScene.class).setArgs(args));
-                }
-            }
-        }
-
         // Check permission
         PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getString(R.string.write_rationale), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
@@ -173,6 +175,15 @@ public final class MainActivity extends StageActivity
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putInt(KEY_NAV_CHECKED_ITEM, mNavCheckedItem);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mDrawerLayout = null;
+        mNavView = null;
+        mRightDrawer = null;
     }
 
     @Override
