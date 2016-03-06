@@ -23,7 +23,7 @@
     <string name="whats_hot">熱門</string>
     <string name="favourite">收藏</string>
     <string name="history">歷史</string>
-    <string name="download">下載</string>
+    <string name="downloads">下載</string>
     <string name="settings">設定</string>
 
     <string name="username">使用者名稱</string>
@@ -101,6 +101,7 @@
 
     <!-- Gallery detail -->
     <string name="error_cannot_find_gallery">找不到畫廊</string>
+    <string name="download">下載</string>
     <string name="read">閱讀</string>
     <string name="more_information">檢視更多資訊</string>
     <plurals name="page_count">
@@ -123,6 +124,16 @@
     <string name="open_in_other_app">在其他應用中開啟</string>
     <string name="rate_successfully">評分成功</string>
     <string name="rate_failed">評分失敗</string>
+    <string name="no_torrents">沒有種子</string>
+    <string name="torrents">種子</string>
+    <string name="favorited">已收藏</string>
+    <string name="unfavorited">未收藏</string>
+    <string name="add_favorites_dialog_title">新增收藏</string>
+    <string name="remember_favorite_collection">記住收藏夾</string>
+    <string name="add_to_favorite_success">已新增至收藏</string>
+    <string name="remove_from_favorite_success">移除收藏</string>
+    <string name="add_to_favorite_failure">新增收藏失敗</string>
+    <string name="remove_from_favorite_failure">移除收藏失敗</string>
 
     <!-- Rating -->
     <string name="rating10">根本把持不住</string>
@@ -179,6 +190,8 @@
     <string name="no_download_info">無下載項目</string>
     <string name="download_state_none">未啟動</string>
     <string name="download_state_wait">等待中</string>
+    <string name="download_state_downloading">下載中</string>
+    <string name="download_state_downloaded">已下載</string>
     <string name="download_state_failed">失敗</string>
     <string name="download_state_failed_2">%d 未完成</string>
     <string name="download_state_finish">已完成</string>
@@ -204,6 +217,8 @@
     <string name="download_service_label">EhViewer 下載服務</string>
     <string name="download_speed_text">%s</string>
     <string name="download_speed_text_2">%1$s，%2$s</string>
+    <string name="remember_download_label">記住下載標籤</string>
+    <string name="default_download_label">預設下載標籤</string>
 
     <!-- Download label -->
     <string name="no_download_label">無標籤</string>
@@ -275,6 +290,9 @@
     <string name="delete_favorites_dialog_title">刪除收藏</string>
     <string name="delete_favorites_dialog_message">刪除 %d 項收藏</string>
     <string name="move_favorites_dialog_title">移動收藏</string>
+    <string name="default_favorites_collection">預設收藏夾</string>
+    <string name="let_me_select">讓我選擇</string>
+    <string name="favorites_info">收藏資訊</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">被玩壞了</string>
@@ -295,10 +313,10 @@
         <item quantity="other">秒</item>
     </plurals>
     <plurals name="minute">
-        <item quantity="other">分</item>
+        <item quantity="other">分鐘</item>
     </plurals>
     <plurals name="hour">
-        <item quantity="other">時</item>
+        <item quantity="other">小時</item>
     </plurals>
     <plurals name="day">
         <item quantity="other">天</item>

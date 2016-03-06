@@ -403,7 +403,7 @@ public class FavoritesScene extends BaseScene implements
                         String[] favCat = Settings.getFavCat();
                         System.arraycopy(favCat, 0, items, 2, 10);
                         new AlertDialog.Builder(getContext())
-                                .setTitle(R.string.default_favorites_slot)
+                                .setTitle(R.string.default_favorites_collection)
                                 .setItems(items, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {

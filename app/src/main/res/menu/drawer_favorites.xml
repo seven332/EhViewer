@@ -28,7 +28,7 @@
     <item
         android:id="@+id/action_default_favorites_slot"
         android:icon="@drawable/v_heart_box_dark_x24"
-        android:title="@string/default_favorites_slot"
+        android:title="@string/default_favorites_collection"
         app:showAsAction="ifRoom"/>
 
 </menu>

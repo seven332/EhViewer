@@ -86,7 +86,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DownloadScene extends ToolbarScene
+public class DownloadsScene extends ToolbarScene
         implements DownloadManager.DownloadInfoListener,
         EasyRecyclerView.OnItemClickListener,
         EasyRecyclerView.OnItemLongClickListener,
@@ -238,7 +238,7 @@ public class DownloadScene extends ToolbarScene
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
 
         // Clear nav checked item
-        setNavCheckedItem(R.id.nav_download);
+        setNavCheckedItem(R.id.nav_downloads);
 
         // Hide IME
         ActivityHelper.hideSoftInput(getActivity());
@@ -1000,7 +1000,7 @@ public class DownloadScene extends ToolbarScene
         @Override
         public void onOutOfCustomChoice(EasyRecyclerView view) {
             if (mRecyclerView != null) {
-                mRecyclerView.setOnItemLongClickListener(DownloadScene.this);
+                mRecyclerView.setOnItemLongClickListener(DownloadsScene.this);
             }
             if (mFabLayout != null) {
                 mFabLayout.setExpanded(false);

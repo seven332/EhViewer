@@ -35,7 +35,7 @@
     <string name="whats_hot">What\'s hot</string>
     <string name="favourite">Favourite</string>
     <string name="history">History</string>
-    <string name="download">Download</string>
+    <string name="downloads">Downloads</string>
     <string name="settings">Settings</string>
     <string name="stub" translatable="false">Stub</string>
 
@@ -140,6 +140,7 @@
 
     <!-- Gallery detail -->
     <string name="error_cannot_find_gallery">Can\'t find the gallery</string>
+    <string name="download">Download</string>
     <string name="read">Read</string>
     <string name="more_information">More information</string>
     <plurals name="page_count">
@@ -168,7 +169,7 @@
     <string name="favorited">Favorited</string>
     <string name="unfavorited">Unfavorited</string>
     <string name="add_favorites_dialog_title">Add to favorites</string>
-    <string name="remember_favorite_slot">Remember favorite slot</string>
+    <string name="remember_favorite_collection">Remember favorite collection</string>
     <string name="add_to_favorite_success">Added to favorites</string>
     <string name="remove_from_favorite_success">Removed from favorites</string>
     <string name="add_to_favorite_failure">Failed to add to favorites</string>
@@ -328,7 +329,7 @@
     <string name="delete_favorites_dialog_title">Delete from favorites</string>
     <string name="delete_favorites_dialog_message">Delete %d items from favorites</string>
     <string name="move_favorites_dialog_title">Move favorites</string>
-    <string name="default_favorites_slot">Default favorites slot</string>
+    <string name="default_favorites_collection">Default favorites collection</string>
     <string name="let_me_select">Let me select</string>
     <string name="favorites_info">Favorites info</string>
 

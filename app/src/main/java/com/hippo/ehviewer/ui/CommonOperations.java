@@ -75,7 +75,7 @@ public final class CommonOperations {
                                 Settings.putDefaultFavSlot(Settings.INVALID_DEFAULT_FAV_SLOT);
                             }
                         }
-                    }, activity.getString(R.string.remember_favorite_slot), false)
+                    }, activity.getString(R.string.remember_favorite_collection), false)
                     .setTitle(R.string.add_favorites_dialog_title)
                     .show();
         }
