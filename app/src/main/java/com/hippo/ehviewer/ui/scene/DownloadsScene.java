@@ -72,7 +72,6 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.unifile.UniFile;
-import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
@@ -115,6 +114,11 @@ public class DownloadsScene extends ToolbarScene
     @Nullable
     @WholeLifeCircle
     private List<DownloadInfo> mList;
+
+    @Override
+    public int getNavCheckedItem() {
+        return R.id.nav_downloads;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -237,12 +241,6 @@ public class DownloadsScene extends ToolbarScene
         super.onViewCreated(view, savedInstanceState);
         updateTitle();
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
-
-        // Clear nav checked item
-        setNavCheckedItem(R.id.nav_downloads);
-
-        // Hide IME
-        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

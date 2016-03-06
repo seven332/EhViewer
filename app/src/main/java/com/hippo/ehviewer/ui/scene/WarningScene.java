@@ -29,7 +29,6 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
-import com.hippo.util.ActivityHelper;
 import com.hippo.yorozuya.ViewUtils;
 
 public final class WarningScene extends BaseScene implements View.OnClickListener {
@@ -67,14 +66,6 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
         RippleSalon.addRipple(mOk, true);
 
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Hide IME
-        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

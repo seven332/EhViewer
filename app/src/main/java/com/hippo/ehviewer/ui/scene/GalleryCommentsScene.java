@@ -181,12 +181,6 @@ public final class GalleryCommentsScene extends ToolbarScene
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_comments);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
-
-        // Clear nav checked item
-        setNavCheckedItem(0);
-
-        // Hide IME
-        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

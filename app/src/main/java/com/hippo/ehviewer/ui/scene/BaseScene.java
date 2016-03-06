@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
+import com.hippo.util.ActivityHelper;
 
 public abstract class BaseScene extends SceneFragment {
 
@@ -75,6 +76,10 @@ public abstract class BaseScene extends SceneFragment {
         return true;
     }
 
+    public int getNavCheckedItem() {
+        return 0;
+    }
+
     public View onCreateDrawerView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return null;
@@ -94,6 +99,12 @@ public abstract class BaseScene extends SceneFragment {
         } else {
             setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
         }
+
+        // Update nav checked item
+        setNavCheckedItem(getNavCheckedItem());
+
+        // Hide soft ime
+        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

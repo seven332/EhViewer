@@ -180,6 +180,11 @@ public class FavoritesScene extends BaseScene implements
     };
 
     @Override
+    public int getNavCheckedItem() {
+        return R.id.nav_favourite;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -339,12 +344,6 @@ public class FavoritesScene extends BaseScene implements
 
         // Save recent fav cat
         Settings.putRecentFavCat(mUrlBuilder.getFavCat());
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setNavCheckedItem(R.id.nav_whats_hot);
     }
 
     @Override

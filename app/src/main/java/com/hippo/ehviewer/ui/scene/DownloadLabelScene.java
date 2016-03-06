@@ -50,7 +50,6 @@ import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dao.DownloadLabel;
-import com.hippo.util.ActivityHelper;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -140,12 +139,6 @@ public class DownloadLabelScene extends ToolbarScene {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.label);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
-
-        // Clear nav checked item
-        setNavCheckedItem(0);
-
-        // Hide IME
-        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

@@ -69,7 +69,6 @@ import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
-import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
@@ -150,6 +149,11 @@ public final class GalleryListScene extends BaseScene
             }
         }
     };
+
+    @Override
+    public int getNavCheckedItem() {
+        return mNavCheckedId;
+    }
 
     private void handleArgs(Bundle args) {
         if (args == null) {
@@ -325,17 +329,6 @@ public final class GalleryListScene extends BaseScene
         }
 
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Update nav checked item
-        setNavCheckedItem(mNavCheckedId);
-
-        // Hide IME
-        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

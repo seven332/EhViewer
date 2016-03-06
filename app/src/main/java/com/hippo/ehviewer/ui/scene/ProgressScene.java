@@ -32,7 +32,6 @@ import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
-import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.view.ViewTransition;
 
@@ -171,14 +170,6 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
         }
 
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Hide IME
-        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override

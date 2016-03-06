@@ -47,7 +47,6 @@ import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
-import com.hippo.util.ActivityHelper;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.Slider;
@@ -152,12 +151,6 @@ public class GalleryPreviewsScene extends ToolbarScene {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_previews);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
-
-        // Clear nav checked item
-        setNavCheckedItem(0);
-
-        // Hide IME
-        ActivityHelper.hideSoftInput(getActivity());
     }
 
     @Override
