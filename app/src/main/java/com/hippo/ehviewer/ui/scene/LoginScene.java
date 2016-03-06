@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,11 @@ import com.hippo.util.ExceptionUtils;
 
 public final class LoginScene extends BaseScene implements EditText.OnEditorActionListener,
         View.OnClickListener {
+
+    private static final String TAG = LoginScene.class.getSimpleName();
+
+    public static final String KEY_TARGET_SCENE = "target_scene";
+    public static final String KEY_TARGET_ARGS = "target_args";
 
     private static final String KEY_REQUEST_ID = "request_id";
 
@@ -205,12 +211,33 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     }
 
     private void redirectTo() {
-        Bundle args = new Bundle();
-        args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-        startScene(new Announcer(GalleryListScene.class).setArgs(args));
+        String targetScene = null;
+        Bundle targetArgs = null;
+
+        Bundle args = getArguments();
+        if (null != args) {
+            targetScene = args.getString(KEY_TARGET_SCENE);
+            targetArgs = args.getBundle(KEY_TARGET_ARGS);
+        }
+
+        Class<?> clazz = null;
+        if (targetScene != null) {
+            try {
+                clazz = Class.forName(targetScene);
+            } catch (ClassNotFoundException e) {
+                Log.e(TAG, "Can't find class with name: " + targetScene);
+            }
+        }
+
+        if (clazz != null) {
+            startScene(new Announcer(clazz).setArgs(targetArgs));
+        } else {
+            Bundle newArgs = new Bundle();
+            newArgs.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            startScene(new Announcer(GalleryListScene.class).setArgs(newArgs));
+        }
+
         finish();
-        // Enable drawer
-        setDrawerLayoutEnable(true);
     }
 
     private void whetherToSkip() {

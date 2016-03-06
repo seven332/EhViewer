@@ -26,6 +26,9 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.client.EhUrlOpener;
+import com.hippo.ehviewer.ui.MainActivity;
+import com.hippo.scene.Announcer;
+import com.hippo.scene.StageActivity;
 import com.hippo.util.CustomTabsHelper;
 
 public final class UrlOpener {
@@ -41,8 +44,16 @@ public final class UrlOpener {
         Intent intent;
         Uri uri = Uri.parse(url);
 
-        if (ehUrl && EhUrlOpener.openUrl(activity, url)) {
-            return;
+        if (ehUrl) {
+            Announcer announcer = EhUrlOpener.parseUrl(url);
+            if (null != announcer) {
+                intent = new Intent(activity, MainActivity.class);
+                intent.setAction(StageActivity.ACTION_START_SCENE);
+                intent.putExtra(StageActivity.KEY_SCENE_NAME, announcer.getClazz().getName());
+                intent.putExtra(StageActivity.KEY_SCENE_ARGS, announcer.getArgs());
+                activity.startActivity(intent);
+                return;
+            }
         }
 
         // CustomTabs

@@ -97,17 +97,32 @@ public final class MainActivity extends StageActivity
     @Override
     protected Announcer getLaunchAnnouncer() {
         if (Settings.getShowWarning()) {
-            //setDrawerLayoutEnable(false);
             return new Announcer(WarningScene.class);
         } else if (!EhUtils.hasSignedIn(this)) {
-            //setDrawerLayoutEnable(false);
             return new Announcer(LoginScene.class);
         } else {
-            //setDrawerLayoutEnable(true);
             Bundle args = new Bundle();
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
             return new Announcer(GalleryListScene.class).setArgs(args);
         }
+    }
+
+    // Sometimes scene can't show directly
+    private Announcer processAnnouncer(Announcer announcer) {
+        if (0 == getSceneCount()) {
+            if (Settings.getShowWarning()) {
+                Bundle newArgs = new Bundle();
+                newArgs.putString(WarningScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(WarningScene.KEY_TARGET_ARGS, announcer.getArgs());
+                return new Announcer(WarningScene.class).setArgs(newArgs);
+            } else if (!EhUtils.hasSignedIn(this)) {
+                Bundle newArgs = new Bundle();
+                newArgs.putString(LoginScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(LoginScene.KEY_TARGET_ARGS, announcer.getArgs());
+                return new Announcer(LoginScene.class).setArgs(newArgs);
+            }
+        }
+        return announcer;
     }
 
     private boolean handleIntent(Intent intent) {
@@ -117,7 +132,11 @@ public final class MainActivity extends StageActivity
 
         String action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(action)) {
-            return EhUrlOpener.openUrl(this, intent.getData().toString());
+            Announcer announcer = EhUrlOpener.parseUrl(intent.getData().toString());
+            if (announcer != null) {
+                startScene(processAnnouncer(announcer));
+                return true;
+            }
         }
 
         return false;
@@ -138,8 +157,7 @@ public final class MainActivity extends StageActivity
     @Nullable
     @Override
     protected Announcer onStartSceneFromIntent(@NonNull Class<?> clazz, @Nullable Bundle args) {
-        // TODO start login scene or warning scene
-        return super.onStartSceneFromIntent(clazz, args);
+        return processAnnouncer(new Announcer(clazz).setArgs(args));
     }
 
     @Override
