@@ -228,6 +228,7 @@ public class EhDaoGenerator {
                 "\t};");
         javaClass.addImport("android.os.Parcel");
         // Add download info stuff
+        javaClass.addField("public static final int STATE_INVALID = -1");
         javaClass.addField("public static final int STATE_NONE = 0");
         javaClass.addField("public static final int STATE_WAIT = 1");
         javaClass.addField("public static final int STATE_DOWNLOAD = 2");

@@ -120,7 +120,7 @@ public class DownloadScene extends ToolbarScene
         super.onCreate(savedInstanceState);
 
         DownloadManager manager = EhApplication.getDownloadManager(getContext());
-        manager.setDownloadInfoListener(this);
+        manager.addDownloadInfoListener(this);
 
         if (savedInstanceState == null) {
             onInit();
@@ -134,7 +134,7 @@ public class DownloadScene extends ToolbarScene
         super.onDestroy();
         mList = null;
         DownloadManager manager = EhApplication.getDownloadManager(getContext());
-        manager.setDownloadInfoListener(null);
+        manager.removeDownloadInfoListener(null);
     }
 
     private void updateForLabel() {

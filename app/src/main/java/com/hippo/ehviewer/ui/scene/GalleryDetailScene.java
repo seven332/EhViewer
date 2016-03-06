@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -71,9 +72,11 @@ import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
+import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
+import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -97,9 +100,11 @@ import com.hippo.yorozuya.ViewUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 import java.util.Locale;
 
-public class GalleryDetailScene extends BaseScene implements View.OnClickListener {
+public class GalleryDetailScene extends BaseScene implements View.OnClickListener,
+        com.hippo.ehviewer.download.DownloadManager.DownloadInfoListener {
 
     @IntDef({STATE_INIT, STATE_NORMAL, STATE_REFRESH, STATE_REFRESH_HEADER, STATE_FAILED})
     @Retention(RetentionPolicy.SOURCE)
@@ -124,6 +129,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private static final String KEY_GALLERY_DETAIL = "gallery_detail";
     private static final String KEY_REQUEST_ID = "request_id";
+    private static final String KEY_DOWNLOAD_STATE = "download_state";
 
     @Nullable
     @ViewLifeCircle
@@ -162,7 +168,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private ViewGroup mActionGroup;
     @Nullable
     @ViewLifeCircle
-    private View mDownload;
+    private TextView mDownload;
     @Nullable
     @ViewLifeCircle
     private View mRead;
@@ -249,6 +255,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     @Nullable
     @ViewLifeCircle
     private PopupMenu mPopupMenu;
+
+    @WholeLifeCircle
+    private int mDownloadState;
 
     @Nullable
     private String mAction;
@@ -361,6 +370,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private void onInit() {
         handleArgs(getArguments());
+        long gid = getGid();
+        if (gid != -1) {
+            mDownloadState = EhApplication.getDownloadManager(getContext()).getDownloadState(gid);
+        } else {
+            mDownloadState = DownloadInfo.STATE_INVALID;
+        }
     }
 
     private void onRestore(Bundle savedInstanceState) {
@@ -370,6 +385,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mToken = savedInstanceState.getString(KEY_TOKEN);
         mGalleryDetail = savedInstanceState.getParcelable(KEY_GALLERY_DETAIL);
         mRequestId = savedInstanceState.getInt(KEY_REQUEST_ID);
+        mDownloadState = savedInstanceState.getInt(KEY_DOWNLOAD_STATE);
     }
 
     @Override
@@ -390,6 +406,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             outState.putParcelable(KEY_GALLERY_DETAIL, mGalleryDetail);
         }
         outState.putInt(KEY_REQUEST_ID, mRequestId);
+        outState.putInt(KEY_DOWNLOAD_STATE, mDownloadState);
     }
 
     @Nullable
@@ -414,7 +431,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mCategory = (TextView) ViewUtils.$$(mHeader, R.id.category);
         mOtherActions = (ImageView) ViewUtils.$$(mHeader, R.id.other_actions);
         mActionGroup = (ViewGroup) ViewUtils.$$(mHeader, R.id.action_card);
-        mDownload = ViewUtils.$$(mActionGroup, R.id.download);
+        mDownload = (TextView) ViewUtils.$$(mActionGroup, R.id.download);
         mRead = ViewUtils.$$(mActionGroup, R.id.read);
         RippleSalon.addRipple(mOtherActions, false);
         RippleSalon.addRipple(mDownload, false);
@@ -491,6 +508,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             adjustViewVisibility(STATE_FAILED, false);
         }
 
+        EhApplication.getDownloadManager(getContext()).addDownloadInfoListener(this);
+
         return view;
     }
 
@@ -508,6 +527,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        EhApplication.getDownloadManager(getContext()).removeDownloadInfoListener(this);
 
         mFailedView = null;
         mFailedText = null;
@@ -703,6 +724,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             mUploader.setText(gi.uploader);
             mCategory.setText(EhUtils.getCategory(gi.category));
             mCategory.setTextColor(EhUtils.getCategoryColor(gi.category));
+            updateDownloadText();
         }
     }
 
@@ -742,6 +764,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mUploader.setText(gd.uploader);
         mCategory.setText(EhUtils.getCategory(gd.category));
         mCategory.setTextColor(EhUtils.getCategoryColor(gd.category));
+        updateDownloadText();
 
         mLanguage.setText(gd.language);
         mPages.setText(resources.getQuantityString(
@@ -1135,6 +1158,77 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 super.onSceneResult(requestCode, resultCode, data);
         }
     }
+
+    private void updateDownloadText() {
+        if (null == mDownload) {
+            return;
+        }
+        switch (mDownloadState) {
+            default:
+            case DownloadInfo.STATE_INVALID:
+            case DownloadInfo.STATE_NONE:
+                mDownload.setText(R.string.download);
+                break;
+            case DownloadInfo.STATE_WAIT:
+            case DownloadInfo.STATE_DOWNLOAD:
+                mDownload.setText(R.string.download_state_downloading);
+                break;
+            case DownloadInfo.STATE_FINISH:
+            case DownloadInfo.STATE_FAILED:
+                mDownload.setText(R.string.download_state_downloaded);
+                break;
+        }
+    }
+
+    private void updateDownloadState() {
+        long gid = getGid();
+        if (-1L == gid) {
+            return;
+        }
+
+        int downloadState = EhApplication.getDownloadManager(getContext()).getDownloadState(gid);
+        if (downloadState == mDownloadState) {
+            return;
+        }
+        mDownloadState = downloadState;
+        updateDownloadText();
+    }
+
+    @Override
+    public void onAdd(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
+        updateDownloadState();
+    }
+
+    @Override
+    public void onUpdate(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list) {
+        updateDownloadState();
+    }
+
+    @Override
+    public void onUpdateAll() {
+        updateDownloadState();
+    }
+
+    @Override
+    public void onReload() {
+        updateDownloadState();
+    }
+
+    @Override
+    public void onChange() {
+        updateDownloadState();
+    }
+
+    @Override
+    public void onRemove(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
+        updateDownloadState();
+    }
+
+    @Override
+    public void onRenameLabel(String from, String to) {}
+
+    @Override
+    public void onUpdateLabels() {}
 
     private static class ExitTransaction implements TransitionHelper {
 
