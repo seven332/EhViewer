@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -994,7 +995,8 @@ public class DownloadsScene extends ToolbarScene
                 mFabLayout.setExpanded(true);
             }
             // Lock drawer
-            setDrawerLayoutEnable(false);
+            setDrawerLockMode(Gravity.LEFT, DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            setDrawerLockMode(Gravity.RIGHT, DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
 
         @Override
@@ -1006,7 +1008,8 @@ public class DownloadsScene extends ToolbarScene
                 mFabLayout.setExpanded(false);
             }
             // Unlock drawer
-            setDrawerLayoutEnable(true);
+            setDrawerLockMode(Gravity.LEFT, DrawerLayout.LOCK_MODE_UNLOCKED);
+            setDrawerLockMode(Gravity.RIGHT, DrawerLayout.LOCK_MODE_UNLOCKED);
         }
 
         @Override

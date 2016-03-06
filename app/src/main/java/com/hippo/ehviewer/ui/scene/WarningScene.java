@@ -46,6 +46,11 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
     @ViewLifeCircle
     private View mOk;
 
+    @Override
+    public boolean needShowLeftDrawer() {
+        return false;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,

@@ -71,6 +71,11 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     private int mRequestId;
 
     @Override
+    public boolean needShowLeftDrawer() {
+        return false;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

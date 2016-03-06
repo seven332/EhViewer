@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +33,10 @@ public abstract class BaseScene extends SceneFragment {
 
     private boolean mViewCreated;
 
-    public void setDrawerLayoutEnable(boolean enable) {
+    public void setDrawerLockMode(int lockMode, int edgeGravity) {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {
-            ((MainActivity) activity).setDrawerLayoutEnable(enable);
+            ((MainActivity) activity).setDrawerLockMode(lockMode, edgeGravity);
         }
     }
 
@@ -69,6 +71,10 @@ public abstract class BaseScene extends SceneFragment {
         }
     }
 
+    public boolean needShowLeftDrawer() {
+        return true;
+    }
+
     public View onCreateDrawerView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return null;
@@ -81,6 +87,13 @@ public abstract class BaseScene extends SceneFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mViewCreated = true;
+
+        // Update left drawer locked state
+        if (needShowLeftDrawer()) {
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+        } else {
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+        }
     }
 
     @Override

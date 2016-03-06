@@ -65,6 +65,11 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
     private ViewTransition mViewTransition;
 
     @Override
+    public boolean needShowLeftDrawer() {
+        return false;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

@@ -27,6 +27,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -654,7 +655,8 @@ public class FavoritesScene extends BaseScene implements
             mHelper.setRefreshLayoutEnable(false);
         }
         // Lock drawer
-        setDrawerLayoutEnable(false);
+        setDrawerLockMode(Gravity.LEFT, DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        setDrawerLockMode(Gravity.RIGHT, DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
     @Override
@@ -667,7 +669,8 @@ public class FavoritesScene extends BaseScene implements
             mHelper.setRefreshLayoutEnable(true);
         }
         // Unlock drawer
-        setDrawerLayoutEnable(true);
+        setDrawerLockMode(Gravity.LEFT, DrawerLayout.LOCK_MODE_UNLOCKED);
+        setDrawerLockMode(Gravity.RIGHT, DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
     @Override
