@@ -21,7 +21,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/card_background">
 
-    <com.hippo.ehviewer.widget.ThumbImageView
+    <com.hippo.widget.LoadImageView
         android:id="@+id/thumb"
         android:layout_width="@dimen/list_thumb_width"
         android:layout_height="@dimen/list_thumb_height"
