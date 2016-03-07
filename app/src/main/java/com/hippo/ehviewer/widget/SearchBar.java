@@ -138,9 +138,9 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
         mBaseHeight = getMeasuredHeight();
 
         mSuggestionList = new ArrayList<>();
-        // TODO Use custom view
-        mSuggestionAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_list_item_1, mSuggestionList);
+        mSuggestionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_simple_list, mSuggestionList);
+        mHeaderAttached = true;
+        mList.addHeaderView(mListHeader);
         mList.setAdapter(mSuggestionAdapter);
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -166,14 +166,14 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     private void addListHeader() {
         if (!mHeaderAttached) {
             mHeaderAttached = true;
-            mList.addHeaderView(mListHeader, null, false);
+            mListHeader.setVisibility(VISIBLE);
         }
     }
 
     private void removeListHeader() {
         if (mHeaderAttached) {
             mHeaderAttached = false;
-            mList.removeHeaderView(mListHeader);
+            mListHeader.setVisibility(GONE);
         }
     }
 
