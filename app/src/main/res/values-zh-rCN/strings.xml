@@ -277,6 +277,8 @@
     <string name="settings_download_document">文档</string>
 
     <string name="settings_about_title">关于</string>
+    <string name="settings_about_enable_analytics">启用数据统计</string>
+    <string name="settings_about_about_analytics">关于数据统计</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">选择文件夹</string>

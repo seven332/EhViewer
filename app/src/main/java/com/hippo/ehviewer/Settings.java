@@ -392,7 +392,7 @@ public class Settings {
         putBoolean(KEY_ASK_ANALYTICS, value);
     }
 
-    private static final String KEY_ENABLE_ANALYTICS = "enable_analytics";
+    public static final String KEY_ENABLE_ANALYTICS = "enable_analytics";
     private static final boolean DEFAULT_ENABLE_ANALYTICS = false;
 
     public static boolean getEnableAnalytics() {

@@ -17,15 +17,32 @@
 package com.hippo.ehviewer.ui.fragment;
 
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 
-public class AboutFragment extends PreferenceFragment {
+public class AboutFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.about_settings);
+
+        Preference enableAnalytics = findPreference(Settings.KEY_ENABLE_ANALYTICS);
+        enableAnalytics.setOnPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        String key = preference.getKey();
+        if (Settings.KEY_ENABLE_ANALYTICS.equals(key)) {
+            if (newValue instanceof Boolean && (Boolean) newValue) {
+                Analytics.start(getActivity());
+            }
+        }
+        return true;
     }
 }

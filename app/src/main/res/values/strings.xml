@@ -316,6 +316,8 @@
     <string name="settings_download_document">Document</string>
 
     <string name="settings_about_title">About</string>
+    <string name="settings_about_enable_analytics">Enable analytics</string>
+    <string name="settings_about_about_analytics">About analytics</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">Dir picker</string>

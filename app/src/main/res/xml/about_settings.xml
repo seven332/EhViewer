@@ -18,9 +18,18 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"
+        android:key="enable_analytics"
+        android:title="@string/settings_about_enable_analytics"
+        android:defaultValue="true"/>
 
-
-
-
+    <com.hippo.preference.SimpleDialogPreference
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="?android:attr/preferenceStyle"
+        android:key="about_analytics"
+        android:title="@string/settings_about_about_analytics"
+        app:message="@string/analytics_explain"/>
 
 </PreferenceScreen>
