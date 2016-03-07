@@ -37,6 +37,7 @@ import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.ehviewer.client.parser.TorrentParser;
+import com.hippo.ehviewer.client.parser.WhatsHotParser;
 import com.hippo.network.StatusCodeException;
 import com.hippo.yorozuya.AssertUtils;
 
@@ -517,5 +518,32 @@ public class EhEngine {
         }
 
         return result;
+    }
+
+    public static List<GalleryInfo> getWhatsHot(EhClient.Task task,
+            OkHttpClient okHttpClient) throws Exception {
+        String url = EhUrl.HOST_G;
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            List<GalleryInfo> list = WhatsHotParser.parse(body);
+            fillGalleryListByApi(task, okHttpClient, list);
+            return list;
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
     }
 }

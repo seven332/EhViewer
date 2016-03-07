@@ -82,6 +82,7 @@ import com.hippo.yorozuya.SimpleHandler;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 public final class GalleryListScene extends BaseScene
         implements EasyRecyclerView.OnItemClickListener, EasyRecyclerView.OnItemLongClickListener,
@@ -798,13 +799,22 @@ public final class GalleryListScene extends BaseScene
         protected void getPageData(int taskId, int type, int page) {
             mUrlBuilder.setPageIndex(page);
 
-            String url = mUrlBuilder.build();
-            EhRequest request = new EhRequest();
-            request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
-            request.setCallback(new GetGalleryListListener(getContext(),
-                    ((StageActivity) getActivity()).getStageId(), getTag(), taskId));
-            request.setArgs(url, Settings.getShowJpnTitle()); // TODO check tag filter
-            mClient.execute(request);
+            if (ListUrlBuilder.MODE_WHATS_HOT == mUrlBuilder.getMode()) {
+                EhRequest request = new EhRequest();
+                request.setMethod(EhClient.METHOD_GET_WHATS_HOT);
+                request.setCallback(new GetWhatsHotListener(getContext(),
+                        ((StageActivity) getActivity()).getStageId(), getTag(), taskId));
+                request.setArgs();
+                mClient.execute(request);
+            } else {
+                String url = mUrlBuilder.build();
+                EhRequest request = new EhRequest();
+                request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
+                request.setCallback(new GetGalleryListListener(getContext(),
+                        ((StageActivity) getActivity()).getStageId(), getTag(), taskId));
+                request.setArgs(url, Settings.getShowJpnTitle());
+                mClient.execute(request);
+            }
         }
 
         @Override
@@ -849,6 +859,56 @@ public final class GalleryListScene extends BaseScene
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.onGetExpection(taskId, e);
+        }
+    }
+
+    private void onGetWhatsHotSuccess(List<GalleryInfo> result, int taskId) {
+        if (mHelper != null && mSearchBarMover != null &&
+                mHelper.isCurrentTask(taskId)) {
+            mHelper.setPages(taskId, 1);
+            mHelper.onGetPageData(taskId, result);
+            SimpleHandler.getInstance().post(mReturnSearchBarRunnable);
+        }
+    }
+
+    private void onGetWhatsHotFailure(Exception e, int taskId) {
+        if (mHelper != null && mSearchBarMover != null &&
+                mHelper.isCurrentTask(taskId) && isViewCreated()) {
+            mHelper.onGetExpection(taskId, e);
+        }
+    }
+
+    private static class GetWhatsHotListener extends EhCallback<GalleryListScene, List<GalleryInfo>> {
+
+        private final int mTaskId;
+
+        public GetWhatsHotListener(Context context, int stageId, String sceneTag, int taskId) {
+            super(context, stageId, sceneTag);
+            mTaskId = taskId;
+        }
+
+        @Override
+        public void onSuccess(List<GalleryInfo> result) {
+            GalleryListScene scene = getScene();
+            if (scene != null) {
+                scene.onGetWhatsHotSuccess(result, mTaskId);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            GalleryListScene scene = getScene();
+            if (scene != null) {
+                scene.onGetWhatsHotFailure(e, mTaskId);
+            }
+        }
+
+        @Override
+        public void onCancel() {}
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryListScene;
         }
     }
 

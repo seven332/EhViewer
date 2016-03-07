@@ -374,7 +374,10 @@ public final class MainActivity extends StageActivity
             startSceneFirstly(new Announcer(GalleryListScene.class)
                     .setArgs(args));
         } else if (id == R.id.nav_whats_hot) {
-
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_WHATS_HOT);
+            startSceneFirstly(new Announcer(GalleryListScene.class)
+                    .setArgs(args));
         } else if (id == R.id.nav_favourite) {
             startScene(new Announcer(FavoritesScene.class));
         } else if (id == R.id.nav_history) {

@@ -43,7 +43,7 @@ public class GalleryApiParser {
             gi.category = EhUtils.getCategory(g.getString("category"));
             gi.thumb = g.getString("thumb");
             gi.uploader = g.getString("uploader");
-            gi.posted = g.getString("posted"); // TODO long to date
+            gi.posted = ParserUtils.formatDate(ParserUtils.parseLong(g.getString("posted")) * 1000);
             gi.rating = Float.parseFloat(g.getString("rating"));
             // tags
             JSONArray tagJa = g.getJSONArray("tags");

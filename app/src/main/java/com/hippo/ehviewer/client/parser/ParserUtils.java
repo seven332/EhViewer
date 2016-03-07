@@ -18,7 +18,18 @@ package com.hippo.ehviewer.client.parser;
 
 import com.hippo.yorozuya.StringUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class ParserUtils {
+
+    public static final DateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+
+    public static synchronized String formatDate(long time) {
+        return sDateFormat.format(new Date(time));
+    }
 
     public static String trim(String str) {
         // Avoid null
