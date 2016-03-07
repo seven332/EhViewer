@@ -29,7 +29,11 @@ import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.NumberUtils;
+
+import java.io.File;
 
 public class Settings {
 
@@ -372,5 +376,92 @@ public class Settings {
 
     public static void putDefaultFavSlot(int value) {
         putInt(KEY_DEFAULT_FAV_SLOT, value);
+    }
+
+    /********************
+     ****** Analytics
+     ********************/
+    private static final String KEY_ASK_ANALYTICS = "ask_analytics";
+    private static final boolean DEFAULT_ASK_ANALYTICS = true;
+
+    public static boolean getAskAnalytics() {
+        return getBoolean(KEY_ASK_ANALYTICS, DEFAULT_ASK_ANALYTICS);
+    }
+
+    public static void putAskAnalytics(boolean value) {
+        putBoolean(KEY_ASK_ANALYTICS, value);
+    }
+
+    private static final String KEY_ENABLE_ANALYTICS = "enable_analytics";
+    private static final boolean DEFAULT_ENABLE_ANALYTICS = false;
+
+    public static boolean getEnableAnalytics() {
+        return getBoolean(KEY_ENABLE_ANALYTICS, DEFAULT_ENABLE_ANALYTICS);
+    }
+
+    public static void putEnableAnalytics(boolean value) {
+        putBoolean(KEY_ENABLE_ANALYTICS, value);
+    }
+
+    private static final String KEY_USER_ID = "user_id";
+    private static final String FILENAME_USER_ID = ".user_id";
+    private static final int LENGTH_USER_ID = 32;
+
+    public static String getUserID() {
+        boolean writeXml = false;
+        boolean writeFile = false;
+        String userID = getString(KEY_USER_ID, null);
+        File file = AppConfig.getFileInAppDir(FILENAME_USER_ID);
+        if (null == userID || !isValidUserID(userID)) {
+            writeXml = true;
+            // Get use ID from out sd card file
+            userID = FileUtils.read(file);
+            if (null == userID || !isValidUserID(userID)) {
+                writeFile = true;
+                userID = generateUserID();
+            }
+        } else {
+            writeFile = true;
+        }
+
+        if (writeXml) {
+            putString(KEY_USER_ID, userID);
+        }
+        if (writeFile) {
+            FileUtils.write(file, userID);
+        }
+
+        return userID;
+    }
+
+    @NonNull
+    private static String generateUserID() {
+        int length = LENGTH_USER_ID;
+        StringBuilder sb = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            if (MathUtils.random(0, ('9' - '0' + 1) + ('z' - 'a' + 1)) <= '9' - '0') {
+                sb.append((char) MathUtils.random('0', '9' + 1));
+            } else {
+                sb.append((char) MathUtils.random('a', 'z' + 1));
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private static boolean isValidUserID(@Nullable String userID) {
+        if (null == userID || LENGTH_USER_ID != userID.length()) {
+            return false;
+        }
+
+        for (int i = 0; i < LENGTH_USER_ID; i++) {
+            char ch = userID.charAt(i);
+            if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'z')) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -92,6 +92,10 @@ public class EhApplication extends SceneApplication {
             EhDB.mergeOldDB(this);
         }
 
+        if (Settings.getEnableAnalytics()) {
+            Analytics.start(this);
+        }
+
         if (DEBUG_NATIVE_MEMORY) {
             debugNativeMemory();
         }

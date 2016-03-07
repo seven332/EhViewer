@@ -65,6 +65,16 @@ public class AppConfig {
     }
 
     @Nullable
+    public static File getFileInAppDir(String filename) {
+        File appFolder = getExternalAppDir();
+        if (appFolder != null) {
+            File file = new File(appFolder, filename);
+            return FileUtils.ensureFile(file) ? file : null;
+        }
+        return null;
+    }
+
+    @Nullable
     public static File getDefaultDownloadDir() {
         return getDirInAppDir(DOWNLOAD);
     }

@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,8 +39,8 @@ import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.ActivityHelper;
@@ -51,9 +50,6 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
         View.OnClickListener {
 
     private static final String TAG = LoginScene.class.getSimpleName();
-
-    public static final String KEY_TARGET_SCENE = "target_scene";
-    public static final String KEY_TARGET_ARGS = "target_args";
 
     private static final String KEY_REQUEST_ID = "request_id";
 
@@ -216,32 +212,8 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     }
 
     private void redirectTo() {
-        String targetScene = null;
-        Bundle targetArgs = null;
-
-        Bundle args = getArguments();
-        if (null != args) {
-            targetScene = args.getString(KEY_TARGET_SCENE);
-            targetArgs = args.getBundle(KEY_TARGET_ARGS);
-        }
-
-        Class<?> clazz = null;
-        if (targetScene != null) {
-            try {
-                clazz = Class.forName(targetScene);
-            } catch (ClassNotFoundException e) {
-                Log.e(TAG, "Can't find class with name: " + targetScene);
-            }
-        }
-
-        if (clazz != null) {
-            startScene(new Announcer(clazz).setArgs(targetArgs));
-        } else {
-            Bundle newArgs = new Bundle();
-            newArgs.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-            startScene(new Announcer(GalleryListScene.class).setArgs(newArgs));
-        }
-
+        ((MainActivity) getActivity()).startSceneForCheckStep(
+                MainActivity.CHECK_STEP_SIGN_IN, getArguments());
         finish();
     }
 

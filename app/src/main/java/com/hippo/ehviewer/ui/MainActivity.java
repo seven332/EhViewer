@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
+import com.hippo.ehviewer.ui.scene.AnalyticsScene;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.DownloadLabelScene;
 import com.hippo.ehviewer.ui.scene.DownloadsScene;
@@ -58,9 +60,18 @@ import com.hippo.yorozuya.ViewUtils;
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
+
+    public static final int CHECK_STEP_WARNING = 0;
+    public static final int CHECK_STEP_ANALYTICS = 1;
+    public static final int CHECK_STEP_SIGN_IN = 2;
+
+    public static final String KEY_TARGET_SCENE = "target_scene";
+    public static final String KEY_TARGET_ARGS = "target_args";
 
     @Nullable
     @WholeLifeCircle
@@ -76,6 +87,7 @@ public final class MainActivity extends StageActivity
 
     static {
         registerLaunchMode(WarningScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
+        registerLaunchMode(AnalyticsScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(LoginScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(GalleryListScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TOP);
         registerLaunchMode(GalleryDetailScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
@@ -88,6 +100,46 @@ public final class MainActivity extends StageActivity
         registerLaunchMode(ProgressScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
     }
 
+    public void startSceneForCheckStep(int checkStep, Bundle args) {
+        switch (checkStep) {
+            case CHECK_STEP_WARNING:
+                if (Settings.getAskAnalytics()) {
+                    startScene(new Announcer(AnalyticsScene.class).setArgs(args));
+                    break;
+                }
+            case CHECK_STEP_ANALYTICS:
+                if (!EhUtils.hasSignedIn(this)) {
+                    startScene(new Announcer(LoginScene.class).setArgs(args));
+                    break;
+                }
+            case CHECK_STEP_SIGN_IN:
+                String targetScene = null;
+                Bundle targetArgs = null;
+                if (null != args) {
+                    targetScene = args.getString(KEY_TARGET_SCENE);
+                    targetArgs = args.getBundle(KEY_TARGET_ARGS);
+                }
+
+                Class<?> clazz = null;
+                if (targetScene != null) {
+                    try {
+                        clazz = Class.forName(targetScene);
+                    } catch (ClassNotFoundException e) {
+                        Log.e(TAG, "Can't find class with name: " + targetScene);
+                    }
+                }
+
+                if (clazz != null) {
+                    startScene(new Announcer(clazz).setArgs(targetArgs));
+                } else {
+                    Bundle newArgs = new Bundle();
+                    newArgs.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+                    startScene(new Announcer(GalleryListScene.class).setArgs(newArgs));
+                }
+                break;
+        }
+    }
+
     @Override
     public int getContainerViewId() {
         return R.id.fragment_container;
@@ -98,6 +150,8 @@ public final class MainActivity extends StageActivity
     protected Announcer getLaunchAnnouncer() {
         if (Settings.getShowWarning()) {
             return new Announcer(WarningScene.class);
+        } else if (Settings.getAskAnalytics()) {
+            return new Announcer(AnalyticsScene.class);
         } else if (!EhUtils.hasSignedIn(this)) {
             return new Announcer(LoginScene.class);
         } else {
@@ -112,13 +166,18 @@ public final class MainActivity extends StageActivity
         if (0 == getSceneCount()) {
             if (Settings.getShowWarning()) {
                 Bundle newArgs = new Bundle();
-                newArgs.putString(WarningScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
-                newArgs.putBundle(WarningScene.KEY_TARGET_ARGS, announcer.getArgs());
+                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(WarningScene.class).setArgs(newArgs);
+            } else if (Settings.getAskAnalytics()) {
+                Bundle newArgs = new Bundle();
+                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                return new Announcer(AnalyticsScene.class).setArgs(newArgs);
             } else if (!EhUtils.hasSignedIn(this)) {
                 Bundle newArgs = new Bundle();
-                newArgs.putString(LoginScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
-                newArgs.putBundle(LoginScene.KEY_TARGET_ARGS, announcer.getArgs());
+                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(LoginScene.class).setArgs(newArgs);
             }
         }

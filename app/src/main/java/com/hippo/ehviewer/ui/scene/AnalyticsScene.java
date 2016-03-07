@@ -21,17 +21,19 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.text.Html;
+import com.hippo.text.LinkMovementMethod2;
 import com.hippo.yorozuya.ViewUtils;
 
-public final class WarningScene extends BaseScene implements View.OnClickListener {
-
-    private static final String TAG = WarningScene.class.getSimpleName();
+public class AnalyticsScene extends BaseScene implements View.OnClickListener {
 
     @Nullable
     @ViewLifeCircle
@@ -49,10 +51,14 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.scene_warning, container, false);
+        View view = inflater.inflate(R.layout.scene_analytics, container, false);
 
         mCancel = ViewUtils.$$(view, R.id.cancel);
         mOk = ViewUtils.$$(view, R.id.ok);
+        TextView text = (TextView) ViewUtils.$$(view, R.id.text);
+
+        text.setText(Html.fromHtml(getString(R.string.analytics_explain)));
+        text.setMovementMethod(new LinkMovementMethod2(getActivity()));
 
         mCancel.setOnClickListener(this);
         mOk.setOnClickListener(this);
@@ -74,15 +80,17 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
     @Override
     public void onClick(View v) {
         if (mCancel == v) {
-            finishStage();
+            Settings.putEnableAnalytics(false);
         } else if (mOk == v) {
-            // Never show this warning anymore
-            Settings.putShowWarning(false);
-
-            // Start new scene and finish it self
-            ((MainActivity) getActivity()).startSceneForCheckStep(
-                    MainActivity.CHECK_STEP_WARNING, getArguments());
-            finish();
+            Settings.putEnableAnalytics(true);
+            // Start Analytics
+            Analytics.start(getContext());
         }
+        Settings.putAskAnalytics(false);
+
+        // Start new scene and finish it self
+        ((MainActivity) getActivity()).startSceneForCheckStep(
+                MainActivity.CHECK_STEP_ANALYTICS, getArguments());
+        finish();
     }
 }

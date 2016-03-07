@@ -23,10 +23,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.ui.TrackedActivity;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.IntIdGenerator;
 
@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class StageActivity extends AppCompatActivity {
+public abstract class StageActivity extends TrackedActivity {
 
     private static final String TAG = StageActivity.class.getSimpleName();
 

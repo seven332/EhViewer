@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.view.KeyEvent;
 import android.view.View;
@@ -56,7 +55,7 @@ import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 
-public class GalleryActivity extends AppCompatActivity
+public class GalleryActivity extends TrackedActivity
         implements GalleryProviderListener, Slider.OnSetProgressListener,
         GalleryView.Listener {
 
