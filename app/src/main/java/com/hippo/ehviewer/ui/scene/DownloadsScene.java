@@ -92,7 +92,10 @@ public class DownloadsScene extends ToolbarScene
         EasyRecyclerView.OnItemLongClickListener,
         FabLayout.OnClickFabListener {
 
+    public static final String KEY_ACTION = "action";
     private static final String KEY_LABEL = "label";
+
+    public static final String ACTION_CLEAR_DOWNLOAD_SERVICE = "clear_download_service";
 
     @Nullable
     @ViewLifeCircle
@@ -120,9 +123,22 @@ public class DownloadsScene extends ToolbarScene
         return R.id.nav_downloads;
     }
 
+    private void handleArguments(Bundle args) {
+        if (args != null && ACTION_CLEAR_DOWNLOAD_SERVICE.equals(args.getString(KEY_ACTION))) {
+            DownloadService.clear();
+        }
+    }
+
+    @Override
+    public void onNewArguments(@NonNull Bundle args) {
+        handleArguments(args);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        handleArguments(getArguments());
 
         DownloadManager manager = EhApplication.getDownloadManager(getContext());
         manager.addDownloadInfoListener(this);

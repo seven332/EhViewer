@@ -31,7 +31,6 @@ import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.download.DownloadManager;
-import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
@@ -40,8 +39,6 @@ import com.hippo.text.Html;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.SimpleHandler;
-import com.hippo.yorozuya.sparse.SparseJBArray;
-import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -67,12 +64,6 @@ public class EhApplication extends SceneApplication {
     private LruCacheEx<String, LargePreviewSet> mLargePreviewSetCache;
     private LruCacheEx<Long, Integer> mPreviewPagesCache;
     private DownloadManager mDownloadManager;
-
-    private SparseJBArray mItemStateArray;
-    private SparseJLArray<String> mItemTitleArray;
-    private int mFailedCount;
-    private int mFinishedCount;
-    private int mDownloadedCount;
 
     @Override
     public void onCreate() {
@@ -249,35 +240,5 @@ public class EhApplication extends SceneApplication {
             application.mDownloadManager = new DownloadManager(application);
         }
         return application.mDownloadManager;
-    }
-
-
-    public static void initDownloadService(Context context, DownloadService service) {
-        EhApplication application = ((EhApplication) context.getApplicationContext());
-        if (application.mItemStateArray == null) {
-            application.mItemStateArray = new SparseJBArray();
-        }
-        if (application.mItemTitleArray == null) {
-            application.mItemTitleArray = new SparseJLArray<>();
-        }
-
-        service.init(application.mItemStateArray, application.mItemTitleArray,
-                application.mFailedCount, application.mFinishedCount, application.mDownloadedCount);
-    }
-
-    public static void clearDownloadService(Context context, DownloadService service) {
-        EhApplication application = ((EhApplication) context.getApplicationContext());
-        application.mFailedCount = 0;
-        application.mFinishedCount = 0;
-        application.mDownloadedCount = 0;
-        service.clear();
-    }
-
-    public static void backupDownloadService(Context context,
-            int failedCount, int finishedCount, int downloadedCount) {
-        EhApplication application = ((EhApplication) context.getApplicationContext());
-        application.mFailedCount = failedCount;
-        application.mFinishedCount = finishedCount;
-        application.mDownloadedCount = downloadedCount;
     }
 }

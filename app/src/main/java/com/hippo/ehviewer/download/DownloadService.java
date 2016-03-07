@@ -22,6 +22,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.IntDef;
@@ -81,34 +82,20 @@ public class DownloadService extends Service implements DownloadManager.Download
     private NotificationDelay mDownloadedDelay;
     private NotificationDelay m509Delay;
 
-    @Nullable
-    private SparseJBArray mItemStateArray;
-    @Nullable
-    private SparseJLArray<String> mItemTitleArray;
 
-    private int mFailedCount;
-    private int mFinishedCount;
-    private int mDownloadedCount;
+    private final static SparseJBArray sItemStateArray = new SparseJBArray();
+    private final static SparseJLArray<String> sItemTitleArray = new SparseJLArray<>();
 
-    public void init(SparseJBArray stateArray, SparseJLArray<String> titleArray,
-            int failedCount, int finishedCount, int downloadedCount) {
-        mItemStateArray = stateArray;
-        mItemTitleArray = titleArray;
-        mFailedCount = failedCount;
-        mFinishedCount = finishedCount;
-        mDownloadedCount = downloadedCount;
-    }
+    private static int sFailedCount;
+    private static int sFinishedCount;
+    private static int sDownloadedCount;
 
-    public void clear() {
-        mFailedCount = 0;
-        mFinishedCount = 0;
-        mDownloadedCount = 0;
-        if (mItemStateArray != null) {
-            mItemStateArray.clear();
-        }
-        if (mItemTitleArray != null) {
-            mItemTitleArray.clear();
-        }
+    public static void clear() {
+        sFailedCount = 0;
+        sFinishedCount = 0;
+        sDownloadedCount = 0;
+        sItemStateArray.clear();
+        sItemTitleArray.clear();
     }
 
     @Override
@@ -118,7 +105,6 @@ public class DownloadService extends Service implements DownloadManager.Download
         mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mDownloadManager = EhApplication.getDownloadManager(getApplicationContext());
         mDownloadManager.setDownloadListener(this);
-        EhApplication.initDownloadService(getApplicationContext(), this);
     }
 
     @Override
@@ -142,10 +128,6 @@ public class DownloadService extends Service implements DownloadManager.Download
         if (m509Delay != null) {
             m509Delay.release();
         }
-        EhApplication.backupDownloadService(getApplicationContext(),
-                mFailedCount, mFinishedCount, mDownloadedCount);
-        mItemStateArray = null;
-        mItemTitleArray = null;
     }
 
     @Override
@@ -204,7 +186,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 mDownloadManager.deleteRangeDownload(gidList);
             }
         } else if (ACTION_CLEAR.equals(action)) {
-            EhApplication.clearDownloadService(getApplicationContext(), this);
+            clear();
         }
 
         checkStopSelf();
@@ -226,9 +208,12 @@ public class DownloadService extends Service implements DownloadManager.Download
         stopAllIntent.setAction(ACTION_STOP_ALL);
         PendingIntent piStopAll = PendingIntent.getService(this, 0, stopAllIntent, 0);
 
+        Bundle bundle = new Bundle();
+        bundle.putString(DownloadsScene.KEY_ACTION, DownloadsScene.ACTION_CLEAR_DOWNLOAD_SERVICE);
         Intent activityIntent = new Intent(this, MainActivity.class);
         activityIntent.setAction(StageActivity.ACTION_START_SCENE);
         activityIntent.putExtra(StageActivity.KEY_SCENE_NAME, DownloadsScene.class.getName());
+        activityIntent.putExtra(StageActivity.KEY_SCENE_ARGS, bundle);
         PendingIntent piActivity = PendingIntent.getActivity(DownloadService.this, 0,
                 activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -254,9 +239,12 @@ public class DownloadService extends Service implements DownloadManager.Download
         clearIntent.setAction(ACTION_CLEAR);
         PendingIntent piClear = PendingIntent.getService(this, 0, clearIntent, 0);
 
+        Bundle bundle = new Bundle();
+        bundle.putString(DownloadsScene.KEY_ACTION, DownloadsScene.ACTION_CLEAR_DOWNLOAD_SERVICE);
         Intent activityIntent = new Intent(this, MainActivity.class);
         activityIntent.setAction(StageActivity.ACTION_START_SCENE);
         activityIntent.putExtra(StageActivity.KEY_SCENE_NAME, DownloadsScene.class.getName());
+        activityIntent.putExtra(StageActivity.KEY_SCENE_ARGS, bundle);
         PendingIntent piActivity = PendingIntent.getActivity(DownloadService.this, 0,
                 activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -353,7 +341,7 @@ public class DownloadService extends Service implements DownloadManager.Download
 
     @Override
     public void onFinish(DownloadInfo info) {
-        if (mNotifyManager == null || mItemStateArray == null || mItemTitleArray == null) {
+        if (mNotifyManager == null) {
             return;
         }
 
@@ -363,59 +351,59 @@ public class DownloadService extends Service implements DownloadManager.Download
 
         boolean finish = info.state == DownloadInfo.STATE_FINISH;
         long gid = info.gid;
-        int index = mItemStateArray.indexOfKey(gid);
+        int index = sItemStateArray.indexOfKey(gid);
         if (index < 0) { // Not contain
-            mItemStateArray.put(gid, finish);
-            mItemTitleArray.put(gid, info.title);
-            mDownloadedCount++;
+            sItemStateArray.put(gid, finish);
+            sItemTitleArray.put(gid, info.title);
+            sDownloadedCount++;
             if (finish) {
-                mFinishedCount++;
+                sFinishedCount++;
             } else {
-                mFailedCount++;
+                sFailedCount++;
             }
         } else { // Contain
-            boolean oldFinish = mItemStateArray.valueAt(index);
-            mItemStateArray.put(gid, finish);
-            mItemTitleArray.put(gid, info.title);
+            boolean oldFinish = sItemStateArray.valueAt(index);
+            sItemStateArray.put(gid, finish);
+            sItemTitleArray.put(gid, info.title);
             if (oldFinish && !finish) {
-                mFinishedCount--;
-                mFailedCount++;
+                sFinishedCount--;
+                sFailedCount++;
             } else if (!oldFinish && finish) {
-                mFinishedCount++;
-                mFailedCount--;
+                sFinishedCount++;
+                sFailedCount--;
             }
         }
 
         String text;
         boolean needStyle;
-        if (mFinishedCount != 0 && mFailedCount == 0) {
-            if (mFinishedCount == 1) {
-                if (mItemTitleArray.size() >= 1) {
-                    text = getString(R.string.stat_download_done_line_succeeded, mItemTitleArray.valueAt(0));
+        if (sFinishedCount != 0 && sFailedCount == 0) {
+            if (sFinishedCount == 1) {
+                if (sItemTitleArray.size() >= 1) {
+                    text = getString(R.string.stat_download_done_line_succeeded, sItemTitleArray.valueAt(0));
                 } else {
-                    Log.d("TAG", "WTF, mItemTitleArray is null");
+                    Log.d("TAG", "WTF, sItemTitleArray is null");
                     text = getString(R.string.error_unknown);
                 }
                 needStyle = false;
             } else {
-                text = getString(R.string.stat_download_done_text_succeeded, mFinishedCount);
+                text = getString(R.string.stat_download_done_text_succeeded, sFinishedCount);
                 needStyle = true;
             }
-        } else if (mFinishedCount == 0 && mFailedCount != 0) {
-            if (mFailedCount == 1) {
-                if (mItemTitleArray.size() >= 1) {
-                    text = getString(R.string.stat_download_done_line_failed, mItemTitleArray.valueAt(0));
+        } else if (sFinishedCount == 0 && sFailedCount != 0) {
+            if (sFailedCount == 1) {
+                if (sItemTitleArray.size() >= 1) {
+                    text = getString(R.string.stat_download_done_line_failed, sItemTitleArray.valueAt(0));
                 } else {
-                    Log.d("TAG", "WTF, mItemTitleArray is null");
+                    Log.d("TAG", "WTF, sItemTitleArray is null");
                     text = getString(R.string.error_unknown);
                 }
                 needStyle = false;
             } else {
-                text = getString(R.string.stat_download_done_text_failed, mFailedCount);
+                text = getString(R.string.stat_download_done_text_failed, sFailedCount);
                 needStyle = true;
             }
         } else {
-            text = getString(R.string.stat_download_done_text_mix, mFinishedCount, mFailedCount);
+            text = getString(R.string.stat_download_done_text_mix, sFinishedCount, sFailedCount);
             needStyle = true;
         }
 
@@ -423,8 +411,8 @@ public class DownloadService extends Service implements DownloadManager.Download
         if (needStyle) {
             style = new NotificationCompat.InboxStyle();
             style.setBigContentTitle(getString(R.string.stat_download_done_title));
-            SparseJBArray stateArray = mItemStateArray;
-            SparseJLArray<String> titleArray = mItemTitleArray;
+            SparseJBArray stateArray = sItemStateArray;
+            SparseJLArray<String> titleArray = sItemTitleArray;
             for (int i = 0, n = stateArray.size(); i < n; i++) {
                 long id = stateArray.keyAt(i);
                 boolean fin = stateArray.valueAt(i);
@@ -442,7 +430,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         mDownloadedBuilder.setContentText(text)
                 .setStyle(style)
                 .setWhen(System.currentTimeMillis())
-                .setNumber(mDownloadedCount);
+                .setNumber(sDownloadedCount);
 
         mDownloadedDelay.show();
 
