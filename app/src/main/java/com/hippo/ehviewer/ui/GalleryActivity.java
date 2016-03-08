@@ -66,6 +66,7 @@ public class GalleryActivity extends TrackedActivity
     public static final String KEY_ACTION = "action";
     public static final String KEY_FILENAME = "filename";
     public static final String KEY_GALLERY_INFO = "gallery_info";
+    public static final String KEY_PAGE = "page";
     public static final String KEY_SHOWING = "showing";
 
     private static final long SLIDER_ANIMATION_DURING = 150;
@@ -74,6 +75,7 @@ public class GalleryActivity extends TrackedActivity
     private String mAction;
     private String mFilename;
     private GalleryInfo mGalleryInfo;
+    private int mPage;
 
     @Nullable
     private GalleryView mGalleryView;
@@ -162,6 +164,7 @@ public class GalleryActivity extends TrackedActivity
         mAction = intent.getAction();
         mFilename = intent.getStringExtra(KEY_FILENAME);
         mGalleryInfo = intent.getParcelableExtra(KEY_GALLERY_INFO);
+        mPage = intent.getIntExtra(KEY_PAGE, -1);
         buildProvider();
     }
 
@@ -169,6 +172,7 @@ public class GalleryActivity extends TrackedActivity
         mAction = savedInstanceState.getString(KEY_ACTION);
         mFilename = savedInstanceState.getString(KEY_FILENAME);
         mGalleryInfo = savedInstanceState.getParcelable(KEY_GALLERY_INFO);
+        mPage = savedInstanceState.getInt(KEY_ACTION, -1);
         buildProvider();
     }
 
@@ -181,6 +185,7 @@ public class GalleryActivity extends TrackedActivity
             outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
         }
         outState.putBoolean(KEY_SHOWING, mSystemUiShowing);
+        outState.putInt(KEY_PAGE, mPage);
     }
 
     @Override
@@ -205,9 +210,16 @@ public class GalleryActivity extends TrackedActivity
         mGalleryProvider.setGLRoot(glRootView);
         mUploader = new ImageTexture.Uploader(glRootView);
 
+        int startPage;
+        if (savedInstanceState == null) {
+            startPage = mPage >= 0 ? mPage : mGalleryProvider.getStartPage();
+        } else {
+            startPage = mCurrentIndex;
+        }
+
         mGalleryView = new GalleryView(this, new GalleryAdapter(), this,
                 Settings.getReadingDirection(), Settings.getPageScaling(),
-                Settings.getStartPosition(), mGalleryProvider.getStartPage());
+                Settings.getStartPosition(), startPage);
         glRootView.setContentPane(mGalleryView);
 
         // System UI helper
@@ -238,7 +250,7 @@ public class GalleryActivity extends TrackedActivity
         mSlider.setOnSetProgressListener(this);
 
         mSize = mGalleryProvider.size();
-        mCurrentIndex = mGalleryView.getCurrentIndex();
+        mCurrentIndex = startPage;
         mLayoutMode = mGalleryView.getLayoutMode();
         updateSlider();
 

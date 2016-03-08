@@ -357,6 +357,16 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    private GalleryInfo getGalleryInfo() {
+        if (null != mGalleryDetail) {
+            return mGalleryDetail;
+        } else if (null != mGalleryInfo) {
+            return mGalleryInfo;
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -879,6 +889,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             String imageUrl = previewSet.getImageUrlAt(i);
             LoadImageView image = (LoadImageView) view.findViewById(R.id.image);
             image.load(EhCacheKeyFactory.getLargePreviewKey(gd.gid, index), imageUrl, true);
+            image.setTag(R.id.index, i);
+            image.setOnClickListener(this);
             TextView text = (TextView) view.findViewById(R.id.text);
             text.setText(String.format(Locale.US, "%d", index + 1));
         }
@@ -1088,24 +1100,33 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     .setArgs(args)
                     .setRequestCode(this, REQUEST_CODE_COMMENT_GALLERY));
         } else if (mPreviews == v) {
-            long gid = getGid();
-            String token = getToken();
-            if (gid == -1 || token == null) {
-                return;
+            if (null != mGalleryDetail) {
+                Bundle args = new Bundle();
+                args.putParcelable(GalleryPreviewsScene.KEY_GALLERY_INFO, mGalleryDetail);
+                startScene(new Announcer(GalleryPreviewsScene.class).setArgs(args));
             }
-            Bundle args = new Bundle();
-            args.putLong(GalleryPreviewsScene.KEY_GID, gid);
-            args.putString(GalleryPreviewsScene.KEY_TOKEN, token);
-            startScene(new Announcer(GalleryPreviewsScene.class).setArgs(args));
         } else {
-            Object tag;
-            tag = v.getTag(R.id.tag);
-            if (tag instanceof String) {
-                String tagStr = (String) tag;
+            Object o = v.getTag(R.id.tag);
+            if (o instanceof String) {
+                String tag = (String) o;
                 ListUrlBuilder lub = new ListUrlBuilder();
                 lub.setMode(ListUrlBuilder.MODE_TAG);
-                lub.setKeyword(tagStr);
+                lub.setKeyword(tag);
                 GalleryListScene.startScene(this, lub);
+                return;
+            }
+
+            Context context = getContext();
+            GalleryInfo galleryInfo = getGalleryInfo();
+            o = v.getTag(R.id.index);
+            if (null != context && null != galleryInfo && o instanceof Integer) {
+                int index = (Integer) o;
+                Intent intent = new Intent(context, GalleryActivity.class);
+                intent.setAction(GalleryActivity.ACTION_EH);
+                intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, galleryInfo);
+                intent.putExtra(GalleryActivity.KEY_PAGE, index);
+                startActivity(intent);
+                return;
             }
         }
     }

@@ -18,6 +18,7 @@
 <resources>
 
     <item name="tag" type="id"/>
+    <item name="index" type="id"/>
 
     <item name="fragment_tag" type="id"/>
 

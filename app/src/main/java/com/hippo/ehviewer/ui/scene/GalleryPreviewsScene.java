@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,9 +43,11 @@ import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryPreview;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.EhException;
+import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.widget.ContentLayout;
@@ -56,19 +59,27 @@ import com.hippo.yorozuya.SimpleHandler;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class GalleryPreviewsScene extends ToolbarScene {
+public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerView.OnItemClickListener {
 
-    public static final String KEY_GID = "gid";
-    public static final String KEY_TOKEN = "token";
-    public final static String KEY_HAS_FIRST_REFRESH = "has_first_refresh";
+    public static final String KEY_GALLERY_INFO = "gallery_info";
+    private final static String KEY_HAS_FIRST_REFRESH = "has_first_refresh";
 
+    /*---------------
+     Whole life cycle
+     ---------------*/
+    @Nullable
     private EhClient mClient;
+    @Nullable
+    private GalleryInfo mGalleryInfo;
+
+    /*---------------
+     View life cycle
+     ---------------*/
     @Nullable
     private GalleryPreviewAdapter mAdapter;
     @Nullable
     private GalleryPreviewHelper mHelper;
-    private long mGid = -1;
-    private String mToken = null;
+
     private boolean mHasFirstRefresh = false;
 
     @Override
@@ -83,30 +94,24 @@ public class GalleryPreviewsScene extends ToolbarScene {
         }
     }
 
-    private void handlerArgs(Bundle args) {
+    private void onInit() {
+        Bundle args = getArguments();
         if (args == null) {
             return;
         }
 
-        mGid = args.getLong(KEY_GID, -1);
-        mToken = args.getString(KEY_TOKEN, null);
-    }
-
-    private void onInit() {
-        handlerArgs(getArguments());
+        mGalleryInfo = args.getParcelable(KEY_GALLERY_INFO);
     }
 
     private void onRestore(@NonNull Bundle savedInstanceState) {
-        mGid = savedInstanceState.getLong(KEY_GID, -1);
-        mToken = savedInstanceState.getString(KEY_TOKEN, null);
+        mGalleryInfo = savedInstanceState.getParcelable(KEY_GALLERY_INFO);
         mHasFirstRefresh = savedInstanceState.getBoolean(KEY_HAS_FIRST_REFRESH);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(KEY_GID, mGid);
-        outState.putString(KEY_TOKEN, mToken);
+        outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
         outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
     }
 
@@ -126,6 +131,7 @@ public class GalleryPreviewsScene extends ToolbarScene {
         recyclerView.setPadding(padding, padding, padding, padding);
         recyclerView.setClipToPadding(false);
         recyclerView.addItemDecoration(new MarginItemDecoration(padding));
+        recyclerView.setOnItemClickListener(this);
 
         mHelper = new GalleryPreviewHelper();
         contentLayout.setHelper(mHelper);
@@ -186,6 +192,20 @@ public class GalleryPreviewsScene extends ToolbarScene {
         finish();
     }
 
+    @Override
+    public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+        Context context = getContext();
+        if (null != context && null != mHelper && null != mGalleryInfo) {
+            GalleryPreview p = mHelper.getDataAt(position);
+            Intent intent = new Intent(context, GalleryActivity.class);
+            intent.setAction(GalleryActivity.ACTION_EH);
+            intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, mGalleryInfo);
+            intent.putExtra(GalleryActivity.KEY_PAGE, p.index);
+            startActivity(intent);
+        }
+        return true;
+    }
+
     private class GalleryPreviewHolder extends RecyclerView.ViewHolder {
 
         public LoadImageView image;
@@ -208,9 +228,9 @@ public class GalleryPreviewsScene extends ToolbarScene {
 
         @Override
         public void onBindViewHolder(GalleryPreviewHolder holder, int position) {
-            if (mHelper != null) {
+            if (null != mHelper && null != mGalleryInfo) {
                 GalleryPreview preview = mHelper.getDataAt(position);
-                holder.image.load(EhCacheKeyFactory.getLargePreviewKey(mGid, preview.index), preview.imageUrl);
+                holder.image.load(EhCacheKeyFactory.getLargePreviewKey(mGalleryInfo.gid, preview.index), preview.imageUrl);
                 holder.text.setText(String.format(Locale.US, "%d", preview.index + 1));
             }
         }
@@ -225,14 +245,14 @@ public class GalleryPreviewsScene extends ToolbarScene {
 
         @Override
         protected void getPageData(final int taskId, int type, int page) {
-            if (mGid == -1 || mToken == null) {
+            if (null == mClient || null == mGalleryInfo) {
                 onGetExpection(taskId, new EhException(getString(R.string.error_cannot_find_gallery)));
                 return;
             }
 
             final LargePreviewSet previewSet = EhApplication.getLargePreviewSetCache(
-                    getContext()).get(EhCacheKeyFactory.getLargePreviewSetKey(mGid, page));
-            final Integer pages = EhApplication.getPreviewPagesCache(getContext()).get(mGid);
+                    getContext()).get(EhCacheKeyFactory.getLargePreviewSetKey(mGalleryInfo.gid, page));
+            final Integer pages = EhApplication.getPreviewPagesCache(getContext()).get(mGalleryInfo.gid);
             if (previewSet != null && pages != null) {
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
@@ -243,11 +263,11 @@ public class GalleryPreviewsScene extends ToolbarScene {
                 return;
             }
 
-            String url = EhUrl.getGalleryDetailUrl(mGid, mToken, page, false);
+            String url = EhUrl.getGalleryDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, page, false);
             EhRequest request = new EhRequest();
             request.setMethod(EhClient.METHOD_GET_LARGE_PREVIEW_SET);
             request.setCallback(new GetLargePreviewSetListener(getContext(),
-                    ((StageActivity) getActivity()).getStageId(), getTag(), taskId, mGid, page));
+                    ((StageActivity) getActivity()).getStageId(), getTag(), taskId, mGalleryInfo.gid, page));
             request.setArgs(url);
             mClient.execute(request);
         }
@@ -350,10 +370,10 @@ public class GalleryPreviewsScene extends ToolbarScene {
     private class GoToDialogHelper implements View.OnClickListener,
             DialogInterface.OnDismissListener {
 
-        private int mPages;
+        private final int mPages;
 
-        private View mView;
-        private Slider mSlider;
+        private final View mView;
+        private final Slider mSlider;
 
         private Dialog mDialog;
 
