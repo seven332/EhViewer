@@ -50,7 +50,7 @@ jobject create_image_object(JNIEnv* env, void* ptr, int format, int width, int h
   image_clazz = (*env)->FindClass(env, "com/hippo/image/Image");
   constructor = (*env)->GetMethodID(env, image_clazz, "<init>", "(JIII)V");
   if (constructor == 0) {
-    LOGE(EMSG("Can't find Image object constructor"));
+    LOGE(MSG("Can't find Image object constructor"));
     return NULL;
   } else {
     return (*env)->NewObject(env, image_clazz, constructor,
@@ -113,7 +113,7 @@ Java_com_hippo_image_Image_nativeRender(JNIEnv* env,
   AndroidBitmap_getInfo(env, dst, &info);
   AndroidBitmap_lockPixels(env, dst, &pixels);
   if (pixels == NULL) {
-    LOGE(EMSG("Can't lock bitmap pixels"));
+    LOGE(MSG("Can't lock bitmap pixels"));
     return;
   }
 

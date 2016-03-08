@@ -35,13 +35,13 @@ InputStreamPipe* create_input_stream_pipe(JNIEnv* env, jobject isPipe)
   jmethodID closeMID = (*env)->GetMethodID(env, streamPipeCls, "close", "()V");
 
   if (obtainMID == NULL || releaseMID == NULL || openMID == NULL || closeMID == NULL) {
-    LOGE(EMSG("Can't get method id"));
+    LOGE(MSG("Can't get method id"));
     return NULL;
   }
 
   InputStreamPipe* inputStreamPipe = (InputStreamPipe*) malloc(sizeof(InputStreamPipe));
   if (inputStreamPipe == NULL) {
-    LOGE(EMSG("Out of memory"));
+    LOGE(MSG("Out of memory"));
     return NULL;
   }
 
@@ -77,7 +77,7 @@ InputStream* open_input_stream_from_pipe(JNIEnv* env, InputStreamPipe* inputStre
 {
   jobject is = (*env)->CallObjectMethod(env, inputStreamPipe->isPipe, inputStreamPipe->openMID);
   if ((*env)->ExceptionCheck(env)) {
-    LOGE(EMSG("Catch exception"));
+    LOGE(MSG("Catch exception"));
     (*env)->ExceptionClear(env);
     return NULL;
   }

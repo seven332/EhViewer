@@ -100,7 +100,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     simd/jidctred-sse2.asm \
     simd/jquantf-sse2.asm \
     simd/jquanti-sse2.asm
-    LOCAL_ASMFLAGS := -DELF
+    LOCAL_ASMFLAGS := -DELF -DPIC
 else ifeq ($(TARGET_ARCH_ABI), x86_64)
     LOCAL_SRC_FILES += \
     simd/jsimd_x86_64.c \
@@ -119,7 +119,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86_64)
     simd/jidctred-sse2-64.asm \
     simd/jquantf-sse2-64.asm \
     simd/jquanti-sse2-64.asm
-    LOCAL_ASMFLAGS := -D__x86_64__ -DELF
+    LOCAL_ASMFLAGS := -D__x86_64__ -DELF -DPIC
 else
     LOCAL_SRC_FILES += jsimd_none.c
 endif

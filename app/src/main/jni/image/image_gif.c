@@ -43,7 +43,7 @@ static int custom_read_fun(GifFileType* gif, GifByteType* bytes, int size) {
   JNIEnv *env = get_env();
 
   if (env == NULL) {
-    LOGE(EMSG("Can't get JNIEnv"));
+    LOGE(MSG("Can't get JNIEnv"));
     return 0;
   }
 
@@ -152,7 +152,7 @@ void* GIF_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
   if (partially) {
     // Glance
     if (DGifGlance(gif_file) != GIF_OK) {
-      LOGE(EMSG("GIF error code %d"), error_code);
+      LOGE(MSG("GIF error code %d"), error_code);
       DGifCloseFile(gif_file, &error_code);
       free(buffer);
       free(gif);
@@ -184,7 +184,7 @@ void* GIF_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
       fix_gif_file(gif_file);
     }
     if (gif_file->ImageCount <= 0) {
-      LOGE(EMSG("No frame"));
+      LOGE(MSG("No frame"));
       DGifCloseFile(gif_file, &error_code);
       free(buffer);
       free(gif);
@@ -241,7 +241,7 @@ bool GIF_complete(GIF* gif)
   }
 
   if (gif->gif_file == NULL || gif->patch_head_input_stream == NULL) {
-    LOGE(EMSG("Some stuff is NULL"));
+    LOGE(MSG("Some stuff is NULL"));
     return false;
   }
 
@@ -313,7 +313,7 @@ static void backup(GIF* gif)
 static void restore(GIF* gif)
 {
   if (gif->backup == NULL) {
-    LOGE(EMSG("Backup is NULL"));
+    LOGE(MSG("Backup is NULL"));
   } else {
     memcpy(gif->buffer, gif->backup, (size_t) (gif->gif_file->SWidth * gif->gif_file->SHeight * 4));
   }
@@ -404,7 +404,7 @@ static void blend(GifFileType* gif_file, int index, void* pixels, int tran)
       copy_line(src_ptr, dst_ptr, cmap, tran, len);
     }
   } else {
-    LOGW(EMSG("Can't find color map"));
+    LOGW(MSG("Can't find color map"));
   }
 }
 
@@ -415,7 +415,7 @@ void GIF_advance(GIF* gif)
 
   index = (gif->buffer_index + 1) % gif->gif_file->ImageCount;
   if (index != 0 && gif->partially) {
-    LOGE(EMSG("The png is only decoded partially. Only the first frame can be shown."));
+    LOGE(MSG("The png is only decoded partially. Only the first frame can be shown."));
     return;
   }
 

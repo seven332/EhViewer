@@ -23,7 +23,7 @@
 
 #include <android/log.h>
 
-#define TAG "EhViewer"
+#define TAG "Image"
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, TAG ,__VA_ARGS__)
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG ,__VA_ARGS__)
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG ,__VA_ARGS__)
@@ -34,10 +34,10 @@
 #define STRINGIZE(L) #L
 #define MAKESTRING(M, L) M(L)
 #define FILE_LINE MAKESTRING(STRINGIZE, __LINE__ )
-#define EMSG(msg) __FILE__ "(" FILE_LINE "): "msg
+#define MSG(msg) __FILE__ "(" FILE_LINE "): "msg
 
 #define OUT_OF_MEMORY "Out of memory"
 
-#define WTF_OM LOGE(EMSG(OUT_OF_MEMORY))
+#define WTF_OM LOGE(MSG(OUT_OF_MEMORY))
 
 #endif //LOG_H

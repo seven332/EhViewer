@@ -36,20 +36,20 @@ InputStream* create_input_stream(JNIEnv* env, jobject is)
   jbyteArray buffer;
 
   if (readMID == NULL || closeMID == NULL) {
-    LOGE(EMSG("Can't get read or close method id"));
+    LOGE(MSG("Can't get read or close method id"));
     return NULL;
   }
 
   buffer = (*env)->NewByteArray(env, BUFFER_SIZE);
   buffer = (*env)->NewGlobalRef(env, buffer);
   if (buffer == NULL) {
-    LOGE(EMSG("Can't create buffer"));
+    LOGE(MSG("Can't create buffer"));
     return NULL;
   }
 
   InputStream* inputStream = (InputStream*) malloc(sizeof(InputStream));
   if (inputStream == NULL) {
-    LOGE(EMSG("Out of memory"));
+    LOGE(MSG("Out of memory"));
     return NULL;
   }
 
@@ -83,7 +83,7 @@ size_t read_input_stream(JNIEnv* env, InputStream* inputStream, unsigned char* b
 
     len = (*env)->CallIntMethod(env, inputStream->is, inputStream->readMID, inputStream->buffer, 0, len);
     if ((*env)->ExceptionCheck(env)) {
-      LOGE(EMSG("Catch exception"));
+      LOGE(MSG("Catch exception"));
       (*env)->ExceptionClear(env);
       len = -1;
     }
@@ -107,7 +107,7 @@ void close_input_stream(JNIEnv* env, InputStream* inputStream)
 {
   (*env)->CallVoidMethod(env, inputStream->is, inputStream->closeMID);
   if ((*env)->ExceptionCheck(env)) {
-    LOGE(EMSG("Catch exception"));
+    LOGE(MSG("Catch exception"));
     (*env)->ExceptionClear(env);
   }
 }

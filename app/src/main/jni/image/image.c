@@ -78,7 +78,7 @@ void* decode(JNIEnv* env, InputStream* stream, bool partially, int* format)
       break;
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), *format);
+      LOGE(MSG("Can't detect format %d"), *format);
       destroy_input_stream(get_env(), &stream);
       return NULL;
   }
@@ -104,7 +104,7 @@ void* decode(JNIEnv* env, InputStream* stream, bool partially, int* format)
       return GIF_decode(env, patch_head_input_stream, partially);
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), *format);
+      LOGE(MSG("Can't detect format %d"), *format);
       close_patch_head_input_stream(get_env(), patch_head_input_stream);
       destroy_patch_head_input_stream(get_env(), &patch_head_input_stream);
       return NULL;
@@ -127,7 +127,7 @@ bool complete(void* image, int format)
       return GIF_complete((GIF*) image);
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
       return false;
   }
 }
@@ -148,7 +148,7 @@ bool is_completed(void* image, int format)
       return GIF_is_completed((GIF*) image);
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
       return false;
   }
 }
@@ -169,7 +169,7 @@ int get_width(void* image, int format)
       return GIF_get_width((GIF*) image);
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
       return -1;
   }
 }
@@ -190,7 +190,7 @@ int get_height(void* image, int format)
       return GIF_get_height((GIF*) image);
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
       return -1;
   }
 }
@@ -222,7 +222,7 @@ void render(void* image, int format, int src_x, int src_y,
       break;
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
       break;
   }
 }
@@ -246,7 +246,7 @@ void advance(void* image, int format)
       break;
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
   }
 }
 
@@ -266,7 +266,7 @@ int get_delay(void* image, int format)
       return GIF_get_delay((GIF*) image);
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
       return false;
   }
 }
@@ -287,7 +287,7 @@ int get_frame_count(void* image, int format)
       return GIF_get_frame_count((GIF*) image);
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
       return false;
   }
 }
@@ -308,7 +308,7 @@ bool is_opaque(void* image, int format)
       return GIF_is_opaque((GIF*) image);
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
       return false;
   }
 }
@@ -332,6 +332,6 @@ void recycle(void* image, int format)
       break;
 #endif
     default:
-      LOGE(EMSG("Can't detect format %d"), format);
+      LOGE(MSG("Can't detect format %d"), format);
   }
 }

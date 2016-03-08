@@ -51,7 +51,7 @@ static size_t custom_read(void * custom_stuff, unsigned char * buffer, size_t si
   JNIEnv *env = get_env();
 
   if (env == NULL) {
-    LOGE(EMSG("Can't get JNIEnv"));
+    LOGE(MSG("Can't get JNIEnv"));
     return 0;
   }
 
@@ -80,7 +80,7 @@ void* JPEG_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, bo
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = my_error_exit;
   if (setjmp(jerr.setjmp_buffer)) {
-    LOGE(EMSG("%s"), emsg);
+    LOGE(MSG("%s"), emsg);
     free(jpeg);
     free(buffer);
     jpeg_destroy_decompress(&cinfo);
