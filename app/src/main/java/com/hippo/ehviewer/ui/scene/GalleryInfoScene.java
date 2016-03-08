@@ -29,7 +29,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
@@ -176,7 +175,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         if (position != 0 && mValues != null) {
             ClipboardManager cmb = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             cmb.setPrimaryClip(ClipData.newPlainText(null, mValues.get(position)));
-            Toast.makeText(getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
+            showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
             return true;
         } else {
             return false;

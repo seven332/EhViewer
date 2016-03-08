@@ -47,7 +47,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hippo.annotation.Implemented;
 import com.hippo.drawable.DrawerArrowDrawable;
@@ -848,7 +847,6 @@ public class FavoritesScene extends BaseScene implements
                 dstCat = which - 1;
             }
             if (srcCat == dstCat) {
-                Toast.makeText(getContext(), "src and dst in the same", Toast.LENGTH_SHORT).show();
                 return;
             }
 

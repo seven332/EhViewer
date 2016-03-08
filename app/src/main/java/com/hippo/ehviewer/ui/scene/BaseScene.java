@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui.scene;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
@@ -31,6 +32,9 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.util.ActivityHelper;
 
 public abstract class BaseScene extends SceneFragment {
+
+    public static final int LENGTH_SHORT = 0;
+    public static final int LENGTH_LONG = 1;
 
     private boolean mViewCreated;
 
@@ -78,6 +82,20 @@ public abstract class BaseScene extends SceneFragment {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {
             ((MainActivity) activity).setNavCheckedItem(resId);
+        }
+    }
+
+    public void showTip(CharSequence message, int length) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).showTip(message, length);
+        }
+    }
+
+    public void showTip(@StringRes int id, int length) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).showTip(id, length);
         }
     }
 

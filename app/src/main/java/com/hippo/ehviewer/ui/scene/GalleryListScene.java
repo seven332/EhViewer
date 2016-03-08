@@ -44,7 +44,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
@@ -372,7 +371,7 @@ public final class GalleryListScene extends BaseScene
         if (time - mPressBackTime > BACK_PRESSED_INTERVAL) {
             // It is the last scene
             mPressBackTime = time;
-            Toast.makeText(getContext(), R.string.press_twice_exit, Toast.LENGTH_SHORT).show();
+            showTip(R.string.press_twice_exit, LENGTH_SHORT);
             return true;
         } else {
             return false;
@@ -466,7 +465,9 @@ public final class GalleryListScene extends BaseScene
                                 CommonOperations.startDownload(getActivity(), gi);
                                 break;
                             case 1: // Favorites
-                                CommonOperations.addToFavorites(getActivity(), gi, new addToFavoriteListener());
+                                CommonOperations.addToFavorites(getActivity(), gi,
+                                        new addToFavoriteListener(getContext(),
+                                                ((StageActivity) getActivity()).getStageId(), getTag()));
                                 break;
                         }
                     }
@@ -616,7 +617,7 @@ public final class GalleryListScene extends BaseScene
             if (mSearchLayout.isSpecifyGallery()) {
                 int index = query.indexOf(' ');
                 if (index <= 0 || index >= query.length() - 1) {
-                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show(); // TODO
+                    showTip(R.string.error_invalid_specify_gallery, LENGTH_LONG);
                     return;
                 }
 
@@ -625,7 +626,7 @@ public final class GalleryListScene extends BaseScene
                 try {
                     gid = Long.parseLong(query.substring(0, index));
                 } catch (NumberFormatException e) {
-                    Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show(); // TODO
+                    showTip(R.string.error_invalid_specify_gallery, LENGTH_LONG);
                     return;
                 }
                 token = query.substring(index + 1);
@@ -953,19 +954,28 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
-    private class addToFavoriteListener implements EhClient.Callback<Void> {
+    private static class addToFavoriteListener extends EhCallback<GalleryListScene, Void> {
+
+        public addToFavoriteListener(Context context, int stageId, String sceneTag) {
+            super(context, stageId, sceneTag);
+        }
 
         @Override
         public void onSuccess(Void result) {
-            Toast.makeText(getContext(), R.string.add_to_favorite_success, Toast.LENGTH_SHORT).show();
+            showTip(R.string.add_to_favorite_success, LENGTH_SHORT);
         }
 
         @Override
         public void onFailure(Exception e) {
-            Toast.makeText(getContext(), R.string.add_to_favorite_failure, Toast.LENGTH_SHORT).show();
+            showTip(R.string.add_to_favorite_failure, LENGTH_SHORT);
         }
 
         @Override
         public void onCancel() {}
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryListScene;
+        }
     }
 }

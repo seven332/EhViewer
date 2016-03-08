@@ -53,7 +53,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hippo.drawable.RoundSideRectDrawable;
 import com.hippo.ehviewer.EhApplication;
@@ -1338,8 +1337,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         @Override
         public void onSuccess(Void result) {
-            Toast.makeText(getContext(), mAddOrRemove ? R.string.remove_from_favorite_success :
-                    R.string.add_to_favorite_success, Toast.LENGTH_SHORT).show();
+            showTip(mAddOrRemove ? R.string.remove_from_favorite_success :
+                    R.string.add_to_favorite_success, LENGTH_SHORT);
             GalleryDetailScene scene = getScene();
             if (scene != null) {
                 scene.onModifyFavoritesSuccess(mAddOrRemove);
@@ -1348,8 +1347,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         @Override
         public void onFailure(Exception e) {
-            Toast.makeText(getContext(), mAddOrRemove ? R.string.remove_from_favorite_failure :
-                    R.string.add_to_favorite_failure, Toast.LENGTH_SHORT).show();
+            showTip(mAddOrRemove ? R.string.remove_from_favorite_failure :
+                    R.string.add_to_favorite_failure, LENGTH_SHORT);
         }
 
         @Override
@@ -1564,8 +1563,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         @Override
         public void onSuccess(RateGalleryParser.Result result) {
-            // Show toast
-            Toast.makeText(getApplication(), R.string.rate_successfully, Toast.LENGTH_SHORT).show();
+            showTip(R.string.rate_successfully, LENGTH_SHORT);
 
             GalleryDetailScene scene = getScene();
             if (scene != null) {
@@ -1583,8 +1581,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         @Override
         public void onFailure(Exception e) {
             e.printStackTrace();
-            // Show toast
-            Toast.makeText(getApplication(), R.string.rate_failed, Toast.LENGTH_SHORT).show();
+            showTip(R.string.rate_failed, LENGTH_SHORT);
         }
 
         @Override

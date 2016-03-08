@@ -24,7 +24,9 @@ import android.os.PersistableBundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
@@ -37,7 +39,6 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
-import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.ehviewer.ui.scene.AnalyticsScene;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.DownloadLabelScene;
@@ -73,14 +74,14 @@ public final class MainActivity extends StageActivity
     public static final String KEY_TARGET_SCENE = "target_scene";
     public static final String KEY_TARGET_ARGS = "target_args";
 
+    /*---------------
+     Whole life cycle
+     ---------------*/
     @Nullable
-    @WholeLifeCircle
     private DrawerLayout mDrawerLayout;
     @Nullable
-    @WholeLifeCircle
     private NavigationView mNavView;
     @Nullable
-    @WholeLifeCircle
     private FrameLayout mRightDrawer;
 
     private int mNavCheckedItem = 0;
@@ -354,6 +355,23 @@ public final class MainActivity extends StageActivity
             } else {
                 mNavView.setCheckedItem(resId);
             }
+        }
+    }
+
+    public void showTip(@StringRes int id, int length) {
+        showTip(getString(id), length);
+    }
+
+    /**
+     * If activity is running, show snack bar, otherwise show toast
+     */
+    public void showTip(CharSequence message, int length) {
+        if (null != mDrawerLayout) {
+            Snackbar.make(mDrawerLayout, message,
+                    length == BaseScene.LENGTH_LONG ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, message,
+                    length == BaseScene.LENGTH_LONG ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
         }
     }
 

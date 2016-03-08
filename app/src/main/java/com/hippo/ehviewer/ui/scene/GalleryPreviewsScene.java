@@ -33,7 +33,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
@@ -408,7 +407,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
                     mDialog = null;
                 }
             } else {
-                Toast.makeText(getContext(), R.string.error_out_of_range, Toast.LENGTH_SHORT).show();
+                showTip(R.string.error_out_of_range, LENGTH_SHORT);
             }
         }
 

@@ -37,7 +37,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
@@ -410,8 +409,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         @Override
         public void onSuccess(GalleryComment[] result) {
-            // Show toast
-            Toast.makeText(getApplication(), R.string.comment_successfully, Toast.LENGTH_SHORT).show();
+            showTip(R.string.comment_successfully, LENGTH_SHORT);
 
             GalleryCommentsScene scene = getScene();
             if (scene != null) {
@@ -421,8 +419,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         @Override
         public void onFailure(Exception e) {
-            // Show toast
-            Toast.makeText(getApplication(), R.string.comment_failed, Toast.LENGTH_SHORT).show();
+            showTip(R.string.comment_failed, LENGTH_SHORT);
         }
 
         @Override

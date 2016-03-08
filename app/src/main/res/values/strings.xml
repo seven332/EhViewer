@@ -94,6 +94,7 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">Invalid url</string>
     <string name="error_get_ptoken_error">Get pToken error</string>
+    <string name="error_invalid_specify_gallery">Keyword should looks like \"618395 0439fa3666\" for specify gallery</string>
 
     <string name="app_waring">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them. Do you want to use this application?</string>
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
