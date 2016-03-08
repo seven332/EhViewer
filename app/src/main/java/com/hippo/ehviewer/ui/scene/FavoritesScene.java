@@ -146,7 +146,6 @@ public class FavoritesScene extends BaseScene implements
     @WholeLifeCircle
     private FavListUrlBuilder mUrlBuilder;
 
-    public int[] countArray; // Size 10
     public int current; // -1 for error
     public int limit; // -1 for error
 
@@ -453,11 +452,18 @@ public class FavoritesScene extends BaseScene implements
     @Override
     @Implemented(FastScroller.OnDragHandlerListener.class)
     public void onStartDragHandler() {
+        // Lock right drawer
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
     }
 
     @Override
     @Implemented(FastScroller.OnDragHandlerListener.class)
     public void onEndDragHandler() {
+        // Restore right drawer
+        if (null != mRecyclerView && !mRecyclerView.isInCustomChoice()) {
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
+        }
+
         if (mSearchBarMover != null) {
             mSearchBarMover.returnSearchBarPosition();
         }
@@ -654,8 +660,8 @@ public class FavoritesScene extends BaseScene implements
             mHelper.setRefreshLayoutEnable(false);
         }
         // Lock drawer
-        setDrawerLockMode(Gravity.LEFT, DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        setDrawerLockMode(Gravity.RIGHT, DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
     }
 
     @Override
@@ -668,8 +674,8 @@ public class FavoritesScene extends BaseScene implements
             mHelper.setRefreshLayoutEnable(true);
         }
         // Unlock drawer
-        setDrawerLockMode(Gravity.LEFT, DrawerLayout.LOCK_MODE_UNLOCKED);
-        setDrawerLockMode(Gravity.RIGHT, DrawerLayout.LOCK_MODE_UNLOCKED);
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
     }
 
     @Override

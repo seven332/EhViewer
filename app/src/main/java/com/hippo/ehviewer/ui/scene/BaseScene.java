@@ -41,6 +41,15 @@ public abstract class BaseScene extends SceneFragment {
         }
     }
 
+    public int getDrawerLockMode(int edgeGravity) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            return ((MainActivity) activity).getDrawerLockMode(edgeGravity);
+        } else {
+            return DrawerLayout.LOCK_MODE_UNLOCKED;
+        }
+    }
+
     public void openDrawer(int drawerGravity) {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {

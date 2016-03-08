@@ -30,6 +30,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -653,10 +654,16 @@ public final class GalleryListScene extends BaseScene
     }
 
     @Override
-    public void onStartDragHandler() {}
+    public void onStartDragHandler() {
+        // Lock right drawer
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+    }
 
     @Override
     public void onEndDragHandler() {
+        // Restore right drawer
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
+
         mSearchBarMover.returnSearchBarPosition();
     }
 

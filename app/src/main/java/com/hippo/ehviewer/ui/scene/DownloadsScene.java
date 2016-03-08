@@ -90,7 +90,7 @@ public class DownloadsScene extends ToolbarScene
         implements DownloadManager.DownloadInfoListener,
         EasyRecyclerView.OnItemClickListener,
         EasyRecyclerView.OnItemLongClickListener,
-        FabLayout.OnClickFabListener {
+        FabLayout.OnClickFabListener, FastScroller.OnDragHandlerListener {
 
     public static final String KEY_ACTION = "action";
     private static final String KEY_LABEL = "label";
@@ -237,6 +237,7 @@ public class DownloadsScene extends ToolbarScene
         HandlerDrawable drawable = new HandlerDrawable();
         drawable.setColor(ResourcesUtils.getAttrColor(getContext(), R.attr.colorAccent));
         fastScroller.setHandlerDrawable(drawable);
+        fastScroller.setOnDragHandlerListener(this);
 
         mFabLayout.setExpanded(false, false);
         mFabLayout.setHidePrimaryFab(true);
@@ -401,6 +402,20 @@ public class DownloadsScene extends ToolbarScene
             mRecyclerView.outOfCustomChoiceMode();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onStartDragHandler() {
+        // Lock right drawer
+        setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+    }
+
+    @Override
+    public void onEndDragHandler() {
+        // Restore right drawer
+        if (null != mRecyclerView && !mRecyclerView.isInCustomChoice()) {
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
         }
     }
 
@@ -1009,8 +1024,8 @@ public class DownloadsScene extends ToolbarScene
                 mFabLayout.setExpanded(true);
             }
             // Lock drawer
-            setDrawerLockMode(Gravity.LEFT, DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            setDrawerLockMode(Gravity.RIGHT, DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
         }
 
         @Override
@@ -1022,8 +1037,8 @@ public class DownloadsScene extends ToolbarScene
                 mFabLayout.setExpanded(false);
             }
             // Unlock drawer
-            setDrawerLockMode(Gravity.LEFT, DrawerLayout.LOCK_MODE_UNLOCKED);
-            setDrawerLockMode(Gravity.RIGHT, DrawerLayout.LOCK_MODE_UNLOCKED);
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
         }
 
         @Override

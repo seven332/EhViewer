@@ -310,6 +310,14 @@ public final class MainActivity extends StageActivity
         }
     }
 
+    public int getDrawerLockMode(int edgeGravity) {
+        if (mDrawerLayout != null) {
+            return mDrawerLayout.getDrawerLockMode(edgeGravity);
+        } else {
+            return DrawerLayout.LOCK_MODE_UNLOCKED;
+        }
+    }
+
     public void setDrawerLockMode(int lockMode, int edgeGravity) {
         if (mDrawerLayout != null) {
             mDrawerLayout.setDrawerLockMode(lockMode, edgeGravity);
