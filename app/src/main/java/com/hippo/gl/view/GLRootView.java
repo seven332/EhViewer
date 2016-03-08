@@ -120,7 +120,7 @@ public class GLRootView extends GLSurfaceView
         setEGLContextClientVersion(2);
 
         // do not need depth buffer
-        setEGLConfigChooser(new ComponentSizeChooser(8, 8, 8, 8, 0, 0));
+        setEGLConfigChooser(new BestConfigChooser());
         setRenderer(this);
         // setFormat is done by SurfaceView in SDK 2.3 and newer.
         //if (ApiHelper.USE_888_PIXEL_FORMAT) {
@@ -715,28 +715,12 @@ public class GLRootView extends GLSurfaceView
         }
     }
 
-    /**
-     * No guarantee to choose a configuration with exactly the specified r,g,b,a,depth,stencil sizes.
-     * But we try our best.
-     */
-    private static class ComponentSizeChooser extends BaseConfigChooser {
-        public ComponentSizeChooser(int redSize, int greenSize, int blueSize,
-                int alphaSize, int depthSize, int stencilSize) {
-            super(new int[] {
-                    EGL10.EGL_RED_SIZE, redSize,
-                    EGL10.EGL_GREEN_SIZE, greenSize,
-                    EGL10.EGL_BLUE_SIZE, blueSize,
-                    EGL10.EGL_ALPHA_SIZE, alphaSize,
-                    EGL10.EGL_DEPTH_SIZE, depthSize,
-                    EGL10.EGL_STENCIL_SIZE, stencilSize,
-                    EGL10.EGL_NONE});
-            mValue = new int[1];
-            mRedSize = redSize;
-            mGreenSize = greenSize;
-            mBlueSize = blueSize;
-            mAlphaSize = alphaSize;
-            mDepthSize = depthSize;
-            mStencilSize = stencilSize;
+    private static class BestConfigChooser extends BaseConfigChooser {
+
+        private final int[] mValue = new int[1];
+
+        public BestConfigChooser() {
+            super(new int[] {EGL10.EGL_NONE});
         }
 
         @Override
@@ -744,41 +728,32 @@ public class GLRootView extends GLSurfaceView
                 EGLConfig[] configs) {
             // Use score to avoid "No config chosen"
             int configIndex = 0;
-            int minScore = Integer.MAX_VALUE;
+            int maxScore = 0;
 
             for (int i = 0, n = configs.length; i < n; i++) {
                 EGLConfig config = configs[i];
-                int d = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_DEPTH_SIZE, 0);
-                int s = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_STENCIL_SIZE, 0);
-                int r = findConfigAttrib(egl, display, config,
+                int redSize = findConfigAttrib(egl, display, config,
                         EGL10.EGL_RED_SIZE, 0);
-                int g = findConfigAttrib(egl, display, config,
+                int greenSize = findConfigAttrib(egl, display, config,
                         EGL10.EGL_GREEN_SIZE, 0);
-                int b = findConfigAttrib(egl, display, config,
+                int blueSize = findConfigAttrib(egl, display, config,
                         EGL10.EGL_BLUE_SIZE, 0);
-                int a = findConfigAttrib(egl, display, config,
+                int alphaSize = findConfigAttrib(egl, display, config,
                         EGL10.EGL_ALPHA_SIZE, 0);
+                int depthSize = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_DEPTH_SIZE, 0);
+                int stencilSize = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_STENCIL_SIZE, 0);
+                int sampleBuffers = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_SAMPLE_BUFFERS, 0);
+                int samples = findConfigAttrib(egl, display, config,
+                        EGL10.EGL_SAMPLES, 0);
 
-                int score = 0;
-                if (d < mDepthSize) {
-                    score += 100;
-                } else if (d > mDepthSize) {
-                    score += (d - mDepthSize);
-                }
-                if (s < mStencilSize) {
-                    score += 100;
-                } else if (s > mStencilSize) {
-                    score += (s - mStencilSize);
-                }
-                score += Math.abs(r - mRedSize);
-                score += Math.abs(g - mGreenSize);
-                score += Math.abs(b - mBlueSize);
-                score += Math.abs(a - mAlphaSize);
+                int score = redSize + greenSize + blueSize + alphaSize +
+                        depthSize + stencilSize + sampleBuffers + samples;
 
-                if (score < minScore) {
-                    minScore = score;
+                if (score > maxScore) {
+                    maxScore = score;
                     configIndex = i;
                 }
             }
@@ -794,14 +769,5 @@ public class GLRootView extends GLSurfaceView
             }
             return defaultValue;
         }
-
-        private int[] mValue;
-        // Subclasses can adjust these values:
-        protected int mRedSize;
-        protected int mGreenSize;
-        protected int mBlueSize;
-        protected int mAlphaSize;
-        protected int mDepthSize;
-        protected int mStencilSize;
     }
 }
