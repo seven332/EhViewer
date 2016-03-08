@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.spider;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Process;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -112,9 +113,12 @@ public class SpiderQueen implements Runnable {
 
     private static final SparseJLArray<SpiderQueen> sQueenMap = new SparseJLArray<>();
 
+    @NonNull
     private final OkHttpClient mHttpClient;
+    @NonNull
     private final GalleryInfo mGalleryInfo;
-    private volatile SpiderDen mSpiderDen;
+    @NonNull
+    private final SpiderDen mSpiderDen;
 
     private int mReadReference = 0;
     private int mDownloadReference = 0;
@@ -164,9 +168,10 @@ public class SpiderQueen implements Runnable {
 
     private final List<OnSpiderListener> mSpiderListeners = new ArrayList<>();
 
-    private SpiderQueen(EhApplication application, GalleryInfo galleryInfo) {
+    private SpiderQueen(EhApplication application, @NonNull GalleryInfo galleryInfo) {
         mHttpClient = EhApplication.getOkHttpClient(application);
         mGalleryInfo = galleryInfo;
+        mSpiderDen = new SpiderDen(mGalleryInfo);
     }
 
     public void addOnSpiderListener(OnSpiderListener listener) {
@@ -301,10 +306,7 @@ public class SpiderQueen implements Runnable {
             mMode = MODE_READ;
         }
 
-        SpiderDen spiderDen = mSpiderDen;
-        if (spiderDen != null) {
-            spiderDen.setMode(mMode);
-        }
+        mSpiderDen.setMode(mMode);
 
         // Update download page
         boolean startWorkers;
@@ -533,7 +535,33 @@ public class SpiderQueen implements Runnable {
         }
     }
 
-    private SpiderInfo readSpiderInfoFromLocal() {
+    public int getStartPage() {
+        mSpiderInfo = readSpiderInfoFromLocal();
+        if (mSpiderInfo != null) {
+            return mSpiderInfo.startPage;
+        } else {
+            return 0;
+        }
+    }
+
+    public void putStartPage(int page) {
+        if (mSpiderInfo != null) {
+            mSpiderInfo.startPage = page;
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    writeSpiderInfoToLocal(mSpiderInfo);
+                    return null;
+                }
+            }.execute();
+        }
+    }
+
+    private synchronized SpiderInfo readSpiderInfoFromLocal() {
+        if (null != mSpiderInfo) {
+            return mSpiderInfo;
+        }
+
         // Read from download dir
         UniFile downloadDir = mSpiderDen.getDownloadDir();
         if (downloadDir != null) {
@@ -627,7 +655,7 @@ public class SpiderQueen implements Runnable {
         }
     }
 
-    private void writeSpiderInfoToLocal(@NonNull SpiderInfo spiderInfo) {
+    private synchronized void writeSpiderInfoToLocal(@NonNull SpiderInfo spiderInfo) {
         // Write to download dir
         UniFile downloadDir = mSpiderDen.getDownloadDir();
         if (downloadDir != null) {
@@ -651,9 +679,6 @@ public class SpiderQueen implements Runnable {
     }
 
     private void runInternal() {
-        mSpiderDen = new SpiderDen(mGalleryInfo);
-        mSpiderDen.setMode(mMode);
-
         // Get EhConfig
         EhConfig config = Settings.getEhConfig().clone();
         config.previewSize = EhConfig.PREVIEW_SIZE_NORMAL;

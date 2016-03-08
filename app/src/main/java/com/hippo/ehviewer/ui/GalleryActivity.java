@@ -207,7 +207,7 @@ public class GalleryActivity extends TrackedActivity
 
         mGalleryView = new GalleryView(this, new GalleryAdapter(), this,
                 Settings.getReadingDirection(), Settings.getPageScaling(),
-                Settings.getStartPosition());
+                Settings.getStartPosition(), mGalleryProvider.getStartPage());
         glRootView.setContentPane(mGalleryView);
 
         // System UI helper
@@ -494,6 +494,10 @@ public class GalleryActivity extends TrackedActivity
 
     @Override
     public void onUpdateCurrentIndex(int index) {
+        if (null != mGalleryProvider) {
+            mGalleryProvider.putStartPage(index);
+        }
+
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
             task = new NotifyTask();

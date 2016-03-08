@@ -38,6 +38,7 @@ import com.hippo.gl.widget.GLEdgeView;
 import com.hippo.gl.widget.GLProgressView;
 import com.hippo.gl.widget.GLTextureView;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Pool;
 import com.hippo.yorozuya.ResourcesUtils;
 
@@ -140,7 +141,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     public GalleryView(@NonNull Context context, @NonNull Adapter adapter,
             Listener listener, @LayoutMode int layoutMode, @ImageView.Scale int scaleMode,
-            @ImageView.StartPosition int startPosition) {
+            @ImageView.StartPosition int startPosition, int startPage) {
         mContext = context;
         mAdapter = adapter;
         mListener = listener;
@@ -152,6 +153,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         mLayoutMode = layoutMode;
         mScaleMode = scaleMode;
         mStartPosition = startPosition;
+        mIndex = MathUtils.clamp(startPage, 0, Integer.MAX_VALUE);
         mProgressColor = ResourcesUtils.getAttrColor(context, R.attr.colorPrimary);
         mProgressSize = LayoutUtils.dp2pix(context, PROGRESS_SIZE_IN_DP);
         mErrorSize = context.getResources().getDimension(R.dimen.text_large);

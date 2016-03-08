@@ -82,6 +82,12 @@ public abstract class GalleryProvider {
 
     public abstract String getError();
 
+    public int getStartPage() {
+        return 0;
+    }
+
+    public void putStartPage(int page) {}
+
     public void setGalleryProviderListener(GalleryProviderListener listener) {
         mGalleryProviderListener = listener;
     }

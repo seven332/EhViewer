@@ -36,7 +36,7 @@ public class SpiderInfo {
     static final String TOKEN_FAILED = "failed";
     static final String TOKEN_WAIT = "wait";
 
-    int currentIndex = 0;
+    int startPage = 0;
     long gid = -1;
     String token = null;
     int pages = -1;
@@ -55,8 +55,8 @@ public class SpiderInfo {
         try {
             is = file.openInputStream();
             spiderInfo = new SpiderInfo();
-            // Current index
-            spiderInfo.currentIndex = Integer.parseInt(IOUtils.readAsciiLine(is), 16);
+            // Start page
+            spiderInfo.startPage = Integer.parseInt(IOUtils.readAsciiLine(is), 16);
             // Gid
             spiderInfo.gid = Long.parseLong(IOUtils.readAsciiLine(is));
             // Token
@@ -104,7 +104,7 @@ public class SpiderInfo {
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(os);
-            writer.write(String.format("%08x", currentIndex));
+            writer.write(String.format("%08x", startPage));
             writer.write("\n");
             writer.write(Long.toString(gid));
             writer.write("\n");

@@ -63,6 +63,22 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     }
 
     @Override
+    public int getStartPage() {
+        if (mSpiderQueen != null) {
+            return mSpiderQueen.getStartPage();
+        } else {
+            return super.getStartPage();
+        }
+    }
+
+    @Override
+    public void putStartPage(int page) {
+        if (mSpiderQueen != null) {
+            mSpiderQueen.putStartPage(page);
+        }
+    }
+
+    @Override
     public int size() {
         if (mSpiderQueen != null) {
             return mSpiderQueen.size();
