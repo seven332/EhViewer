@@ -46,6 +46,9 @@
     <string name="register">Register</string>
     <string name="sign_in_via_webview">Sign in via WebView</string>
     <string name="sign_in_via_cookies">Sign in via cookies</string>
+    <string name="display_name_dialog_title">Enter Display Name</string>
+    <string name="display_name">Display name</string>
+    <string name="display_name_is_empty">Display name is empty</string>
 
     <string name="error_status_code_400" translatable="false">Bad Request</string>
     <string name="error_status_code_401" translatable="false">Unauthorized</string>

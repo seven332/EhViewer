@@ -33,6 +33,9 @@
     <string name="register">注册</string>
     <string name="sign_in_via_webview">通过网页登陆</string>
     <string name="sign_in_via_cookies">通过 Cookie 登陆</string>
+    <string name="display_name_dialog_title">输入昵称</string>
+    <string name="display_name">昵称</string>
+    <string name="display_name_is_empty">昵称为空</string>
 
     <string name="error_bad_status_code">错误的状态码：%d</string>
     <string name="error_timeout">超时</string>

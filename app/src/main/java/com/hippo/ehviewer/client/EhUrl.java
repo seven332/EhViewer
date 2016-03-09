@@ -33,6 +33,7 @@ public class EhUrl {
 
     public static final String API_EX = HOST_EX + "api.php";
 
+    public static final String URL_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login";
     public static final String URL_FAVORITES = HOST_EX + "favorites.php";
 
     public static String getGalleryDetailUrl(long gid, String token) {

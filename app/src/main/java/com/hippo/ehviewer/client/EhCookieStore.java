@@ -28,8 +28,8 @@ import okhttp3.Request;
 
 public class EhCookieStore extends CookieDBStore {
 
-    private static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
-    private static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
+    public static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
+    public static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
 
     public void cleanUpForSignIn() {
         removeAll();
@@ -40,14 +40,16 @@ public class EhCookieStore extends CookieDBStore {
                 contain(EhUrl.DOMAIN_EX, KEY_IPD_PASS_HASH);
     }
 
-    private Cookie newCookie(Cookie cookie, String newDomain) {
+    public static Cookie newCookie(Cookie cookie, String newDomain, boolean forcePersistent, boolean forceNotHostOnly) {
         Cookie.Builder builder = new Cookie.Builder();
         builder.name(cookie.name());
         builder.value(cookie.value());
         if (cookie.persistent()) {
             builder.expiresAt(cookie.expiresAt());
+        } else if (forcePersistent) {
+            builder.expiresAt(Long.MAX_VALUE);
         }
-        if (cookie.hostOnly()) {
+        if (cookie.hostOnly() && !forceNotHostOnly) {
             builder.hostOnlyDomain(newDomain);
         } else {
             builder.domain(newDomain);
@@ -99,17 +101,10 @@ public class EhCookieStore extends CookieDBStore {
 
         for (Cookie cookie: cookies) {
             if (EhUrl.DOMAIN_E.equals(cookie.domain())) {
-                // Don't save igneous: mystery. It is for sad panda
-                if (EhUrl.DOMAIN_E.equals(cookie.domain()) &&
-                        "igneous".equals(cookie.name()) &&
-                        "mystery".equals(cookie.value())) {
-                    continue;
-                }
-
                 // Save id and hash for exhentai
                 if (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
                         KEY_IPD_PASS_HASH.equals(cookie.name())) {
-                    result.add(newCookie(cookie, EhUrl.DOMAIN_EX));
+                    result.add(newCookie(cookie, EhUrl.DOMAIN_EX, false, false));
                 }
             }
 
