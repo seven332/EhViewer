@@ -136,8 +136,8 @@ public class EhDB {
                         gi.posted = cursor.getString(3);
                         gi.category = cursor.getInt(4);
                         gi.thumb = cursor.getString(5);
-                        gi.uploader = cursor.getString(5);
-                        gi.rating = cursor.getFloat(6);
+                        gi.uploader = cursor.getString(6);
+                        gi.rating = cursor.getFloat(7);
 
                         map.put(gi.gid, gi);
 
