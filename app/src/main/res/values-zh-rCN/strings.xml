@@ -105,7 +105,7 @@
     <string name="name_is_empty">名称为空</string>
     <string name="delete">删除</string>
     <string name="delete_quick_search_title">删除快速搜索</string>
-    <string name="delete_quick_search_message">删除 %s？</string>
+    <string name="delete_quick_search_message">删除“%s”？</string>
     <string name="no_quick_search">未添加快速搜索</string>
 
     <!-- search_min_rating -->
@@ -231,7 +231,7 @@
     <string name="download_stop_all">全部停止</string>
     <string name="download_service_label">EhViewer 下载服务</string>
     <string name="download_speed_text">%s</string>
-    <string name="download_speed_text_2">%1$s，%2$s</string>
+    <string name="download_speed_text_2">%1$s，剩余 %2$s</string>
     <string name="remember_download_label">记住下载标签</string>
     <string name="default_download_label">默认下载标签</string>
 
@@ -244,7 +244,7 @@
     <string name="label_text_exist">标签已存在</string>
     <string name="rename_label_title">重命名标签</string>
     <string name="delete_label_title">删除标签</string>
-    <string name="delete_label_text">删除标签“%s”</string>
+    <string name="delete_label_message">删除“%s”？</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
@@ -305,7 +305,7 @@
     <string name="favorites_title">%s</string>
     <string name="favorites_title_2">%1$s - %2$s</string>
     <string name="delete_favorites_dialog_title">删除收藏</string>
-    <string name="delete_favorites_dialog_message">删除 %d 项收藏</string>
+    <string name="delete_favorites_dialog_message">删除 %d 项收藏？</string>
     <string name="move_favorites_dialog_title">移动收藏</string>
     <string name="default_favorites_collection">默认收藏夹</string>
     <string name="let_me_select">让我选择</string>

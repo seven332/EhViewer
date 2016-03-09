@@ -144,7 +144,7 @@
     <string name="name_is_empty">Name is empty</string>
     <string name="delete">Delete</string>
     <string name="delete_quick_search_title">Delete Quick Search</string>
-    <string name="delete_quick_search_message">Delete %s?</string>
+    <string name="delete_quick_search_message">Delete \"%s\"?</string>
     <string name="no_quick_search">No quick search saved yet</string>
 
     <!-- search_min_rating -->
@@ -271,7 +271,7 @@
     <string name="download_stop_all">Stop all</string>
     <string name="download_service_label">EhViewer Download Service</string>
     <string name="download_speed_text">%s</string>
-    <string name="download_speed_text_2">%1$s, %2$s</string>
+    <string name="download_speed_text_2">%1$s, %2$s left</string>
     <string name="remember_download_label">Remember download label</string>
     <string name="default_download_label">Default download label</string>
 
@@ -284,7 +284,7 @@
     <string name="label_text_exist">Label exists</string>
     <string name="rename_label_title">Rename label</string>
     <string name="delete_label_title">Delete label</string>
-    <string name="delete_label_text">Delete label \"%s\"</string>
+    <string name="delete_label_message">Delete \"%s\"?</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
@@ -344,7 +344,7 @@
     <string name="favorites_title">%s</string>
     <string name="favorites_title_2">%1$s - %2$s</string>
     <string name="delete_favorites_dialog_title">Delete from favorites</string>
-    <string name="delete_favorites_dialog_message">Delete %d items from favorites</string>
+    <string name="delete_favorites_dialog_message">Delete %d items from favorites?</string>
     <string name="move_favorites_dialog_title">Move favorites</string>
     <string name="default_favorites_collection">Default favorites collection</string>
     <string name="let_me_select">Let me select</string>
@@ -368,12 +368,12 @@
     <string name="yesterday">Yesterday</string>
     <string name="some_days_ago">%d days ago</string>
     <plurals name="second">
-        <item quantity="one">second</item>
-        <item quantity="other">seconds</item>
+        <item quantity="one">sec</item>
+        <item quantity="other">secs</item>
     </plurals>
     <plurals name="minute">
-        <item quantity="one">minute</item>
-        <item quantity="other">minutes</item>
+        <item quantity="one">min</item>
+        <item quantity="other">mins</item>
     </plurals>
     <plurals name="hour">
         <item quantity="one">hour</item>

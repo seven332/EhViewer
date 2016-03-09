@@ -340,7 +340,7 @@ public class DownloadLabelScene extends ToolbarScene {
                 DeleteLabelDialogHelper helper = new DeleteLabelDialogHelper(index);
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.delete_label_title)
-                        .setMessage(getString(R.string.delete_label_text, mList.get(index).getLabel()))
+                        .setMessage(getString(R.string.delete_label_message, mList.get(index).getLabel()))
                         .setPositiveButton(android.R.string.ok, helper)
                         .show();
             } else if (label == v) {

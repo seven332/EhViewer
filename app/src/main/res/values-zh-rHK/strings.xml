@@ -33,6 +33,9 @@
     <string name="register">註冊</string>
     <string name="sign_in_via_webview">通過網頁登陸</string>
     <string name="sign_in_via_cookies">通過 Cookie 登陸</string>
+    <string name="display_name_dialog_title">輸入暱稱</string>
+    <string name="display_name">暱稱</string>
+    <string name="display_name_is_empty">暱稱為空</string>
 
     <string name="error_bad_status_code">錯誤的狀態碼：%d</string>
     <string name="error_timeout">超時</string>
@@ -102,7 +105,7 @@
     <string name="name_is_empty">名稱為空</string>
     <string name="delete">刪除</string>
     <string name="delete_quick_search_title">刪除快速搜索</string>
-    <string name="delete_quick_search_message">刪除 %s？</string>
+    <string name="delete_quick_search_message">刪除“%s”？</string>
     <string name="no_quick_search">未添加快速搜索</string>
 
     <!-- search_min_rating -->
@@ -228,7 +231,7 @@
     <string name="download_stop_all">全部停止</string>
     <string name="download_service_label">EhViewer 下載服務</string>
     <string name="download_speed_text">%s</string>
-    <string name="download_speed_text_2">%1$s，%2$s</string>
+    <string name="download_speed_text_2">%1$s，剩餘 %2$s</string>
     <string name="remember_download_label">記住下載標籤</string>
     <string name="default_download_label">默認下載標籤</string>
 
@@ -241,7 +244,7 @@
     <string name="label_text_exist">標籤已存在</string>
     <string name="rename_label_title">重命名標籤</string>
     <string name="delete_label_title">刪除標籤</string>
-    <string name="delete_label_text">刪除標籤“%s”</string>
+    <string name="delete_label_message">刪除“%s”？</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
@@ -302,7 +305,7 @@
     <string name="favorites_title">%s</string>
     <string name="favorites_title_2">%1$s - %2$s</string>
     <string name="delete_favorites_dialog_title">刪除收藏</string>
-    <string name="delete_favorites_dialog_message">刪除 %d 項收藏</string>
+    <string name="delete_favorites_dialog_message">刪除 %d 項收藏？</string>
     <string name="move_favorites_dialog_title">移動收藏</string>
     <string name="default_favorites_collection">默認收藏夾</string>
     <string name="let_me_select">讓我選擇</string>
