@@ -50,6 +50,8 @@
     <string name="display_name">Display name</string>
     <string name="display_name_is_empty">Display name is empty</string>
 
+    <string name="default_display_name">Little Hippo</string>
+
     <string name="error_status_code_400" translatable="false">Bad Request</string>
     <string name="error_status_code_401" translatable="false">Unauthorized</string>
     <string name="error_status_code_402" translatable="false">Payment Required</string>

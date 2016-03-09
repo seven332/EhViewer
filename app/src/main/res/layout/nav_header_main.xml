@@ -28,4 +28,27 @@
         android:scaleType="centerCrop"
         android:contentDescription="@null"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.hippo.widget.LoadImageView
+            android:id="@+id/avatar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/keyline_margin"/>
+
+        <TextView
+            android:id="@+id/display_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/avatar"
+            android:layout_toRightOf="@id/avatar"
+            android:layout_marginLeft="12dp"
+            android:layout_marginBottom="12dp"
+            android:textColor="@android:color/black"/>
+
+    </RelativeLayout>
+
 </FrameLayout>

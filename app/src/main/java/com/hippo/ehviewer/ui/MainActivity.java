@@ -28,11 +28,13 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
@@ -49,15 +51,16 @@ import com.hippo.ehviewer.ui.scene.GalleryDetailScene;
 import com.hippo.ehviewer.ui.scene.GalleryInfoScene;
 import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.GalleryPreviewsScene;
-import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.ui.scene.ProgressScene;
 import com.hippo.ehviewer.ui.scene.QuickSearchScene;
+import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.ehviewer.ui.scene.WebViewLoginScene;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.PermissionRequester;
+import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.ViewUtils;
 
 public final class MainActivity extends StageActivity
@@ -231,6 +234,22 @@ public final class MainActivity extends StageActivity
         mDrawerLayout = (DrawerLayout) ViewUtils.$$(this, R.id.draw_view);
         mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
         mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
+        View headerLayout = mNavView.getHeaderView(0);
+        LoadImageView avatarView = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
+        TextView displayNameView = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
+
+        String avatarUrl = Settings.getAvatar();
+        if (TextUtils.isEmpty(avatarUrl)) {
+            avatarView.load(R.drawable.default_avatar);
+        } else {
+            avatarView.load(avatarUrl, avatarUrl);
+        }
+
+        String displayName = Settings.getDisplayName();
+        if (TextUtils.isEmpty(displayName)) {
+            displayName = getString(R.string.default_display_name);
+        }
+        displayNameView.setText(displayName);
 
         if (mNavView != null) {
             mNavView.setNavigationItemSelectedListener(this);

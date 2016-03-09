@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
@@ -93,7 +94,9 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         }
         a.recycle();
 
-        mConaco = EhApplication.getConaco(context);
+        if (!isInEditMode()) {
+            mConaco = EhApplication.getConaco(context);
+        }
     }
 
     @Override
@@ -177,6 +180,16 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
                 .setDataContainer(container)
                 .setUseNetwork(useNetwork);
         mConaco.load(builder);
+    }
+
+    public void load(Drawable drawable) {
+        unload();
+        setImageDrawable(drawable);
+    }
+
+    public void load(@DrawableRes int id) {
+        unload();
+        setImageResource(id);
     }
 
     public void unload() {

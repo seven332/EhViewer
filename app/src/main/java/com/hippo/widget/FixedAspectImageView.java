@@ -19,9 +19,9 @@ package com.hippo.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.MathUtils;
@@ -29,7 +29,7 @@ import com.hippo.yorozuya.MathUtils;
 /**
  * aspect is width / height
  */
-public class FixedAspectImageView extends ImageView {
+public class FixedAspectImageView extends AppCompatImageView {
 
     private static final String TAG = FixedAspectImageView.class.getSimpleName();
 
