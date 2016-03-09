@@ -112,6 +112,17 @@ public class Settings {
         putString(KEY_DISPLAY_NAME, value);
     }
 
+    private static final String KEY_AVATAR = "avatar";
+    private static final String DEFAULT_AVATAR = null;
+
+    public static String getAvatar() {
+        return getString(KEY_AVATAR, DEFAULT_AVATAR);
+    }
+
+    public static void putAvatar(String value) {
+        putString(KEY_AVATAR, value);
+    }
+
     private static final String KEY_SHOW_WARNING = "show_warning";
     private static final boolean DEFAULT_SHOW_WARNING = true;
 

@@ -30,10 +30,12 @@ import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.parser.FavoritesParser;
+import com.hippo.ehviewer.client.parser.ForumsParser;
 import com.hippo.ehviewer.client.parser.GalleryApiParser;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
+import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.ehviewer.client.parser.TorrentParser;
@@ -541,6 +543,55 @@ public class EhEngine {
             List<GalleryInfo> list = WhatsHotParser.parse(body);
             fillGalleryListByApi(task, okHttpClient, list);
             return list;
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    private static ProfileParser.Result getProfileInternal(EhClient.Task task,
+            OkHttpClient okHttpClient, String url) throws Exception {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return ProfileParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    public static ProfileParser.Result getProfile(EhClient.Task task,
+            OkHttpClient okHttpClient) throws Exception {
+        String url = EhUrl.URL_FORUMS;
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return getProfileInternal(task, okHttpClient, ForumsParser.parse(body));
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;

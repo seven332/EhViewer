@@ -24,14 +24,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
-import com.hippo.ehviewer.client.parser.SignInParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +55,7 @@ public class WebViewLoginScene extends BaseScene {
 
     @Nullable
     @Override
+    @SuppressWarnings("deprecation")
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     public View onCreateView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,7 +63,6 @@ public class WebViewLoginScene extends BaseScene {
         CookieManager.getInstance().removeAllCookie();
         mWebView = new WebView(getContext());
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
         mWebView.setWebViewClient(new LoginWebViewClient());
         mWebView.loadUrl(EhUrl.URL_SIGN_IN);
         return mWebView;
@@ -135,24 +133,8 @@ public class WebViewLoginScene extends BaseScene {
             }
 
             if (getId && getHash) {
-                // Get content
-                view.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
-            }
-        }
-    }
-
-    private class MyJavaScriptInterface {
-
-        @JavascriptInterface
-        public void processHTML(String html) {
-            try {
-                String displayName = SignInParser.parse(html);
-                Bundle bundle = new Bundle();
-                bundle.putString(KEY_DISPLAY_NAME, displayName);
-                setResult(RESULT_OK, bundle);
+                setResult(RESULT_OK, null);
                 finish();
-            } catch (Exception e) {
-                // TODO NO ask username
             }
         }
     }

@@ -29,12 +29,13 @@ public class EhUrl {
     public static final String HOST_G = "http://" + DOMAIN_G + "/";
 
     public static final String API_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
-    public static final String API_REGISTER = "http://forums.e-hentai.org/index.php?act=Reg&CODE=00";
 
     public static final String API_EX = HOST_EX + "api.php";
 
     public static final String URL_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login";
+    public static final String URL_REGISTER = "http://forums.e-hentai.org/index.php?act=Reg&CODE=00";
     public static final String URL_FAVORITES = HOST_EX + "favorites.php";
+    public static final String URL_FORUMS = "https://forums.e-hentai.org/";
 
     public static String getGalleryDetailUrl(long gid, String token) {
         return getGalleryDetailUrl(gid, token, 0, false);

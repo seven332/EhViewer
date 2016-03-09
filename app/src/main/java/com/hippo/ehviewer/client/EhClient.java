@@ -55,6 +55,7 @@ public class EhClient {
     public static final int METHOD_MODIFY_FAVORITES = 11;
     public static final int METHOD_GET_TORRENT_LIST = 12;
     public static final int METHOD_GET_WHATS_HOT = 13;
+    public static final int METHOD_GET_PROFILE = 14;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -174,6 +175,8 @@ public class EhClient {
                         return EhEngine.getTorrentList(this, mOkHttpClient, (String) params[0]);
                     case METHOD_GET_WHATS_HOT:
                         return EhEngine.getWhatsHot(this, mOkHttpClient);
+                    case METHOD_GET_PROFILE:
+                        return EhEngine.getProfile(this, mOkHttpClient);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

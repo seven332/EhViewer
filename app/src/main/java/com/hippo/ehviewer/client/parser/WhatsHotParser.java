@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.client.parser;
 
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.JsoupUtils;
@@ -34,7 +35,7 @@ public class WhatsHotParser {
     public static List<GalleryInfo> parse(String body) throws ParseException {
         try {
             List<GalleryInfo> galleryInfoList = new ArrayList<>(15);
-            Document d = Jsoup.parse(body);
+            Document d = Jsoup.parse(body, EhUrl.HOST_G);
             Element pp = d.getElementById("pp");
             Elements id1List = pp.getElementsByClass("id1");
             for (int i = 0, n = id1List.size(); i < n; i++) {
