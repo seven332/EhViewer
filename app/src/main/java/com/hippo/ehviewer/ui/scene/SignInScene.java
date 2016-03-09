@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -45,23 +44,36 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.ViewUtils;
 
-public final class LoginScene extends BaseScene implements EditText.OnEditorActionListener,
+public final class SignInScene extends BaseScene implements EditText.OnEditorActionListener,
         View.OnClickListener {
-
-    private static final String TAG = LoginScene.class.getSimpleName();
 
     private static final String KEY_REQUEST_ID = "request_id";
 
+    /*---------------
+     View life cycle
+     ---------------*/
+    @Nullable
     private View mProgress;
+    @Nullable
     private TextInputLayout mUsernameLayout;
+    @Nullable
     private TextInputLayout mPasswordLayout;
+    @Nullable
     private EditText mUsername;
+    @Nullable
     private EditText mPassword;
+    @Nullable
     private View mRegister;
+    @Nullable
     private View mSignIn;
-    private TextView mSignInViaWebview;
+    @Nullable
+    private TextView mSignInViaWebView;
+    @Nullable
     private TextView mSignInViaCookies;
+    @Nullable
     private TextView mSkipSigningIn;
 
     private int mRequestId;
@@ -102,19 +114,21 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_login, container, false);
 
-        View loginForm = view.findViewById(R.id.login_form);
-        mProgress = view.findViewById(R.id.progress);
-        mUsernameLayout = (TextInputLayout) loginForm.findViewById(R.id.username_layout);
+        View loginForm = ViewUtils.$$(view, R.id.login_form);
+        mProgress = ViewUtils.$$(view, R.id.progress);
+        mUsernameLayout = (TextInputLayout) ViewUtils.$$(loginForm, R.id.username_layout);
         mUsername = mUsernameLayout.getEditText();
-        mPasswordLayout = (TextInputLayout) loginForm.findViewById(R.id.password_layout);
+        AssertUtils.assertNotNull(mUsername);
+        mPasswordLayout = (TextInputLayout) ViewUtils.$$(loginForm, R.id.password_layout);
         mPassword = mPasswordLayout.getEditText();
-        mRegister = loginForm.findViewById(R.id.register);
-        mSignIn = loginForm.findViewById(R.id.sign_in);
-        mSignInViaWebview = (TextView) loginForm.findViewById(R.id.sign_in_via_webview);
-        mSignInViaCookies = (TextView) loginForm.findViewById(R.id.sign_in_via_cookies);
-        mSkipSigningIn = (TextView) loginForm.findViewById(R.id.skip_signing_in);
+        AssertUtils.assertNotNull(mPassword);
+        mRegister = ViewUtils.$$(loginForm, R.id.register);
+        mSignIn = ViewUtils.$$(loginForm, R.id.sign_in);
+        mSignInViaWebView = (TextView) ViewUtils.$$(loginForm, R.id.sign_in_via_webview);
+        mSignInViaCookies = (TextView) ViewUtils.$$(loginForm, R.id.sign_in_via_cookies);
+        mSkipSigningIn = (TextView) ViewUtils.$$(loginForm, R.id.skip_signing_in);
 
-        mSignInViaWebview.setPaintFlags(mSignInViaWebview.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        mSignInViaWebView.setPaintFlags(mSignInViaWebView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         mSignInViaCookies.setPaintFlags(mSignInViaCookies.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         mSkipSigningIn.setPaintFlags(mSignInViaCookies.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
@@ -122,7 +136,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
 
         mRegister.setOnClickListener(this);
         mSignIn.setOnClickListener(this);
-        mSignInViaWebview.setOnClickListener(this);
+        mSignInViaWebView.setOnClickListener(this);
         mSignInViaCookies.setOnClickListener(this);
         mSkipSigningIn.setOnClickListener(this);
 
@@ -153,7 +167,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
             UrlOpener.openUrl(getActivity(), EhUrl.API_REGISTER, false, true);
         } else if (mSignIn == v) {
             signIn();
-        } else if (mSignInViaWebview == v) {
+        } else if (mSignInViaWebView == v) {
 
         } else if (mSignInViaCookies == v) {
 
@@ -175,6 +189,11 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
     }
 
     private void signIn() {
+        if (null == mUsername || null == mPassword || null == mUsernameLayout ||
+                null == mPasswordLayout || null == mProgress) {
+            return;
+        }
+
         String username = mUsername.getText().toString();
         String password = mPassword.getText().toString();
 
@@ -222,35 +241,32 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
                 .setTitle(R.string.skip_signing_in)
                 .setMessage(R.string.skip_signing_in_plain)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == AlertDialog.BUTTON_POSITIVE) {
-                            redirectTo();
-                        }
-                    }
-                }).show();
+                .setPositiveButton(R.string.get_it, null)
+                .show();
     }
-
 
     public void onSignInSuccess() {
         if (EhApplication.getEhCookieStore(getContext()).hasSignedIn()) {
             // Has signed in
             redirectTo();
         } else {
-            mProgress.setVisibility(View.GONE);
+            if (null != mProgress) {
+                mProgress.setVisibility(View.GONE);
+            }
             whetherToSkip();
         }
     }
 
     public void onSignInFailure(Exception e) {
-        mProgress.setVisibility(View.GONE);
+        if (null != mProgress) {
+            mProgress.setVisibility(View.GONE);
+        }
         Toast.makeText(getContext(), ExceptionUtils.getReadableString(getContext(), e),
                 Toast.LENGTH_SHORT).show();
         whetherToSkip();
     }
 
-    private class SignInListener extends EhCallback<LoginScene, String> {
+    private class SignInListener extends EhCallback<SignInScene, String> {
 
         public SignInListener(Context context, int stageId, String sceneTag) {
             super(context, stageId, sceneTag);
@@ -261,7 +277,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
             getApplication().removeGlobalStuff(this);
             Settings.putDisplayName(result);
 
-            LoginScene scene = getScene();
+            SignInScene scene = getScene();
             if (scene != null) {
                 scene.onSignInSuccess();
             }
@@ -272,7 +288,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
             getApplication().removeGlobalStuff(this);
             e.printStackTrace();
 
-            LoginScene scene = getScene();
+            SignInScene scene = getScene();
             if (scene != null) {
                 scene.onSignInFailure(e);
             }
@@ -285,7 +301,7 @@ public final class LoginScene extends BaseScene implements EditText.OnEditorActi
 
         @Override
         public boolean isInstance(SceneFragment scene) {
-            return scene instanceof LoginScene;
+            return scene instanceof SignInScene;
         }
     }
 }

@@ -126,6 +126,10 @@ public class CookieDBStore implements CookieJar {
         }
     }
 
+    public synchronized void removeAll() {
+        map.clear();
+        CookieDB.removeAllCookies();
+    }
 
     public synchronized void add(Cookie cookie) {
         String domain = cookie.domain();

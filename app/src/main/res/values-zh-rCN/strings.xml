@@ -61,12 +61,13 @@
     <string name="error_username_cannot_empty">用户名不可为空</string>
     <string name="error_password_cannot_empty">密码不可为空</string>
     <string name="skip_signing_in">跳过登陆</string>
-    <string name="skip_signing_in_plain">登陆失败。这可能是网站更新导致的。你愿意跳过登陆么？</string>
+    <string name="skip_signing_in_plain">登陆失败。这可能是网站更新导致的，也有可能是发生了奇怪的事情。您可以选择在登陆按钮下方通过网页登陆或者输入 cookie，或者跳过登陆。跳过登陆可能导致无法正常使用应用。</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">点击重试</string>
     <string name="write_rationale">EhViewer 将申请设备存储空间访问权限以便下载画廊。你愿意授权吗？</string>
     <string name="you_rejected_me">好痛</string>
     <string name="analytics_explain">你同意让开发者收集你的设备信息与使用情况吗？这将对开发有很大帮助。&lt;br&gt;&lt;br&gt;数据统计服务由 Google Analytics 提供，其隐私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 查看。&lt;br&gt;&lt;br&gt;若您同意参与数据统计，您的设备信息与应用使用情况将会被记录，其包括但不限于：Android API 版本、设备型号、语言所在地、本应用版本号、会话时长、应用功能使用次数。开发者承诺以下信息并不会被记录：电话号码、电子邮件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意参与数据统计之前，您的信息不会被记录。&lt;br&gt;&lt;br&gt;被记录的数据会由 Google Analytics 进行分析，分析报表仅可被本应用开发者访问。</string>
+    <string name="get_it">知道了</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">搜索 ExHentai</string>

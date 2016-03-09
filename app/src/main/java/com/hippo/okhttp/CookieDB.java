@@ -111,6 +111,10 @@ public class CookieDB {
         sDaoSession.getOkHttp3CookieDao().deleteByKey(id);
     }
 
+    static void removeAllCookies() {
+        sDaoSession.getOkHttp3CookieDao().deleteAll();
+    }
+
     static long addCookie(Cookie cookie) {
         OkHttp3CookieDao dao = sDaoSession.getOkHttp3CookieDao();
 

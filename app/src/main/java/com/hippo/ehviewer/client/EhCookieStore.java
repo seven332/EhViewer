@@ -32,8 +32,7 @@ public class EhCookieStore extends CookieDBStore {
     private static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
 
     public void cleanUpForSignIn() {
-        remove(EhUrl.DOMAIN_E);
-        remove(EhUrl.DOMAIN_EX);
+        removeAll();
     }
 
     public boolean hasSignedIn() {
@@ -99,14 +98,22 @@ public class EhCookieStore extends CookieDBStore {
         List<Cookie> result = new ArrayList<>(cookies.size() + 2);
 
         for (Cookie cookie: cookies) {
-            result.add(cookie);
+            if (EhUrl.DOMAIN_E.equals(cookie.domain())) {
+                // Don't save igneous: mystery. It is for sad panda
+                if (EhUrl.DOMAIN_E.equals(cookie.domain()) &&
+                        "igneous".equals(cookie.name()) &&
+                        "mystery".equals(cookie.value())) {
+                    continue;
+                }
 
-            // Save id and hash for exhentai
-            if (EhUrl.DOMAIN_E.equals(cookie.domain()) &&
-                    (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
-                            KEY_IPD_PASS_HASH.equals(cookie.name()))) {
-                result.add(newCookie(cookie, EhUrl.DOMAIN_EX));
+                // Save id and hash for exhentai
+                if (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
+                        KEY_IPD_PASS_HASH.equals(cookie.name())) {
+                    result.add(newCookie(cookie, EhUrl.DOMAIN_EX));
+                }
             }
+
+            result.add(cookie);
         }
 
         super.saveFromResponse(url, Collections.unmodifiableList(result));
