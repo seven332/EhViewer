@@ -472,4 +472,34 @@ public class EhDB {
         QuickSearchDao dao = sDaoSession.getQuickSearchDao();
         dao.update(quickSearch);
     }
+
+    public static synchronized void deleteQuickSearch(QuickSearch quickSearch) {
+        QuickSearchDao dao = sDaoSession.getQuickSearchDao();
+        dao.delete(quickSearch);
+    }
+
+    public static synchronized void moveQuickSearch(int fromPosition, int toPosition) {
+        if (fromPosition == toPosition) {
+            return;
+        }
+
+        boolean reverse = fromPosition > toPosition;
+        int offset = reverse ? toPosition : fromPosition;
+        int limit = reverse ? fromPosition - toPosition + 1 : toPosition - fromPosition + 1;
+
+        QuickSearchDao dao = sDaoSession.getQuickSearchDao();
+        List<QuickSearch> list = dao.queryBuilder().orderAsc(QuickSearchDao.Properties.Time)
+                .offset(offset).limit(limit).list();
+
+        int step = reverse ? 1 : -1;
+        int start = reverse ? limit - 1 : 0;
+        int end = reverse ? 0 : limit - 1;
+        long toTime = list.get(end).getTime();
+        for (int i = end; reverse ? i < start : i > start; i += step) {
+            list.get(i).setTime(list.get(i + step).getTime());
+        }
+        list.get(start).setTime(toTime);
+
+        dao.updateInTx(list);
+    }
 }

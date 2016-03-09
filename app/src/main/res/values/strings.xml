@@ -138,6 +138,10 @@
     <string name="quick_search_tip">Click \"+\" to add Quick Search</string>
     <string name="add_quick_search_dialog_title">Add Quick Search</string>
     <string name="name_is_empty">Name is empty</string>
+    <string name="delete">Delete</string>
+    <string name="delete_quick_search_title">Delete Quick Search</string>
+    <string name="delete_quick_search_message">Delete %s?</string>
+    <string name="no_quick_search">No quick search saved yet</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 stars</string>

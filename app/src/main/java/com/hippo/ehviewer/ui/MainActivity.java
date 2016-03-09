@@ -51,6 +51,7 @@ import com.hippo.ehviewer.ui.scene.GalleryListScene;
 import com.hippo.ehviewer.ui.scene.GalleryPreviewsScene;
 import com.hippo.ehviewer.ui.scene.LoginScene;
 import com.hippo.ehviewer.ui.scene.ProgressScene;
+import com.hippo.ehviewer.ui.scene.QuickSearchScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -91,6 +92,7 @@ public final class MainActivity extends StageActivity
         registerLaunchMode(AnalyticsScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(LoginScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(GalleryListScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TOP);
+        registerLaunchMode(QuickSearchScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(GalleryDetailScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
         registerLaunchMode(GalleryInfoScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
         registerLaunchMode(GalleryCommentsScene.class, SceneFragment.LAUNCH_MODE_STANDARD);

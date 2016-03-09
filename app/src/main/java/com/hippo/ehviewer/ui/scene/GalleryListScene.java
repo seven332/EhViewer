@@ -485,6 +485,7 @@ public final class GalleryListScene extends BaseScene
                         showAddQuickSearchDialog(list, adapter, listView, tip);
                         break;
                     case R.id.action_settings:
+                        startScene(new Announcer(QuickSearchScene.class));
                         break;
                 }
                 return true;

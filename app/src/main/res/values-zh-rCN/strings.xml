@@ -98,7 +98,11 @@
     <string name="quick_search">快速搜索</string>
     <string name="quick_search_tip">点击“+”来添加快速搜索</string>
     <string name="add_quick_search_dialog_title">添加快速搜索</string>
-    <string name="name_is_empty">Name is empty</string>
+    <string name="name_is_empty">名称为空</string>
+    <string name="delete">删除</string>
+    <string name="delete_quick_search_title">删除快速搜索</string>
+    <string name="delete_quick_search_message">删除 %s？</string>
+    <string name="no_quick_search">未添加快速搜索</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>
