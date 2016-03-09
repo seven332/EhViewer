@@ -19,6 +19,7 @@ package com.hippo.widget;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -114,6 +115,7 @@ public class ContentLayout extends FrameLayout {
         mRecyclerViewOriginBottom = mRecyclerView.getPaddingBottom();
     }
 
+    @NonNull
     public EasyRecyclerView getRecyclerView() {
         return mRecyclerView;
     }

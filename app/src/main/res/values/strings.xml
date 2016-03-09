@@ -134,6 +134,11 @@
 
     <string name="add_to_favourites">Add to favourites</string>
 
+    <string name="quick_search">Quick search</string>
+    <string name="quick_search_tip">Click \"+\" to add Quick Search</string>
+    <string name="add_quick_search_dialog_title">Add Quick Search</string>
+    <string name="name_is_empty">Name is empty</string>
+
     <!-- search_min_rating -->
     <string name="star_2">2 stars</string>
     <string name="star_3">3 stars</string>
@@ -336,6 +341,7 @@
     <string name="default_favorites_collection">Default favorites collection</string>
     <string name="let_me_select">Let me select</string>
     <string name="favorites_info">Favorites info</string>
+    <string name="collections">Collections</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">Something wrong happened</string>

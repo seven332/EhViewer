@@ -39,6 +39,13 @@
             android:layout_height="8dp"
             android:background="@drawable/shadow_bottom"/>
 
+        <TextView
+            android:id="@+id/tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
         <ListView
             android:id="@+id/list_view"
             android:layout_width="match_parent"

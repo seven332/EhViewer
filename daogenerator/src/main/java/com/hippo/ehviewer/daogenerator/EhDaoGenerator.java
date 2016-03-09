@@ -36,6 +36,7 @@ public class EhDaoGenerator {
 
     private static final String DOWNLOAD_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/DownloadInfo.java";
     private static final String HISTORY_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/HistoryInfo.java";
+    private static final String QUICK_SEARCH_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/QuickSearch.java";
     private static final String LOCAL_FAVORITE_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/LocalFavoriteInfo.java";
     private static final String BOOKMARK_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/BookmarkInfo.java";
 
@@ -57,6 +58,7 @@ public class EhDaoGenerator {
 
         adjustDownloadInfo();
         adjustHistoryInfo();
+        adjustQuickSearch();
         adjustLocalFavoriteInfo();
         adjustBookmarkInfo();
     }
@@ -97,7 +99,7 @@ public class EhDaoGenerator {
         Entity entity = schema.addEntity("DownloadDirname");
         entity.setTableName("DOWNLOAD_DIRNAME");
         entity.setClassNameDao("DownloadDirnameDao");
-        entity.addLongProperty("gid").primaryKey();
+        entity.addLongProperty("gid").primaryKey().notNull();
         entity.addStringProperty("dirname");
     }
 
@@ -128,12 +130,12 @@ public class EhDaoGenerator {
         entity.setClassNameDao("QuickSearchDao");
         entity.addIdProperty();
         entity.addStringProperty("name");
-        entity.addIntProperty("mode");
-        entity.addIntProperty("category");
+        entity.addIntProperty("mode").notNull();
+        entity.addIntProperty("category").notNull();
         entity.addStringProperty("keyword");
-        entity.addIntProperty("advanceSearch");
-        entity.addIntProperty("minRating");
-        entity.addLongProperty("date");
+        entity.addIntProperty("advanceSearch").notNull();
+        entity.addIntProperty("minRating").notNull();
+        entity.addLongProperty("time").notNull();
     }
 
     private static void addLocalFavorites(Schema schema) {
@@ -321,6 +323,29 @@ public class EhDaoGenerator {
         javaClass.addImport("com.hippo.ehviewer.client.data.GalleryInfo");
 
         FileWriter fileWriter = new FileWriter(HISTORY_INFO_PATH);
+        fileWriter.write(javaClass.toString());
+        fileWriter.close();
+    }
+
+    private static void adjustQuickSearch() throws Exception {
+        JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, new File(QUICK_SEARCH_PATH));
+
+        // Set all field public
+        javaClass.getField("id").setPublic();
+        javaClass.getField("name").setPublic();
+        javaClass.getField("mode").setPublic();
+        javaClass.getField("category").setPublic();
+        javaClass.getField("keyword").setPublic();
+        javaClass.getField("advanceSearch").setPublic();
+        javaClass.getField("minRating").setPublic();
+        javaClass.getField("time").setPublic();
+
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic String toString() {\n" +
+                "\t\treturn name;\n" +
+                "\t}");
+
+        FileWriter fileWriter = new FileWriter(QUICK_SEARCH_PATH);
         fileWriter.write(javaClass.toString());
         fileWriter.close();
     }

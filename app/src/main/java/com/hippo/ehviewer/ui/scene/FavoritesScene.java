@@ -385,6 +385,7 @@ public class FavoritesScene extends BaseScene implements
         Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
         ListView listView = (ListView) view.findViewById(R.id.list_view);
 
+        toolbar.setTitle(R.string.collections);
         toolbar.inflateMenu(R.menu.drawer_favorites);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

@@ -20,15 +20,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_default_favorites_slot"
-        android:icon="@drawable/v_heart_box_dark_x24"
-        android:title="@string/default_favorites_collection"
+        android:id="@+id/action_add"
+        android:icon="@drawable/v_plus_dark_x24"
+        android:title="@string/add"
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/action_info"
-        android:icon="@drawable/v_info_dark_x24"
-        android:title="@string/favorites_info"
+        android:id="@+id/action_settings"
+        android:icon="@drawable/v_settings_dark_x24"
+        android:title="@string/settings"
         app:showAsAction="ifRoom"/>
 
 </menu>

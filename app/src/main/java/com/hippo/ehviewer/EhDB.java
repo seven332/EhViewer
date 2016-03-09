@@ -198,7 +198,7 @@ public class EhDB {
                             search = search.substring("uploader:".length());
                         }
 
-                        quickSearch.setDate((long) cursor.getInt(0));
+                        quickSearch.setTime((long) cursor.getInt(0));
                         quickSearch.setName(cursor.getString(1));
                         quickSearch.setMode(mode);
                         quickSearch.setCategory(cursor.getInt(3));
@@ -455,5 +455,21 @@ public class EhDB {
         for (GalleryInfo gi: galleryInfoList) {
             putLocalFavorites(gi);
         }
+    }
+
+    public static synchronized List<QuickSearch> getAllQuickSearch() {
+        QuickSearchDao dao = sDaoSession.getQuickSearchDao();
+        return dao.queryBuilder().orderAsc(QuickSearchDao.Properties.Time).list();
+    }
+
+    public static synchronized void insertQuickSearch(QuickSearch quickSearch) {
+        QuickSearchDao dao = sDaoSession.getQuickSearchDao();
+        quickSearch.time = System.currentTimeMillis();
+        quickSearch.id = dao.insert(quickSearch);
+    }
+
+    public static synchronized void updateQuickSearch(QuickSearch quickSearch) {
+        QuickSearchDao dao = sDaoSession.getQuickSearchDao();
+        dao.update(quickSearch);
     }
 }

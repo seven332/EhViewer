@@ -55,6 +55,7 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">无效链接</string>
     <string name="error_get_ptoken_error">获取 pToken 错误</string>
+    <string name="error_invalid_specify_gallery">指定画廊的关键字应该看起来像 \"618395 0439fa3666\"</string>
 
     <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的后果负责。您是否愿意继续使用该应用？</string>
     <string name="error_username_cannot_empty">用户名不可为空</string>
@@ -93,6 +94,11 @@
     <string name="search_sr">最低评分：</string>
 
     <string name="add_to_favourites">收藏</string>
+
+    <string name="quick_search">快速搜索</string>
+    <string name="quick_search_tip">点击“+”来添加快速搜索</string>
+    <string name="add_quick_search_dialog_title">添加快速搜索</string>
+    <string name="name_is_empty">Name is empty</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>
@@ -296,6 +302,7 @@
     <string name="default_favorites_collection">默认收藏夹</string>
     <string name="let_me_select">让我选择</string>
     <string name="favorites_info">收藏信息</string>
+    <string name="collections">收藏夹</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">被玩坏了</string>

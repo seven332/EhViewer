@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.widget.AdvanceSearchTable;
 import com.hippo.network.UrlBuilder;
 import com.hippo.yorozuya.StringUtils;
@@ -145,6 +146,24 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mKeyword = lub.mKeyword;
         mAdvanceSearch = lub.mAdvanceSearch;
         mMinRating = lub.mMinRating;
+    }
+
+    public void set(QuickSearch q) {
+        mMode = q.mode;
+        mCategory = q.category;
+        mKeyword = q.keyword;
+        mAdvanceSearch = q.advanceSearch;
+        mMinRating = q.minRating;
+    }
+
+    public QuickSearch toQuickSearch() {
+        QuickSearch q = new QuickSearch();
+        q.mode = mMode;
+        q.category = mCategory;
+        q.keyword = mKeyword;
+        q.advanceSearch = mAdvanceSearch;
+        q.minRating = mMinRating;
+        return q;
     }
 
     /**

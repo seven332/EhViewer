@@ -34,6 +34,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -41,15 +42,21 @@ import android.text.style.ImageSpan;
 import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.hippo.app.EditTextDialogBuilder;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
@@ -59,6 +66,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
+import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.widget.FitPaddingLayout;
 import com.hippo.ehviewer.widget.SearchBar;
@@ -79,6 +87,7 @@ import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -111,32 +120,47 @@ public final class GalleryListScene extends BaseScene
 
     private static final long ANIMATE_TIME = 300L;
 
+    /*---------------
+     Whole life cycle
+     ---------------*/
+    @Nullable
     private EhClient mClient;
-
-    private FitPaddingLayout mFitPaddingLayout;
-    private EasyRecyclerView mRecyclerView;
-    private SearchLayout mSearchLayout;
-    private SearchBar mSearchBar;
-    private FloatingActionButton mFab;
-
-    private ViewTransition mViewTransition;
-
-    private GalleryListAdapter mAdapter;
-    private GalleryListHelper mHelper;
-
-    private DrawerArrowDrawable mLeftDrawable;
-    private AddDeleteDrawable mRightDrawable;
-
-    private SearchBarMover mSearchBarMover;
-
+    @Nullable
     private ListUrlBuilder mUrlBuilder;
+
+    /*---------------
+     View life cycle
+     ---------------*/
+    @Nullable
+    private FitPaddingLayout mFitPaddingLayout;
+    @Nullable
+    private EasyRecyclerView mRecyclerView;
+    @Nullable
+    private SearchLayout mSearchLayout;
+    @Nullable
+    private SearchBar mSearchBar;
+    @Nullable
+    private FloatingActionButton mFab;
+    @Nullable
+    private ViewTransition mViewTransition;
+    @Nullable
+    private GalleryListAdapter mAdapter;
+    @Nullable
+    private GalleryListHelper mHelper;
+    @Nullable
+    private DrawerArrowDrawable mLeftDrawable;
+    @Nullable
+    private AddDeleteDrawable mRightDrawable;
+    @Nullable
+    private SearchBarMover mSearchBarMover;
+    @Nullable
+    private Animator.AnimatorListener mFabAnimatorListener;
+
     @State
     private int mState = STATE_NORMAL;
 
     // Double click back exit
     private long mPressBackTime = 0;
-
-    private Animator.AnimatorListener mFabAnimatorListener = null;
 
     private boolean mHasFirstRefresh = false;
 
@@ -157,7 +181,7 @@ public final class GalleryListScene extends BaseScene
     }
 
     private void handleArgs(Bundle args) {
-        if (args == null) {
+        if (null == args || null == mUrlBuilder) {
             return;
         }
 
@@ -178,9 +202,13 @@ public final class GalleryListScene extends BaseScene
     public void onNewArguments(@NonNull Bundle args) {
         handleArgs(args);
         onUpdateUrlBuilder();
-        mHelper.refresh();
+        if (null != mHelper) {
+            mHelper.refresh();
+        }
         setState(STATE_NORMAL);
-        mSearchBarMover.showSearchBar();
+        if (null != mSearchBarMover) {
+            mSearchBarMover.showSearchBar();
+        }
     }
 
     @Override
@@ -216,6 +244,14 @@ public final class GalleryListScene extends BaseScene
         outState.putInt(KEY_STATE, mState);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mClient = null;
+        mUrlBuilder = null;
+    }
+
     private void setSearchBarHint(Context context, SearchBar searchBar) {
         Resources resources = context.getResources();
         Drawable searchImage = DrawableManager.getDrawable(context, R.drawable.v_magnify_x24);
@@ -229,28 +265,45 @@ public final class GalleryListScene extends BaseScene
         searchBar.setEditTextHint(ssb);
     }
 
+    @Nullable
+    private static String getSuitableTitleForUrlBuilder(
+            Resources resources, ListUrlBuilder urlBuilder, boolean appName) {
+        String keyword = urlBuilder.getKeyword();
+        int category = urlBuilder.getCategory();
+
+        if (ListUrlBuilder.MODE_NORMAL == urlBuilder.getMode() &&
+                EhUtils.NONE == category &&
+                TextUtils.isEmpty(keyword)) {
+            return resources.getString(appName ? R.string.app_name : R.string.homepage);
+        } else if (ListUrlBuilder.MODE_WHATS_HOT == urlBuilder.getMode()) {
+            return resources.getString(R.string.whats_hot);
+        } else if (!TextUtils.isEmpty(keyword)) {
+            return keyword;
+        } else if (MathUtils.hammingWeight(category) == 1) {
+            return EhUtils.getCategory(category);
+        } else {
+            return null;
+        }
+    }
+
     // Update search bar title, drawer checked item
     private void onUpdateUrlBuilder() {
         ListUrlBuilder builder = mUrlBuilder;
+        if (null == builder) {
+            return;
+        }
+
         Resources resources = getResources();
         String keyword = builder.getKeyword();
         int category = builder.getCategory();
 
-        String title;
-        if (ListUrlBuilder.MODE_NORMAL == builder.getMode() &&
-                EhUtils.NONE == category &&
-                TextUtils.isEmpty(keyword)) {
-            title = resources.getString(R.string.app_name);
-        } else if (ListUrlBuilder.MODE_WHATS_HOT == builder.getMode()) {
-            title = resources.getString(R.string.whats_hot);
-        } else if (!TextUtils.isEmpty(keyword)) {
-            title = keyword;
-        } else if (MathUtils.hammingWeight(category) == 1) {
-            title = EhUtils.getCategory(category);
-        } else {
+        String title = getSuitableTitleForUrlBuilder(getResources(), builder, true);
+        if (null == title) {
             title = resources.getString(R.string.search);
         }
-        mSearchBar.setTitle(title);
+        if (mSearchBar != null) {
+            mSearchBar.setTitle(title);
+        }
 
         int checkedItemId;
         if (ListUrlBuilder.MODE_NORMAL == builder.getMode() &&
@@ -274,12 +327,12 @@ public final class GalleryListScene extends BaseScene
 
         Resources resources = getContext().getResources();
 
-        mFitPaddingLayout = (FitPaddingLayout) view.findViewById(R.id.main_layout);
-        ContentLayout contentLayout = (ContentLayout) mFitPaddingLayout.findViewById(R.id.content_layout);
+        mFitPaddingLayout = (FitPaddingLayout) ViewUtils.$$(view, R.id.main_layout);
+        ContentLayout contentLayout = (ContentLayout) ViewUtils.$$(mFitPaddingLayout, R.id.content_layout);
         mRecyclerView = contentLayout.getRecyclerView();
-        mSearchLayout = (SearchLayout) mFitPaddingLayout.findViewById(R.id.search_layout);
-        mSearchBar = (SearchBar) mFitPaddingLayout.findViewById(R.id.search_bar);
-        mFab = (FloatingActionButton) mFitPaddingLayout.findViewById(R.id.fab);
+        mSearchLayout = (SearchLayout) ViewUtils.$$(mFitPaddingLayout, R.id.search_layout);
+        mSearchBar = (SearchBar) ViewUtils.$$(mFitPaddingLayout, R.id.search_bar);
+        mFab = (FloatingActionButton) ViewUtils.$$(mFitPaddingLayout, R.id.fab);
 
         mViewTransition = new ViewTransition(contentLayout, mSearchLayout);
 
@@ -337,7 +390,9 @@ public final class GalleryListScene extends BaseScene
         super.onDestroyView();
 
         // End animation
-        mSearchBarMover.cancelAnimation();
+        if (mSearchBarMover != null) {
+            mSearchBarMover.cancelAnimation();
+        }
 
         mFitPaddingLayout = null;
         mRecyclerView = null;
@@ -353,10 +408,104 @@ public final class GalleryListScene extends BaseScene
         mFabAnimatorListener = null;
     }
 
+    private void showAddQuickSearchDialog(final List<QuickSearch> list,
+            final ArrayAdapter<QuickSearch> adapter, final ListView listView, final TextView tip) {
+        if (null == mUrlBuilder) {
+            return;
+        }
+
+        final EditTextDialogBuilder builder = new EditTextDialogBuilder(getContext(),
+                getSuitableTitleForUrlBuilder(getResources(), mUrlBuilder, false), getString(R.string.quick_search));
+        builder.setTitle(R.string.add_quick_search_dialog_title);
+        builder.setPositiveButton(android.R.string.ok, null);
+        final AlertDialog dialog = builder.show();
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = builder.getText().trim();
+                if (TextUtils.isEmpty(text)) {
+                    builder.setError(getString(R.string.name_is_empty));
+                } else {
+                    builder.setError(null);
+                    dialog.dismiss();
+                    QuickSearch quickSearch = mUrlBuilder.toQuickSearch();
+                    quickSearch.name = text;
+                    EhDB.insertQuickSearch(quickSearch);
+                    list.add(quickSearch);
+                    adapter.notifyDataSetChanged();
+
+                    if (0 == list.size()) {
+                        tip.setVisibility(View.VISIBLE);
+                        listView.setVisibility(View.GONE);
+                    } else {
+                        tip.setVisibility(View.GONE);
+                        listView.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public View onCreateDrawerView(LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.drawer_list, container, false);
+        Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
+        final TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
+        final ListView listView = (ListView) ViewUtils.$$(view, R.id.list_view);
+
+        final List<QuickSearch> list = EhDB.getAllQuickSearch();
+        final ArrayAdapter<QuickSearch> adapter = new ArrayAdapter<>(getContext(), R.layout.item_simple_list, list);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (null == mHelper || null == mUrlBuilder) {
+                    return;
+                }
+
+                mUrlBuilder.set(list.get(position));
+                mUrlBuilder.setPageIndex(0);
+                onUpdateUrlBuilder();
+                mHelper.refresh();
+                setState(STATE_NORMAL);
+                closeDrawer(Gravity.RIGHT);
+            }
+        });
+
+        tip.setText(R.string.quick_search_tip);
+        toolbar.setTitle(R.string.quick_search);
+        toolbar.inflateMenu(R.menu.drawer_gallery_list);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.action_add:
+                        showAddQuickSearchDialog(list, adapter, listView, tip);
+                        break;
+                    case R.id.action_settings:
+                        break;
+                }
+                return true;
+            }
+        });
+
+        if (0 == list.size()) {
+            tip.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tip.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
+
+        return view;
+    }
+
     @Override
     public void onClick(View v) {
         if (mFab == v) {
-            if (mState != STATE_NORMAL) {
+            if (mState != STATE_NORMAL && null != mSearchBar) {
                 mSearchBar.applySearch();
             }
         }
@@ -439,6 +588,10 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+        if (null == mHelper || null == mRecyclerView) {
+            return false;
+        }
+
         GalleryInfo gi = mHelper.getDataAt(position);
         Bundle args = new Bundle();
         args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
@@ -454,6 +607,10 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
+        if (null == mHelper) {
+            return false;
+        }
+
         final GalleryInfo gi = mHelper.getDataAt(position);
         new AlertDialog.Builder(getContext())
                 .setTitle(EhUtils.getSuitableTitle(gi))
@@ -476,6 +633,10 @@ public final class GalleryListScene extends BaseScene
     }
 
     private void showFab() {
+        if (null == mFab) {
+            return;
+        }
+
         mFab.setVisibility(View.VISIBLE);
         mFab.setScaleX(0.0f);
         mFab.setScaleY(0.0f);
@@ -484,6 +645,10 @@ public final class GalleryListScene extends BaseScene
     }
 
     private void hideFab() {
+        if (null == mFab) {
+            return;
+        }
+
         if (mFabAnimatorListener == null) {
             mFabAnimatorListener = new SimpleAnimatorListener() {
                 @Override
@@ -501,6 +666,11 @@ public final class GalleryListScene extends BaseScene
     }
 
     private void setState(@State int state, boolean animation) {
+        if (null == mSearchBar || null == mSearchBarMover ||
+                null == mViewTransition || null == mSearchLayout) {
+            return;
+        }
+
         if (mState != state) {
             int oldState = mState;
             mState = state;
@@ -585,6 +755,10 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public void onClickLeftIcon() {
+        if (null == mSearchBar) {
+            return;
+        }
+
         if (mSearchBar.getState() == SearchBar.STATE_NORMAL) {
             toggleDrawer(Gravity.LEFT);
         } else {
@@ -594,6 +768,10 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public void onClickRightIcon() {
+        if (null == mSearchBar) {
+            return;
+        }
+
         if (mSearchBar.getState() == SearchBar.STATE_NORMAL) {
             setState(STATE_SEARCH);
         } else {
@@ -609,10 +787,12 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
-
-
     @Override
     public void onApplySearch(String query) {
+        if (null == mUrlBuilder || null == mHelper || null == mSearchLayout) {
+            return;
+        }
+
         if (mState == STATE_SEARCH || mState == STATE_SEARCH_SHOW_LIST) {
             if (mSearchLayout.isSpecifyGallery()) {
                 int index = query.indexOf(' ');
@@ -665,11 +845,17 @@ public final class GalleryListScene extends BaseScene
         // Restore right drawer
         setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
 
-        mSearchBarMover.returnSearchBarPosition();
+        if (null != mSearchBarMover) {
+            mSearchBarMover.returnSearchBarPosition();
+        }
     }
 
     @Override
     public void onStateChange(SearchBar searchBar, int newState, int oldState, boolean animation) {
+        if (null == mFitPaddingLayout || null == mLeftDrawable || null == mRightDrawable) {
+            return;
+        }
+
         if (newState == SearchBar.STATE_NORMAL) {
             mFitPaddingLayout.setEnableUpdatePaddingTop(true);
         } else {
@@ -699,7 +885,9 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public void onChangeSearchMode() {
-        mSearchBarMover.showSearchBar();
+        if (null != mSearchBarMover) {
+            mSearchBarMover.showSearchBar();
+        }
     }
 
     // SearchBarMover.Helper
@@ -771,6 +959,10 @@ public final class GalleryListScene extends BaseScene
         @Override
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public void onBindViewHolder(GalleryListHolder holder, int position) {
+            if (null == mHelper) {
+                return;
+            }
+
             GalleryInfo gi = mHelper.getDataAt(position);
             holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb, true);
             holder.title.setText(EhUtils.getSuitableTitle(gi));
@@ -797,7 +989,7 @@ public final class GalleryListScene extends BaseScene
 
         @Override
         public int getItemCount() {
-            return mHelper.size();
+            return null != mHelper ? mHelper.size() : 0;
         }
     }
 
@@ -805,8 +997,11 @@ public final class GalleryListScene extends BaseScene
 
         @Override
         protected void getPageData(int taskId, int type, int page) {
-            mUrlBuilder.setPageIndex(page);
+            if (null == mClient || null == mUrlBuilder) {
+                return;
+            }
 
+            mUrlBuilder.setPageIndex(page);
             if (ListUrlBuilder.MODE_WHATS_HOT == mUrlBuilder.getMode()) {
                 EhRequest request = new EhRequest();
                 request.setMethod(EhClient.METHOD_GET_WHATS_HOT);
@@ -832,17 +1027,23 @@ public final class GalleryListScene extends BaseScene
 
         @Override
         protected void notifyDataSetChanged() {
-            mAdapter.notifyDataSetChanged();
+            if (null != mAdapter) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
         protected void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            mAdapter.notifyItemRangeRemoved(positionStart, itemCount);
+            if (null != mAdapter) {
+                mAdapter.notifyItemRangeRemoved(positionStart, itemCount);
+            }
         }
 
         @Override
         protected void notifyItemRangeInserted(int positionStart, int itemCount) {
-            mAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            if (null != mAdapter) {
+                mAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            }
         }
 
         @Override
