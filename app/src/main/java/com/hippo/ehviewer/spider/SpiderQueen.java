@@ -959,6 +959,10 @@ public class SpiderQueen implements Runnable {
                     }
 
                     Response response = mHttpClient.newCall(new EhRequestBuilder(imageUrl).build()).execute();
+                    if (response.code() >= 400) {
+                        // Maybe 404
+                        continue;
+                    }
                     ResponseBody responseBody = response.body();
                     long contentLength = responseBody.contentLength();
                     is = responseBody.byteStream();
