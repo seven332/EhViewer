@@ -6,9 +6,10 @@
  * Modified 2002-2010 by Guido Vollbeding.
  * libjpeg-turbo Modifications:
  * Copyright 2009 Pierre Ossman <ossman@cendio.se> for Cendio AB
- * Copyright (C) 2010, D. R. Commander.
+ * Copyright (C) 2010, 2015, D. R. Commander.
  * Copyright (C) 2013, MIPS Technologies, Inc., California
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains the inverse-DCT management logic.
  * This code selects a particular IDCT implementation to be used,
@@ -58,7 +59,7 @@ typedef struct {
   int cur_method[MAX_COMPONENTS];
 } my_idct_controller;
 
-typedef my_idct_controller * my_idct_ptr;
+typedef my_idct_controller *my_idct_ptr;
 
 
 /* Allocated multiplier tables: big enough for any supported variant */
@@ -100,7 +101,7 @@ start_pass (j_decompress_ptr cinfo)
   jpeg_component_info *compptr;
   int method = 0;
   inverse_DCT_method_ptr method_ptr = NULL;
-  JQUANT_TBL * qtbl;
+  JQUANT_TBL *qtbl;
 
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
        ci++, compptr++) {
@@ -245,7 +246,7 @@ start_pass (j_decompress_ptr cinfo)
         /* For LL&M IDCT method, multipliers are equal to raw quantization
          * coefficients, but are stored as ints to ensure access efficiency.
          */
-        ISLOW_MULT_TYPE * ismtbl = (ISLOW_MULT_TYPE *) compptr->dct_table;
+        ISLOW_MULT_TYPE *ismtbl = (ISLOW_MULT_TYPE *) compptr->dct_table;
         for (i = 0; i < DCTSIZE2; i++) {
           ismtbl[i] = (ISLOW_MULT_TYPE) qtbl->quantval[i];
         }
@@ -262,7 +263,7 @@ start_pass (j_decompress_ptr cinfo)
          * For integer operation, the multiplier table is to be scaled by
          * IFAST_SCALE_BITS.
          */
-        IFAST_MULT_TYPE * ifmtbl = (IFAST_MULT_TYPE *) compptr->dct_table;
+        IFAST_MULT_TYPE *ifmtbl = (IFAST_MULT_TYPE *) compptr->dct_table;
 #define CONST_BITS 14
         static const INT16 aanscales[DCTSIZE2] = {
           /* precomputed values scaled up by 14 bits */
@@ -279,8 +280,8 @@ start_pass (j_decompress_ptr cinfo)
 
         for (i = 0; i < DCTSIZE2; i++) {
           ifmtbl[i] = (IFAST_MULT_TYPE)
-            DESCALE(MULTIPLY16V16((INT32) qtbl->quantval[i],
-                                  (INT32) aanscales[i]),
+            DESCALE(MULTIPLY16V16((JLONG) qtbl->quantval[i],
+                                  (JLONG) aanscales[i]),
                     CONST_BITS-IFAST_SCALE_BITS);
         }
       }
@@ -294,7 +295,7 @@ start_pass (j_decompress_ptr cinfo)
          *   scalefactor[0] = 1
          *   scalefactor[k] = cos(k*PI/16) * sqrt(2)    for k=1..7
          */
-        FLOAT_MULT_TYPE * fmtbl = (FLOAT_MULT_TYPE *) compptr->dct_table;
+        FLOAT_MULT_TYPE *fmtbl = (FLOAT_MULT_TYPE *) compptr->dct_table;
         int row, col;
         static const double aanscalefactor[DCTSIZE] = {
           1.0, 1.387039845, 1.306562965, 1.175875602,

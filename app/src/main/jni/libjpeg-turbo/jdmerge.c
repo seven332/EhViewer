@@ -3,11 +3,12 @@
  *
  * This file was part of the Independent JPEG Group's software:
  * Copyright (C) 1994-1996, Thomas G. Lane.
- * Copyright 2009 Pierre Ossman <ossman@cendio.se> for Cendio AB
  * libjpeg-turbo Modifications:
- * Copyright (C) 2009, 2011, 2014 D. R. Commander.
+ * Copyright 2009 Pierre Ossman <ossman@cendio.se> for Cendio AB
+ * Copyright (C) 2009, 2011, 2014-2015, D. R. Commander.
  * Copyright (C) 2013, Linaro Limited.
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains code for merged upsampling/color conversion.
  *
@@ -55,10 +56,10 @@ typedef struct {
                     JDIMENSION in_row_group_ctr, JSAMPARRAY output_buf);
 
   /* Private state for YCC->RGB conversion */
-  int * Cr_r_tab;               /* => table for Cr to R conversion */
-  int * Cb_b_tab;               /* => table for Cb to B conversion */
-  INT32 * Cr_g_tab;             /* => table for Cr to G conversion */
-  INT32 * Cb_g_tab;             /* => table for Cb to G conversion */
+  int *Cr_r_tab;                /* => table for Cr to R conversion */
+  int *Cb_b_tab;                /* => table for Cb to B conversion */
+  JLONG *Cr_g_tab;              /* => table for Cr to G conversion */
+  JLONG *Cb_g_tab;              /* => table for Cb to G conversion */
 
   /* For 2:1 vertical sampling, we produce two output rows at a time.
    * We need a "spare" row buffer to hold the second output row if the
@@ -72,11 +73,11 @@ typedef struct {
   JDIMENSION rows_to_go;        /* counts rows remaining in image */
 } my_upsampler;
 
-typedef my_upsampler * my_upsample_ptr;
+typedef my_upsampler *my_upsample_ptr;
 
 #define SCALEBITS       16      /* speediest right-shift on some machines */
-#define ONE_HALF        ((INT32) 1 << (SCALEBITS-1))
-#define FIX(x)          ((INT32) ((x) * (1L<<SCALEBITS) + 0.5))
+#define ONE_HALF        ((JLONG) 1 << (SCALEBITS-1))
+#define FIX(x)          ((JLONG) ((x) * (1L<<SCALEBITS) + 0.5))
 
 
 /* Include inline routines for colorspace extensions */
@@ -190,7 +191,7 @@ build_ycc_rgb_table (j_decompress_ptr cinfo)
 {
   my_upsample_ptr upsample = (my_upsample_ptr) cinfo->upsample;
   int i;
-  INT32 x;
+  JLONG x;
   SHIFT_TEMPS
 
   upsample->Cr_r_tab = (int *)
@@ -199,12 +200,12 @@ build_ycc_rgb_table (j_decompress_ptr cinfo)
   upsample->Cb_b_tab = (int *)
     (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
                                 (MAXJSAMPLE+1) * sizeof(int));
-  upsample->Cr_g_tab = (INT32 *)
+  upsample->Cr_g_tab = (JLONG *)
     (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
-                                (MAXJSAMPLE+1) * sizeof(INT32));
-  upsample->Cb_g_tab = (INT32 *)
+                                (MAXJSAMPLE+1) * sizeof(JLONG));
+  upsample->Cb_g_tab = (JLONG *)
     (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
-                                (MAXJSAMPLE+1) * sizeof(INT32));
+                                (MAXJSAMPLE+1) * sizeof(JLONG));
 
   for (i = 0, x = -CENTERJSAMPLE; i <= MAXJSAMPLE; i++, x++) {
     /* i is the actual input pixel value, in the range 0..MAXJSAMPLE */
@@ -435,12 +436,12 @@ h2v2_merged_upsample (j_decompress_ptr cinfo,
 #define PACK_NEED_ALIGNMENT(ptr)  (((size_t)(ptr)) & 3)
 
 #define WRITE_TWO_PIXELS_LE(addr, pixels) {  \
-  ((INT16*)(addr))[0] = (pixels);  \
-  ((INT16*)(addr))[1] = (pixels) >> 16;  \
+  ((INT16*)(addr))[0] = (INT16)(pixels);  \
+  ((INT16*)(addr))[1] = (INT16)((pixels) >> 16);  \
 }
 #define WRITE_TWO_PIXELS_BE(addr, pixels) {  \
-  ((INT16*)(addr))[1] = (pixels);  \
-  ((INT16*)(addr))[0] = (pixels) >> 16;  \
+  ((INT16*)(addr))[1] = (INT16)(pixels);  \
+  ((INT16*)(addr))[0] = (INT16)((pixels) >> 16);  \
 }
 
 #define DITHER_565_R(r, dither)  ((r) + ((dither) & 0xFF))
@@ -455,8 +456,8 @@ h2v2_merged_upsample (j_decompress_ptr cinfo,
  */
 
 #define DITHER_MASK       0x3
-#define DITHER_ROTATE(x)  (((x) << 24) | (((x) >> 8) & 0x00FFFFFF))
-static const INT32 dither_matrix[4] = {
+#define DITHER_ROTATE(x)  ((((x) & 0xFF) << 24) | (((x) >> 8) & 0x00FFFFFF))
+static const JLONG dither_matrix[4] = {
   0x0008020A,
   0x0C040E06,
   0x030B0109,

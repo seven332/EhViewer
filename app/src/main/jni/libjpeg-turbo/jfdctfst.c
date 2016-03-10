@@ -1,9 +1,12 @@
 /*
  * jfdctfst.c
  *
+ * This file was part of the Independent JPEG Group's software:
  * Copyright (C) 1994-1996, Thomas G. Lane.
- * This file is part of the Independent JPEG Group's software.
- * For conditions of distribution and use, see the accompanying README file.
+ * libjpeg-turbo Modifications:
+ * Copyright (C) 2015, D. R. Commander
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains a fast, not so accurate integer implementation of the
  * forward DCT (Discrete Cosine Transform).
@@ -15,8 +18,8 @@
  * This implementation is based on Arai, Agui, and Nakajima's algorithm for
  * scaled DCT.  Their original paper (Trans. IEICE E-71(11):1095) is in
  * Japanese, but the algorithm is described in the Pennebaker & Mitchell
- * JPEG textbook (see REFERENCES section in file README).  The following code
- * is based directly on figure 4-8 in P&M.
+ * JPEG textbook (see REFERENCES section in file README.ijg).  The following
+ * code is based directly on figure 4-8 in P&M.
  * While an 8-point DCT cannot be done in less than 11 multiplies, it is
  * possible to arrange the computation so that many of the multiplies are
  * simple scalings of the final outputs.  These multiplies can then be
@@ -76,10 +79,10 @@
  */
 
 #if CONST_BITS == 8
-#define FIX_0_382683433  ((INT32)   98)         /* FIX(0.382683433) */
-#define FIX_0_541196100  ((INT32)  139)         /* FIX(0.541196100) */
-#define FIX_0_707106781  ((INT32)  181)         /* FIX(0.707106781) */
-#define FIX_1_306562965  ((INT32)  334)         /* FIX(1.306562965) */
+#define FIX_0_382683433  ((JLONG)   98)         /* FIX(0.382683433) */
+#define FIX_0_541196100  ((JLONG)  139)         /* FIX(0.541196100) */
+#define FIX_0_707106781  ((JLONG)  181)         /* FIX(0.707106781) */
+#define FIX_1_306562965  ((JLONG)  334)         /* FIX(1.306562965) */
 #else
 #define FIX_0_382683433  FIX(0.382683433)
 #define FIX_0_541196100  FIX(0.541196100)
@@ -99,7 +102,7 @@
 #endif
 
 
-/* Multiply a DCTELEM variable by an INT32 constant, and immediately
+/* Multiply a DCTELEM variable by an JLONG constant, and immediately
  * descale to yield a DCTELEM result.
  */
 
@@ -111,7 +114,7 @@
  */
 
 GLOBAL(void)
-jpeg_fdct_ifast (DCTELEM * data)
+jpeg_fdct_ifast (DCTELEM *data)
 {
   DCTELEM tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
   DCTELEM tmp10, tmp11, tmp12, tmp13;

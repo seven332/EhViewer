@@ -6,7 +6,8 @@
  * Modification developed 2002-2009 by Guido Vollbeding.
  * libjpeg-turbo Modifications:
  * Copyright (C) 2015, D. R. Commander
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains a slow-but-accurate integer implementation of the
  * inverse DCT (Discrete Cosine Transform).  In the IJG code, this routine
@@ -91,7 +92,7 @@
  * they are represented to better-than-integral precision.  These outputs
  * require BITS_IN_JSAMPLE + PASS1_BITS + 3 bits; this fits in a 16-bit word
  * with the recommended scaling.  (To scale up 12-bit sample data further, an
- * intermediate INT32 array would be needed.)
+ * intermediate JLONG array would be needed.)
  *
  * To avoid overflow of the 32-bit intermediate results in pass 2, we must
  * have BITS_IN_JSAMPLE + CONST_BITS + PASS1_BITS <= 26.  Error analysis
@@ -114,18 +115,18 @@
  */
 
 #if CONST_BITS == 13
-#define FIX_0_298631336  ((INT32)  2446)        /* FIX(0.298631336) */
-#define FIX_0_390180644  ((INT32)  3196)        /* FIX(0.390180644) */
-#define FIX_0_541196100  ((INT32)  4433)        /* FIX(0.541196100) */
-#define FIX_0_765366865  ((INT32)  6270)        /* FIX(0.765366865) */
-#define FIX_0_899976223  ((INT32)  7373)        /* FIX(0.899976223) */
-#define FIX_1_175875602  ((INT32)  9633)        /* FIX(1.175875602) */
-#define FIX_1_501321110  ((INT32)  12299)       /* FIX(1.501321110) */
-#define FIX_1_847759065  ((INT32)  15137)       /* FIX(1.847759065) */
-#define FIX_1_961570560  ((INT32)  16069)       /* FIX(1.961570560) */
-#define FIX_2_053119869  ((INT32)  16819)       /* FIX(2.053119869) */
-#define FIX_2_562915447  ((INT32)  20995)       /* FIX(2.562915447) */
-#define FIX_3_072711026  ((INT32)  25172)       /* FIX(3.072711026) */
+#define FIX_0_298631336  ((JLONG)  2446)        /* FIX(0.298631336) */
+#define FIX_0_390180644  ((JLONG)  3196)        /* FIX(0.390180644) */
+#define FIX_0_541196100  ((JLONG)  4433)        /* FIX(0.541196100) */
+#define FIX_0_765366865  ((JLONG)  6270)        /* FIX(0.765366865) */
+#define FIX_0_899976223  ((JLONG)  7373)        /* FIX(0.899976223) */
+#define FIX_1_175875602  ((JLONG)  9633)        /* FIX(1.175875602) */
+#define FIX_1_501321110  ((JLONG)  12299)       /* FIX(1.501321110) */
+#define FIX_1_847759065  ((JLONG)  15137)       /* FIX(1.847759065) */
+#define FIX_1_961570560  ((JLONG)  16069)       /* FIX(1.961570560) */
+#define FIX_2_053119869  ((JLONG)  16819)       /* FIX(2.053119869) */
+#define FIX_2_562915447  ((JLONG)  20995)       /* FIX(2.562915447) */
+#define FIX_3_072711026  ((JLONG)  25172)       /* FIX(3.072711026) */
 #else
 #define FIX_0_298631336  FIX(0.298631336)
 #define FIX_0_390180644  FIX(0.390180644)
@@ -142,7 +143,7 @@
 #endif
 
 
-/* Multiply an INT32 variable by an INT32 constant to yield an INT32 result.
+/* Multiply an JLONG variable by an JLONG constant to yield an JLONG result.
  * For 8-bit samples with the recommended scaling, all the variable
  * and constant values involved are no more than 16 bits wide, so a
  * 16x16->32 bit multiply can be used instead of a full 32x32 multiply.
@@ -169,16 +170,16 @@
  */
 
 GLOBAL(void)
-jpeg_idct_islow (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_islow (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp0, tmp1, tmp2, tmp3;
-  INT32 tmp10, tmp11, tmp12, tmp13;
-  INT32 z1, z2, z3, z4, z5;
+  JLONG tmp0, tmp1, tmp2, tmp3;
+  JLONG tmp10, tmp11, tmp12, tmp13;
+  JLONG z1, z2, z3, z4, z5;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -313,7 +314,7 @@ jpeg_idct_islow (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     if (wsptr[1] == 0 && wsptr[2] == 0 && wsptr[3] == 0 && wsptr[4] == 0 &&
         wsptr[5] == 0 && wsptr[6] == 0 && wsptr[7] == 0) {
       /* AC terms all zero */
-      JSAMPLE dcval = range_limit[(int) DESCALE((INT32) wsptr[0], PASS1_BITS+3)
+      JSAMPLE dcval = range_limit[(int) DESCALE((JLONG) wsptr[0], PASS1_BITS+3)
                                   & RANGE_MASK];
 
       outptr[0] = dcval;
@@ -333,15 +334,15 @@ jpeg_idct_islow (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part: reverse the even part of the forward DCT. */
     /* The rotator is sqrt(2)*c(-6). */
 
-    z2 = (INT32) wsptr[2];
-    z3 = (INT32) wsptr[6];
+    z2 = (JLONG) wsptr[2];
+    z3 = (JLONG) wsptr[6];
 
     z1 = MULTIPLY(z2 + z3, FIX_0_541196100);
     tmp2 = z1 + MULTIPLY(z3, - FIX_1_847759065);
     tmp3 = z1 + MULTIPLY(z2, FIX_0_765366865);
 
-    tmp0 = LEFT_SHIFT((INT32) wsptr[0] + (INT32) wsptr[4], CONST_BITS);
-    tmp1 = LEFT_SHIFT((INT32) wsptr[0] - (INT32) wsptr[4], CONST_BITS);
+    tmp0 = LEFT_SHIFT((JLONG) wsptr[0] + (JLONG) wsptr[4], CONST_BITS);
+    tmp1 = LEFT_SHIFT((JLONG) wsptr[0] - (JLONG) wsptr[4], CONST_BITS);
 
     tmp10 = tmp0 + tmp3;
     tmp13 = tmp0 - tmp3;
@@ -352,10 +353,10 @@ jpeg_idct_islow (j_decompress_ptr cinfo, jpeg_component_info * compptr,
      * transpose is its inverse.  i0..i3 are y7,y5,y3,y1 respectively.
      */
 
-    tmp0 = (INT32) wsptr[7];
-    tmp1 = (INT32) wsptr[5];
-    tmp2 = (INT32) wsptr[3];
-    tmp3 = (INT32) wsptr[1];
+    tmp0 = (JLONG) wsptr[7];
+    tmp1 = (JLONG) wsptr[5];
+    tmp2 = (JLONG) wsptr[3];
+    tmp3 = (JLONG) wsptr[1];
 
     z1 = tmp0 + tmp3;
     z2 = tmp1 + tmp2;
@@ -423,15 +424,15 @@ jpeg_idct_islow (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_7x7 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_7x7 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                JCOEFPTR coef_block,
                JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp0, tmp1, tmp2, tmp10, tmp11, tmp12, tmp13;
-  INT32 z1, z2, z3;
+  JLONG tmp0, tmp1, tmp2, tmp10, tmp11, tmp12, tmp13;
+  JLONG z1, z2, z3;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -501,12 +502,12 @@ jpeg_idct_7x7 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    tmp13 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    tmp13 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     tmp13 = LEFT_SHIFT(tmp13, CONST_BITS);
 
-    z1 = (INT32) wsptr[2];
-    z2 = (INT32) wsptr[4];
-    z3 = (INT32) wsptr[6];
+    z1 = (JLONG) wsptr[2];
+    z2 = (JLONG) wsptr[4];
+    z3 = (JLONG) wsptr[6];
 
     tmp10 = MULTIPLY(z2 - z3, FIX(0.881747734));     /* c4 */
     tmp12 = MULTIPLY(z1 - z2, FIX(0.314692123));     /* c6 */
@@ -520,9 +521,9 @@ jpeg_idct_7x7 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
 
     tmp1 = MULTIPLY(z1 + z2, FIX(0.935414347));      /* (c3+c1-c5)/2 */
     tmp2 = MULTIPLY(z1 - z2, FIX(0.170262339));      /* (c3+c5-c1)/2 */
@@ -572,15 +573,15 @@ jpeg_idct_7x7 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_6x6 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_6x6 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                JCOEFPTR coef_block,
                JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp0, tmp1, tmp2, tmp10, tmp11, tmp12;
-  INT32 z1, z2, z3;
+  JLONG tmp0, tmp1, tmp2, tmp10, tmp11, tmp12;
+  JLONG z1, z2, z3;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -637,22 +638,22 @@ jpeg_idct_6x6 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    tmp0 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    tmp0 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     tmp0 = LEFT_SHIFT(tmp0, CONST_BITS);
-    tmp2 = (INT32) wsptr[4];
+    tmp2 = (JLONG) wsptr[4];
     tmp10 = MULTIPLY(tmp2, FIX(0.707106781));   /* c4 */
     tmp1 = tmp0 + tmp10;
     tmp11 = tmp0 - tmp10 - tmp10;
-    tmp10 = (INT32) wsptr[2];
+    tmp10 = (JLONG) wsptr[2];
     tmp0 = MULTIPLY(tmp10, FIX(1.224744871));   /* c2 */
     tmp10 = tmp1 + tmp0;
     tmp12 = tmp1 - tmp0;
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
     tmp1 = MULTIPLY(z1 + z3, FIX(0.366025404)); /* c5 */
     tmp0 = tmp1 + LEFT_SHIFT(z1 + z2, CONST_BITS);
     tmp2 = tmp1 + LEFT_SHIFT(z3 - z2, CONST_BITS);
@@ -693,15 +694,15 @@ jpeg_idct_6x6 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_5x5 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_5x5 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                JCOEFPTR coef_block,
                JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp0, tmp1, tmp10, tmp11, tmp12;
-  INT32 z1, z2, z3;
+  JLONG tmp0, tmp1, tmp10, tmp11, tmp12;
+  JLONG z1, z2, z3;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -756,10 +757,10 @@ jpeg_idct_5x5 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    tmp12 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    tmp12 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     tmp12 = LEFT_SHIFT(tmp12, CONST_BITS);
-    tmp0 = (INT32) wsptr[2];
-    tmp1 = (INT32) wsptr[4];
+    tmp0 = (JLONG) wsptr[2];
+    tmp1 = (JLONG) wsptr[4];
     z1 = MULTIPLY(tmp0 + tmp1, FIX(0.790569415)); /* (c2+c4)/2 */
     z2 = MULTIPLY(tmp0 - tmp1, FIX(0.353553391)); /* (c2-c4)/2 */
     z3 = tmp12 + z2;
@@ -769,8 +770,8 @@ jpeg_idct_5x5 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z2 = (INT32) wsptr[1];
-    z3 = (INT32) wsptr[3];
+    z2 = (JLONG) wsptr[1];
+    z3 = (JLONG) wsptr[3];
 
     z1 = MULTIPLY(z2 + z3, FIX(0.831253876));     /* c3 */
     tmp0 = z1 + MULTIPLY(z2, FIX(0.513743148));   /* c1-c3 */
@@ -808,14 +809,14 @@ jpeg_idct_5x5 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_3x3 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_3x3 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                JCOEFPTR coef_block,
                JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp0, tmp2, tmp10, tmp12;
+  JLONG tmp0, tmp2, tmp10, tmp12;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -860,16 +861,16 @@ jpeg_idct_3x3 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    tmp0 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    tmp0 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     tmp0 = LEFT_SHIFT(tmp0, CONST_BITS);
-    tmp2 = (INT32) wsptr[2];
+    tmp2 = (JLONG) wsptr[2];
     tmp12 = MULTIPLY(tmp2, FIX(0.707106781)); /* c2 */
     tmp10 = tmp0 + tmp12;
     tmp2 = tmp0 - tmp12 - tmp12;
 
     /* Odd part */
 
-    tmp12 = (INT32) wsptr[1];
+    tmp12 = (JLONG) wsptr[1];
     tmp0 = MULTIPLY(tmp12, FIX(1.224744871)); /* c1 */
 
     /* Final output stage */
@@ -898,15 +899,15 @@ jpeg_idct_3x3 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_9x9 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_9x9 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                JCOEFPTR coef_block,
                JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp0, tmp1, tmp2, tmp3, tmp10, tmp11, tmp12, tmp13, tmp14;
-  INT32 z1, z2, z3, z4;
+  JLONG tmp0, tmp1, tmp2, tmp3, tmp10, tmp11, tmp12, tmp13, tmp14;
+  JLONG z1, z2, z3, z4;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -985,12 +986,12 @@ jpeg_idct_9x9 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    tmp0 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    tmp0 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     tmp0 = LEFT_SHIFT(tmp0, CONST_BITS);
 
-    z1 = (INT32) wsptr[2];
-    z2 = (INT32) wsptr[4];
-    z3 = (INT32) wsptr[6];
+    z1 = (JLONG) wsptr[2];
+    z2 = (JLONG) wsptr[4];
+    z3 = (JLONG) wsptr[6];
 
     tmp3 = MULTIPLY(z3, FIX(0.707106781));      /* c6 */
     tmp1 = tmp0 + tmp3;
@@ -1010,10 +1011,10 @@ jpeg_idct_9x9 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
-    z4 = (INT32) wsptr[7];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
+    z4 = (JLONG) wsptr[7];
 
     z2 = MULTIPLY(z2, - FIX(1.224744871));           /* -c3 */
 
@@ -1069,16 +1070,16 @@ jpeg_idct_9x9 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_10x10 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_10x10 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp10, tmp11, tmp12, tmp13, tmp14;
-  INT32 tmp20, tmp21, tmp22, tmp23, tmp24;
-  INT32 z1, z2, z3, z4, z5;
+  JLONG tmp10, tmp11, tmp12, tmp13, tmp14;
+  JLONG tmp20, tmp21, tmp22, tmp23, tmp24;
+  JLONG z1, z2, z3, z4, z5;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -1168,9 +1169,9 @@ jpeg_idct_10x10 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    z3 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    z3 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     z3 = LEFT_SHIFT(z3, CONST_BITS);
-    z4 = (INT32) wsptr[4];
+    z4 = (JLONG) wsptr[4];
     z1 = MULTIPLY(z4, FIX(1.144122806));         /* c4 */
     z2 = MULTIPLY(z4, FIX(0.437016024));         /* c8 */
     tmp10 = z3 + z1;
@@ -1178,8 +1179,8 @@ jpeg_idct_10x10 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     tmp22 = z3 - LEFT_SHIFT(z1 - z2, 1);         /* c0 = (c4-c8)*2 */
 
-    z2 = (INT32) wsptr[2];
-    z3 = (INT32) wsptr[6];
+    z2 = (JLONG) wsptr[2];
+    z3 = (JLONG) wsptr[6];
 
     z1 = MULTIPLY(z2 + z3, FIX(0.831253876));    /* c6 */
     tmp12 = z1 + MULTIPLY(z2, FIX(0.513743148)); /* c2-c6 */
@@ -1192,11 +1193,11 @@ jpeg_idct_10x10 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
     z3 = LEFT_SHIFT(z3, CONST_BITS);
-    z4 = (INT32) wsptr[7];
+    z4 = (JLONG) wsptr[7];
 
     tmp11 = z2 + z4;
     tmp13 = z2 - z4;
@@ -1264,16 +1265,16 @@ jpeg_idct_10x10 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_11x11 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_11x11 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp10, tmp11, tmp12, tmp13, tmp14;
-  INT32 tmp20, tmp21, tmp22, tmp23, tmp24, tmp25;
-  INT32 z1, z2, z3, z4;
+  JLONG tmp10, tmp11, tmp12, tmp13, tmp14;
+  JLONG tmp20, tmp21, tmp22, tmp23, tmp24, tmp25;
+  JLONG z1, z2, z3, z4;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -1361,12 +1362,12 @@ jpeg_idct_11x11 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    tmp10 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    tmp10 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     tmp10 = LEFT_SHIFT(tmp10, CONST_BITS);
 
-    z1 = (INT32) wsptr[2];
-    z2 = (INT32) wsptr[4];
-    z3 = (INT32) wsptr[6];
+    z1 = (JLONG) wsptr[2];
+    z2 = (JLONG) wsptr[4];
+    z3 = (JLONG) wsptr[6];
 
     tmp20 = MULTIPLY(z2 - z3, FIX(2.546640132));     /* c2+c4 */
     tmp23 = MULTIPLY(z2 - z1, FIX(0.430815045));     /* c2-c6 */
@@ -1386,10 +1387,10 @@ jpeg_idct_11x11 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
-    z4 = (INT32) wsptr[7];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
+    z4 = (JLONG) wsptr[7];
 
     tmp11 = z1 + z2;
     tmp14 = MULTIPLY(tmp11 + z3 + z4, FIX(0.398430003)); /* c9 */
@@ -1458,16 +1459,16 @@ jpeg_idct_11x11 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_12x12 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_12x12 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp10, tmp11, tmp12, tmp13, tmp14, tmp15;
-  INT32 tmp20, tmp21, tmp22, tmp23, tmp24, tmp25;
-  INT32 z1, z2, z3, z4;
+  JLONG tmp10, tmp11, tmp12, tmp13, tmp14, tmp15;
+  JLONG tmp20, tmp21, tmp22, tmp23, tmp24, tmp25;
+  JLONG z1, z2, z3, z4;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -1565,19 +1566,19 @@ jpeg_idct_12x12 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    z3 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    z3 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     z3 = LEFT_SHIFT(z3, CONST_BITS);
 
-    z4 = (INT32) wsptr[4];
+    z4 = (JLONG) wsptr[4];
     z4 = MULTIPLY(z4, FIX(1.224744871)); /* c4 */
 
     tmp10 = z3 + z4;
     tmp11 = z3 - z4;
 
-    z1 = (INT32) wsptr[2];
+    z1 = (JLONG) wsptr[2];
     z4 = MULTIPLY(z1, FIX(1.366025404)); /* c2 */
     z1 = LEFT_SHIFT(z1, CONST_BITS);
-    z2 = (INT32) wsptr[6];
+    z2 = (JLONG) wsptr[6];
     z2 = LEFT_SHIFT(z2, CONST_BITS);
 
     tmp12 = z1 - z2;
@@ -1597,10 +1598,10 @@ jpeg_idct_12x12 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
-    z4 = (INT32) wsptr[7];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
+    z4 = (JLONG) wsptr[7];
 
     tmp11 = MULTIPLY(z2, FIX(1.306562965));                  /* c3 */
     tmp14 = MULTIPLY(z2, - FIX_0_541196100);                 /* -c9 */
@@ -1674,16 +1675,16 @@ jpeg_idct_12x12 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_13x13 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_13x13 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp10, tmp11, tmp12, tmp13, tmp14, tmp15;
-  INT32 tmp20, tmp21, tmp22, tmp23, tmp24, tmp25, tmp26;
-  INT32 z1, z2, z3, z4;
+  JLONG tmp10, tmp11, tmp12, tmp13, tmp14, tmp15;
+  JLONG tmp20, tmp21, tmp22, tmp23, tmp24, tmp25, tmp26;
+  JLONG z1, z2, z3, z4;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -1786,12 +1787,12 @@ jpeg_idct_13x13 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    z1 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    z1 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     z1 = LEFT_SHIFT(z1, CONST_BITS);
 
-    z2 = (INT32) wsptr[2];
-    z3 = (INT32) wsptr[4];
-    z4 = (INT32) wsptr[6];
+    z2 = (JLONG) wsptr[2];
+    z3 = (JLONG) wsptr[4];
+    z4 = (JLONG) wsptr[6];
 
     tmp10 = z3 + z4;
     tmp11 = z3 - z4;
@@ -1818,10 +1819,10 @@ jpeg_idct_13x13 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
-    z4 = (INT32) wsptr[7];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
+    z4 = (JLONG) wsptr[7];
 
     tmp11 = MULTIPLY(z1 + z2, FIX(1.322312651));     /* c3 */
     tmp12 = MULTIPLY(z1 + z3, FIX(1.163874945));     /* c5 */
@@ -1902,16 +1903,16 @@ jpeg_idct_13x13 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_14x14 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_14x14 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16;
-  INT32 tmp20, tmp21, tmp22, tmp23, tmp24, tmp25, tmp26;
-  INT32 z1, z2, z3, z4;
+  JLONG tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16;
+  JLONG tmp20, tmp21, tmp22, tmp23, tmp24, tmp25, tmp26;
+  JLONG z1, z2, z3, z4;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -2013,9 +2014,9 @@ jpeg_idct_14x14 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    z1 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    z1 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     z1 = LEFT_SHIFT(z1, CONST_BITS);
-    z4 = (INT32) wsptr[4];
+    z4 = (JLONG) wsptr[4];
     z2 = MULTIPLY(z4, FIX(1.274162392));         /* c4 */
     z3 = MULTIPLY(z4, FIX(0.314692123));         /* c12 */
     z4 = MULTIPLY(z4, FIX(0.881747734));         /* c8 */
@@ -2026,8 +2027,8 @@ jpeg_idct_14x14 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     tmp23 = z1 - LEFT_SHIFT(z2 + z3 - z4, 1);    /* c0 = (c4+c12-c8)*2 */
 
-    z1 = (INT32) wsptr[2];
-    z2 = (INT32) wsptr[6];
+    z1 = (JLONG) wsptr[2];
+    z2 = (JLONG) wsptr[6];
 
     z3 = MULTIPLY(z1 + z2, FIX(1.105676686));    /* c6 */
 
@@ -2045,10 +2046,10 @@ jpeg_idct_14x14 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
-    z4 = (INT32) wsptr[7];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
+    z4 = (JLONG) wsptr[7];
     z4 = LEFT_SHIFT(z4, CONST_BITS);
 
     tmp14 = z1 + z3;
@@ -2128,16 +2129,16 @@ jpeg_idct_14x14 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_15x15 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_15x15 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16;
-  INT32 tmp20, tmp21, tmp22, tmp23, tmp24, tmp25, tmp26, tmp27;
-  INT32 z1, z2, z3, z4;
+  JLONG tmp10, tmp11, tmp12, tmp13, tmp14, tmp15, tmp16;
+  JLONG tmp20, tmp21, tmp22, tmp23, tmp24, tmp25, tmp26, tmp27;
+  JLONG z1, z2, z3, z4;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -2245,12 +2246,12 @@ jpeg_idct_15x15 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    z1 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    z1 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     z1 = LEFT_SHIFT(z1, CONST_BITS);
 
-    z2 = (INT32) wsptr[2];
-    z3 = (INT32) wsptr[4];
-    z4 = (INT32) wsptr[6];
+    z2 = (JLONG) wsptr[2];
+    z3 = (JLONG) wsptr[4];
+    z4 = (JLONG) wsptr[6];
 
     tmp10 = MULTIPLY(z4, FIX(0.437016024)); /* c12 */
     tmp11 = MULTIPLY(z4, FIX(1.144122806)); /* c6 */
@@ -2285,11 +2286,11 @@ jpeg_idct_15x15 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z4 = (INT32) wsptr[5];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z4 = (JLONG) wsptr[5];
     z3 = MULTIPLY(z4, FIX(1.224744871));                    /* c5 */
-    z4 = (INT32) wsptr[7];
+    z4 = (JLONG) wsptr[7];
 
     tmp13 = z2 - z4;
     tmp15 = MULTIPLY(z1 + tmp13, FIX(0.831253876));         /* c9 */
@@ -2370,16 +2371,16 @@ jpeg_idct_15x15 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
  */
 
 GLOBAL(void)
-jpeg_idct_16x16 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_16x16 (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
-  INT32 tmp0, tmp1, tmp2, tmp3, tmp10, tmp11, tmp12, tmp13;
-  INT32 tmp20, tmp21, tmp22, tmp23, tmp24, tmp25, tmp26, tmp27;
-  INT32 z1, z2, z3, z4;
+  JLONG tmp0, tmp1, tmp2, tmp3, tmp10, tmp11, tmp12, tmp13;
+  JLONG tmp20, tmp21, tmp22, tmp23, tmp24, tmp25, tmp26, tmp27;
+  JLONG z1, z2, z3, z4;
   JCOEFPTR inptr;
-  ISLOW_MULT_TYPE * quantptr;
-  int * wsptr;
+  ISLOW_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;
@@ -2496,10 +2497,10 @@ jpeg_idct_16x16 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     /* Even part */
 
     /* Add fudge factor here for final descale. */
-    tmp0 = (INT32) wsptr[0] + (ONE << (PASS1_BITS+2));
+    tmp0 = (JLONG) wsptr[0] + (ONE << (PASS1_BITS+2));
     tmp0 = LEFT_SHIFT(tmp0, CONST_BITS);
 
-    z1 = (INT32) wsptr[4];
+    z1 = (JLONG) wsptr[4];
     tmp1 = MULTIPLY(z1, FIX(1.306562965));      /* c4[16] = c2[8] */
     tmp2 = MULTIPLY(z1, FIX_0_541196100);       /* c12[16] = c6[8] */
 
@@ -2508,8 +2509,8 @@ jpeg_idct_16x16 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     tmp12 = tmp0 + tmp2;
     tmp13 = tmp0 - tmp2;
 
-    z1 = (INT32) wsptr[2];
-    z2 = (INT32) wsptr[6];
+    z1 = (JLONG) wsptr[2];
+    z2 = (JLONG) wsptr[6];
     z3 = z1 - z2;
     z4 = MULTIPLY(z3, FIX(0.275899379));        /* c14[16] = c7[8] */
     z3 = MULTIPLY(z3, FIX(1.387039845));        /* c2[16] = c1[8] */
@@ -2530,10 +2531,10 @@ jpeg_idct_16x16 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
     /* Odd part */
 
-    z1 = (INT32) wsptr[1];
-    z2 = (INT32) wsptr[3];
-    z3 = (INT32) wsptr[5];
-    z4 = (INT32) wsptr[7];
+    z1 = (JLONG) wsptr[1];
+    z2 = (JLONG) wsptr[3];
+    z3 = (JLONG) wsptr[5];
+    z4 = (JLONG) wsptr[7];
 
     tmp11 = z1 + z3;
 

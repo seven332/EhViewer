@@ -58,11 +58,11 @@ PB_CENTERJSAMP  times 16 db CENTERJSAMPLE
 ; Perform dequantization and inverse DCT on one block of coefficients.
 ;
 ; GLOBAL(void)
-; jsimd_idct_float_sse2 (void * dct_table, JCOEFPTR coef_block,
+; jsimd_idct_float_sse2 (void *dct_table, JCOEFPTR coef_block,
 ;                        JSAMPARRAY output_buf, JDIMENSION output_col)
 ;
 
-; r10 = void * dct_table
+; r10 = void *dct_table
 ; r11 = JCOEFPTR coef_block
 ; r12 = JSAMPARRAY output_buf
 ; r13 = JDIMENSION output_col
@@ -91,7 +91,7 @@ EXTN(jsimd_idct_float_sse2):
 
         mov     rdx, r10                ; quantptr
         mov     rsi, r11                ; inptr
-        lea     rdi, [workspace]                        ; FAST_FLOAT * wsptr
+        lea     rdi, [workspace]                        ; FAST_FLOAT *wsptr
         mov     rcx, DCTSIZE/4                          ; ctr
 .columnloop:
 %ifndef NO_ZERO_COLUMN_TEST_FLOAT_SSE
@@ -324,7 +324,7 @@ EXTN(jsimd_idct_float_sse2):
         ; ---- Pass 2: process rows from work array, store into output array.
 
         mov     rax, [original_rbp]
-        lea     rsi, [workspace]                        ; FAST_FLOAT * wsptr
+        lea     rsi, [workspace]                        ; FAST_FLOAT *wsptr
         mov     rdi, r12        ; (JSAMPROW *)
         mov     eax, r13d
         mov     rcx, DCTSIZE/4                          ; ctr

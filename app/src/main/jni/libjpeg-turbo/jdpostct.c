@@ -5,7 +5,8 @@
  * Copyright (C) 1994-1996, Thomas G. Lane.
  * It was modified by The libjpeg-turbo Project to include only code relevant
  * to libjpeg-turbo.
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains the decompression postprocessing controller.
  * This controller manages the upsampling, color conversion, and color
@@ -41,7 +42,7 @@ typedef struct {
   JDIMENSION next_row;          /* index of next row to fill/empty in strip */
 } my_post_controller;
 
-typedef my_post_controller * my_post_ptr;
+typedef my_post_controller *my_post_ptr;
 
 
 /* Forward declarations */

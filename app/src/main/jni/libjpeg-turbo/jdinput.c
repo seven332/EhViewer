@@ -4,8 +4,10 @@
  * This file was part of the Independent JPEG Group's software:
  * Copyright (C) 1991-1997, Thomas G. Lane.
  * libjpeg-turbo Modifications:
- * Copyright (C) 2010, D. R. Commander.
- * For conditions of distribution and use, see the accompanying README file.
+ * Copyright (C) 2010, 2016, D. R. Commander.
+ * Copyright (C) 2015, Google, Inc.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains input control logic for the JPEG decompressor.
  * These routines are concerned with controlling the decompressor's input
@@ -27,7 +29,7 @@ typedef struct {
   boolean inheaders;            /* TRUE until first SOS is reached */
 } my_input_controller;
 
-typedef my_input_controller * my_inputctl_ptr;
+typedef my_input_controller *my_inputctl_ptr;
 
 
 /* Forward declarations */
@@ -104,6 +106,11 @@ initial_setup (j_decompress_ptr cinfo)
     compptr->height_in_blocks = (JDIMENSION)
       jdiv_round_up((long) cinfo->image_height * (long) compptr->v_samp_factor,
                     (long) (cinfo->max_v_samp_factor * DCTSIZE));
+    /* Set the first and last MCU columns to decompress from multi-scan images.
+     * By default, decompress all of the MCU columns.
+     */
+    cinfo->master->first_MCU_col[ci] = 0;
+    cinfo->master->last_MCU_col[ci] = compptr->width_in_blocks - 1;
     /* downsampled_width and downsampled_height will also be overridden by
      * jdmaster.c if we are doing full decompression.  The transcoder library
      * doesn't use these values, but the calling application might.
@@ -238,7 +245,7 @@ latch_quant_tables (j_decompress_ptr cinfo)
 {
   int ci, qtblno;
   jpeg_component_info *compptr;
-  JQUANT_TBL * qtbl;
+  JQUANT_TBL *qtbl;
 
   for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
     compptr = cinfo->cur_comp_info[ci];

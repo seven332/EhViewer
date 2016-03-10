@@ -5,8 +5,10 @@
  * Copyright (C) 1991-1997, Thomas G. Lane.
  * Modified 1997-2009 by Guido Vollbeding.
  * libjpeg-turbo Modifications:
- * Copyright (C) 2015, D. R. Commander
- * For conditions of distribution and use, see the accompanying README file.
+ * Copyright (C) 2015-2016, D. R. Commander
+ * Copyright (C) 2015, Google, Inc.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file provides common declarations for the various JPEG modules.
  * These declarations are considered internal to the JPEG library; most
@@ -42,16 +44,16 @@ typedef enum {            /* Operating modes for buffer controllers */
 #define DSTATE_STOPPING 210     /* looking for EOI in jpeg_finish_decompress */
 
 
+/* JLONG must hold at least signed 32-bit values. */
+typedef long JLONG;
+
+
 /*
  * Left shift macro that handles a negative operand without causing any
  * sanitizer warnings
  */
 
-#ifdef __INT32_IS_ACTUALLY_LONG
-#define LEFT_SHIFT(a, b) ((INT32)((unsigned long)(a) << (b)))
-#else
-#define LEFT_SHIFT(a, b) ((INT32)((unsigned int)(a) << (b)))
-#endif
+#define LEFT_SHIFT(a, b) ((JLONG)((unsigned long)(a) << (b)))
 
 
 /* Declarations for compression modules */
@@ -112,7 +114,7 @@ struct jpeg_downsampler {
 struct jpeg_forward_dct {
   void (*start_pass) (j_compress_ptr cinfo);
   /* perhaps this should be an array??? */
-  void (*forward_DCT) (j_compress_ptr cinfo, jpeg_component_info * compptr,
+  void (*forward_DCT) (j_compress_ptr cinfo, jpeg_component_info *compptr,
                        JSAMPARRAY sample_data, JBLOCKROW coef_blocks,
                        JDIMENSION start_row, JDIMENSION start_col,
                        JDIMENSION num_blocks);
@@ -149,6 +151,13 @@ struct jpeg_decomp_master {
 
   /* State variables made visible to other modules */
   boolean is_dummy_pass;        /* True during 1st pass for 2-pass quant */
+
+  /* Partial decompression variables */
+  JDIMENSION first_iMCU_col;
+  JDIMENSION last_iMCU_col;
+  JDIMENSION first_MCU_col[MAX_COMPS_IN_SCAN];
+  JDIMENSION last_MCU_col[MAX_COMPS_IN_SCAN];
+  boolean jinit_upsampler_no_alloc;
 };
 
 /* Input control module */
@@ -222,7 +231,7 @@ struct jpeg_entropy_decoder {
 
 /* Inverse DCT (also performs dequantization) */
 typedef void (*inverse_DCT_method_ptr) (j_decompress_ptr cinfo,
-                                        jpeg_component_info * compptr,
+                                        jpeg_component_info *compptr,
                                         JCOEFPTR coef_block,
                                         JSAMPARRAY output_buf,
                                         JDIMENSION output_col);
@@ -275,16 +284,16 @@ struct jpeg_color_quantizer {
  * shift" instructions that shift in copies of the sign bit.  But some
  * C compilers implement >> with an unsigned shift.  For these machines you
  * must define RIGHT_SHIFT_IS_UNSIGNED.
- * RIGHT_SHIFT provides a proper signed right shift of an INT32 quantity.
+ * RIGHT_SHIFT provides a proper signed right shift of a JLONG quantity.
  * It is only applied with constant shift counts.  SHIFT_TEMPS must be
  * included in the variables of any routine using RIGHT_SHIFT.
  */
 
 #ifdef RIGHT_SHIFT_IS_UNSIGNED
-#define SHIFT_TEMPS     INT32 shift_temp;
+#define SHIFT_TEMPS     JLONG shift_temp;
 #define RIGHT_SHIFT(x,shft)  \
         ((shift_temp = (x)) < 0 ? \
-         (shift_temp >> (shft)) | ((~((INT32) 0)) << (32-(shft))) : \
+         (shift_temp >> (shft)) | ((~((JLONG) 0)) << (32-(shft))) : \
          (shift_temp >> (shft)))
 #else
 #define SHIFT_TEMPS
@@ -339,7 +348,7 @@ EXTERN(void) jcopy_sample_rows (JSAMPARRAY input_array, int source_row,
                                 int num_rows, JDIMENSION num_cols);
 EXTERN(void) jcopy_block_row (JBLOCKROW input_row, JBLOCKROW output_row,
                               JDIMENSION num_blocks);
-EXTERN(void) jzero_far (void * target, size_t bytestozero);
+EXTERN(void) jzero_far (void *target, size_t bytestozero);
 /* Constant tables in jutils.c */
 #if 0                           /* This table is not actually needed in v6a */
 extern const int jpeg_zigzag_order[]; /* natural coef order to zigzag order */
@@ -347,7 +356,7 @@ extern const int jpeg_zigzag_order[]; /* natural coef order to zigzag order */
 extern const int jpeg_natural_order[]; /* zigzag coef order to natural order */
 
 /* Arithmetic coding probability estimation tables in jaricom.c */
-extern const INT32 jpeg_aritab[];
+extern const JLONG jpeg_aritab[];
 
 /* Suppress undefined-structure complaints if necessary. */
 

@@ -88,6 +88,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86)
     simd/jquant-sse.asm \
     simd/jccolor-sse2.asm \
     simd/jcgray-sse2.asm \
+    simd/jchuff-sse2.asm \
     simd/jcsample-sse2.asm \
     simd/jdcolor-sse2.asm \
     simd/jdmerge-sse2.asm \
@@ -107,6 +108,7 @@ else ifeq ($(TARGET_ARCH_ABI), x86_64)
     simd/jfdctflt-sse-64.asm \
     simd/jccolor-sse2-64.asm \
     simd/jcgray-sse2-64.asm \
+    simd/jchuff-sse2-64.asm \
     simd/jcsample-sse2-64.asm \
     simd/jdcolor-sse2-64.asm \
     simd/jdmerge-sse2-64.asm \

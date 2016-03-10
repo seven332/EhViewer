@@ -6,7 +6,8 @@
  * Modified 1997-2009 by Guido Vollbeding.
  * libjpeg-turbo Modifications:
  * Copyright (C) 2009, 2011, 2014-2015, D. R. Commander.
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains additional configuration options that customize the
  * JPEG software for special applications or support machine-dependent
@@ -146,13 +147,35 @@ typedef unsigned int UINT16;
 typedef short INT16;
 #endif
 
-/* INT32 must hold at least signed 32-bit values. */
+/* INT32 must hold at least signed 32-bit values.
+ *
+ * NOTE: The INT32 typedef dates back to libjpeg v5 (1994.)  Integers were
+ * sometimes 16-bit back then (MS-DOS), which is why INT32 is typedef'd to
+ * long.  It also wasn't common (or at least as common) in 1994 for INT32 to be
+ * defined by platform headers.  Since then, however, INT32 is defined in
+ * several other common places:
+ *
+ * Xmd.h (X11 header) typedefs INT32 to int on 64-bit platforms and long on
+ * 32-bit platforms (i.e always a 32-bit signed type.)
+ *
+ * basetsd.h (Win32 header) typedefs INT32 to int (always a 32-bit signed type
+ * on modern platforms.)
+ *
+ * qglobal.h (Qt header) typedefs INT32 to int (always a 32-bit signed type on
+ * modern platforms.)
+ *
+ * This is a recipe for conflict, since "long" and "int" aren't always
+ * compatible types.  Since the definition of INT32 has technically been part
+ * of the libjpeg API for more than 20 years, we can't remove it, but we do not
+ * use it internally any longer.  We instead define a separate type (JLONG)
+ * for internal use, which ensures that internal behavior will always be the
+ * same regardless of any external headers that may be included.
+ */
 
 #ifndef XMD_H                   /* X11/xmd.h correctly defines INT32 */
 #ifndef _BASETSD_H_		/* Microsoft defines it in basetsd.h */
 #ifndef _BASETSD_H		/* MinGW is slightly different */
 #ifndef QGLOBAL_H		/* Qt defines it in qglobal.h */
-#define __INT32_IS_ACTUALLY_LONG
 typedef long INT32;
 #endif
 #endif

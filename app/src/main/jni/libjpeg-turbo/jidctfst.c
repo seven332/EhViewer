@@ -1,9 +1,12 @@
 /*
  * jidctfst.c
  *
+ * This file was part of the Independent JPEG Group's software:
  * Copyright (C) 1994-1998, Thomas G. Lane.
- * This file is part of the Independent JPEG Group's software.
- * For conditions of distribution and use, see the accompanying README file.
+ * libjpeg-turbo Modifications:
+ * Copyright (C) 2015, D. R. Commander.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains a fast, not so accurate integer implementation of the
  * inverse DCT (Discrete Cosine Transform).  In the IJG code, this routine
@@ -17,8 +20,8 @@
  * This implementation is based on Arai, Agui, and Nakajima's algorithm for
  * scaled DCT.  Their original paper (Trans. IEICE E-71(11):1095) is in
  * Japanese, but the algorithm is described in the Pennebaker & Mitchell
- * JPEG textbook (see REFERENCES section in file README).  The following code
- * is based directly on figure 4-8 in P&M.
+ * JPEG textbook (see REFERENCES section in file README.ijg).  The following
+ * code is based directly on figure 4-8 in P&M.
  * While an 8-point DCT cannot be done in less than 11 multiplies, it is
  * possible to arrange the computation so that many of the multiplies are
  * simple scalings of the final outputs.  These multiplies can then be
@@ -89,10 +92,10 @@
  */
 
 #if CONST_BITS == 8
-#define FIX_1_082392200  ((INT32)  277)         /* FIX(1.082392200) */
-#define FIX_1_414213562  ((INT32)  362)         /* FIX(1.414213562) */
-#define FIX_1_847759065  ((INT32)  473)         /* FIX(1.847759065) */
-#define FIX_2_613125930  ((INT32)  669)         /* FIX(2.613125930) */
+#define FIX_1_082392200  ((JLONG)  277)         /* FIX(1.082392200) */
+#define FIX_1_414213562  ((JLONG)  362)         /* FIX(1.414213562) */
+#define FIX_1_847759065  ((JLONG)  473)         /* FIX(1.847759065) */
+#define FIX_2_613125930  ((JLONG)  669)         /* FIX(2.613125930) */
 #else
 #define FIX_1_082392200  FIX(1.082392200)
 #define FIX_1_414213562  FIX(1.414213562)
@@ -112,7 +115,7 @@
 #endif
 
 
-/* Multiply a DCTELEM variable by an INT32 constant, and immediately
+/* Multiply a DCTELEM variable by an JLONG constant, and immediately
  * descale to yield a DCTELEM result.
  */
 
@@ -122,7 +125,7 @@
 /* Dequantize a coefficient by multiplying it by the multiplier-table
  * entry; produce a DCTELEM result.  For 8-bit data a 16x16->16
  * multiplication will do.  For 12-bit data, the multiplier table is
- * declared INT32, so a 32-bit multiply will be used.
+ * declared JLONG, so a 32-bit multiply will be used.
  */
 
 #if BITS_IN_JSAMPLE == 8
@@ -134,7 +137,7 @@
 
 
 /* Like DESCALE, but applies to a DCTELEM and produces an int.
- * We assume that int right shift is unsigned if INT32 right shift is.
+ * We assume that int right shift is unsigned if JLONG right shift is.
  */
 
 #ifdef RIGHT_SHIFT_IS_UNSIGNED
@@ -165,7 +168,7 @@
  */
 
 GLOBAL(void)
-jpeg_idct_ifast (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_ifast (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
@@ -173,8 +176,8 @@ jpeg_idct_ifast (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   DCTELEM tmp10, tmp11, tmp12, tmp13;
   DCTELEM z5, z10, z11, z12, z13;
   JCOEFPTR inptr;
-  IFAST_MULT_TYPE * quantptr;
-  int * wsptr;
+  IFAST_MULT_TYPE *quantptr;
+  int *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = IDCT_range_limit(cinfo);
   int ctr;

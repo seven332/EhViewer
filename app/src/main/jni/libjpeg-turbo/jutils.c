@@ -5,7 +5,8 @@
  * Copyright (C) 1991-1996, Thomas G. Lane.
  * It was modified by The libjpeg-turbo Project to include only code
  * relevant to libjpeg-turbo.
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains tables and miscellaneous utility routines needed
  * for both compression and decompression.
@@ -124,7 +125,7 @@ jcopy_block_row (JBLOCKROW input_row, JBLOCKROW output_row,
 
 
 GLOBAL(void)
-jzero_far (void * target, size_t bytestozero)
+jzero_far (void *target, size_t bytestozero)
 /* Zero out a chunk of memory. */
 /* This might be sample-array data, block-array data, or alloc_large data. */
 {

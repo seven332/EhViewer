@@ -3,9 +3,10 @@
  *
  * This file was part of the Independent JPEG Group's software:
  * Copyright (C) 1994-1996, Thomas G. Lane.
- * It was modified by The libjpeg-turbo Project to include only code relevant
- * to libjpeg-turbo.
- * For conditions of distribution and use, see the accompanying README file.
+ * libjpeg-turbo Modifications:
+ * Copyright (C) 2015, D. R. Commander.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This include file contains common declarations for the forward and
  * inverse DCT modules.  These declarations are private to the DCT managers
@@ -18,7 +19,7 @@
 /*
  * A forward DCT routine is given a pointer to a work area of type DCTELEM[];
  * the DCT is to be performed in-place in that buffer.  Type DCTELEM is int
- * for 8-bit samples, INT32 for 12-bit samples.  (NOTE: Floating-point DCT
+ * for 8-bit samples, JLONG for 12-bit samples.  (NOTE: Floating-point DCT
  * implementations use an array of type FAST_FLOAT, instead.)
  * The DCT inputs are expected to be signed (range +-CENTERJSAMPLE).
  * The DCT outputs are returned scaled up by a factor of 8; they therefore
@@ -40,7 +41,7 @@ typedef unsigned short UDCTELEM;
 typedef unsigned int UDCTELEM2;
 #endif
 #else
-typedef INT32 DCTELEM;          /* must have 32 bits */
+typedef JLONG DCTELEM;          /* must have 32 bits */
 typedef unsigned long long UDCTELEM2;
 #endif
 
@@ -67,7 +68,7 @@ typedef MULTIPLIER ISLOW_MULT_TYPE; /* short or int, whichever is faster */
 typedef MULTIPLIER IFAST_MULT_TYPE; /* 16 bits is OK, use short if faster */
 #define IFAST_SCALE_BITS  2     /* fractional bits in scale factors */
 #else
-typedef INT32 IFAST_MULT_TYPE;  /* need 32 bits for scaled quantizers */
+typedef JLONG IFAST_MULT_TYPE;  /* need 32 bits for scaled quantizers */
 #define IFAST_SCALE_BITS  13    /* fractional bits in scale factors */
 #endif
 typedef FAST_FLOAT FLOAT_MULT_TYPE; /* preferred floating type */
@@ -89,63 +90,63 @@ typedef FAST_FLOAT FLOAT_MULT_TYPE; /* preferred floating type */
 
 /* Extern declarations for the forward and inverse DCT routines. */
 
-EXTERN(void) jpeg_fdct_islow (DCTELEM * data);
-EXTERN(void) jpeg_fdct_ifast (DCTELEM * data);
-EXTERN(void) jpeg_fdct_float (FAST_FLOAT * data);
+EXTERN(void) jpeg_fdct_islow (DCTELEM *data);
+EXTERN(void) jpeg_fdct_ifast (DCTELEM *data);
+EXTERN(void) jpeg_fdct_float (FAST_FLOAT *data);
 
 EXTERN(void) jpeg_idct_islow
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_ifast
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_float
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_7x7
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_6x6
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_5x5
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_4x4
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_3x3
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_2x2
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_1x1
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_9x9
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_10x10
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_11x11
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_12x12
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_13x13
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_14x14
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_15x15
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 EXTERN(void) jpeg_idct_16x16
-        (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+        (j_decompress_ptr cinfo, jpeg_component_info *compptr,
          JCOEFPTR coef_block, JSAMPARRAY output_buf, JDIMENSION output_col);
 
 
@@ -153,13 +154,13 @@ EXTERN(void) jpeg_idct_16x16
  * Macros for handling fixed-point arithmetic; these are used by many
  * but not all of the DCT/IDCT modules.
  *
- * All values are expected to be of type INT32.
+ * All values are expected to be of type JLONG.
  * Fractional constants are scaled left by CONST_BITS bits.
  * CONST_BITS is defined within each module using these macros,
  * and may differ from one module to the next.
  */
 
-#define ONE     ((INT32) 1)
+#define ONE     ((JLONG) 1)
 #define CONST_SCALE (ONE << CONST_BITS)
 
 /* Convert a positive real constant to an integer scaled by CONST_SCALE.
@@ -167,16 +168,16 @@ EXTERN(void) jpeg_idct_16x16
  * thus causing a lot of useless floating-point operations at run time.
  */
 
-#define FIX(x)  ((INT32) ((x) * CONST_SCALE + 0.5))
+#define FIX(x)  ((JLONG) ((x) * CONST_SCALE + 0.5))
 
-/* Descale and correctly round an INT32 value that's scaled by N bits.
+/* Descale and correctly round a JLONG value that's scaled by N bits.
  * We assume RIGHT_SHIFT rounds towards minus infinity, so adding
  * the fudge factor is correct for either sign of X.
  */
 
 #define DESCALE(x,n)  RIGHT_SHIFT((x) + (ONE << ((n)-1)), n)
 
-/* Multiply an INT32 variable by an INT32 constant to yield an INT32 result.
+/* Multiply a JLONG variable by a JLONG constant to yield a JLONG result.
  * This macro is used only when the two inputs will actually be no more than
  * 16 bits wide, so that a 16x16->32 bit multiply can be used instead of a
  * full 32x32 multiply.  This provides a useful speedup on many machines.
@@ -189,7 +190,7 @@ EXTERN(void) jpeg_idct_16x16
 #define MULTIPLY16C16(var,const)  (((INT16) (var)) * ((INT16) (const)))
 #endif
 #ifdef SHORTxLCONST_32          /* known to work with Microsoft C 6.0 */
-#define MULTIPLY16C16(var,const)  (((INT16) (var)) * ((INT32) (const)))
+#define MULTIPLY16C16(var,const)  (((INT16) (var)) * ((JLONG) (const)))
 #endif
 
 #ifndef MULTIPLY16C16           /* default definition */

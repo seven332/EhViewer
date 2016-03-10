@@ -3,9 +3,10 @@
  *
  * This file was part of the Independent JPEG Group's software:
  * Copyright (C) 1991-1997, Thomas G. Lane.
- * It was modified by The libjpeg-turbo Project to include only code and
- * information relevant to libjpeg-turbo.
- * For conditions of distribution and use, see the accompanying README file.
+ * libjpeg-turbo Modifications:
+ * Copyright (C) 2016, D. R. Commander.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains the JPEG system-independent memory management
  * routines.  This code is usable across a wide variety of machines; most
@@ -34,7 +35,7 @@
 
 #ifndef NO_GETENV
 #ifndef HAVE_STDLIB_H           /* <stdlib.h> should declare getenv() */
-extern char * getenv (const char * name);
+extern char *getenv (const char *name);
 #endif
 #endif
 
@@ -69,9 +70,9 @@ round_up_pow2 (size_t a, size_t b)
  * There isn't any really portable way to determine the worst-case alignment
  * requirement.  This module assumes that the alignment requirement is
  * multiples of ALIGN_SIZE.
- * By default, we define ALIGN_SIZE as sizeof(double).  This is necessary on some
- * workstations (where doubles really do need 8-byte alignment) and will work
- * fine on nearly everything.  If your machine has lesser alignment needs,
+ * By default, we define ALIGN_SIZE as sizeof(double).  This is necessary on
+ * some workstations (where doubles really do need 8-byte alignment) and will
+ * work fine on nearly everything.  If your machine has lesser alignment needs,
  * you can save a few bytes by making ALIGN_SIZE smaller.
  * The only place I know of where this will NOT work is certain Macintosh
  * 680x0 compilers that define double as a 10-byte IEEE extended float.
@@ -96,7 +97,7 @@ round_up_pow2 (size_t a, size_t b)
  * Small and large pool headers are identical.
  */
 
-typedef struct small_pool_struct * small_pool_ptr;
+typedef struct small_pool_struct *small_pool_ptr;
 
 typedef struct small_pool_struct {
   small_pool_ptr next;  /* next in list of pools */
@@ -104,7 +105,7 @@ typedef struct small_pool_struct {
   size_t bytes_left;            /* bytes still available in this pool */
 } small_pool_hdr;
 
-typedef struct large_pool_struct * large_pool_ptr;
+typedef struct large_pool_struct *large_pool_ptr;
 
 typedef struct large_pool_struct {
   large_pool_ptr next;  /* next in list of pools */
@@ -140,7 +141,7 @@ typedef struct {
   JDIMENSION last_rowsperchunk; /* from most recent alloc_sarray/barray */
 } my_memory_mgr;
 
-typedef my_memory_mgr * my_mem_ptr;
+typedef my_memory_mgr *my_mem_ptr;
 
 
 /*
@@ -266,7 +267,7 @@ alloc_small (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
 {
   my_mem_ptr mem = (my_mem_ptr) cinfo->mem;
   small_pool_ptr hdr_ptr, prev_hdr_ptr;
-  char * data_ptr;
+  char *data_ptr;
   size_t min_request, slop;
 
   /*
@@ -275,10 +276,16 @@ alloc_small (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
    * and so that algorithms can straddle outside the proper area up
    * to the next alignment.
    */
+  if (sizeofobject > MAX_ALLOC_CHUNK) {
+    /* This prevents overflow/wrap-around in round_up_pow2() if sizeofobject
+       is close to SIZE_MAX. */
+    out_of_memory(cinfo, 7);
+  }
   sizeofobject = round_up_pow2(sizeofobject, ALIGN_SIZE);
 
   /* Check for unsatisfiable request (do now to ensure no overflow below) */
-  if ((sizeof(small_pool_hdr) + sizeofobject + ALIGN_SIZE - 1) > MAX_ALLOC_CHUNK)
+  if ((sizeof(small_pool_hdr) + sizeofobject + ALIGN_SIZE - 1) >
+      MAX_ALLOC_CHUNK)
     out_of_memory(cinfo, 1);    /* request exceeds malloc's ability */
 
   /* See if space is available in any existing pool */
@@ -356,17 +363,23 @@ alloc_large (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
 {
   my_mem_ptr mem = (my_mem_ptr) cinfo->mem;
   large_pool_ptr hdr_ptr;
-  char * data_ptr;
+  char *data_ptr;
 
   /*
    * Round up the requested size to a multiple of ALIGN_SIZE so that
    * algorithms can straddle outside the proper area up to the next
    * alignment.
    */
+  if (sizeofobject > MAX_ALLOC_CHUNK) {
+    /* This prevents overflow/wrap-around in round_up_pow2() if sizeofobject
+       is close to SIZE_MAX. */
+    out_of_memory(cinfo, 8);
+  }
   sizeofobject = round_up_pow2(sizeofobject, ALIGN_SIZE);
 
   /* Check for unsatisfiable request (do now to ensure no overflow below) */
-  if ((sizeof(large_pool_hdr) + sizeofobject + ALIGN_SIZE - 1) > MAX_ALLOC_CHUNK)
+  if ((sizeof(large_pool_hdr) + sizeofobject + ALIGN_SIZE - 1) >
+      MAX_ALLOC_CHUNK)
     out_of_memory(cinfo, 3);    /* request exceeds malloc's ability */
 
   /* Always make a new pool */
@@ -378,7 +391,8 @@ alloc_large (j_common_ptr cinfo, int pool_id, size_t sizeofobject)
                                             ALIGN_SIZE - 1);
   if (hdr_ptr == NULL)
     out_of_memory(cinfo, 4);    /* jpeg_get_large failed */
-  mem->total_space_allocated += sizeofobject + sizeof(large_pool_hdr) + ALIGN_SIZE - 1;
+  mem->total_space_allocated += sizeofobject + sizeof(large_pool_hdr) +
+                                ALIGN_SIZE - 1;
 
   /* Success, initialize the new pool header and add to list */
   hdr_ptr->next = mem->large_list[pool_id];
@@ -428,7 +442,14 @@ alloc_sarray (j_common_ptr cinfo, int pool_id,
   /* Make sure each row is properly aligned */
   if ((ALIGN_SIZE % sizeof(JSAMPLE)) != 0)
     out_of_memory(cinfo, 5);    /* safety check */
-  samplesperrow = (JDIMENSION)round_up_pow2(samplesperrow, (2 * ALIGN_SIZE) / sizeof(JSAMPLE));
+
+  if (samplesperrow > MAX_ALLOC_CHUNK) {
+    /* This prevents overflow/wrap-around in round_up_pow2() if sizeofobject
+       is close to SIZE_MAX. */
+    out_of_memory(cinfo, 9);
+  }
+  samplesperrow = (JDIMENSION)round_up_pow2(samplesperrow, (2 * ALIGN_SIZE) /
+                                                           sizeof(JSAMPLE));
 
   /* Calculate max # of rows allowed in one allocation chunk */
   ltemp = (MAX_ALLOC_CHUNK-sizeof(large_pool_hdr)) /
@@ -1133,7 +1154,7 @@ jinit_memory_mgr (j_common_ptr cinfo)
    * this feature.
    */
 #ifndef NO_GETENV
-  { char * memenv;
+  { char *memenv;
 
     if ((memenv = getenv("JPEGMEM")) != NULL) {
       char ch = 'x';

@@ -4,8 +4,9 @@
  * This file was part of the Independent JPEG Group's software:
  * Copyright (C) 1991-1996, Thomas G. Lane.
  * libjpeg-turbo Modifications:
- * Copyright (C) 2009, 2014, D. R. Commander.
- * For conditions of distribution and use, see the accompanying README file.
+ * Copyright (C) 2009, 2014-2015, D. R. Commander.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains 2-pass color quantization (color mapping) routines.
  * These routines provide selection of a custom color map for an image,
@@ -127,11 +128,11 @@ static const int c_scales[3]={R_SCALE, G_SCALE, B_SCALE};
 
 typedef UINT16 histcell;        /* histogram cell; prefer an unsigned type */
 
-typedef histcell * histptr; /* for pointers to histogram cells */
+typedef histcell *histptr; /* for pointers to histogram cells */
 
 typedef histcell hist1d[HIST_C2_ELEMS]; /* typedefs for the array */
-typedef hist1d * hist2d;    /* type for the 2nd-level pointers */
-typedef hist2d * hist3d;        /* type for top-level pointer */
+typedef hist1d *hist2d;         /* type for the 2nd-level pointers */
+typedef hist2d *hist3d;         /* type for top-level pointer */
 
 
 /* Declarations for Floyd-Steinberg dithering.
@@ -159,8 +160,8 @@ typedef hist2d * hist3d;        /* type for top-level pointer */
 typedef INT16 FSERROR;          /* 16 bits should be enough */
 typedef int LOCFSERROR;         /* use 'int' for calculation temps */
 #else
-typedef INT32 FSERROR;          /* may need more than 16 bits */
-typedef INT32 LOCFSERROR;       /* be sure calculation temps are big enough */
+typedef JLONG FSERROR;          /* may need more than 16 bits */
+typedef JLONG LOCFSERROR;       /* be sure calculation temps are big enough */
 #endif
 
 typedef FSERROR *FSERRPTR;      /* pointer to error array */
@@ -183,10 +184,10 @@ typedef struct {
   /* Variables for Floyd-Steinberg dithering */
   FSERRPTR fserrors;            /* accumulated errors */
   boolean on_odd_row;           /* flag to remember which row we are on */
-  int * error_limiter;          /* table for clamping the applied error */
+  int *error_limiter;           /* table for clamping the applied error */
 } my_cquantizer;
 
-typedef my_cquantizer * my_cquantize_ptr;
+typedef my_cquantizer *my_cquantize_ptr;
 
 
 /*
@@ -239,12 +240,12 @@ typedef struct {
   int c1min, c1max;
   int c2min, c2max;
   /* The volume (actually 2-norm) of the box */
-  INT32 volume;
+  JLONG volume;
   /* The number of nonzero histogram cells within this box */
   long colorcount;
 } box;
 
-typedef box * boxptr;
+typedef box *boxptr;
 
 
 LOCAL(boxptr)
@@ -274,7 +275,7 @@ find_biggest_volume (boxptr boxlist, int numboxes)
 {
   register boxptr boxp;
   register int i;
-  register INT32 maxv = 0;
+  register JLONG maxv = 0;
   boxptr which = NULL;
 
   for (i = 0, boxp = boxlist; i < numboxes; i++, boxp++) {
@@ -297,7 +298,7 @@ update_box (j_decompress_ptr cinfo, boxptr boxp)
   histptr histp;
   int c0,c1,c2;
   int c0min,c0max,c1min,c1max,c2min,c2max;
-  INT32 dist0,dist1,dist2;
+  JLONG dist0,dist1,dist2;
   long ccount;
 
   c0min = boxp->c0min;  c0max = boxp->c0max;
@@ -571,7 +572,7 @@ select_colors (j_decompress_ptr cinfo, int desired_colors)
  * distance from every colormap entry to every histogram cell.  Unfortunately,
  * it needs a work array to hold the best-distance-so-far for each histogram
  * cell (because the inner loop has to be over cells, not colormap entries).
- * The work array elements have to be INT32s, so the work array would need
+ * The work array elements have to be JLONGs, so the work array would need
  * 256Kb at our recommended precision.  This is not feasible in DOS machines.
  *
  * To get around these problems, we apply Thomas' method to compute the
@@ -637,8 +638,8 @@ find_nearby_colors (j_decompress_ptr cinfo, int minc0, int minc1, int minc2,
   int maxc0, maxc1, maxc2;
   int centerc0, centerc1, centerc2;
   int i, x, ncolors;
-  INT32 minmaxdist, min_dist, max_dist, tdist;
-  INT32 mindist[MAXNUMCOLORS];  /* min distance to colormap entry i */
+  JLONG minmaxdist, min_dist, max_dist, tdist;
+  JLONG mindist[MAXNUMCOLORS];  /* min distance to colormap entry i */
 
   /* Compute true coordinates of update box's upper corner and center.
    * Actually we compute the coordinates of the center of the upper-corner
@@ -762,15 +763,15 @@ find_best_colors (j_decompress_ptr cinfo, int minc0, int minc1, int minc2,
 {
   int ic0, ic1, ic2;
   int i, icolor;
-  register INT32 * bptr;        /* pointer into bestdist[] array */
-  JSAMPLE * cptr;               /* pointer into bestcolor[] array */
-  INT32 dist0, dist1;           /* initial distance values */
-  register INT32 dist2;         /* current distance in inner loop */
-  INT32 xx0, xx1;               /* distance increments */
-  register INT32 xx2;
-  INT32 inc0, inc1, inc2;       /* initial values for increments */
+  register JLONG *bptr;         /* pointer into bestdist[] array */
+  JSAMPLE *cptr;                /* pointer into bestcolor[] array */
+  JLONG dist0, dist1;           /* initial distance values */
+  register JLONG dist2;         /* current distance in inner loop */
+  JLONG xx0, xx1;               /* distance increments */
+  register JLONG xx2;
+  JLONG inc0, inc1, inc2;       /* initial values for increments */
   /* This array holds the distance to the nearest-so-far color for each cell */
-  INT32 bestdist[BOX_C0_ELEMS * BOX_C1_ELEMS * BOX_C2_ELEMS];
+  JLONG bestdist[BOX_C0_ELEMS * BOX_C1_ELEMS * BOX_C2_ELEMS];
 
   /* Initialize best-distance for each cell of the update box */
   bptr = bestdist;
@@ -840,7 +841,7 @@ fill_inverse_cmap (j_decompress_ptr cinfo, int c0, int c1, int c2)
   hist3d histogram = cquantize->histogram;
   int minc0, minc1, minc2;      /* lower left corner of update box */
   int ic0, ic1, ic2;
-  register JSAMPLE * cptr;      /* pointer into bestcolor[] array */
+  register JSAMPLE *cptr;       /* pointer into bestcolor[] array */
   register histptr cachep;      /* pointer into main cache array */
   /* This array lists the candidate colormap indexes. */
   JSAMPLE colorlist[MAXNUMCOLORS];
@@ -1079,7 +1080,7 @@ init_error_limit (j_decompress_ptr cinfo)
 /* Allocate and fill in the error_limiter table */
 {
   my_cquantize_ptr cquantize = (my_cquantize_ptr) cinfo->cquantize;
-  int * table;
+  int *table;
   int in, out;
 
   table = (int *) (*cinfo->mem->alloc_small)

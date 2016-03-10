@@ -71,10 +71,10 @@ PW_F1306        times 8 dw  F_1_306 << CONST_SHIFT
 ; Perform the forward DCT on one block of samples.
 ;
 ; GLOBAL(void)
-; jsimd_fdct_ifast_sse2 (DCTELEM * data)
+; jsimd_fdct_ifast_sse2 (DCTELEM *data)
 ;
 
-; r10 = DCTELEM * data
+; r10 = DCTELEM *data
 
 %define wk(i)           rbp-(WK_NUM-(i))*SIZEOF_XMMWORD ; xmmword wk[WK_NUM]
 %define WK_NUM          2

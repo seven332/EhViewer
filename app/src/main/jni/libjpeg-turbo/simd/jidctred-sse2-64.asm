@@ -100,11 +100,11 @@ PB_CENTERJSAMP  times 16 db CENTERJSAMPLE
 ; producing a reduced-size 4x4 output block.
 ;
 ; GLOBAL(void)
-; jsimd_idct_4x4_sse2 (void * dct_table, JCOEFPTR coef_block,
+; jsimd_idct_4x4_sse2 (void *dct_table, JCOEFPTR coef_block,
 ;                      JSAMPARRAY output_buf, JDIMENSION output_col)
 ;
 
-; r10 = void * dct_table
+; r10 = void *dct_table
 ; r11 = JCOEFPTR coef_block
 ; r12 = JSAMPARRAY output_buf
 ; r13 = JDIMENSION output_col
@@ -403,11 +403,11 @@ EXTN(jsimd_idct_4x4_sse2):
 ; producing a reduced-size 2x2 output block.
 ;
 ; GLOBAL(void)
-; jsimd_idct_2x2_sse2 (void * dct_table, JCOEFPTR coef_block,
+; jsimd_idct_2x2_sse2 (void *dct_table, JCOEFPTR coef_block,
 ;                      JSAMPARRAY output_buf, JDIMENSION output_col)
 ;
 
-; r10 = void * dct_table
+; r10 = void *dct_table
 ; r11 = JCOEFPTR coef_block
 ; r12 = JSAMPARRAY output_buf
 ; r13 = JDIMENSION output_col

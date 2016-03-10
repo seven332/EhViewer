@@ -5,7 +5,8 @@
  * Copyright (C) 1995-1997, Thomas G. Lane.
  * libjpeg-turbo Modifications:
  * Copyright (C) 2015, D. R. Commander.
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains Huffman entropy decoding routines for progressive JPEG.
  *
@@ -68,12 +69,12 @@ typedef struct {
   unsigned int restarts_to_go;  /* MCUs left in this restart interval */
 
   /* Pointers to derived tables (these workspaces have image lifespan) */
-  d_derived_tbl * derived_tbls[NUM_HUFF_TBLS];
+  d_derived_tbl *derived_tbls[NUM_HUFF_TBLS];
 
-  d_derived_tbl * ac_derived_tbl; /* active table during an AC scan */
+  d_derived_tbl *ac_derived_tbl; /* active table during an AC scan */
 } phuff_entropy_decoder;
 
-typedef phuff_entropy_decoder * phuff_entropy_ptr;
+typedef phuff_entropy_decoder *phuff_entropy_ptr;
 
 /* Forward declarations */
 METHODDEF(boolean) decode_mcu_DC_first (j_decompress_ptr cinfo,
@@ -98,7 +99,7 @@ start_pass_phuff_decoder (j_decompress_ptr cinfo)
   int ci, coefi, tbl;
   d_derived_tbl **pdtbl;
   int *coef_bit_ptr;
-  jpeg_component_info * compptr;
+  jpeg_component_info *compptr;
 
   is_DC_band = (cinfo->Ss == 0);
 
@@ -297,8 +298,8 @@ decode_mcu_DC_first (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
   JBLOCKROW block;
   BITREAD_STATE_VARS;
   savable_state state;
-  d_derived_tbl * tbl;
-  jpeg_component_info * compptr;
+  d_derived_tbl *tbl;
+  jpeg_component_info *compptr;
 
   /* Process restart marker if needed; may have to suspend */
   if (cinfo->restart_interval) {
@@ -368,7 +369,7 @@ decode_mcu_AC_first (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
   unsigned int EOBRUN;
   JBLOCKROW block;
   BITREAD_STATE_VARS;
-  d_derived_tbl * tbl;
+  d_derived_tbl *tbl;
 
   /* Process restart marker if needed; may have to suspend */
   if (cinfo->restart_interval) {
@@ -504,7 +505,7 @@ decode_mcu_AC_refine (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
   JBLOCKROW block;
   JCOEFPTR thiscoef;
   BITREAD_STATE_VARS;
-  d_derived_tbl * tbl;
+  d_derived_tbl *tbl;
   int num_newnz;
   int newnz_pos[DCTSIZE2];
 

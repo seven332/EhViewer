@@ -27,12 +27,12 @@
 ;
 ; GLOBAL(void)
 ; jsimd_convsamp_float_3dnow (JSAMPARRAY sample_data, JDIMENSION start_col,
-;                             FAST_FLOAT * workspace);
+;                             FAST_FLOAT *workspace);
 ;
 
 %define sample_data     ebp+8           ; JSAMPARRAY sample_data
 %define start_col       ebp+12          ; JDIMENSION start_col
-%define workspace       ebp+16          ; FAST_FLOAT * workspace
+%define workspace       ebp+16          ; FAST_FLOAT *workspace
 
         align   16
         global  EXTN(jsimd_convsamp_float_3dnow)
@@ -129,13 +129,13 @@ EXTN(jsimd_convsamp_float_3dnow):
 ; Quantize/descale the coefficients, and store into coef_block
 ;
 ; GLOBAL(void)
-; jsimd_quantize_float_3dnow (JCOEFPTR coef_block, FAST_FLOAT * divisors,
-;                             FAST_FLOAT * workspace);
+; jsimd_quantize_float_3dnow (JCOEFPTR coef_block, FAST_FLOAT *divisors,
+;                             FAST_FLOAT *workspace);
 ;
 
 %define coef_block      ebp+8           ; JCOEFPTR coef_block
-%define divisors        ebp+12          ; FAST_FLOAT * divisors
-%define workspace       ebp+16          ; FAST_FLOAT * workspace
+%define divisors        ebp+12          ; FAST_FLOAT *divisors
+%define workspace       ebp+16          ; FAST_FLOAT *workspace
 
         align   16
         global  EXTN(jsimd_quantize_float_3dnow)

@@ -92,10 +92,10 @@ PW_DESCALE_P2X  times 8 dw  1 << (PASS1_BITS-1)
 ; Perform the forward DCT on one block of samples.
 ;
 ; GLOBAL(void)
-; jsimd_fdct_islow_sse2 (DCTELEM * data)
+; jsimd_fdct_islow_sse2 (DCTELEM *data)
 ;
 
-; r10 = DCTELEM * data
+; r10 = DCTELEM *data
 
 %define wk(i)           rbp-(WK_NUM-(i))*SIZEOF_XMMWORD ; xmmword wk[WK_NUM]
 %define WK_NUM          6

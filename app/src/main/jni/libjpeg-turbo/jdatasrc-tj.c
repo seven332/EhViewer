@@ -6,7 +6,8 @@
  * Modified 2009-2011 by Guido Vollbeding.
  * libjpeg-turbo Modifications:
  * Copyright (C) 2011, D. R. Commander.
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains decompression data source routines for the case of
  * reading JPEG data from memory or from a file (or any stdio stream).
@@ -105,7 +106,7 @@ fill_mem_input_buffer (j_decompress_ptr cinfo)
 METHODDEF(void)
 skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
-  struct jpeg_source_mgr * src = cinfo->src;
+  struct jpeg_source_mgr *src = cinfo->src;
 
   /* Just a dumb implementation for now.  Could use fseek() except
    * it doesn't work on pipes.  Not clear that being smart is worth
@@ -157,9 +158,9 @@ term_source (j_decompress_ptr cinfo)
 
 GLOBAL(void)
 jpeg_mem_src_tj (j_decompress_ptr cinfo,
-              unsigned char * inbuffer, unsigned long insize)
+                 const unsigned char *inbuffer, unsigned long insize)
 {
-  struct jpeg_source_mgr * src;
+  struct jpeg_source_mgr *src;
 
   if (inbuffer == NULL || insize == 0)  /* Treat empty input as fatal error */
     ERREXIT(cinfo, JERR_INPUT_EMPTY);
@@ -181,5 +182,5 @@ jpeg_mem_src_tj (j_decompress_ptr cinfo,
   src->resync_to_restart = jpeg_resync_to_restart; /* use default method */
   src->term_source = term_source;
   src->bytes_in_buffer = (size_t) insize;
-  src->next_input_byte = (JOCTET *) inbuffer;
+  src->next_input_byte = (const JOCTET *) inbuffer;
 }

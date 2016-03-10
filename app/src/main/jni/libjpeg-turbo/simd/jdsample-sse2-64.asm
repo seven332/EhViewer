@@ -50,13 +50,13 @@ PW_EIGHT        times 8 dw  8
 ; jsimd_h2v1_fancy_upsample_sse2 (int max_v_samp_factor,
 ;                                 JDIMENSION downsampled_width,
 ;                                 JSAMPARRAY input_data,
-;                                 JSAMPARRAY * output_data_ptr);
+;                                 JSAMPARRAY *output_data_ptr);
 ;
 
 ; r10 = int max_v_samp_factor
 ; r11 = JDIMENSION downsampled_width
 ; r12 = JSAMPARRAY input_data
-; r13 = JSAMPARRAY * output_data_ptr
+; r13 = JSAMPARRAY *output_data_ptr
 
         align   16
         global  EXTN(jsimd_h2v1_fancy_upsample_sse2)
@@ -189,13 +189,13 @@ EXTN(jsimd_h2v1_fancy_upsample_sse2):
 ; jsimd_h2v2_fancy_upsample_sse2 (int max_v_samp_factor,
 ;                                 JDIMENSION downsampled_width,
 ;                                 JSAMPARRAY input_data,
-;                                 JSAMPARRAY * output_data_ptr);
+;                                 JSAMPARRAY *output_data_ptr);
 ;
 
 ; r10 = int max_v_samp_factor
 ; r11 = JDIMENSION downsampled_width
 ; r12 = JSAMPARRAY input_data
-; r13 = JSAMPARRAY * output_data_ptr
+; r13 = JSAMPARRAY *output_data_ptr
 
 %define wk(i)           rbp-(WK_NUM-(i))*SIZEOF_XMMWORD ; xmmword wk[WK_NUM]
 %define WK_NUM          4
@@ -489,13 +489,13 @@ EXTN(jsimd_h2v2_fancy_upsample_sse2):
 ; jsimd_h2v1_upsample_sse2 (int max_v_samp_factor,
 ;                           JDIMENSION output_width,
 ;                           JSAMPARRAY input_data,
-;                           JSAMPARRAY * output_data_ptr);
+;                           JSAMPARRAY *output_data_ptr);
 ;
 
 ; r10 = int max_v_samp_factor
 ; r11 = JDIMENSION output_width
 ; r12 = JSAMPARRAY input_data
-; r13 = JSAMPARRAY * output_data_ptr
+; r13 = JSAMPARRAY *output_data_ptr
 
         align   16
         global  EXTN(jsimd_h2v1_upsample_sse2)
@@ -578,13 +578,13 @@ EXTN(jsimd_h2v1_upsample_sse2):
 ; jsimd_h2v2_upsample_sse2 (nt max_v_samp_factor,
 ;                           JDIMENSION output_width,
 ;                           JSAMPARRAY input_data,
-;                           JSAMPARRAY * output_data_ptr);
+;                           JSAMPARRAY *output_data_ptr);
 ;
 
 ; r10 = int max_v_samp_factor
 ; r11 = JDIMENSION output_width
 ; r12 = JSAMPARRAY input_data
-; r13 = JSAMPARRAY * output_data_ptr
+; r13 = JSAMPARRAY *output_data_ptr
 
         align   16
         global  EXTN(jsimd_h2v2_upsample_sse2)

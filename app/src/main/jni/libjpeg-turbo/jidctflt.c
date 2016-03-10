@@ -6,7 +6,8 @@
  * Modified 2010 by Guido Vollbeding.
  * libjpeg-turbo Modifications:
  * Copyright (C) 2014, D. R. Commander.
-  * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains a floating-point implementation of the
  * inverse DCT (Discrete Cosine Transform).  In the IJG code, this routine
@@ -25,8 +26,8 @@
  * This implementation is based on Arai, Agui, and Nakajima's algorithm for
  * scaled DCT.  Their original paper (Trans. IEICE E-71(11):1095) is in
  * Japanese, but the algorithm is described in the Pennebaker & Mitchell
- * JPEG textbook (see REFERENCES section in file README).  The following code
- * is based directly on figure 4-8 in P&M.
+ * JPEG textbook (see REFERENCES section in file README.ijg).  The following
+ * code is based directly on figure 4-8 in P&M.
  * While an 8-point DCT cannot be done in less than 11 multiplies, it is
  * possible to arrange the computation so that many of the multiplies are
  * simple scalings of the final outputs.  These multiplies can then be
@@ -68,7 +69,7 @@
  */
 
 GLOBAL(void)
-jpeg_idct_float (j_decompress_ptr cinfo, jpeg_component_info * compptr,
+jpeg_idct_float (j_decompress_ptr cinfo, jpeg_component_info *compptr,
                  JCOEFPTR coef_block,
                  JSAMPARRAY output_buf, JDIMENSION output_col)
 {
@@ -76,8 +77,8 @@ jpeg_idct_float (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   FAST_FLOAT tmp10, tmp11, tmp12, tmp13;
   FAST_FLOAT z5, z10, z11, z12, z13;
   JCOEFPTR inptr;
-  FLOAT_MULT_TYPE * quantptr;
-  FAST_FLOAT * wsptr;
+  FLOAT_MULT_TYPE *quantptr;
+  FAST_FLOAT *wsptr;
   JSAMPROW outptr;
   JSAMPLE *range_limit = cinfo->sample_range_limit;
   int ctr;

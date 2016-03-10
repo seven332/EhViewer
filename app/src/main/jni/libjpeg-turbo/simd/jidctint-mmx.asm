@@ -91,11 +91,11 @@ PB_CENTERJSAMP  times 8 db  CENTERJSAMPLE
 ; Perform dequantization and inverse DCT on one block of coefficients.
 ;
 ; GLOBAL(void)
-; jsimd_idct_islow_mmx (void * dct_table, JCOEFPTR coef_block,
+; jsimd_idct_islow_mmx (void *dct_table, JCOEFPTR coef_block,
 ;                       JSAMPARRAY output_buf, JDIMENSION output_col)
 ;
 
-%define dct_table(b)    (b)+8           ; jpeg_component_info * compptr
+%define dct_table(b)    (b)+8           ; jpeg_component_info *compptr
 %define coef_block(b)   (b)+12          ; JCOEFPTR coef_block
 %define output_buf(b)   (b)+16          ; JSAMPARRAY output_buf
 %define output_col(b)   (b)+20          ; JDIMENSION output_col
@@ -130,7 +130,7 @@ EXTN(jsimd_idct_islow_mmx):
 ;       mov     eax, [original_ebp]
         mov     edx, POINTER [dct_table(eax)]           ; quantptr
         mov     esi, JCOEFPTR [coef_block(eax)]         ; inptr
-        lea     edi, [workspace]                        ; JCOEF * wsptr
+        lea     edi, [workspace]                        ; JCOEF *wsptr
         mov     ecx, DCTSIZE/4                          ; ctr
         alignx  16,7
 .columnloop:
@@ -510,7 +510,7 @@ EXTN(jsimd_idct_islow_mmx):
         ; ---- Pass 2: process rows from work array, store into output array.
 
         mov     eax, [original_ebp]
-        lea     esi, [workspace]                        ; JCOEF * wsptr
+        lea     esi, [workspace]                        ; JCOEF *wsptr
         mov     edi, JSAMPARRAY [output_buf(eax)]       ; (JSAMPROW *)
         mov     eax, JDIMENSION [output_col(eax)]
         mov     ecx, DCTSIZE/4                          ; ctr

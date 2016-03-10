@@ -5,7 +5,8 @@
  * Copyright (C) 1995-1997, Thomas G. Lane.
  * It was modified by The libjpeg-turbo Project to include only code relevant
  * to libjpeg-turbo.
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains library routines for transcoding decompression,
  * that is, reading raw DCT coefficient arrays from an input JPEG file.

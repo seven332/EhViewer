@@ -2,7 +2,8 @@
  * jpegcomp.h
  *
  * Copyright (C) 2010, D. R. Commander
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * JPEG compatibility macros
  * These declarations are considered internal to the JPEG library; most

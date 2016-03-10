@@ -6,7 +6,8 @@
  * Modified 2009-2011 by Guido Vollbeding.
  * libjpeg-turbo Modifications:
  * Copyright (C) 2013, D. R. Commander.
- * For conditions of distribution and use, see the accompanying README file.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains decompression data source routines for the case of
  * reading JPEG data from memory or from a file (or any stdio stream).
@@ -28,12 +29,12 @@
 typedef struct {
   struct jpeg_source_mgr pub;   /* public fields */
 
-  FILE * infile;                /* source stream */
-  JOCTET * buffer;              /* start of buffer */
+  FILE *infile;                 /* source stream */
+  JOCTET *buffer;               /* start of buffer */
   boolean start_of_file;        /* have we gotten any data yet? */
 } my_source_mgr;
 
-typedef my_source_mgr * my_src_ptr;
+typedef my_source_mgr *my_src_ptr;
 
 
 /* Expanded data source object for custom input */
@@ -42,9 +43,9 @@ typedef struct {
   struct jpeg_source_mgr pub;   /* public fields */
 
   custom_source_func func;      /* custom func */
-  JOCTET * buffer;              /* start of buffer */
+  JOCTET *buffer;              /* start of buffer */
   boolean start_of_read;        /* have we gotten any data yet? */
-  void * custom_stuff;          /* custom stuff to help custom func */
+  void *custom_stuff;          /* custom stuff to help custom func */
 } my_custom_source_mgr;
 
 typedef my_custom_source_mgr * my_custom_src_ptr;
@@ -213,7 +214,7 @@ fill_mem_input_buffer (j_decompress_ptr cinfo)
 METHODDEF(void)
 skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
-  struct jpeg_source_mgr * src = cinfo->src;
+  struct jpeg_source_mgr *src = cinfo->src;
 
   /* Just a dumb implementation for now.  Could use fseek() except
    * it doesn't work on pipes.  Not clear that being smart is worth
@@ -265,7 +266,7 @@ term_source (j_decompress_ptr cinfo)
  */
 
 GLOBAL(void)
-jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
+jpeg_stdio_src (j_decompress_ptr cinfo, FILE *infile)
 {
   my_src_ptr src;
 
@@ -299,7 +300,7 @@ jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
 
 
 GLOBAL(void)
-jpeg_custom_src (j_decompress_ptr cinfo, custom_source_func func, void * custom_stuff) {
+jpeg_custom_src (j_decompress_ptr cinfo, custom_source_func func, void *custom_stuff) {
   my_custom_src_ptr src;
 
   /* The source object and input buffer are made permanent so that a series
@@ -340,9 +341,9 @@ jpeg_custom_src (j_decompress_ptr cinfo, custom_source_func func, void * custom_
 
 GLOBAL(void)
 jpeg_mem_src (j_decompress_ptr cinfo,
-              unsigned char * inbuffer, unsigned long insize)
+              const unsigned char *inbuffer, unsigned long insize)
 {
-  struct jpeg_source_mgr * src;
+  struct jpeg_source_mgr *src;
 
   if (inbuffer == NULL || insize == 0)  /* Treat empty input as fatal error */
     ERREXIT(cinfo, JERR_INPUT_EMPTY);
@@ -364,6 +365,6 @@ jpeg_mem_src (j_decompress_ptr cinfo,
   src->resync_to_restart = jpeg_resync_to_restart; /* use default method */
   src->term_source = term_source;
   src->bytes_in_buffer = (size_t) insize;
-  src->next_input_byte = (JOCTET *) inbuffer;
+  src->next_input_byte = (const JOCTET *) inbuffer;
 }
 #endif

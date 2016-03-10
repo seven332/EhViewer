@@ -5,8 +5,9 @@
  * Copyright (C) 1991-1997, Thomas G. Lane.
  * Modifications:
  * Copyright (C) 2013, Linaro Limited.
- * Copyright (C) 2014, D. R. Commander.
- * For conditions of distribution and use, see the accompanying README file.
+ * Copyright (C) 2014-2015, D. R. Commander.
+ * For conditions of distribution and use, see the accompanying README.ijg
+ * file.
  *
  * This file contains output colorspace conversion routines.
  */
@@ -30,12 +31,12 @@ ycc_rgb565_convert_internal (j_decompress_ptr cinfo,
   register JSAMPLE * range_limit = cinfo->sample_range_limit;
   register int * Crrtab = cconvert->Cr_r_tab;
   register int * Cbbtab = cconvert->Cb_b_tab;
-  register INT32 * Crgtab = cconvert->Cr_g_tab;
-  register INT32 * Cbgtab = cconvert->Cb_g_tab;
+  register JLONG * Crgtab = cconvert->Cr_g_tab;
+  register JLONG * Cbgtab = cconvert->Cb_g_tab;
   SHIFT_TEMPS
 
   while (--num_rows >= 0) {
-    INT32 rgb;
+    JLONG rgb;
     unsigned int r, g, b;
     inptr0 = input_buf[0][input_row];
     inptr1 = input_buf[1][input_row];
@@ -52,7 +53,7 @@ ycc_rgb565_convert_internal (j_decompress_ptr cinfo,
                                             SCALEBITS))];
       b = range_limit[y + Cbbtab[cb]];
       rgb = PACK_SHORT_565(r, g, b);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
       outptr += 2;
       num_cols--;
     }
@@ -87,7 +88,7 @@ ycc_rgb565_convert_internal (j_decompress_ptr cinfo,
                                             SCALEBITS))];
       b = range_limit[y + Cbbtab[cb]];
       rgb = PACK_SHORT_565(r, g, b);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
     }
   }
 }
@@ -109,13 +110,13 @@ ycc_rgb565D_convert_internal (j_decompress_ptr cinfo,
   register JSAMPLE * range_limit = cinfo->sample_range_limit;
   register int * Crrtab = cconvert->Cr_r_tab;
   register int * Cbbtab = cconvert->Cb_b_tab;
-  register INT32 * Crgtab = cconvert->Cr_g_tab;
-  register INT32 * Cbgtab = cconvert->Cb_g_tab;
-  INT32 d0 = dither_matrix[cinfo->output_scanline & DITHER_MASK];
+  register JLONG * Crgtab = cconvert->Cr_g_tab;
+  register JLONG * Cbgtab = cconvert->Cb_g_tab;
+  JLONG d0 = dither_matrix[cinfo->output_scanline & DITHER_MASK];
   SHIFT_TEMPS
 
   while (--num_rows >= 0) {
-    INT32 rgb;
+    JLONG rgb;
     unsigned int r, g, b;
 
     inptr0 = input_buf[0][input_row];
@@ -133,7 +134,7 @@ ycc_rgb565D_convert_internal (j_decompress_ptr cinfo,
                                                      SCALEBITS)), d0)];
       b = range_limit[DITHER_565_B(y + Cbbtab[cb], d0)];
       rgb = PACK_SHORT_565(r, g, b);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
       outptr += 2;
       num_cols--;
     }
@@ -173,7 +174,7 @@ ycc_rgb565D_convert_internal (j_decompress_ptr cinfo,
                                                      SCALEBITS)), d0)];
       b = range_limit[DITHER_565_B(y + Cbbtab[cb], d0)];
       rgb = PACK_SHORT_565(r, g, b);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
     }
   }
 }
@@ -192,7 +193,7 @@ rgb_rgb565_convert_internal (j_decompress_ptr cinfo,
   SHIFT_TEMPS
 
   while (--num_rows >= 0) {
-    INT32 rgb;
+    JLONG rgb;
     unsigned int r, g, b;
 
     inptr0 = input_buf[0][input_row];
@@ -205,7 +206,7 @@ rgb_rgb565_convert_internal (j_decompress_ptr cinfo,
       g = GETJSAMPLE(*inptr1++);
       b = GETJSAMPLE(*inptr2++);
       rgb = PACK_SHORT_565(r, g, b);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
       outptr += 2;
       num_cols--;
     }
@@ -228,7 +229,7 @@ rgb_rgb565_convert_internal (j_decompress_ptr cinfo,
       g = GETJSAMPLE(*inptr1);
       b = GETJSAMPLE(*inptr2);
       rgb = PACK_SHORT_565(r, g, b);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
     }
   }
 }
@@ -245,11 +246,11 @@ rgb_rgb565D_convert_internal (j_decompress_ptr cinfo,
   register JDIMENSION col;
   register JSAMPLE * range_limit = cinfo->sample_range_limit;
   JDIMENSION num_cols = cinfo->output_width;
-  INT32 d0 = dither_matrix[cinfo->output_scanline & DITHER_MASK];
+  JLONG d0 = dither_matrix[cinfo->output_scanline & DITHER_MASK];
   SHIFT_TEMPS
 
   while (--num_rows >= 0) {
-    INT32 rgb;
+    JLONG rgb;
     unsigned int r, g, b;
 
     inptr0 = input_buf[0][input_row];
@@ -262,7 +263,7 @@ rgb_rgb565D_convert_internal (j_decompress_ptr cinfo,
       g = range_limit[DITHER_565_G(GETJSAMPLE(*inptr1++), d0)];
       b = range_limit[DITHER_565_B(GETJSAMPLE(*inptr2++), d0)];
       rgb = PACK_SHORT_565(r, g, b);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
       outptr += 2;
       num_cols--;
     }
@@ -287,7 +288,7 @@ rgb_rgb565D_convert_internal (j_decompress_ptr cinfo,
       g = range_limit[DITHER_565_G(GETJSAMPLE(*inptr1), d0)];
       b = range_limit[DITHER_565_B(GETJSAMPLE(*inptr2), d0)];
       rgb = PACK_SHORT_565(r, g, b);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
     }
   }
 }
@@ -304,7 +305,7 @@ gray_rgb565_convert_internal (j_decompress_ptr cinfo,
   JDIMENSION num_cols = cinfo->output_width;
 
   while (--num_rows >= 0) {
-    INT32 rgb;
+    JLONG rgb;
     unsigned int g;
 
     inptr = input_buf[0][input_row++];
@@ -312,7 +313,7 @@ gray_rgb565_convert_internal (j_decompress_ptr cinfo,
     if (PACK_NEED_ALIGNMENT(outptr)) {
       g = *inptr++;
       rgb = PACK_SHORT_565(g, g, g);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
       outptr += 2;
       num_cols--;
     }
@@ -327,7 +328,7 @@ gray_rgb565_convert_internal (j_decompress_ptr cinfo,
     if (num_cols & 1) {
       g = *inptr;
       rgb = PACK_SHORT_565(g, g, g);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
     }
   }
 }
@@ -343,10 +344,10 @@ gray_rgb565D_convert_internal (j_decompress_ptr cinfo,
   register JDIMENSION col;
   register JSAMPLE * range_limit = cinfo->sample_range_limit;
   JDIMENSION num_cols = cinfo->output_width;
-  INT32 d0 = dither_matrix[cinfo->output_scanline & DITHER_MASK];
+  JLONG d0 = dither_matrix[cinfo->output_scanline & DITHER_MASK];
 
   while (--num_rows >= 0) {
-    INT32 rgb;
+    JLONG rgb;
     unsigned int g;
 
     inptr = input_buf[0][input_row++];
@@ -355,7 +356,7 @@ gray_rgb565D_convert_internal (j_decompress_ptr cinfo,
       g = *inptr++;
       g = range_limit[DITHER_565_R(g, d0)];
       rgb = PACK_SHORT_565(g, g, g);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
       outptr += 2;
       num_cols--;
     }
@@ -377,7 +378,7 @@ gray_rgb565D_convert_internal (j_decompress_ptr cinfo,
       g = *inptr;
       g = range_limit[DITHER_565_R(g, d0)];
       rgb = PACK_SHORT_565(g, g, g);
-      *(INT16*)outptr = rgb;
+      *(INT16*)outptr = (INT16)rgb;
     }
   }
 }
