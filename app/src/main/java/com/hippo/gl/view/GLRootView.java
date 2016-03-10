@@ -597,7 +597,6 @@ public class GLRootView extends GLSurfaceView
         unfreeze();
         super.onDetachedFromWindow();
 
-        // TODO Is it right ?
         if (mContentView != null) {
             mContentView.detachFromRoot();
         }

@@ -21,6 +21,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 
 import com.hippo.ehviewer.R;
@@ -86,6 +87,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int METHOD_PAGE_RIGHT = 17;
     private static final int METHOD_SET_SCALE_MODE = 18;
     private static final int METHOD_SET_START_POSITION = 19;
+    private static final int METHOD_ON_ATTACH_TO_ROOT = 20;
+    private static final int METHOD_ON_DETACH_FROM_ROOT = 21;
+    private static final int METHOD_PAUSE = 22;
+    private static final int METHOD_RESUME = 23;
 
     private final Context mContext;
     private MovableTextTexture mPageTextTexture;
@@ -94,6 +99,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private PagerLayoutManager mPagerLayoutManager;
     private ScrollLayoutManager mScrollLayoutManager;
+    @Nullable
     private LayoutManager mLayoutManager;
 
     private final Pool<GalleryPageView> mGalleryPageViewPool = new Pool<>(5);
@@ -139,6 +145,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private final AtomicInteger mCurrentIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
 
+    @SuppressWarnings("deprecation")
     public GalleryView(@NonNull Context context, @NonNull Adapter adapter,
             Listener listener, @LayoutMode int layoutMode, @ImageView.Scale int scaleMode,
             @ImageView.StartPosition int startPosition, int startPage) {
@@ -177,15 +184,10 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
     }
 
-    @Override
-    public void onAttachToRoot(GLRoot root) {
-        super.onAttachToRoot(root);
-        mEdgeView.onAttachToRoot(root);
-
-        mPageTextTexture = MovableTextTexture.create(Typeface.DEFAULT,
-                mContext.getResources().getDimensionPixelSize(R.dimen.gallery_page_text),
-                mContext.getResources().getColor(R.color.secondary_text_dark),
-                new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+    private void attachLayoutManager() {
+        if (null != mLayoutManager) {
+            return;
+        }
 
         switch (mLayoutMode) {
             case LAYOUT_MODE_LEFT_TO_RIGHT:
@@ -216,17 +218,67 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         requestFill();
     }
 
-    @Override
-    public void onDetachFromRoot() {
-        super.onDetachFromRoot();
-        mEdgeView.onDetachFromRoot();
+    private void detachLayoutManager() {
+        if (null == mLayoutManager) {
+            return;
+        }
 
         mIndex = mLayoutManager.getInternalCurrentIndex();
         mAdapter = mLayoutManager.onDetach();
         mLayoutManager = null;
+    }
 
-        mPageTextTexture.recycle();
-        mPageTextTexture = null;
+    @SuppressWarnings("deprecation")
+    private void onAttachToRootInternal() {
+        if (null == mPageTextTexture) {
+            mPageTextTexture = MovableTextTexture.create(Typeface.DEFAULT,
+                    mContext.getResources().getDimensionPixelSize(R.dimen.gallery_page_text),
+                    mContext.getResources().getColor(R.color.secondary_text_dark),
+                    new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+        }
+        attachLayoutManager();
+    }
+
+    @Override
+    public void onAttachToRoot(GLRoot root) {
+        super.onAttachToRoot(root);
+        mEdgeView.onAttachToRoot(root);
+        postMethod(METHOD_ON_ATTACH_TO_ROOT);
+    }
+
+    private void onDetachFromRootInternal() {
+        detachLayoutManager();
+        if (null != mPageTextTexture) {
+            mPageTextTexture.recycle();
+            mPageTextTexture = null;
+        }
+    }
+
+    @Override
+    public void onDetachFromRoot() {
+        super.onDetachFromRoot();
+        mEdgeView.onDetachFromRoot();
+        postMethod(METHOD_ON_DETACH_FROM_ROOT);
+    }
+
+    private void pauseInternal() {
+        detachLayoutManager();
+    }
+
+    public void pause() {
+        postMethod(METHOD_PAUSE);
+    }
+
+    private void resumeInternal() {
+        if (null == mPageTextTexture) {
+            // Not attached
+            return;
+        }
+        attachLayoutManager();
+    }
+
+    public void resume() {
+        postMethod(METHOD_RESUME);
     }
 
     @LayoutMode
@@ -727,6 +779,18 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                     break;
                 case METHOD_SET_START_POSITION:
                     setStartPositionInternal((Integer) args[0]);
+                    break;
+                case METHOD_ON_ATTACH_TO_ROOT:
+                    onAttachToRootInternal();
+                    break;
+                case METHOD_ON_DETACH_FROM_ROOT:
+                    onDetachFromRootInternal();
+                    break;
+                case METHOD_PAUSE:
+                    pauseInternal();
+                    break;
+                case METHOD_RESUME:
+                    resumeInternal();
                     break;
             }
         }
