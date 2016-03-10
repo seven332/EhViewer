@@ -339,8 +339,19 @@
     <string name="settings_download_document">Document</string>
 
     <string name="settings_about_title">About</string>
+    <string name="settings_about_author_title">Author</string>
+    <string name="settings_about_author_summary" translatable="false">Hippo &lt;ehviewersu$gmail.com&gt;</string>
+    <string name="settings_about_google_plus_title">Google+ Community</string>
+    <string name="settings_about_website_title">Website</string>
+    <string name="settings_about_source_title">Source</string>
+    <string name="settings_about_changelog_title">Changelog</string>
+    <string name="settings_about_license_title">License</string>
+    <string name="settings_about_donate">Donate</string>
+    <string name="settings_about_donate_message">Your donation can help me develop more and better applications.\n\nAlipay: seven332$163.com</string>
     <string name="settings_about_enable_analytics">Enable analytics</string>
     <string name="settings_about_about_analytics">About analytics</string>
+
+    <string name="license">License</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">Dir picker</string>

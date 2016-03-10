@@ -18,6 +18,34 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <Preference
+        android:key="author"
+        android:title="@string/settings_about_author_title"/>
+
+    <Preference
+        android:key="google_plus"
+        android:title="@string/settings_about_google_plus_title"/>
+
+    <Preference
+        android:key="website"
+        android:title="@string/settings_about_website_title"/>
+
+    <Preference
+        android:key="source"
+        android:title="@string/settings_about_source_title"/>
+
+    <Preference
+        android:key="changelog"
+        android:title="@string/settings_about_changelog_title"/>
+
+    <Preference
+        android:key="license"
+        android:title="@string/settings_about_license_title"/>
+
+    <Preference
+        android:key="donate"
+        android:title="@string/settings_about_donate"/>
+
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"

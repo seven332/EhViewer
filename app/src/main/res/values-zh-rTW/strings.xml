@@ -300,6 +300,14 @@
     <string name="settings_download_document">文件</string>
 
     <string name="settings_about_title">關於</string>
+    <string name="settings_about_author_title">作者</string>
+    <string name="settings_about_google_plus_title">Google+ 社群</string>
+    <string name="settings_about_website_title">網站</string>
+    <string name="settings_about_source_title">源碼</string>
+    <string name="settings_about_changelog_title">更新日誌</string>
+    <string name="settings_about_license_title">開源許可</string>
+    <string name="settings_about_donate">捐贈</string>
+    <string name="settings_about_donate_message">你的捐贈能幫助我開發更多更好的應用。\n\n支付寶：seven332$163.com</string>
     <string name="settings_about_enable_analytics">啟用資料統計</string>
     <string name="settings_about_about_analytics">關於資料統計</string>
 

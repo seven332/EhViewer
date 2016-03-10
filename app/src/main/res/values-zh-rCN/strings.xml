@@ -300,6 +300,14 @@
     <string name="settings_download_document">文档</string>
 
     <string name="settings_about_title">关于</string>
+    <string name="settings_about_author_title">作者</string>
+    <string name="settings_about_google_plus_title">Google+ 社群</string>
+    <string name="settings_about_website_title">网站</string>
+    <string name="settings_about_source_title">源码</string>
+    <string name="settings_about_changelog_title">更新日志</string>
+    <string name="settings_about_license_title">开源许可</string>
+    <string name="settings_about_donate">捐赠</string>
+    <string name="settings_about_donate_message">你的捐赠能帮助我开发更多更好的应用。\n\n支付宝：seven332$163.com</string>
     <string name="settings_about_enable_analytics">启用数据统计</string>
     <string name="settings_about_about_analytics">关于数据统计</string>
 

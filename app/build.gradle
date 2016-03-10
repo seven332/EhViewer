@@ -60,6 +60,11 @@ clean {
     delete file('src/main/libs').absolutePath
 }
 
+task copyNotice(type: Copy) {
+    from '../NOTICE'
+    into './src/main/assets'
+}
+
 dependencies {
     compile project(':beerbelly')
     compile project(':conaco')

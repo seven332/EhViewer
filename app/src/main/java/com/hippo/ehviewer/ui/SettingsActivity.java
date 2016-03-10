@@ -32,7 +32,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 
-import com.hippo.app.AppCompatPreferenceActivity;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.fragment.AboutFragment;
 import com.hippo.ehviewer.ui.fragment.DownloadFragment;
@@ -43,7 +42,7 @@ import com.hippo.util.DrawableManager;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public final class SettingsActivity extends AppCompatPreferenceActivity {
+public final class SettingsActivity extends TrackedPreferenceActivity {
 
     private static final int REQUEST_CODE_FRAGMENT = 0;
 
