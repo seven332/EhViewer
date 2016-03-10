@@ -309,18 +309,33 @@ public class SpiderQueen implements Runnable {
         mSpiderDen.setMode(mMode);
 
         // Update download page
-        boolean startWorkers;
+        boolean downloadMode;
         synchronized (mRequestPageQueue) {
             if (mMode == MODE_DOWNLOAD) {
                 mDownloadPage = 0;
-                startWorkers = true;
+                downloadMode = true;
             } else {
                 mDownloadPage = -1;
-                startWorkers = false;
+                downloadMode = false;
             }
         }
 
-        if (startWorkers && mPageStateArray != null) {
+        if (downloadMode && mPageStateArray != null) {
+            // Clear download state
+            synchronized (mPageStateLock) {
+                int[] temp = mPageStateArray;
+                for (int i = 0, n = temp.length; i < n; i++) {
+                    int oldState = temp[i];
+                    if (STATE_DOWNLOADING != oldState) {
+                        temp[i] = STATE_NONE;
+                    }
+                }
+                mDownloadedPages.lazySet(0);
+                mFinishedPages.lazySet(0);
+                mPageErrorMap.clear();
+                mPagePercentMap.clear();
+            }
+            // Ensure download workers
             ensureWorkers();
         }
     }
@@ -845,32 +860,36 @@ public class SpiderQueen implements Runnable {
             synchronized (mPageStateLock) {
                 oldState = mPageStateArray[index];
                 mPageStateArray[index] = state;
-            }
 
-            if (!isStateDone(oldState) && isStateDone(state)) {
-                mDownloadedPages.incrementAndGet();
-            } else if (isStateDone(oldState) && !isStateDone(state)) {
-                mDownloadedPages.decrementAndGet();
-            }
-            if (oldState != STATE_FINISHED && state == STATE_FINISHED) {
-                mFinishedPages.incrementAndGet();
-            } else if (oldState == STATE_FINISHED && state != STATE_FINISHED) {
-                mFinishedPages.decrementAndGet();
-            }
+                if (!isStateDone(oldState) && isStateDone(state)) {
+                    mDownloadedPages.incrementAndGet();
+                } else if (isStateDone(oldState) && !isStateDone(state)) {
+                    mDownloadedPages.decrementAndGet();
+                }
+                if (oldState != STATE_FINISHED && state == STATE_FINISHED) {
+                    mFinishedPages.incrementAndGet();
+                } else if (oldState == STATE_FINISHED && state != STATE_FINISHED) {
+                    mFinishedPages.decrementAndGet();
+                }
 
-            // Clear
-            if (state == STATE_DOWNLOADING) {
-                mPageErrorMap.remove(index);
-            } else if (state == STATE_FINISHED || state == STATE_FAILED) {
-                mPagePercentMap.remove(index);
+                // Clear
+                if (state == STATE_DOWNLOADING) {
+                    mPageErrorMap.remove(index);
+                } else if (state == STATE_FINISHED || state == STATE_FAILED) {
+                    mPagePercentMap.remove(index);
+                }
+
+                // Get default error
+                if (state == STATE_FAILED) {
+                    if (error == null) {
+                        error = GetText.getString(R.string.error_unknown);
+                    }
+                    mPageErrorMap.put(index, error);
+                }
             }
 
             // Notify listeners
             if (state == STATE_FAILED) {
-                if (error == null) {
-                    error = GetText.getString(R.string.error_unknown);
-                }
-                mPageErrorMap.put(index, error);
                 notifyPageFailure(index, error);
             } else if (state == STATE_FINISHED) {
                 notifyPageSuccess(index);
