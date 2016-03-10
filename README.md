@@ -46,9 +46,11 @@ Here is the libraries
 - [apng](http://apng.sourceforge.net/)
 - [giflib](http://giflib.sourceforge.net)
 - [greenDAO](https://github.com/greenrobot/greenDAO)
+- [jsoup](https://github.com/jhy/jsoup)
 - [libjpeg-turbo](http://libjpeg-turbo.virtualgl.org/)
 - [libpng](http://www.libpng.org/pub/png/libpng.html)
 - [okhttp](https://github.com/square/okhttp)
+- [roaster](https://github.com/forge/roaster)
 - [Slabo](https://github.com/TiroTypeworks/Slabo)
 - [TagSoup](http://home.ccil.org/~cowan/tagsoup/)
 
