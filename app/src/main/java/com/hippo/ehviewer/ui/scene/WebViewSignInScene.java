@@ -38,7 +38,7 @@ import java.util.List;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
-public class WebViewLoginScene extends BaseScene {
+public class WebViewSignInScene extends BaseScene {
 
     public static final String KEY_DISPLAY_NAME = "display_name";
 

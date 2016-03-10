@@ -218,7 +218,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         } else if (mSignIn == v) {
             signIn();
         } else if (mSignInViaWebView == v) {
-            startScene(new Announcer(WebViewLoginScene.class).setRequestCode(this, REQUEST_CODE_WEBVIEW));
+            startScene(new Announcer(WebViewSignInScene.class).setRequestCode(this, REQUEST_CODE_WEBVIEW));
         } else if (mSignInViaCookies == v) {
 
         } else if (mSkipSigningIn == v) {
