@@ -285,6 +285,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mAction = action;
         if (ACTION_GALLERY_INFO.equals(action)) {
             mGalleryInfo = args.getParcelable(KEY_GALLERY_INFO);
+            // Add history
+            if (null != mGalleryInfo) {
+                EhDB.putHistoryInfo(mGalleryInfo);
+            }
         } else if (ACTION_GID_TOKEN.equals(action)) {
             mGid = args.getLong(KEY_GID);
             mToken = args.getString(KEY_TOKEN);
@@ -1263,7 +1267,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         public boolean onTransition(Context context,
                 FragmentTransaction transaction, Fragment exit, Fragment enter) {
             if (!(enter instanceof GalleryListScene) && !(enter instanceof DownloadsScene) &&
-                    !(enter instanceof FavoritesScene)) {
+                    !(enter instanceof FavoritesScene) && !(enter instanceof HistoryScene)) {
                 return false;
             }
 
@@ -1487,6 +1491,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             EhApplication.getLargePreviewSetCache(getApplication()).put(
                     EhCacheKeyFactory.getLargePreviewSetKey(result.gid, 0), result.previewSet);
             EhApplication.getPreviewPagesCache(getApplication()).put(result.gid, result.previewPages);
+
+            // Add history
+            EhDB.putHistoryInfo(result);
 
             // Notify success
             GalleryDetailScene scene = getScene();

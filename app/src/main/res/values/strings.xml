@@ -295,6 +295,9 @@
     <string name="delete_label_title">Delete label</string>
     <string name="delete_label_message">Delete \"%s\"?</string>
 
+    <!-- History -->
+    <string name="no_history">Viewed galleries will be shown here</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
     <string name="page_menu_refresh">@string/refresh</string>

@@ -45,9 +45,13 @@ import com.hippo.yorozuya.sparse.SparseJLArray;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.dao.query.LazyList;
+
 public class EhDB {
 
     private static final String TAG = EhDB.class.getSimpleName();
+
+    private static final int MAX_HISTORY_COUNT = 100;
 
     private static DaoSession sDaoSession;
 
@@ -501,5 +505,27 @@ public class EhDB {
         list.get(start).setTime(toTime);
 
         dao.updateInTx(list);
+    }
+
+    public static synchronized LazyList<HistoryInfo> getHistoryLazyList() {
+        return sDaoSession.getHistoryDao().queryBuilder().orderDesc(HistoryDao.Properties.Time).listLazy();
+    }
+
+    public static synchronized void putHistoryInfo(GalleryInfo galleryInfo) {
+        HistoryDao dao = sDaoSession.getHistoryDao();
+        HistoryInfo info = dao.load(galleryInfo.gid);
+        if (null != info) {
+            // Update time
+            info.time = System.currentTimeMillis();
+            dao.update(info);
+        } else {
+            // New history
+            info = new HistoryInfo(galleryInfo);
+            info.time = System.currentTimeMillis();
+            dao.insert(info);
+            List<HistoryInfo> list = dao.queryBuilder().orderDesc(HistoryDao.Properties.Time)
+                    .limit(-1).offset(MAX_HISTORY_COUNT).list();
+            dao.deleteInTx(list);
+        }
     }
 }
