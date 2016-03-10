@@ -37,6 +37,15 @@
     <string name="display_name">暱稱</string>
     <string name="display_name_is_empty">暱稱為空</string>
 
+    <string name="default_display_name">Little Hippo</string>
+
+    <string name="cookie_explain">Cookie 是儲存在瀏覽器裡的一小塊資料。如果您不清楚 Cookie 什麼或者怎麼獲取 Cookie，最好搜尋一下。\n\n可以通過輸入特定的 Cookie 來登陸。</string>
+    <string name="text_is_empty">文字為空</string>
+    <string name="waring">警告</string>
+    <string name="wrong_cookie_warning">看起來您輸入的 Cookie 是錯誤的，最好檢查一下。</string>
+    <string name="i_will_check_it">好的</string>
+    <string name="i_dont_think_so">我沒輸錯</string>
+
     <string name="error_bad_status_code">錯誤的狀態碼：%d</string>
     <string name="error_timeout">超時</string>
     <string name="error_unknown_host">未知主機</string>
@@ -67,9 +76,9 @@
     <string name="skip_signing_in_plain">登陸失敗。這可能是網站更新導致的，也有可能是發生了奇怪的事情。您可以選擇在登陸按鈕下方通過網頁登陸或者輸入 cookie，或者跳過登陸。跳過登陸可能導致無法正常使用應用。</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">點選重試</string>
-    <string name="write_rationale">EhViewer 將申請裝置儲存空間訪問許可權以便下載畫廊。你願意授權嗎？</string>
+    <string name="write_rationale">EhViewer 將申請裝置儲存空間訪問許可權以便下載畫廊。您願意授權嗎？</string>
     <string name="you_rejected_me">好痛</string>
-    <string name="analytics_explain">你同意讓開發者收集你的裝置資訊與使用情況嗎？這將對開發有很大幫助。&lt;br&gt;&lt;br&gt;資料統計服務由 Google Analytics 提供，其隱私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 檢視。&lt;br&gt;&lt;br&gt;若您同意參與資料統計，您的裝置資訊與應用使用情況將會被記錄，其包括但不限於：Android API 版本、裝置型號、語言所在地、本應用版本號、會話時長、應用功能使用次數。開發者承諾以下資訊並不會被記錄：電話號碼、電子郵件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意參與資料統計之前，您的資訊不會被記錄。&lt;br&gt;&lt;br&gt;被記錄的資料會由 Google Analytics 進行分析，分析報表僅可被本應用開發者訪問。</string>
+    <string name="analytics_explain">您同意讓開發者收集您的裝置資訊與使用情況嗎？這將對開發有很大幫助。&lt;br&gt;&lt;br&gt;資料統計服務由 Google Analytics 提供，其隱私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 檢視。&lt;br&gt;&lt;br&gt;若您同意參與資料統計，您的裝置資訊與應用使用情況將會被記錄，其包括但不限於：Android API 版本、裝置型號、語言所在地、本應用版本號、會話時長、應用功能使用次數。開發者承諾以下資訊並不會被記錄：電話號碼、電子郵件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意參與資料統計之前，您的資訊不會被記錄。&lt;br&gt;&lt;br&gt;被記錄的資料會由 Google Analytics 進行分析，分析報表僅可被本應用開發者訪問。</string>
     <string name="get_it">知道了</string>
 
     <!-- Gallery List -->
@@ -286,8 +295,8 @@
     <string name="settings_download_download_location_title">下載路徑</string>
     <string name="settings_download_invalid_download_location">無效的下載路徑</string>
     <string name="settings_download_cant_get_download_location">無法獲取下載路徑</string>
-    <string name="settings_download_pick_dir_kk">在 KitKat 中你無法把資料寫入外接 SD 卡，除非你做了奇怪的事情</string>
-    <string name="settings_download_pick_dir_l">Lollipop 提供了新的寫入外接 SD 卡的 API。如果你想把下載路徑設定到外接 SD 卡上，點選 \"文件\" 按鈕</string>
+    <string name="settings_download_pick_dir_kk">在 KitKat 中您無法把資料寫入外接 SD 卡，除非您做了奇怪的事情</string>
+    <string name="settings_download_pick_dir_l">Lollipop 提供了新的寫入外接 SD 卡的 API。如果您想把下載路徑設定到外接 SD 卡上，點選 \"文件\" 按鈕</string>
     <string name="settings_download_document">文件</string>
 
     <string name="settings_about_title">關於</string>

@@ -52,6 +52,13 @@
 
     <string name="default_display_name">Little Hippo</string>
 
+    <string name="cookie_explain">A cookie is a small piece of data stored in web browser. Search it if you don\'t know what it is or how to get it.\n\nYou can sign in by entering special cookies.</string>
+    <string name="text_is_empty">Text is empty</string>
+    <string name="waring">Warning</string>
+    <string name="wrong_cookie_warning">It seems that the cookies you entered are wrong. You\'d better check them.</string>
+    <string name="i_will_check_it">I will check it</string>
+    <string name="i_dont_think_so">I don\'t think so</string>
+
     <string name="error_status_code_400" translatable="false">Bad Request</string>
     <string name="error_status_code_401" translatable="false">Unauthorized</string>
     <string name="error_status_code_402" translatable="false">Payment Required</string>

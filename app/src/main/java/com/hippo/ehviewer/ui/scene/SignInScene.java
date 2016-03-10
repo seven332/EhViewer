@@ -55,6 +55,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     private static final String KEY_REQUEST_ID = "request_id";
 
     private static final int REQUEST_CODE_WEBVIEW = 0;
+    private static final int REQUEST_CODE_COOKIE = 0;
 
     /*---------------
      View life cycle
@@ -220,7 +221,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         } else if (mSignInViaWebView == v) {
             startScene(new Announcer(WebViewSignInScene.class).setRequestCode(this, REQUEST_CODE_WEBVIEW));
         } else if (mSignInViaCookies == v) {
-
+            startScene(new Announcer(CookieSignInScene.class).setRequestCode(this, REQUEST_CODE_COOKIE));
         } else if (mSkipSigningIn == v) {
             redirectTo();
         }
