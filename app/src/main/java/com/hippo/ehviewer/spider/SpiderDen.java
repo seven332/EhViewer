@@ -295,12 +295,16 @@ public final class SpiderDen {
             return null;
         }
 
-        UniFile file = findImageFile(dir, index);
-        if (file != null) {
-            return new UniFileInputStreamPipe(file);
-        } else {
-            return null;
+        for (int i = 0; i < 2; i++) {
+            UniFile file = findImageFile(dir, index);
+            if (file != null) {
+                return new UniFileInputStreamPipe(file);
+            } else if (!copyFromCacheToDownloadDir(index)) {
+                return null;
+            }
         }
+
+        return null;
     }
 
     @Nullable
