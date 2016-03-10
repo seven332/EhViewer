@@ -60,6 +60,7 @@ public class FixedAspectImageView extends AppCompatImageView {
         this(context, attrs, 0);
     }
 
+    @SuppressWarnings("ResourceType")
     public FixedAspectImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
