@@ -322,6 +322,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     public void onGetProfileSuccess() {
+        updateAvatar();
         redirectTo();
     }
 

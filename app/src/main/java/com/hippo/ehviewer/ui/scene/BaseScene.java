@@ -38,6 +38,13 @@ public abstract class BaseScene extends SceneFragment {
 
     private boolean mViewCreated;
 
+    public void updateAvatar() {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).updateAvatar();
+        }
+    }
+
     public void setDrawerLockMode(int lockMode, int edgeGravity) {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {

@@ -34,7 +34,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
@@ -88,6 +87,8 @@ public final class MainActivity extends StageActivity
     private NavigationView mNavView;
     @Nullable
     private FrameLayout mRightDrawer;
+    @Nullable
+    private LoadImageView mAvatar;
 
     private int mNavCheckedItem = 0;
 
@@ -235,21 +236,9 @@ public final class MainActivity extends StageActivity
         mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
         mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
         View headerLayout = mNavView.getHeaderView(0);
-        LoadImageView avatarView = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
-        TextView displayNameView = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
+        mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
 
-        String avatarUrl = Settings.getAvatar();
-        if (TextUtils.isEmpty(avatarUrl)) {
-            avatarView.load(R.drawable.default_avatar);
-        } else {
-            avatarView.load(avatarUrl, avatarUrl);
-        }
-
-        String displayName = Settings.getDisplayName();
-        if (TextUtils.isEmpty(displayName)) {
-            displayName = getString(R.string.default_display_name);
-        }
-        displayNameView.setText(displayName);
+        updateAvatar();
 
         if (mNavView != null) {
             mNavView.setNavigationItemSelectedListener(this);
@@ -331,6 +320,19 @@ public final class MainActivity extends StageActivity
         if (scene instanceof BaseScene) {
             BaseScene baseScene = (BaseScene) scene;
             baseScene.onDestroyDrawerView();
+        }
+    }
+
+    public void updateAvatar() {
+        if (null == mAvatar) {
+            return;
+        }
+
+        String avatarUrl = Settings.getAvatar();
+        if (TextUtils.isEmpty(avatarUrl)) {
+            mAvatar.load(R.drawable.default_avatar);
+        } else {
+            mAvatar.load(avatarUrl, avatarUrl);
         }
     }
 
