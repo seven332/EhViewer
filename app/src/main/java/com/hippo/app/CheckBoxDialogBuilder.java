@@ -33,7 +33,7 @@ public class CheckBoxDialogBuilder extends AlertDialog.Builder {
     @SuppressLint("InflateParams")
     public CheckBoxDialogBuilder(Context context, String message, String checkText, boolean checked) {
         super(context);
-        View view = LayoutInflater.from(context).inflate(R.layout.dialog_checkbox_builder, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_checkbox_builder, null);
         setView(view);
         TextView messageView = (TextView) view.findViewById(R.id.message);
         mCheckBox = (CheckBox) view.findViewById(R.id.checkbox);

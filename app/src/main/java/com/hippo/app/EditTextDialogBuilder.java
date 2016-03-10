@@ -39,7 +39,7 @@ public class EditTextDialogBuilder extends AlertDialog.Builder implements EditTe
     @SuppressLint("InflateParams")
     public EditTextDialogBuilder(Context context, String text, String hint) {
         super(context);
-        View view = LayoutInflater.from(context).inflate(R.layout.dialog_edittext_builder, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_edittext_builder, null);
         setView(view);
         mTextInputLayout = (TextInputLayout) view;
         mEditText = (EditText) view.findViewById(R.id.edit_text);

@@ -1413,7 +1413,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 mProgressView.setVisibility(View.GONE);
                 mErrorText.setVisibility(View.GONE);
                 mListView.setVisibility(View.VISIBLE);
-                mListView.setAdapter(new ArrayAdapter<>(getContext(), R.layout.item_simple_list, nameArray));
+                mListView.setAdapter(new ArrayAdapter<>(mDialog.getContext(), R.layout.item_select_dialog, nameArray));
             }
         }
 

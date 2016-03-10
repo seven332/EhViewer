@@ -39,11 +39,11 @@ public class ListCheckBoxDialogBuilder extends AlertDialog.Builder {
     public ListCheckBoxDialogBuilder(Context context, CharSequence[] items,
             final OnItemClickListener listener, String checkText, boolean checked) {
         super(context);
-        View view = LayoutInflater.from(context).inflate(R.layout.dialog_list_checkbox_builder, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_list_checkbox_builder, null);
         setView(view);
         ListView listView = (ListView) ViewUtils.$$(view, R.id.list_view);
         mCheckBox = (CheckBox) ViewUtils.$$(view, R.id.checkbox);
-        listView.setAdapter(new ArrayAdapter<>(context, R.layout.item_simple_list, items));
+        listView.setAdapter(new ArrayAdapter<>(getContext(), R.layout.item_select_dialog, items));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
