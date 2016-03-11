@@ -433,7 +433,7 @@ public class Settings {
         boolean writeXml = false;
         boolean writeFile = false;
         String userID = getString(KEY_USER_ID, null);
-        File file = AppConfig.getFileInAppDir(FILENAME_USER_ID);
+        File file = AppConfig.getFileInExternalAppDir(FILENAME_USER_ID);
         if (null == userID || !isValidUserID(userID)) {
             writeXml = true;
             // Get use ID from out sd card file

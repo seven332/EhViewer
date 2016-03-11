@@ -17,11 +17,13 @@
 package com.hippo.ehviewer.gallery;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.image.Image;
+import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.SimpleHandler;
 
 public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.OnSpiderListener {
@@ -68,6 +70,25 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
             return mSpiderQueen.getStartPage();
         } else {
             return super.getStartPage();
+        }
+    }
+
+    @Override
+    public boolean save(int index, @NonNull UniFile file) {
+        if (null != mSpiderQueen) {
+            return mSpiderQueen.save(index, file);
+        } else {
+            return false;
+        }
+    }
+
+    @Nullable
+    @Override
+    public UniFile save(int index, @NonNull UniFile dir, @NonNull String filename) {
+        if (null != mSpiderQueen) {
+            return mSpiderQueen.save(index, dir, filename);
+        } else {
+            return null;
         }
     }
 

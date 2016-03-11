@@ -17,11 +17,14 @@
 package com.hippo.ehviewer.gallery;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 
 import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.view.GLRoot;
 import com.hippo.image.Image;
+import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.ConcurrentPool;
 import com.hippo.yorozuya.OSUtils;
 
@@ -85,6 +88,14 @@ public abstract class GalleryProvider {
     public int getStartPage() {
         return 0;
     }
+
+    public abstract boolean save(int index, @NonNull UniFile file);
+
+    /**
+     * @param filename without extension
+     */
+    @Nullable
+    public abstract UniFile save(int index, @NonNull UniFile dir, @NonNull String filename);
 
     public void putStartPage(int page) {}
 

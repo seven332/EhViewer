@@ -21,17 +21,22 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -46,6 +51,7 @@ import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
+import com.hippo.unifile.UniFile;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.widget.Slider;
 import com.hippo.yorozuya.AnimationUtils;
@@ -142,7 +148,7 @@ public class GalleryActivity extends TrackedActivity
 
         if (ACTION_DIR.equals(mAction)) {
             if (mFilename != null) {
-                mGalleryProvider = new DirGalleryProvider(new File(mFilename));
+                mGalleryProvider = new DirGalleryProvider(UniFile.fromFile(new File(mFilename)));
             }
         } else if (ACTION_ZIP.equals(mAction)) {
             if (mFilename != null) {
@@ -658,6 +664,83 @@ public class GalleryActivity extends TrackedActivity
         }
     }
 
+    private void shareImage(int page) {
+        if (null == mGalleryProvider) {
+            return;
+        }
+
+        File dir = AppConfig.getExternalTempDir();
+        if (null == dir) {
+            Toast.makeText(this, R.string.error_cant_create_temp_file, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        UniFile file;
+        if (null == (file = mGalleryProvider.save(page, UniFile.fromFile(dir), Long.toString(System.currentTimeMillis())))) {
+            Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // TODO Create ContentProvider for some app are not grand storage write permission
+        Uri uri = file.getUri();
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                MimeTypeMap.getFileExtensionFromUrl(uri.toString()));
+        if (TextUtils.isEmpty(mimeType)) {
+            mimeType = "image/jpeg";
+        }
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.setType(mimeType);
+        startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
+    }
+
+    private void saveImage(int page) {
+        if (null == mGalleryProvider) {
+            return;
+        }
+
+        File dir = AppConfig.getExternalImageDir();
+        if (null == dir) {
+            Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        UniFile file;
+        if (null == (file = mGalleryProvider.save(page, UniFile.fromFile(dir), Long.toString(System.currentTimeMillis())))) {
+            Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, getString(R.string.image_saved, file.getUri()), Toast.LENGTH_SHORT).show();
+    }
+
+    private void showPageDialog(final int page) {
+        Resources resources = GalleryActivity.this.getResources();
+        new AlertDialog.Builder(GalleryActivity.this)
+                .setTitle(resources.getString(R.string.page_menu_title, page + 1))
+                .setItems(R.array.page_menu_entries, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (mGalleryProvider == null) {
+                            return;
+                        }
+
+                        switch (which) {
+                            case 0: // Refresh
+                                mGalleryProvider.forceRequest(page);
+                                break;
+                            case 1: // Share
+                                shareImage(page);
+                                break;
+                            case 2: // Save
+                                saveImage(page);
+                                break;
+                            case 3: // Add a bookmark
+                                break;
+                        }
+                    }
+                }).show();
+    }
+
     private class NotifyTask implements Runnable {
 
         public static final int KEY_LAYOUT_MODE = 0;
@@ -699,31 +782,7 @@ public class GalleryActivity extends TrackedActivity
         }
 
         private void onLongPressPage(final int index) {
-            Resources resources = GalleryActivity.this.getResources();
-            new AlertDialog.Builder(GalleryActivity.this)
-                    .setTitle(resources.getString(R.string.page_menu_title, index + 1))
-                    .setItems(R.array.page_menu_entries, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (mGalleryProvider == null) {
-                                return;
-                            }
-
-                            switch (which) {
-                                case 0: // Refresh
-                                    mGalleryProvider.forceRequest(index);
-                                    break;
-                                case 1: // Share
-                                    // TODO
-                                    break;
-                                case 2: // Save
-                                    // TODO
-                                    break;
-                                case 3: // Add a bookmark
-                                    break;
-                            }
-                        }
-                    }).show();
+            showPageDialog(index);
         }
 
         @Override

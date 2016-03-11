@@ -107,6 +107,8 @@
     <string name="error_invalid_url">Invalid url</string>
     <string name="error_get_ptoken_error">Get pToken error</string>
     <string name="error_invalid_specify_gallery">Keyword should looks like \"618395 0439fa3666\" for specify gallery</string>
+    <string name="error_cant_create_temp_file">Can\'t create temp file</string>
+    <string name="error_cant_save_image">Can\'t save image</string>
 
     <string name="app_waring">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them. Do you want to use this application?</string>
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
@@ -305,6 +307,8 @@
     <string name="page_menu_save">Save</string>
     <string name="page_menu_add_bookmark">Add a bookmark</string>
     <string name="gallery_menu_title">Menu</string>
+    <string name="share_image">Share image</string>
+    <string name="image_saved">Image saved to %s</string>
 
     <string name="settings_eh_title">EH</string>
     <string name="settings_eh_show_jpn_title_title">Show Japanese title</string>

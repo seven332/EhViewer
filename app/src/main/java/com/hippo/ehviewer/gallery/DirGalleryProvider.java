@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.gallery;
 
 import android.os.Process;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -24,32 +25,37 @@ import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.image.Image;
+import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.StringUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DirGalleryProvider extends GalleryProvider implements Runnable {
 
     private static final String TAG = DirGalleryProvider.class.getSimpleName();
     private static final AtomicInteger sIdGenerator = new AtomicInteger();
 
-    private final File mDir;
+    private final UniFile mDir;
     private final Stack<Integer> mRequests = new Stack<>();
     private final AtomicInteger mDecodingIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
+    private final AtomicReference<UniFile[]> mFileList = new AtomicReference<>();
     @Nullable
     private Thread mBgThread;
     private volatile int mSize = STATE_WAIT;
     private String mError;
 
-    public DirGalleryProvider(File dir) {
+    public DirGalleryProvider(@NonNull UniFile dir) {
         mDir = dir;
     }
 
@@ -101,9 +107,61 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
     }
 
     @Override
+    public boolean save(int index, @NonNull UniFile file) {
+        UniFile[] fileList = mFileList.get();
+        if (null == fileList || index < 0 || index >= fileList.length) {
+            return false;
+        }
+
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = fileList[index].openInputStream();
+            os = file.openOutputStream();
+            IOUtils.copy(is, os);
+            return true;
+        } catch (IOException e) {
+            return false;
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
+        }
+    }
+
+    @Nullable
+    @Override
+    public UniFile save(int index, @NonNull UniFile dir, @NonNull String filename) {
+        UniFile[] fileList = mFileList.get();
+        if (null == fileList || index < 0 || index >= fileList.length) {
+            return null;
+        }
+
+        UniFile src = fileList[index];
+        String extension = FileUtils.getExtensionFromFilename(src.getName());
+        UniFile dst = dir.subFile(null != extension ? filename + "." + extension : filename);
+        if (null == dst) {
+            return null;
+        }
+
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = src.openInputStream();
+            os = dst.openOutputStream();
+            IOUtils.copy(is, os);
+            return dst;
+        } catch (IOException e) {
+            return null;
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
+        }
+    }
+
+    @Override
     public void run() {
         // It may take a long time, so run it in new thread
-        String[] files = mDir.list(new ImageFilter());
+        UniFile[] files = mDir.listFiles();
 
         if (files == null) {
             mSize = STATE_ERROR;
@@ -118,6 +176,9 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
 
         // Sort it
         Arrays.sort(files);
+
+        // Put file list
+        mFileList.lazySet(files);
 
         // Set state normal and notify
         mSize = files.length;
@@ -146,8 +207,9 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
                 continue;
             }
 
+            InputStream is = null;
             try {
-                InputStream is = new FileInputStream(new File(mDir, files[index]));
+                is = files[index].openInputStream();
                 Image image = Image.decode(is, true);
                 mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
                 if (image != null) {
@@ -155,12 +217,17 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
                 } else {
                     notifyPageFailed(index, GetText.getString(R.string.error_decoding_failed));
                 }
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
-                notifyPageFailed(index, GetText.getString(R.string.error_not_found));
+                notifyPageFailed(index, GetText.getString(R.string.error_reading_failed));
+            } finally {
+                IOUtils.closeQuietly(is);
             }
             mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
         }
+
+        // Clear file list
+        mFileList.lazySet(null);
 
         Log.i(TAG, "ImageDecoder end");
     }

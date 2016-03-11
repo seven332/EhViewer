@@ -28,8 +28,9 @@ public class AppConfig {
 
     private static final String APP_DIRNAME = "EhViewer";
 
-    private static final String SPIDER_INFO = "spider_info";
     private static final String DOWNLOAD = "download";
+    private static final String TEMP = "temp";
+    private static final String IMAGE = "image";
 
     private static Context sContext;
 
@@ -50,7 +51,7 @@ public class AppConfig {
      * mkdirs and get
      */
     @Nullable
-    public static File getDirInAppDir(String filename) {
+    public static File getDirInExternalAppDir(String filename) {
         File appFolder = getExternalAppDir();
         if (appFolder != null) {
             File dir = new File(appFolder, filename);
@@ -60,7 +61,7 @@ public class AppConfig {
     }
 
     @Nullable
-    public static File getFileInAppDir(String filename) {
+    public static File getFileInExternalAppDir(String filename) {
         File appFolder = getExternalAppDir();
         if (appFolder != null) {
             File file = new File(appFolder, filename);
@@ -71,6 +72,21 @@ public class AppConfig {
 
     @Nullable
     public static File getDefaultDownloadDir() {
-        return getDirInAppDir(DOWNLOAD);
+        return getDirInExternalAppDir(DOWNLOAD);
+    }
+
+    @Nullable
+    public static File getExternalTempDir() {
+        return getDirInExternalAppDir(TEMP);
+    }
+
+    @Nullable
+    public static File getExternalImageDir() {
+        return getDirInExternalAppDir(IMAGE);
+    }
+
+    @Nullable
+    public static File createExternalTempFile() {
+        return FileUtils.createTempFile(getExternalTempDir(), null);
     }
 }

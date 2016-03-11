@@ -68,6 +68,8 @@
     <string name="error_invalid_url">無效連結</string>
     <string name="error_get_ptoken_error">獲取 pToken 錯誤</string>
     <string name="error_invalid_specify_gallery">指定畫廊的關鍵字應該看起來像 \"618395 0439fa3666\"</string>
+    <string name="error_cant_create_temp_file">無法建立臨時檔案</string>
+    <string name="error_cant_save_image">無法儲存圖片</string>
 
     <string name="app_waring">本應用中內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用作者不會對由本應用造成的後果負責。您是否願意繼續使用該應用？</string>
     <string name="error_username_cannot_empty">使用者名稱不可為空</string>
@@ -115,7 +117,7 @@
     <string name="delete">刪除</string>
     <string name="delete_quick_search_title">刪除快速搜尋</string>
     <string name="delete_quick_search_message">刪除“%s”？</string>
-    <string name="no_quick_search">未新增快速搜尋</string>
+    <string name="no_quick_search">這裡是快速搜尋</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>
@@ -235,7 +237,7 @@
     <string name="drawer_download_label_title">標籤</string>
     <string name="default_download_label_name">預設</string>
     <string name="download_move_dialog_title">移動</string>
-    <string name="download_labels">標籤</string>
+    <string name="download_labels">下載標籤</string>
     <string name="download_start_all">全部開始</string>
     <string name="download_stop_all">全部停止</string>
     <string name="download_service_label">EhViewer 下載服務</string>
@@ -245,7 +247,7 @@
     <string name="default_download_label">預設下載標籤</string>
 
     <!-- Download label -->
-    <string name="no_download_label">無標籤</string>
+    <string name="no_download_label">這裡是下載標籤</string>
     <string name="add">新增</string>
     <string name="new_label_title">新標籤</string>
     <string name="label_text_is_empty">標籤文字為空</string>
@@ -255,6 +257,9 @@
     <string name="delete_label_title">刪除標籤</string>
     <string name="delete_label_message">刪除“%s”？</string>
 
+    <!-- History -->
+    <string name="no_history">這裡是閱讀歷史</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -262,6 +267,8 @@
     <string name="page_menu_save">儲存</string>
     <string name="page_menu_add_bookmark">新增書籤</string>
     <string name="gallery_menu_title">選單</string>
+    <string name="share_image">分享圖片</string>
+    <string name="image_saved">圖片已儲存至 %s</string>
 
     <!-- Settings -->
     <string name="settings_eh_title">EH</string>
@@ -310,6 +317,8 @@
     <string name="settings_about_donate_message">你的捐贈能幫助我開發更多更好的應用。\n\n支付寶：seven332$163.com</string>
     <string name="settings_about_enable_analytics">啟用資料統計</string>
     <string name="settings_about_about_analytics">關於資料統計</string>
+
+    <string name="license">開源許可</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">選擇資料夾</string>

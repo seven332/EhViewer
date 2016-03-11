@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.spider;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Process;
 import android.support.annotation.IntDef;
@@ -548,6 +549,72 @@ public class SpiderQueen implements Runnable {
                     thread.start();
                 }
             }
+        }
+    }
+
+    public boolean save(int index, @NonNull UniFile file) {
+        int state = getPageState(index);
+        if (STATE_FINISHED != state) {
+            return false;
+        }
+
+        InputStreamPipe pipe = mSpiderDen.openInputStreamPipe(index);
+        if (null == pipe) {
+            return false;
+        }
+
+        OutputStream os = null;
+        try {
+            os = file.openOutputStream();
+            pipe.obtain();
+            IOUtils.copy(pipe.open(), os);
+            return true;
+        } catch (IOException e) {
+            return false;
+        } finally {
+            pipe.close();
+            pipe.release();
+            IOUtils.closeQuietly(os);
+        }
+    }
+
+    @Nullable
+    public UniFile save(int index, @NonNull UniFile dir, @NonNull String filename) {
+        int state = getPageState(index);
+        if (STATE_FINISHED != state) {
+            return null;
+        }
+
+        InputStreamPipe pipe = mSpiderDen.openInputStreamPipe(index);
+        if (null == pipe) {
+            return null;
+        }
+
+        OutputStream os = null;
+        try {
+            pipe.obtain();
+
+            // Get dst file
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(pipe.open(), null, options);
+            pipe.close();
+            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(options.outMimeType);
+            UniFile dst = dir.subFile(null != extension ? filename + "." + extension : filename);
+            if (null == dst) {
+                return null;
+            }
+
+            // Copy
+            os = dst.openOutputStream();
+            IOUtils.copy(pipe.open(), os);
+            return dst;
+        } catch (IOException e) {
+            return null;
+        } finally {
+            pipe.close();
+            pipe.release();
+            IOUtils.closeQuietly(os);
         }
     }
 

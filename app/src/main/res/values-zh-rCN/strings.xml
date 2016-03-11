@@ -68,6 +68,8 @@
     <string name="error_invalid_url">无效链接</string>
     <string name="error_get_ptoken_error">获取 pToken 错误</string>
     <string name="error_invalid_specify_gallery">指定画廊的关键字应该看起来像 \"618395 0439fa3666\"</string>
+    <string name="error_cant_create_temp_file">无法创建临时文件</string>
+    <string name="error_cant_save_image">无法保存图片</string>
 
     <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的后果负责。您是否愿意继续使用该应用？</string>
     <string name="error_username_cannot_empty">用户名不可为空</string>
@@ -255,6 +257,9 @@
     <string name="delete_label_title">删除标签</string>
     <string name="delete_label_message">删除“%s”？</string>
 
+    <!-- History -->
+    <string name="no_history">这里是阅读历史</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -262,6 +267,8 @@
     <string name="page_menu_save">保存</string>
     <string name="page_menu_add_bookmark">添加书签</string>
     <string name="gallery_menu_title">菜单</string>
+    <string name="share_image">分享图片</string>
+    <string name="image_saved">图片已保存至 %s</string>
 
     <!-- Settings -->
     <string name="settings_eh_title">EH</string>
@@ -310,6 +317,8 @@
     <string name="settings_about_donate_message">你的捐赠能帮助我开发更多更好的应用。\n\n支付宝：seven332$163.com</string>
     <string name="settings_about_enable_analytics">启用数据统计</string>
     <string name="settings_about_about_analytics">关于数据统计</string>
+
+    <string name="license">开源许可</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">选择文件夹</string>

@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.gallery;
 
 import android.os.Process;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -24,6 +25,7 @@ import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.image.Image;
+import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.StringUtils;
 
@@ -106,6 +108,19 @@ public class ZipGalleryProvider extends GalleryProvider implements Runnable {
     }
 
     @Override
+    public boolean save(int index, @NonNull UniFile file) {
+        // TODO
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public UniFile save(int index, @NonNull UniFile dir, @NonNull String filename) {
+        // TODO
+        return null;
+    }
+
+    @Override
     public void run() {
         ZipFile zipFile = null;
         try {
@@ -121,9 +136,6 @@ public class ZipGalleryProvider extends GalleryProvider implements Runnable {
         // Check zip file null
         if (zipFile == null) {
             mSize = STATE_ERROR;
-            if (mError == null) {
-                mError = GetText.getString(R.string.error_unknown);
-            }
 
             // Notify to to show error
             notifyDataChanged();
