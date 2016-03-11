@@ -18,6 +18,7 @@ package com.hippo.ehviewer;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -25,7 +26,6 @@ import android.util.SparseArray;
 
 import com.hippo.beerbelly.LruCacheEx;
 import com.hippo.conaco.Conaco;
-import com.hippo.drawable.ImageWrapper;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.data.GalleryDetail;
@@ -58,8 +58,8 @@ public class EhApplication extends SceneApplication {
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
     private OkHttpClient mOkHttpClient;
-    private ImageWrapperHelper mImageWrapperHelper;
-    private Conaco<ImageWrapper> mConaco;
+    private BitmapHelper mBitmapHelper;
+    private Conaco<Bitmap> mConaco;
     private LruCacheEx<Long, GalleryDetail> mGalleryDetailCache;
     private LruCacheEx<String, LargePreviewSet> mLargePreviewSetCache;
     private LruCacheEx<Long, Integer> mPreviewPagesCache;
@@ -170,12 +170,12 @@ public class EhApplication extends SceneApplication {
     }
 
     @NonNull
-    public static ImageWrapperHelper getImageWrapperHelper(@NonNull Context context) {
+    public static BitmapHelper getBitmapHelper(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
-        if (application.mImageWrapperHelper == null) {
-            application.mImageWrapperHelper = new ImageWrapperHelper();
+        if (application.mBitmapHelper == null) {
+            application.mBitmapHelper = new BitmapHelper();
         }
-        return application.mImageWrapperHelper;
+        return application.mBitmapHelper;
     }
 
     private static int getMemoryCacheMaxSize(Context context) {
@@ -186,17 +186,17 @@ public class EhApplication extends SceneApplication {
     }
 
     @NonNull
-    public static Conaco<ImageWrapper> getConaco(@NonNull Context context) {
+    public static Conaco<Bitmap> getConaco(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mConaco == null) {
-            Conaco.Builder<ImageWrapper> builder = new Conaco.Builder<>();
+            Conaco.Builder<Bitmap> builder = new Conaco.Builder<>();
             builder.hasMemoryCache = true;
             builder.memoryCacheMaxSize = getMemoryCacheMaxSize(context);
             builder.hasDiskCache = true;
             builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
             builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
             builder.okHttpClient = getOkHttpClient(context);
-            builder.objectHelper = getImageWrapperHelper(context);
+            builder.objectHelper = getBitmapHelper(context);
             builder.debug = DEBUG_CONACO;
             application.mConaco = builder.build();
         }

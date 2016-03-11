@@ -18,7 +18,9 @@ package com.hippo.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -32,24 +34,22 @@ import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.Unikery;
 import com.hippo.conaco.ValueHolder;
-import com.hippo.drawable.ImageDrawable;
-import com.hippo.drawable.ImageWrapper;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 
-public class LoadImageView extends FixedAspectImageView implements Unikery<ImageWrapper>,
+public class LoadImageView extends FixedAspectImageView implements Unikery<Bitmap>,
         View.OnClickListener, View.OnLongClickListener {
 
     private int mTaskId = Unikery.INVALID_ID;
 
-    private Conaco<ImageWrapper> mConaco;
+    private Conaco<Bitmap> mConaco;
 
     private String mKey;
     private String mUrl;
     private DataContainer mContainer;
     private boolean mUseNetwork;
 
-    private ValueHolder<ImageWrapper> mHolder;
+    private ValueHolder<Bitmap> mHolder;
 
     private boolean mFailed;
 
@@ -173,7 +173,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         mContainer = container;
         mUseNetwork = useNetwork;
 
-        ConacoTask.Builder<ImageWrapper> builder = new ConacoTask.Builder<ImageWrapper>()
+        ConacoTask.Builder<Bitmap> builder = new ConacoTask.Builder<Bitmap>()
                 .setUnikery(this)
                 .setKey(key)
                 .setUrl(url)
@@ -213,64 +213,12 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
 
     private void removeDrawableAndHolder() {
         // Remove drawable
-        Drawable drawable = getDrawable();
-        if (drawable instanceof TransitionDrawable) {
-            TransitionDrawable tDrawable = (TransitionDrawable) drawable;
-            int number = tDrawable.getNumberOfLayers();
-            if (number > 0) {
-                drawable = tDrawable.getDrawable(number - 1);
-            }
-        }
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).recycle();
-        }
         setImageDrawable(null);
 
         // Remove holder
         if (mHolder != null) {
             mHolder.release(this);
-
-            ImageWrapper imageWrapper = mHolder.getValue();
-            if (mHolder.isFree()) {
-                // ImageWrapper is free, stop animate
-                imageWrapper.stop();
-                if (!mHolder.isInMemoryCache()) {
-                    // ImageWrapper is not needed any more, recycle it
-                    imageWrapper.recycle();
-                }
-            }
-
             mHolder = null;
-        }
-    }
-
-    public void start() {
-        Drawable drawable = getDrawable();
-        if (drawable instanceof TransitionDrawable) {
-            TransitionDrawable tDrawable = (TransitionDrawable) drawable;
-            int number = tDrawable.getNumberOfLayers();
-            if (number > 0) {
-                drawable = tDrawable.getDrawable(number - 1);
-            }
-        }
-
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).start();
-        }
-    }
-
-    public void stop() {
-        Drawable drawable = getDrawable();
-        if (drawable instanceof TransitionDrawable) {
-            TransitionDrawable tDrawable = (TransitionDrawable) drawable;
-            int number = tDrawable.getNumberOfLayers();
-            if (number > 0) {
-                drawable = tDrawable.getDrawable(number - 1);
-            }
-        }
-
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).stop();
         }
     }
 
@@ -290,7 +238,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
     }
 
     @Override
-    public boolean onGetObject(@NonNull ValueHolder<ImageWrapper> holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ValueHolder<Bitmap> holder, Conaco.Source source) {
         // Release
         mKey = null;
         mUrl = null;
@@ -301,12 +249,10 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         removeDrawableAndHolder();
 
         mHolder = holder;
-        ImageWrapper imageWrapper = holder.getValue();
-        Drawable drawable = new ImageDrawable(imageWrapper);
-        imageWrapper.start();
+        Bitmap bitmap = holder.getValue();
+        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
 
-        if ((source == Conaco.Source.DISK || source == Conaco.Source.NETWORK) &&
-                imageWrapper.getFrameCount() <= 1) {
+        if ((source == Conaco.Source.DISK || source == Conaco.Source.NETWORK)) {
             Drawable[] layers = new Drawable[2];
             layers[0] = new ColorDrawable(Color.TRANSPARENT);
             layers[1] = drawable;
@@ -322,8 +268,10 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
 
     @Override
     public void onSetDrawable(Drawable drawable) {
+        mKey = null;
+        mUrl = null;
+        mContainer = null;
         removeDrawableAndHolder();
-
         setImageDrawable(drawable);
     }
 

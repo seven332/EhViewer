@@ -16,6 +16,8 @@
 
 package com.hippo.drawable;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.widget.TextView;
@@ -24,13 +26,13 @@ import com.hippo.conaco.Conaco;
 import com.hippo.conaco.Unikery;
 import com.hippo.conaco.ValueHolder;
 
-public class UnikeryDrawable extends WrapDrawable implements Unikery<ImageWrapper> {
+public class UnikeryDrawable extends WrapDrawable implements Unikery<Bitmap> {
 
     private int mTaskId = Unikery.INVALID_ID;
 
-    private TextView mTextView;
+    private final TextView mTextView;
 
-    private ValueHolder<ImageWrapper> mHolder;
+    private ValueHolder<Bitmap> mHolder;
 
     public UnikeryDrawable(TextView textView) {
         mTextView = textView;
@@ -82,40 +84,23 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery<ImageWrappe
 
     private void removeDrawableAndHolder() {
         // Remove drawable
-        Drawable drawable = getDrawable();
-        if (drawable instanceof ImageDrawable) {
-            ((ImageDrawable) drawable).recycle();
-        }
         setDrawable(null);
 
         // Remove holder
         if (mHolder != null) {
             mHolder.release(this);
-
-            ImageWrapper imageWrapper = mHolder.getValue();
-            if (mHolder.isFree()) {
-                // ImageWrapper is free, stop animate
-                imageWrapper.stop();
-                if (!mHolder.isInMemoryCache()) {
-                    // ImageWrapper is not needed any more, recycle it
-                    imageWrapper.recycle();
-                }
-            }
-
             mHolder = null;
         }
     }
 
     @Override
-    public boolean onGetObject(@NonNull ValueHolder<ImageWrapper> holder, Conaco.Source source) {
+    public boolean onGetObject(@NonNull ValueHolder<Bitmap> holder, Conaco.Source source) {
         holder.obtain(this);
 
         removeDrawableAndHolder();
 
         mHolder = holder;
-        ImageWrapper imageWrapper = holder.getValue();
-        Drawable drawable = new ImageDrawable(imageWrapper);
-        imageWrapper.start();
+        Drawable drawable = new BitmapDrawable(holder.getValue());
 
         setDrawable(drawable);
 
