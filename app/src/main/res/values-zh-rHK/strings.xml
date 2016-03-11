@@ -213,7 +213,7 @@
 
     <!-- Download -->
     <string name="scene_download_title">下載 - %s</string>
-    <string name="no_download_info">無下載項目</string>
+    <string name="no_download_info">這裏是下載項目</string>
     <string name="download_state_none">未啟動</string>
     <string name="download_state_wait">等待中</string>
     <string name="download_state_downloading">下載中</string>

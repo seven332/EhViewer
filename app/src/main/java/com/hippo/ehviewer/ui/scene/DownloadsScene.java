@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -73,6 +74,7 @@ import com.hippo.scene.Announcer;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ApiHelper;
+import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
@@ -209,8 +211,12 @@ public class DownloadsScene extends ToolbarScene
         mRecyclerView = (EasyRecyclerView) ViewUtils.$$(content, R.id.recycler_view);
         FastScroller fastScroller = (FastScroller) ViewUtils.$$(content, R.id.fast_scroller);
         mFabLayout = (FabLayout) ViewUtils.$$(view, R.id.fab_layout);
-        View tip = ViewUtils.$$(view, R.id.tip);
+        TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mViewTransition = new ViewTransition(content, tip);
+
+        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_download);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        tip.setCompoundDrawables(null, drawable, null, null);
 
         mAdapter = new DownloadAdapter();
         mAdapter.setHasStableIds(true);
@@ -234,9 +240,9 @@ public class DownloadsScene extends ToolbarScene
         mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
 
         fastScroller.attachToRecyclerView(mRecyclerView);
-        HandlerDrawable drawable = new HandlerDrawable();
-        drawable.setColor(ResourcesUtils.getAttrColor(getContext(), R.attr.colorAccent));
-        fastScroller.setHandlerDrawable(drawable);
+        HandlerDrawable handlerDrawable = new HandlerDrawable();
+        handlerDrawable.setColor(ResourcesUtils.getAttrColor(getContext(), R.attr.colorAccent));
+        fastScroller.setHandlerDrawable(handlerDrawable);
         fastScroller.setOnDragHandlerListener(this);
 
         mFabLayout.setExpanded(false, false);
