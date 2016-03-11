@@ -15,26 +15,15 @@
   ~ limitations under the License.
   -->
 
-<menu
+<vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:height="120dp"
+    android:width="120dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
 
-    <item
-        android:id="@+id/action_start_all"
-        android:icon="@drawable/v_play_dark_x24"
-        android:title="@string/download_start_all"
-        app:showAsAction="always"/>
+    <path
+        android:fillColor="@color/big_icon"
+        android:pathData="@string/pd_big_search"/>
 
-    <item
-        android:id="@+id/action_stop_all"
-        android:icon="@drawable/v_pause_dark_x24"
-        android:title="@string/download_stop_all"
-        app:showAsAction="always"/>
-
-    <item
-        android:id="@+id/action_label"
-        android:icon="@drawable/v_label_dark_x24"
-        android:title="@string/download_labels"
-        app:showAsAction="ifRoom"/>
-
-</menu>
+</vector>

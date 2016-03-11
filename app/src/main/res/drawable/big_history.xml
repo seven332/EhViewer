@@ -15,26 +15,7 @@
   ~ limitations under the License.
   -->
 
-<menu
+<!-- Avoid bitmap cache -->
+<animated-vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item
-        android:id="@+id/action_start_all"
-        android:icon="@drawable/v_play_dark_x24"
-        android:title="@string/download_start_all"
-        app:showAsAction="always"/>
-
-    <item
-        android:id="@+id/action_stop_all"
-        android:icon="@drawable/v_pause_dark_x24"
-        android:title="@string/download_stop_all"
-        app:showAsAction="always"/>
-
-    <item
-        android:id="@+id/action_label"
-        android:icon="@drawable/v_label_dark_x24"
-        android:title="@string/download_labels"
-        app:showAsAction="ifRoom"/>
-
-</menu>
+    android:drawable="@drawable/big_history_internal"/>

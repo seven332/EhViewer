@@ -314,7 +314,7 @@ public class DownloadsScene extends ToolbarScene
         View view = inflater.inflate(R.layout.drawer_list, container, false);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.drawer_download_label_title);
+        toolbar.setTitle(R.string.download_labels);
         toolbar.inflateMenu(R.menu.drawer_download);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -322,7 +322,7 @@ public class DownloadsScene extends ToolbarScene
                 int id = item.getItemId();
                 switch (id) {
                     case R.id.action_settings:
-                        startScene(new Announcer(DownloadLabelScene.class));
+                        startScene(new Announcer(DownloadLabelsScene.class));
                         return true;
                     case R.id.action_default_download_label:
                         DownloadManager dm = EhApplication.getDownloadManager(getContext());

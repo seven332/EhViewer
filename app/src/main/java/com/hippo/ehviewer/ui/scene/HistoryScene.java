@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -51,6 +52,7 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.util.ApiHelper;
+import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.ResourcesUtils;
@@ -87,8 +89,12 @@ public class HistoryScene extends ToolbarScene
         View content = ViewUtils.$$(view, R.id.content);
         mRecyclerView = (EasyRecyclerView) ViewUtils.$$(content, R.id.recycler_view);
         FastScroller fastScroller = (FastScroller) ViewUtils.$$(content, R.id.fast_scroller);
-        View tip = ViewUtils.$$(view, R.id.tip);
+        TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mViewTransition = new ViewTransition(content, tip);
+
+        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_history);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        tip.setCompoundDrawables(null, drawable, null, null);
 
         Resources resources = getResources();
 
@@ -107,9 +113,9 @@ public class HistoryScene extends ToolbarScene
         mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
 
         fastScroller.attachToRecyclerView(mRecyclerView);
-        HandlerDrawable drawable = new HandlerDrawable();
-        drawable.setColor(ResourcesUtils.getAttrColor(getContext(), R.attr.colorAccent));
-        fastScroller.setHandlerDrawable(drawable);
+        HandlerDrawable handlerDrawable = new HandlerDrawable();
+        handlerDrawable.setColor(ResourcesUtils.getAttrColor(getContext(), R.attr.colorAccent));
+        fastScroller.setHandlerDrawable(handlerDrawable);
 
         if (null != mList && mList.size() > 0) {
             mViewTransition.showView(0);

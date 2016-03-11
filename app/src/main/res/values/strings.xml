@@ -154,7 +154,7 @@
     <string name="delete">Delete</string>
     <string name="delete_quick_search_title">Delete Quick Search</string>
     <string name="delete_quick_search_message">Delete \"%s\"?</string>
-    <string name="no_quick_search">No quick search saved yet</string>
+    <string name="no_quick_search">Quick search will be shown here</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 stars</string>
@@ -275,7 +275,7 @@
     <string name="drawer_download_label_title">Label</string>
     <string name="default_download_label_name">Default</string>
     <string name="download_move_dialog_title">Move</string>
-    <string name="label">Label</string>
+    <string name="download_labels">Download labels</string>
     <string name="download_start_all">Start all</string>
     <string name="download_stop_all">Stop all</string>
     <string name="download_service_label">EhViewer Download Service</string>

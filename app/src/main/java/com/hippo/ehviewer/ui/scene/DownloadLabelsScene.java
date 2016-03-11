@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -49,12 +50,13 @@ import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dao.DownloadLabel;
+import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.List;
 
-public class DownloadLabelScene extends ToolbarScene {
+public class DownloadLabelsScene extends ToolbarScene {
 
     /*---------------
      Whole life cycle
@@ -89,14 +91,16 @@ public class DownloadLabelScene extends ToolbarScene {
     @Override
     public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.scene_download_label, container, false);
+        View view = inflater.inflate(R.layout.scene_label_list, container, false);
 
         mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
-        View tip = ViewUtils.$$(view, R.id.tip);
-        TextView tipText = (TextView) ViewUtils.$$(tip, R.id.tip_text);
+        TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
-        tipText.setText(R.string.no_download_label);
+        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_label);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        tip.setCompoundDrawables(null, drawable, null, null);
+        tip.setText(R.string.no_download_label);
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
         RecyclerViewTouchActionGuardManager guardManager = new RecyclerViewTouchActionGuardManager();
@@ -131,7 +135,7 @@ public class DownloadLabelScene extends ToolbarScene {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setTitle(R.string.label);
+        setTitle(R.string.download_labels);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
     }
 
@@ -159,7 +163,7 @@ public class DownloadLabelScene extends ToolbarScene {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_add: {
-                EditTextDialogBuilder builder = new EditTextDialogBuilder(getContext(), null, getString(R.string.label));
+                EditTextDialogBuilder builder = new EditTextDialogBuilder(getContext(), null, getString(R.string.download_labels));
                 builder.setTitle(R.string.new_label_title);
                 builder.setPositiveButton(android.R.string.ok, null);
                 AlertDialog dialog = builder.show();
@@ -290,7 +294,7 @@ public class DownloadLabelScene extends ToolbarScene {
             if (label == v) {
                 DownloadLabel raw = mList.get(index);
                 EditTextDialogBuilder builder = new EditTextDialogBuilder(
-                        getContext(), raw.getLabel(), getString(R.string.label));
+                        getContext(), raw.getLabel(), getString(R.string.download_labels));
                 builder.setTitle(R.string.rename_label_title);
                 builder.setPositiveButton(android.R.string.ok, null);
                 AlertDialog dialog = builder.show();

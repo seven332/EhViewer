@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -45,6 +46,7 @@ import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dao.QuickSearch;
+import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -85,14 +87,16 @@ public final class QuickSearchScene extends ToolbarScene {
     @Override
     public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.scene_download_label, container, false);
+        View view = inflater.inflate(R.layout.scene_label_list, container, false);
 
         mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
-        View tip = ViewUtils.$$(view, R.id.tip);
-        TextView tipText = (TextView) ViewUtils.$$(tip, R.id.tip_text);
+        TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
-        tipText.setText(R.string.no_quick_search);
+        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_search);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        tip.setCompoundDrawables(null, drawable, null, null);
+        tip.setText(R.string.no_quick_search);
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
         RecyclerViewTouchActionGuardManager guardManager = new RecyclerViewTouchActionGuardManager();
