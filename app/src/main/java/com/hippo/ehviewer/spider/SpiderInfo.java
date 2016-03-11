@@ -44,16 +44,31 @@ public class SpiderInfo {
     int previewPerPage = -1;
     SparseArray<String> pTokenMap = null;
 
-    @SuppressWarnings("InfiniteLoopStatement")
-    public static SpiderInfo readFromUniFile(@Nullable UniFile file) {
+
+    public static SpiderInfo read(@Nullable UniFile file) {
         if (file == null) {
             return null;
         }
 
         InputStream is = null;
-        SpiderInfo spiderInfo = null;
         try {
             is = file.openInputStream();
+            return read(is);
+        } catch (IOException e) {
+            return null;
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    @SuppressWarnings("InfiniteLoopStatement")
+    public static SpiderInfo read(@Nullable InputStream is) {
+        if (null == is) {
+            return null;
+        }
+
+        SpiderInfo spiderInfo = null;
+        try {
             spiderInfo = new SpiderInfo();
             // Start page
             spiderInfo.startPage = Integer.parseInt(IOUtils.readAsciiLine(is), 16);
@@ -87,8 +102,6 @@ public class SpiderInfo {
             }
         } catch (IOException | NumberFormatException e) {
             // Ignore
-        } finally {
-            IOUtils.closeQuietly(is);
         }
 
         if (spiderInfo == null || spiderInfo.gid == -1 || spiderInfo.token == null ||

@@ -52,11 +52,7 @@ public final class SpiderDen {
     private static SimpleDiskCache sCache;
 
     public static void initialize(Context context) {
-        try {
-            sCache = new SimpleDiskCache(new File(context.getCacheDir(), "image"), 160 * 1024 * 1024);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sCache = new SimpleDiskCache(new File(context.getCacheDir(), "image"), 160 * 1024 * 1024);
     }
 
     public static UniFile getGalleryDownloadDir(GalleryInfo galleryInfo) {

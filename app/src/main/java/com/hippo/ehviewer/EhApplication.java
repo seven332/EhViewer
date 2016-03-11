@@ -25,6 +25,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.hippo.beerbelly.LruCacheEx;
+import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
@@ -63,6 +64,7 @@ public class EhApplication extends SceneApplication {
     private LruCacheEx<Long, GalleryDetail> mGalleryDetailCache;
     private LruCacheEx<String, LargePreviewSet> mLargePreviewSetCache;
     private LruCacheEx<Long, Integer> mPreviewPagesCache;
+    private SimpleDiskCache mSpiderInfoCache;
     private DownloadManager mDownloadManager;
 
     @Override
@@ -231,6 +233,16 @@ public class EhApplication extends SceneApplication {
             application.mPreviewPagesCache = new LruCacheEx<>(50,  3 * 60 * 1000);
         }
         return application.mPreviewPagesCache;
+    }
+
+    @NonNull
+    public static SimpleDiskCache getSpiderInfoCache(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (null == application.mSpiderInfoCache) {
+            application.mSpiderInfoCache = new SimpleDiskCache(
+                    new File(context.getCacheDir(), "spider_info"), 5 * 1024 * 1024); // 5M
+        }
+        return application.mSpiderInfoCache;
     }
 
     @NonNull

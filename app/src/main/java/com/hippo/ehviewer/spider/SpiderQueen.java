@@ -27,7 +27,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.MimeTypeMap;
 
-import com.hippo.ehviewer.AppConfig;
+import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
@@ -55,8 +55,6 @@ import com.hippo.yorozuya.io.InputStreamPipe;
 import com.hippo.yorozuya.io.OutputStreamPipe;
 import com.hippo.yorozuya.sparse.SparseJLArray;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -116,6 +114,8 @@ public class SpiderQueen implements Runnable {
     @NonNull
     private final OkHttpClient mHttpClient;
     @NonNull
+    private final SimpleDiskCache mSpiderInfoCache;
+    @NonNull
     private final GalleryInfo mGalleryInfo;
     @NonNull
     private final SpiderDen mSpiderDen;
@@ -170,6 +170,7 @@ public class SpiderQueen implements Runnable {
 
     private SpiderQueen(EhApplication application, @NonNull GalleryInfo galleryInfo) {
         mHttpClient = EhApplication.getOkHttpClient(application);
+        mSpiderInfoCache = EhApplication.getSpiderInfoCache(application);
         mGalleryInfo = galleryInfo;
         mSpiderDen = new SpiderDen(mGalleryInfo);
     }
@@ -581,7 +582,7 @@ public class SpiderQueen implements Runnable {
         UniFile downloadDir = mSpiderDen.getDownloadDir();
         if (downloadDir != null) {
             UniFile file = downloadDir.findFile(SPIDER_INFO_FILENAME);
-            SpiderInfo spiderInfo = SpiderInfo.readFromUniFile(file);
+            SpiderInfo spiderInfo = SpiderInfo.read(file);
             if (spiderInfo != null && spiderInfo.gid == mGalleryInfo.gid &&
                     spiderInfo.token.equals(mGalleryInfo.token)) {
                 return spiderInfo;
@@ -589,13 +590,20 @@ public class SpiderQueen implements Runnable {
         }
 
         // Read from cache
-        File dir = AppConfig.getSpiderInfoCacheDir();
-        if (dir != null) {
-            UniFile file = UniFile.fromFile(new File(dir, Long.toString(mGalleryInfo.gid)));
-            SpiderInfo spiderInfo = SpiderInfo.readFromUniFile(file);
-            if (spiderInfo != null && spiderInfo.gid == mGalleryInfo.gid &&
-                    spiderInfo.token.equals(mGalleryInfo.token)) {
-                return spiderInfo;
+        InputStreamPipe pipe = mSpiderInfoCache.getInputStreamPipe(Long.toString(mGalleryInfo.gid));
+        if (null != pipe) {
+            try {
+                pipe.obtain();
+                SpiderInfo spiderInfo = SpiderInfo.read(pipe.open());
+                if (spiderInfo != null && spiderInfo.gid == mGalleryInfo.gid &&
+                        spiderInfo.token.equals(mGalleryInfo.token)) {
+                    return spiderInfo;
+                }
+            } catch (IOException e) {
+                // Ignore
+            } finally {
+                pipe.close();
+                pipe.release();
             }
         }
 
@@ -683,13 +691,15 @@ public class SpiderQueen implements Runnable {
         }
 
         // Read from cache
-        File dir = AppConfig.getSpiderInfoCacheDir();
-        if (dir != null) {
-            try {
-                spiderInfo.write(new FileOutputStream(new File(dir, Long.toString(mGalleryInfo.gid))));
-            } catch (Exception e) {
-                // Ignore
-            }
+        OutputStreamPipe pipe = mSpiderInfoCache.getOutputStreamPipe(Long.toString(mGalleryInfo.gid));
+        try {
+            pipe.obtain();
+            spiderInfo.write(pipe.open());
+        } catch (IOException e) {
+            // Ignore
+        } finally {
+            pipe.close();
+            pipe.release();
         }
     }
 

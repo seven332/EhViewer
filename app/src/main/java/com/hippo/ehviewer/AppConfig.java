@@ -37,11 +37,6 @@ public class AppConfig {
         sContext = context.getApplicationContext();
     }
 
-    public static File getSpiderInfoCacheDir() {
-        File dir = new File(sContext.getCacheDir(), SPIDER_INFO);
-        return FileUtils.ensureDirectory(dir) ? dir : null;
-    }
-
     @Nullable
     public static File getExternalAppDir() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
