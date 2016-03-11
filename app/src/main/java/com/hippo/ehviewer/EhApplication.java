@@ -18,6 +18,8 @@ package com.hippo.ehviewer;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Debug;
 import android.support.annotation.NonNull;
@@ -87,6 +89,14 @@ public class EhApplication extends SceneApplication {
 
         if (Settings.getEnableAnalytics()) {
             Analytics.start(this);
+        }
+
+        // Update version code
+        try {
+            PackageInfo pi= getPackageManager().getPackageInfo(getPackageName(), 0);
+            Settings.putVersionCode(pi.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            // Ignore
         }
 
         if (DEBUG_NATIVE_MEMORY) {

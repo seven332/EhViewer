@@ -101,6 +101,17 @@ public class Settings {
         sSettingsPre.edit().putString(key, Integer.toString(value)).apply();
     }
 
+    private static final String KEY_VERSION_CODE = "version_code";
+    private static final int DEFAULT_VERSION_CODE = 0;
+
+    public static int getVersionCode() {
+        return getInt(KEY_VERSION_CODE, DEFAULT_VERSION_CODE);
+    }
+
+    public static void putVersionCode(int value) {
+        putInt(KEY_VERSION_CODE, value);
+    }
+
     private static final String KEY_DISPLAY_NAME = "display_name";
     private static final String DEFAULT_DISPLAY_NAME = null;
 
