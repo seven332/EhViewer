@@ -100,7 +100,7 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery<Bitmap> {
         removeDrawableAndHolder();
 
         mHolder = holder;
-        Drawable drawable = new BitmapDrawable(holder.getValue());
+        Drawable drawable = new BitmapDrawable(mTextView.getResources(), holder.getValue());
 
         setDrawable(drawable);
 
