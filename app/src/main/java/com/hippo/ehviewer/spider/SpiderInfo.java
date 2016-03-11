@@ -61,6 +61,25 @@ public class SpiderInfo {
         }
     }
 
+    private static int getStartPage(String str) {
+        if (null == str) {
+            return 0;
+        }
+
+        int startPage = 0;
+        for (int i = 0, n = str.length(); i < n; i++) {
+            startPage *= 16;
+            char ch = str.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                startPage += ch - '0';
+            } else if (ch >= 'a' && ch <= 'f') {
+                startPage += ch - 'a' + 10;
+            }
+        }
+
+        return startPage >= 0 ? startPage : 0;
+    }
+
     @SuppressWarnings("InfiniteLoopStatement")
     public static SpiderInfo read(@Nullable InputStream is) {
         if (null == is) {
@@ -71,7 +90,7 @@ public class SpiderInfo {
         try {
             spiderInfo = new SpiderInfo();
             // Start page
-            spiderInfo.startPage = Integer.parseInt(IOUtils.readAsciiLine(is), 16);
+            spiderInfo.startPage = getStartPage(IOUtils.readAsciiLine(is));
             // Gid
             spiderInfo.gid = Long.parseLong(IOUtils.readAsciiLine(is));
             // Token
@@ -117,13 +136,13 @@ public class SpiderInfo {
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(os);
-            writer.write(String.format("%08x", startPage));
+            writer.write(String.format("%08x", startPage >= 0 ? startPage : 0)); // Avoid negative
             writer.write("\n");
             writer.write(Long.toString(gid));
             writer.write("\n");
             writer.write(token);
             writer.write("\n");
-            writer.write('1');
+            writer.write("1");
             writer.write("\n");
             writer.write(Integer.toString(previewPages));
             writer.write("\n");
