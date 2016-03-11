@@ -705,7 +705,7 @@ public class GalleryActivity extends TrackedActivity
             return;
         }
         UniFile file;
-        if (null == (file = mGalleryProvider.save(page, UniFile.fromFile(dir), Long.toString(System.currentTimeMillis())))) {
+        if (null == (file = mGalleryProvider.save(page, UniFile.fromFile(dir), mGalleryProvider.getImageFilename(page)))) {
             Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
             return;
         }

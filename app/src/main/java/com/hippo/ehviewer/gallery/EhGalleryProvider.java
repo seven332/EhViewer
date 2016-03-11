@@ -26,6 +26,8 @@ import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.SimpleHandler;
 
+import java.util.Locale;
+
 public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.OnSpiderListener {
 
     private final Context mContext;
@@ -71,6 +73,12 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
         } else {
             return super.getStartPage();
         }
+    }
+
+    @NonNull
+    @Override
+    public String getImageFilename(int index) {
+        return String.format(Locale.US, "%d-%08d", mGalleryInfo.gid, index + 1);
     }
 
     @Override

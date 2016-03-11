@@ -107,6 +107,13 @@ public class ZipGalleryProvider extends GalleryProvider implements Runnable {
         return mError;
     }
 
+    @NonNull
+    @Override
+    public String getImageFilename(int index) {
+        // TODO
+        return Integer.toString(index);
+    }
+
     @Override
     public boolean save(int index, @NonNull UniFile file) {
         // TODO

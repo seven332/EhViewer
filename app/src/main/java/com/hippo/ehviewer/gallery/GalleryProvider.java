@@ -89,6 +89,12 @@ public abstract class GalleryProvider {
         return 0;
     }
 
+    /**
+     * @return without extension
+     */
+    @NonNull
+    public abstract String getImageFilename(int index);
+
     public abstract boolean save(int index, @NonNull UniFile file);
 
     /**
