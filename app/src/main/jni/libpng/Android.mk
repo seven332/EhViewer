@@ -31,5 +31,4 @@ pngset.c \
 pngtrans.c
 LOCAL_EXPORT_LDLIBS := -lz
 
-# I don't why apng patch make shared library not work
 include $(BUILD_STATIC_LIBRARY)
