@@ -285,7 +285,7 @@
     <string name="default_download_label">Default download label</string>
 
     <!-- Download label -->
-    <string name="no_download_label">No labels</string>
+    <string name="no_download_label">Download labels will be shown here</string>
     <string name="add">Add</string>
     <string name="new_label_title">New label</string>
     <string name="label_text_is_empty">Label text is empty</string>

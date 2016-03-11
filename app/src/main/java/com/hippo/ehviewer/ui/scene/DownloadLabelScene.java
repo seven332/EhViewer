@@ -19,7 +19,6 @@ package com.hippo.ehviewer.ui.scene;
 import android.content.DialogInterface;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,25 +52,25 @@ import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.ViewUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DownloadLabelScene extends ToolbarScene {
 
+    /*---------------
+     Whole life cycle
+     ---------------*/
+    @Nullable
+    public List<DownloadLabel> mList = null;
+
+    /*---------------
+     View life cycle
+     ---------------*/
     @Nullable
     private EasyRecyclerView mRecyclerView;
     @Nullable
     private ViewTransition mViewTransition;
-
     @Nullable
     private RecyclerView.Adapter mAdapter;
-
-    @Nullable
-    public List<DownloadLabel> mList = null;
-
-    @NonNull
-    public final Map<DownloadLabel, Boolean> mPinState = new HashMap<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,42 +91,37 @@ public class DownloadLabelScene extends ToolbarScene {
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_download_label, container, false);
 
-        mRecyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
-        View tip = view.findViewById(R.id.tip);
+        mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
+        View tip = ViewUtils.$$(view, R.id.tip);
+        TextView tipText = (TextView) ViewUtils.$$(tip, R.id.tip_text);
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
-        if (mRecyclerView != null) {
-            // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
-            RecyclerViewTouchActionGuardManager guardManager = new RecyclerViewTouchActionGuardManager();
-            guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-            guardManager.setEnabled(true);
+        tipText.setText(R.string.no_download_label);
 
-            // drag & drop manager
-            RecyclerViewDragDropManager dragDropManager = new RecyclerViewDragDropManager();
-            dragDropManager.setDraggingItemShadowDrawable(
-                    (NinePatchDrawable) getResources().getDrawable(R.drawable.shadow_8dp));
-
-            // swipe manager
-            RecyclerViewSwipeManager swipeManager = new RecyclerViewSwipeManager();
-
-            RecyclerView.Adapter adapter = new LabelAdapter();
-            adapter.setHasStableIds(true);
-            adapter = dragDropManager.createWrappedAdapter(adapter); // wrap for dragging
-            adapter = swipeManager.createWrappedAdapter(adapter); // wrap for swiping
-            mAdapter = adapter;
-
-            final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-            animator.setSupportsChangeAnimations(false);
-
-            mRecyclerView.hasFixedSize();
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            mRecyclerView.setAdapter(adapter);
-            mRecyclerView.setItemAnimator(animator);
-
-            guardManager.attachRecyclerView(mRecyclerView);
-            swipeManager.attachRecyclerView(mRecyclerView);
-            dragDropManager.attachRecyclerView(mRecyclerView);
-        }
+        // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
+        RecyclerViewTouchActionGuardManager guardManager = new RecyclerViewTouchActionGuardManager();
+        guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+        guardManager.setEnabled(true);
+        // drag & drop manager
+        RecyclerViewDragDropManager dragDropManager = new RecyclerViewDragDropManager();
+        dragDropManager.setDraggingItemShadowDrawable(
+                (NinePatchDrawable) getResources().getDrawable(R.drawable.shadow_8dp));
+        // swipe manager
+        RecyclerViewSwipeManager swipeManager = new RecyclerViewSwipeManager();
+        RecyclerView.Adapter adapter = new LabelAdapter();
+        adapter.setHasStableIds(true);
+        adapter = dragDropManager.createWrappedAdapter(adapter); // wrap for dragging
+        adapter = swipeManager.createWrappedAdapter(adapter); // wrap for swiping
+        mAdapter = adapter;
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+        animator.setSupportsChangeAnimations(false);
+        mRecyclerView.hasFixedSize();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setItemAnimator(animator);
+        guardManager.attachRecyclerView(mRecyclerView);
+        swipeManager.attachRecyclerView(mRecyclerView);
+        dragDropManager.attachRecyclerView(mRecyclerView);
 
         updateView();
 
@@ -139,6 +133,15 @@ public class DownloadLabelScene extends ToolbarScene {
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.label);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mRecyclerView = null;
+        mViewTransition = null;
+        mAdapter = null;
     }
 
     @Override
@@ -172,55 +175,6 @@ public class DownloadLabelScene extends ToolbarScene {
                 mViewTransition.showView(0);
             } else {
                 mViewTransition.showView(1);
-            }
-        }
-    }
-
-    private boolean isPinned(int position) {
-        if (mList != null) {
-            Boolean pinned = mPinState.get(mList.get(position));
-            if (pinned != null) {
-                return pinned;
-            }
-        }
-        return false;
-    }
-
-    private void setPinned(int position, boolean pinned) {
-        if (mList != null) {
-            mPinState.put(mList.get(position), pinned);
-        }
-    }
-
-    private class DeleteLabelDialogHelper implements DialogInterface.OnClickListener {
-
-        private final int mIndex;
-
-        public DeleteLabelDialogHelper(int index) {
-            mIndex = index;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            if (which != DialogInterface.BUTTON_POSITIVE) {
-                return;
-            }
-            if (mList == null) {
-                return;
-            }
-
-            DownloadLabel raw = mList.get(mIndex);
-            EhApplication.getDownloadManager(getContext()).deleteLabel(raw.getLabel());
-            mPinState.remove(raw);
-            if (mAdapter != null) {
-                mAdapter.notifyItemRemoved(mIndex);
-            }
-            if (mViewTransition != null) {
-                if (mList != null && mList.size() > 0) {
-                    mViewTransition.showView(0);
-                } else {
-                    mViewTransition.showView(1);
-                }
             }
         }
     }
@@ -308,7 +262,6 @@ public class DownloadLabelScene extends ToolbarScene {
     private class LabelHolder extends AbstractDraggableSwipeableItemViewHolder
             implements View.OnClickListener {
 
-        public final View delete;
         public final View swipeHandler;
         public final TextView label;
         public final View dragHandler;
@@ -316,12 +269,10 @@ public class DownloadLabelScene extends ToolbarScene {
         public LabelHolder(View itemView) {
             super(itemView);
 
-            delete = itemView.findViewById(R.id.delete);
-            swipeHandler = itemView.findViewById(R.id.swipe_handler);
-            label = (TextView) itemView.findViewById(R.id.label);
-            dragHandler = itemView.findViewById(R.id.drag_handler);
+            swipeHandler = ViewUtils.$$(itemView, R.id.swipe_handler);
+            label = (TextView) ViewUtils.$$(itemView, R.id.label);
+            dragHandler = ViewUtils.$$(itemView, R.id.drag_handler);
 
-            delete.setOnClickListener(this);
             label.setOnClickListener(this);
         }
 
@@ -336,14 +287,7 @@ public class DownloadLabelScene extends ToolbarScene {
                 return;
             }
 
-            if (delete == v) {
-                DeleteLabelDialogHelper helper = new DeleteLabelDialogHelper(index);
-                new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.delete_label_title)
-                        .setMessage(getString(R.string.delete_label_message, mList.get(index).getLabel()))
-                        .setPositiveButton(android.R.string.ok, helper)
-                        .show();
-            } else if (label == v) {
+            if (label == v) {
                 DownloadLabel raw = mList.get(index);
                 EditTextDialogBuilder builder = new EditTextDialogBuilder(
                         getContext(), raw.getLabel(), getString(R.string.label));
@@ -367,7 +311,7 @@ public class DownloadLabelScene extends ToolbarScene {
         @Override
         public LabelHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new LabelHolder(getActivity().getLayoutInflater()
-                    .inflate(R.layout.item_download_label, parent, false));
+                    .inflate(R.layout.item_label_list, parent, false));
         }
 
         @Override
@@ -375,11 +319,7 @@ public class DownloadLabelScene extends ToolbarScene {
             if (mList != null) {
                 holder.label.setText(mList.get(position).getLabel());
             }
-
-            // set swiping properties
-            holder.setMaxLeftSwipeAmount(-0.5f);
-            holder.setMaxRightSwipeAmount(0);
-            holder.setSwipeItemHorizontalSlideAmount(isPinned(position) ? -0.5f : 0);
+            holder.setSwipeItemHorizontalSlideAmount(0);
         }
 
         @Override
@@ -438,11 +378,7 @@ public class DownloadLabelScene extends ToolbarScene {
                 case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
                 case SwipeableItemConstants.RESULT_CANCELED:
                 default:
-                    if (position >= 0) {
-                        return new UnpinResultAction(position);
-                    } else {
-                        return null;
-                    }
+                    return new SwipeResultActionDefault();
             }
         }
     }
@@ -459,35 +395,30 @@ public class DownloadLabelScene extends ToolbarScene {
         protected void onPerformAction() {
             super.onPerformAction();
 
-            if (!isPinned(mPosition)) {
-                setPinned(mPosition, true);
-
-                if (mAdapter != null) {
-                    mAdapter.notifyItemChanged(mPosition);
-                }
+            final List<DownloadLabel> list = mList;
+            if (list == null || mPosition < 0 || mPosition >= list.size()) {
+                return;
             }
-        }
-    }
+            final DownloadLabel label = list.get(mPosition);
 
-    private class UnpinResultAction extends SwipeResultActionDefault {
-
-        private final int mPosition;
-
-        public UnpinResultAction(int position) {
-            mPosition = position;
-        }
-
-        @Override
-        protected void onPerformAction() {
-            super.onPerformAction();
-
-            if (isPinned(mPosition)) {
-                setPinned(mPosition, false);
-
-                if (mAdapter != null) {
-                    mAdapter.notifyItemChanged(mPosition);
-                }
-            }
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.delete_label_title)
+                    .setMessage(getString(R.string.delete_label_message, label.getLabel()))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            EhApplication.getDownloadManager(getContext()).deleteLabel(label.getLabel());
+                        }
+                    })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            if (null != mAdapter) {
+                                mAdapter.notifyDataSetChanged();
+                            }
+                            updateView();
+                        }
+                    }).show();
         }
     }
 }

@@ -151,8 +151,7 @@ public final class QuickSearchScene extends ToolbarScene {
         }
     }
 
-    private class QuickSearchHolder extends AbstractDraggableSwipeableItemViewHolder
-            implements View.OnClickListener {
+    private class QuickSearchHolder extends AbstractDraggableSwipeableItemViewHolder {
 
         public final View swipeHandler;
         public final TextView label;
@@ -170,11 +169,6 @@ public final class QuickSearchScene extends ToolbarScene {
         public View getSwipeableContainerView() {
             return swipeHandler;
         }
-
-        @Override
-        public void onClick(View v) {
-
-        }
     }
 
 
@@ -185,7 +179,7 @@ public final class QuickSearchScene extends ToolbarScene {
         @Override
         public QuickSearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new QuickSearchHolder(getActivity().getLayoutInflater()
-                    .inflate(R.layout.item_quick_search, parent, false));
+                    .inflate(R.layout.item_label_list, parent, false));
         }
 
         @Override

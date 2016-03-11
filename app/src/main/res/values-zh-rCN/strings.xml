@@ -245,7 +245,7 @@
     <string name="default_download_label">默认下载标签</string>
 
     <!-- Download label -->
-    <string name="no_download_label">无标签</string>
+    <string name="no_download_label">这里是下载标签</string>
     <string name="add">添加</string>
     <string name="new_label_title">新标签</string>
     <string name="label_text_is_empty">标签文本为空</string>
