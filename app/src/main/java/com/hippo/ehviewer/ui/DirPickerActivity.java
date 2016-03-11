@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import com.hippo.ehviewer.R;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.DirExplorer;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.io.File;
 
@@ -38,8 +40,14 @@ public class DirPickerActivity extends ToolbarActivity
 
     public static final String KEY_FILE_URI = "file_uri";
 
+    /*---------------
+     Whole life cycle
+     ---------------*/
+    @Nullable
     private TextView mPath;
+    @Nullable
     private DirExplorer mDirExplorer;
+    @Nullable
     private View mOk;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -50,9 +58,9 @@ public class DirPickerActivity extends ToolbarActivity
         setContentView(R.layout.activity_dir_picker);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
 
-        mPath = (TextView) findViewById(R.id.path);
-        mDirExplorer = (DirExplorer) findViewById(R.id.dir_explorer);
-        mOk = findViewById(R.id.ok);
+        mPath = (TextView) ViewUtils.$$(this, R.id.path);
+        mDirExplorer = (DirExplorer) ViewUtils.$$(this, R.id.dir_explorer);
+        mOk = ViewUtils.$$(this, R.id.ok);
 
         File file = null;
         Intent intent = getIntent();
@@ -74,6 +82,15 @@ public class DirPickerActivity extends ToolbarActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mPath = null;
+        mDirExplorer = null;
+        mOk = null;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -87,6 +104,9 @@ public class DirPickerActivity extends ToolbarActivity
     @Override
     public void onClick(@NonNull View v) {
         if (mOk == v) {
+            if (null == mDirExplorer) {
+                return;
+            }
             File file = mDirExplorer.getCurrentFile();
             if (!file.canWrite()) {
                 Toast.makeText(this, R.string.directory_not_writable, Toast.LENGTH_SHORT).show();
@@ -101,6 +121,8 @@ public class DirPickerActivity extends ToolbarActivity
 
     @Override
     public void onChangeDir(File dir) {
-        mPath.setText(dir.getPath());
+        if (null != mPath) {
+            mPath.setText(dir.getPath());
+        }
     }
 }
