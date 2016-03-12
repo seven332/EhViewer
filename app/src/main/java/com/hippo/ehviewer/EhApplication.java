@@ -49,12 +49,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.OkHttpClient;
 
-public class EhApplication extends SceneApplication {
+public class EhApplication extends SceneApplication implements Thread.UncaughtExceptionHandler {
 
     private static final String TAG = EhApplication.class.getSimpleName();
 
     private static final boolean DEBUG_CONACO = false;
     private static final boolean DEBUG_NATIVE_MEMORY = false;
+
+    private Thread.UncaughtExceptionHandler mDefaultHandler;
 
     private final AtomicInteger mIdGenerator = new AtomicInteger();
     private final SparseArray<Object> mGlobalStuffMap = new SparseArray<>();
@@ -71,6 +73,10 @@ public class EhApplication extends SceneApplication {
 
     @Override
     public void onCreate() {
+        // Prepare to catch crash
+        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(this);
+
         super.onCreate();
 
         GetText.initialize(this);
@@ -262,5 +268,32 @@ public class EhApplication extends SceneApplication {
             application.mDownloadManager = new DownloadManager(application);
         }
         return application.mDownloadManager;
+    }
+
+    private boolean handleException(Throwable ex) {
+        if (ex == null) {
+            return false;
+        }
+        try {
+            ex.printStackTrace();
+            Crash.saveCrashInfo2File(this, ex);
+            return true;
+        } catch (Throwable tr) {
+            return false;
+        }
+    }
+
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        if (!handleException(ex) && mDefaultHandler != null) {
+            mDefaultHandler.uncaughtException(thread, ex);
+        }
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
+    }
+
+    @NonNull
+    public static String getDeveloperEmail() {
+        return "ehviewersu$gmail.com".replace('$', '@');
     }
 }

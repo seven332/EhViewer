@@ -31,6 +31,7 @@ public class AppConfig {
     private static final String DOWNLOAD = "download";
     private static final String TEMP = "temp";
     private static final String IMAGE = "image";
+    private static final String CRASH = "crash";
 
     private static Context sContext;
 
@@ -83,6 +84,11 @@ public class AppConfig {
     @Nullable
     public static File getExternalImageDir() {
         return getDirInExternalAppDir(IMAGE);
+    }
+
+    @Nullable
+    public static File getExternalCrashDir() {
+        return getDirInExternalAppDir(CRASH);
     }
 
     @Nullable

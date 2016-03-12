@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:padding="@dimen/keyline_margin"
-        app:srcCompat="@drawable/v_chart_accent_x48"/>
+        app:srcCompat="@drawable/v_bug_black_x48"/>
 
     <com.hippo.widget.MaxSizeContainer
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -49,12 +49,12 @@
                 android:id="@+id/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/crash_explain"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/text_little_small"
                 android:lineSpacingExtra="8dp"/>
 
         </ScrollView>
-
     </com.hippo.widget.MaxSizeContainer>
 
     <LinearLayout
@@ -75,13 +75,13 @@
             android:background="@drawable/card_purple_2dp"/>
 
         <TextView
-            android:id="@+id/ok"
+            android:id="@+id/send"
             style="@style/CardButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="@dimen/keyline_margin"
-            android:text="@android:string/ok"
+            android:text="@string/send"
             android:textColor="@android:color/white"
             android:background="@drawable/card_teal_2dp"/>
 

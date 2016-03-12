@@ -36,6 +36,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrlOpener;
@@ -43,6 +44,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.ui.scene.AnalyticsScene;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.CookieSignInScene;
+import com.hippo.ehviewer.ui.scene.CrashScene;
 import com.hippo.ehviewer.ui.scene.DownloadLabelsScene;
 import com.hippo.ehviewer.ui.scene.DownloadsScene;
 import com.hippo.ehviewer.ui.scene.FavoritesScene;
@@ -75,7 +77,8 @@ public final class MainActivity extends StageActivity
 
     public static final int CHECK_STEP_WARNING = 0;
     public static final int CHECK_STEP_ANALYTICS = 1;
-    public static final int CHECK_STEP_SIGN_IN = 2;
+    public static final int CHECK_STEP_CRASH = 2;
+    public static final int CHECK_STEP_SIGN_IN = 3;
 
     public static final String KEY_TARGET_SCENE = "target_scene";
     public static final String KEY_TARGET_ARGS = "target_args";
@@ -97,6 +100,7 @@ public final class MainActivity extends StageActivity
     static {
         registerLaunchMode(WarningScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(AnalyticsScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
+        registerLaunchMode(CrashScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(SignInScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(WebViewSignInScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(CookieSignInScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
@@ -121,6 +125,11 @@ public final class MainActivity extends StageActivity
                     break;
                 }
             case CHECK_STEP_ANALYTICS:
+                if (Crash.hasCrashFile()) {
+                    startScene(new Announcer(CrashScene.class).setArgs(args));
+                    break;
+                }
+            case CHECK_STEP_CRASH:
                 if (!EhUtils.hasSignedIn(this)) {
                     startScene(new Announcer(SignInScene.class).setArgs(args));
                     break;
@@ -165,6 +174,8 @@ public final class MainActivity extends StageActivity
             return new Announcer(WarningScene.class);
         } else if (Settings.getAskAnalytics()) {
             return new Announcer(AnalyticsScene.class);
+        } else if (Crash.hasCrashFile()) {
+            return new Announcer(CrashScene.class);
         } else if (!EhUtils.hasSignedIn(this)) {
             return new Announcer(SignInScene.class);
         } else {
@@ -187,6 +198,11 @@ public final class MainActivity extends StageActivity
                 newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
                 newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(AnalyticsScene.class).setArgs(newArgs);
+            } else if (Crash.hasCrashFile()) {
+                Bundle newArgs = new Bundle();
+                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                return new Announcer(CrashScene.class).setArgs(newArgs);
             } else if (!EhUtils.hasSignedIn(this)) {
                 Bundle newArgs = new Bundle();
                 newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());

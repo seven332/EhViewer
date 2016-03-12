@@ -23,6 +23,7 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 
 import com.hippo.ehviewer.Analytics;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.UrlOpener;
@@ -83,7 +84,7 @@ public class AboutFragment extends PreferenceFragment
     public boolean onPreferenceClick(Preference preference) {
         String key = preference.getKey();
         if (KEY_AUTHOR.equals(key)) {
-            ActivityHelper.sendEmail(getActivity(), "ehviewersu$gmail.com".replace('$', '@'),
+            ActivityHelper.sendEmail(getActivity(), EhApplication.getDeveloperEmail(),
                     "About EhViewer", null);
         } else if (KEY_GOOGLE_PLUS.equals(key)) {
             UrlOpener.openUrl(getActivity(), "https://plus.google.com/communities/103823982034655188459",

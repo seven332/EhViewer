@@ -122,6 +122,10 @@
     <string name="analytics_explain">Would you mind if the developer collected your device information and your usage? It will help the developer a lot.&lt;br&gt;&lt;br&gt;Data analysis service is provided by Google Analytics. Its privacy policy can be found at &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;.&lt;br&gt;&lt;br&gt;If you agree to join data analysis, your device information and your usage will be collected, including but not limited to Android API version, equipment model, language residence, the application version, conversion time, function times. The developer promise that these information will NOT be collected, including phone number, e-mail address, IMEI.&lt;br&gt;&lt;br&gt;Your information will not be collected until you agree to join data analysis.&lt;br&gt;&lt;br&gt;The collected information will be analyzed by Google Analytics. The analysis report can only be viewed by the developer of this application.</string>
     <string name="get_it">Got it</string>
 
+    <!-- Crash -->
+    <string name="send">Send</string>
+    <string name="crash_explain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
+
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">Search ExHentai</string>
     <string name="gallery_list_empty_hit">The World is Big and Pandas sit alone</string>

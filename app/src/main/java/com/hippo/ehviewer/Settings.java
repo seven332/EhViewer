@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -485,5 +486,20 @@ public class Settings {
         }
 
         return true;
+    }
+
+    /********************
+     ****** Crash
+     ********************/
+    public static final String KEY_CRASH_FILENAME = "crash_filename";
+    public static final String VALUE_CRASH_FILENAME = null;
+
+    public static String getCrashFilename() {
+        return getString(KEY_CRASH_FILENAME, VALUE_CRASH_FILENAME);
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    public static void putCrashFilename(String value) {
+        sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
     }
 }

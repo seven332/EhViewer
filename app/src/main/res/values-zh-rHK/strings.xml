@@ -83,6 +83,10 @@
     <string name="analytics_explain">您同意讓開發者收集您的設備信息與使用情況嗎？這將對開發有很大幫助。&lt;br&gt;&lt;br&gt;數據統計服務由 Google Analytics 提供，其隱私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 查看。&lt;br&gt;&lt;br&gt;若您同意參與數據統計，您的設備信息與應用使用情況將會被記錄，其包括但不限於：Android API 版本、設備型號、語言所在地、本應用版本號、會話時長、應用功能使用次數。開發者承諾以下信息並不會被記錄：電話號碼、電子郵件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意參與數據統計之前，您的信息不會被記錄。&lt;br&gt;&lt;br&gt;被記錄的數據會由 Google Analytics 進行分析，分析報表僅可被本應用開發者訪問。</string>
     <string name="get_it">知道了</string>
 
+    <!-- Crash -->
+    <string name="send">發送</string>
+    <string name="crash_explain">上次應用崩潰了。你願意把錯誤日誌發送給開發者以便以後得到更好的用户體驗麼？（以電子郵件的形式發送）</string>
+
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">搜索 ExHentai</string>
     <string name="gallery_list_empty_hit">什麼都沒有找到</string>
