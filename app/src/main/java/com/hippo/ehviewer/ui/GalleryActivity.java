@@ -22,6 +22,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -229,7 +230,13 @@ public class GalleryActivity extends TrackedActivity
         glRootView.setContentPane(mGalleryView);
 
         // System UI helper
-        mSystemUiHelper = new SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE,
+        int systemUiLevel;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            systemUiLevel = SystemUiHelper.LEVEL_IMMERSIVE;
+        } else {
+            systemUiLevel = SystemUiHelper.LEVEL_LOW_PROFILE;
+        }
+        mSystemUiHelper = new SystemUiHelper(this, systemUiLevel,
                 SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
         if (savedInstanceState == null || !savedInstanceState.getBoolean(KEY_SHOWING, false)) {
             mSystemUiHelper.hide();
