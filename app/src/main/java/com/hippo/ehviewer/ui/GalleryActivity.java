@@ -328,18 +328,10 @@ public class GalleryActivity extends TrackedActivity
         // Check volume
         if (Settings.getVolumePage()) {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
-                    mGalleryView.pageRight();
-                } else {
-                    mGalleryView.pageLeft();
-                }
+                mGalleryView.pageLeft();
                 return true;
             } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
-                    mGalleryView.pageLeft();
-                } else {
-                    mGalleryView.pageRight();
-                }
+                mGalleryView.pageRight();
                 return true;
             }
         }
@@ -347,7 +339,6 @@ public class GalleryActivity extends TrackedActivity
         // Check keyboard and Dpad
         switch (keyCode) {
             case KeyEvent.KEYCODE_PAGE_UP:
-            case KeyEvent.KEYCODE_DPAD_LEFT:
             case KeyEvent.KEYCODE_DPAD_UP:
                 if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
                     mGalleryView.pageRight();
@@ -355,14 +346,19 @@ public class GalleryActivity extends TrackedActivity
                     mGalleryView.pageLeft();
                 }
                 return true;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                mGalleryView.pageLeft();
+                return true;
             case KeyEvent.KEYCODE_PAGE_DOWN:
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
             case KeyEvent.KEYCODE_DPAD_DOWN:
                 if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
                     mGalleryView.pageLeft();
                 } else {
                     mGalleryView.pageRight();
                 }
+                return true;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                mGalleryView.pageRight();
                 return true;
             case KeyEvent.KEYCODE_DPAD_CENTER:
             case KeyEvent.KEYCODE_SPACE:
