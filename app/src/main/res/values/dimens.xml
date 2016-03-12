@@ -22,6 +22,8 @@
 
     <dimen name="drawer_max_width">280dp</dimen>
 
+    <dimen name="dialog_padding_top_material">18dp</dimen>
+
     <!-- Text size -->
     <dimen name="text_super_large">24sp</dimen>
     <dimen name="text_large">22sp</dimen>
