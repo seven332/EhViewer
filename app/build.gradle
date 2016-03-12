@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 48
         versionName "0.9.0"
