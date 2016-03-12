@@ -20,22 +20,22 @@
 
     <header
         android:fragment="com.hippo.ehviewer.ui.fragment.EhFragment"
-        android:title="@string/settings_eh_title"
+        android:title="@string/settings_eh"
         android:icon="@drawable/v_sad_panda_primary_x24"/>
 
     <header
         android:fragment="com.hippo.ehviewer.ui.fragment.ReadFragment"
-        android:title="@string/settings_read_title"
+        android:title="@string/settings_read"
         android:icon="@drawable/v_book_open_primary_x24"/>
 
     <header
         android:fragment="com.hippo.ehviewer.ui.fragment.DownloadFragment"
-        android:title="@string/settings_download_title"
+        android:title="@string/settings_download"
         android:icon="@drawable/v_download_primary_x24"/>
 
     <header
         android:fragment="com.hippo.ehviewer.ui.fragment.AboutFragment"
-        android:title="@string/settings_about_title"
+        android:title="@string/settings_about"
         android:icon="@drawable/v_info_primary_x24"/>
 
 </preference-headers>

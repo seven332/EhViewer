@@ -22,6 +22,7 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -30,10 +31,23 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
+import com.hippo.app.ProgressDialog;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.download.DownloadManager;
+import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.ehviewer.ui.DirPickerActivity;
 import com.hippo.unifile.UniFile;
+import com.hippo.yorozuya.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DownloadFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -41,8 +55,10 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
     public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
 
     public static final String KEY_DOWNLOAD_LOCATION = "download_location";
+    public static final String KEY_RESTORE_DOWNLOAD_ITEMS = "restore_download_items";
 
-    private @Nullable Preference mDownloadLocation;
+    @Nullable
+    private Preference mDownloadLocation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,12 +66,20 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
         addPreferencesFromResource(R.xml.download_settings);
 
         mDownloadLocation = findPreference(KEY_DOWNLOAD_LOCATION);
+        Preference restoreDownloadItems = findPreference(KEY_RESTORE_DOWNLOAD_ITEMS);
 
         onUpdateDownloadLocation();
 
         if (mDownloadLocation != null) {
             mDownloadLocation.setOnPreferenceClickListener(this);
         }
+        restoreDownloadItems.setOnPreferenceClickListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mDownloadLocation = null;
     }
 
     public void onUpdateDownloadLocation() {
@@ -73,7 +97,6 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
     public boolean onPreferenceClick(Preference preference) {
         String key = preference.getKey();
         if (KEY_DOWNLOAD_LOCATION.equals(key)) {
-
             int sdk = Build.VERSION.SDK_INT;
             if (sdk < Build.VERSION_CODES.KITKAT) {
                 openDirPicker();
@@ -82,6 +105,11 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
             } else {
                 showDirPickerDialogL();
             }
+            return true;
+        } else if (KEY_RESTORE_DOWNLOAD_ITEMS.equals(key)) {
+            ProgressDialog dialog = ProgressDialog.show(getActivity(), null,
+                    getString(R.string.settings_download_restoring), true, false);
+            new RestoreTask(dialog).execute();
             return true;
         }
         return false;
@@ -173,6 +201,123 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
             default: {
                 super.onActivityResult(requestCode, resultCode, data);
             }
+        }
+    }
+
+
+    private class RestoreTask extends AsyncTask<Void, Void, List<GalleryInfo>> {
+
+        private final ProgressDialog mDialog;
+        private final DownloadManager mManager;
+
+        public RestoreTask(ProgressDialog dialog) {
+            mDialog = dialog;
+            mManager = EhApplication.getDownloadManager(getActivity());
+        }
+
+        private GalleryInfo getGalleryInfo(UniFile file) {
+            if (null == file || !file.isDirectory()) {
+                return null;
+            }
+            UniFile siFile = file.findFile(SpiderQueen.SPIDER_INFO_FILENAME);
+            if (null == siFile) {
+                return null;
+            }
+
+            InputStream is = null;
+            try {
+                is = siFile.openInputStream();
+                // Skip start page
+                IOUtils.readAsciiLine(is);
+                long gid = Long.parseLong(IOUtils.readAsciiLine(is));
+                if (mManager.containDownloadInfo(gid)) {
+                    return null;
+                }
+                String token = IOUtils.readAsciiLine(is);
+                GalleryInfo galleryInfo = new GalleryInfo();
+                galleryInfo.gid = gid;
+                galleryInfo.token = token;
+                return galleryInfo;
+            } catch (IOException e) {
+                return null;
+            } finally {
+                IOUtils.closeQuietly(is);
+            }
+        }
+
+        @Override
+        protected List<GalleryInfo> doInBackground(Void... params) {
+            UniFile dir = Settings.getDownloadLocation();
+            if (null == dir) {
+                return null;
+            }
+
+            List<GalleryInfo> galleryInfoList = new ArrayList<>();
+
+            UniFile[] files = dir.listFiles();
+            for (UniFile file: files) {
+                GalleryInfo galleryInfo = getGalleryInfo(file);
+                if (null != galleryInfo) {
+                    galleryInfoList.add(galleryInfo);
+                }
+            }
+
+            if (0 == galleryInfoList.size()) {
+                return null;
+            } else {
+                return galleryInfoList;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<GalleryInfo> galleryInfoList) {
+            if (null == galleryInfoList) {
+                Toast.makeText(getActivity(), R.string.settings_download_restore_not_found,
+                        Toast.LENGTH_SHORT).show();
+                mDialog.dismiss();
+                return;
+            }
+
+            EhRequest request = new EhRequest();
+            request.setMethod(EhClient.METHOD_FILL_GALLERY_LIST_BY_API);
+            request.setArgs(galleryInfoList);
+            request.setCallback(new EhClient.Callback<List<GalleryInfo>>() {
+                @Override
+                public void onSuccess(List<GalleryInfo> galleryInfoList) {
+                    DownloadManager downloadManager = EhApplication.getDownloadManager(getActivity());
+
+                    int count = 0;
+                    for (int i = 0, n = galleryInfoList.size(); i < n; i++) {
+                        GalleryInfo galleryInfo = galleryInfoList.get(i);
+                        // Avoid failed gallery info
+                        if (null != galleryInfo.title) {
+                            downloadManager.addDownload(galleryInfo, null);
+                            count++;
+                        }
+                    }
+
+                    Toast.makeText(getActivity(),
+                            getString(R.string.settings_download_restore_successfully, count),
+                            Toast.LENGTH_SHORT).show();
+
+                    mDialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(getActivity(), R.string.settings_download_restore_failed,
+                            Toast.LENGTH_SHORT).show();
+                    mDialog.dismiss();
+                }
+
+                @Override
+                public void onCancel() {
+                    mDialog.dismiss();
+                }
+            });
+
+            EhClient client = EhApplication.getEhClient(getActivity());
+            client.execute(request);
         }
     }
 }

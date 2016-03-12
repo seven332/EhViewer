@@ -28,7 +28,7 @@
 
     <ListPreference
         android:key="page_scaling"
-        android:title="@string/settings_read_page_scaling_title"
+        android:title="@string/settings_read_page_scaling"
         android:summary="%s"
         android:entries="@array/page_scaling_entries"
         android:entryValues="@array/page_scaling_entry_values"
@@ -36,7 +36,7 @@
 
     <ListPreference
         android:key="start_position"
-        android:title="@string/settings_read_start_position_title"
+        android:title="@string/settings_read_start_position"
         android:summary="%s"
         android:entries="@array/start_position_entries"
         android:entryValues="@array/start_position_values"
@@ -46,28 +46,28 @@
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"
         android:key="keep_screen_on"
-        android:title="@string/settings_read_keep_screen_on_title"
+        android:title="@string/settings_read_keep_screen_on"
         android:defaultValue="false" />
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"
         android:key="gallery_show_clock"
-        android:title="@string/settings_read_show_clock_title"
+        android:title="@string/settings_read_show_clock"
         android:defaultValue="true"/>
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"
         android:key="gallery_show_battery"
-        android:title="@string/settings_read_show_battery_title"
+        android:title="@string/settings_read_show_battery"
         android:defaultValue="true"/>
 
     <com.hippo.preference.FixedSwitchPreference
         style="?android:attr/preferenceStyle"
         android:widgetLayout="@layout/preference_widget_fixed_switch"
         android:key="volume_page"
-        android:title="@string/settings_read_volume_page_title"
+        android:title="@string/settings_read_volume_page"
         android:defaultValue="false"/>
 
 </PreferenceScreen>

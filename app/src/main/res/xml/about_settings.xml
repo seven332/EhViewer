@@ -20,27 +20,27 @@
 
     <Preference
         android:key="author"
-        android:title="@string/settings_about_author_title"/>
+        android:title="@string/settings_about_author"/>
 
     <Preference
         android:key="google_plus"
-        android:title="@string/settings_about_google_plus_title"/>
+        android:title="@string/settings_about_google_plus"/>
 
     <Preference
         android:key="website"
-        android:title="@string/settings_about_website_title"/>
+        android:title="@string/settings_about_website"/>
 
     <Preference
         android:key="source"
-        android:title="@string/settings_about_source_title"/>
+        android:title="@string/settings_about_source"/>
 
     <Preference
         android:key="changelog"
-        android:title="@string/settings_about_changelog_title"/>
+        android:title="@string/settings_about_changelog"/>
 
     <Preference
         android:key="license"
-        android:title="@string/settings_about_license_title"/>
+        android:title="@string/settings_about_license"/>
 
     <Preference
         android:key="donate"

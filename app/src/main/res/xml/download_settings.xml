@@ -20,6 +20,11 @@
 
     <Preference
         android:key="download_location"
-        android:title="@string/settings_download_download_location_title"/>
+        android:title="@string/settings_download_download_location"/>
+
+    <Preference
+        android:key="restore_download_items"
+        android:title="@string/settings_download_restore_download_items"
+        android:summary="@string/settings_download_restore_download_items_summary"/>
 
 </PreferenceScreen>

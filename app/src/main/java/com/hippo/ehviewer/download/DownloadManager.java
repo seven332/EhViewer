@@ -345,6 +345,42 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
+    public void addDownload(GalleryInfo galleryInfo, @Nullable String label) {
+        if (containDownloadInfo(galleryInfo.gid)) {
+            // Contain
+            return;
+        }
+
+        // It is new download info
+        DownloadInfo info = new DownloadInfo(galleryInfo);
+        info.label = label;
+        info.state = DownloadInfo.STATE_NONE;
+        info.time = System.currentTimeMillis();
+
+        // Add to label download list
+        LinkedList<DownloadInfo> list = getInfoListForLabel(info.label);
+        if (list == null) {
+            Log.e(TAG, "Can't find download info list with label: " + label);
+            return;
+        }
+        list.add(info);
+
+        // Add to all download list and map
+        mAllInfoMap.put(galleryInfo.gid, info);
+
+        // Add to wait list
+        mWaitList.add(info);
+
+        // Save to
+        EhDB.putDownloadInfo(info);
+
+        // Notify
+        for (DownloadInfoListener l: mDownloadInfoListeners) {
+            l.onAdd(info, list, list.size() - 1);
+        }
+    }
+
+
     void stopDownload(long gid) {
         DownloadInfo info = stopDownloadInternal(gid);
         if (info != null) {

@@ -103,7 +103,7 @@ public class SpiderQueen implements Runnable {
     private static final int NUMBER_SPIDER_WORKER = 3;
     private static final int NUMBER_PRELOAD = 5;
 
-    private static final String SPIDER_INFO_FILENAME = ".ehviewer";
+    public static final String SPIDER_INFO_FILENAME = ".ehviewer";
 
     private static final String[] URL_509_SUFFIX_ARRAY = {
             "/509.gif",

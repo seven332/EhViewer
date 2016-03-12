@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settings_read_page_scaling_title"
+                android:text="@string/settings_read_page_scaling"
                 android:textColor="@color/primary_text_dark"/>
 
             <com.hippo.widget.CuteSpinner
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settings_read_start_position_title"
+                android:text="@string/settings_read_start_position"
                 android:textColor="@color/primary_text_dark"/>
 
             <com.hippo.widget.CuteSpinner
@@ -103,28 +103,28 @@
             android:id="@+id/keep_screen_on"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_keep_screen_on_title"
+            android:text="@string/settings_read_keep_screen_on"
             android:textColor="@color/primary_text_dark"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/show_clock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_show_clock_title"
+            android:text="@string/settings_read_show_clock"
             android:textColor="@color/primary_text_dark"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/show_battery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_show_battery_title"
+            android:text="@string/settings_read_show_battery"
             android:textColor="@color/primary_text_dark"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/volume_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_volume_page_title"
+            android:text="@string/settings_read_volume_page"
             android:textColor="@color/primary_text_dark"/>
 
     </LinearLayout>

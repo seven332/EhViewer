@@ -162,7 +162,7 @@ public class EhEngine {
     }
 
     // At least, GalleryInfo contain valid gid and token
-    public static Void fillGalleryListByApi(EhClient.Task task, OkHttpClient okHttpClient,
+    public static List<GalleryInfo> fillGalleryListByApi(EhClient.Task task, OkHttpClient okHttpClient,
             List<GalleryInfo> galleryInfoList) throws Exception {
         // We can only request 25 items one time at most
         final int MAX_REQUEST_SIZE = 25;
@@ -174,7 +174,7 @@ public class EhEngine {
                 requestItems.clear();
             }
         }
-        return null;
+        return galleryInfoList;
     }
 
     private static void doFillGalleryListByApi(EhClient.Task task, OkHttpClient okHttpClient,
