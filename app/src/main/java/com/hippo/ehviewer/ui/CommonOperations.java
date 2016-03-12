@@ -17,24 +17,149 @@
 package com.hippo.ehviewer.ui;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 import com.hippo.app.ListCheckBoxDialogBuilder;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
+import com.hippo.text.Html;
+import com.hippo.yorozuya.FileUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public final class CommonOperations {
+
+    private static final String TAG = CommonOperations.class.getSimpleName();
+
+    private static boolean UPDATING;
+
+    public static void checkUpdate(Activity activity, boolean feedback) {
+        if (!UPDATING) {
+            UPDATING = true;
+            new UpdateTask(activity, feedback).execute();
+        }
+    }
+
+    private static final class UpdateTask extends AsyncTask<Void, Void, JSONObject> {
+
+        private final Activity mActivity;
+        private final OkHttpClient mHttpClient;
+        private final boolean mFeedback;
+
+        public UpdateTask(Activity activity, boolean feedback) {
+            mActivity = activity;
+            mHttpClient = EhApplication.getOkHttpClient(activity);
+            mFeedback = feedback;
+        }
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            try {
+                String url;
+                if (Settings.getBetaUpdateChannel()) {
+                    url = "http://www.ehviewer.com/update_beta.json";
+                } else {
+                    url = "http://www.ehviewer.com/update.json";
+                }
+                Log.d(TAG, url);
+                Request request = new Request.Builder().url(url).build();
+                Response response = mHttpClient.newCall(request).execute();
+                return new JSONObject(response.body().string());
+            } catch (IOException e) {
+                return null;
+            } catch (JSONException e) {
+                return null;
+            }
+        }
+
+        private void showUpToDateDialog() {
+            if (!mFeedback) {
+                return;
+            }
+
+            new AlertDialog.Builder(mActivity)
+                    .setMessage(R.string.update_to_date)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
+
+        private void showUpdateDialog(String versionName, String size, CharSequence info, final String url) {
+            new AlertDialog.Builder(mActivity)
+                    .setTitle(R.string.update)
+                    .setMessage(mActivity.getString(R.string.update_plain, versionName, size, info))
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            UrlOpener.openUrl(mActivity, url, false, false);
+                        }
+                    }).show();
+        }
+
+
+        private void handleResult(JSONObject jo) {
+            if (null == jo || mActivity.isFinishing()) {
+                return;
+            }
+
+            String versionName;
+            String size;
+            CharSequence info;
+            String url;
+
+            try {
+                PackageManager pm = mActivity.getPackageManager();
+                PackageInfo pi = pm.getPackageInfo(mActivity.getPackageName(), PackageManager.GET_ACTIVITIES);
+                int currentVersionCode = pi.versionCode;
+                int newVersionCode = jo.getInt("version_code");
+                if (currentVersionCode >= newVersionCode) {
+                    // Update to date
+                    showUpToDateDialog();
+                    return;
+                }
+
+                versionName = jo.getString("version_name");
+                size = FileUtils.humanReadableByteCount(jo.getLong("size"), false);
+                info = Html.fromHtml(jo.getString("info"));
+                url = jo.getString("url");
+            } catch (PackageManager.NameNotFoundException | JSONException e) {
+                return;
+            }
+
+            showUpdateDialog(versionName, size, info, url);
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            try {
+                handleResult(jsonObject);
+            } finally {
+                UPDATING = false;
+            }
+        }
+    }
 
     private static void doAddToFavorites(Activity activity, GalleryInfo galleryInfo,
             int slot, EhClient.Callback<Void> listener) {

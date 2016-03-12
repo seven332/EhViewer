@@ -60,4 +60,15 @@
         android:title="@string/settings_about_about_analytics"
         app:message="@string/analytics_explain"/>
 
+    <Preference
+        android:key="check_for_updates"
+        android:title="@string/settings_about_check_for_updates"/>
+
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"
+        android:key="beta_update_channel"
+        android:title="@string/settings_about_beta_update_channel"
+        android:defaultValue="false"/>
+
 </PreferenceScreen>

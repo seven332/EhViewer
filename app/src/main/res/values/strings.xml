@@ -126,6 +126,11 @@
     <string name="send">Send</string>
     <string name="crash_explain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
 
+    <!-- Update -->
+    <string name="update">Update</string>
+    <string name="update_plain">Version: %1$s\nSize: %2$s\n\n%3$s</string>
+    <string name="update_to_date">EhViewer is update to date</string>
+
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">Search ExHentai</string>
     <string name="gallery_list_empty_hit">The World is Big and Pandas sit alone</string>
@@ -361,6 +366,8 @@
     <string name="settings_about_donate_message">Your donation can help me develop more and better applications.\n\nAlipay: seven332$163.com</string>
     <string name="settings_about_enable_analytics">Enable analytics</string>
     <string name="settings_about_about_analytics">About analytics</string>
+    <string name="settings_about_check_for_updates">Check for updates</string>
+    <string name="settings_about_beta_update_channel">Beta update channel</string>
 
     <string name="license">License</string>
 

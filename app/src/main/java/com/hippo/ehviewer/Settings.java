@@ -489,10 +489,24 @@ public class Settings {
     }
 
     /********************
+     ****** Update
+     ********************/
+    private static final String KEY_BETA_UPDATE_CHANNEL = "beta_update_channel";
+    private static final boolean DEFAULT_BETA_UPDATE_CHANNEL = EhApplication.BETA;
+
+    public static boolean getBetaUpdateChannel() {
+        return getBoolean(KEY_BETA_UPDATE_CHANNEL, DEFAULT_BETA_UPDATE_CHANNEL);
+    }
+
+    public static void putBetaUpdateChannel(boolean value) {
+        putBoolean(KEY_BETA_UPDATE_CHANNEL, value);
+    }
+
+    /********************
      ****** Crash
      ********************/
-    public static final String KEY_CRASH_FILENAME = "crash_filename";
-    public static final String VALUE_CRASH_FILENAME = null;
+    private static final String KEY_CRASH_FILENAME = "crash_filename";
+    private static final String VALUE_CRASH_FILENAME = null;
 
     public static String getCrashFilename() {
         return getString(KEY_CRASH_FILENAME, VALUE_CRASH_FILENAME);

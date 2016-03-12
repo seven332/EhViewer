@@ -266,6 +266,7 @@ public final class MainActivity extends StageActivity
 
         if (savedInstanceState == null) {
             onInit();
+            CommonOperations.checkUpdate(this, false);
         } else {
             onRestore(savedInstanceState);
         }
