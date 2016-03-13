@@ -389,7 +389,7 @@ public class Settings {
     }
 
     // -1 for local, 0 - 9 for cloud favorite, other for no default fav slot
-    private static final String KEY_DEFAULT_FAV_SLOT = "default_favorite";
+    private static final String KEY_DEFAULT_FAV_SLOT = "default_favorite_2";
     public static final int INVALID_DEFAULT_FAV_SLOT = -2;
     private static final int DEFAULT_DEFAULT_FAV_SLOT = INVALID_DEFAULT_FAV_SLOT;
 
