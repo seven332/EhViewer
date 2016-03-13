@@ -184,7 +184,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
 
     @Override
     public void onNavigationClick() {
-        finish();
+        onBackPressed();
     }
 
     private static class InfoHolder extends RecyclerView.ViewHolder {

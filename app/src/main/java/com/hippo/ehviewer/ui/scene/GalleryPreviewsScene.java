@@ -188,7 +188,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
     @Override
     public void onNavigationClick() {
-        finish();
+        onBackPressed();
     }
 
     @Override

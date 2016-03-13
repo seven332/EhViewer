@@ -144,6 +144,10 @@ public final class QuickSearchScene extends ToolbarScene {
         mAdapter = null;
     }
 
+    @Override
+    public void onNavigationClick() {
+        onBackPressed();
+    }
 
     private void updateView() {
         if (mViewTransition != null) {

@@ -147,6 +147,11 @@ public class HistoryScene extends ToolbarScene
     }
 
     @Override
+    public void onNavigationClick() {
+        onBackPressed();
+    }
+
+    @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         if (null == mList || null == mRecyclerView) {
             return false;
