@@ -38,8 +38,8 @@ public class GalleryApiParser {
             if (gi == null) {
                 continue;
             }
-            gi.title = g.getString("title");
-            gi.titleJpn = g.getString("title_jpn");
+            gi.title = ParserUtils.trim(g.getString("title"));
+            gi.titleJpn = ParserUtils.trim(g.getString("title_jpn"));
             gi.category = EhUtils.getCategory(g.getString("category"));
             gi.thumb = g.getString("thumb");
             gi.uploader = g.getString("uploader");
