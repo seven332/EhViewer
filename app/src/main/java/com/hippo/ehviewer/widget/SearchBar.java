@@ -45,6 +45,7 @@ import android.widget.TextView;
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.SimpleImageView;
+import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;
@@ -78,9 +79,8 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     private TextView mTitleTextView;
     private SimpleImageView mActionButton;
     private SearchEditText mEditText;
-    private ListView mList;
+    private View mListContainer;
     private View mListHeader;
-    private boolean mHeaderAttached;
 
     private ViewTransition mViewTransition;
 
@@ -117,12 +117,13 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.widget_search_bar, this);
-        mMenuButton = (SimpleImageView) findViewById(R.id.search_menu);
-        mTitleTextView = (TextView) findViewById(R.id.search_title);
-        mActionButton = (SimpleImageView) findViewById(R.id.search_action);
-        mEditText = (SearchEditText) findViewById(R.id.search_edit_text);
-        mList = (ListView) findViewById(R.id.search_bar_list);
-        mListHeader = inflater.inflate(R.layout.header_suggestion_list, mList, false);
+        mMenuButton = (SimpleImageView) ViewUtils.$$(this, R.id.search_menu);
+        mTitleTextView = (TextView) ViewUtils.$$(this, R.id.search_title);
+        mActionButton = (SimpleImageView) ViewUtils.$$(this, R.id.search_action);
+        mEditText = (SearchEditText) ViewUtils.$$(this, R.id.search_edit_text);
+        mListContainer = ViewUtils.$$(this, R.id.list_container);
+        ListView list = (ListView) ViewUtils.$$(mListContainer, R.id.search_bar_list);
+        mListHeader = ViewUtils.$$(mListContainer, R.id.list_header);
 
         mViewTransition = new ViewTransition(mTitleTextView, mEditText);
 
@@ -139,23 +140,19 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
         mSuggestionList = new ArrayList<>();
         mSuggestionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_simple_list, mSuggestionList);
-        mHeaderAttached = true;
-        mList.addHeaderView(mListHeader);
-        mList.setAdapter(mSuggestionAdapter);
-        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        list.setAdapter(mSuggestionAdapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String suggestion = mSuggestionList.get(MathUtils.clamp(
-                        position - mList.getHeaderViewsCount(), 0, mSuggestionList.size() - 1));
+                String suggestion = mSuggestionList.get(MathUtils.clamp(position, 0, mSuggestionList.size() - 1));
                 mEditText.setText(suggestion);
                 mEditText.setSelection(mEditText.getText().length());
             }
         });
-        mList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                String suggestion = mSuggestionList.get(MathUtils.clamp(
-                        position - mList.getHeaderViewsCount(), 0, mSuggestionList.size() - 1));
+                String suggestion = mSuggestionList.get(MathUtils.clamp(position, 0, mSuggestionList.size() - 1));
                 mSearchDatabase.deleteQuery(suggestion);
                 updateSuggestions();
                 return true;
@@ -164,17 +161,11 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     }
 
     private void addListHeader() {
-        if (!mHeaderAttached) {
-            mHeaderAttached = true;
-            mListHeader.setVisibility(VISIBLE);
-        }
+        mListHeader.setVisibility(VISIBLE);
     }
 
     private void removeListHeader() {
-        if (mHeaderAttached) {
-            mHeaderAttached = false;
-            mListHeader.setVisibility(GONE);
-        }
+        mListHeader.setVisibility(GONE);
     }
 
     private void updateSuggestions() {
@@ -348,10 +339,11 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
         if (animation) {
             ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 1f);
             oa.setDuration(ANIMATE_TIME);
+            oa.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
             oa.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    mList.setVisibility(View.VISIBLE);
+                    mListContainer.setVisibility(View.VISIBLE);
                     mInAnimation = true;
                 }
 
@@ -365,7 +357,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
             }
             oa.start();
         } else {
-            mList.setVisibility(View.VISIBLE);
+            mListContainer.setVisibility(View.VISIBLE);
             setProgress(1f);
         }
     }
@@ -382,6 +374,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
         if (animation) {
             ObjectAnimator oa = ObjectAnimator.ofFloat(this, "progress", 0f);
             oa.setDuration(ANIMATE_TIME);
+            oa.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
             oa.addListener(new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -390,7 +383,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mList.setVisibility(View.GONE);
+                    mListContainer.setVisibility(View.GONE);
                     mInAnimation = false;
                 }
             });
@@ -400,14 +393,14 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
             oa.start();
         } else {
             setProgress(0f);
-            mList.setVisibility(View.GONE);
+            mListContainer.setVisibility(View.GONE);
         }
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (mList.getVisibility() == View.VISIBLE) {
+        if (mListContainer.getVisibility() == View.VISIBLE) {
             mWidth = right - left;
             mHeight = bottom - top;
         }

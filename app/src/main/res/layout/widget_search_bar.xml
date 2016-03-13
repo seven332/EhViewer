@@ -71,15 +71,26 @@
 
         </FrameLayout>
 
-        <ListView
-            android:id="@+id/search_bar_list"
+        <LinearLayout
+            android:id="@+id/list_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:divider="@color/divider"
-            android:dividerHeight="1dp"
-            android:headerDividersEnabled="false"/>
+            android:orientation="vertical"
+            android:visibility="gone">
 
+            <View
+                android:id="@+id/list_header"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"/>
+
+            <ListView
+                android:id="@+id/search_bar_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@color/divider"
+                android:dividerHeight="1dp"/>
+
+        </LinearLayout>
     </LinearLayout>
-
 </merge>
