@@ -221,9 +221,15 @@ public final class CommonOperations {
 
         boolean justStart = dm.containDownloadInfo(galleryInfo.gid);
         String label = null;
+        // Get default download label
         if (!justStart && Settings.getHasDefaultDownloadLabel()) {
             label = Settings.getDefaultDownloadLabel();
             justStart = label == null || dm.containLabel(label);
+        }
+        // If there is no other label, just use null label
+        if (!justStart && 0 == dm.getLabelList().size()) {
+            justStart = true;
+            label = null;
         }
 
         if (justStart) {
