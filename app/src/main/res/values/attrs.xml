@@ -126,7 +126,7 @@
         <attr name="dialogLayout" format="reference"/>
     </declare-styleable>
 
-    <declare-styleable name="MessageDialogPreference">
+    <declare-styleable name="MessagePreference">
         <attr name="dialogMessage" format="string"/>
         <attr name="dialogMessageHtml" format="boolean"/>
         <attr name="dialogMessageLinkify" format="boolean"/>

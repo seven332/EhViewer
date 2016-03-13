@@ -29,42 +29,42 @@ import android.widget.TextView;
 import com.hippo.ehviewer.R;
 import com.hippo.text.Html;
 
-public class MessageDialogPreference extends DialogPreference {
+public class MessagePreference extends DialogPreference {
 
     private CharSequence mDialogMessage;
     private boolean mDialogMessageLinkify;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public MessageDialogPreference(Context context) {
+    public MessagePreference(Context context) {
         super(context);
         init(context, null, 0, 0);
     }
 
-    public MessageDialogPreference(Context context, AttributeSet attrs) {
+    public MessagePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, 0, 0);
     }
 
-    public MessageDialogPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MessagePreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public MessageDialogPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public MessagePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MessageDialogPreference, defStyleAttr, defStyleRes);
-        String message = a.getString(R.styleable.MessageDialogPreference_dialogMessage);
-        if (a.getBoolean(R.styleable.MessageDialogPreference_dialogMessageHtml, false)) {
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MessagePreference, defStyleAttr, defStyleRes);
+        String message = a.getString(R.styleable.MessagePreference_dialogMessage);
+        if (a.getBoolean(R.styleable.MessagePreference_dialogMessageHtml, false)) {
             mDialogMessage = Html.fromHtml(message);
         } else {
             mDialogMessage = message;
         }
-        mDialogMessageLinkify = a.getBoolean(R.styleable.MessageDialogPreference_dialogMessageLinkify, false);
+        mDialogMessageLinkify = a.getBoolean(R.styleable.MessagePreference_dialogMessageLinkify, false);
         a.recycle();
     }
 

@@ -51,7 +51,7 @@
         android:title="@string/settings_about_enable_analytics"
         android:defaultValue="true"/>
 
-    <com.hippo.preference.MessageDialogPreference
+    <com.hippo.preference.MessagePreference
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:key="about_analytics"
         android:title="@string/settings_about_about_analytics"
