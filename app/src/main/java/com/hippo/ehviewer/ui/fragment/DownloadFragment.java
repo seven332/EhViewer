@@ -25,14 +25,17 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.hippo.app.ProgressDialog;
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhClient;
@@ -50,6 +53,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+
+    private static final String TAG = DownloadFragment.class.getSimpleName();
 
     public static final int REQUEST_CODE_PICK_IMAGE_DIR = 0;
     public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
@@ -205,7 +210,7 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
     }
 
 
-    private class RestoreTask extends AsyncTask<Void, Void, List<GalleryInfo>> {
+    private class RestoreTask extends AsyncTask<Void, Void, List<RestoreItem>> {
 
         private final ProgressDialog mDialog;
         private final DownloadManager mManager;
@@ -215,7 +220,7 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
             mManager = EhApplication.getDownloadManager(getActivity());
         }
 
-        private GalleryInfo getGalleryInfo(UniFile file) {
+        private RestoreItem getRestoreItem(UniFile file) {
             if (null == file || !file.isDirectory()) {
                 return null;
             }
@@ -234,10 +239,11 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
                     return null;
                 }
                 String token = IOUtils.readAsciiLine(is);
-                GalleryInfo galleryInfo = new GalleryInfo();
-                galleryInfo.gid = gid;
-                galleryInfo.token = token;
-                return galleryInfo;
+                RestoreItem restoreItem = new RestoreItem();
+                restoreItem.gid = gid;
+                restoreItem.token = token;
+                restoreItem.dirname = file.getName();
+                return restoreItem;
             } catch (IOException e) {
                 return null;
             } finally {
@@ -246,32 +252,32 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
         }
 
         @Override
-        protected List<GalleryInfo> doInBackground(Void... params) {
+        protected List<RestoreItem> doInBackground(Void... params) {
             UniFile dir = Settings.getDownloadLocation();
             if (null == dir) {
                 return null;
             }
 
-            List<GalleryInfo> galleryInfoList = new ArrayList<>();
+            List<RestoreItem> restoreItemList = new ArrayList<>();
 
             UniFile[] files = dir.listFiles();
             for (UniFile file: files) {
-                GalleryInfo galleryInfo = getGalleryInfo(file);
-                if (null != galleryInfo) {
-                    galleryInfoList.add(galleryInfo);
+                RestoreItem restoreItem = getRestoreItem(file);
+                if (null != restoreItem) {
+                    restoreItemList.add(restoreItem);
                 }
             }
 
-            if (0 == galleryInfoList.size()) {
+            if (0 == restoreItemList.size()) {
                 return null;
             } else {
-                return galleryInfoList;
+                return restoreItemList;
             }
         }
 
         @Override
-        protected void onPostExecute(List<GalleryInfo> galleryInfoList) {
-            if (null == galleryInfoList) {
+        protected void onPostExecute(List<RestoreItem> restoreItemList) {
+            if (null == restoreItemList) {
                 Toast.makeText(getActivity(), R.string.settings_download_restore_not_found,
                         Toast.LENGTH_SHORT).show();
                 mDialog.dismiss();
@@ -280,7 +286,7 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
 
             EhRequest request = new EhRequest();
             request.setMethod(EhClient.METHOD_FILL_GALLERY_LIST_BY_API);
-            request.setArgs(galleryInfoList);
+            request.setArgs(new ArrayList<GalleryInfo>(restoreItemList));
             request.setCallback(new EhClient.Callback<List<GalleryInfo>>() {
                 @Override
                 public void onSuccess(List<GalleryInfo> galleryInfoList) {
@@ -291,7 +297,14 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
                         GalleryInfo galleryInfo = galleryInfoList.get(i);
                         // Avoid failed gallery info
                         if (null != galleryInfo.title) {
+                            // Put to download
                             downloadManager.addDownload(galleryInfo, null);
+                            // Put download dir to DB
+                            if (galleryInfo instanceof RestoreItem) {
+                                EhDB.putDownloadDirname(galleryInfo.gid, ((RestoreItem) galleryInfo).dirname);
+                            } else {
+                                Log.w(TAG, "The GalleryInfo is not RestoreItem");
+                            }
                             count++;
                         }
                     }
@@ -319,5 +332,41 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
             EhClient client = EhApplication.getEhClient(getActivity());
             client.execute(request);
         }
+    }
+
+    private static class RestoreItem extends GalleryInfo {
+
+        public String dirname;
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(this.dirname);
+        }
+
+        public RestoreItem() {
+        }
+
+        protected RestoreItem(Parcel in) {
+            super(in);
+            this.dirname = in.readString();
+        }
+
+        public static final Creator<RestoreItem> CREATOR = new Creator<RestoreItem>() {
+            @Override
+            public RestoreItem createFromParcel(Parcel source) {
+                return new RestoreItem(source);
+            }
+
+            @Override
+            public RestoreItem[] newArray(int size) {
+                return new RestoreItem[size];
+            }
+        };
     }
 }
