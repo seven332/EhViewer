@@ -98,13 +98,14 @@ public class Crash {
             return;
         }
 
-        String fileName = "crash-" + ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".log";
+        String nowString = ReadableTime.getFilenamableTime(System.currentTimeMillis());
+        String fileName = "crash-" + nowString + ".log";
         File file = new File(dir, fileName);
 
         FileWriter fw = null;
         try {
             fw = new FileWriter(file);
-            fw.write("TIME=");fw.write(ReadableTime.getFilenamableTime(System.currentTimeMillis()));fw.write("\r\n");
+            fw.write("TIME=");fw.write(nowString);fw.write("\r\n");
             fw.write("\r\n");
             collectInfo(context, fw);
             fw.write("======== CrashInfo ========\r\n");
