@@ -46,9 +46,7 @@
         android:key="donate"
         android:title="@string/settings_about_donate"/>
 
-    <com.hippo.preference.FixedSwitchPreference
-        style="?android:attr/preferenceStyle"
-        android:widgetLayout="@layout/preference_widget_fixed_switch"
+    <com.hippo.preference.SwitchPreference
         android:key="enable_analytics"
         android:title="@string/settings_about_enable_analytics"
         android:defaultValue="true"/>
@@ -65,9 +63,7 @@
         android:key="check_for_updates"
         android:title="@string/settings_about_check_for_updates"/>
 
-    <com.hippo.preference.FixedSwitchPreference
-        style="?android:attr/preferenceStyle"
-        android:widgetLayout="@layout/preference_widget_fixed_switch"
+    <com.hippo.preference.SwitchPreference
         android:key="beta_update_channel"
         android:title="@string/settings_about_beta_update_channel"
         android:defaultValue="@bool/beta"/>

@@ -33,7 +33,7 @@ import com.hippo.ehviewer.R;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class FixedSwitchPreference extends TwoStatePreference {
+public class SwitchPreference extends TwoStatePreference {
 
     private static Method sSyncSummaryViewMethod;
 
@@ -63,38 +63,39 @@ public class FixedSwitchPreference extends TwoStatePreference {
                 return;
             }
 
-            FixedSwitchPreference.this.setChecked(isChecked);
+            SwitchPreference.this.setChecked(isChecked);
         }
     }
 
-    public FixedSwitchPreference(Context context) {
+    public SwitchPreference(Context context) {
         super(context);
         init(context, null, 0, 0);
     }
 
-    public FixedSwitchPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public SwitchPreference(Context context, AttributeSet attrs) {
+        super(context, attrs, android.R.attr.preferenceStyle);
         init(context, attrs, 0, 0);
     }
 
-    public FixedSwitchPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SwitchPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FixedSwitchPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public SwitchPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FixedSwitchPreference, defStyleAttr, defStyleRes);
-        setSummaryOn(a.getString(R.styleable.FixedSwitchPreference_summaryOn));
-        setSummaryOff(a.getString(R.styleable.FixedSwitchPreference_summaryOff));
-        setSwitchTextOn(a.getString(R.styleable.FixedSwitchPreference_switchTextOn));
-        setSwitchTextOff(a.getString(R.styleable.FixedSwitchPreference_switchTextOff));
-        setDisableDependentsState(a.getBoolean(R.styleable.FixedSwitchPreference_disableDependentsState, false));
+        setWidgetLayoutResource(R.layout.preference_widget_fixed_switch);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SwitchPreference, defStyleAttr, defStyleRes);
+        setSummaryOn(a.getString(R.styleable.SwitchPreference_summaryOn));
+        setSummaryOff(a.getString(R.styleable.SwitchPreference_summaryOff));
+        setSwitchTextOn(a.getString(R.styleable.SwitchPreference_switchTextOn));
+        setSwitchTextOff(a.getString(R.styleable.SwitchPreference_switchTextOff));
+        setDisableDependentsState(a.getBoolean(R.styleable.SwitchPreference_disableDependentsState, false));
         a.recycle();
     }
 

@@ -88,7 +88,7 @@
         <attr name="dark" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="FixedSwitchPreference">
+    <declare-styleable name="SwitchPreference">
         <!-- The summary for the Preference in a PreferenceActivity screen when the
              SwitchPreference is checked. If separate on/off summaries are not
              needed, the summary attribute can be used instead. -->

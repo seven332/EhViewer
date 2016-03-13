@@ -42,30 +42,22 @@
         android:entryValues="@array/start_position_values"
         android:defaultValue="1"/>
 
-    <com.hippo.preference.FixedSwitchPreference
-        style="?android:attr/preferenceStyle"
-        android:widgetLayout="@layout/preference_widget_fixed_switch"
+    <com.hippo.preference.SwitchPreference
         android:key="keep_screen_on"
         android:title="@string/settings_read_keep_screen_on"
         android:defaultValue="false" />
 
-    <com.hippo.preference.FixedSwitchPreference
-        style="?android:attr/preferenceStyle"
-        android:widgetLayout="@layout/preference_widget_fixed_switch"
+    <com.hippo.preference.SwitchPreference
         android:key="gallery_show_clock"
         android:title="@string/settings_read_show_clock"
         android:defaultValue="true"/>
 
-    <com.hippo.preference.FixedSwitchPreference
-        style="?android:attr/preferenceStyle"
-        android:widgetLayout="@layout/preference_widget_fixed_switch"
+    <com.hippo.preference.SwitchPreference
         android:key="gallery_show_battery"
         android:title="@string/settings_read_show_battery"
         android:defaultValue="true"/>
 
-    <com.hippo.preference.FixedSwitchPreference
-        style="?android:attr/preferenceStyle"
-        android:widgetLayout="@layout/preference_widget_fixed_switch"
+    <com.hippo.preference.SwitchPreference
         android:key="volume_page"
         android:title="@string/settings_read_volume_page"
         android:defaultValue="false"/>
