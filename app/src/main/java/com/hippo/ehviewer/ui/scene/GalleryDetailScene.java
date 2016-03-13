@@ -827,7 +827,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 String tagStr = tg.getTagAt(j);
                 tag.setText(tagStr);
                 tag.setBackgroundDrawable(new RoundSideRectDrawable(colorTag));
-                tag.setTag(R.id.tag, tagStr);
+                tag.setTag(R.id.tag, tg.groupName + ":" + tagStr);
                 tag.setOnClickListener(this);
             }
         }
