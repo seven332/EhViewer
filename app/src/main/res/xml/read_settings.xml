@@ -16,30 +16,31 @@
   -->
 
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
+    <com.hippo.preference.ListPreference
         android:key="reading_direction"
         android:title="@string/settings_read_reading_direction_title"
         android:summary="%s"
-        android:entries="@array/reading_direction_entries"
-        android:entryValues="@array/reading_direction_entry_values"
+        app:entries="@array/reading_direction_entries"
+        app:entryValues="@array/reading_direction_entry_values"
         android:defaultValue="1"/>
 
-    <ListPreference
+    <com.hippo.preference.ListPreference
         android:key="page_scaling"
         android:title="@string/settings_read_page_scaling"
         android:summary="%s"
-        android:entries="@array/page_scaling_entries"
-        android:entryValues="@array/page_scaling_entry_values"
+        app:entries="@array/page_scaling_entries"
+        app:entryValues="@array/page_scaling_entry_values"
         android:defaultValue="3"/>
 
-    <ListPreference
+    <com.hippo.preference.ListPreference
         android:key="start_position"
         android:title="@string/settings_read_start_position"
         android:summary="%s"
-        android:entries="@array/start_position_entries"
-        android:entryValues="@array/start_position_values"
+        app:entries="@array/start_position_entries"
+        app:entryValues="@array/start_position_values"
         android:defaultValue="1"/>
 
     <com.hippo.preference.SwitchPreference
