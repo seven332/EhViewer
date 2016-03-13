@@ -361,16 +361,14 @@ public class DownloadLabelsScene extends ToolbarScene {
         @Override
         public int onGetSwipeReactionType(LabelHolder holder, int position, int x, int y) {
             if (ViewUtils.isViewUnder(holder.getSwipeableContainerView(), x, y, 0)) {
-                return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
+                return SwipeableItemConstants.REACTION_CAN_SWIPE_LEFT;
             } else {
                 return SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_BOTH_H;
             }
         }
 
         @Override
-        public void onSetSwipeBackground(LabelHolder holder, int position, int type) {
-            // Empty
-        }
+        public void onSetSwipeBackground(LabelHolder holder, int position, int type) {}
 
         @Override
         public SwipeResultAction onSwipeItem(LabelHolder holder, int position, int result) {
