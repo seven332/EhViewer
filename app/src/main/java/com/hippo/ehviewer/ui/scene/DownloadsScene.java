@@ -250,11 +250,7 @@ public class DownloadsScene extends ToolbarScene
         mFabLayout.setAutoCancel(false);
         mFabLayout.setOnClickFabListener(this);
 
-        if (mList == null || mList.isEmpty()) {
-            mViewTransition.showView(1);
-        } else {
-            mViewTransition.showView(0);
-        }
+        updateView();
 
         return view;
     }
@@ -312,6 +308,16 @@ public class DownloadsScene extends ToolbarScene
         mFabLayout = null;
         mViewTransition = null;
         mAdapter = null;
+    }
+
+    public void updateView() {
+        if (mViewTransition != null) {
+            if (mList == null || mList.size() == 0) {
+                mViewTransition.showView(1);
+            } else {
+                mViewTransition.showView(0);
+            }
+        }
     }
 
     @Override
@@ -387,13 +393,7 @@ public class DownloadsScene extends ToolbarScene
                 if (!ObjectUtils.equal(label, mLabel)) {
                     mLabel = label;
                     updateForLabel();
-                    if (mViewTransition != null) {
-                        if (mList == null || mList.size() == 0) {
-                            mViewTransition.showView(1);
-                        } else {
-                            mViewTransition.showView(0);
-                        }
-                    }
+                    updateView();
                     closeDrawer(Gravity.RIGHT);
                 }
             }
@@ -573,6 +573,7 @@ public class DownloadsScene extends ToolbarScene
         if (mAdapter != null) {
             mAdapter.notifyItemInserted(position);
         }
+        updateView();
     }
 
     @Override
@@ -599,27 +600,14 @@ public class DownloadsScene extends ToolbarScene
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
-
-        if (mViewTransition != null) {
-            if (mList != null && mList.size() == 0) {
-                mViewTransition.showView(1);
-            } else {
-                mViewTransition.showView(0);
-            }
-        }
+        updateView();
     }
 
     @Override
     public void onChange() {
         mLabel = null;
         updateForLabel();
-        if (mViewTransition != null) {
-            if (mList == null || mList.size() == 0) {
-                mViewTransition.showView(1);
-            } else {
-                mViewTransition.showView(0);
-            }
-        }
+        updateView();
     }
 
     @Override
@@ -630,13 +618,7 @@ public class DownloadsScene extends ToolbarScene
 
         mLabel = to;
         updateForLabel();
-        if (mViewTransition != null) {
-            if (mList == null || mList.size() == 0) {
-                mViewTransition.showView(1);
-            } else {
-                mViewTransition.showView(0);
-            }
-        }
+        updateView();
     }
 
     @Override
@@ -647,10 +629,7 @@ public class DownloadsScene extends ToolbarScene
         if (mAdapter != null) {
             mAdapter.notifyItemRemoved(position);
         }
-
-        if (mList != null && mList.size() == 0 && mViewTransition != null) {
-            mViewTransition.showView(1);
-        }
+        updateView();
     }
 
     @Override
