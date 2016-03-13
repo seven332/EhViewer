@@ -17,59 +17,74 @@
 package com.hippo.preference;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
-import android.preference.DialogPreference;
+import android.support.v7.app.AlertDialog;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.text.Html;
 
-// TODO Add html attr
-// TODO Add url clickable
-public class SimpleDialogPreference extends DialogPreference {
+public class MessageDialogPreference extends DialogPreference {
 
-    private CharSequence mMessage;
+    private CharSequence mDialogMessage;
+    private boolean mDialogMessageLinkify;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SimpleDialogPreference(Context context) {
+    public MessageDialogPreference(Context context) {
         super(context);
         init(context, null, 0, 0);
     }
 
-    public SimpleDialogPreference(Context context, AttributeSet attrs) {
+    public MessageDialogPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, 0, 0);
     }
 
-    public SimpleDialogPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MessageDialogPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SimpleDialogPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public MessageDialogPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SimpleDialogPreference, defStyleAttr, defStyleRes);
-        setMessage(a.getString(R.styleable.SimpleDialogPreference_message));
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MessageDialogPreference, defStyleAttr, defStyleRes);
+        String message = a.getString(R.styleable.MessageDialogPreference_dialogMessage);
+        if (a.getBoolean(R.styleable.MessageDialogPreference_dialogMessageHtml, false)) {
+            mDialogMessage = Html.fromHtml(message);
+        } else {
+            mDialogMessage = message;
+        }
+        mDialogMessageLinkify = a.getBoolean(R.styleable.MessageDialogPreference_dialogMessageLinkify, false);
         a.recycle();
-    }
-
-    public void setMessage(String message) {
-        mMessage = Html.fromHtml(message);
     }
 
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        builder.setMessage(mMessage);
+        builder.setMessage(mDialogMessage);
         builder.setPositiveButton(android.R.string.ok, null);
         builder.setNegativeButton(null, null);
+    }
+
+    @Override
+    protected void onDialogCreated(AlertDialog dialog) {
+        super.onDialogCreated(dialog);
+
+        if (mDialogMessageLinkify) {
+            final View messageView = dialog.findViewById(android.R.id.message);
+            if (null != messageView && messageView instanceof TextView) {
+                ((TextView) messageView).setMovementMethod(LinkMovementMethod.getInstance());
+            }
+        }
     }
 }

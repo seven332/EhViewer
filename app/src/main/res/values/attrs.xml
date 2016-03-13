@@ -108,10 +108,6 @@
         <attr name="disableDependentsState" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="SimpleDialogPreference">
-        <attr name="message" format="string"/>
-    </declare-styleable>
-
     <declare-styleable name="BatteryView">
         <attr name="color"/>
         <attr name="warningColor" format="color"/>
@@ -120,6 +116,20 @@
     <declare-styleable name="Indicating">
         <attr name="indicatorHeight" format="dimension"/>
         <attr name="indicatorColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="DialogPreference">
+        <attr name="dialogTitle" format="string"/>
+        <attr name="dialogIcon" format="reference"/>
+        <attr name="positiveButtonText" format="string"/>
+        <attr name="negativeButtonText" format="string"/>
+        <attr name="dialogLayout" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="MessageDialogPreference">
+        <attr name="dialogMessage" format="string"/>
+        <attr name="dialogMessageHtml" format="boolean"/>
+        <attr name="dialogMessageLinkify" format="boolean"/>
     </declare-styleable>
 
 </resources>

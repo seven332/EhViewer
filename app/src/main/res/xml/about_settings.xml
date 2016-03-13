@@ -53,12 +53,13 @@
         android:title="@string/settings_about_enable_analytics"
         android:defaultValue="true"/>
 
-    <com.hippo.preference.SimpleDialogPreference
+    <com.hippo.preference.MessageDialogPreference
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        style="?android:attr/preferenceStyle"
         android:key="about_analytics"
         android:title="@string/settings_about_about_analytics"
-        app:message="@string/analytics_explain"/>
+        app:dialogMessage="@string/analytics_explain"
+        app:dialogMessageHtml="true"
+        app:dialogMessageLinkify="true"/>
 
     <Preference
         android:key="check_for_updates"
