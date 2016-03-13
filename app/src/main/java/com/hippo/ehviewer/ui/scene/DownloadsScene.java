@@ -157,7 +157,7 @@ public class DownloadsScene extends ToolbarScene
         super.onDestroy();
         mList = null;
         DownloadManager manager = EhApplication.getDownloadManager(getContext());
-        manager.removeDownloadInfoListener(null);
+        manager.removeDownloadInfoListener(this);
     }
 
     private void updateForLabel() {
