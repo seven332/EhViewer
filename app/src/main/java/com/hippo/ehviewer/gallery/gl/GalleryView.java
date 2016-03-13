@@ -144,6 +144,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private final List<Object[]> mArgsListTemp = new ArrayList<>(5);
 
     private final AtomicInteger mCurrentIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
+    private boolean mPause;
 
     @SuppressWarnings("deprecation")
     public GalleryView(@NonNull Context context, @NonNull Adapter adapter,
@@ -262,7 +263,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     private void pauseInternal() {
-        detachLayoutManager();
+        mPause = true;
     }
 
     public void pause() {
@@ -270,11 +271,12 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     private void resumeInternal() {
-        if (null == mPageTextTexture) {
-            // Not attached
-            return;
+        if (mPause) {
+            mPause = false;
+            if (null != mLayoutManager) {
+                mLayoutManager.bindUnloadedPage();
+            }
         }
-        attachLayoutManager();
     }
 
     public void resume() {
@@ -831,9 +833,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @RenderThread
     public GalleryPageView findPageByIndex(int id) {
-        GalleryUtils.assertInRenderThread();
-
-        if (mLayoutManager != null) {
+        if (!mPause && mLayoutManager != null) {
             return mLayoutManager.findPageByIndex(id);
         } else {
             return null;
@@ -974,6 +974,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         public abstract boolean onUpdateAnimation(long time);
 
         public abstract void onDataChanged();
+
+        public abstract void bindUnloadedPage();
 
         public abstract void onPageLeft();
 

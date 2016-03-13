@@ -718,6 +718,23 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     }
 
     @Override
+    public void bindUnloadedPage() {
+        if (null == mAdapter) {
+            return;
+        }
+
+        if (null != mCurrent && !mCurrent.getImageView().isLoaded()) {
+            mAdapter.bind(mCurrent, mIndex);
+        }
+        if (null != mPrevious && !mPrevious.getImageView().isLoaded()) {
+            mAdapter.bind(mPrevious, mIndex - 1);
+        }
+        if (null != mNext && !mNext.getImageView().isLoaded()) {
+            mAdapter.bind(mNext, mIndex + 1);
+        }
+    }
+
+    @Override
     public void onPageLeft() {
         int size = mAdapter.size();
         if (size <= 0 || mCurrent == null) {

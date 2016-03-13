@@ -654,6 +654,21 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     }
 
     @Override
+    public void bindUnloadedPage() {
+        if (null == mAdapter || 0 <= mPages.size()) {
+            return;
+        }
+
+        int index = mIndex;
+        for (GalleryPageView page: mPages) {
+            if (!page.getImageView().isLoaded()) {
+                mAdapter.bind(page, index);
+            }
+            index++;
+        }
+    }
+
+    @Override
     public void onPageLeft() {
         int size = mAdapter.size();
         if (size <= 0 || mPages.isEmpty()) {
