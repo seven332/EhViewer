@@ -335,10 +335,18 @@ public class GalleryActivity extends TrackedActivity
         // Check volume
         if (Settings.getVolumePage()) {
             if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                mGalleryView.pageLeft();
+                if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
+                    mGalleryView.pageRight();
+                } else {
+                    mGalleryView.pageLeft();
+                }
                 return true;
             } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                mGalleryView.pageRight();
+                if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
+                    mGalleryView.pageLeft();
+                } else {
+                    mGalleryView.pageRight();
+                }
                 return true;
             }
         }
