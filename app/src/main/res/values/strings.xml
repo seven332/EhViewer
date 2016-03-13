@@ -360,6 +360,10 @@
     <string name="settings_download_restore_failed">Restore failed</string>
     <string name="settings_download_restore_successfully">Restore %d items successfully</string>
 
+    <string name="settings_advanced">Advanced</string>
+    <string name="settings_about_save_parse_error_body">Save html content when parsing error</string>
+    <string name="settings_about_save_parse_error_body_summary">Html content may be privacy-sensitive</string>
+
     <string name="settings_about">About</string>
     <string name="settings_about_author">Author</string>
     <string name="settings_about_author_summary" translatable="false">Hippo &lt;ehviewersu$gmail.com&gt;</string>

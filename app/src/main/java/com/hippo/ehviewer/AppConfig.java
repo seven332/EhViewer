@@ -32,6 +32,7 @@ public class AppConfig {
     private static final String TEMP = "temp";
     private static final String IMAGE = "image";
     private static final String CRASH = "crash";
+    private static final String PARSE_ERROR = "parse_error";
 
     private static Context sContext;
 
@@ -89,6 +90,11 @@ public class AppConfig {
     @Nullable
     public static File getExternalCrashDir() {
         return getDirInExternalAppDir(CRASH);
+    }
+
+    @Nullable
+    public static File getExternalParseErrorDir() {
+        return getDirInExternalAppDir(PARSE_ERROR);
     }
 
     @Nullable

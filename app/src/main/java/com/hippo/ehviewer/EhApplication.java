@@ -99,10 +99,6 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
             Analytics.start(this);
         }
 
-        if (BETA) {
-            Settings.putBetaUpdateChannel(true);
-        }
-
         // Update version code
         try {
             PackageInfo pi= getPackageManager().getPackageInfo(getPackageName(), 0);

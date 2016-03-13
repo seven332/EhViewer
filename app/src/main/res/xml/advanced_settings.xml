@@ -15,9 +15,15 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <bool name="beta">true</bool>
-    <bool name="dad_spin_bars">true</bool>
+    <com.hippo.preference.FixedSwitchPreference
+        style="?android:attr/preferenceStyle"
+        android:widgetLayout="@layout/preference_widget_fixed_switch"
+        android:key="save_parse_error_body"
+        android:title="@string/settings_about_save_parse_error_body"
+        android:summary="@string/settings_about_save_parse_error_body_summary"
+        android:defaultValue="@bool/beta"/>
 
-</resources>
+</PreferenceScreen>

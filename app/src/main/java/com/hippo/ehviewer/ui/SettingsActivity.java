@@ -34,6 +34,7 @@ import android.widget.ListAdapter;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.fragment.AboutFragment;
+import com.hippo.ehviewer.ui.fragment.AdvancedFragment;
 import com.hippo.ehviewer.ui.fragment.DownloadFragment;
 import com.hippo.ehviewer.ui.fragment.EhFragment;
 import com.hippo.ehviewer.ui.fragment.ReadFragment;
@@ -50,6 +51,7 @@ public final class SettingsActivity extends TrackedPreferenceActivity {
             EhFragment.class.getName(),
             ReadFragment.class.getName(),
             DownloadFragment.class.getName(),
+            AdvancedFragment.class.getName(),
             AboutFragment.class.getName(),
     };
 

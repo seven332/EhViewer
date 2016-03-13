@@ -20,8 +20,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
+import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -41,11 +43,17 @@ import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.ehviewer.client.parser.TorrentParser;
 import com.hippo.ehviewer.client.parser.WhatsHotParser;
 import com.hippo.network.StatusCodeException;
+import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.IOUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +79,33 @@ public class EhEngine {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
+    private static void saveParseErrorBody(ParseException e) {
+        File dir = AppConfig.getExternalParseErrorDir();
+        if (null == dir) {
+            return;
+        }
+
+        File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".txt");
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            String message = e.getMessage();
+            String body = e.getBody();
+            if (null != message) {
+                os.write(message.getBytes("utf-8"));
+                os.write('\n');
+            }
+            if (null != body) {
+                os.write(body.getBytes("utf-8"));
+            }
+            os.flush();
+        } catch (IOException e1) {
+            // Ignore
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
+    }
+
     private static void throwException(Call call, int code, @Nullable Headers headers,
             @Nullable String body, Exception e) throws Exception {
         if (call.isCanceled()) {
@@ -88,6 +123,9 @@ public class EhEngine {
             if (body != null && !body.contains("<")){
                 throw new EhException(body);
             } else {
+                if (Settings.getSaveParseErrorBody()) {
+                    saveParseErrorBody((ParseException) e);
+                }
                 throw new EhException(GetText.getString(R.string.error_parse_error));
             }
         }

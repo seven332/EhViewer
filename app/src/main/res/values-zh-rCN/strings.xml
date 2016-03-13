@@ -321,6 +321,10 @@
     <string name="settings_download_restore_failed">恢复失败</string>
     <string name="settings_download_restore_successfully">成功恢复 %s 项</string>
 
+    <string name="settings_advanced">高级</string>
+    <string name="settings_about_save_parse_error_body">解析失败时保存页面内容</string>
+    <string name="settings_about_save_parse_error_body_summary">页面内容可能含有隐私敏感信息</string>
+
     <string name="settings_about">关于</string>
     <string name="settings_about_author">作者</string>
     <string name="settings_about_google_plus">Google+ 社群</string>

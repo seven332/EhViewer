@@ -43,7 +43,6 @@ public class AboutFragment extends PreferenceFragment
     private static final String KEY_LICENSE = "license";
     private static final String KEY_DONATE = "donate";
     private static final String KEY_CHECK_FOR_UPDATES = "check_for_updates";
-    private static final String KEY_BETA_UPDATE_CHANNEL = "beta_update_channel";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,10 +58,8 @@ public class AboutFragment extends PreferenceFragment
         Preference license = findPreference(KEY_LICENSE);
         Preference donate = findPreference(KEY_DONATE);
         Preference checkForUpdate = findPreference(KEY_CHECK_FOR_UPDATES);
-        Preference betaUpdateChannel = findPreference(KEY_BETA_UPDATE_CHANNEL);
 
         author.setSummary(getString(R.string.settings_about_author_summary).replace('$', '@'));
-        betaUpdateChannel.setDefaultValue(EhApplication.BETA);
 
         author.setOnPreferenceClickListener(this);
         googlePlus.setOnPreferenceClickListener(this);

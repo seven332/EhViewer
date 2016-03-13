@@ -69,6 +69,6 @@
         android:widgetLayout="@layout/preference_widget_fixed_switch"
         android:key="beta_update_channel"
         android:title="@string/settings_about_beta_update_channel"
-        android:defaultValue="false"/>
+        android:defaultValue="@bool/beta"/>
 
 </PreferenceScreen>
