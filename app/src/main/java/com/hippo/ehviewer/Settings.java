@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.data.FavListUrlBuilder;
@@ -37,6 +38,8 @@ import com.hippo.yorozuya.NumberUtils;
 import java.io.File;
 
 public class Settings {
+
+    private static final String TAG = Settings.class.getSimpleName();
 
     private static Context sContext;
     private static SharedPreferences sSettingsPre;
@@ -55,7 +58,12 @@ public class Settings {
     }
 
     public static boolean getBoolean(String key, boolean defValue) {
-        return sSettingsPre.getBoolean(key, defValue);
+        try {
+            return sSettingsPre.getBoolean(key, defValue);
+        } catch (ClassCastException e) {
+            Log.d(TAG, "Get ClassCastException when get " + key + " value", e);
+            return defValue;
+        }
     }
 
     public static void putBoolean(String key, boolean value) {
@@ -63,7 +71,12 @@ public class Settings {
     }
 
     public static int getInt(String key, int defValue) {
-        return sSettingsPre.getInt(key, defValue);
+        try {
+            return sSettingsPre.getInt(key, defValue);
+        } catch (ClassCastException e) {
+            Log.d(TAG, "Get ClassCastException when get " + key + " value", e);
+            return defValue;
+        }
     }
 
     public static void putInt(String key, int value) {
@@ -71,7 +84,12 @@ public class Settings {
     }
 
     public static long getLong(String key, long defValue) {
-        return sSettingsPre.getLong(key, defValue);
+        try {
+            return sSettingsPre.getLong(key, defValue);
+        } catch (ClassCastException e) {
+            Log.d(TAG, "Get ClassCastException when get " + key + " value", e);
+            return defValue;
+        }
     }
 
     public static void putLong(String key, long value) {
@@ -79,7 +97,12 @@ public class Settings {
     }
 
     public static float getFloat(String key, float defValue) {
-        return sSettingsPre.getFloat(key, defValue);
+        try {
+            return sSettingsPre.getFloat(key, defValue);
+        } catch (ClassCastException e) {
+            Log.d(TAG, "Get ClassCastException when get " + key + " value", e);
+            return defValue;
+        }
     }
 
     public static void putFloat(String key, float value) {
@@ -87,7 +110,12 @@ public class Settings {
     }
 
     public static String getString(String key, String defValue) {
-        return sSettingsPre.getString(key, defValue);
+        try {
+            return sSettingsPre.getString(key, defValue);
+        } catch (ClassCastException e) {
+            Log.d(TAG, "Get ClassCastException when get " + key + " value", e);
+            return defValue;
+        }
     }
 
     public static void putString(String key, String value) {
@@ -95,7 +123,12 @@ public class Settings {
     }
 
     public static int getIntFromStr(String key, int defValue) {
-        return NumberUtils.parseIntSafely(sSettingsPre.getString(key, Integer.toString(defValue)), defValue);
+        try {
+            return NumberUtils.parseIntSafely(sSettingsPre.getString(key, Integer.toString(defValue)), defValue);
+        } catch (ClassCastException e) {
+            Log.d(TAG, "Get ClassCastException when get " + key + " value", e);
+            return defValue;
+        }
     }
 
     public static void putIntToStr(String key, int value) {
