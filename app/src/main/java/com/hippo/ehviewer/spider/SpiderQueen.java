@@ -314,18 +314,19 @@ public class SpiderQueen implements Runnable {
         mSpiderDen.setMode(mMode);
 
         // Update download page
-        boolean downloadMode;
+        boolean intoDownloadMode = false;
         synchronized (mRequestPageQueue) {
             if (mMode == MODE_DOWNLOAD) {
-                mDownloadPage = 0;
-                downloadMode = true;
+                if (mDownloadPage < 0) {
+                    mDownloadPage = 0;
+                    intoDownloadMode = true;
+                }
             } else {
                 mDownloadPage = -1;
-                downloadMode = false;
             }
         }
 
-        if (downloadMode && mPageStateArray != null) {
+        if (intoDownloadMode && mPageStateArray != null) {
             // Clear download state
             synchronized (mPageStateLock) {
                 int[] temp = mPageStateArray;
