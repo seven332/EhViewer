@@ -18,7 +18,6 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -76,6 +75,7 @@ import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // TODO Bug for FavoritesScene and GalleryListScene, if list view of SearchBar expand first, RecyclerView padding top will be wrong
@@ -227,8 +227,6 @@ public class FavoritesScene extends BaseScene implements
     @Override
     public View onCreateView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Resources resources = getResources();
-
         View view = inflater.inflate(R.layout.scene_favorites, container, false);
         ContentLayout contentLayout = (ContentLayout) view.findViewById(R.id.content_layout);
         mRecyclerView = contentLayout.getRecyclerView();
@@ -255,6 +253,7 @@ public class FavoritesScene extends BaseScene implements
         mAdapter = new FavoritesAdapter(LayoutInflater.from(getContext()),
                 getContext(), mRecyclerView, layoutManager, Settings.getListMode());
         mRecyclerView.setAdapter(mAdapter);
+        mAdapter.register();
 
         mLeftDrawable = new DrawerArrowDrawable(getContext());
         mSearchBar.setLeftDrawable(mLeftDrawable);
@@ -336,16 +335,15 @@ public class FavoritesScene extends BaseScene implements
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (null != mRecyclerView) {
-            mRecyclerView.setAdapter(null);
-            mRecyclerView.setLayoutManager(null);
-            mRecyclerView = null;
+        if (null != mAdapter) {
+            mAdapter.unregister();
+            mAdapter = null;
         }
 
+        mRecyclerView = null;
         mSearchBar = null;
         mFabLayout = null;
 
-        mAdapter = null;
         mHelper = null;
         mSearchBarMover = null;
         mLeftDrawable = null;
@@ -412,9 +410,7 @@ public class FavoritesScene extends BaseScene implements
         mDrawerList.add(getString(R.string.local_favorites));
         mDrawerList.add(getString(R.string.cloud_favorites));
         if (mFavCatArray != null) {
-            for (String favCat: mFavCatArray) {
-                mDrawerList.add(favCat);
-            }
+            Collections.addAll(mDrawerList, mFavCatArray);
         }
         mDrawerAdapter = new ArrayAdapter<>(getContext(), R.layout.item_simple_list, mDrawerList);
         listView.setAdapter(mDrawerAdapter);

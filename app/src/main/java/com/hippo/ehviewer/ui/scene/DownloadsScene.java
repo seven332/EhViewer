@@ -258,12 +258,7 @@ public class DownloadsScene extends ToolbarScene
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (null != mRecyclerView) {
-            mRecyclerView.setAdapter(null);
-            mRecyclerView.setLayoutManager(null);
-            mRecyclerView = null;
-        }
-
+        mRecyclerView = null;
         mFabLayout = null;
         mViewTransition = null;
         mAdapter = null;

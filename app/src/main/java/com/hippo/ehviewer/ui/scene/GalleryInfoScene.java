@@ -56,12 +56,6 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
     @Nullable
     private ArrayList<String> mValues;
 
-    /*---------------
-     View life cycle
-     ---------------*/
-    @Nullable
-    private EasyRecyclerView mRecyclerView;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,31 +151,20 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_info, container, false);
 
-        mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
+        EasyRecyclerView recyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
         InfoAdapter adapter = new InfoAdapter();
-        mRecyclerView.setAdapter(adapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
                 LinearDividerItemDecoration.VERTICAL, getResources().getColor(R.color.divider),
                 LayoutUtils.dp2pix(getContext(), 1));
         decoration.setPadding(getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
-        mRecyclerView.addItemDecoration(decoration);
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
-        mRecyclerView.setClipToPadding(false);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setOnItemClickListener(this);
+        recyclerView.addItemDecoration(decoration);
+        recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        recyclerView.setClipToPadding(false);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setOnItemClickListener(this);
         return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        if (null != mRecyclerView) {
-            mRecyclerView.setAdapter(null);
-            mRecyclerView.setLayoutManager(null);
-            mRecyclerView = null;
-        }
     }
 
     @Override

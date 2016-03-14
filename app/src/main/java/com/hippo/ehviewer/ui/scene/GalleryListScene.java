@@ -343,6 +343,7 @@ public final class GalleryListScene extends BaseScene
         mAdapter = new GalleryListAdapter(LayoutInflater.from(getContext()),
                 getContext(), mRecyclerView, layoutManager, Settings.getListMode());
         mRecyclerView.setAdapter(mAdapter);
+        mAdapter.register();
 
         mLeftDrawable = new DrawerArrowDrawable(getContext());
         mRightDrawable = new AddDeleteDrawable(getContext());
@@ -379,22 +380,21 @@ public final class GalleryListScene extends BaseScene
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (null != mRecyclerView) {
-            mRecyclerView.setAdapter(null);
-            mRecyclerView.setLayoutManager(null);
-            mRecyclerView = null;
-        }
-        if (mSearchBarMover != null) {
+        if (null != mSearchBarMover) {
             mSearchBarMover.cancelAnimation();
             mSearchBarMover = null;
         }
+        if (null != mAdapter) {
+            mAdapter.unregister();
+            mAdapter = null;
+        }
 
+        mRecyclerView = null;
         mFitPaddingLayout = null;
         mSearchLayout = null;
         mSearchBar = null;
         mFab = null;
         mViewTransition = null;
-        mAdapter = null;
         mHelper = null;
         mLeftDrawable = null;
         mRightDrawable = null;

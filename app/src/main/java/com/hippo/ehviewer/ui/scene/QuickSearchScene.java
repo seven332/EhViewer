@@ -64,8 +64,6 @@ public final class QuickSearchScene extends ToolbarScene {
      View life cycle
      ---------------*/
     @Nullable
-    private EasyRecyclerView mRecyclerView;
-    @Nullable
     private ViewTransition mViewTransition;
     @Nullable
     private RecyclerView.Adapter mAdapter;
@@ -89,9 +87,9 @@ public final class QuickSearchScene extends ToolbarScene {
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_label_list, container, false);
 
-        mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
+        EasyRecyclerView recyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
         TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
-        mViewTransition = new ViewTransition(mRecyclerView, tip);
+        mViewTransition = new ViewTransition(recyclerView, tip);
 
         Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_search);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -115,13 +113,13 @@ public final class QuickSearchScene extends ToolbarScene {
         mAdapter = adapter;
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
         animator.setSupportsChangeAnimations(false);
-        mRecyclerView.hasFixedSize();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(adapter);
-        mRecyclerView.setItemAnimator(animator);
-        guardManager.attachRecyclerView(mRecyclerView);
-        swipeManager.attachRecyclerView(mRecyclerView);
-        dragDropManager.attachRecyclerView(mRecyclerView);
+        recyclerView.hasFixedSize();
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(animator);
+        guardManager.attachRecyclerView(recyclerView);
+        swipeManager.attachRecyclerView(recyclerView);
+        dragDropManager.attachRecyclerView(recyclerView);
 
         updateView();
 
@@ -138,12 +136,6 @@ public final class QuickSearchScene extends ToolbarScene {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        if (null != mRecyclerView) {
-            mRecyclerView.setAdapter(null);
-            mRecyclerView.setLayoutManager(null);
-            mRecyclerView = null;
-        }
 
         mViewTransition = null;
         mAdapter = null;

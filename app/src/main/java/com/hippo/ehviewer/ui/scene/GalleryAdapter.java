@@ -182,13 +182,11 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
         }
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void register() {
         Messenger.getInstance().register(Constants.MESSAGE_ID_LIST_MODE, this);
     }
 
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void unregister() {
         Messenger.getInstance().unregister(Constants.MESSAGE_ID_LIST_MODE, this);
     }
 
