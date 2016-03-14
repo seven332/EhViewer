@@ -216,10 +216,10 @@ public final class CommonOperations {
         client.execute(request);
     }
 
-    public static void startDownload(final Activity activity, final GalleryInfo galleryInfo) {
+    public static void startDownload(final Activity activity, final GalleryInfo galleryInfo, boolean forceDefault) {
         final DownloadManager dm = EhApplication.getDownloadManager(activity);
 
-        boolean justStart = dm.containDownloadInfo(galleryInfo.gid);
+        boolean justStart = forceDefault || dm.containDownloadInfo(galleryInfo.gid);
         String label = null;
         // Get default download label
         if (!justStart && Settings.getHasDefaultDownloadLabel()) {

@@ -104,7 +104,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener,
-        com.hippo.ehviewer.download.DownloadManager.DownloadInfoListener {
+        com.hippo.ehviewer.download.DownloadManager.DownloadInfoListener,
+        View.OnLongClickListener{
 
     @IntDef({STATE_INIT, STATE_NORMAL, STATE_REFRESH, STATE_REFRESH_HEADER, STATE_FAILED})
     @Retention(RetentionPolicy.SOURCE)
@@ -421,6 +422,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mCategory.setOnClickListener(this);
         mOtherActions.setOnClickListener(this);
         mDownload.setOnClickListener(this);
+        mDownload.setOnLongClickListener(this);
         mRead.setOnClickListener(this);
 
         mBelowHeader = mainView.findViewById(R.id.below_header);
@@ -987,15 +989,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             lub.setCategory(category);
             GalleryListScene.startScene(this, lub);
         } else if (mDownload == v) {
-            // Add download
-            GalleryInfo galleryInfo = null;
-            if (mGalleryInfo != null) {
-                galleryInfo = mGalleryInfo;
-            } else if (mGalleryDetail != null) {
-                galleryInfo = mGalleryDetail;
-            }
+            GalleryInfo galleryInfo = getGalleryInfo();
             if (galleryInfo != null) {
-                CommonOperations.startDownload(getActivity(), galleryInfo);
+                CommonOperations.startDownload(getActivity(), galleryInfo, false);
             }
         } else if (mRead == v) {
             GalleryInfo galleryInfo = null;
@@ -1104,6 +1100,18 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 return;
             }
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (mDownload == v) {
+            GalleryInfo galleryInfo = getGalleryInfo();
+            if (galleryInfo != null) {
+                CommonOperations.startDownload(getActivity(), galleryInfo, true);
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

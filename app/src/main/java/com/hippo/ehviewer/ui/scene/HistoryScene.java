@@ -174,7 +174,7 @@ public class HistoryScene extends ToolbarScene
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0: // Download
-                                CommonOperations.startDownload(getActivity(), gi);
+                                CommonOperations.startDownload(getActivity(), gi, false);
                                 break;
                             case 1: // Favorites
                                 CommonOperations.addToFavorites(getActivity(), gi,
