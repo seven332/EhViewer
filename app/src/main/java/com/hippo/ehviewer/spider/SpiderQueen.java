@@ -100,9 +100,6 @@ public class SpiderQueen implements Runnable {
     public static final int STATE_FINISHED = 2;
     public static final int STATE_FAILED = 3;
 
-    private static final int NUMBER_SPIDER_WORKER = 3;
-    private static final int NUMBER_PRELOAD = 5;
-
     public static final String SPIDER_INFO_FILENAME = ".ehviewer";
 
     private static final String[] URL_509_SUFFIX_ARRAY = {
@@ -169,11 +166,17 @@ public class SpiderQueen implements Runnable {
 
     private final List<OnSpiderListener> mSpiderListeners = new ArrayList<>();
 
+    private final int mSpiderWorkerNumber;
+    private final int mPreloadNumber;
+
     private SpiderQueen(EhApplication application, @NonNull GalleryInfo galleryInfo) {
         mHttpClient = EhApplication.getOkHttpClient(application);
         mSpiderInfoCache = EhApplication.getSpiderInfoCache(application);
         mGalleryInfo = galleryInfo;
         mSpiderDen = new SpiderDen(mGalleryInfo);
+
+        mSpiderWorkerNumber = Settings.getMultiThreadDownload();
+        mPreloadNumber = Settings.getPreloadImage();
     }
 
     public void addOnSpiderListener(OnSpiderListener listener) {
@@ -494,7 +497,7 @@ public class SpiderQueen implements Runnable {
                 } else {
                     size = Integer.MAX_VALUE;
                 }
-                for (int i = index + 1, n = index + i + NUMBER_PRELOAD; i < n && i < size; i++) {
+                for (int i = index + 1, n = index + i + mPreloadNumber; i < n && i < size; i++) {
                     if (STATE_NONE == getPageState(i)) {
                         mRequestPageQueue2.add(i);
                     }
@@ -538,7 +541,7 @@ public class SpiderQueen implements Runnable {
     private void ensureWorkers() {
         synchronized (mWorkerLock) {
             if (mWorkers == null) {
-                mWorkers = new Thread[NUMBER_SPIDER_WORKER];
+                mWorkers = new Thread[mSpiderWorkerNumber];
             }
 
             for (int i = 0, n = mWorkers.length; i < n; i++) {

@@ -34,6 +34,38 @@
         <item>@string/star_5</item>
     </string-array>
 
+    <string-array name="multi_thread_download_entries">
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+    </string-array>
+
+    <string-array name="multi_thread_download_entry_values">
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+    </string-array>
+
+    <string-array name="preload_image_entries">
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>11</item>
+        <item>13</item>
+        <item>17</item>
+    </string-array>
+
+    <string-array name="preload_image_entry_values">
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>11</item>
+        <item>13</item>
+        <item>17</item>
+    </string-array>
+
     <string-array name="reading_direction_entries">
         <item>@string/settings_read_reading_direction_left_to_right</item>
         <item>@string/settings_read_reading_direction_right_to_Left</item>

@@ -16,11 +16,28 @@
   -->
 
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
         android:key="download_location"
         android:title="@string/settings_download_download_location"/>
+
+    <com.hippo.preference.ListPreference
+        android:key="download_thread"
+        android:title="@string/settings_download_multi_thread_download"
+        android:summary="@string/settings_download_multi_thread_download_summary"
+        app:entries="@array/multi_thread_download_entries"
+        app:entryValues="@array/multi_thread_download_entry_values"
+        android:defaultValue="3"/>
+
+    <com.hippo.preference.ListPreference
+        android:key="preload_image"
+        android:title="@string/settings_download_preload_image"
+        android:summary="@string/settings_download_preload_image_summary"
+        app:entries="@array/preload_image_entries"
+        app:entryValues="@array/preload_image_entry_values"
+        android:defaultValue="5"/>
 
     <Preference
         android:key="restore_download_items"

@@ -356,6 +356,10 @@
     <string name="settings_download_pick_dir_kk">You can\'t write any kind of data on your external SD card in Android 4.4+ unless you have hacked it</string>
     <string name="settings_download_pick_dir_l">Android 5.0+ provides new API to write on external SD card. Click the \"DOCUMENT\" button if you want to set download location to SD card</string>
     <string name="settings_download_document">Document</string>
+    <string name="settings_download_multi_thread_download">Multi thread download</string>
+    <string name="settings_download_multi_thread_download_summary">Up to %s images</string>
+    <string name="settings_download_preload_image">Preload image</string>
+    <string name="settings_download_preload_image_summary">Preload next %s image</string>
     <string name="settings_download_restore_download_items">Restore download items</string>
     <string name="settings_download_restore_download_items_summary">Restore all download items in download location</string>
     <string name="settings_download_restoring">Restoring</string>

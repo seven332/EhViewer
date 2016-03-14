@@ -362,6 +362,28 @@ public class Settings {
         putString(KEY_DEFAULT_DOWNLOAD_LABEL, value);
     }
 
+    private static final String KEY_MULTI_THREAD_DOWNLOAD = "download_thread";
+    private static final int DEFAULT_MULTI_THREAD_DOWNLOAD = 3;
+
+    public static int getMultiThreadDownload() {
+        return getIntFromStr(KEY_MULTI_THREAD_DOWNLOAD, DEFAULT_MULTI_THREAD_DOWNLOAD);
+    }
+
+    public static void putMultiThreadDownload(int value) {
+        putIntToStr(KEY_MULTI_THREAD_DOWNLOAD, value);
+    }
+
+    private static final String KEY_PRELOAD_IMAGE = "preload_image";
+    private static final int DEFAULT_PRELOAD_IMAGE = 5;
+
+    public static int getPreloadImage() {
+        return getIntFromStr(KEY_PRELOAD_IMAGE, DEFAULT_PRELOAD_IMAGE);
+    }
+
+    public static void putPreloadImage(int value) {
+        putIntToStr(KEY_PRELOAD_IMAGE, value);
+    }
+
     /********************
      ****** Favorites
      ********************/
