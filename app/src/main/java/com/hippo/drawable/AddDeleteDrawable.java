@@ -99,12 +99,12 @@ public class AddDeleteDrawable extends Drawable {
 
     @Override
     public int getIntrinsicHeight() {
-        return mSize;
+        return mSize * 6 / 5;
     }
 
     @Override
     public int getIntrinsicWidth() {
-        return mSize;
+        return mSize * 6 / 5;
     }
 
     /**
