@@ -39,12 +39,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;
-import com.hippo.widget.SimpleImageView;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
@@ -75,9 +75,9 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     private int mBaseHeight;
     private float mProgress;
 
-    private SimpleImageView mMenuButton;
+    private ImageView mMenuButton;
     private TextView mTitleTextView;
-    private SimpleImageView mActionButton;
+    private ImageView mActionButton;
     private SearchEditText mEditText;
     private View mListContainer;
     private View mListHeader;
@@ -117,9 +117,9 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.widget_search_bar, this);
-        mMenuButton = (SimpleImageView) ViewUtils.$$(this, R.id.search_menu);
+        mMenuButton = (ImageView) ViewUtils.$$(this, R.id.search_menu);
         mTitleTextView = (TextView) ViewUtils.$$(this, R.id.search_title);
-        mActionButton = (SimpleImageView) ViewUtils.$$(this, R.id.search_action);
+        mActionButton = (ImageView) ViewUtils.$$(this, R.id.search_action);
         mEditText = (SearchEditText) ViewUtils.$$(this, R.id.search_edit_text);
         mListContainer = ViewUtils.$$(this, R.id.list_container);
         ListView list = (ListView) ViewUtils.$$(mListContainer, R.id.search_bar_list);
@@ -219,11 +219,11 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     }
 
     public void setLeftDrawable(Drawable drawable) {
-        mMenuButton.setDrawable(drawable);
+        mMenuButton.setImageDrawable(drawable);
     }
 
     public void setRightDrawable(Drawable drawable) {
-        mActionButton.setDrawable(drawable);
+        mActionButton.setImageDrawable(drawable);
     }
 
     public void setLeftIconVisibility(int visibility) {

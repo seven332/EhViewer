@@ -28,12 +28,13 @@
         android:padding="@dimen/keyline_margin"
         android:orientation="vertical">
 
-        <com.hippo.widget.SimpleImageView
+        <ImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:padding="@dimen/keyline_margin"
-            android:src="@drawable/v_cookie_brown_x48"/>
+            app:srcCompat="@drawable/v_cookie_brown_x48"/>
 
         <TextView
             android:layout_width="wrap_content"
