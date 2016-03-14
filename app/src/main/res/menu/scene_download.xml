@@ -29,12 +29,6 @@
         android:id="@+id/action_stop_all"
         android:icon="@drawable/v_pause_dark_x24"
         android:title="@string/download_stop_all"
-        app:showAsAction="always"/>
-
-    <item
-        android:id="@+id/action_label"
-        android:icon="@drawable/v_label_dark_x24"
-        android:title="@string/download_labels"
         app:showAsAction="ifRoom"/>
 
 </menu>

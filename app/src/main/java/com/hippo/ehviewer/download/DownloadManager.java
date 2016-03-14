@@ -50,26 +50,23 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
 
     private final Context mContext;
 
-    @NonNull
+    // All download info list
+    private final LinkedList<DownloadInfo> mAllInfoList;
+    // All download info map
+    private final SparseJLArray<DownloadInfo> mAllInfoMap;
+    // label and info list map, without default label info list
     private final Map<String, LinkedList<DownloadInfo>> mMap;
     // All labels without default label
-    @NonNull
     private final List<DownloadLabel> mLabelList;
     // Store download info with default label
-    @NonNull
     private final LinkedList<DownloadInfo> mDefaultInfoList;
-    // For quick search
-    @NonNull
-    private final SparseJLArray<DownloadInfo> mAllInfoMap;
     // Store download info wait to start
-    @NonNull
     private final LinkedList<DownloadInfo> mWaitList;
-    @NonNull
+
     private final SpeedReminder mSpeedReminder;
 
     @Nullable
     private DownloadListener mDownloadListener;
-    @NonNull
     private final List<DownloadInfoListener> mDownloadInfoListeners;
 
     @Nullable
@@ -77,12 +74,12 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     @Nullable
     private SpiderQueen mCurrentSpider;
 
-    @NonNull
     private final ConcurrentPool<NotifyTask> mNotifyTaskPool = new ConcurrentPool<>(5);
 
     public DownloadManager(Context context) {
         mContext = context;
 
+        // Get all labels
         List<DownloadLabel> labels = EhDB.getAllDownloadLabelList();
         mLabelList = labels;
 
@@ -92,21 +89,28 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         for (DownloadLabel label : labels) {
             map.put(label.getLabel(), new LinkedList<DownloadInfo>());
         }
+
         // Create default for non tag
         mDefaultInfoList = new LinkedList<>();
-        // Create all download info map
-        SparseJLArray<DownloadInfo> allInfoMap = new SparseJLArray<>();
+
+        // Get all info
+        List<DownloadInfo> allInfoList = EhDB.getAllDownloadInfo();
+        mAllInfoList = new LinkedList<>(allInfoList);
+
+        // Create all info map
+        SparseJLArray<DownloadInfo> allInfoMap = new SparseJLArray<>(allInfoList.size() + 10);
         mAllInfoMap = allInfoMap;
 
-        // Fill download info list
-        List<DownloadInfo> allInfoList = EhDB.getAllDownloadInfos();
-        for (DownloadInfo info: allInfoList) {
+        for (int i = 0, n = allInfoList.size(); i < n; i++) {
+            DownloadInfo info = allInfoList.get(i);
+
             // Add to all info map
             allInfoMap.put(info.gid, info);
 
             // Add to each label list
             LinkedList<DownloadInfo> list = getInfoListForLabel(info.label);
             if (list == null) {
+                // Can't find the label in label list
                 list = new LinkedList<>();
                 map.put(info.label, list);
                 if (!containLabel(info.label)) {
@@ -262,9 +266,10 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                 Log.e(TAG, "Can't find download info list with label: " + label);
                 return;
             }
-            list.add(info);
+            list.addFirst(info);
 
             // Add to all download list and map
+            mAllInfoList.addFirst(info);
             mAllInfoMap.put(galleryInfo.gid, info);
 
             // Add to wait list
@@ -319,17 +324,15 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     void startAllDownload() {
         boolean update = false;
         // Start all STATE_NONE and STATE_FAILED item
-        // TODO keep order in wait list
-        SparseJLArray<DownloadInfo> allInfoMap = mAllInfoMap;
-        List<DownloadInfo> waitList = mWaitList;
-        for (int i = 0, n = allInfoMap.size(); i < n; i++) {
-            DownloadInfo info = allInfoMap.valueAt(i);
+        LinkedList<DownloadInfo> allInfoList = mAllInfoList;
+        LinkedList<DownloadInfo> waitList = mWaitList;
+        for (DownloadInfo info: allInfoList) {
             if (info.state == DownloadInfo.STATE_NONE || info.state == DownloadInfo.STATE_FAILED) {
                 update = true;
                 // Set state DownloadInfo.STATE_WAIT
                 info.state = DownloadInfo.STATE_WAIT;
                 // Add to wait list
-                waitList.add(info);
+                waitList.addLast(info);
                 // Update in DB
                 EhDB.putDownloadInfo(info);
             }
@@ -363,9 +366,10 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             Log.e(TAG, "Can't find download info list with label: " + label);
             return;
         }
-        list.add(info);
+        list.addFirst(info);
 
         // Add to all download list and map
+        mAllInfoList.addFirst(info);
         mAllInfoMap.put(galleryInfo.gid, info);
 
         // Add to wait list
@@ -449,6 +453,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             EhDB.removeDownloadInfo(info.gid);
 
             // Remove all list and map
+            mAllInfoList.remove(info);
             mAllInfoMap.remove(info.gid);
 
             // Remove label list
@@ -484,6 +489,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             EhDB.removeDownloadInfo(info.gid);
 
             // Remove from all info map
+            mAllInfoList.remove(info);
             mAllInfoMap.remove(info.gid);
 
             // Remove from label list
@@ -598,8 +604,6 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             return;
         }
 
-        boolean changed = false;
-
         for (DownloadInfo info: list) {
             if (ObjectUtils.equal(info.label, label)) {
                 continue;
@@ -614,13 +618,10 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             srcList.remove(info);
             dstList.add(info);
             info.label = label;
-            // TODO Other comparator
-            Collections.sort(dstList, sDateAscComparator);
+            Collections.sort(dstList, sDateDescComparator);
 
             // Save to DB
             EhDB.putDownloadInfo(info);
-
-            changed = true;
         }
 
         for (DownloadInfoListener l: mDownloadInfoListeners) {
@@ -717,7 +718,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
 
         // Sort
-        Collections.sort(mDefaultInfoList, sDateAscComparator);
+        Collections.sort(mDefaultInfoList, sDateDescComparator);
 
         // Notify listener
         for (DownloadInfoListener l: mDownloadInfoListeners) {
@@ -814,6 +815,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         private long mContentLength;
         private long mReceivedSize;
         private int mBytesRead;
+        @SuppressWarnings("unused")
         private String mError;
         private int mFinished;
         private int mDownloaded;
@@ -1075,10 +1077,10 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
-    private static final Comparator<DownloadInfo> sDateAscComparator = new Comparator<DownloadInfo>() {
+    private static final Comparator<DownloadInfo> sDateDescComparator = new Comparator<DownloadInfo>() {
         @Override
         public int compare(DownloadInfo lhs, DownloadInfo rhs) {
-            return lhs.time - rhs.time > 0 ? 1 : -1;
+            return lhs.time - rhs.time > 0 ? -1 : 1;
         }
     };
 

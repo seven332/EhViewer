@@ -295,9 +295,6 @@ public class DownloadsScene extends ToolbarScene
                 getActivity().startService(intent);
                 return true;
             }
-            case R.id.action_label: {
-                openDrawer(Gravity.RIGHT);
-            }
         }
         return false;
     }

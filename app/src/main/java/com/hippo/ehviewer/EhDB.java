@@ -297,9 +297,9 @@ public class EhDB {
         }
     }
 
-    public static synchronized List<DownloadInfo> getAllDownloadInfos() {
+    public static synchronized List<DownloadInfo> getAllDownloadInfo() {
         DownloadsDao dao = sDaoSession.getDownloadsDao();
-        List<DownloadInfo> list = dao.queryBuilder().orderAsc(DownloadsDao.Properties.Time).list();
+        List<DownloadInfo> list = dao.queryBuilder().orderDesc(DownloadsDao.Properties.Time).list();
         // Fix state
         for (DownloadInfo info: list) {
             if (info.state == DownloadInfo.STATE_WAIT || info.state == DownloadInfo.STATE_DOWNLOAD) {
