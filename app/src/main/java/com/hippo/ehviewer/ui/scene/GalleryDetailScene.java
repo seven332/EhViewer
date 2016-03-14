@@ -87,6 +87,7 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.util.LayoutUtils2;
 import com.hippo.util.ReadableTime;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.AutoWrapLayout;
@@ -851,6 +852,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else {
             mPreviewText.setText(R.string.more_previews);
         }
+
+        int minWidth = getResources().getDimensionPixelOffset(R.dimen.preview_grid_min_width);
+        int spanCount = LayoutUtils2.calculateSpanCount(getContext(), minWidth);
+        mGridLayout.setColumnCount(spanCount);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         for (int i = 0, size = previewSet.size(); i < size; i++) {

@@ -49,6 +49,7 @@ import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
+import com.hippo.util.LayoutUtils2;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.Slider;
@@ -125,7 +126,9 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
         mAdapter = new GalleryPreviewAdapter();
         recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3)); // TODO hardcode
+        int minWidth = getResources().getDimensionPixelOffset(R.dimen.preview_grid_min_width);
+        int spanCount = LayoutUtils2.calculateSpanCount(getContext(), minWidth);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), spanCount));
         int padding = LayoutUtils.dp2pix(getContext(), 4);
         recyclerView.setPadding(padding, padding, padding, padding);
         recyclerView.setClipToPadding(false);
