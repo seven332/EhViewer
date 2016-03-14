@@ -622,7 +622,9 @@ public final class GalleryListScene extends BaseScene
             mFabAnimatorListener = new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mFab.setVisibility(View.INVISIBLE);
+                    if (null != mFab) {
+                        mFab.setVisibility(View.INVISIBLE);
+                    }
                 }
             };
         }
