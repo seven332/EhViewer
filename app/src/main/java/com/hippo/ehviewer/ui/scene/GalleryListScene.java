@@ -288,14 +288,21 @@ public final class GalleryListScene extends BaseScene
         String keyword = builder.getKeyword();
         int category = builder.getCategory();
 
+        // Update search edit text
+        if (!TextUtils.isEmpty(keyword) && null != mSearchBar) {
+            mSearchBar.setText(keyword);
+        }
+
+        // Update title
         String title = getSuitableTitleForUrlBuilder(getResources(), builder, true);
         if (null == title) {
             title = resources.getString(R.string.search);
         }
-        if (mSearchBar != null) {
+        if (null != mSearchBar) {
             mSearchBar.setTitle(title);
         }
 
+        // Update nav checked item
         int checkedItemId;
         if (ListUrlBuilder.MODE_NORMAL == builder.getMode() &&
                 EhUtils.NONE == category &&
