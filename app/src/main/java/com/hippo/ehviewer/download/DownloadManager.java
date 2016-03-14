@@ -332,7 +332,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                 // Set state DownloadInfo.STATE_WAIT
                 info.state = DownloadInfo.STATE_WAIT;
                 // Add to wait list
-                waitList.addLast(info);
+                waitList.add(info);
                 // Update in DB
                 EhDB.putDownloadInfo(info);
             }
@@ -371,9 +371,6 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         // Add to all download list and map
         mAllInfoList.addFirst(info);
         mAllInfoMap.put(galleryInfo.gid, info);
-
-        // Add to wait list
-        mWaitList.add(info);
 
         // Save to
         EhDB.putDownloadInfo(info);
