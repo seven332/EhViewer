@@ -26,12 +26,7 @@ import android.view.View;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.MathUtils;
 
-/**
- * aspect is width / height
- */
 public class FixedAspectImageView extends AppCompatImageView {
-
-    private static final String TAG = FixedAspectImageView.class.getSimpleName();
 
     private static final int[] MIN_ATTRS = {
             android.R.attr.minWidth,
@@ -50,20 +45,26 @@ public class FixedAspectImageView extends AppCompatImageView {
     private int mMaxHeight = Integer.MAX_VALUE;
     private boolean mAdjustViewBounds = false;
 
+    // width / height
     private float mAspect = -1f;
 
     public FixedAspectImageView(Context context) {
         super(context);
+        init(context, null, 0);
     }
 
     public FixedAspectImageView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init(context, attrs, 0);
+    }
+
+    public FixedAspectImageView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context, attrs, defStyle);
     }
 
     @SuppressWarnings("ResourceType")
-    public FixedAspectImageView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-
+    private void init(Context context, AttributeSet attrs, int defStyle) {
         TypedArray a;
 
         // Make sure we get value from xml
@@ -114,10 +115,6 @@ public class FixedAspectImageView extends AppCompatImageView {
         mAdjustViewBounds = adjustViewBounds;
     }
 
-    public boolean isAdjustViewBounds() {
-        return mAdjustViewBounds;
-    }
-
     /**
      * Enable aspect will set AdjustViewBounds true.
      * Any negative float to disable it,
@@ -128,7 +125,6 @@ public class FixedAspectImageView extends AppCompatImageView {
     public void setAspect(float ratio) {
         if (ratio > 0) {
             mAspect = ratio;
-            setAdjustViewBounds(true);
         } else {
             mAspect = -1f;
         }
@@ -208,7 +204,8 @@ public class FixedAspectImageView extends AppCompatImageView {
             // If no drawable, its intrinsic size is 0.
             w = h = 0;
 
-            if (mAdjustViewBounds && mAspect > 0.0f) {
+            // Aspect is forced set.
+            if (mAspect > 0.0f) {
                 resizeWidth = widthSpecMode != MeasureSpec.EXACTLY;
                 resizeHeight = heightSpecMode != MeasureSpec.EXACTLY;
                 desiredAspect = mAspect;
@@ -219,20 +216,24 @@ public class FixedAspectImageView extends AppCompatImageView {
             if (w <= 0) w = 1;
             if (h <= 0) h = 1;
 
-            // We are supposed to adjust view bounds to match the aspect
-            // ratio of our drawable. See if that is possible.
             if (mAdjustViewBounds) {
+                // We are supposed to adjust view bounds to match the aspect
+                // ratio of our drawable. See if that is possible.
                 resizeWidth = widthSpecMode != MeasureSpec.EXACTLY;
                 resizeHeight = heightSpecMode != MeasureSpec.EXACTLY;
-
-                desiredAspect = mAspect <= 0.0f ? ((float) w / (float) h) : mAspect;
+                desiredAspect = (float) w / (float) h;
+            } else if (mAspect > 0.0f) {
+                // Aspect is forced set.
+                resizeWidth = widthSpecMode != MeasureSpec.EXACTLY;
+                resizeHeight = heightSpecMode != MeasureSpec.EXACTLY;
+                desiredAspect = mAspect;
             }
         }
 
-        int pleft = getPaddingLeft();
-        int pright = getPaddingRight();
-        int ptop = getPaddingTop();
-        int pbottom = getPaddingBottom();
+        int pLeft = getPaddingLeft();
+        int pRight = getPaddingRight();
+        int pTop = getPaddingTop();
+        int pBottom = getPaddingBottom();
 
         int widthSize;
         int heightSize;
@@ -243,23 +244,23 @@ public class FixedAspectImageView extends AppCompatImageView {
             // least one dimension.
 
             // Get the max possible width given our constraints
-            widthSize = resolveAdjustedSize(w + pleft + pright, mMinWidth, mMaxWidth, widthMeasureSpec);
+            widthSize = resolveAdjustedSize(w + pLeft + pRight, mMinWidth, mMaxWidth, widthMeasureSpec);
 
             // Get the max possible height given our constraints
-            heightSize = resolveAdjustedSize(h + ptop + pbottom, mMinHeight, mMaxHeight, heightMeasureSpec);
+            heightSize = resolveAdjustedSize(h + pTop + pBottom, mMinHeight, mMaxHeight, heightMeasureSpec);
 
             if (desiredAspect != 0.0f) {
                 // See what our actual aspect ratio is
-                float actualAspect = (float)(widthSize - pleft - pright) /
-                                        (heightSize - ptop - pbottom);
+                float actualAspect = (float)(widthSize - pLeft - pRight) /
+                                        (heightSize - pTop - pBottom);
 
                 if (Math.abs(actualAspect - desiredAspect) > 0.0000001) {
                     boolean done = false;
 
                     // Try adjusting width to be proportional to height
                     if (resizeWidth) {
-                        int newWidth = (int)(desiredAspect * (heightSize - ptop - pbottom)) +
-                                pleft + pright;
+                        int newWidth = (int)(desiredAspect * (heightSize - pTop - pBottom)) +
+                                pLeft + pRight;
 
                         // Allow the width to outgrow its original estimate if height is fixed.
                         //if (!resizeHeight) {
@@ -274,8 +275,8 @@ public class FixedAspectImageView extends AppCompatImageView {
 
                     // Try adjusting height to be proportional to width
                     if (!done && resizeHeight) {
-                        int newHeight = (int)((widthSize - pleft - pright) / desiredAspect) +
-                                ptop + pbottom;
+                        int newHeight = (int)((widthSize - pLeft - pRight) / desiredAspect) +
+                                pTop + pBottom;
 
                         // Allow the height to outgrow its original estimate if width is fixed.
                         if (!resizeWidth) {
@@ -293,8 +294,8 @@ public class FixedAspectImageView extends AppCompatImageView {
             // We are either don't want to preserve the drawables aspect ratio,
             // or we are not allowed to change view dimensions. Just measure in
             // the normal way.
-            w += pleft + pright;
-            h += ptop + pbottom;
+            w += pLeft + pRight;
+            h += pTop + pBottom;
 
             w = Math.max(w, getSuggestedMinimumWidth());
             h = Math.max(h, getSuggestedMinimumHeight());
