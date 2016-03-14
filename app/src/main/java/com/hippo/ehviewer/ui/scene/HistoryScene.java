@@ -16,20 +16,14 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,21 +34,18 @@ import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhCacheKeyFactory;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.HistoryInfo;
 import com.hippo.ehviewer.ui.CommonOperations;
-import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
-import com.hippo.scene.TransitionHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
-import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -96,21 +87,18 @@ public class HistoryScene extends ToolbarScene
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 
-        Resources resources = getResources();
-
         mList = EhDB.getHistoryLazyList();
-        mAdapter = new HistoryAdapter();
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
-        int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
-        int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
-        mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+        mAdapter = new HistoryAdapter(LayoutInflater.from(getContext()),
+                getContext(), mRecyclerView, layoutManager, Settings.getListMode());
+        mRecyclerView.setAdapter(mAdapter);
 
         fastScroller.attachToRecyclerView(mRecyclerView);
         HandlerDrawable handlerDrawable = new HandlerDrawable();
@@ -137,13 +125,18 @@ public class HistoryScene extends ToolbarScene
     public void onDestroyView() {
         super.onDestroyView();
 
-        mRecyclerView = null;
-        mViewTransition = null;
-        mAdapter = null;
+        if (null != mRecyclerView) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView.setLayoutManager(null);
+            mRecyclerView = null;
+        }
         if (null != mList) {
             mList.close();
             mList = null;
         }
+
+        mViewTransition = null;
+        mAdapter = null;
     }
 
     @Override
@@ -161,9 +154,9 @@ public class HistoryScene extends ToolbarScene
         args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
         args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, mList.get(position));
         Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
-        if (ApiHelper.SUPPORT_TRANSITION) {
-            HistoryHolder holder = (HistoryHolder) mRecyclerView.getChildViewHolder(view);
-            announcer.setTranHelper(new EnterGalleryDetailTransaction(holder));
+        View thumb;
+        if (ApiHelper.SUPPORT_TRANSITION && null != (thumb = view.findViewById(R.id.thumb))) {
+            announcer.setTranHelper(new EnterGalleryDetailTransaction(thumb));
         }
         startScene(announcer);
         return true;
@@ -196,103 +189,22 @@ public class HistoryScene extends ToolbarScene
         return true;
     }
 
-    private class HistoryHolder extends RecyclerView.ViewHolder {
+    private class HistoryAdapter extends GalleryAdapter {
 
-        private final LoadImageView thumb;
-        private final TextView title;
-        private final TextView uploader;
-        private final SimpleRatingView rating;
-        private final TextView category;
-        private final TextView posted;
-        private final TextView simpleLanguage;
-
-        public HistoryHolder(View itemView) {
-            super(itemView);
-
-            thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
-            title = (TextView) itemView.findViewById(R.id.title);
-            uploader = (TextView) itemView.findViewById(R.id.uploader);
-            rating = (SimpleRatingView) itemView.findViewById(R.id.rating);
-            category = (TextView) itemView.findViewById(R.id.category);
-            posted = (TextView) itemView.findViewById(R.id.posted);
-            simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
-        }
-    }
-
-    private class HistoryAdapter extends RecyclerView.Adapter<HistoryHolder> {
-
-        @Override
-        public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new HistoryHolder(getActivity().getLayoutInflater()
-                    .inflate(R.layout.item_gallery_list, parent, false));
+        public HistoryAdapter(LayoutInflater inflater, Context context,
+                RecyclerView recyclerView, GridLayoutManager layoutManager, int type) {
+            super(inflater, context, recyclerView, layoutManager, type);
         }
 
+        @Nullable
         @Override
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public void onBindViewHolder(HistoryHolder holder, int position) {
-            if (null == mList) {
-                return;
-            }
-
-            GalleryInfo gi = mList.get(position);
-            holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb, true);
-            holder.title.setText(EhUtils.getSuitableTitle(gi));
-            holder.uploader.setText(gi.uploader);
-            holder.rating.setRating(gi.rating);
-            TextView category = holder.category;
-            String newCategoryText = EhUtils.getCategory(gi.category);
-            if (!newCategoryText.equals(category.getText())) {
-                category.setText(newCategoryText);
-                category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
-            }
-            holder.posted.setText(gi.posted);
-            holder.simpleLanguage.setText(gi.simpleLanguage);
-
-            // Update transition name
-            if (ApiHelper.SUPPORT_TRANSITION) {
-                long gid = gi.gid;
-                holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
-                holder.title.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
-                holder.uploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));
-                holder.category.setTransitionName(TransitionNameFactory.getCategoryTransitionName(gid));
-            }
+        public GalleryInfo getDataAt(int position) {
+            return null != mList ? mList.get(position) : null;
         }
 
         @Override
         public int getItemCount() {
-            return mList != null ? mList.size() : 0;
-        }
-    }
-
-    private static class EnterGalleryDetailTransaction implements TransitionHelper {
-
-        private final HistoryHolder mHolder;
-
-        public EnterGalleryDetailTransaction(HistoryHolder holder) {
-            mHolder = holder;
-        }
-
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public boolean onTransition(Context context, FragmentTransaction transaction,
-                Fragment exit, Fragment enter) {
-            if (mHolder == null || !(enter instanceof GalleryDetailScene)) {
-                return false;
-            }
-
-            exit.setSharedElementReturnTransition(
-                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-            exit.setExitTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            enter.setSharedElementEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-            enter.setEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            transaction.addSharedElement(mHolder.thumb, mHolder.thumb.getTransitionName());
-            transaction.addSharedElement(mHolder.title, mHolder.title.getTransitionName());
-            transaction.addSharedElement(mHolder.uploader, mHolder.uploader.getTransitionName());
-            transaction.addSharedElement(mHolder.category, mHolder.category.getTransitionName());
-            return true;
+            return null != mList ? mList.size() : 0;
         }
     }
 

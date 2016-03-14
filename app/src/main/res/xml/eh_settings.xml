@@ -19,6 +19,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.hippo.preference.ListPreference
+        android:key="list_mode"
+        android:title="@string/settings_eh_list_mode"
+        android:summary="%s"
+        app:entries="@array/list_mode_entries"
+        app:entryValues="@array/list_mode_entry_values"
+        android:defaultValue="0"/>
+
     <com.hippo.preference.SwitchPreference
         android:key="show_jpn_title"
         android:title="@string/settings_eh_show_jpn_title"

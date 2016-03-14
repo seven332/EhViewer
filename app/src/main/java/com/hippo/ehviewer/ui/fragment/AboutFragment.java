@@ -80,6 +80,7 @@ public class AboutFragment extends PreferenceFragment
             if (newValue instanceof Boolean && (Boolean) newValue) {
                 Analytics.start(getActivity());
             }
+            return true;
         }
         return true;
     }

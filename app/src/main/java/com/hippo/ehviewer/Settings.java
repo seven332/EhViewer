@@ -197,6 +197,13 @@ public class Settings {
     /********************
      ****** Eh
      ********************/
+    public static final String KEY_LIST_MODE = "list_mode";
+    private static final int DEFAULT_LIST_MODE = 0;
+
+    public static int getListMode() {
+        return getIntFromStr(KEY_LIST_MODE, DEFAULT_LIST_MODE);
+    }
+
     private static final String KEY_SHOW_JPN_TITLE = "show_jpn_title";
     private static final boolean DEFAULT_SHOW_JPN_TITLE = false;
 

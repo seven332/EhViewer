@@ -17,29 +17,24 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
-import android.transition.TransitionInflater;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -59,7 +54,6 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
-import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUtils;
@@ -71,17 +65,14 @@ import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.widget.FitPaddingLayout;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
-import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
-import com.hippo.scene.TransitionHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.ContentLayout;
-import com.hippo.widget.LoadImageView;
 import com.hippo.widget.SearchBarMover;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
@@ -341,18 +332,17 @@ public final class GalleryListScene extends BaseScene
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
-        mAdapter = new GalleryListAdapter();
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
-        int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
-        int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
-        mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+        mAdapter = new GalleryListAdapter(LayoutInflater.from(getContext()),
+                getContext(), mRecyclerView, layoutManager, Settings.getListMode());
+        mRecyclerView.setAdapter(mAdapter);
 
         mLeftDrawable = new DrawerArrowDrawable(getContext());
         mRightDrawable = new AddDeleteDrawable(getContext());
@@ -389,13 +379,17 @@ public final class GalleryListScene extends BaseScene
     public void onDestroyView() {
         super.onDestroyView();
 
-        // End animation
+        if (null != mRecyclerView) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView.setLayoutManager(null);
+            mRecyclerView = null;
+        }
         if (mSearchBarMover != null) {
             mSearchBarMover.cancelAnimation();
+            mSearchBarMover = null;
         }
 
         mFitPaddingLayout = null;
-        mRecyclerView = null;
         mSearchLayout = null;
         mSearchBar = null;
         mFab = null;
@@ -404,7 +398,6 @@ public final class GalleryListScene extends BaseScene
         mHelper = null;
         mLeftDrawable = null;
         mRightDrawable = null;
-        mSearchBarMover = null;
         mFabAnimatorListener = null;
     }
 
@@ -555,38 +548,6 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
-    private static class EnterGalleryDetailTransaction implements TransitionHelper {
-
-        private final GalleryListHolder mHolder;
-
-        public EnterGalleryDetailTransaction(GalleryListHolder holder) {
-            mHolder = holder;
-        }
-
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public boolean onTransition(Context context, FragmentTransaction transaction,
-                Fragment exit, Fragment enter) {
-            if (mHolder == null || !(enter instanceof GalleryDetailScene)) {
-                return false;
-            }
-
-            exit.setSharedElementReturnTransition(
-                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-            exit.setExitTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            enter.setSharedElementEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-            enter.setEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            transaction.addSharedElement(mHolder.thumb, mHolder.thumb.getTransitionName());
-            transaction.addSharedElement(mHolder.title, mHolder.title.getTransitionName());
-            transaction.addSharedElement(mHolder.uploader, mHolder.uploader.getTransitionName());
-            transaction.addSharedElement(mHolder.category, mHolder.category.getTransitionName());
-            return true;
-        }
-    }
-
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         if (null == mHelper || null == mRecyclerView) {
@@ -598,9 +559,9 @@ public final class GalleryListScene extends BaseScene
         args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
         args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
         Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
-        if (ApiHelper.SUPPORT_TRANSITION) {
-            GalleryListHolder holder = (GalleryListHolder) mRecyclerView.getChildViewHolder(view);
-            announcer.setTranHelper(new EnterGalleryDetailTransaction(holder));
+        View thumb;
+        if (ApiHelper.SUPPORT_TRANSITION && null != (thumb = view.findViewById(R.id.thumb))) {
+            announcer.setTranHelper(new EnterGalleryDetailTransaction(thumb));
         }
         startScene(announcer);
         return true;
@@ -921,76 +882,22 @@ public final class GalleryListScene extends BaseScene
         scene.startScene(new Announcer(GalleryListScene.class).setArgs(args));
     }
 
-    private class GalleryListHolder extends RecyclerView.ViewHolder {
+    private class GalleryListAdapter extends GalleryAdapter {
 
-        private final LoadImageView thumb;
-        private final TextView title;
-        private final TextView uploader;
-        private final SimpleRatingView rating;
-        private final TextView category;
-        private final TextView posted;
-        private final TextView simpleLanguage;
-
-        public GalleryListHolder(View itemView) {
-            super(itemView);
-
-            thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
-            title = (TextView) itemView.findViewById(R.id.title);
-            uploader = (TextView) itemView.findViewById(R.id.uploader);
-            rating = (SimpleRatingView) itemView.findViewById(R.id.rating);
-            category = (TextView) itemView.findViewById(R.id.category);
-            posted = (TextView) itemView.findViewById(R.id.posted);
-            simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
-        }
-    }
-
-    private class GalleryListAdapter extends RecyclerView.Adapter<GalleryListHolder> {
-
-        private final LayoutInflater mInflater;
-
-        public GalleryListAdapter() {
-            mInflater = getActivity().getLayoutInflater();
-        }
-
-        @Override
-        public GalleryListHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new GalleryListHolder(mInflater.inflate(R.layout.item_gallery_list, parent, false));
-        }
-
-        @Override
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public void onBindViewHolder(GalleryListHolder holder, int position) {
-            if (null == mHelper) {
-                return;
-            }
-
-            GalleryInfo gi = mHelper.getDataAt(position);
-            holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb, true);
-            holder.title.setText(EhUtils.getSuitableTitle(gi));
-            holder.uploader.setText(gi.uploader);
-            holder.rating.setRating(gi.rating);
-            TextView category = holder.category;
-            String newCategoryText = EhUtils.getCategory(gi.category);
-            if (!newCategoryText.equals(category.getText())) {
-                category.setText(newCategoryText);
-                category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
-            }
-            holder.posted.setText(gi.posted);
-            holder.simpleLanguage.setText(gi.simpleLanguage);
-
-            // Update transition name
-            if (ApiHelper.SUPPORT_TRANSITION) {
-                long gid = gi.gid;
-                holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
-                holder.title.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
-                holder.uploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));
-                holder.category.setTransitionName(TransitionNameFactory.getCategoryTransitionName(gid));
-            }
+        public GalleryListAdapter(LayoutInflater inflater, Context context,
+                RecyclerView recyclerView, GridLayoutManager layoutManager, int type) {
+            super(inflater, context, recyclerView, layoutManager, type);
         }
 
         @Override
         public int getItemCount() {
             return null != mHelper ? mHelper.size() : 0;
+        }
+
+        @Nullable
+        @Override
+        public GalleryInfo getDataAt(int position) {
+            return null != mHelper ? mHelper.getDataAt(position) : null;
         }
     }
 

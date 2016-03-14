@@ -18,7 +18,6 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -28,15 +27,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
-import android.transition.TransitionInflater;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -66,12 +62,9 @@ import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.ehviewer.ui.GalleryActivity;
-import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
-import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
-import com.hippo.scene.TransitionHelper;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
@@ -99,26 +92,25 @@ public class DownloadsScene extends ToolbarScene
 
     public static final String ACTION_CLEAR_DOWNLOAD_SERVICE = "clear_download_service";
 
+    /*---------------
+     Whole life cycle
+     ---------------*/
     @Nullable
-    @ViewLifeCircle
-    private EasyRecyclerView mRecyclerView;
-    @Nullable
-    @ViewLifeCircle
-    private ViewTransition mViewTransition;
-    @Nullable
-    @ViewLifeCircle
-    private FabLayout mFabLayout;
-
-    @Nullable
-    @ViewLifeCircle
-    private DownloadAdapter mAdapter;
-
-    @Nullable
-    @WholeLifeCircle
     private String mLabel;
     @Nullable
-    @WholeLifeCircle
     private List<DownloadInfo> mList;
+
+    /*---------------
+     View life cycle
+     ---------------*/
+    @Nullable
+    private EasyRecyclerView mRecyclerView;
+    @Nullable
+    private ViewTransition mViewTransition;
+    @Nullable
+    private FabLayout mFabLayout;
+    @Nullable
+    private DownloadAdapter mAdapter;
 
     @Override
     public int getNavCheckedItem() {
@@ -263,6 +255,21 @@ public class DownloadsScene extends ToolbarScene
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (null != mRecyclerView) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView.setLayoutManager(null);
+            mRecyclerView = null;
+        }
+
+        mFabLayout = null;
+        mViewTransition = null;
+        mAdapter = null;
+    }
+
+    @Override
     public void onNavigationClick() {
         onBackPressed();
     }
@@ -298,16 +305,6 @@ public class DownloadsScene extends ToolbarScene
             }
         }
         return false;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        mRecyclerView = null;
-        mFabLayout = null;
-        mViewTransition = null;
-        mAdapter = null;
     }
 
     public void updateView() {
@@ -887,8 +884,7 @@ public class DownloadsScene extends ToolbarScene
                 args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, list.get(index));
                 Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
                 if (ApiHelper.SUPPORT_TRANSITION) {
-                    DownloadHolder holder = (DownloadHolder) recyclerView.getChildViewHolder(itemView);
-                    announcer.setTranHelper(new EnterGalleryDetailTransaction(holder));
+                    announcer.setTranHelper(new EnterGalleryDetailTransaction(thumb));
                 }
                 startScene(announcer);
             } else if (start == v) {
@@ -912,38 +908,6 @@ public class DownloadsScene extends ToolbarScene
                         .setPositiveButton(android.R.string.ok, helper)
                         .show();
             }
-        }
-    }
-
-    private static class EnterGalleryDetailTransaction implements TransitionHelper {
-
-        private final DownloadHolder mHolder;
-
-        public EnterGalleryDetailTransaction(DownloadHolder holder) {
-            mHolder = holder;
-        }
-
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public boolean onTransition(Context context, FragmentTransaction transaction,
-                Fragment exit, Fragment enter) {
-            if (mHolder == null || !(enter instanceof GalleryDetailScene)) {
-                return false;
-            }
-
-            exit.setSharedElementReturnTransition(
-                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-            exit.setExitTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            enter.setSharedElementEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-            enter.setEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            transaction.addSharedElement(mHolder.thumb, mHolder.thumb.getTransitionName());
-            transaction.addSharedElement(mHolder.title, mHolder.title.getTransitionName());
-            transaction.addSharedElement(mHolder.uploader, mHolder.uploader.getTransitionName());
-            transaction.addSharedElement(mHolder.category, mHolder.category.getTransitionName());
-            return true;
         }
     }
 
@@ -985,9 +949,6 @@ public class DownloadsScene extends ToolbarScene
             if (ApiHelper.SUPPORT_TRANSITION) {
                 long gid = info.gid;
                 holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
-                holder.title.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
-                holder.uploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));
-                holder.category.setTransitionName(TransitionNameFactory.getCategoryTransitionName(gid));
             }
         }
 

@@ -38,6 +38,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -47,10 +48,19 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
     public static final String KEY_KEYS = "keys";
     public static final String KEY_VALUES = "values";
 
+    /*---------------
+     Whole life cycle
+     ---------------*/
     @Nullable
     private ArrayList<String> mKeys;
     @Nullable
     private ArrayList<String> mValues;
+
+    /*---------------
+     View life cycle
+     ---------------*/
+    @Nullable
+    private EasyRecyclerView mRecyclerView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,20 +157,31 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_info, container, false);
 
-        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
         InfoAdapter adapter = new InfoAdapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
                 LinearDividerItemDecoration.VERTICAL, getResources().getColor(R.color.divider),
                 LayoutUtils.dp2pix(getContext(), 1));
         decoration.setPadding(getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
-        recyclerView.addItemDecoration(decoration);
-        recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
-        recyclerView.setClipToPadding(false);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setOnItemClickListener(this);
+        mRecyclerView.addItemDecoration(decoration);
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setClipToPadding(false);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setOnItemClickListener(this);
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (null != mRecyclerView) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView.setLayoutManager(null);
+            mRecyclerView = null;
+        }
     }
 
     @Override

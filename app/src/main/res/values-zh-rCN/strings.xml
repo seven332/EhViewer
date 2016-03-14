@@ -281,6 +281,9 @@
 
     <!-- Settings -->
     <string name="settings_eh">EH</string>
+    <string name="settings_eh_list_mode">列表模式</string>
+    <string name="settings_eh_list_mode_detail">详情</string>
+    <string name="settings_eh_list_mode_thumb">缩略图</string>
     <string name="settings_eh_show_jpn_title">显示日文标题</string>
     <string name="settings_eh_show_jpn_title_summary_on">尝试显示日文标题。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>

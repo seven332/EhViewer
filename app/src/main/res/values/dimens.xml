@@ -42,7 +42,11 @@
     <dimen name="list_item_margin">2dp</dimen>
     <dimen name="list_content_margin_h">4dp</dimen>
     <dimen name="list_content_margin_v">4dp</dimen>
+    <dimen name="list_content_interval">4dp</dimen>
     <dimen name="list_search_bar_margin">4dp</dimen>
+
+    <dimen name="gallery_list_min_width">320dp</dimen>
+    <dimen name="gallery_grid_min_width">120dp</dimen>
 
     <!-- DrawerArrowDrawable -->
     <dimen name="dad_drawable_size">24dp</dimen>

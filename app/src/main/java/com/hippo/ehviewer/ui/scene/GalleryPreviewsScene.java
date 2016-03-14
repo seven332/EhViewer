@@ -75,6 +75,8 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
      View life cycle
      ---------------*/
     @Nullable
+    private EasyRecyclerView mRecyclerView;
+    @Nullable
     private GalleryPreviewAdapter mAdapter;
     @Nullable
     private GalleryPreviewHelper mHelper;
@@ -121,16 +123,16 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         ContentLayout contentLayout = (ContentLayout) inflater.inflate(
                 R.layout.scene_gallery_previews, container, false);
         contentLayout.hideFastScroll();
-        EasyRecyclerView recyclerView = contentLayout.getRecyclerView();
+        mRecyclerView = contentLayout.getRecyclerView();
 
         mAdapter = new GalleryPreviewAdapter();
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3)); // TODO hardcode
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3)); // TODO hardcode
         int padding = LayoutUtils.dp2pix(getContext(), 4);
-        recyclerView.setPadding(padding, padding, padding, padding);
-        recyclerView.setClipToPadding(false);
-        recyclerView.addItemDecoration(new MarginItemDecoration(padding));
-        recyclerView.setOnItemClickListener(this);
+        mRecyclerView.setPadding(padding, padding, padding, padding);
+        mRecyclerView.setClipToPadding(false);
+        mRecyclerView.addItemDecoration(new MarginItemDecoration(padding));
+        mRecyclerView.setOnItemClickListener(this);
 
         mHelper = new GalleryPreviewHelper();
         contentLayout.setHelper(mHelper);
@@ -147,6 +149,13 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        if (null != mRecyclerView) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView.setLayoutManager(null);
+            mRecyclerView = null;
+        }
+
         mAdapter = null;
         mHelper = null;
     }

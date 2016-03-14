@@ -139,7 +139,12 @@ public final class QuickSearchScene extends ToolbarScene {
     public void onDestroyView() {
         super.onDestroyView();
 
-        mRecyclerView = null;
+        if (null != mRecyclerView) {
+            mRecyclerView.setAdapter(null);
+            mRecyclerView.setLayoutManager(null);
+            mRecyclerView = null;
+        }
+
         mViewTransition = null;
         mAdapter = null;
     }

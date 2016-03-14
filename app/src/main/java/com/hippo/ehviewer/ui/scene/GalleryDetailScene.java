@@ -140,119 +140,88 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     @ViewLifeCircle
     private ViewTransition mViewTransition;
 
+    /*---------------
+     View life cycle
+     ---------------*/
     // Header
     @Nullable
-    @ViewLifeCircle
     private View mHeader;
     @Nullable
-    @ViewLifeCircle
     private View mColorBg;
     @Nullable
-    @ViewLifeCircle
     private LoadImageView mThumb;
     @Nullable
-    @ViewLifeCircle
     private TextView mTitle;
     @Nullable
-    @ViewLifeCircle
     private TextView mUploader;
     @Nullable
-    @ViewLifeCircle
     private TextView mCategory;
     @Nullable
-    @ViewLifeCircle
     private ImageView mOtherActions;
     @Nullable
-    @ViewLifeCircle
     private ViewGroup mActionGroup;
     @Nullable
-    @ViewLifeCircle
     private TextView mDownload;
     @Nullable
-    @ViewLifeCircle
     private View mRead;
     // Below header
     @Nullable
-    @ViewLifeCircle
     private View mBelowHeader;
     // Info
     @Nullable
-    @ViewLifeCircle
     private View mInfo;
     @Nullable
-    @ViewLifeCircle
     private TextView mLanguage;
     @Nullable
-    @ViewLifeCircle
     private TextView mPages;
     @Nullable
-    @ViewLifeCircle
     private TextView mSize;
     @Nullable
-    @ViewLifeCircle
     private TextView mPosted;
     @Nullable
-    @ViewLifeCircle
     private TextView mFavoredTimes;
     // Actions
     @Nullable
-    @ViewLifeCircle
     private View mActions;
     @Nullable
-    @ViewLifeCircle
     private TextView mRatingText;
     @Nullable
-    @ViewLifeCircle
     private RatingBar mRating;
     @Nullable
-    @ViewLifeCircle
     private View mHeartGroup;
     @Nullable
-    @ViewLifeCircle
     private TextView mHeart;
     @Nullable
-    @ViewLifeCircle
     private TextView mHeartOutline;
     @Nullable
-    @ViewLifeCircle
     private TextView mTorrent;
     @Nullable
-    @ViewLifeCircle
     private TextView mShare;
     @Nullable
-    @ViewLifeCircle
     private TextView mRate;
     // Tags
     @Nullable
-    @ViewLifeCircle
     private LinearLayout mTags;
     @Nullable
-    @ViewLifeCircle
     private TextView mNoTags;
     // Comments
     @Nullable
-    @ViewLifeCircle
     private LinearLayout mComments;
     @Nullable
-    @ViewLifeCircle
     private TextView mCommentsText;
     // Previews
+    @Nullable
     private View mPreviews;
     @Nullable
-    @ViewLifeCircle
     private SimpleGridLayout mGridLayout;
     @Nullable
-    @ViewLifeCircle
     private TextView mPreviewText;
     // Progress
     @Nullable
-    @ViewLifeCircle
     private View mProgress;
     @Nullable
-    @ViewLifeCircle
     private ViewTransition mViewTransition2;
     @Nullable
-    @ViewLifeCircle
     private PopupMenu mPopupMenu;
 
     @WholeLifeCircle
@@ -1143,11 +1112,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             // Only show transaction when thumb can be seen
             if (location[1] + mThumb.getHeight() > 0) {
                 setTransitionName();
-                finish(new ExitTransaction(mThumb, mTitle, mUploader, mCategory));
+                finish(new ExitTransaction(mThumb));
                 return;
             }
         }
-
         finish();
     }
 
@@ -1251,15 +1219,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private static class ExitTransaction implements TransitionHelper {
 
         private final View mThumb;
-        private final View mTitle;
-        private final View mUploader;
-        private final View mCategory;
 
-        public ExitTransaction(View thumb, View title, View uploader, View category) {
+        public ExitTransaction(View thumb) {
             mThumb = thumb;
-            mTitle = title;
-            mUploader = uploader;
-            mCategory = category;
         }
 
         @Override
@@ -1280,9 +1242,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             enter.setEnterTransition(
                     TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
             transaction.addSharedElement(mThumb, mThumb.getTransitionName());
-            transaction.addSharedElement(mTitle, mTitle.getTransitionName());
-            transaction.addSharedElement(mUploader, mUploader.getTransitionName());
-            transaction.addSharedElement(mCategory, mCategory.getTransitionName());
             return true;
         }
     }

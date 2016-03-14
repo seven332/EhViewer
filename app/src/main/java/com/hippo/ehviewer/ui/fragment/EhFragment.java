@@ -17,15 +17,33 @@
 package com.hippo.ehviewer.ui.fragment;
 
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
+import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
+import com.hippo.yorozuya.Messenger;
 
-public class EhFragment extends PreferenceFragment {
+public class EhFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.eh_settings);
+
+        Preference listMode = findPreference(Settings.KEY_LIST_MODE);
+
+        listMode.setOnPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        String key = preference.getKey();
+        if (Settings.KEY_LIST_MODE.equals(key)) {
+            Messenger.getInstance().notify(Constants.MESSAGE_ID_LIST_MODE, null);
+            return true;
+        }
+        return true;
     }
 }

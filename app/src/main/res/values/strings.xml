@@ -320,6 +320,9 @@
     <string name="image_saved">Image saved to %s</string>
 
     <string name="settings_eh">EH</string>
+    <string name="settings_eh_list_mode">List mode</string>
+    <string name="settings_eh_list_mode_detail">Detail</string>
+    <string name="settings_eh_list_mode_thumb">Thumb</string>
     <string name="settings_eh_show_jpn_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
