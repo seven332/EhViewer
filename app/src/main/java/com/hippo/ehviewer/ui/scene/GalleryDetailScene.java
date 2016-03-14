@@ -129,7 +129,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private static final String KEY_GALLERY_DETAIL = "gallery_detail";
     private static final String KEY_REQUEST_ID = "request_id";
-    private static final String KEY_DOWNLOAD_STATE = "download_state";
 
     @Nullable
     @ViewLifeCircle
@@ -349,16 +348,17 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else {
             onRestore(savedInstanceState);
         }
-    }
 
-    private void onInit() {
-        handleArgs(getArguments());
         long gid = getGid();
         if (gid != -1) {
             mDownloadState = EhApplication.getDownloadManager(getContext()).getDownloadState(gid);
         } else {
             mDownloadState = DownloadInfo.STATE_INVALID;
         }
+    }
+
+    private void onInit() {
+        handleArgs(getArguments());
     }
 
     private void onRestore(Bundle savedInstanceState) {
@@ -368,7 +368,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mToken = savedInstanceState.getString(KEY_TOKEN);
         mGalleryDetail = savedInstanceState.getParcelable(KEY_GALLERY_DETAIL);
         mRequestId = savedInstanceState.getInt(KEY_REQUEST_ID);
-        mDownloadState = savedInstanceState.getInt(KEY_DOWNLOAD_STATE);
     }
 
     @Override
@@ -389,7 +388,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             outState.putParcelable(KEY_GALLERY_DETAIL, mGalleryDetail);
         }
         outState.putInt(KEY_REQUEST_ID, mRequestId);
-        outState.putInt(KEY_DOWNLOAD_STATE, mDownloadState);
     }
 
     @Nullable
@@ -1254,6 +1252,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private void onGetGalleryDetailSuccess(GalleryDetail result) {
         mGalleryDetail = result;
         if (isViewCreated()) {
+            updateDownloadState();
             adjustViewVisibility(STATE_NORMAL, true);
             bindViewSecond();
         }
