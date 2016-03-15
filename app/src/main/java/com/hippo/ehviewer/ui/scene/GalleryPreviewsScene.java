@@ -111,8 +111,15 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        boolean hasFirstRefresh;
+        if (mHelper != null && 1 == mHelper.getShownViewIndex()) {
+            hasFirstRefresh = false;
+        } else {
+            hasFirstRefresh = mHasFirstRefresh;
+        }
+        outState.putBoolean(KEY_HAS_FIRST_REFRESH, hasFirstRefresh);
         outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
-        outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
     }
 
     @Nullable
@@ -151,8 +158,14 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
     public void onDestroyView() {
         super.onDestroyView();
 
+        if (null != mHelper) {
+            if (1 == mHelper.getShownViewIndex()) {
+                mHasFirstRefresh = false;
+            }
+            mHelper = null;
+        }
+
         mAdapter = null;
-        mHelper = null;
     }
 
     @Override
@@ -249,7 +262,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         @Override
         protected void getPageData(final int taskId, int type, int page) {
             if (null == mClient || null == mGalleryInfo) {
-                onGetExpection(taskId, new EhException(getString(R.string.error_cannot_find_gallery)));
+                onGetException(taskId, new EhException(getString(R.string.error_cannot_find_gallery)));
                 return;
             }
 
@@ -322,7 +335,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
     private void onGetLargePreviewSetFailure(Exception e, int taskId) {
         if (mHelper != null && mHelper.isCurrentTask(taskId) && isViewCreated()) {
-            mHelper.onGetExpection(taskId, e);
+            mHelper.onGetException(taskId, e);
         }
     }
 

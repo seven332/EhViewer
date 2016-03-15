@@ -17,6 +17,7 @@
 package com.hippo.widget;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -35,6 +36,7 @@ import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.LayoutManagerUtils;
 import com.hippo.ehviewer.R;
+import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.refreshlayout.RefreshLayout;
@@ -51,14 +53,12 @@ public class ContentLayout extends FrameLayout {
     private static final String TAG = ContentLayout.class.getSimpleName();
 
     private ProgressView mProgressView;
-    private ViewGroup mTipView;
+    private TextView mTipView;
     private ViewGroup mContentView;
 
     private RefreshLayout mRefreshLayout;
     private EasyRecyclerView mRecyclerView;
     private FastScroller mFastScroller;
-    private View mImageView;
-    private TextView mTextView;
 
     private ContentHelper mContentHelper;
 
@@ -84,14 +84,12 @@ public class ContentLayout extends FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.widget_content_layout, this);
 
         mProgressView = (ProgressView) findViewById(R.id.progress);
-        mTipView = (ViewGroup) findViewById(R.id.tip);
+        mTipView = (TextView) findViewById(R.id.tip);
         mContentView = (ViewGroup) findViewById(R.id.content_view);
 
         mRefreshLayout = (RefreshLayout) mContentView.findViewById(R.id.refresh_layout);
         mFastScroller = (FastScroller) mContentView.findViewById(R.id.fast_scroller);
         mRecyclerView = (EasyRecyclerView) mRefreshLayout.findViewById(R.id.recycler_view);
-        mImageView = mTipView.getChildAt(0);
-        mTextView = (TextView) mTipView.getChildAt(1);
 
         mFastScroller.attachToRecyclerView(mRecyclerView);
         HandlerDrawable drawable = new HandlerDrawable();
@@ -190,13 +188,11 @@ public class ContentLayout extends FrameLayout {
         public static final int REFRESH_TYPE_PROGRESS_VIEW = 2;
 
         private ProgressView mProgressView;
-        private ViewGroup mTipView;
+        private TextView mTipView;
         private ViewGroup mContentView;
 
         private RefreshLayout mRefreshLayout;
         private EasyRecyclerView mRecyclerView;
-        private View mImageView;
-        private TextView mTextView;
 
         private ViewTransition mViewTransition;
 
@@ -303,11 +299,12 @@ public class ContentLayout extends FrameLayout {
 
             mRefreshLayout = contentLayout.mRefreshLayout;
             mRecyclerView = contentLayout.mRecyclerView;
-            mImageView = contentLayout.mImageView;
-            mTextView = contentLayout.mTextView;
+
+            Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_weird_face);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            mTipView.setCompoundDrawables(null, drawable, null, null);
 
             mViewTransition = new ViewTransition(mContentView, mProgressView, mTipView);
-            mViewTransition.showView(2, false);
 
             mRecyclerView.addOnScrollListener(mOnScrollListener);
             mRefreshLayout.setOnRefreshListener(mOnRefreshListener);
@@ -340,6 +337,10 @@ public class ContentLayout extends FrameLayout {
         }
 
         protected void onHideRecyclerView() {
+        }
+
+        public int getShownViewIndex() {
+            return mViewTransition.getShownViewIndex();
         }
 
         public void setRefreshLayoutEnable(boolean enable) {
@@ -542,7 +543,7 @@ public class ContentLayout extends FrameLayout {
             mRefreshLayout.setFooterRefreshing(false);
         }
 
-        public void onGetExpection(int taskId, Exception e) {
+        public void onGetException(int taskId, Exception e) {
             if (mCurrentTaskId == taskId) {
                 mRefreshLayout.setHeaderRefreshing(false);
                 mRefreshLayout.setFooterRefreshing(false);
@@ -582,7 +583,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         public void showText(CharSequence text) {
-            mTextView.setText(text);
+            mTipView.setText(text);
             if (mViewTransition.showView(2)) {
                 onHideRecyclerView();
             }
@@ -692,7 +693,7 @@ public class ContentLayout extends FrameLayout {
         /**
          * Check range first!
          *
-         * @param page the targe page
+         * @param page the target page
          * @throws IndexOutOfBoundsException
          */
         public void goTo(int page) throws IndexOutOfBoundsException {
@@ -737,14 +738,7 @@ public class ContentLayout extends FrameLayout {
             bundle.putParcelable(KEY_SUPER, superState);
             int shownView = mViewTransition.getShownViewIndex();
             bundle.putInt(KEY_SHOWN_VIEW, shownView);
-            String tip;
-            if (shownView == 2) {
-                // It is progress view
-                tip = getContext().getResources().getString(R.string.content_layout_restore_tip);
-            } else {
-                tip = mTextView.getText().toString();
-            }
-            bundle.putString(KEY_TIP, tip);
+            bundle.putString(KEY_TIP, mTipView.getText().toString());
             // TODO What if data is large
             bundle.putParcelableArrayList(KEY_DATA, mData);
             bundle.putInt(KEY_NEXT_ID, mIdGenerator.nextId());
@@ -758,12 +752,8 @@ public class ContentLayout extends FrameLayout {
         private Parcelable restoreInstanceState(Parcelable state) {
             if (state instanceof Bundle) {
                 Bundle bundle = (Bundle) state;
-                int shownView = bundle.getInt(KEY_SHOWN_VIEW);
-                if (shownView != 0) {
-                    shownView = 2;
-                }
-                mViewTransition.showView(shownView, false);
-                mTextView.setText(bundle.getString(KEY_TIP));
+                mViewTransition.showView(bundle.getInt(KEY_SHOWN_VIEW), false);
+                mTipView.setText(bundle.getString(KEY_TIP));
                 mData = bundle.getParcelableArrayList(KEY_DATA);
                 mIdGenerator.setNextId(bundle.getInt(KEY_NEXT_ID));
                 mPageDivider = bundle.getParcelable(KEY_PAGE_DIVIDER);

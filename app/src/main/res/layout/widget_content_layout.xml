@@ -25,30 +25,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <LinearLayout
+    <TextView
         android:id="@+id/tip"
-        android:layout_width="240dp"
+        android:layout_width="228dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:layout_width="168dp"
-            android:layout_height="168dp"
-            android:layout_gravity="center_horizontal"
-            app:srcCompat="@drawable/sad_panda"/>
-
-        <TextView
-            style="@style/TextAppearance.AppCompat.Medium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"/>
-
-    </LinearLayout>
+        android:gravity="center_horizontal"
+        android:drawablePadding="16dp"
+        style="@style/TextAppearance.AppCompat.Medium"/>
 
     <FrameLayout
         android:id="@+id/content_view"

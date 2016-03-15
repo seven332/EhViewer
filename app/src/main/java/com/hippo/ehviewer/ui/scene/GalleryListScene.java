@@ -230,7 +230,14 @@ public final class GalleryListScene extends BaseScene
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
+
+        boolean hasFirstRefresh;
+        if (mHelper != null && 1 == mHelper.getShownViewIndex()) {
+            hasFirstRefresh = false;
+        } else {
+            hasFirstRefresh = mHasFirstRefresh;
+        }
+        outState.putBoolean(KEY_HAS_FIRST_REFRESH, hasFirstRefresh);
         outState.putParcelable(KEY_LIST_URL_BUILDER, mUrlBuilder);
         outState.putInt(KEY_STATE, mState);
     }
@@ -395,6 +402,12 @@ public final class GalleryListScene extends BaseScene
             mAdapter.unregister();
             mAdapter = null;
         }
+        if (null != mHelper) {
+            if (1 == mHelper.getShownViewIndex()) {
+                mHasFirstRefresh = false;
+            }
+            mHelper = null;
+        }
 
         mRecyclerView = null;
         mFitPaddingLayout = null;
@@ -402,7 +415,6 @@ public final class GalleryListScene extends BaseScene
         mSearchBar = null;
         mFab = null;
         mViewTransition = null;
-        mHelper = null;
         mLeftDrawable = null;
         mRightDrawable = null;
         mFabAnimatorListener = null;
@@ -984,7 +996,7 @@ public final class GalleryListScene extends BaseScene
     private void onGetGalleryListFailure(Exception e, int taskId) {
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId) && isViewCreated()) {
-            mHelper.onGetExpection(taskId, e);
+            mHelper.onGetException(taskId, e);
         }
     }
 
@@ -1000,7 +1012,7 @@ public final class GalleryListScene extends BaseScene
     private void onGetWhatsHotFailure(Exception e, int taskId) {
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId) && isViewCreated()) {
-            mHelper.onGetExpection(taskId, e);
+            mHelper.onGetException(taskId, e);
         }
     }
 

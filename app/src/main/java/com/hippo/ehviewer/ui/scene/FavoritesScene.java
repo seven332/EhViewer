@@ -206,9 +206,16 @@ public class FavoritesScene extends BaseScene implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        boolean hasFirstRefresh;
+        if (mHelper != null && 1 == mHelper.getShownViewIndex()) {
+            hasFirstRefresh = false;
+        } else {
+            hasFirstRefresh = mHasFirstRefresh;
+        }
+        outState.putBoolean(KEY_HAS_FIRST_REFRESH, hasFirstRefresh);
         outState.putParcelable(KEY_URL_BUILDER, mUrlBuilder);
         outState.putBoolean(KEY_SEARCH_MODE, mSearchMode);
-        outState.putBoolean(KEY_HAS_FIRST_REFRESH, mHasFirstRefresh);
         outState.putIntArray(KEY_FAV_COUNT_ARRAY, mFavCountArray);
         outState.putInt(KEY_ALL_COUNT, mAllCount);
         outState.putInt(KEY_ALL_LIMIT, mAllLimit);
@@ -339,12 +346,17 @@ public class FavoritesScene extends BaseScene implements
             mAdapter.unregister();
             mAdapter = null;
         }
+        if (null != mHelper) {
+            if (1 == mHelper.getShownViewIndex()) {
+                mHasFirstRefresh = false;
+            }
+            mHelper = null;
+        }
 
         mRecyclerView = null;
         mSearchBar = null;
         mFabLayout = null;
 
-        mHelper = null;
         mSearchBarMover = null;
         mLeftDrawable = null;
 
@@ -763,7 +775,7 @@ public class FavoritesScene extends BaseScene implements
     private void onGetFavoritesFailure(Exception e, int taskId) {
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId)) {
-            mHelper.onGetExpection(taskId, e);
+            mHelper.onGetException(taskId, e);
         }
     }
 
@@ -776,7 +788,7 @@ public class FavoritesScene extends BaseScene implements
                 list = EhDB.searchLocalFavorites(keyword);
             }
             if (list.size() == 0) {
-                mHelper.onGetExpection(taskId, new NotFoundException());
+                mHelper.onGetException(taskId, new NotFoundException());
             } else {
                 mHelper.setPages(taskId, 1);
                 mHelper.onGetPageData(taskId, list);
