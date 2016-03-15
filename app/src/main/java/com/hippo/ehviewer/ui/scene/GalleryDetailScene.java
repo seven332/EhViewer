@@ -74,7 +74,6 @@ import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
-import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
@@ -131,19 +130,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private static final String KEY_GALLERY_DETAIL = "gallery_detail";
     private static final String KEY_REQUEST_ID = "request_id";
 
-    @Nullable
-    @ViewLifeCircle
-    private ViewGroup mFailedView;
-    @Nullable
-    @ViewLifeCircle
-    private TextView mFailedText;
-    @Nullable
-    @ViewLifeCircle
-    private ViewTransition mViewTransition;
-
     /*---------------
      View life cycle
      ---------------*/
+    @Nullable
+    private TextView mTip;
+    @Nullable
+    private ViewTransition mViewTransition;
     // Header
     @Nullable
     private View mHeader;
@@ -400,10 +393,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         ViewGroup main = (ViewGroup) ViewUtils.$$(view, R.id.main);
         View mainView = ViewUtils.$$(main, R.id.scroll_view);
         View progressView = ViewUtils.$$(main, R.id.progress_view);
-        mFailedView = (ViewGroup) ViewUtils.$$(main, R.id.tip);
-        mFailedText = (TextView) ViewUtils.$$(mFailedView, R.id.tip_text);
-        mFailedView.setOnClickListener(this);
-        mViewTransition = new ViewTransition(mainView, progressView, mFailedView);
+        mTip = (TextView) ViewUtils.$$(main, R.id.tip);
+        mViewTransition = new ViewTransition(mainView, progressView, mTip);
+
+        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_weird_face);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        mTip.setCompoundDrawables(null, drawable, null, null);
+        mTip.setOnClickListener(this);
 
         mHeader = ViewUtils.$$(mainView, R.id.header);
         mColorBg = ViewUtils.$$(mHeader, R.id.color_bg);
@@ -487,7 +483,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 adjustViewVisibility(STATE_REFRESH, false);
             }
         } else {
-            mFailedText.setText(R.string.error_cannot_find_gallery);
+            mTip.setText(R.string.error_cannot_find_gallery);
             adjustViewVisibility(STATE_FAILED, false);
         }
 
@@ -507,8 +503,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         EhApplication.getDownloadManager(getContext()).removeDownloadInfoListener(this);
 
-        mFailedView = null;
-        mFailedText = null;
+        mTip = null;
         mViewTransition = null;
 
         mHeader = null;
@@ -962,7 +957,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        if (mFailedView == v) {
+        if (mTip == v) {
             if (request()) {
                 adjustViewVisibility(STATE_REFRESH, true);
             }
@@ -1270,8 +1265,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         e.printStackTrace();
         if (isViewCreated()) {
             String error = ExceptionUtils.getReadableString(getContext(), e);
-            if (mFailedText != null) {
-                mFailedText.setText(error);
+            if (mTip != null) {
+                mTip.setText(error);
                 adjustViewVisibility(STATE_FAILED, true);
             }
         }

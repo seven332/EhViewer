@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,6 +33,7 @@ import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
+import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.view.ViewTransition;
 
@@ -59,8 +61,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
     private String mPToken;
     private int mPage;
 
-    private View mTip;
-    private TextView mTipText;
+    private TextView mTip;
     private ViewTransition mViewTransition;
 
     @Override
@@ -155,11 +156,13 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_progress, container, false);
         View progress = view.findViewById(R.id.progress);
-        mTip = view.findViewById(R.id.tip);
-        mTipText = (TextView) mTip.findViewById(R.id.tip_text);
+        mTip = (TextView) view.findViewById(R.id.tip);
 
+        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_weird_face);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        mTip.setCompoundDrawables(null, drawable, null, null);
         mTip.setOnClickListener(this);
-        mTipText.setText(mError);
+        mTip.setText(mError);
 
         mViewTransition = new ViewTransition(progress, mTip);
 
@@ -200,7 +203,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
         if (isViewCreated()) {
             // Show tip
             mViewTransition.showView(1);
-            mTipText.setText(mError);
+            mTip.setText(mError);
         }
     }
 
