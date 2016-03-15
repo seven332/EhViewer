@@ -179,7 +179,7 @@ public class GalleryActivity extends TrackedActivity
         mAction = savedInstanceState.getString(KEY_ACTION);
         mFilename = savedInstanceState.getString(KEY_FILENAME);
         mGalleryInfo = savedInstanceState.getParcelable(KEY_GALLERY_INFO);
-        mPage = savedInstanceState.getInt(KEY_ACTION, -1);
+        mPage = savedInstanceState.getInt(KEY_PAGE, -1);
         buildProvider();
     }
 
