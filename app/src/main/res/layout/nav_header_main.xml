@@ -32,7 +32,18 @@
         android:id="@+id/avatar"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/keyline_margin"/>
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="48dp"/>
+
+    <TextView
+        android:id="@+id/display_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="@dimen/text_small"
+        android:textColor="@android:color/white"/>
 
 </FrameLayout>

@@ -34,6 +34,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.Crash;
@@ -94,6 +95,8 @@ public final class MainActivity extends StageActivity
     private FrameLayout mRightDrawer;
     @Nullable
     private LoadImageView mAvatar;
+    @Nullable
+    private TextView mDisplayName;
 
     private int mNavCheckedItem = 0;
 
@@ -257,6 +260,7 @@ public final class MainActivity extends StageActivity
         mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
         View headerLayout = mNavView.getHeaderView(0);
         mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
+        mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
 
         updateAvatar();
 
@@ -295,6 +299,8 @@ public final class MainActivity extends StageActivity
         mDrawerLayout = null;
         mNavView = null;
         mRightDrawer = null;
+        mAvatar = null;
+        mDisplayName = null;
     }
 
     @Override
@@ -345,7 +351,7 @@ public final class MainActivity extends StageActivity
     }
 
     public void updateAvatar() {
-        if (null == mAvatar) {
+        if (null == mAvatar || null == mDisplayName) {
             return;
         }
 
@@ -355,6 +361,12 @@ public final class MainActivity extends StageActivity
         } else {
             mAvatar.load(avatarUrl, avatarUrl);
         }
+
+        String displayName = Settings.getDisplayName();
+        if (TextUtils.isEmpty(displayName)) {
+            displayName = getString(R.string.default_display_name);
+        }
+        mDisplayName.setText(displayName);
     }
 
     public int getDrawerLockMode(int edgeGravity) {
