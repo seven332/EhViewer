@@ -75,6 +75,7 @@ public class GalleryActivity extends TrackedActivity
     public static final String KEY_GALLERY_INFO = "gallery_info";
     public static final String KEY_PAGE = "page";
     public static final String KEY_SHOWING = "showing";
+    public static final String KEY_CURRENT_INDEX = "current_index";
 
     private static final long SLIDER_ANIMATION_DURING = 150;
     private static final long HIDE_SLIDER_DELAY = 3000;
@@ -180,6 +181,7 @@ public class GalleryActivity extends TrackedActivity
         mFilename = savedInstanceState.getString(KEY_FILENAME);
         mGalleryInfo = savedInstanceState.getParcelable(KEY_GALLERY_INFO);
         mPage = savedInstanceState.getInt(KEY_PAGE, -1);
+        mCurrentIndex = savedInstanceState.getInt(KEY_CURRENT_INDEX);
         buildProvider();
     }
 
@@ -193,6 +195,7 @@ public class GalleryActivity extends TrackedActivity
         }
         outState.putBoolean(KEY_SHOWING, mSystemUiShowing);
         outState.putInt(KEY_PAGE, mPage);
+        outState.putInt(KEY_CURRENT_INDEX, mCurrentIndex);
     }
 
     @Override
