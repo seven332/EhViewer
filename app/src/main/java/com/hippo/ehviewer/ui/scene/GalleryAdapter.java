@@ -26,6 +26,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -146,7 +147,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
 
         switch (mType) {
             default:
-            case TYPE_LIST:
+            case TYPE_LIST: {
                 holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb);
                 holder.title.setText(EhUtils.getSuitableTitle(gi));
                 holder.uploader.setText(gi.uploader);
@@ -160,19 +161,21 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
                 holder.posted.setText(gi.posted);
                 holder.simpleLanguage.setText(gi.simpleLanguage);
                 break;
-            case TYPE_GRID:
+            }
+            case TYPE_GRID: {
                 holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb);
-                TextView simpleLanguage = holder.simpleLanguage;
-                Drawable drawable = simpleLanguage.getBackground();
+                View category = holder.category;
+                Drawable drawable = category.getBackground();
                 int color = EhUtils.getCategoryColor(gi.category);
                 if (!(drawable instanceof TriangleDrawable)) {
                     drawable = new TriangleDrawable(color);
-                    simpleLanguage.setBackground(drawable);
+                    category.setBackground(drawable);
                 } else {
                     ((TriangleDrawable) drawable).setColor(color);
                 }
-                simpleLanguage.setText(gi.simpleLanguage);
+                holder.simpleLanguage.setText(gi.simpleLanguage);
                 break;
+            }
         }
 
         // Update transition name

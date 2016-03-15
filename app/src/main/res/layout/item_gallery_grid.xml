@@ -33,13 +33,21 @@
         app:retryType="none"/>
 
     <TextView
+        android:id="@+id/category"
+        android:layout_width="32dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|right"/>
+
+    <TextView
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/simple_language"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="top|right"
-        android:textSize="12dp"
+        android:layout_marginRight="2dp"
+        android:textSize="10dp"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:gravity="top|right"/>
+        tools:ignore="SpUsage"/>
 
 </FrameLayout>
