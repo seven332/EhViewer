@@ -70,6 +70,12 @@
             android:theme="@style/AppTheme"/>
 
         <activity
+            android:name="com.hippo.ehviewer.ui.ExcludedLanguagesActivity"
+            android:configChanges="screenSize|uiMode"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/excluded_languages"/>
+
+        <activity
             android:name="com.hippo.ehviewer.ui.DirPickerActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.NoActionBar"

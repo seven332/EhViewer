@@ -102,6 +102,10 @@
         <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 
+    <style name="ButtonInCard.Accent">
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
     <style name="Slider">
         <item name="thickness">2dp</item>
         <item name="radius">6dp</item>

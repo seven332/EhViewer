@@ -323,6 +323,8 @@
     <string name="settings_eh_list_mode">List mode</string>
     <string name="settings_eh_list_mode_detail">Detail</string>
     <string name="settings_eh_list_mode_thumb">Thumb</string>
+    <string name="settings_eh_excluded_languages">Excluded languages</string>
+    <string name="settings_eh_excluded_languages_summary">Hide galleries in certain languages from the gallery list and searches</string>
     <string name="settings_eh_show_jpn_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
@@ -386,6 +388,34 @@
     <string name="settings_about_check_for_updates">Check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
 
+    <!-- ExcludedLanguagesScene -->
+    <string name="excluded_languages">Excluded languages</string>
+    <string name="select_all">All</string>
+    <string name="deselect_all">None</string>
+    <string name="invert_selection">Invert</string>
+    <string name="language">Language</string>
+    <string name="original">Original</string>
+    <string name="translated">Translated</string>
+    <string name="rewrite">Rewrite</string>
+    <string name="language_japanese">Japanese</string>
+    <string name="language_english">English</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_dutch">Dutch</string>
+    <string name="language_french">French</string>
+    <string name="language_german">German</string>
+    <string name="language_hungarian">Hungarian</string>
+    <string name="language_italian">Italian</string>
+    <string name="language_korean">Korean</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_portuguese">Portuguese</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_thai">Thai</string>
+    <string name="language_vietnamese">Vietnamese</string>
+    <string name="language_na">N/A</string>
+    <string name="language_other">Other</string>
+
+    <!-- License -->
     <string name="license">License</string>
 
     <!-- Dir Picker-->

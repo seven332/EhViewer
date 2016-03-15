@@ -53,7 +53,8 @@ public class Settings {
 
     private static EhConfig loadEhConfig() {
         EhConfig ehConfig= new EhConfig();
-        // TODO
+        ehConfig.excludedLanguages = getExcludedLanguages();
+        ehConfig.setDirty();
         return ehConfig;
     }
 
@@ -209,6 +210,19 @@ public class Settings {
 
     public static boolean getShowJpnTitle() {
         return getBoolean(KEY_SHOW_JPN_TITLE, DEFAULT_SHOW_JPN_TITLE);
+    }
+
+    public static final String KEY_EXCLUDED_LANGUAGES = "excluded_languages";
+    private static final String DEFAULT_EXCLUDED_LANGUAGES = null;
+
+    public static String getExcludedLanguages() {
+        return getString(KEY_EXCLUDED_LANGUAGES, DEFAULT_EXCLUDED_LANGUAGES);
+    }
+
+    public static void putExcludedLanguages(String value) {
+        sEhConfig.excludedLanguages = value;
+        sEhConfig.setDirty();
+        putString(KEY_EXCLUDED_LANGUAGES, value);
     }
 
     /********************

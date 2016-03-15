@@ -27,6 +27,11 @@
         app:entryValues="@array/list_mode_entry_values"
         android:defaultValue="0"/>
 
+    <Preference
+        android:key="excluded_languages"
+        android:title="@string/settings_eh_excluded_languages"
+        android:summary="@string/settings_eh_excluded_languages_summary"/>
+
     <com.hippo.preference.SwitchPreference
         android:key="show_jpn_title"
         android:title="@string/settings_eh_show_jpn_title"

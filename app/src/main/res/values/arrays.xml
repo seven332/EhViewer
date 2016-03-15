@@ -34,21 +34,21 @@
         <item>@string/star_5</item>
     </string-array>
 
-    <string-array name="multi_thread_download_entries">
+    <string-array name="multi_thread_download_entries" translatable="false">
         <item>1</item>
         <item>3</item>
         <item>5</item>
         <item>7</item>
     </string-array>
 
-    <string-array name="multi_thread_download_entry_values">
+    <string-array name="multi_thread_download_entry_values" translatable="false">
         <item>1</item>
         <item>3</item>
         <item>5</item>
         <item>7</item>
     </string-array>
 
-    <string-array name="preload_image_entries">
+    <string-array name="preload_image_entries" translatable="false">
         <item>3</item>
         <item>5</item>
         <item>7</item>
@@ -57,7 +57,7 @@
         <item>17</item>
     </string-array>
 
-    <string-array name="preload_image_entry_values">
+    <string-array name="preload_image_entry_values" translatable="false">
         <item>3</item>
         <item>5</item>
         <item>7</item>
