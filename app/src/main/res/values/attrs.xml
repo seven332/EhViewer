@@ -142,4 +142,8 @@
         <attr name="entryValues" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="ActivityPreference">
+        <attr name="activity" format="string"/>
+    </declare-styleable>
+
 </resources>

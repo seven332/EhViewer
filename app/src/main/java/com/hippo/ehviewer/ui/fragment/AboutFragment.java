@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -28,7 +27,6 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.ui.CommonOperations;
-import com.hippo.ehviewer.ui.LicenseActivity;
 import com.hippo.util.ActivityHelper;
 
 public class AboutFragment extends PreferenceFragment
@@ -55,7 +53,6 @@ public class AboutFragment extends PreferenceFragment
         Preference website = findPreference(KEY_WEBSITE);
         Preference source = findPreference(KEY_SOURCE);
         Preference changelog = findPreference(KEY_CHANGELOG);
-        Preference license = findPreference(KEY_LICENSE);
         Preference donate = findPreference(KEY_DONATE);
         Preference checkForUpdate = findPreference(KEY_CHECK_FOR_UPDATES);
 
@@ -66,7 +63,6 @@ public class AboutFragment extends PreferenceFragment
         website.setOnPreferenceClickListener(this);
         source.setOnPreferenceClickListener(this);
         changelog.setOnPreferenceClickListener(this);
-        license.setOnPreferenceClickListener(this);
         donate.setOnPreferenceClickListener(this);
         checkForUpdate.setOnPreferenceClickListener(this);
 
@@ -103,9 +99,6 @@ public class AboutFragment extends PreferenceFragment
         } else if (KEY_CHANGELOG.equals(key)) {
             UrlOpener.openUrl(getActivity(), "http://www.ehviewer.com/changlog",
                     false, true);
-        } else if (KEY_LICENSE.equals(key)) {
-            Intent intent = new Intent(getActivity(), LicenseActivity.class);
-            startActivity(intent);
         } else if (KEY_DONATE.equals(key)) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.settings_about_donate)

@@ -32,10 +32,11 @@
         android:title="@string/settings_eh_default_categories"
         android:summary="@string/settings_eh_default_categories_summary"/>
 
-    <Preference
+    <com.hippo.preference.ActivityPreference
         android:key="excluded_languages"
         android:title="@string/settings_eh_excluded_languages"
-        android:summary="@string/settings_eh_excluded_languages_summary"/>
+        android:summary="@string/settings_eh_excluded_languages_summary"
+        app:activity="com.hippo.ehviewer.ui.ExcludedLanguagesActivity"/>
 
     <com.hippo.preference.SwitchPreference
         android:key="show_jpn_title"

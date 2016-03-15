@@ -16,7 +16,8 @@
   -->
 
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
         android:key="author"
@@ -38,9 +39,10 @@
         android:key="changelog"
         android:title="@string/settings_about_changelog"/>
 
-    <Preference
+    <com.hippo.preference.ActivityPreference
         android:key="license"
-        android:title="@string/settings_about_license"/>
+        android:title="@string/settings_about_license"
+        app:activity="com.hippo.ehviewer.ui.LicenseActivity"/>
 
     <Preference
         android:key="donate"
@@ -52,7 +54,6 @@
         android:defaultValue="true"/>
 
     <com.hippo.preference.MessagePreference
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:key="about_analytics"
         android:title="@string/settings_about_about_analytics"
         app:dialogMessage="@string/analytics_explain"
