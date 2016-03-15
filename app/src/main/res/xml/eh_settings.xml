@@ -27,6 +27,11 @@
         app:entryValues="@array/list_mode_entry_values"
         android:defaultValue="0"/>
 
+    <com.hippo.ehviewer.preference.DefaultCategoryPreference
+        android:key="default_categories"
+        android:title="@string/settings_eh_default_categories"
+        android:summary="@string/settings_eh_default_categories_summary"/>
+
     <Preference
         android:key="excluded_languages"
         android:title="@string/settings_eh_excluded_languages"

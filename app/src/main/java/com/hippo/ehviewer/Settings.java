@@ -27,6 +27,7 @@ import android.util.Log;
 
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.data.FavListUrlBuilder;
+import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.unifile.UniFile;
@@ -54,6 +55,7 @@ public class Settings {
     private static EhConfig loadEhConfig() {
         EhConfig ehConfig= new EhConfig();
         ehConfig.excludedLanguages = getExcludedLanguages();
+        ehConfig.defaultCategories = getDefaultCategories();
         ehConfig.setDirty();
         return ehConfig;
     }
@@ -210,6 +212,19 @@ public class Settings {
 
     public static boolean getShowJpnTitle() {
         return getBoolean(KEY_SHOW_JPN_TITLE, DEFAULT_SHOW_JPN_TITLE);
+    }
+
+    public static final String KEY_DEFAULT_CATEGORIES = "default_categories";
+    public static final int DEFAULT_DEFAULT_CATEGORIES = ListUrlBuilder.ALL_CATEGORT;
+
+    public static int getDefaultCategories() {
+        return getInt(KEY_DEFAULT_CATEGORIES, DEFAULT_DEFAULT_CATEGORIES);
+    }
+
+    public static void putDefaultCategories(int value) {
+        sEhConfig.defaultCategories = value;
+        sEhConfig.setDirty();
+        putInt(KEY_DEFAULT_CATEGORIES, value);
     }
 
     public static final String KEY_EXCLUDED_LANGUAGES = "excluded_languages";
