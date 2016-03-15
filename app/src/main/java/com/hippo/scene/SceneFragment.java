@@ -25,7 +25,6 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.yorozuya.IntList;
 
 import java.lang.annotation.Retention;
@@ -87,7 +86,7 @@ public class SceneFragment extends Fragment {
     public int getStackIndex() {
         FragmentActivity activity = getActivity();
         if (activity instanceof StageActivity) {
-            return ((StageActivity) activity).getStackIndex(this);
+            return ((StageActivity) activity).getSceneIndex(this);
         } else {
             return -1;
         }
@@ -105,7 +104,7 @@ public class SceneFragment extends Fragment {
         view.setBackgroundColor(getContext().getResources().getColor(R.color.background_light));
 
         // Notify
-        ((MainActivity) getActivity()).onSceneViewCreated(this, savedInstanceState);
+        ((StageActivity) getActivity()).onSceneViewCreated(this, savedInstanceState);
     }
 
     @Override
@@ -113,7 +112,14 @@ public class SceneFragment extends Fragment {
         super.onDestroyView();
 
         // Notify
-        ((MainActivity) getActivity()).onSceneViewDestroyed(this);
+        ((StageActivity) getActivity()).onSceneViewDestroyed(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        ((StageActivity) getActivity()).onSceneDestroyed(this);
     }
 
     void addRequest(String requestSceneTag, int requestCode) {

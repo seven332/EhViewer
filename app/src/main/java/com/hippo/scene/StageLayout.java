@@ -32,6 +32,7 @@ public class StageLayout extends FrameLayout {
 
     private Field mDisappearingChildrenField;
     private ArrayList<View> mSuperDisappearingChildren;
+    private ArrayList<View> mSortedScenes;
     private View mDumpView;
     private boolean mDoTrick;
 
@@ -77,23 +78,15 @@ public class StageLayout extends FrameLayout {
         }
     }
 
-    private String getViewTag(View view) {
-        Object tag = view.getTag(R.id.fragment_tag);
-        if (tag instanceof String) {
-            return (String) tag;
-        } else {
-            return null;
-        }
-    }
-
     private boolean beforeDispatchDraw() {
         getSuperDisappearingChildren();
 
         if (mSuperDisappearingChildren == null ||
-                mSuperDisappearingChildren.size() <= 0 || getChildCount() <= 1) { // dump view
+                mSuperDisappearingChildren.size() <= 0 || getChildCount() <= 1) { // only dump view
             return false;
         }
 
+        // Get stage
         StageActivity stage = null;
         Context context = getContext();
         if (context instanceof StageActivity) {
@@ -103,14 +96,34 @@ public class StageLayout extends FrameLayout {
             return false;
         }
 
-        View view1 = mSuperDisappearingChildren.get(0);
-        View view2 = getChildAt(1); // Skip dump view
-        String tag1 = getViewTag(view1);
-        String tag2 = getViewTag(view2);
-        try {
-            return stage.compareScene(tag1, tag2) < 0;
-        } catch (NumberFormatException e) {
-            return false;
+        if (null == mSortedScenes) {
+            mSortedScenes = new ArrayList<>();
+        }
+
+        // Add all scene view to mSortedScenes
+        ArrayList<View> disappearingChildren = mSuperDisappearingChildren;
+        ArrayList<View> sortedScenes = mSortedScenes;
+        for (int i = 1, n = getChildCount(); i < n; i++) { // Skip dump view
+            View view = getChildAt(i);
+            if (null != view.getTag(R.id.fragment_tag)) {
+                sortedScenes.add(view);
+            }
+        }
+        for (int i = 0, n = disappearingChildren.size(); i < n; i++) {
+            View view = disappearingChildren.get(i);
+            if (null != view.getTag(R.id.fragment_tag)) {
+                sortedScenes.add(view);
+            }
+        }
+
+        stage.sortSceneViews(sortedScenes);
+
+        return true;
+    }
+
+    private void afterDispatchDraw() {
+        if (null != mSortedScenes) {
+            mSortedScenes.clear();
         }
     }
 
@@ -118,21 +131,21 @@ public class StageLayout extends FrameLayout {
     protected void dispatchDraw(Canvas canvas) {
         mDoTrick = beforeDispatchDraw();
         super.dispatchDraw(canvas);
+        afterDispatchDraw();
         mDoTrick = false;
     }
 
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
-        ArrayList<View> disappearingChildren = mSuperDisappearingChildren;
-
         if (mDoTrick) {
+            ArrayList<View> sortedScenes = mSortedScenes;
             if (child == mDumpView) {
                 boolean more = false;
-                for (int i = disappearingChildren.size() - 1; i >= 0; i--) {
-                    more |= super.drawChild(canvas, disappearingChildren.get(i), drawingTime);
+                for (int i = 0, n = sortedScenes.size(); i < n; i++) {
+                    more |= super.drawChild(canvas, sortedScenes.get(i), drawingTime);
                 }
                 return more;
-            } else if (disappearingChildren.contains(child)) {
+            } else if (sortedScenes.contains(child)) {
                 // Skip
                 return false;
             }

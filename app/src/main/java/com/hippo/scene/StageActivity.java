@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.View;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.TrackedActivity;
@@ -31,7 +32,10 @@ import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.IntIdGenerator;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,10 +52,30 @@ public abstract class StageActivity extends TrackedActivity {
     private static final String KEY_SCENE_TAG_LIST = "stage_activity_scene_tag_list";
     private static final String KEY_NEXT_ID = "stage_activity_next_id";
 
-    private ArrayList<String> mSceneTagList = new ArrayList<>();
+    private final ArrayList<String> mSceneTagList = new ArrayList<>();
+    private final ArrayList<String> mDelaySceneTagList = new ArrayList<>();
     private final AtomicInteger mIdGenerator = new AtomicInteger();
 
     private int mStageId = IntIdGenerator.INVALID_ID;
+
+    private final SceneViewComparator mSceneViewComparator = new SceneViewComparator();
+
+    private final class SceneViewComparator implements Comparator<View> {
+
+        private int getIndex(View view) {
+            Object o = view.getTag(R.id.fragment_tag);
+            if (o instanceof String) {
+                return mDelaySceneTagList.indexOf(o);
+            } else {
+                return -1;
+            }
+        }
+
+        @Override
+        public int compare(View lhs, View rhs) {
+            return getIndex(lhs) - getIndex(rhs);
+        }
+    }
 
     private static final Map<Class<?>, Integer> sLaunchModeMap = new HashMap<>();
 
@@ -138,7 +162,9 @@ public abstract class StageActivity extends TrackedActivity {
 
         if (savedInstanceState != null) {
             mStageId = savedInstanceState.getInt(KEY_STAGE_ID, IntIdGenerator.INVALID_ID);
-            mSceneTagList = savedInstanceState.getStringArrayList(KEY_SCENE_TAG_LIST);
+            ArrayList<String> list = savedInstanceState.getStringArrayList(KEY_SCENE_TAG_LIST);
+            mSceneTagList.addAll(list);
+            mDelaySceneTagList.addAll(list);
             mIdGenerator.lazySet(savedInstanceState.getInt(KEY_NEXT_ID));
         }
 
@@ -191,6 +217,10 @@ public abstract class StageActivity extends TrackedActivity {
     }
 
     public void onSceneViewDestroyed(SceneFragment scene) {
+    }
+
+    void onSceneDestroyed(SceneFragment scene) {
+        mDelaySceneTagList.remove(scene.getTag());
     }
 
     protected void onRegister(int id) {
@@ -321,6 +351,7 @@ public abstract class StageActivity extends TrackedActivity {
 
         // Add new tag to list
         mSceneTagList.add(newTag);
+        mDelaySceneTagList.add(newTag);
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         // Animation
@@ -420,6 +451,7 @@ public abstract class StageActivity extends TrackedActivity {
 
             // Add tag to list
             mSceneTagList.add(tag);
+            mDelaySceneTagList.add(tag);
 
             // Add scene
             transaction.add(getContainerViewId(), scene, tag);
@@ -434,19 +466,16 @@ public abstract class StageActivity extends TrackedActivity {
         }
     }
 
-    int getStackIndex(SceneFragment scene) {
-        return getStackIndex(scene.getTag());
+    int getSceneIndex(SceneFragment scene) {
+        return getTagIndex(scene.getTag());
     }
 
-    int getStackIndex(String tag) {
-        return mSceneTagList.indexOf(tag); // Collections.binarySearch(mSceneTagList, tag);
+    int getTagIndex(String tag) {
+        return mSceneTagList.indexOf(tag);
     }
 
-    // TODO What about id is negative
-    int compareScene(String tag1, String tag2) throws NumberFormatException {
-        int int1 = Integer.parseInt(tag1);
-        int int2 = Integer.parseInt(tag2);
-        return int1 - int2;
+    void sortSceneViews(List<View> views) {
+        Collections.sort(views, mSceneViewComparator);
     }
 
     public void finishScene(SceneFragment scene) {
@@ -468,7 +497,7 @@ public abstract class StageActivity extends TrackedActivity {
         }
 
         // Get scene index
-        int index = mSceneTagList.indexOf(tag);//Collections.binarySearch(mSceneTagList, tag);
+        int index = mSceneTagList.indexOf(tag);
         if (index < 0) {
             Log.e(TAG, "finishScene: Can't find the tag in tag list: " + tag);
             return;
