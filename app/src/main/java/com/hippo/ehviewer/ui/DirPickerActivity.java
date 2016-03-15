@@ -40,6 +40,8 @@ public class DirPickerActivity extends ToolbarActivity
 
     public static final String KEY_FILE_URI = "file_uri";
 
+    public static final String KEY_FILE_PATH = "file_path";
+
     /*---------------
      Whole life cycle
      ---------------*/
@@ -54,7 +56,6 @@ public class DirPickerActivity extends ToolbarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_dir_picker);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
 
@@ -62,13 +63,11 @@ public class DirPickerActivity extends ToolbarActivity
         mDirExplorer = (DirExplorer) ViewUtils.$$(this, R.id.dir_explorer);
         mOk = ViewUtils.$$(this, R.id.ok);
 
-        File file = null;
-        Intent intent = getIntent();
-        if (intent != null) {
-            Uri fileUri = intent.getParcelableExtra(KEY_FILE_URI);
-            if (fileUri != null) {
-                file = new File(fileUri.getPath());
-            }
+        File file;
+        if (null == savedInstanceState) {
+            file = onInit();
+        } else {
+            file = onRestore(savedInstanceState);
         }
 
         mDirExplorer.setCurrentFile(file);
@@ -79,6 +78,34 @@ public class DirPickerActivity extends ToolbarActivity
         mOk.setOnClickListener(this);
 
         mPath.setText(mDirExplorer.getCurrentFile().getPath());
+    }
+
+    private File onInit() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            Uri fileUri = intent.getParcelableExtra(KEY_FILE_URI);
+            if (fileUri != null) {
+                return new File(fileUri.getPath());
+            }
+        }
+        return null;
+    }
+
+    private File onRestore(@NonNull Bundle savedInstanceState) {
+        String filePath = savedInstanceState.getString(KEY_FILE_PATH);
+        if (null != filePath) {
+            return new File(filePath);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (null != mDirExplorer) {
+            outState.putString(KEY_FILE_PATH, mDirExplorer.getCurrentFile().getPath());
+        }
     }
 
     @Override
