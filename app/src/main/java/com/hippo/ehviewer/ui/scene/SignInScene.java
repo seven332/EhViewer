@@ -38,6 +38,7 @@ import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.rippleold.RippleSalon;
@@ -266,7 +267,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         showProgress(true);
 
         // Clean up for sign in
-        EhApplication.getEhCookieStore(getContext()).cleanUpForSignIn();
+        EhUtils.signOut(getContext());
 
         EhCallback callback = new SignInListener(getContext(),
                 ((StageActivity) getActivity()).getStageId(), getTag());

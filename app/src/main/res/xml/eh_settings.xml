@@ -19,6 +19,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.hippo.ehviewer.preference.SignOutPreference
+        android:key="sign_out"
+        android:title="@string/settings_eh_sign_out"
+        android:summary="@string/settings_eh_sign_out_summary"/>
+
     <com.hippo.preference.ListPreference
         android:key="list_mode"
         android:title="@string/settings_eh_list_mode"

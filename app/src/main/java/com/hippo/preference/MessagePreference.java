@@ -68,6 +68,10 @@ public class MessagePreference extends DialogPreference {
         a.recycle();
     }
 
+    public void setDialogMessage(CharSequence message) {
+        mDialogMessage = message;
+    }
+
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);

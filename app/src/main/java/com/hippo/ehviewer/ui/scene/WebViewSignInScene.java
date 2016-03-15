@@ -30,6 +30,7 @@ import android.webkit.WebViewClient;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.client.EhUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,8 +40,6 @@ import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
 public class WebViewSignInScene extends BaseScene {
-
-    public static final String KEY_DISPLAY_NAME = "display_name";
 
     /*---------------
      View life cycle
@@ -56,10 +55,10 @@ public class WebViewSignInScene extends BaseScene {
     @Nullable
     @Override
     @SuppressWarnings("deprecation")
-    @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
+    @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        EhApplication.getEhCookieStore(getContext()).removeAll();
+        EhUtils.signOut(getContext());
         CookieManager.getInstance().removeAllCookie();
         mWebView = new WebView(getContext());
         mWebView.getSettings().setJavaScriptEnabled(true);

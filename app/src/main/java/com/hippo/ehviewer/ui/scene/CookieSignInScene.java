@@ -34,6 +34,7 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.util.ActivityHelper;
 import com.hippo.yorozuya.AssertUtils;
@@ -196,8 +197,9 @@ public class CookieSignInScene extends BaseScene implements EditText.OnEditorAct
             return;
         }
 
+        EhUtils.signOut(getContext());
+
         EhCookieStore store = EhApplication.getEhCookieStore(context);
-        store.removeAll();
         store.add(newCookie(EhCookieStore.KEY_IPD_MEMBER_ID, id, EhUrl.DOMAIN_E));
         store.add(newCookie(EhCookieStore.KEY_IPD_MEMBER_ID, id, EhUrl.DOMAIN_EX));
         store.add(newCookie(EhCookieStore.KEY_IPD_PASS_HASH, hash, EhUrl.DOMAIN_E));

@@ -74,6 +74,8 @@ public final class MainActivity extends StageActivity
 
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
+    private static final int REQUEST_CODE_UPDATE_PROFILE = 0;
+
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
 
     public static final int CHECK_STEP_WARNING = 0;
@@ -262,7 +264,7 @@ public final class MainActivity extends StageActivity
         mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
         mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
 
-        updateAvatar();
+        updateProfile();
 
         if (mNavView != null) {
             mNavView.setNavigationItemSelectedListener(this);
@@ -350,7 +352,7 @@ public final class MainActivity extends StageActivity
         }
     }
 
-    public void updateAvatar() {
+    public void updateProfile() {
         if (null == mAvatar || null == mDisplayName) {
             return;
         }

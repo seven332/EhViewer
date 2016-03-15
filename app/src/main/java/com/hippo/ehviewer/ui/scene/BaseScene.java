@@ -41,7 +41,7 @@ public abstract class BaseScene extends SceneFragment {
     public void updateAvatar() {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {
-            ((MainActivity) activity).updateAvatar();
+            ((MainActivity) activity).updateProfile();
         }
     }
 

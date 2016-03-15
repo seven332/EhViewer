@@ -31,7 +31,7 @@ public class EhCookieStore extends CookieDBStore {
     public static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
     public static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
 
-    public void cleanUpForSignIn() {
+    public void signOut() {
         removeAll();
     }
 
