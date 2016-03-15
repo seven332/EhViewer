@@ -56,6 +56,7 @@ public class Settings {
         EhConfig ehConfig= new EhConfig();
         ehConfig.excludedLanguages = getExcludedLanguages();
         ehConfig.defaultCategories = getDefaultCategories();
+        ehConfig.excludedNamespaces = getExcludedTagNamespaces();
         ehConfig.setDirty();
         return ehConfig;
     }
@@ -225,6 +226,19 @@ public class Settings {
         sEhConfig.defaultCategories = value;
         sEhConfig.setDirty();
         putInt(KEY_DEFAULT_CATEGORIES, value);
+    }
+
+    public static final String KEY_EXCLUDED_TAG_NAMESPACES = "excluded_tag_namespaces";
+    private static final int DEFAULT_EXCLUDED_TAG_NAMESPACES = 0;
+
+    public static int getExcludedTagNamespaces() {
+        return getInt(KEY_EXCLUDED_TAG_NAMESPACES, DEFAULT_EXCLUDED_TAG_NAMESPACES);
+    }
+
+    public static void putExcludedTagNamespaces(int value) {
+        sEhConfig.excludedNamespaces = value;
+        sEhConfig.setDirty();
+        putInt(KEY_EXCLUDED_TAG_NAMESPACES, value);
     }
 
     public static final String KEY_EXCLUDED_LANGUAGES = "excluded_languages";

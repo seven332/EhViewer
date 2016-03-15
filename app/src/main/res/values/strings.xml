@@ -327,6 +327,8 @@
     <string name="settings_eh_default_categories_summary">The categories shown as default on Homepage</string>
     <string name="settings_eh_excluded_languages">Excluded languages</string>
     <string name="settings_eh_excluded_languages_summary">Hide galleries in certain languages from the gallery list and searches</string>
+    <string name="settings_eh_excluded_tag_namespaces">Excluded tag namespaces</string>
+    <string name="settings_eh_excluded_tag_namespaces_summary">Exclude certain namespaces from a default tag search</string>
     <string name="settings_eh_show_jpn_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
