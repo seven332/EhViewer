@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.IdRes;
@@ -263,6 +264,12 @@ public final class MainActivity extends StageActivity
         View headerLayout = mNavView.getHeaderView(0);
         mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
         mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
+
+        // Pre-L need shadow drawable
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
+            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_right, Gravity.RIGHT);
+        }
 
         updateProfile();
 
