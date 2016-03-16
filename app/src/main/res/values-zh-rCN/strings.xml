@@ -408,6 +408,16 @@
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">被玩坏了</string>
 
+    <!-- Guide -->
+    <string name="guide_quick_search_title">快速搜索</string>
+    <string name="guide_quick_search_text">从右侧滑动打开快速搜索面板</string>
+    <string name="guide_collections_title">收藏夹</string>
+    <string name="guide_collections_text">从右侧滑动来选择收藏夹</string>
+    <string name="guide_download_labels_title">下载标签</string>
+    <string name="guide_download_labels_text">从右侧滑动打开下载标签面板</string>
+    <string name="guide_download_thumb_title">画廊详情</string>
+    <string name="guide_download_thumb_text">点击缩略图查看画廊详情</string>
+
     <!-- Readable Time -->
     <string name="from_the_future">来自未来</string>
     <string name="just_now">刚刚</string>

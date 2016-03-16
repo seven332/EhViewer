@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
@@ -35,6 +36,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -45,6 +47,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
+import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.hippo.app.EditTextDialogBuilder;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
@@ -399,7 +404,36 @@ public final class GalleryListScene extends BaseScene
             mHelper.firstRefresh();
         }
 
+        guideQuickSearch();
+
         return view;
+    }
+
+    private void guideQuickSearch() {
+        if (!Settings.getGuideQuickSearch()) {
+            return;
+        }
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+
+        new ShowcaseView.Builder(getActivity())
+                .withMaterialShowcase()
+                .setStyle(R.style.Guide)
+                .setTarget(new PointTarget(point.x, point.y / 3))
+                .blockAllTouches()
+                .setContentTitle(R.string.guide_quick_search_title)
+                .setContentText(R.string.guide_quick_search_text)
+                .replaceEndButton(R.layout.button_guide)
+                .setShowcaseEventListener(new SimpleShowcaseEventListener() {
+                    @Override
+                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        ViewUtils.removeFromParent(showcaseView);
+                        Settings.putGuideQuickSearch(false);
+                        openDrawer(Gravity.RIGHT);
+                    }
+                }).build();
     }
 
     @Override

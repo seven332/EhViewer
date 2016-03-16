@@ -635,4 +635,51 @@ public class Settings {
     public static void putSaveParseErrorBody(boolean value) {
         putBoolean(KEY_SAVE_PARSE_ERROR_BODY, value);
     }
+
+    /********************
+     ****** Guide
+     ********************/
+    private static final String KEY_GUIDE_QUICK_SEARCH = "guide_quick_search";
+    private static final boolean DEFAULT_GUIDE_QUICK_SEARCH = true;
+
+    public static boolean getGuideQuickSearch() {
+        return getBoolean(KEY_GUIDE_QUICK_SEARCH, DEFAULT_GUIDE_QUICK_SEARCH);
+    }
+
+    public static void putGuideQuickSearch(boolean value) {
+        putBoolean(KEY_GUIDE_QUICK_SEARCH, value);
+    }
+
+    private static final String KEY_GUIDE_COLLECTIONS = "guide_collections";
+    private static final boolean DEFAULT_GUIDE_COLLECTIONS = true;
+
+    public static boolean getGuideCollections() {
+        return getBoolean(KEY_GUIDE_COLLECTIONS, DEFAULT_GUIDE_COLLECTIONS);
+    }
+
+    public static void putGuideCollections(boolean value) {
+        putBoolean(KEY_GUIDE_COLLECTIONS, value);
+    }
+
+    private static final String KEY_GUIDE_DOWNLOAD_THUMB = "guide_download_thumb";
+    private static final boolean DEFAULT_GUIDE_DOWNLOAD_THUMB = true;
+
+    public static boolean getGuideDownloadThumb() {
+        return getBoolean(KEY_GUIDE_DOWNLOAD_THUMB, DEFAULT_GUIDE_DOWNLOAD_THUMB);
+    }
+
+    public static void putGuideDownloadThumb(boolean value) {
+        putBoolean(KEY_GUIDE_DOWNLOAD_THUMB, value);
+    }
+
+    private static final String KEY_GUIDE_DOWNLOAD_LABELS = "guide_download_labels";
+    private static final boolean DEFAULT_GUIDE_DOWNLOAD_LABELS = true;
+
+    public static boolean getGuideDownloadLabels() {
+        return getBoolean(KEY_GUIDE_DOWNLOAD_LABELS, DEFAULT_GUIDE_DOWNLOAD_LABELS);
+    }
+
+    public static void puttGuideDownloadLabels(boolean value) {
+        putBoolean(KEY_GUIDE_DOWNLOAD_LABELS, value);
+    }
 }

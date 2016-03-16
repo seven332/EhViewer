@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui.scene;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -33,6 +34,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.SparseBooleanArray;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -42,6 +44,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
+import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.hippo.annotation.Implemented;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
@@ -297,7 +302,36 @@ public class FavoritesScene extends BaseScene implements
             mHelper.firstRefresh();
         }
 
+        guideCollections();
+
         return view;
+    }
+
+    private void guideCollections() {
+        if (!Settings.getGuideCollections()) {
+            return;
+        }
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+
+        new ShowcaseView.Builder(getActivity())
+                .withMaterialShowcase()
+                .setStyle(R.style.Guide)
+                .setTarget(new PointTarget(point.x, point.y / 3))
+                .blockAllTouches()
+                .setContentTitle(R.string.guide_collections_title)
+                .setContentText(R.string.guide_collections_text)
+                .replaceEndButton(R.layout.button_guide)
+                .setShowcaseEventListener(new SimpleShowcaseEventListener() {
+                    @Override
+                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        ViewUtils.removeFromParent(showcaseView);
+                        Settings.putGuideCollections(false);
+                        openDrawer(Gravity.RIGHT);
+                    }
+                }).build();
     }
 
     // keyword of mUrlBuilder, fav cat of mUrlBuilder, mFavCatArray.

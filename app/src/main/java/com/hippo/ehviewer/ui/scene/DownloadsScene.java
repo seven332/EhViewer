@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -34,6 +35,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -45,6 +47,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
+import com.github.amlcurran.showcaseview.targets.PointTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
@@ -75,6 +81,7 @@ import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LongList;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
+import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
@@ -113,6 +120,8 @@ public class DownloadsScene extends ToolbarScene
     private FabLayout mFabLayout;
     @Nullable
     private DownloadAdapter mAdapter;
+    @Nullable
+    private LinearLayoutManager mLayoutManager;
 
     @Override
     public int getNavCheckedItem() {
@@ -224,7 +233,8 @@ public class DownloadsScene extends ToolbarScene
         mAdapter = new DownloadAdapter();
         mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
@@ -255,7 +265,83 @@ public class DownloadsScene extends ToolbarScene
 
         updateView();
 
+        guide();
+
         return view;
+    }
+
+    private void guide() {
+        if (Settings.getGuideDownloadThumb()) {
+            SimpleHandler.getInstance().post(new Runnable() {
+                @Override
+                public void run() {
+                    guideDownloadThumb();
+                }
+            });
+        } else {
+            guideDownloadLabels();
+        }
+    }
+
+    private void guideDownloadThumb() {
+        if (!Settings.getGuideDownloadThumb() || null == mLayoutManager || null == mRecyclerView) {
+            guideDownloadLabels();
+            return;
+        }
+        int position = mLayoutManager.findFirstCompletelyVisibleItemPosition();
+        if (position < 0) {
+            guideDownloadLabels();
+            return;
+        }
+        RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForAdapterPosition(position);
+        if (null == holder) {
+            guideDownloadLabels();
+            return;
+        }
+
+        new ShowcaseView.Builder(getActivity())
+                .withMaterialShowcase()
+                .setStyle(R.style.Guide)
+                .setTarget(new ViewTarget(((DownloadHolder) holder).thumb))
+                .blockAllTouches()
+                .setContentTitle(R.string.guide_download_thumb_title)
+                .setContentText(R.string.guide_download_thumb_text)
+                .replaceEndButton(R.layout.button_guide)
+                .setShowcaseEventListener(new SimpleShowcaseEventListener() {
+                    @Override
+                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        ViewUtils.removeFromParent(showcaseView);
+                        Settings.putGuideDownloadThumb(false);
+                        guideDownloadLabels();
+                    }
+                }).build();
+    }
+
+    private void guideDownloadLabels() {
+        if (!Settings.getGuideDownloadLabels()) {
+            return;
+        }
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+
+        new ShowcaseView.Builder(getActivity())
+                .withMaterialShowcase()
+                .setStyle(R.style.Guide)
+                .setTarget(new PointTarget(point.x, point.y / 3))
+                .blockAllTouches()
+                .setContentTitle(R.string.guide_download_labels_title)
+                .setContentText(R.string.guide_download_labels_text)
+                .replaceEndButton(R.layout.button_guide)
+                .setShowcaseEventListener(new SimpleShowcaseEventListener() {
+                    @Override
+                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        ViewUtils.removeFromParent(showcaseView);
+                        Settings.puttGuideDownloadLabels(false);
+                        openDrawer(Gravity.RIGHT);
+                    }
+                }).build();
     }
 
     @Override
@@ -273,6 +359,7 @@ public class DownloadsScene extends ToolbarScene
         mFabLayout = null;
         mViewTransition = null;
         mAdapter = null;
+        mLayoutManager = null;
     }
 
     @Override
