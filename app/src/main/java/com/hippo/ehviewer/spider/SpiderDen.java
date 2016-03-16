@@ -25,6 +25,7 @@ import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
+import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.io.UniFileInputStreamPipe;
@@ -61,7 +62,7 @@ public final class SpiderDen {
             // Read from DB
             String dirname = EhDB.getDownloadDirname(galleryInfo.gid);
             if (dirname == null) {
-                dirname = FileUtils.sanitizeFilename(galleryInfo.gid + "-" + galleryInfo.title);
+                dirname = FileUtils.sanitizeFilename(galleryInfo.gid + "-" + EhUtils.getSuitableTitle(galleryInfo));
                 // Put into DB
                 EhDB.putDownloadDirname(galleryInfo.gid, dirname);
             }

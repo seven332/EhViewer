@@ -32,6 +32,7 @@ import android.util.Log;
 
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.ui.MainActivity;
@@ -296,7 +297,7 @@ public class DownloadService extends Service implements DownloadManager.Download
 
         ensureDownloadingBuilder();
 
-        mDownloadingBuilder.setContentTitle(info.title)
+        mDownloadingBuilder.setContentTitle(EhUtils.getSuitableTitle(info))
                 .setContentText(null)
                 .setContentInfo(null)
                 .setProgress(0, 0, true);
@@ -321,7 +322,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         } else {
             text = getString(R.string.download_speed_text, text);
         }
-        mDownloadingBuilder.setContentTitle(info.title)
+        mDownloadingBuilder.setContentTitle(EhUtils.getSuitableTitle(info))
                 .setContentText(text)
                 .setContentInfo(info.total == -1 || info.finished == -1 ? null : info.finished + "/" + info.total)
                 .setProgress(info.total, info.finished, false);
@@ -354,7 +355,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         int index = sItemStateArray.indexOfKey(gid);
         if (index < 0) { // Not contain
             sItemStateArray.put(gid, finish);
-            sItemTitleArray.put(gid, info.title);
+            sItemTitleArray.put(gid, EhUtils.getSuitableTitle(info));
             sDownloadedCount++;
             if (finish) {
                 sFinishedCount++;
@@ -364,7 +365,7 @@ public class DownloadService extends Service implements DownloadManager.Download
         } else { // Contain
             boolean oldFinish = sItemStateArray.valueAt(index);
             sItemStateArray.put(gid, finish);
-            sItemTitleArray.put(gid, info.title);
+            sItemTitleArray.put(gid, EhUtils.getSuitableTitle(info));
             if (oldFinish && !finish) {
                 sFinishedCount--;
                 sFailedCount++;

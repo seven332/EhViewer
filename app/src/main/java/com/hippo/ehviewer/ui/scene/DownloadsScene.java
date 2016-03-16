@@ -892,7 +892,7 @@ public class DownloadsScene extends ToolbarScene
             } else if (delete == v) {
                 GalleryInfo galleryInfo = list.get(index);
                 CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(getContext(),
-                        getString(R.string.download_remove_dialog_message, galleryInfo.title),
+                        getString(R.string.download_remove_dialog_message, EhUtils.getSuitableTitle(galleryInfo)),
                         getString(R.string.download_remove_dialog_check_text),
                         Settings.getRemoveImageFiles());
                 DeleteDialogHelper helper = new DeleteDialogHelper(galleryInfo, builder);
@@ -926,7 +926,7 @@ public class DownloadsScene extends ToolbarScene
             }
             DownloadInfo info = mList.get(position);
             holder.thumb.load(EhCacheKeyFactory.getThumbKey(info.gid), info.thumb, true);
-            holder.title.setText(info.title);
+            holder.title.setText(EhUtils.getSuitableTitle(info));
             holder.uploader.setText(info.uploader);
             holder.rating.setRating(info.rating);
             TextView category = holder.category;
