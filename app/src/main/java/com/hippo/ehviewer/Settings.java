@@ -682,4 +682,15 @@ public class Settings {
     public static void puttGuideDownloadLabels(boolean value) {
         putBoolean(KEY_GUIDE_DOWNLOAD_LABELS, value);
     }
+
+    private static final String KEY_GUIDE_GALLERY = "guide_gallery";
+    private static final boolean DEFAULT_GUIDE_GALLERY = true;
+
+    public static boolean getGuideGallery() {
+        return getBoolean(KEY_GUIDE_GALLERY, DEFAULT_GUIDE_GALLERY);
+    }
+
+    public static void putGuideGallery(boolean value) {
+        putBoolean(KEY_GUIDE_GALLERY, value);
+    }
 }

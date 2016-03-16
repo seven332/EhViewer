@@ -468,6 +468,11 @@
     <string name="guide_download_labels_text">Swipe right to open download labels panel</string>
     <string name="guide_download_thumb_title">Gallery Detail</string>
     <string name="guide_download_thumb_text">Click thumb to view gallery detail</string>
+    <string name="guide_gallery_left">Turn Page</string>
+    <string name="guide_gallery_right">Turn Page</string>
+    <string name="guide_gallery_menu">Menu</string>
+    <string name="guide_gallery_progress">Progress</string>
+    <string name="guide_gallery_long_click">Long click to open page menu</string>
 
     <!-- Readable Time -->
     <string name="from_the_future">From the future</string>

@@ -107,4 +107,6 @@
 
     <color name="big_icon">#1f000000</color>
 
+    <color name="guide_bg">#e5009688</color>
+
 </resources>

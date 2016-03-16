@@ -146,7 +146,7 @@
     </style>
 
     <style name="Guide">
-        <item name="sv_backgroundColor">#e5009688</item>
+        <item name="sv_backgroundColor">@color/guide_bg</item>
         <item name="sv_titleTextAppearance">@style/Guide.Title</item>
         <item name="sv_detailTextAppearance">@style/Guide.Text</item>
     </style>

@@ -33,6 +33,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ import com.hippo.ehviewer.gallery.ZipGalleryProvider;
 import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.ehviewer.gallery.gl.ImageView;
+import com.hippo.ehviewer.widget.GalleryGuideView;
 import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
@@ -59,6 +61,7 @@ import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.ConcurrentPool;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.io.File;
 
@@ -275,6 +278,11 @@ public class GalleryActivity extends TrackedActivity
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        if (Settings.getGuideGallery()) {
+            FrameLayout mainLayout = (FrameLayout) ViewUtils.$$(this, R.id.main);
+            mainLayout.addView(new GalleryGuideView(this));
         }
     }
 

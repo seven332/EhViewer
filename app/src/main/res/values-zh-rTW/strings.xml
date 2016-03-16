@@ -424,6 +424,11 @@
     <string name="guide_download_labels_text">從右側滑動開啟下載標籤面板</string>
     <string name="guide_download_thumb_title">畫廊詳情</string>
     <string name="guide_download_thumb_text">點選縮圖檢視畫廊詳情</string>
+    <string name="guide_gallery_left">翻頁</string>
+    <string name="guide_gallery_right">翻頁</string>
+    <string name="guide_gallery_menu">選單</string>
+    <string name="guide_gallery_progress">進度條</string>
+    <string name="guide_gallery_long_click">長按開啟頁面選單</string>
 
     <!-- Readable Time -->
     <string name="from_the_future">來自未來</string>
