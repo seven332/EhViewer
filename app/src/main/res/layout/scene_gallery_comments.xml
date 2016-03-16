@@ -78,14 +78,19 @@
         </LinearLayout>
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        style="@style/Widget.Design.FloatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:layout_marginRight="@dimen/corner_fab_margin"
-        android:layout_marginBottom="@dimen/corner_fab_margin"
-        app:srcCompat="@drawable/v_reply_dark_x24"/>
+    <com.hippo.widget.FabLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/corner_fab_margin"
+        android:paddingBottom="@dimen/corner_fab_margin">
 
+        <android.support.design.widget.FloatingActionButton
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/v_reply_dark_x24"
+            style="@style/Widget.Design.FloatingActionButton"/>
+
+    </com.hippo.widget.FabLayout>
 </FrameLayout>
