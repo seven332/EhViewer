@@ -122,6 +122,10 @@ public class ContentLayout extends FrameLayout {
         return mFastScroller;
     }
 
+    public RefreshLayout getRefreshLayout() {
+        return mRefreshLayout;
+    }
+
     public void setHelper(ContentHelper helper) {
         mContentHelper = helper;
         helper.init(this);

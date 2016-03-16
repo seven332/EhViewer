@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -69,7 +70,7 @@ import com.hippo.util.DrawableManager;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.SearchBarMover;
-import com.hippo.yorozuya.AssertUtils;
+import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
@@ -237,11 +238,13 @@ public class FavoritesScene extends BaseScene implements
         View view = inflater.inflate(R.layout.scene_favorites, container, false);
         ContentLayout contentLayout = (ContentLayout) view.findViewById(R.id.content_layout);
         mRecyclerView = contentLayout.getRecyclerView();
-        AssertUtils.assertNotNull(mRecyclerView);
-        mSearchBar = (SearchBar) view.findViewById(R.id.search_bar);
-        AssertUtils.assertNotNull(mSearchBar);
-        mFabLayout = (FabLayout) view.findViewById(R.id.fab_layout);
-        AssertUtils.assertNotNull(mFabLayout);
+        FastScroller fastScroller = contentLayout.getFastScroller();
+        RefreshLayout refreshLayout = contentLayout.getRefreshLayout();
+        mSearchBar = (SearchBar) ViewUtils.$$(view, R.id.search_bar);
+        mFabLayout = (FabLayout) ViewUtils.$$(view, R.id.fab_layout);
+
+        Resources resources = getResources();
+        int paddingTopSB = resources.getDimensionPixelOffset(R.dimen.list_padding_top_search_bar);
 
         mHelper = new FavoritesHelper();
         contentLayout.setHelper(mHelper);
@@ -261,6 +264,13 @@ public class FavoritesScene extends BaseScene implements
                 getContext(), mRecyclerView, layoutManager, Settings.getListMode());
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.register();
+        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop() + paddingTopSB,
+                mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
+
+        fastScroller.setPadding(fastScroller.getPaddingLeft(), fastScroller.getPaddingTop() + paddingTopSB,
+                fastScroller.getPaddingRight(), fastScroller.getPaddingBottom());
+
+        refreshLayout.setHeaderTranslationY(paddingTopSB);
 
         mLeftDrawable = new DrawerArrowDrawable(getContext());
         mSearchBar.setLeftDrawable(mLeftDrawable);

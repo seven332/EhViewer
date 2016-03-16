@@ -584,6 +584,10 @@ public class RefreshLayout extends ViewGroup {
         return alpha;
     }
 
+    public void setHeaderTranslationY(float translationY) {
+        mCircleView.setTranslationY(translationY);
+    }
+
     /**
      * Set the background color of the progress spinner disc.
      *

@@ -143,6 +143,8 @@ public final class GalleryCommentsScene extends ToolbarScene
         mEditText = (EditText) ViewUtils.$$(mEditPanel, R.id.edit_text);
         mFab = (FloatingActionButton) ViewUtils.$$(view, R.id.fab);
 
+        int paddingBottomFab = getResources().getDimensionPixelOffset(R.dimen.list_padding_bottom_fab);
+
         Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_weird_face);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
@@ -160,6 +162,8 @@ public final class GalleryCommentsScene extends ToolbarScene
         recyclerView.setHasFixedSize(true);
         recyclerView.setOnItemClickListener(this);
         recyclerView.setOnItemLongClickListener(this);
+        recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(),
+                recyclerView.getPaddingRight(), recyclerView.getPaddingBottom() + paddingBottomFab);
 
         mSendImage.setOnClickListener(this);
         mFab.setOnClickListener(this);

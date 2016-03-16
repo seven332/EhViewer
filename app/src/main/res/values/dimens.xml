@@ -44,6 +44,8 @@
     <dimen name="list_content_margin_v">4dp</dimen>
     <dimen name="list_content_interval">4dp</dimen>
     <dimen name="list_search_bar_margin">4dp</dimen>
+    <dimen name="list_padding_top_search_bar">77dp</dimen>
+    <dimen name="list_padding_bottom_fab">80dp</dimen>
 
     <dimen name="gallery_list_min_width">320dp</dimen>
     <dimen name="gallery_grid_min_width">120dp</dimen>

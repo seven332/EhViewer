@@ -62,7 +62,6 @@ import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.ui.CommonOperations;
-import com.hippo.ehviewer.widget.FitPaddingLayout;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.rippleold.RippleSalon;
@@ -74,6 +73,7 @@ import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.SearchBarMover;
+import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
@@ -122,8 +122,6 @@ public final class GalleryListScene extends BaseScene
     /*---------------
      View life cycle
      ---------------*/
-    @Nullable
-    private FitPaddingLayout mFitPaddingLayout;
     @Nullable
     private EasyRecyclerView mRecyclerView;
     @Nullable
@@ -332,12 +330,17 @@ public final class GalleryListScene extends BaseScene
 
         Resources resources = getContext().getResources();
 
-        mFitPaddingLayout = (FitPaddingLayout) ViewUtils.$$(view, R.id.main_layout);
-        ContentLayout contentLayout = (ContentLayout) ViewUtils.$$(mFitPaddingLayout, R.id.content_layout);
+        View mainLayout = ViewUtils.$$(view, R.id.main_layout);
+        ContentLayout contentLayout = (ContentLayout) ViewUtils.$$(mainLayout, R.id.content_layout);
         mRecyclerView = contentLayout.getRecyclerView();
-        mSearchLayout = (SearchLayout) ViewUtils.$$(mFitPaddingLayout, R.id.search_layout);
-        mSearchBar = (SearchBar) ViewUtils.$$(mFitPaddingLayout, R.id.search_bar);
-        mFab = (FloatingActionButton) ViewUtils.$$(mFitPaddingLayout, R.id.fab);
+        FastScroller fastScroller = contentLayout.getFastScroller();
+        RefreshLayout refreshLayout = contentLayout.getRefreshLayout();
+        mSearchLayout = (SearchLayout) ViewUtils.$$(mainLayout, R.id.search_layout);
+        mSearchBar = (SearchBar) ViewUtils.$$(mainLayout, R.id.search_bar);
+        mFab = (FloatingActionButton) ViewUtils.$$(mainLayout, R.id.fab);
+
+        int paddingTopSB = resources.getDimensionPixelOffset(R.dimen.list_padding_top_search_bar);
+        int paddingBottomFab = resources.getDimensionPixelOffset(R.dimen.list_padding_bottom_fab);
 
         mViewTransition = new ViewTransition(contentLayout, mSearchLayout);
 
@@ -358,6 +361,13 @@ public final class GalleryListScene extends BaseScene
                 getContext(), mRecyclerView, layoutManager, Settings.getListMode());
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.register();
+        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop() + paddingTopSB,
+                mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
+
+        fastScroller.setPadding(fastScroller.getPaddingLeft(), fastScroller.getPaddingTop() + paddingTopSB,
+                fastScroller.getPaddingRight(), fastScroller.getPaddingBottom());
+
+        refreshLayout.setHeaderTranslationY(paddingTopSB);
 
         mLeftDrawable = new DrawerArrowDrawable(getContext());
         mRightDrawable = new AddDeleteDrawable(getContext());
@@ -368,6 +378,8 @@ public final class GalleryListScene extends BaseScene
         setSearchBarHint(getContext(), mSearchBar);
 
         mSearchLayout.setHelper(this);
+        mSearchLayout.setPadding(mSearchLayout.getPaddingLeft(), mSearchLayout.getPaddingTop() + paddingTopSB,
+                mSearchLayout.getPaddingRight(), mSearchLayout.getPaddingBottom() + paddingBottomFab);
 
         mFab.setOnClickListener(this);
 
@@ -410,7 +422,6 @@ public final class GalleryListScene extends BaseScene
         }
 
         mRecyclerView = null;
-        mFitPaddingLayout = null;
         mSearchLayout = null;
         mSearchBar = null;
         mFab = null;
@@ -835,14 +846,8 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public void onStateChange(SearchBar searchBar, int newState, int oldState, boolean animation) {
-        if (null == mFitPaddingLayout || null == mLeftDrawable || null == mRightDrawable) {
+        if (null == mLeftDrawable || null == mRightDrawable) {
             return;
-        }
-
-        if (newState == SearchBar.STATE_NORMAL) {
-            mFitPaddingLayout.setEnableUpdatePaddingTop(true);
-        } else {
-            mFitPaddingLayout.setEnableUpdatePaddingTop(false);
         }
 
         switch (oldState) {
