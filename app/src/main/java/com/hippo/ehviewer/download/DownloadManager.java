@@ -382,7 +382,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
     }
 
 
-    void stopDownload(long gid) {
+    public void stopDownload(long gid) {
         DownloadInfo info = stopDownloadInternal(gid);
         if (info != null) {
             // Update listener
@@ -412,7 +412,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
-    void stopRangeDownload(LongList gidList) {
+    public void stopRangeDownload(LongList gidList) {
         stopRangeDownloadInternal(gidList);
 
         // Update listener
@@ -424,7 +424,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         ensureDownload();
     }
 
-    void stopAllDownload() {
+    public void stopAllDownload() {
         // Stop all in wait list
         for (DownloadInfo info : mWaitList) {
             info.state = DownloadInfo.STATE_NONE;
@@ -442,7 +442,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
-    void deleteDownload(long gid) {
+    public void deleteDownload(long gid) {
         stopDownloadInternal(gid);
         DownloadInfo info = mAllInfoMap.get(gid);
         if (info != null) {
@@ -471,7 +471,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
-    void deleteRangeDownload(LongList gidList) {
+    public void deleteRangeDownload(LongList gidList) {
         stopRangeDownloadInternal(gidList);
 
         for (int i = 0, n = gidList.size(); i < n; i++) {

@@ -96,6 +96,8 @@ public class DownloadsScene extends ToolbarScene
      Whole life cycle
      ---------------*/
     @Nullable
+    private DownloadManager mDownloadManager;
+    @Nullable
     private String mLabel;
     @Nullable
     private List<DownloadInfo> mList;
@@ -134,8 +136,8 @@ public class DownloadsScene extends ToolbarScene
 
         handleArguments(getArguments());
 
-        DownloadManager manager = EhApplication.getDownloadManager(getContext());
-        manager.addDownloadInfoListener(this);
+        mDownloadManager = EhApplication.getDownloadManager(getContext());
+        mDownloadManager.addDownloadInfoListener(this);
 
         if (savedInstanceState == null) {
             onInit();
@@ -148,19 +150,28 @@ public class DownloadsScene extends ToolbarScene
     public void onDestroy() {
         super.onDestroy();
         mList = null;
-        DownloadManager manager = EhApplication.getDownloadManager(getContext());
+
+        DownloadManager manager = mDownloadManager;
+        if (null == manager) {
+            manager = EhApplication.getDownloadManager(getContext());
+        } else {
+            mDownloadManager = null;
+        }
         manager.removeDownloadInfoListener(this);
     }
 
     private void updateForLabel() {
-        DownloadManager manager = EhApplication.getDownloadManager(getContext());
+        if (null == mDownloadManager) {
+            return;
+        }
+
         if (mLabel == null) {
-            mList = manager.getDefaultDownloadInfoList();
+            mList = mDownloadManager.getDefaultDownloadInfoList();
         } else {
-            mList = manager.getLabelDownloadInfoList(mLabel);
+            mList = mDownloadManager.getLabelDownloadInfoList(mLabel);
             if (mList == null) {
                 mLabel = null;
-                mList = manager.getDefaultDownloadInfoList();
+                mList = mDownloadManager.getDefaultDownloadInfoList();
             }
         }
 
@@ -290,9 +301,9 @@ public class DownloadsScene extends ToolbarScene
                 return true;
             }
             case R.id.action_stop_all: {
-                Intent intent = new Intent(getActivity(), DownloadService.class);
-                intent.setAction(DownloadService.ACTION_STOP_ALL);
-                getActivity().startService(intent);
+                if (null != mDownloadManager) {
+                    mDownloadManager.stopAllDownload();
+                }
                 return true;
             }
         }
@@ -326,7 +337,11 @@ public class DownloadsScene extends ToolbarScene
                         startScene(new Announcer(DownloadLabelsScene.class));
                         return true;
                     case R.id.action_default_download_label:
-                        DownloadManager dm = EhApplication.getDownloadManager(getContext());
+                        DownloadManager dm = mDownloadManager;
+                        if (null == dm) {
+                            return true;
+                        }
+
                         List<DownloadLabel> list = dm.getLabelList();
                         final String[] items = new String[list.size() + 2];
                         items[0] = getString(R.string.let_me_select);
@@ -513,10 +528,9 @@ public class DownloadsScene extends ToolbarScene
                     break;
                 }
                 case 2: { // Stop
-                    Intent intent = new Intent(getActivity(), DownloadService.class);
-                    intent.setAction(DownloadService.ACTION_STOP_RANGE);
-                    intent.putExtra(DownloadService.KEY_GID_LIST, gidList);
-                    getActivity().startService(intent);
+                    if (null != mDownloadManager) {
+                        mDownloadManager.stopRangeDownload(gidList);
+                    }
                     // Cancel check mode
                     recyclerView.outOfCustomChoiceMode();
                     break;
@@ -733,10 +747,9 @@ public class DownloadsScene extends ToolbarScene
             }
 
             // Delete
-            Intent intent = new Intent(getActivity(), DownloadService.class);
-            intent.setAction(DownloadService.ACTION_DELETE);
-            intent.putExtra(DownloadService.KEY_GID, mGalleryInfo.gid);
-            getActivity().startService(intent);
+            if (null != mDownloadManager) {
+                mDownloadManager.deleteDownload(mGalleryInfo.gid);
+            }
 
             // Delete image files
             boolean checked = mBuilder.isChecked();
@@ -776,10 +789,9 @@ public class DownloadsScene extends ToolbarScene
             }
 
             // Delete
-            Intent intent = new Intent(getActivity(), DownloadService.class);
-            intent.setAction(DownloadService.ACTION_DELETE_RANGE);
-            intent.putExtra(DownloadService.KEY_GID_LIST, mGidList);
-            getActivity().startService(intent);
+            if (null != mDownloadManager) {
+                mDownloadManager.deleteRangeDownload(mGidList);
+            }
 
             // Delete image files
             boolean checked = mBuilder.isChecked();
@@ -899,10 +911,9 @@ public class DownloadsScene extends ToolbarScene
                 intent.putExtra(DownloadService.KEY_GALLERY_INFO, list.get(index));
                 getActivity().startService(intent);
             } else if (stop == v) {
-                Intent intent = new Intent(getActivity(), DownloadService.class);
-                intent.setAction(DownloadService.ACTION_STOP);
-                intent.putExtra(DownloadService.KEY_GID, list.get(index).gid);
-                getActivity().startService(intent);
+                if (null != mDownloadManager) {
+                    mDownloadManager.stopDownload(list.get(index).gid);
+                }
             } else if (delete == v) {
                 GalleryInfo galleryInfo = list.get(index);
                 CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(getContext(),
