@@ -657,22 +657,36 @@ public class DownloadsScene extends ToolbarScene
         holder.rating.setVisibility(View.VISIBLE);
         holder.category.setVisibility(View.VISIBLE);
         holder.state.setVisibility(View.VISIBLE);
-        holder.progressBar.setVisibility(View.INVISIBLE);
-        holder.percent.setVisibility(View.INVISIBLE);
-        holder.speed.setVisibility(View.INVISIBLE);
+        holder.progressBar.setVisibility(View.GONE);
+        holder.percent.setVisibility(View.GONE);
+        holder.speed.setVisibility(View.GONE);
+        if (info.state == DownloadInfo.STATE_WAIT || info.state == DownloadInfo.STATE_DOWNLOAD) {
+            holder.start.setVisibility(View.GONE);
+            holder.stop.setVisibility(View.VISIBLE);
+        } else {
+            holder.start.setVisibility(View.VISIBLE);
+            holder.stop.setVisibility(View.GONE);
+        }
 
         holder.state.setText(state);
     }
 
     @SuppressLint("SetTextI18n")
     private void bindProgress(DownloadHolder holder, DownloadInfo info) {
-        holder.uploader.setVisibility(View.INVISIBLE);
-        holder.rating.setVisibility(View.INVISIBLE);
-        holder.category.setVisibility(View.INVISIBLE);
-        holder.state.setVisibility(View.INVISIBLE);
+        holder.uploader.setVisibility(View.GONE);
+        holder.rating.setVisibility(View.GONE);
+        holder.category.setVisibility(View.GONE);
+        holder.state.setVisibility(View.GONE);
         holder.progressBar.setVisibility(View.VISIBLE);
         holder.percent.setVisibility(View.VISIBLE);
         holder.speed.setVisibility(View.VISIBLE);
+        if (info.state == DownloadInfo.STATE_WAIT || info.state == DownloadInfo.STATE_DOWNLOAD) {
+            holder.start.setVisibility(View.GONE);
+            holder.stop.setVisibility(View.VISIBLE);
+        } else {
+            holder.start.setVisibility(View.VISIBLE);
+            holder.stop.setVisibility(View.GONE);
+        }
 
         if (info.total <= 0 || info.finished < 0) {
             holder.percent.setText(null);
