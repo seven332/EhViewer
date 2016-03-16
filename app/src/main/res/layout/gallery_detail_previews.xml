@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:columnCount="3"
-        app:itemMargin="16dp"/>
+        app:itemMargin="8dp"/>
 
     <TextView
         android:id="@+id/preview_text"
