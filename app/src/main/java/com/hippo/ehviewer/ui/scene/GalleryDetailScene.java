@@ -1338,7 +1338,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         private final TextView mErrorText;
         private final ListView mListView;
 
+        @Nullable
         private EhRequest mRequest;
+        @Nullable
         private Dialog mDialog;
 
         @SuppressLint("InflateParams")
@@ -1361,11 +1363,15 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             }
         }
 
-        public void setDialog(Dialog dialog) {
+        public void setDialog(@Nullable Dialog dialog) {
             mDialog = dialog;
         }
 
         private void bind(Pair<String, String>[] data) {
+            if (null == mDialog) {
+                return;
+            }
+
             if (0 == data.length) {
                 mProgressView.setVisibility(View.GONE);
                 mErrorText.setVisibility(View.VISIBLE);
