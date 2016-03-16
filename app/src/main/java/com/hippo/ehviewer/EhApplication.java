@@ -17,6 +17,7 @@
 package com.hippo.ehviewer;
 
 import android.app.ActivityManager;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -109,6 +110,26 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
 
         if (DEBUG_NATIVE_MEMORY) {
             debugNativeMemory();
+        }
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
+            if (null != mConaco) {
+                mConaco.clearMemoryCache();
+            }
+            if (null != mGalleryDetailCache) {
+                mGalleryDetailCache.evictAll();
+            }
+            if (null != mLargePreviewSetCache) {
+                mLargePreviewSetCache.evictAll();
+            }
+            if (null != mPreviewPagesCache) {
+                mPreviewPagesCache.evictAll();
+            }
         }
     }
 
