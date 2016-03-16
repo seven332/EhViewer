@@ -37,6 +37,7 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
+import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.text.Html;
 import com.hippo.yorozuya.FileUtils;
 
@@ -216,7 +217,7 @@ public final class CommonOperations {
         client.execute(request);
     }
 
-    public static void startDownload(final Activity activity, final GalleryInfo galleryInfo, boolean forceDefault) {
+    public static void startDownload(final MainActivity activity, final GalleryInfo galleryInfo, boolean forceDefault) {
         final DownloadManager dm = EhApplication.getDownloadManager(activity);
 
         boolean justStart = forceDefault || dm.containDownloadInfo(galleryInfo.gid);
@@ -239,6 +240,8 @@ public final class CommonOperations {
             intent.putExtra(DownloadService.KEY_LABEL, label);
             intent.putExtra(DownloadService.KEY_GALLERY_INFO, galleryInfo);
             activity.startService(intent);
+            // Notify
+            activity.showTip(R.string.added_to_download_list, BaseScene.LENGTH_SHORT);
         } else {
             // Let use chose label
             List<DownloadLabel> list = dm.getLabelList();
@@ -274,6 +277,8 @@ public final class CommonOperations {
                             } else {
                                 Settings.putHasDefaultDownloadLabel(false);
                             }
+                            // Notify
+                            activity.showTip(R.string.added_to_download_list, BaseScene.LENGTH_SHORT);
                         }
                     }, activity.getString(R.string.remember_download_label), false)
                     .setTitle(R.string.download)

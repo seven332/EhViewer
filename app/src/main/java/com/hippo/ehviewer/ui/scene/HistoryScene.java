@@ -39,6 +39,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.HistoryInfo;
 import com.hippo.ehviewer.ui.CommonOperations;
+import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -174,7 +175,7 @@ public class HistoryScene extends ToolbarScene
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0: // Download
-                                CommonOperations.startDownload(getActivity(), gi, false);
+                                CommonOperations.startDownload((MainActivity) getActivity(), gi, false);
                                 break;
                             case 1: // Favorites
                                 CommonOperations.addToFavorites(getActivity(), gi,

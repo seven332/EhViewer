@@ -254,6 +254,7 @@
     <string name="download_speed_text_2">%1$s，剩余 %2$s</string>
     <string name="remember_download_label">记住下载标签</string>
     <string name="default_download_label">默认下载标签</string>
+    <string name="added_to_download_list">已添加至下载列表</string>
 
     <!-- Download label -->
     <string name="no_download_label">这里是下载标签</string>

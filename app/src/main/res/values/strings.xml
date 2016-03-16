@@ -294,6 +294,7 @@
     <string name="download_speed_text_2">%1$s, %2$s left</string>
     <string name="remember_download_label">Remember download label</string>
     <string name="default_download_label">Default download label</string>
+    <string name="added_to_download_list">Added to download list</string>
 
     <!-- Download label -->
     <string name="no_download_label">Download labels will be shown here</string>

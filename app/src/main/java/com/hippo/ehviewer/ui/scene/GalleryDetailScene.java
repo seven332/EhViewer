@@ -74,6 +74,7 @@ import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
+import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
@@ -986,7 +987,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else if (mDownload == v) {
             GalleryInfo galleryInfo = getGalleryInfo();
             if (galleryInfo != null) {
-                CommonOperations.startDownload(getActivity(), galleryInfo, false);
+                CommonOperations.startDownload((MainActivity) getActivity(), galleryInfo, false);
             }
         } else if (mRead == v) {
             GalleryInfo galleryInfo = null;
@@ -1102,7 +1103,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         if (mDownload == v) {
             GalleryInfo galleryInfo = getGalleryInfo();
             if (galleryInfo != null) {
-                CommonOperations.startDownload(getActivity(), galleryInfo, true);
+                CommonOperations.startDownload((MainActivity) getActivity(), galleryInfo, true);
             }
             return true;
         }

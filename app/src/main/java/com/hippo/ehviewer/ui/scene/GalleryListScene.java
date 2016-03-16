@@ -67,6 +67,7 @@ import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.ui.CommonOperations;
+import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.rippleold.RippleSalon;
@@ -645,7 +646,7 @@ public final class GalleryListScene extends BaseScene
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0: // Download
-                                CommonOperations.startDownload(getActivity(), gi, false);
+                                CommonOperations.startDownload((MainActivity) getActivity(), gi, false);
                                 break;
                             case 1: // Favorites
                                 CommonOperations.addToFavorites(getActivity(), gi,
