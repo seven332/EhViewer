@@ -464,9 +464,9 @@
     <string name="guide_quick_search_text">Swipe right to open quick search panel</string>
     <string name="guide_collections_title">Collections</string>
     <string name="guide_collections_text">Swipe right to select collections</string>
-    <string name="guide_download_labels_title">Download labels</string>
+    <string name="guide_download_labels_title">Download Labels</string>
     <string name="guide_download_labels_text">Swipe right to open download labels panel</string>
-    <string name="guide_download_thumb_title">Gallery detail</string>
+    <string name="guide_download_thumb_title">Gallery Detail</string>
     <string name="guide_download_thumb_text">Click thumb to view gallery detail</string>
 
     <!-- Readable Time -->
