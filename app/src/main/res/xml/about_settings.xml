@@ -25,28 +25,39 @@
 
     <Preference
         android:key="google_plus"
-        android:title="@string/settings_about_google_plus"/>
+        android:title="@string/settings_about_google_plus"
+        android:summary="@string/settings_about_google_plus_summary"/>
 
     <Preference
         android:key="website"
-        android:title="@string/settings_about_website"/>
+        android:title="@string/settings_about_website"
+        android:summary="@string/settings_about_website_summary"/>
 
     <Preference
         android:key="source"
-        android:title="@string/settings_about_source"/>
+        android:title="@string/settings_about_source"
+        android:summary="@string/settings_about_source_summary"/>
 
     <Preference
         android:key="changelog"
-        android:title="@string/settings_about_changelog"/>
+        android:title="@string/settings_about_changelog"
+        android:summary="@string/settings_about_changelog_summary"/>
 
     <com.hippo.preference.ActivityPreference
         android:key="license"
         android:title="@string/settings_about_license"
+        android:summary="@string/settings_about_license_summary"
         app:activity="com.hippo.ehviewer.ui.LicenseActivity"/>
 
     <Preference
-        android:key="donate"
-        android:title="@string/settings_about_donate"/>
+        android:key="check_for_updates"
+        android:title="@string/settings_about_check_for_updates"/>
+
+    <com.hippo.preference.SwitchPreference
+        android:key="beta_update_channel"
+        android:title="@string/settings_about_beta_update_channel"
+        android:summary="@string/settings_about_beta_update_channel_summary"
+        android:defaultValue="@bool/beta"/>
 
     <com.hippo.preference.SwitchPreference
         android:key="enable_analytics"
@@ -61,12 +72,7 @@
         app:dialogMessageLinkify="true"/>
 
     <Preference
-        android:key="check_for_updates"
-        android:title="@string/settings_about_check_for_updates"/>
-
-    <com.hippo.preference.SwitchPreference
-        android:key="beta_update_channel"
-        android:title="@string/settings_about_beta_update_channel"
-        android:defaultValue="@bool/beta"/>
+        android:key="donate"
+        android:title="@string/settings_about_donate"/>
 
 </PreferenceScreen>

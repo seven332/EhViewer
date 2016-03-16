@@ -342,6 +342,10 @@
     <string name="settings_advanced">高级</string>
     <string name="settings_about_save_parse_error_body">解析失败时保存页面内容</string>
     <string name="settings_about_save_parse_error_body_summary">页面内容可能含有隐私敏感信息</string>
+    <string name="settings_about_dump_logcat">导出日志</string>
+    <string name="settings_about_dump_logcat_summary">保存日志至外置存储器</string>
+    <string name="settings_about_dump_logcat_failed">导出日志失败</string>
+    <string name="settings_about_dump_logcat_to">已保存日志至 %s</string>
 
     <string name="settings_about">关于</string>
     <string name="settings_about_author">作者</string>
@@ -350,12 +354,15 @@
     <string name="settings_about_source">源码</string>
     <string name="settings_about_changelog">更新日志</string>
     <string name="settings_about_license">开源许可</string>
+    <string name="settings_about_license_summary">EhViewer 的诞生离不开许多开源项目</string>
     <string name="settings_about_donate">捐赠</string>
+    <string name="settings_about_donate_summary">支付宝：seven332$163.com</string>
     <string name="settings_about_donate_message">你的捐赠能帮助我开发更多更好的应用。\n\n支付宝：seven332$163.com</string>
     <string name="settings_about_enable_analytics">启用数据统计</string>
     <string name="settings_about_about_analytics">关于数据统计</string>
     <string name="settings_about_check_for_updates">检查更新</string>
     <string name="settings_about_beta_update_channel">更新测试版</string>
+    <string name="settings_about_beta_update_channel_summary">测试版可能在你的设备上出现不可预知的错误</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">排除语言</string>

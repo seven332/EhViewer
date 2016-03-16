@@ -57,6 +57,7 @@ public class AboutFragment extends PreferenceFragment
         Preference checkForUpdate = findPreference(KEY_CHECK_FOR_UPDATES);
 
         author.setSummary(getString(R.string.settings_about_author_summary).replace('$', '@'));
+        donate.setSummary(getString(R.string.settings_about_donate_summary).replace('$', '@'));
 
         author.setOnPreferenceClickListener(this);
         googlePlus.setOnPreferenceClickListener(this);

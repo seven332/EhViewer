@@ -24,4 +24,9 @@
         android:summary="@string/settings_about_save_parse_error_body_summary"
         android:defaultValue="@bool/beta"/>
 
+    <Preference
+        android:key="dump_logcat"
+        android:title="@string/settings_about_dump_logcat"
+        android:summary="@string/settings_about_dump_logcat_summary"/>
+
 </PreferenceScreen>

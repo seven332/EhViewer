@@ -381,21 +381,32 @@
     <string name="settings_advanced">Advanced</string>
     <string name="settings_about_save_parse_error_body">Save html content when parsing error</string>
     <string name="settings_about_save_parse_error_body_summary">Html content may be privacy-sensitive</string>
+    <string name="settings_about_dump_logcat">Dump logcat</string>
+    <string name="settings_about_dump_logcat_summary">Save logcat to external storage</string>
+    <string name="settings_about_dump_logcat_failed">Dump logcat failed</string>
+    <string name="settings_about_dump_logcat_to">Saved logcat to %s</string>
 
     <string name="settings_about">About</string>
     <string name="settings_about_author">Author</string>
     <string name="settings_about_author_summary" translatable="false">Hippo &lt;ehviewersu$gmail.com&gt;</string>
     <string name="settings_about_google_plus">Google+ Community</string>
+    <string name="settings_about_google_plus_summary" translatable="false">https://plus.google.com/communities/103823982034655188459</string>
     <string name="settings_about_website">Website</string>
+    <string name="settings_about_website_summary" translatable="false">http://www.ehviewer.com</string>
     <string name="settings_about_source">Source</string>
+    <string name="settings_about_source_summary" translatable="false">https://github.com/seven332/EhViewer</string>
     <string name="settings_about_changelog">Changelog</string>
+    <string name="settings_about_changelog_summary" translatable="false">http://www.ehviewer.com/changlog</string>
     <string name="settings_about_license">License</string>
+    <string name="settings_about_license_summary">EhViewer is made possible by many open source projects</string>
     <string name="settings_about_donate">Donate</string>
+    <string name="settings_about_donate_summary">Alipay: seven332$163.com</string>
     <string name="settings_about_donate_message">Your donation can help me develop more and better applications.\n\nAlipay: seven332$163.com</string>
     <string name="settings_about_enable_analytics">Enable analytics</string>
     <string name="settings_about_about_analytics">About analytics</string>
     <string name="settings_about_check_for_updates">Check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
+    <string name="settings_about_beta_update_channel_summary">Beta release might be broken on your devices</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">Excluded languages</string>
