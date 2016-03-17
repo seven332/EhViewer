@@ -22,7 +22,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +46,7 @@ import com.hippo.scene.StageActivity;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
+import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -87,7 +87,7 @@ public class HistoryScene extends ToolbarScene
         tip.setCompoundDrawables(null, drawable, null, null);
 
         mList = EhDB.getHistoryLazyList();
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
+        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(getContext(), 0);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         recyclerView.setDrawSelectorOnTop(true);
@@ -191,7 +191,7 @@ public class HistoryScene extends ToolbarScene
     private class HistoryAdapter extends GalleryAdapter {
 
         public HistoryAdapter(LayoutInflater inflater, Context context,
-                RecyclerView recyclerView, GridLayoutManager layoutManager, int type) {
+                RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
             super(inflater, context, recyclerView, layoutManager, type);
         }
 

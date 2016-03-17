@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -49,10 +48,10 @@ import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
-import com.hippo.util.LayoutUtils2;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.Slider;
+import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
@@ -133,9 +132,10 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
         mAdapter = new GalleryPreviewAdapter();
         recyclerView.setAdapter(mAdapter);
-        int minWidth = getResources().getDimensionPixelOffset(R.dimen.preview_grid_min_width);
-        int spanCount = LayoutUtils2.calculateSpanCount(getContext(), minWidth);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), spanCount));
+        int columnWidth = getResources().getDimensionPixelOffset(R.dimen.preview_grid_column_width);
+        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(getContext(), columnWidth);
+        layoutManager.setStrategy(GridAutoSpanLayoutManager.STRATEGY_SUITABLE_SIZE);
+        recyclerView.setLayoutManager(layoutManager);
         int padding = LayoutUtils.dp2pix(getContext(), 4);
         recyclerView.setPadding(padding, padding, padding, padding);
         recyclerView.setClipToPadding(false);

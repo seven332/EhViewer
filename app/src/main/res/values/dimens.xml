@@ -47,9 +47,9 @@
     <dimen name="list_padding_top_search_bar">77dp</dimen>
     <dimen name="list_padding_bottom_fab">80dp</dimen>
 
-    <dimen name="gallery_list_min_width">240dp</dimen>
-    <dimen name="gallery_grid_min_width">80dp</dimen>
-    <dimen name="preview_grid_min_width">80dp</dimen>
+    <dimen name="gallery_list_column_width">320dp</dimen>
+    <dimen name="gallery_grid_column_width">100dp</dimen>
+    <dimen name="preview_grid_column_width">100dp</dimen>
 
     <!-- DrawerArrowDrawable -->
     <dimen name="dad_drawable_size">24dp</dimen>

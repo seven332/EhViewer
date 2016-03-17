@@ -87,14 +87,13 @@ import com.hippo.util.ActivityHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
-import com.hippo.util.LayoutUtils2;
 import com.hippo.util.ReadableTime;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.ProgressiveRatingBar;
-import com.hippo.widget.SimpleGridLayout;
+import com.hippo.widget.recyclerview.SimpleGridAutoSpanLayout;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -208,7 +207,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     @Nullable
     private View mPreviews;
     @Nullable
-    private SimpleGridLayout mGridLayout;
+    private SimpleGridAutoSpanLayout mGridLayout;
     @Nullable
     private TextView mPreviewText;
     // Progress
@@ -462,7 +461,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mComments.setOnClickListener(this);
 
         mPreviews = ViewUtils.$$(belowHeader, R.id.previews);
-        mGridLayout = (SimpleGridLayout) ViewUtils.$$(mPreviews, R.id.grid_layout);
+        mGridLayout = (SimpleGridAutoSpanLayout) ViewUtils.$$(mPreviews, R.id.grid_layout);
         mPreviewText = (TextView) ViewUtils.$$(mPreviews, R.id.preview_text);
         RippleSalon.addRipple(mPreviews, false);
         mPreviews.setOnClickListener(this);
@@ -849,10 +848,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             mPreviewText.setText(R.string.more_previews);
         }
 
-        int minWidth = getResources().getDimensionPixelOffset(R.dimen.preview_grid_min_width);
-        int spanCount = LayoutUtils2.calculateSpanCount(getContext(), minWidth);
-        mGridLayout.setColumnCount(spanCount);
-
+        int columnWidth = getResources().getDimensionPixelOffset(R.dimen.preview_grid_column_width);
+        mGridLayout.setColumnSize(columnWidth);
+        mGridLayout.setStrategy(SimpleGridAutoSpanLayout.STRATEGY_SUITABLE_SIZE);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         for (int i = 0, size = previewSet.size(); i < size; i++) {
             View view = inflater.inflate(R.layout.item_gallery_preview, mGridLayout, false);

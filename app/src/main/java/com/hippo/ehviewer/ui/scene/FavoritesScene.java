@@ -26,7 +26,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -75,6 +74,7 @@ import com.hippo.util.DrawableManager;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.SearchBarMover;
+import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.SimpleHandler;
@@ -255,7 +255,7 @@ public class FavoritesScene extends BaseScene implements
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
+        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(getContext(), 0);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
@@ -931,7 +931,7 @@ public class FavoritesScene extends BaseScene implements
     private class FavoritesAdapter extends GalleryAdapter {
 
         public FavoritesAdapter(LayoutInflater inflater, Context context,
-                RecyclerView recyclerView, GridLayoutManager layoutManager, int type) {
+                RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
             super(inflater, context, recyclerView, layoutManager, type);
         }
 
