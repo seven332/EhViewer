@@ -201,6 +201,17 @@ public class Settings {
     /********************
      ****** Eh
      ********************/
+    public static final String KEY_GALLERY_SITE = "gallery_site";
+    private static final int DEFAULT_GALLERY_SITE = 1;
+
+    public static int getGallerySite() {
+        return getIntFromStr(KEY_GALLERY_SITE, DEFAULT_GALLERY_SITE);
+    }
+
+    public static void putGallerySite(int value) {
+        putIntToStr(KEY_GALLERY_SITE, value);
+    }
+
     public static final String KEY_LIST_MODE = "list_mode";
     private static final int DEFAULT_LIST_MODE = 0;
 

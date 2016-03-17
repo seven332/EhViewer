@@ -315,7 +315,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
             default:
             case MODE_NORMAL: {
                 boolean filter = false;
-                UrlBuilder ub = new UrlBuilder(EhUrl.HOST_EX);
+                UrlBuilder ub = new UrlBuilder(EhUrl.getHost());
                 if (mCategory != EhUtils.NONE) {
                     ub.addQuery("f_doujinshi", ((mCategory & EhConfig.DOUJINSHI) == 0) ? "0" : "1");
                     ub.addQuery("f_manga", ((mCategory & EhConfig.MANGA) == 0) ? "0" : "1");
@@ -367,7 +367,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 return ub.build();
             }
             case MODE_UPLOADER: {
-                StringBuilder sb = new StringBuilder(EhUrl.HOST_EX);
+                StringBuilder sb = new StringBuilder(EhUrl.getHost());
                 sb.append("uploader/");
                 try {
                     sb.append(URLEncoder.encode(mKeyword, "UTF-8"));
@@ -380,7 +380,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 return sb.toString();
             }
             case MODE_TAG: {
-                StringBuilder sb = new StringBuilder(EhUrl.HOST_EX);
+                StringBuilder sb = new StringBuilder(EhUrl.getHost());
                 sb.append("tag/");
                 try {
                     sb.append(URLEncoder.encode(mKeyword, "UTF-8"));

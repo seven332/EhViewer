@@ -45,7 +45,7 @@ public class CookieDBStore implements CookieJar {
                 : domainMatch(urlHost, cookie.domain());
     }
 
-    private static boolean domainMatch(String urlHost, String cookieDomain) {
+    public static boolean domainMatch(String urlHost, String cookieDomain) {
         if (urlHost.equals(cookieDomain)) {
             return true; // As in 'example.com' matching 'example.com'.
         }

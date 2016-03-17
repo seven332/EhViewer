@@ -287,6 +287,7 @@
     <string name="settings_eh_sign_out_warning">天哪，我的老伙计，你要退出登录吗？我是说，你真的要退出登录吗？</string>
     <string name="settings_eh_sign_out_yes">是的，我是说，真的</string>
     <string name="settings_eh_sign_out_tip">已退出登陆，重启应用以便再次登陆</string>
+    <string name="settings_eh_gallery_site">画廊站点</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">详情</string>
     <string name="settings_eh_list_mode_thumb">缩略图</string>

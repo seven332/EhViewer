@@ -30,6 +30,16 @@ public class EhCookieStore extends CookieDBStore {
 
     public static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
     public static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
+    public static final String KEY_TIPS = "tips";
+
+    public static final Cookie sTipsCookie =
+            new Cookie.Builder()
+                    .name(KEY_TIPS)
+                    .value("0")
+                    .domain(EhUrl.DOMAIN_G)
+                    .path("/")
+                    .expiresAt(Long.MAX_VALUE)
+                    .build();
 
     public void signOut() {
         removeAll();
@@ -68,27 +78,39 @@ public class EhCookieStore extends CookieDBStore {
     public List<Cookie> loadForRequest(HttpUrl url, Request request) {
         List<Cookie> cookies = super.loadForRequest(url, request);
         Object tag = request.tag();
+        String host = url.host();
 
-        if (url.host().equals(EhUrl.DOMAIN_EX) && tag instanceof EhConfig) {
-            EhConfig ehConfig = (EhConfig) tag;
+        boolean checkTips = domainMatch(host, EhUrl.DOMAIN_G);
+        boolean checkUconfig = (domainMatch(host, EhUrl.DOMAIN_E) || domainMatch(host, EhUrl.DOMAIN_EX)) && tag instanceof EhConfig;
 
+        if (checkTips || checkUconfig) {
             List<Cookie> result = new ArrayList<>(cookies.size() + 1);
-            // Add all but skip uconfig
+            // Add all but skip some
             for (Cookie cookie: cookies) {
-                if (EhConfig.KEY_UCONFIG.equals(cookie.name())) {
+                String name = cookie.name();
+                if (checkTips && KEY_TIPS.equals(name)) {
+                    continue;
+                }
+                if (checkUconfig && EhConfig.KEY_UCONFIG.equals(name)) {
                     continue;
                 }
                 result.add(cookie);
             }
-            // Add uconfig from EhConfig
-            Cookie uconfigCookie = new Cookie.Builder()
-                    .name(EhConfig.KEY_UCONFIG)
-                    .value(ehConfig.uconfig())
-                    .domain(EhUrl.DOMAIN_EX)
-                    .path("/")
-                    .build();
-            result.add(uconfigCookie);
-
+            // Add some
+            if (checkTips) {
+                result.add(sTipsCookie);
+            }
+            if (checkUconfig) {
+                EhConfig ehConfig = (EhConfig) tag;
+                Cookie uconfigCookie = new Cookie.Builder()
+                        .name(EhConfig.KEY_UCONFIG)
+                        .value(ehConfig.uconfig())
+                        .domain(host)
+                        .path("/")
+                        .expiresAt(Long.MAX_VALUE)
+                        .build();
+                result.add(uconfigCookie);
+            }
             return Collections.unmodifiableList(result);
         } else {
             return cookies;

@@ -16,9 +16,13 @@
 
 package com.hippo.ehviewer.client;
 
+import com.hippo.ehviewer.Settings;
 import com.hippo.network.UrlBuilder;
 
 public class EhUrl {
+
+    public static final int SITE_G = 0;
+    public static final int SITE_EX = 1;
 
     public static final String DOMAIN_EX = "exhentai.org";
     public static final String DOMAIN_E = "e-hentai.org";
@@ -30,19 +34,51 @@ public class EhUrl {
 
     public static final String API_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
 
+    public static final String API_G = HOST_G + "api.php";
     public static final String API_EX = HOST_EX + "api.php";
 
     public static final String URL_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login";
     public static final String URL_REGISTER = "http://forums.e-hentai.org/index.php?act=Reg&CODE=00";
-    public static final String URL_FAVORITES = HOST_EX + "favorites.php";
+    public static final String URL_FAVORITES_G = HOST_G + "favorites.php";
+    public static final String URL_FAVORITES_EX = HOST_EX + "favorites.php";
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
 
     public static String getGalleryDetailUrl(long gid, String token) {
         return getGalleryDetailUrl(gid, token, 0, false);
     }
 
+    public static String getHost() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_G:
+                return HOST_G;
+            case SITE_EX:
+                return HOST_EX;
+        }
+    }
+
+    public static String getFavoritesUrl() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_G:
+                return URL_FAVORITES_G;
+            case SITE_EX:
+                return URL_FAVORITES_EX;
+        }
+    }
+
+    public static String getApiUrl() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_G:
+                return API_G;
+            case SITE_EX:
+                return API_EX;
+        }
+    }
+
     public static String getGalleryDetailUrl(long gid, String token, int index, boolean allComment) {
-        UrlBuilder builder = new UrlBuilder(HOST_EX + "g/" + gid + '/' + token + '/');
+        UrlBuilder builder = new UrlBuilder(getHost() + "g/" + gid + '/' + token + '/');
         if (index != 0) {
             builder.addQuery("p", index);
         }
@@ -53,10 +89,10 @@ public class EhUrl {
     }
 
     public static String getPageUrl(long gid, int index, String pToken) {
-        return HOST_EX + "s/" + pToken + '/' + gid + '-' + (index + 1);
+        return getHost() + "s/" + pToken + '/' + gid + '-' + (index + 1);
     }
 
     public static String getAddFavorites(long gid, String token) {
-        return HOST_EX + "gallerypopups.php?gid=" + gid + "&t=" + token + "&act=addfav";
+        return getHost() + "gallerypopups.php?gid=" + gid + "&t=" + token + "&act=addfav";
     }
 }

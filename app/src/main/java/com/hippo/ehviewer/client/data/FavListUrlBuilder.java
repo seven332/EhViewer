@@ -66,7 +66,7 @@ public class FavListUrlBuilder implements Parcelable {
     }
 
     public String build() {
-        UrlBuilder ub = new UrlBuilder(EhUrl.URL_FAVORITES);
+        UrlBuilder ub = new UrlBuilder(EhUrl.getFavoritesUrl());
         if (isValidFavCat(mFavCat)) {
             ub.addQuery("favcat", Integer.toString(mFavCat));
         }

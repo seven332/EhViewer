@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.client.parser;
 
-import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.JsoupUtils;
@@ -52,7 +51,7 @@ public class FavoritesParser {
         int limit;
 
         try {
-            Document d = Jsoup.parse(body, EhUrl.HOST_EX);
+            Document d = Jsoup.parse(body);
             Element ido = JsoupUtils.getElementByClass(d, "ido");
             Elements fps = ido.getElementsByClass("fp");
             // Last one is "fp fps"

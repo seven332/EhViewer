@@ -229,7 +229,7 @@ public class EhEngine {
         }
         json.put("gidlist", ja);
         json.put("namespace", 1);
-        String url = EhUrl.API_EX;
+        String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url)
                 .post(RequestBody.create(JSON, json.toString()))
@@ -314,7 +314,7 @@ public class EhEngine {
         json.put("token", token);
         json.put("rating", (int) Math.ceil(rating * 2));
         final RequestBody requestBody = RequestBody.create(JSON, json.toString());
-        String url = EhUrl.API_EX;
+        String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, task.getEhConfig())
                 .post(requestBody)
@@ -375,7 +375,7 @@ public class EhEngine {
                 .put("pagelist", new JSONArray().put(
                         new JSONArray().put(gid).put(gtoken).put(page + 1)));
         final RequestBody requestBody = RequestBody.create(JSON, json.toString());
-        String url = EhUrl.API_EX;
+        String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, task.getEhConfig())
                 .post(requestBody)

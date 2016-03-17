@@ -987,7 +987,7 @@ public class FavoritesScene extends BaseScene implements
                     String url;
                     if (local) {
                         // Local fav is shown now, but operation need be done for cloud fav
-                        url = EhUrl.URL_FAVORITES;
+                        url = EhUrl.getFavoritesUrl();
                     } else {
                         url = mUrlBuilder.build();
                     }
