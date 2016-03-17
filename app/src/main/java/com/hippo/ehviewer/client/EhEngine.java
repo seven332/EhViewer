@@ -49,6 +49,8 @@ import com.hippo.yorozuya.IOUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -296,8 +298,9 @@ public class EhEngine {
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            return Pair.create(GalleryDetailParser.parseLargePreview(body),
-                    GalleryDetailParser.parsePreviewPages(body));
+            Document document = Jsoup.parse(body);
+            return Pair.create(GalleryDetailParser.parseLargePreviewSet(document, body),
+                    GalleryDetailParser.parsePreviewPages(document, body));
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;
@@ -361,7 +364,8 @@ public class EhEngine {
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            return GalleryDetailParser.parseComment(body);
+            Document document = Jsoup.parse(body);
+            return GalleryDetailParser.parseComments(document);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;

@@ -16,6 +16,9 @@
 
 package com.hippo.ehviewer.client.parser;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
@@ -26,10 +29,17 @@ import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.OffensiveException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.exception.PiningException;
+import com.hippo.util.JsoupUtils;
 import com.hippo.yorozuya.NumberUtils;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,6 +96,9 @@ public class GalleryDetailParser {
     private static final Pattern NORMAL_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtm\"[^<>]*><div[^<>]*width:(\\d+)[^<>]*height:(\\d+)[^<>]*\\((.+?)\\)[^<>]*-(\\d+)px[^<>]*><a[^<>]*href=\"(.+?)\"[^<>]*><img alt=\"([\\d,]+)\"");
     private static final Pattern LARGE_PREVIEW_PATTERN = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img alt=\"([\\d,]+)\".+?src=\"(.+?)\"");
 
+    private static final GalleryTagGroup[] EMPTY_GALLERY_TAG_GROUP_ARRAY = new GalleryTagGroup[0];
+    private static final GalleryComment[] EMPTY_GALLERY_COMMENT_ARRAY = new GalleryComment[0];
+
     static {
         WEB_COMMENT_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -112,10 +125,11 @@ public class GalleryDetailParser {
 
         GalleryDetail galleryDetail = new GalleryDetail();
         parseDetail(body, galleryDetail);
-        galleryDetail.tags = parseTagGroup(body);
-        galleryDetail.comments = parseComment(body);
-        galleryDetail.previewPages = parsePreviewPages(body);
-        galleryDetail.previewSet = parseLargePreview(body);
+        Document document = Jsoup.parse(body);
+        galleryDetail.tags = parseTagGroups(document);
+        galleryDetail.comments = parseComments(document);
+        galleryDetail.previewPages = parsePreviewPages(document, body);
+        galleryDetail.previewSet = parseLargePreviewSet(document, body);
         return galleryDetail;
     }
 
@@ -178,7 +192,56 @@ public class GalleryDetailParser {
         gd.isFavored = m.find() && "Favorite Gallery".equals(ParserUtils.trim(m.group(1)));
     }
 
-    public static GalleryTagGroup[] parseTagGroup(String body) throws EhException {
+    @Nullable
+    private static GalleryTagGroup parseTagGroup(Element element) {
+        try {
+            GalleryTagGroup group = new GalleryTagGroup();
+
+            String nameSpace = element.child(0).text();
+            // Remove last ':'
+            nameSpace = nameSpace.substring(0, nameSpace.length() - 1);
+            group.groupName = nameSpace;
+
+            Elements tags = element.child(1).children();
+            for (int i = 0, n = tags.size(); i < n; i++) {
+                group.addTag(tags.get(i).text());
+            }
+
+            return group.size() > 0 ? group : null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Parse tag groups with html parser
+     */
+    @NonNull
+    public static GalleryTagGroup[] parseTagGroups(Document document) {
+        try {
+            Element taglist = document.getElementById("taglist");
+            Elements tagGroups = taglist.child(0).child(0).children();
+
+            List<GalleryTagGroup> list = new ArrayList<>(tagGroups.size());
+            for (int i = 0, n = tagGroups.size(); i < n; i++) {
+                GalleryTagGroup group = parseTagGroup(tagGroups.get(i));
+                if (null != group) {
+                    list.add(group);
+                }
+            }
+            return list.toArray(new GalleryTagGroup[list.size()]);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return EMPTY_GALLERY_TAG_GROUP_ARRAY;
+        }
+    }
+
+    /**
+     * Parse tag groups with regular expressions
+     */
+    @NonNull
+    private static GalleryTagGroup[] parseTagGroups(String body) throws EhException {
         List<GalleryTagGroup> list = new LinkedList<>();
 
         Matcher m = TAG_GROUP_PATTERN.matcher(body);
@@ -199,7 +262,52 @@ public class GalleryDetailParser {
         }
     }
 
-    public static GalleryComment[] parseComment(String body) {
+    @Nullable
+    @SuppressWarnings("ConstantConditions")
+    public static GalleryComment parseComment(Element element) {
+        try {
+            GalleryComment comment = new GalleryComment();
+            Element c3 = JsoupUtils.getElementByClass(element, "c3");
+            String temp = c3.ownText();
+            temp = temp.substring("Posted on ".length(), temp.length() - " by:  ".length());
+            comment.time = WEB_COMMENT_DATE_FORMAT.parse(temp).getTime();
+            comment.user = c3.child(0).text();
+            comment.comment = JsoupUtils.getElementByClass(element, "c6").html();
+            return comment;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Parse comments with html parser
+     */
+    @NonNull
+    public static GalleryComment[] parseComments(Document document) {
+        try {
+            Element cdiv = document.getElementById("cdiv");
+            Elements c1s = cdiv.getElementsByClass("c1");
+
+            List<GalleryComment> list = new ArrayList<>(c1s.size());
+            for (int i = 0, n = c1s.size(); i < n; i++) {
+                GalleryComment comment = parseComment(c1s.get(i));
+                if (null != comment) {
+                    list.add(comment);
+                }
+            }
+            return list.toArray(new GalleryComment[list.size()]);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return EMPTY_GALLERY_COMMENT_ARRAY;
+        }
+    }
+
+    /**
+     * Parse comments with regular expressions
+     */
+    @NonNull
+    public static GalleryComment[] parseComments(String body) {
         List<GalleryComment> list = new LinkedList<>();
 
         Matcher m = COMMENT_PATTERN.matcher(body);
@@ -221,6 +329,22 @@ public class GalleryDetailParser {
         return list.toArray(new GalleryComment[list.size()]);
     }
 
+    /**
+     * Parse preview pages with html parser
+     */
+    public static int parsePreviewPages(Document document, String body) throws ParseException {
+        try {
+            Elements elements = document.getElementsByClass("ptt").first().child(0).child(0).children();
+            return Integer.parseInt(elements.get(elements.size() - 2).text());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ParseException("Can't parse preview pages", body);
+        }
+    }
+
+    /**
+     * Parse preview pages with regular expressions
+     */
     public static int parsePreviewPages(String body) throws ParseException {
         Matcher m = PREVIEW_PAGES_PATTERN.matcher(body);
         int previewPages = -1;
@@ -235,6 +359,9 @@ public class GalleryDetailParser {
         return previewPages;
     }
 
+    /**
+     * Parse pages with regular expressions
+     */
     public static int parsePages(String body) throws ParseException {
         Matcher m = PAGES_PATTERN.matcher(body);
         if (m.find()) {
@@ -244,7 +371,37 @@ public class GalleryDetailParser {
         }
     }
 
-    public static LargePreviewSet parseLargePreview(String body) throws ParseException {
+    /**
+     * Parse large previews with regular expressions
+     */
+    public static LargePreviewSet parseLargePreviewSet(Document document, String body) throws ParseException {
+        try {
+            LargePreviewSet largePreviewSet = new LargePreviewSet();
+            Element gdt = document.getElementById("gdt");
+            Elements gdtls = gdt.getElementsByClass("gdtl");
+            int n = gdtls.size();
+            if (n <= 0) {
+                throw new ParseException("Can't parse large preview", body);
+            }
+            for (int i = 0; i < n; i++) {
+                Element element = gdtls.get(i).child(0);
+                String pageUrl = element.attr("href");
+                element = element.child(0);
+                String imageUrl = element.attr("src");
+                int index = Integer.parseInt(element.attr("alt")) - 1;
+                largePreviewSet.addItem(index, imageUrl, pageUrl);
+            }
+            return largePreviewSet;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ParseException("Can't parse large preview", body);
+        }
+    }
+
+    /**
+     * Parse large previews with regular expressions
+     */
+    public static LargePreviewSet parseLargePreviewSet(String body) throws ParseException {
         Matcher m = LARGE_PREVIEW_PATTERN.matcher(body);
         LargePreviewSet largePreviewSet = new LargePreviewSet();
 
@@ -260,6 +417,9 @@ public class GalleryDetailParser {
         return largePreviewSet;
     }
 
+    /**
+     * Parse normal previews with regular expressions
+     */
     public static NormalPreviewSet parseNormalPreviewSet(String body) throws ParseException {
         Matcher m = NORMAL_PREVIEW_PATTERN.matcher(body);
         NormalPreviewSet normalPreviewSet = new NormalPreviewSet();
@@ -276,5 +436,4 @@ public class GalleryDetailParser {
 
         return normalPreviewSet;
     }
-
 }

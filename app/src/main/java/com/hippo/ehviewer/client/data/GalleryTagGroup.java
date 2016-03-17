@@ -21,10 +21,11 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 
+// TODO Add url field?
 public class GalleryTagGroup implements Parcelable {
 
     public String groupName;
-    private ArrayList<String> mTagList;
+    private final ArrayList<String> mTagList;
 
     public void addTag(String tag) {
         mTagList.add(tag);

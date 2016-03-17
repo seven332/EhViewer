@@ -689,7 +689,7 @@ public class SpiderQueen implements Runnable {
                 }
             }
         } catch (ParseException e) {
-            LargePreviewSet previewSet = GalleryDetailParser.parseLargePreview(body);
+            LargePreviewSet previewSet = GalleryDetailParser.parseLargePreviewSet(body);
             spiderInfo.previewPerPage = previewSet.size();
             for (int i = 0, n = previewSet.size(); i < n; i++) {
                 GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
