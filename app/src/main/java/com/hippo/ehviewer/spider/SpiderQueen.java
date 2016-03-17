@@ -37,6 +37,7 @@ import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhRequestBuilder;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.NormalPreviewSet;
 import com.hippo.ehviewer.client.exception.Image509Exception;
 import com.hippo.ehviewer.client.exception.ParseException;
@@ -63,11 +64,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
@@ -153,8 +152,6 @@ public class SpiderQueen implements Runnable {
     private final Queue<Integer> mForceRequestPageQueue = new LinkedList<>();
     // For download, when it go to mPageStateArray.size(), done
     private volatile int mDownloadPage = -1;
-
-    private final Set<Integer> mRequestPreviewPageSet = new HashSet<>();
 
     private final AtomicInteger mDownloadedPages = new AtomicInteger(0);
     private final AtomicInteger mFinishedPages = new AtomicInteger(0);
@@ -681,6 +678,28 @@ public class SpiderQueen implements Runnable {
         return null;
     }
 
+    private void readPreviews(String body, SpiderInfo spiderInfo) throws ParseException {
+        try {
+            NormalPreviewSet previewSet = GalleryDetailParser.parseNormalPreviewSet(body);
+            spiderInfo.previewPerPage = previewSet.size();
+            for (int i = 0, n = previewSet.size(); i < n; i++) {
+                GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
+                if (result != null) {
+                    spiderInfo.pTokenMap.put(result.page, result.pToken);
+                }
+            }
+        } catch (ParseException e) {
+            LargePreviewSet previewSet = GalleryDetailParser.parseLargePreview(body);
+            spiderInfo.previewPerPage = previewSet.size();
+            for (int i = 0, n = previewSet.size(); i < n; i++) {
+                GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
+                if (result != null) {
+                    spiderInfo.pTokenMap.put(result.page, result.pToken);
+                }
+            }
+        }
+    }
+
     private SpiderInfo readSpiderInfoFromInternet(EhConfig config) {
         try {
             SpiderInfo spiderInfo = new SpiderInfo();
@@ -693,17 +712,9 @@ public class SpiderQueen implements Runnable {
             String body = response.body().string();
 
             spiderInfo.pages = GalleryDetailParser.parsePages(body);
-            spiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
-            NormalPreviewSet previewSet = GalleryDetailParser.parseNormalPreviewSet(body);
-            spiderInfo.previewPerPage = previewSet.size();
             spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
-            for (int i = 0, n = previewSet.size(); i < n; i++) {
-                GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
-                if (result != null) {
-                    spiderInfo.pTokenMap.put(result.page, result.pToken);
-                }
-            }
-
+            spiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
+            readPreviews(body, spiderInfo);
             return spiderInfo;
         } catch (Exception e) {
             return null;
@@ -713,12 +724,6 @@ public class SpiderQueen implements Runnable {
     private String getPTokenFromInternet(int index, EhConfig config) {
         // Check previewIndex
         int previewIndex = index / mSpiderInfo.previewPerPage;
-        synchronized (mRequestPreviewPageSet) {
-            if (mRequestPreviewPageSet.contains(previewIndex)) {
-                return SpiderInfo.TOKEN_WAIT;
-            }
-            mRequestPreviewPageSet.add(previewIndex);
-        }
 
         try {
             String url = EhUrl.getGalleryDetailUrl(
@@ -729,23 +734,15 @@ public class SpiderQueen implements Runnable {
             Request request = new EhRequestBuilder(url, config).build();
             Response response = mHttpClient.newCall(request).execute();
             String body = response.body().string();
-            NormalPreviewSet previewSet = GalleryDetailParser.parseNormalPreviewSet(body);
-            synchronized (mPTokenLock) {
-                for (int i = 0, n = previewSet.size(); i < n; i++) {
-                    GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
-                    if (result != null) {
-                        mSpiderInfo.pTokenMap.put(result.page, result.pToken);
-                    }
-                }
-                writeSpiderInfoToLocal(mSpiderInfo);
-            }
+            mSpiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
+            readPreviews(body, mSpiderInfo);
+
+            // Save to local
+            writeSpiderInfoToLocal(mSpiderInfo);
+
             return mSpiderInfo.pTokenMap.get(index);
         } catch (Exception e) {
             return null;
-        } finally {
-            synchronized (mRequestPreviewPageSet) {
-                mRequestPreviewPageSet.remove(previewIndex);
-            }
         }
     }
 
@@ -863,8 +860,12 @@ public class SpiderQueen implements Runnable {
 
             // Get pToken from internet
             pToken = getPTokenFromInternet(index, config);
+            if (null == pToken) {
+                // Preview size may changed, so try to get pToken twice
+                pToken = getPTokenFromInternet(index, config);
+            }
 
-            if (null == pToken || SpiderInfo.TOKEN_WAIT.equals(pToken)) {
+            if (null == pToken) {
                 // If failed, set the pToken "failed"
                 synchronized (mPTokenLock) {
                     mSpiderInfo.pTokenMap.put(index, SpiderInfo.TOKEN_FAILED);
@@ -872,10 +873,8 @@ public class SpiderQueen implements Runnable {
             }
 
             // Notify worker
-            if (!SpiderInfo.TOKEN_WAIT.equals(pToken)) {
-                synchronized (mWorkerLock) {
-                    mWorkerLock.notifyAll();
-                }
+            synchronized (mWorkerLock) {
+                mWorkerLock.notifyAll();
             }
         }
     }

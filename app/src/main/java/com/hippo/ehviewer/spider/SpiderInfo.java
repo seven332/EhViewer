@@ -34,7 +34,6 @@ public class SpiderInfo {
     private static final String TAG = SpiderInfo.class.getSimpleName();
 
     static final String TOKEN_FAILED = "failed";
-    static final String TOKEN_WAIT = "wait";
 
     int startPage = 0;
     long gid = -1;

@@ -25,9 +25,9 @@ import java.util.ArrayList;
 
 public class LargePreviewSet implements Parcelable {
 
-    private IntList mIndexList;
-    private ArrayList<String> mImageUrlList;
-    private ArrayList<String> mPageUrlList;
+    private final IntList mIndexList;
+    private final ArrayList<String> mImageUrlList;
+    private final ArrayList<String> mPageUrlList;
 
     public int size() {
         return mImageUrlList.size();

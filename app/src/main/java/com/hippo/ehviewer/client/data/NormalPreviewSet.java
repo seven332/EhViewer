@@ -22,13 +22,13 @@ import java.util.ArrayList;
 
 public class NormalPreviewSet {
 
-    private IntList mIndexList = new IntList();
-    private ArrayList<String> mImageUrlList = new ArrayList<>();
-    private IntList mXOffsetList = new IntList();
-    private IntList mYOffsetList = new IntList();
-    private IntList mWidthList = new IntList();
-    private IntList mHeightList = new IntList();
-    private ArrayList<String> mPageUrlList = new ArrayList<>();
+    private final IntList mIndexList = new IntList();
+    private final ArrayList<String> mImageUrlList = new ArrayList<>();
+    private final IntList mXOffsetList = new IntList();
+    private final IntList mYOffsetList = new IntList();
+    private final IntList mWidthList = new IntList();
+    private final IntList mHeightList = new IntList();
+    private final ArrayList<String> mPageUrlList = new ArrayList<>();
 
     public void addItem(int index, String imageUrl, int xOffset, int yOffset, int width,
             int height, String pageUrl) {
