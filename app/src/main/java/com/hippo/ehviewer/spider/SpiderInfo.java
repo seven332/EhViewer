@@ -94,11 +94,8 @@ public class SpiderInfo {
             spiderInfo.gid = Long.parseLong(IOUtils.readAsciiLine(is));
             // Token
             spiderInfo.token = IOUtils.readAsciiLine(is);
-            // Deprecated, mode, only ex is support now, MUST be 1
-            if (1 != Integer.parseInt(IOUtils.readAsciiLine(is))) {
-                Log.w(TAG, "Not ex mode");
-                return null;
-            }
+            // Deprecated, mode, skip it
+            IOUtils.readAsciiLine(is);
             // Preview pages
             spiderInfo.previewPages = Integer.parseInt(IOUtils.readAsciiLine(is));
             // Preview pre page
