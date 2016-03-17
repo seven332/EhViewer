@@ -224,6 +224,8 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         } else if (mSignInViaCookies == v) {
             startScene(new Announcer(CookieSignInScene.class).setRequestCode(this, REQUEST_CODE_COOKIE));
         } else if (mSkipSigningIn == v) {
+            // Set gallery size SITE_G if skip sign in
+            Settings.putGallerySite(EhUrl.SITE_G);
             redirectTo();
         }
     }
@@ -293,6 +295,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     private void redirectTo() {
+        Settings.putNeedSignIn(false);
         ((MainActivity) getActivity()).startSceneForCheckStep(
                 MainActivity.CHECK_STEP_SIGN_IN, getArguments());
         finish();
@@ -300,8 +303,8 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
 
     private void whetherToSkip() {
         new AlertDialog.Builder(getContext())
-                .setTitle(R.string.skip_signing_in)
-                .setMessage(R.string.skip_signing_in_plain)
+                .setTitle(R.string.sign_in_failed)
+                .setMessage(R.string.sign_in_failed_plain)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.get_it, null)
                 .show();

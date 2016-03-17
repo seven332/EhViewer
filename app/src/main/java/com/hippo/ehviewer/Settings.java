@@ -198,6 +198,17 @@ public class Settings {
         return sEhConfig;
     }
 
+    private static final String KEY_NEED_SIGN_IN = "need_sign_in";
+    private static final boolean DEFAULT_NEED_SIGN_IN = true;
+
+    public static boolean getNeedSignIn() {
+        return getBoolean(KEY_NEED_SIGN_IN, DEFAULT_NEED_SIGN_IN);
+    }
+
+    public static void putNeedSignIn(boolean value) {
+        putBoolean(KEY_NEED_SIGN_IN, value);
+    }
+
     /********************
      ****** Eh
      ********************/

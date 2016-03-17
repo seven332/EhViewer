@@ -114,7 +114,8 @@
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
     <string name="error_password_cannot_empty">Password cannot be an empty string</string>
     <string name="skip_signing_in">Skip signing in</string>
-    <string name="skip_signing_in_plain">Sign in failed. But perhaps it is a mistake due to website update or something wrong happened. You may try sign in via WebView or enter cookie or skip signing in under sign in button. But you may be a "Sad Panda" after skipping signing in.</string>
+    <string name="sign_in_failed">Sign in failed</string>
+    <string name="sign_in_failed_plain">Perhaps it is a mistake due to website update or something wrong happened. You may try sign in via WebView or enter cookie or skip signing in under sign in button. But you may be a "Sad Panda" after skipping signing in.</string>
     <string name="press_twice_exit">Press twice to exit</string>
     <string name="content_layout_restore_tip">Click to retry</string>
     <string name="write_rationale">EhViewer will request WRITE_EXTERNAL_STORAGE permission for downloading gallery. Do you want to grant the permission?</string>

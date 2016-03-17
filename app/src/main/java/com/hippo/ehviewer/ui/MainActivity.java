@@ -136,7 +136,7 @@ public final class MainActivity extends StageActivity
                     break;
                 }
             case CHECK_STEP_CRASH:
-                if (!EhUtils.hasSignedIn(this)) {
+                if (EhUtils.needSignedIn(this)) {
                     startScene(new Announcer(SignInScene.class).setArgs(args));
                     break;
                 }
@@ -182,7 +182,7 @@ public final class MainActivity extends StageActivity
             return new Announcer(AnalyticsScene.class);
         } else if (Crash.hasCrashFile()) {
             return new Announcer(CrashScene.class);
-        } else if (!EhUtils.hasSignedIn(this)) {
+        } else if (EhUtils.needSignedIn(this)) {
             return new Announcer(SignInScene.class);
         } else {
             Bundle args = new Bundle();
@@ -209,7 +209,7 @@ public final class MainActivity extends StageActivity
                 newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
                 newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(CrashScene.class).setArgs(newArgs);
-            } else if (!EhUtils.hasSignedIn(this)) {
+            } else if (EhUtils.needSignedIn(this)) {
                 Bundle newArgs = new Bundle();
                 newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
                 newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());

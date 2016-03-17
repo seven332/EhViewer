@@ -75,7 +75,8 @@
     <string name="error_username_cannot_empty">使用者名稱不可為空</string>
     <string name="error_password_cannot_empty">密碼不可為空</string>
     <string name="skip_signing_in">跳過登陸</string>
-    <string name="skip_signing_in_plain">登陸失敗。這可能是網站更新導致的，也有可能是發生了奇怪的事情。您可以選擇在登陸按鈕下方通過網頁登陸或者輸入 cookie，或者跳過登陸。跳過登陸可能導致無法正常使用應用。</string>
+    <string name="sign_in_failed">登陸失敗</string>
+    <string name="sign_in_failed_plain">這可能是網站更新導致的，也有可能是發生了奇怪的事情。您可以選擇在登陸按鈕下方通過網頁登陸或者輸入 cookie，或者跳過登陸。跳過登陸可能導致無法正常使用應用。</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">點選重試</string>
     <string name="write_rationale">EhViewer 將申請裝置儲存空間訪問許可權以便下載畫廊。您願意授權嗎？</string>
@@ -287,6 +288,7 @@
     <string name="settings_eh_sign_out_warning">天哪，我的老夥計，你要退出登入嗎？我是說，你真的要退出登入嗎？</string>
     <string name="settings_eh_sign_out_yes">是的，我是說，真的</string>
     <string name="settings_eh_sign_out_tip">已退出登陸，重啟應用以便再次登陸</string>
+    <string name="settings_eh_gallery_site">畫廊站點</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">詳情</string>
     <string name="settings_eh_list_mode_thumb">縮圖</string>

@@ -119,10 +119,11 @@ public class EhUtils {
         EhApplication.getEhCookieStore(context).signOut();
         Settings.putAvatar(null);
         Settings.putDisplayName(null);
+        Settings.putNeedSignIn(true);
     }
 
-    public static boolean hasSignedIn(Context context) {
-        return EhApplication.getEhCookieStore(context).hasSignedIn();
+    public static boolean needSignedIn(Context context) {
+        return Settings.getNeedSignIn() && !EhApplication.getEhCookieStore(context).hasSignedIn();
     }
 
     public static String getSuitableTitle(GalleryInfo gi) {

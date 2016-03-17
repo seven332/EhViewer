@@ -75,7 +75,8 @@
     <string name="error_username_cannot_empty">用户名不可为空</string>
     <string name="error_password_cannot_empty">密码不可为空</string>
     <string name="skip_signing_in">跳过登陆</string>
-    <string name="skip_signing_in_plain">登陆失败。这可能是网站更新导致的，也有可能是发生了奇怪的事情。您可以选择在登陆按钮下方通过网页登陆或者输入 cookie，或者跳过登陆。跳过登陆可能导致无法正常使用应用。</string>
+    <string name="sign_in_failed">登陆失败</string>
+    <string name="sign_in_failed_plain">这可能是网站更新导致的，也有可能是发生了奇怪的事情。您可以选择在登陆按钮下方通过网页登陆或者输入 cookie，或者跳过登陆。跳过登陆可能导致无法正常使用应用。</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">点击重试</string>
     <string name="write_rationale">EhViewer 将申请设备存储空间访问权限以便下载画廊。您愿意授权吗？</string>
