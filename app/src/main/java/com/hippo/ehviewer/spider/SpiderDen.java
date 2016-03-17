@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.io.UniFileOutputStreamPipe;
+import com.hippo.unifile.FilenameFilter;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
@@ -56,16 +57,45 @@ public final class SpiderDen {
         sCache = new SimpleDiskCache(new File(context.getCacheDir(), "image"), 160 * 1024 * 1024);
     }
 
+    private static class StartWithFilenameFilter implements FilenameFilter {
+
+        private final String mPrefix;
+
+        public StartWithFilenameFilter(String prefix) {
+            mPrefix = prefix;
+        }
+
+        @Override
+        public boolean accept(UniFile dir, String filename) {
+            return filename.startsWith(mPrefix);
+        }
+    }
+
     public static UniFile getGalleryDownloadDir(GalleryInfo galleryInfo) {
         UniFile dir = Settings.getDownloadLocation();
         if (dir != null) {
             // Read from DB
             String dirname = EhDB.getDownloadDirname(galleryInfo.gid);
-            if (dirname == null) {
+
+            // Find it
+            if (null == dirname) {
+                UniFile[] files = dir.listFiles(new StartWithFilenameFilter(galleryInfo.gid + "-"));
+                if (null != files) {
+                    for (UniFile file : files) {
+                        if (file.isDirectory()) {
+                            dirname = file.getName();
+                            EhDB.putDownloadDirname(galleryInfo.gid, dirname);
+                        }
+                    }
+                }
+            }
+
+            // Create it
+            if (null == dirname) {
                 dirname = FileUtils.sanitizeFilename(galleryInfo.gid + "-" + EhUtils.getSuitableTitle(galleryInfo));
-                // Put into DB
                 EhDB.putDownloadDirname(galleryInfo.gid, dirname);
             }
+
             return dir.subFile(dirname);
         } else {
             return null;
