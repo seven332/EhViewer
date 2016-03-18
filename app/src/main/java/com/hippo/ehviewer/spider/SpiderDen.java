@@ -81,11 +81,20 @@ public final class SpiderDen {
             if (null == dirname) {
                 UniFile[] files = dir.listFiles(new StartWithFilenameFilter(galleryInfo.gid + "-"));
                 if (null != files) {
+                    // Get max-length-name dir
+                    int maxLength = -1;
                     for (UniFile file : files) {
                         if (file.isDirectory()) {
-                            dirname = file.getName();
-                            EhDB.putDownloadDirname(galleryInfo.gid, dirname);
+                            String name = file.getName();
+                            int length = name.length();
+                            if (length > maxLength) {
+                                maxLength = length;
+                                dirname = name;
+                            }
                         }
+                    }
+                    if (null != dirname) {
+                        EhDB.putDownloadDirname(galleryInfo.gid, dirname);
                     }
                 }
             }
