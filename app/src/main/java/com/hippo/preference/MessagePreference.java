@@ -76,7 +76,7 @@ public class MessagePreference extends DialogPreference {
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
         builder.setMessage(mDialogMessage);
-        builder.setPositiveButton(android.R.string.ok, null);
+        builder.setPositiveButton(android.R.string.ok, this);
         builder.setNegativeButton(null, null);
     }
 
