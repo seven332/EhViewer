@@ -134,7 +134,7 @@
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint">Search ExHentai</string>
-    <string name="gallery_list_empty_hit">The World is Big and Pandas sit alone</string>
+    <string name="gallery_list_empty_hit">The World is Big and the panda sit alone</string>
 
     <string name="search">Search</string>
 
@@ -210,6 +210,10 @@
     <string name="remove_from_favorite_success">Removed from favorites</string>
     <string name="add_to_favorite_failure">Failed to add to favorites</string>
     <string name="remove_from_favorite_failure">Failed to remove from favorites</string>
+    <string name="block_the_uploader">Block the uploader: %s ?</string>
+    <string name="block_the_tag">Block the tag: %s ?</string>
+    <string name="uploader_blocked">The uploader \"%s\" is blocked</string>
+    <string name="tag_blocked">The tag \"%s\" is blocked</string>
 
     <!-- Rating -->
     <string name="rating10">MASTERPIECE</string>
@@ -311,6 +315,20 @@
     <!-- History -->
     <string name="no_history">Viewed galleries will be shown here</string>
 
+    <!-- Filter -->
+    <string name="filter">Filter</string>
+    <string name="no_filter">Filters will be shown here</string>
+    <string name="filter_title">Title</string>
+    <string name="filter_uploader">Uploader</string>
+    <string name="filter_tag">Tag</string>
+    <string name="delete_title_filter">Delete title filter: %s ?</string>
+    <string name="delete_uploader_filter">Delete uploader filter: %s ?</string>
+    <string name="delete_tag_filter">Delete tag filter: %s ?</string>
+    <string name="delete_filter">Delete filter: %s ?</string>
+    <string name="tip">Tip</string>
+    <string name="add_filter">Add filter</string>
+    <string name="filter_text">Filter text</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -340,6 +358,8 @@
     <string name="settings_eh_show_jpn_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
+    <string name="settings_eh_filter">Filter</string>
+    <string name="settings_eh_filter_summary">Filter by title, uploader and tags</string>
 
     <string name="settings_read">Read</string>
     <string name="settings_read_reading_direction_title">Reading direction</string>

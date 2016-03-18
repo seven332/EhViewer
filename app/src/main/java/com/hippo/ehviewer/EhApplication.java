@@ -32,6 +32,7 @@ import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
+import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.download.DownloadManager;
@@ -91,6 +92,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         AppConfig.initialize(this);
         SpiderDen.initialize(this);
         EhDB.initialize(this);
+        EhEngine.initialize();
 
         if (EhDB.needMerge()) {
             EhDB.mergeOldDB(this);

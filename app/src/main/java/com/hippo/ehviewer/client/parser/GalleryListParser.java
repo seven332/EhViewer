@@ -20,11 +20,11 @@ import android.support.annotation.NonNull;
 
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.exception.NotFoundException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.yorozuya.NumberUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,6 +52,7 @@ public class GalleryListParser {
         public List<GalleryInfo> galleryInfos;
     }
 
+    @SuppressWarnings("unchecked")
     public static Result parse(@NonNull String body) throws Exception {
         Result result = new Result();
         Matcher m;
@@ -61,7 +62,8 @@ public class GalleryListParser {
         if (m.find()) {
             result.pages = ParserUtils.parseInt(m.group(1));
         } else if (body.contains("No hits found</p>")) {
-            throw new NotFoundException();
+            result.pages = 0;
+            result.galleryInfos = Collections.EMPTY_LIST;
         } else {
             // Can not get page number
             throw new ParseException("Can't parse gallery list", body);

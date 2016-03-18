@@ -61,6 +61,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.EhFilter;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
@@ -72,6 +73,7 @@ import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
+import com.hippo.ehviewer.dao.Filter;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
@@ -420,6 +422,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mDownload.setOnClickListener(this);
         mDownload.setOnLongClickListener(this);
         mRead.setOnClickListener(this);
+
+        mUploader.setOnLongClickListener(this);
 
         mBelowHeader = mainView.findViewById(R.id.below_header);
         View belowHeader = mBelowHeader;
@@ -794,6 +798,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 tag.setBackgroundDrawable(new RoundSideRectDrawable(colorTag));
                 tag.setTag(R.id.tag, tg.groupName + ":" + tagStr);
                 tag.setOnClickListener(this);
+                tag.setOnLongClickListener(this);
             }
         }
     }
@@ -1096,14 +1101,67 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    private void showBlockUploaderDialog() {
+        final String uploader = getUploader();
+        if (null == uploader) {
+            return;
+        }
+
+        new AlertDialog.Builder(getContext())
+                .setMessage(getString(R.string.block_the_uploader, uploader))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (DialogInterface.BUTTON_POSITIVE != which) {
+                            return;
+                        }
+
+                        Filter filter = new Filter();
+                        filter.mode = EhFilter.MODE_UPLOADER;
+                        filter.text = uploader;
+                        EhFilter.getInstance().addFilter(filter);
+
+                        showTip(getString(R.string.uploader_blocked, uploader), LENGTH_SHORT);
+                    }
+                }).show();
+    }
+
+    private void showBlockTagDialog(final String tag) {
+        new AlertDialog.Builder(getContext())
+                .setMessage(getString(R.string.block_the_tag, tag))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (DialogInterface.BUTTON_POSITIVE != which) {
+                            return;
+                        }
+
+                        Filter filter = new Filter();
+                        filter.mode = EhFilter.MODE_TAG;
+                        filter.text = tag;
+                        EhFilter.getInstance().addFilter(filter);
+
+                        showTip(getString(R.string.tag_blocked, tag), LENGTH_SHORT);
+                    }
+                }).show();
+    }
+
     @Override
     public boolean onLongClick(View v) {
-        if (mDownload == v) {
+        if (mUploader == v) {
+            showBlockUploaderDialog();
+        } else if (mDownload == v) {
             GalleryInfo galleryInfo = getGalleryInfo();
             if (galleryInfo != null) {
                 CommonOperations.startDownload((MainActivity) getActivity(), galleryInfo, true);
             }
             return true;
+        } else {
+            String tag = (String) v.getTag(R.id.tag);
+            if (null != tag) {
+                showBlockTagDialog(tag);
+                return true;
+            }
         }
         return false;
     }

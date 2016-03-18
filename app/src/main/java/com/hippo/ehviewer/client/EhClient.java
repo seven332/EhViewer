@@ -150,7 +150,7 @@ public class EhClient {
                     case METHOD_SIGN_IN:
                         return EhEngine.signIn(this, mOkHttpClient, (String) params[0], (String) params[1]);
                     case METHOD_GET_GALLERY_LIST:
-                        return EhEngine.getGalleryList(this, mOkHttpClient, (String) params[0], (Boolean) params[1]);
+                        return EhEngine.getGalleryList(this, mOkHttpClient, (String) params[0]);
                     case METHOD_FILL_GALLERY_LIST_BY_API:
                         return EhEngine.fillGalleryListByApi(this, mOkHttpClient, (List<GalleryInfo>) params[0]);
                     case METHOD_GET_GALLERY_DETAIL:

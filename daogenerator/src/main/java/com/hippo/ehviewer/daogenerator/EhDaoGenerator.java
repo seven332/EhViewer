@@ -32,13 +32,14 @@ public class EhDaoGenerator {
     private static final String OUT_DIR = "../app/src/main/java-gen";
     private static final String DELETE_DIR = "../app/src/main/java-gen/com/hippo/ehviewer/dao";
 
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     private static final String DOWNLOAD_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/DownloadInfo.java";
     private static final String HISTORY_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/HistoryInfo.java";
     private static final String QUICK_SEARCH_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/QuickSearch.java";
     private static final String LOCAL_FAVORITE_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/LocalFavoriteInfo.java";
     private static final String BOOKMARK_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/BookmarkInfo.java";
+    private static final String FILTER_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/Filter.java";
 
     public static void generate() throws Exception {
         Utilities.deleteContents(new File(DELETE_DIR));
@@ -54,6 +55,7 @@ public class EhDaoGenerator {
         addQuickSearch(schema);
         addLocalFavorites(schema);
         addBookmarks(schema);
+        addFilter(schema);
         new DaoGenerator().generateAll(schema, OUT_DIR);
 
         adjustDownloadInfo();
@@ -61,6 +63,7 @@ public class EhDaoGenerator {
         adjustQuickSearch();
         adjustLocalFavoriteInfo();
         adjustBookmarkInfo();
+        adjustFilter();
     }
 
     private static void addDownloads(Schema schema) {
@@ -177,6 +180,16 @@ public class EhDaoGenerator {
         // Bookmark data
         entity.addIntProperty("page").notNull();
         entity.addLongProperty("time").notNull();
+    }
+
+    // Since 2
+    private static void addFilter(Schema schema) {
+        Entity entity = schema.addEntity("Filter");
+        entity.setTableName("FILTER");
+        entity.setClassNameDao("FilterDao");
+        entity.addIdProperty();
+        entity.addIntProperty("mode").notNull();
+        entity.addStringProperty("text");
     }
 
     private static void adjustDownloadInfo() throws Exception {
@@ -473,6 +486,18 @@ public class EhDaoGenerator {
         javaClass.addImport("com.hippo.ehviewer.client.data.GalleryInfo");
 
         FileWriter fileWriter = new FileWriter(BOOKMARK_INFO_PATH);
+        fileWriter.write(javaClass.toString());
+        fileWriter.close();
+    }
+
+    // Since 2
+    private static void adjustFilter() throws Exception {
+        JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, new File(FILTER_PATH));
+        // Set field public
+        javaClass.getField("mode").setPublic();
+        javaClass.getField("text").setPublic();
+
+        FileWriter fileWriter = new FileWriter(FILTER_PATH);
         fileWriter.write(javaClass.toString());
         fileWriter.close();
     }

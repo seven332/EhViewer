@@ -984,7 +984,7 @@ public final class GalleryListScene extends BaseScene
                 request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
                 request.setCallback(new GetGalleryListListener(getContext(),
                         ((StageActivity) getActivity()).getStageId(), getTag(), taskId));
-                request.setArgs(url, Settings.getShowJpnTitle());
+                request.setArgs(url);
                 mClient.execute(request);
             }
         }

@@ -81,6 +81,12 @@ public class EhEngine {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
+    public static EhFilter sEhFilter;
+
+    public static void initialize() {
+        sEhFilter = EhFilter.getInstance();
+    }
+
     private static void saveParseErrorBody(ParseException e) {
         File dir = AppConfig.getExternalParseErrorDir();
         if (null == dir) {
@@ -171,7 +177,7 @@ public class EhEngine {
     }
 
     public static GalleryListParser.Result getGalleryList(EhClient.Task task, OkHttpClient okHttpClient,
-            String url, boolean callApi) throws Exception {
+            String url) throws Exception {
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
@@ -194,8 +200,30 @@ public class EhEngine {
             throw e;
         }
 
-        if (callApi && result.galleryInfos.size() > 0) {
-            fillGalleryListByApi(task, okHttpClient, result.galleryInfos);
+        // Filter title and uploader
+        List<GalleryInfo> list = result.galleryInfos;
+        for (int i = 0, n = list.size(); i < n; i++) {
+            GalleryInfo info = list.get(i);
+            if (!sEhFilter.filterTitle(info) || !sEhFilter.filterUploader(info)) {
+                list.remove(i);
+                i--;
+                n--;
+            }
+        }
+
+        if (list.size() > 0 && (Settings.getShowJpnTitle() || sEhFilter.needCallApi())) {
+            // Fill by api
+            fillGalleryListByApi(task, okHttpClient, list);
+
+            // Filter tag
+            for (int i = 0, n = list.size(); i < n; i++) {
+                GalleryInfo info = list.get(i);
+                if (!sEhFilter.filterTag(info)) {
+                    list.remove(i);
+                    i--;
+                    n--;
+                }
+            }
         }
 
         return result;
@@ -576,19 +604,45 @@ public class EhEngine {
 
         String body = null;
         Headers headers = null;
+        List<GalleryInfo> list;
         int code = -1;
         try {
             Response response = call.execute();
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            List<GalleryInfo> list = WhatsHotParser.parse(body);
-            fillGalleryListByApi(task, okHttpClient, list);
-            return list;
+            list = WhatsHotParser.parse(body);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;
         }
+
+        // Filter title
+        for (int i = 0, n = list.size(); i < n; i++) {
+            GalleryInfo info = list.get(i);
+            if (!sEhFilter.filterTitle(info)) {
+                list.remove(i);
+                i--;
+                n--;
+            }
+        }
+
+        if (list.size() > 0) {
+            // Fill by api
+            fillGalleryListByApi(task, okHttpClient, list);
+
+            // Filter uploader and tag
+            for (int i = 0, n = list.size(); i < n; i++) {
+                GalleryInfo info = list.get(i);
+                if (!sEhFilter.filterUploader(info) || !sEhFilter.filterTag(info)) {
+                    list.remove(i);
+                    i--;
+                    n--;
+                }
+            }
+        }
+
+        return list;
     }
 
     private static ProfileParser.Result getProfileInternal(EhClient.Task task,

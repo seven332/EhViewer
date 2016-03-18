@@ -170,6 +170,10 @@
     <string name="remove_from_favorite_success">移除收藏</string>
     <string name="add_to_favorite_failure">添加收藏失败</string>
     <string name="remove_from_favorite_failure">移除收藏失败</string>
+    <string name="block_the_uploader">屏蔽上传者：%s？</string>
+    <string name="block_the_tag">屏蔽标签：%s？</string>
+    <string name="uploader_blocked">已屏蔽上传者 \"%s\"</string>
+    <string name="tag_blocked">已屏蔽标签 \"%s\"</string>
 
     <!-- Rating -->
     <string name="rating10">根本把持不住</string>
@@ -267,9 +271,23 @@
     <string name="rename_label_title">重命名标签</string>
     <string name="delete_label_title">删除标签</string>
     <string name="delete_label_message">删除“%s”？</string>
+    <string name="tip">提示</string>
+    <string name="add_filter">添加过滤项</string>
+    <string name="filter_text">过滤项文本</string>
 
     <!-- History -->
     <string name="no_history">这里是阅读历史</string>
+
+    <!-- Filter -->
+    <string name="filter">过滤</string>
+    <string name="no_filter">这里是过滤列表</string>
+    <string name="filter_title">标题</string>
+    <string name="filter_uploader">上传者</string>
+    <string name="filter_tag">标签</string>
+    <string name="delete_title_filter">删除标题过滤项：%s？</string>
+    <string name="delete_uploader_filter">删除上传者过滤项：%s？</string>
+    <string name="delete_tag_filter">删除标签过滤项：%s？</string>
+    <string name="delete_filter">删除过滤项：%s？</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
@@ -301,6 +319,8 @@
     <string name="settings_eh_show_jpn_title">显示日文标题</string>
     <string name="settings_eh_show_jpn_title_summary_on">尝试显示日文标题。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
+    <string name="settings_eh_filter">过滤</string>
+    <string name="settings_eh_filter_summary">过滤标题，上传者和标签</string>
 
     <string name="settings_read">阅读</string>
     <string name="settings_read_reading_direction_title">阅读方向</string>
