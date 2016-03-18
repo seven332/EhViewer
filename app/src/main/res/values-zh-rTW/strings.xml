@@ -363,12 +363,14 @@
     <string name="settings_download_restore_successfully">成功恢復 %s 項</string>
 
     <string name="settings_advanced">高階</string>
-    <string name="settings_about_save_parse_error_body">解析失敗時儲存頁面內容</string>
-    <string name="settings_about_save_parse_error_body_summary">頁面內容可能含有隱私敏感資訊</string>
-    <string name="settings_about_dump_logcat">匯出日誌</string>
-    <string name="settings_about_dump_logcat_summary">儲存日誌至外接儲存器</string>
-    <string name="settings_about_dump_logcat_failed">匯出日誌失敗</string>
-    <string name="settings_about_dump_logcat_to">已儲存日誌至 %s</string>
+    <string name="settings_advanced_save_parse_error_body">解析失敗時儲存頁面內容</string>
+    <string name="settings_advanced_save_parse_error_body_summary">頁面內容可能含有隱私敏感資訊</string>
+    <string name="settings_advanced_dump_logcat">匯出日誌</string>
+    <string name="settings_advanced_dump_logcat_summary">儲存日誌至外接儲存器</string>
+    <string name="settings_advanced_dump_logcat_failed">匯出日誌失敗</string>
+    <string name="settings_advanced_dump_logcat_to">已儲存日誌至 %s</string>
+    <string name="settings_advanced_clear_download_path_cache">清除畫廊下載路徑快取</string>
+    <string name="settings_advanced_clear_download_path_cache_summary">畫廊下載路徑可能出錯了，導致重新下載。清除畫廊下載路徑快取可能解決這個問題。</string>
 
     <string name="settings_about">關於</string>
     <string name="settings_about_author">作者</string>

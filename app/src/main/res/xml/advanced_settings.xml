@@ -20,13 +20,18 @@
 
     <com.hippo.preference.SwitchPreference
         android:key="save_parse_error_body"
-        android:title="@string/settings_about_save_parse_error_body"
-        android:summary="@string/settings_about_save_parse_error_body_summary"
+        android:title="@string/settings_advanced_save_parse_error_body"
+        android:summary="@string/settings_advanced_save_parse_error_body_summary"
         android:defaultValue="@bool/beta"/>
 
     <Preference
         android:key="dump_logcat"
-        android:title="@string/settings_about_dump_logcat"
-        android:summary="@string/settings_about_dump_logcat_summary"/>
+        android:title="@string/settings_advanced_dump_logcat"
+        android:summary="@string/settings_advanced_dump_logcat_summary"/>
+
+    <com.hippo.ehviewer.preference.ClearDownloadPathCachePreference
+        android:key="clear_download_path_cache"
+        android:title="@string/settings_advanced_clear_download_path_cache"
+        android:summary="@string/settings_advanced_clear_download_path_cache_summary"/>
 
 </PreferenceScreen>

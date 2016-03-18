@@ -364,6 +364,11 @@ public class EhDB {
         dao.deleteByKey(gid);
     }
 
+    public static synchronized void clearDownloadDirname() {
+        DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
+        dao.deleteAll();
+    }
+
     @NonNull
     public static synchronized List<DownloadLabel> getAllDownloadLabelList() {
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();

@@ -58,8 +58,8 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
             }
             Resources resources = getResources();
             Toast.makeText(getActivity(),
-                    ok ? resources.getString(R.string.settings_about_dump_logcat_to, file.getPath()) :
-                            resources.getString(R.string.settings_about_dump_logcat_failed), Toast.LENGTH_SHORT).show();
+                    ok ? resources.getString(R.string.settings_advanced_dump_logcat_to, file.getPath()) :
+                            resources.getString(R.string.settings_advanced_dump_logcat_failed), Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;
