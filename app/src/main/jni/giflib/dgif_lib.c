@@ -97,6 +97,9 @@ DGifOpenFileHandle(int FileHandle, int *Error)
         free((char *)GifFile);
         return NULL;
     }
+
+    /*@i1@*/memset(Private, '\0', sizeof(GifFilePrivateType));
+
 #ifdef _WIN32
     _setmode(FileHandle, O_BINARY);    /* Make sure it is in binary mode. */
 #endif /* _WIN32 */
@@ -179,6 +182,7 @@ DGifOpen(void *userData, InputFunc readFunc, int *Error)
         free((char *)GifFile);
         return NULL;
     }
+    /*@i1@*/memset(Private, '\0', sizeof(GifFilePrivateType));
 
     GifFile->Private = (void *)Private;
     Private->FileHandle = 0;
@@ -764,7 +768,7 @@ DGifSetupDecompress(GifFileType *GifFile)
     BitsPerPixel = CodeSize;
 
     /* this can only happen on a severely malformed GIF */
-    if (BitsPerPixel > 8 || Private->RunningBits > 32) {
+    if (BitsPerPixel > 8) {
 	GifFile->Error = D_GIF_ERR_READ_FAILED;	/* somewhat bogus error code */
 	return GIF_ERROR;    /* Failed to read Code size. */
     }
@@ -1229,19 +1233,19 @@ DGifGlance(GifFileType *GifFile)
 
 	      if (sp->ImageDesc.Interlace) {
 		  int i, j;
-		   /* 
-		    * The way an interlaced image should be read - 
+		   /*
+		    * The way an interlaced image should be read -
 		    * offsets and jumps...
 		    */
 		  int InterlacedOffset[] = { 0, 4, 2, 1 };
 		  int InterlacedJumps[] = { 8, 8, 4, 2 };
 		  /* Need to perform 4 passes on the image */
 		  for (i = 0; i < 4; i++)
-		      for (j = InterlacedOffset[i]; 
+		      for (j = InterlacedOffset[i];
 			   j < sp->ImageDesc.Height;
 			   j += InterlacedJumps[i]) {
-			  if (DGifGetLine(GifFile, 
-					  sp->RasterBits+j*sp->ImageDesc.Width, 
+			  if (DGifGetLine(GifFile,
+					  sp->RasterBits+j*sp->ImageDesc.Width,
 					  sp->ImageDesc.Width) == GIF_ERROR)
 			      return GIF_ERROR;
 		      }
@@ -1266,7 +1270,7 @@ DGifGlance(GifFileType *GifFile)
 	      /* Create an extension block with our data */
               if (ExtData != NULL) {
 		  if (GifAddExtensionBlock(&GifFile->ExtensionBlockCount,
-					   &GifFile->ExtensionBlocks, 
+					   &GifFile->ExtensionBlocks,
 					   ExtFunction, ExtData[0], &ExtData[1])
 		      == GIF_ERROR)
 		      return (GIF_ERROR);
@@ -1278,7 +1282,7 @@ DGifGlance(GifFileType *GifFile)
 		  if (ExtData != NULL)
 		      if (GifAddExtensionBlock(&GifFile->ExtensionBlockCount,
 					       &GifFile->ExtensionBlocks,
-					       CONTINUE_EXT_FUNC_CODE, 
+					       CONTINUE_EXT_FUNC_CODE,
 					       ExtData[0], &ExtData[1]) == GIF_ERROR)
                       return (GIF_ERROR);
               }

@@ -19,7 +19,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := gif
 LOCAL_SRC_FILES := \
 dgif_lib.c \
-egif_lib.c \
 gif_hash.c \
 gifalloc.c \
 openbsd-reallocarray.c
