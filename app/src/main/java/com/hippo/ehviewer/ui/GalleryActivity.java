@@ -65,7 +65,7 @@ import com.hippo.yorozuya.ViewUtils;
 
 import java.io.File;
 
-public class GalleryActivity extends TrackedActivity
+public class GalleryActivity extends EhActivity
         implements GalleryProviderListener, Slider.OnSetProgressListener,
         GalleryView.Listener {
 

@@ -23,8 +23,8 @@ import com.hippo.yorozuya.IntIdGenerator;
 
 public class SceneApplication extends Application {
 
-    private IntIdGenerator mIdGenerator = new IntIdGenerator();
-    private SparseArray<StageActivity> mStageMap = new SparseArray<>();
+    private final IntIdGenerator mIdGenerator = new IntIdGenerator();
+    private final SparseArray<StageActivity> mStageMap = new SparseArray<>();
 
     void registerStageActivity(StageActivity stage) {
         int id = mIdGenerator.nextId();

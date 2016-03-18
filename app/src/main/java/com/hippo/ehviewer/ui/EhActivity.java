@@ -16,14 +16,31 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 
-public class TrackedActivity extends AppCompatActivity {
+public class EhActivity extends AppCompatActivity {
 
     private boolean mTrackStarted;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ((EhApplication) getApplication()).registerActivity(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        ((EhApplication) getApplication()).unregisterActivity(this);
+    }
 
     @Override
     public void onStart() {

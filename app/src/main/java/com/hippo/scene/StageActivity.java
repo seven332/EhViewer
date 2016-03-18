@@ -27,7 +27,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.ui.TrackedActivity;
+import com.hippo.ehviewer.ui.EhActivity;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.IntIdGenerator;
 
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class StageActivity extends TrackedActivity {
+public abstract class StageActivity extends EhActivity {
 
     private static final String TAG = StageActivity.class.getSimpleName();
 
@@ -574,5 +574,19 @@ public abstract class StageActivity extends TrackedActivity {
         } else {
             return null;
         }
+    }
+
+    @Nullable
+    public String getTopSceneClazzName() {
+        int index = mSceneTagList.size() - 1;
+        if (index < 0) {
+            return null;
+        }
+        String tag = mSceneTagList.get(index);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if (null == fragment) {
+            return null;
+        }
+        return fragment.getClass().getName();
     }
 }

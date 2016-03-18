@@ -16,11 +16,14 @@
 
 package com.hippo.ehviewer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 
+import com.hippo.scene.StageActivity;
 import com.hippo.util.PackageUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.IOUtils;
@@ -34,6 +37,12 @@ import java.io.PrintWriter;
 
 public class Crash {
 
+    @NonNull
+    private static String avoidNull(String str) {
+        return null != str ? str : "null";
+    }
+
+    @SuppressWarnings("deprecation")
     private static void collectInfo(Context context, FileWriter fw) throws IOException {
         try {
             PackageManager pm = context.getPackageManager();
@@ -54,6 +63,25 @@ public class Crash {
             fw.write("Can't get package information\r\n");
             fw.write("\r\n");
         }
+
+        // Runtime
+        String topActivityClazzName = null;
+        String topSceneClazzName = null;
+        try {
+            Activity topActivity = ((EhApplication) context.getApplicationContext()).getTopActivity();
+            if (null != topActivity) {
+                topActivityClazzName = topActivity.getClass().getName();
+                if (topActivity instanceof StageActivity) {
+                    topSceneClazzName = ((StageActivity) topActivity).getTopSceneClazzName();
+                }
+            }
+        } catch (Throwable e) {
+            // Ignore
+        }
+        fw.write("======== Runtime ========\r\n");
+        fw.write("TopActivity=");fw.write(avoidNull(topActivityClazzName));fw.write("\r\n");
+        fw.write("TopScene=");fw.write(avoidNull(topSceneClazzName));fw.write("\r\n");
+        fw.write("\r\n");
 
         // Device info
         fw.write("======== DeviceInfo ========\r\n");

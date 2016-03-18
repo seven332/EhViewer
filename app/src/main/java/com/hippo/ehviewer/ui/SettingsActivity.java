@@ -43,7 +43,7 @@ import com.hippo.util.DrawableManager;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public final class SettingsActivity extends TrackedPreferenceActivity {
+public final class SettingsActivity extends EhPreferenceActivity {
 
     private static final int REQUEST_CODE_FRAGMENT = 0;
 

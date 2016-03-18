@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Debug;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.util.SparseArray;
@@ -46,6 +48,8 @@ import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -74,6 +78,8 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     private LruCache<Long, Integer> mPreviewPagesCache;
     private SimpleDiskCache mSpiderInfoCache;
     private DownloadManager mDownloadManager;
+
+    private final List<Activity> mActivityList = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -320,5 +326,22 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     @NonNull
     public static String getDeveloperEmail() {
         return "ehviewersu$gmail.com".replace('$', '@');
+    }
+
+    public void registerActivity(Activity activity) {
+        mActivityList.add(activity);
+    }
+
+    public void unregisterActivity(Activity activity) {
+        mActivityList.remove(activity);
+    }
+
+    @Nullable
+    public Activity getTopActivity() {
+        if (!mActivityList.isEmpty()) {
+            return mActivityList.get(mActivityList.size() - 1);
+        } else {
+            return null;
+        }
     }
 }

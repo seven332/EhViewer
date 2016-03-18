@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 
 import com.hippo.ehviewer.R;
 
-public class ToolbarActivity extends TrackedActivity {
+public class ToolbarActivity extends EhActivity {
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
