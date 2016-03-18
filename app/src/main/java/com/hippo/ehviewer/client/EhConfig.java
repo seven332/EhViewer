@@ -398,12 +398,12 @@ public class EhConfig implements Cloneable {
     /**
      * show warning
      */
-    private static final String CONTENT_WARNING_SHOW = "0";
+    public static final String CONTENT_WARNING_SHOW = "0";
 
     /**
      * not show warning
      */
-    private static final String CONTENT_WARNING_NOT_SHOW = "1";
+    public static final String CONTENT_WARNING_NOT_SHOW = "1";
 
     /**
      * Load images through the Hentai@Home Network<br/>

@@ -30,12 +30,11 @@ public class EhCookieStore extends CookieDBStore {
 
     public static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
     public static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
-    public static final String KEY_TIPS = "tips";
 
     public static final Cookie sTipsCookie =
             new Cookie.Builder()
-                    .name(KEY_TIPS)
-                    .value("0")
+                    .name(EhConfig.KEY_CONTENT_WARNING)
+                    .value(EhConfig.CONTENT_WARNING_NOT_SHOW)
                     .domain(EhUrl.DOMAIN_G)
                     .path("/")
                     .expiresAt(Long.MAX_VALUE)
@@ -88,7 +87,7 @@ public class EhCookieStore extends CookieDBStore {
             // Add all but skip some
             for (Cookie cookie: cookies) {
                 String name = cookie.name();
-                if (checkTips && KEY_TIPS.equals(name)) {
+                if (checkTips && EhConfig.KEY_CONTENT_WARNING.equals(name)) {
                     continue;
                 }
                 if (checkUconfig && EhConfig.KEY_UCONFIG.equals(name)) {
