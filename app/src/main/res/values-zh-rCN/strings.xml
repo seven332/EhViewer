@@ -288,6 +288,7 @@
     <string name="delete_uploader_filter">删除上传者过滤项：%s？</string>
     <string name="delete_tag_filter">删除标签过滤项：%s？</string>
     <string name="delete_filter">删除过滤项：%s？</string>
+    <string name="filter_tip">标题过滤项：排除标题含有该关键字的画廊。\n\n上传者过滤项：排除该上传者上传的画廊。\n\n标签过滤项：排除包含该关键字的画廊，这会使获取画廊列表花费更多时间。</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>

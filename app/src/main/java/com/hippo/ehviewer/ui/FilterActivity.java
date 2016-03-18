@@ -128,7 +128,10 @@ public class FilterActivity extends ToolbarActivity {
     }
 
     private void showTipDialog() {
-
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.filter)
+                .setMessage(R.string.filter_tip)
+                .show();
     }
 
     private void showAddFilterDialog() {

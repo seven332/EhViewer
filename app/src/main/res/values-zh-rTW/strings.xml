@@ -288,6 +288,7 @@
     <string name="delete_uploader_filter">刪除上傳者過濾項：%s？</string>
     <string name="delete_tag_filter">刪除標籤過濾項：%s？</string>
     <string name="delete_filter">刪除過濾項：%s？</string>
+    <string name="filter_tip">標題過濾項：排除標題含有該關鍵字的畫廊。\n\n上傳者過濾項：排除該上傳者上傳的畫廊。\n\n標籤過濾項：排除包含該關鍵字的畫廊，這會使獲取畫廊列表花費更多時間。</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
@@ -371,6 +372,7 @@
     <string name="settings_advanced_dump_logcat_to">已儲存日誌至 %s</string>
     <string name="settings_advanced_clear_download_path_cache">清除畫廊下載路徑快取</string>
     <string name="settings_advanced_clear_download_path_cache_summary">畫廊下載路徑可能出錯了，導致重新下載。清除畫廊下載路徑快取可能解決這個問題。</string>
+    <string name="settings_advanced_clear_download_path_cache_message">清除畫廊下載路徑快取？</string>
 
     <string name="settings_about">關於</string>
     <string name="settings_about_author">作者</string>
