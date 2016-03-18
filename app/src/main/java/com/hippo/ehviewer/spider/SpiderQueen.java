@@ -830,7 +830,11 @@ public class SpiderQueen implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             Integer index;
             synchronized (mPTokenLock) {
-                index = mRequestPTokenQueue.poll();
+                if (mRequestPTokenQueue.isEmpty()) {
+                    index = null;
+                } else {
+                    index = mRequestPTokenQueue.poll();
+                }
             }
 
             if (index == null) {
