@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -139,7 +140,7 @@ public class SpiderQueen implements Runnable {
 
     private final Object mPTokenLock = new Object();
     private volatile SpiderInfo mSpiderInfo;
-    private final Queue<Integer> mRequestPTokenQueue = new LinkedList<>();
+    private final Queue<Integer> mRequestPTokenQueue = new ConcurrentLinkedQueue<>();
 
     private final Object mPageStateLock = new Object();
     private volatile int[] mPageStateArray;
@@ -828,14 +829,7 @@ public class SpiderQueen implements Runnable {
 
         // handle pToken request
         while (!Thread.currentThread().isInterrupted()) {
-            Integer index;
-            synchronized (mPTokenLock) {
-                if (mRequestPTokenQueue.isEmpty()) {
-                    index = null;
-                } else {
-                    index = mRequestPTokenQueue.poll();
-                }
-            }
+            Integer index = mRequestPTokenQueue.poll();
 
             if (index == null) {
                 // No request index, wait here
