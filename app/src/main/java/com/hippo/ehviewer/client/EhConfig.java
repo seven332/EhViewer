@@ -618,7 +618,7 @@ public class EhConfig implements Cloneable {
         }
     }
 
-    public void setDirty() {
+    public synchronized void setDirty() {
         mDirty = true;
     }
 
@@ -650,7 +650,7 @@ public class EhConfig implements Cloneable {
                 KEY_MULTI_PAGE_THUMB + "_" + multiPageThumb;
     }
 
-    public String uconfig() {
+    public synchronized String uconfig() {
         if (mDirty) {
             mDirty = false;
             updateUconfig();
