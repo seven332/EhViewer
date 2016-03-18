@@ -34,6 +34,8 @@ import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.dao.DownloadLabelDao;
 import com.hippo.ehviewer.dao.DownloadsDao;
+import com.hippo.ehviewer.dao.Filter;
+import com.hippo.ehviewer.dao.FilterDao;
 import com.hippo.ehviewer.dao.HistoryDao;
 import com.hippo.ehviewer.dao.HistoryInfo;
 import com.hippo.ehviewer.dao.LocalFavoriteInfo;
@@ -72,6 +74,10 @@ public class EhDB {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            switch (oldVersion) {
+                case 1: // 1 to 2
+                    FilterDao.createTable(db, true);
+            }
         }
     }
 
@@ -277,7 +283,7 @@ public class EhDB {
                             continue;
                         }
 
-                        HistoryInfo info = new HistoryInfo();
+                        HistoryInfo info = new HistoryInfo(gi);
                         info.setMode(cursor.getInt(1));
                         info.setTime(cursor.getLong(2));
                         dao.insert(info);
@@ -527,5 +533,18 @@ public class EhDB {
                     .limit(-1).offset(MAX_HISTORY_COUNT).list();
             dao.deleteInTx(list);
         }
+    }
+
+    public static synchronized List<Filter> getAllFilter() {
+        return sDaoSession.getFilterDao().queryBuilder().list();
+    }
+
+    public static synchronized void addFilter(Filter filter) {
+        long id = sDaoSession.getFilterDao().insert(filter);
+        filter.setId(id);
+    }
+
+    public static synchronized void deleteFilter(Filter filter) {
+        sDaoSession.getFilterDao().delete(filter);
     }
 }
