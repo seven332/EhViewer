@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui;
 
 import android.animation.Animator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -30,6 +31,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
@@ -622,8 +624,8 @@ public class GalleryActivity extends EhActivity
         private final SwitchCompat mVolumePage;
 
         @SuppressLint("InflateParams")
-        public GalleryMenuHelper() {
-            mView = getLayoutInflater().inflate(R.layout.dialog_gallery_menu, null);
+        public GalleryMenuHelper(Context context) {
+            mView = LayoutInflater.from(context).inflate(R.layout.dialog_gallery_menu, null);
             mReadingDirection = (Spinner) mView.findViewById(R.id.reading_direction);
             mScaleMode = (Spinner) mView.findViewById(R.id.page_scaling);
             mStartPosition = (Spinner) mView.findViewById(R.id.start_position);
@@ -781,9 +783,9 @@ public class GalleryActivity extends EhActivity
         }
 
         private void onTapMenuArea() {
-            GalleryMenuHelper helper = new GalleryMenuHelper();
-            new AlertDialog.Builder(GalleryActivity.this)
-                    .setTitle(R.string.gallery_menu_title)
+            AlertDialog.Builder builder = new AlertDialog.Builder(GalleryActivity.this);
+            GalleryMenuHelper helper = new GalleryMenuHelper(builder.getContext());
+            builder.setTitle(R.string.gallery_menu_title)
                     .setView(helper.getView())
                     .setPositiveButton(android.R.string.ok, helper).show();
         }
