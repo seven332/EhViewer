@@ -22,14 +22,13 @@
     android:layout_height="wrap_content"
     android:foreground="@drawable/tile_background">
 
-    <com.hippo.widget.LoadImageView
+    <com.hippo.ehviewer.widget.TileThumb
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/thumb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:background="@color/grey_300"
-        app:aspect="0.67"
         app:retryType="none"/>
 
     <TextView

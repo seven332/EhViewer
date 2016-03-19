@@ -90,6 +90,9 @@ public class GalleryInfo implements Parcelable {
     @Nullable
     public String[] simpleTags;
 
+    public int thumbWidth;
+    public int thumbHeight;
+
     /**
      * language from title
      */

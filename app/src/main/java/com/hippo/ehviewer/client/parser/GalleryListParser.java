@@ -79,8 +79,8 @@ public class GalleryListParser {
 
                 gi.category = EhUtils.getCategory(ParserUtils.trim(m.group(1)));
                 gi.posted = ParserUtils.trim(m.group(2));
-                //gi.thumbHeight = ParserUtils.parseInt(m.group(3));
-                //gi.thumbWidth = ParserUtils.parseInt(m.group(4));
+                gi.thumbHeight = ParserUtils.parseInt(m.group(3));
+                gi.thumbWidth = ParserUtils.parseInt(m.group(4));
 
                 if (m.group(5) == null) {
                     gi.thumb = ParserUtils.trim("http://" + m.group(7).replace('~', '/'));

@@ -23,6 +23,7 @@ import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +60,8 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
     private final RecyclerView mRecyclerView;
     private final GridAutoSpanLayoutManager mLayoutManager;
     private RecyclerView.ItemDecoration mGirdDecoration;
+    private final GridLayoutManager.SpanSizeLookup mDefaultSpanSizeLookup;
+    private GridLayoutManager.SpanSizeLookup mThumbSpanSizeLookup;
     private int mType = TYPE_INVALID;
 
     public GalleryAdapter(@NonNull LayoutInflater inflater, @NonNull Resources resources,
@@ -67,6 +70,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
         mResources = resources;
         mRecyclerView = recyclerView;
         mLayoutManager = layoutManager;
+        mDefaultSpanSizeLookup = mLayoutManager.getSpanSizeLookup();
 
         int paddingH = mResources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
         int paddingV = mResources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
@@ -90,6 +94,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
                 int columnWidth = mResources.getDimensionPixelOffset(R.dimen.gallery_list_column_width);
                 mLayoutManager.setColumnSize(columnWidth);
                 mLayoutManager.setStrategy(GridAutoSpanLayoutManager.STRATEGY_MIN_SIZE);
+                mLayoutManager.setSpanSizeLookup(mDefaultSpanSizeLookup);
                 if (null != mGirdDecoration) {
                     mRecyclerView.removeItemDecoration(mGirdDecoration);
                 }
@@ -100,9 +105,13 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
                 int columnWidth = mResources.getDimensionPixelOffset(R.dimen.gallery_grid_column_width);
                 mLayoutManager.setColumnSize(columnWidth);
                 mLayoutManager.setStrategy(GridAutoSpanLayoutManager.STRATEGY_SUITABLE_SIZE);
+                if (null == mThumbSpanSizeLookup) {
+                    mThumbSpanSizeLookup = new ThumbSpanSizeLookup();
+                }
+                mLayoutManager.setSpanSizeLookup(mThumbSpanSizeLookup);
                 if (null == mGirdDecoration) {
                     mGirdDecoration = new MarginItemDecoration(
-                            mResources.getDimensionPixelOffset(R.dimen.list_content_interval));
+                            mResources.getDimensionPixelOffset(R.dimen.gallery_grid_margin) / 2);
                 }
                 mRecyclerView.addItemDecoration(mGirdDecoration);
                 notifyDataSetChanged();
@@ -194,5 +203,18 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
     public void onReceive(int id, Object obj) {
         setType(Settings.getListMode());
         notifyDataSetChanged();
+    }
+
+    private class ThumbSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+
+        @Override
+        public int getSpanSize(int position) {
+            GalleryInfo info = getDataAt(position);
+            if (info == null || info.thumbWidth <= info.thumbHeight) {
+                return 1;
+            } else {
+                return 2;
+            }
+        }
     }
 }

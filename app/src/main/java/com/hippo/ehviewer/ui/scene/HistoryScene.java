@@ -53,6 +53,7 @@ import com.hippo.yorozuya.ViewUtils;
 
 import de.greenrobot.dao.query.LazyList;
 
+// TODO No grid for history
 public class HistoryScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
         EasyRecyclerView.OnItemLongClickListener{

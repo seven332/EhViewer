@@ -50,8 +50,6 @@ import java.util.List;
 
 public class ContentLayout extends FrameLayout {
 
-    private static final String TAG = ContentLayout.class.getSimpleName();
-
     private ProgressView mProgressView;
     private TextView mTipView;
     private ViewGroup mContentView;
@@ -208,7 +206,7 @@ public class ContentLayout extends FrameLayout {
         /**
          * Generate task id
          */
-        private IntIdGenerator mIdGenerator = new IntIdGenerator();
+        private final IntIdGenerator mIdGenerator = new IntIdGenerator();
 
         /**
          * Store the page divider index
@@ -357,6 +355,10 @@ public class ContentLayout extends FrameLayout {
 
         public void setEmptyString(String str) {
             mEmptyString = str;
+        }
+
+        public List<E> getDat() {
+            return mData;
         }
 
         /**

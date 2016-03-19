@@ -49,6 +49,8 @@
 
     <dimen name="gallery_list_column_width">320dp</dimen>
     <dimen name="gallery_grid_column_width">100dp</dimen>
+    <dimen name="gallery_grid_margin">8dp</dimen>
+
     <dimen name="preview_grid_column_width">100dp</dimen>
 
     <!-- DrawerArrowDrawable -->
