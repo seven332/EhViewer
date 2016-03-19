@@ -42,6 +42,7 @@ import com.hippo.ehviewer.dao.LocalFavoriteInfo;
 import com.hippo.ehviewer.dao.LocalFavoritesDao;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.dao.QuickSearchDao;
+import com.hippo.util.SqlUtils;
 import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.util.ArrayList;
@@ -428,9 +429,10 @@ public class EhDB {
     }
 
     public static synchronized List<GalleryInfo> searchLocalFavorites(String query) {
+        query = SqlUtils.sqlEscapeString("%" + query+ "%");
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
         List<LocalFavoriteInfo> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Time)
-                .where(LocalFavoritesDao.Properties.Title.like("%" + query+ "%")).list();
+                .where(LocalFavoritesDao.Properties.Title.like(query)).list();
         List<GalleryInfo> result = new ArrayList<>();
         result.addAll(list);
         return result;

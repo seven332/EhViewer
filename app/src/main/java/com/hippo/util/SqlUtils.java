@@ -54,4 +54,19 @@ public class SqlUtils {
             dropTable(db, tableName);
         }
     }
+
+    public static String sqlEscapeString(String value) {
+        StringBuilder sb = new StringBuilder();
+
+        int length = value.length();
+        for (int i = 0; i < length; i++) {
+            char c = value.charAt(i);
+            if (c == '\'') {
+                sb.append('\'');
+            }
+            sb.append(c);
+        }
+
+        return sb.toString();
+    }
 }

@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
+import com.hippo.util.SqlUtils;
 import com.hippo.yorozuya.Say;
 
 import java.util.LinkedList;
@@ -64,7 +65,7 @@ public class SearchDatabase {
         sb.append("SELECT * FROM ").append(TABLE_SUGGESTIONS);
         if (!TextUtils.isEmpty(prefix)) {
             sb.append(" WHERE ").append(COLUMN_QUERY).append(" LIKE '")
-                    .append(prefix).append("%'");
+                    .append(SqlUtils.sqlEscapeString(prefix)).append("%'");
         }
         sb.append(" ORDER BY ").append(COLUMN_DATE).append(" DESC")
                 .append(" LIMIT 5");
