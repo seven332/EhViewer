@@ -80,6 +80,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     @Nullable
     private TextView mSkipSigningIn;
 
+    private boolean mSigningIn;
     private int mRequestId;
 
     @Override
@@ -150,6 +151,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         AssertUtils.assertNotNull(container);
         EhApplication application = (EhApplication) context.getApplicationContext();
         if (application.containGlobalStuff(mRequestId)) {
+            mSigningIn = true;
             // request exist
             showProgress(false);
         }
@@ -248,6 +250,10 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     private void signIn() {
+        if (mSigningIn) {
+            return;
+        }
+
         Context context = getContext2();
         MainActivity activity = getActivity2();
         if (null == context || null == activity || null == mUsername || null == mPassword || null == mUsernameLayout ||
@@ -286,6 +292,8 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
                 .setArgs(username, password)
                 .setCallback(callback);
         EhApplication.getEhClient(context).execute(request);
+
+        mSigningIn = true;
     }
 
     private void getProfile() {
@@ -339,6 +347,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         if (EhApplication.getEhCookieStore(context).hasSignedIn()) {
             getProfile();
         } else {
+            mSigningIn = false;
             hideProgress();
             whetherToSkip();
         }
@@ -350,6 +359,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
             return;
         }
 
+        mSigningIn = false;
         Toast.makeText(context, ExceptionUtils.getReadableString(context, e),
                 Toast.LENGTH_SHORT).show();
         hideProgress();
@@ -357,6 +367,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     public void onGetProfileSuccess() {
+        mSigningIn = false;
         updateAvatar();
         redirectTo();
     }
@@ -367,6 +378,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
             return;
         }
 
+        mSigningIn = false;
         Toast.makeText(context, ExceptionUtils.getReadableString(context, e),
                 Toast.LENGTH_SHORT).show();
         hideProgress();
