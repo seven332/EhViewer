@@ -19,6 +19,7 @@ package com.hippo.gl.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Parcelable;
@@ -86,7 +87,7 @@ public class GLRootView extends GLSurfaceView
     private int mCompensation;
     // mCompensationMatrix maps the coordinates of touch events. It is kept sync
     // with mCompensation.
-    private Matrix mCompensationMatrix = new Matrix();
+    private final Matrix mCompensationMatrix = new Matrix();
     private int mDisplayRotation;
 
     private int mFlags = FLAG_NEED_LAYOUT;
@@ -119,15 +120,9 @@ public class GLRootView extends GLSurfaceView
         setBackgroundDrawable(null);
         setEGLContextClientVersion(2);
 
-        // do not need depth buffer
         setEGLConfigChooser(new BestConfigChooser());
         setRenderer(this);
-        // setFormat is done by SurfaceView in SDK 2.3 and newer.
-        //if (ApiHelper.USE_888_PIXEL_FORMAT) {
-        //    getHolder().setFormat(PixelFormat.RGB_888);
-        //} else {
-        //    getHolder().setFormat(PixelFormat.RGB_565);
-        //}
+        getHolder().setFormat(PixelFormat.RGB_888);
 
         // Uncomment this to enable gl error check.
         // setDebugFlags(DEBUG_CHECK_GL_ERROR);
@@ -196,7 +191,7 @@ public class GLRootView extends GLSurfaceView
         }
     }
 
-    private Runnable mRequestRenderOnAnimationFrame = new Runnable() {
+    private final Runnable mRequestRenderOnAnimationFrame = new Runnable() {
         @Override
         public void run() {
             superRequestRender();
@@ -229,8 +224,8 @@ public class GLRootView extends GLSurfaceView
 
         int w = getWidth();
         int h = getHeight();
-        int displayRotation = 0;
-        int compensation = 0;
+        int displayRotation;
+        int compensation;
 
         // Get the new orientation values
         if (mOrientationSource != null) {
@@ -633,35 +628,6 @@ public class GLRootView extends GLSurfaceView
         }
     }
 
-    /*
-    @SuppressWarnings("deprecation")
-    @Override
-    protected boolean fitSystemWindows(@NonNull Rect insets) {
-        int fitPaddingLeft = insets.left;
-        int fitPaddingTop = insets.top;
-        int fitPaddingRight = insets.right;
-        int fitPaddingBottom = insets.bottom;
-
-        GLView contentView = mContentView;
-        if (contentView != null) {
-            for (int i = 0, n = contentView.getComponentCount(); i < n; i++) {
-                GLView component = contentView.getComponent(i);
-                if (component instanceof FitPaddingImpl) {
-                    ((FitPaddingImpl) component).onFitPadding(fitPaddingLeft ,fitPaddingTop,
-                            fitPaddingRight, fitPaddingBottom);
-                }
-            }
-        }
-
-        insets.left = 0;
-        insets.top = 0;
-        insets.right = 0;
-        insets.bottom = 0;
-
-        return super.fitSystemWindows(insets);
-    }
-    */
-
     private static abstract class BaseConfigChooser implements EGLConfigChooser {
 
         public BaseConfigChooser(int[] configSpec) {
@@ -719,7 +685,10 @@ public class GLRootView extends GLSurfaceView
         private final int[] mValue = new int[1];
 
         public BestConfigChooser() {
-            super(new int[] {EGL10.EGL_NONE});
+            super(new int[] {
+                    EGL10.EGL_DEPTH_SIZE, 0,
+                    EGL10.EGL_STENCIL_SIZE, 0,
+                    EGL10.EGL_NONE});
         }
 
         @Override
@@ -739,17 +708,13 @@ public class GLRootView extends GLSurfaceView
                         EGL10.EGL_BLUE_SIZE, 0);
                 int alphaSize = findConfigAttrib(egl, display, config,
                         EGL10.EGL_ALPHA_SIZE, 0);
-                int depthSize = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_DEPTH_SIZE, 0);
-                int stencilSize = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_STENCIL_SIZE, 0);
                 int sampleBuffers = findConfigAttrib(egl, display, config,
                         EGL10.EGL_SAMPLE_BUFFERS, 0);
                 int samples = findConfigAttrib(egl, display, config,
                         EGL10.EGL_SAMPLES, 0);
 
                 int score = redSize + greenSize + blueSize + alphaSize +
-                        depthSize + stencilSize + sampleBuffers + samples;
+                        sampleBuffers + samples;
 
                 if (score > maxScore) {
                     maxScore = score;
