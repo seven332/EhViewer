@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- TextAppearance -->
     <style name="TextAppearance" parent="TextAppearance.AppCompat">
@@ -109,18 +109,13 @@
     <style name="Slider">
         <item name="thickness">2dp</item>
         <item name="radius">6dp</item>
-        <item name="color">?attr/colorPrimary</item>
+        <item name="color">?attr/colorAccent</item>
         <item name="textColor">@android:color/white</item>
         <item name="textSize">12sp</item>
         <item name="dark">false</item>
     </style>
 
     <style name="Slider.Dark">
-        <item name="thickness">2dp</item>
-        <item name="radius">6dp</item>
-        <item name="color">?attr/colorPrimary</item>
-        <item name="textColor">@android:color/white</item>
-        <item name="textSize">12sp</item>
         <item name="dark">true</item>
     </style>
 
