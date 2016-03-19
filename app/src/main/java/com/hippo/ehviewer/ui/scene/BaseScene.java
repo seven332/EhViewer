@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -151,14 +153,52 @@ public abstract class BaseScene extends SceneFragment {
         return mViewCreated;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            onRestoreInstanceState(savedInstanceState);
+    @Nullable
+    public Context getContext2() {
+        return super.getContext();
+    }
+
+    @Nullable
+    public Resources getResources2() {
+        Context context = getContext2();
+        if (null != context) {
+            return context.getResources();
+        } else {
+            return null;
         }
     }
 
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    @Nullable
+    public MainActivity getActivity2() {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            return (MainActivity) activity;
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    public LayoutInflater getLayoutInflater2() {
+        FragmentActivity activity = getActivity();
+        if (null != activity) {
+            return activity.getLayoutInflater();
+        } else {
+            return null;
+        }
+    }
+
+    public void hideSoftInput() {
+        FragmentActivity activity = getActivity();
+        if (null != activity) {
+            ActivityHelper.hideSoftInput(activity);
+        }
+    }
+
+    public void showSoftInput(@Nullable View view) {
+        FragmentActivity activity = getActivity();
+        if (null != activity && null != view) {
+            ActivityHelper.showSoftInput(activity, view);
+        }
     }
 }

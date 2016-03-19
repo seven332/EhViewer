@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -58,7 +59,7 @@ public class AnalyticsScene extends BaseScene implements View.OnClickListener {
         TextView text = (TextView) ViewUtils.$$(view, R.id.text);
 
         text.setText(Html.fromHtml(getString(R.string.analytics_explain)));
-        text.setMovementMethod(new LinkMovementMethod2(getActivity()));
+        text.setMovementMethod(LinkMovementMethod2.getInstance());
 
         mCancel.setOnClickListener(this);
         mOk.setOnClickListener(this);
@@ -79,18 +80,25 @@ public class AnalyticsScene extends BaseScene implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        Context context = getContext2();
+        if (null == context) {
+            return;
+        }
+
         if (mCancel == v) {
             Settings.putEnableAnalytics(false);
         } else if (mOk == v) {
             Settings.putEnableAnalytics(true);
             // Start Analytics
-            Analytics.start(getContext());
+            Analytics.start(context);
         }
         Settings.putAskAnalytics(false);
 
         // Start new scene and finish it self
-        ((MainActivity) getActivity()).startSceneForCheckStep(
-                MainActivity.CHECK_STEP_ANALYTICS, getArguments());
+        MainActivity activity = getActivity2();
+        if (null != activity) {
+            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_ANALYTICS, getArguments());
+        }
         finish();
     }
 }

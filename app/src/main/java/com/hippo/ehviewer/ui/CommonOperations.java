@@ -217,6 +217,7 @@ public final class CommonOperations {
         client.execute(request);
     }
 
+    // TODO Add context if activity and context are different style
     public static void startDownload(final MainActivity activity, final GalleryInfo galleryInfo, boolean forceDefault) {
         final DownloadManager dm = EhApplication.getDownloadManager(activity);
 

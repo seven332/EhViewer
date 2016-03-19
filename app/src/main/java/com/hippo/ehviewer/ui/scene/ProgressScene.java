@@ -30,12 +30,14 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.scene.StageActivity;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.view.ViewTransition;
+import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.ViewUtils;
 
 /**
  * Only show a progress with jobs in background
@@ -61,7 +63,9 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
     private String mPToken;
     private int mPage;
 
+    @Nullable
     private TextView mTip;
+    @Nullable
     private ViewTransition mViewTransition;
 
     @Override
@@ -81,6 +85,12 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
     }
 
     private boolean doJobs() {
+        Context context = getContext2();
+        MainActivity activity = getActivity2();
+        if (null == context || null == activity) {
+            return false;
+        }
+
         if (ACTION_GALLERY_TOKEN.equals(mAction)) {
             if (mGid == -1 || mPToken == null || mPage == -1) {
                 return false;
@@ -89,9 +99,9 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
             EhRequest request = new EhRequest()
                     .setMethod(EhClient.METHOD_GET_GALLERY_TOKEN)
                     .setArgs(mGid, mPToken, mPage)
-                    .setCallback(new GetGalleryTokenListener(getContext(),
-                            ((StageActivity) getActivity()).getStageId(), getTag()));
-            EhApplication.getEhClient(getContext()).execute(request);
+                    .setCallback(new GetGalleryTokenListener(context,
+                            activity.getStageId(), getTag()));
+            EhApplication.getEhClient(context).execute(request);
             return true;
         }
         return false;
@@ -155,10 +165,13 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_progress, container, false);
-        View progress = view.findViewById(R.id.progress);
-        mTip = (TextView) view.findViewById(R.id.tip);
+        View progress = ViewUtils.$$(view, R.id.progress);
+        mTip = (TextView) ViewUtils.$$(view, R.id.tip);
 
-        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_weird_face);
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+
+        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_weird_face);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         mTip.setCompoundDrawables(null, drawable, null, null);
         mTip.setOnClickListener(this);
@@ -176,12 +189,22 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mTip = null;
+        mViewTransition = null;
+    }
+
+    @Override
     public void onClick(View v) {
         if (mTip == v) {
             if (doJobs()) {
                 mValid = true;
                 // Show progress
-                mViewTransition.showView(0, true);
+                if (null != mViewTransition) {
+                    mViewTransition.showView(0, true);
+                }
             }
         }
     }
@@ -198,10 +221,12 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
 
     private void onGetGalleryTokenFailure(Exception e) {
         mValid = false;
-        mError = ExceptionUtils.getReadableString(getContext(), e);
 
-        if (isViewCreated()) {
+        Context context = getContext2();
+
+        if (null != context && null != mViewTransition && null != mTip) {
             // Show tip
+            mError = ExceptionUtils.getReadableString(context, e);
             mViewTransition.showView(1);
             mTip.setText(mError);
         }

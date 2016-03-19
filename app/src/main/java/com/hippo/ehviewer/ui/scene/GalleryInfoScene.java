@@ -37,6 +37,7 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.rippleold.RippleSalon;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -79,7 +80,8 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
             return;
         }
 
-        Resources resources = getResources();
+        Resources resources = getResources2();
+        AssertUtils.assertNotNull(resources);
         mKeys.add(resources.getString(R.string.header_key));
         mValues.add(resources.getString(R.string.header_value));
         mKeys.add(resources.getString(R.string.key_gid));
@@ -151,14 +153,17 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_info, container, false);
 
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+
         EasyRecyclerView recyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
         InfoAdapter adapter = new InfoAdapter();
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL, getResources().getColor(R.color.divider),
-                LayoutUtils.dp2pix(getContext(), 1));
-        decoration.setPadding(getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
+                LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider),
+                LayoutUtils.dp2pix(context, 1));
+        decoration.setPadding(context.getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
         recyclerView.addItemDecoration(decoration);
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         recyclerView.setClipToPadding(false);
@@ -176,8 +181,9 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        if (position != 0 && mValues != null) {
-            ClipboardManager cmb = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        Context context = getContext2();
+        if (null != context && 0 != position && null != mValues) {
+            ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             cmb.setPrimaryClip(ClipData.newPlainText(null, mValues.get(position)));
             showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
             return true;
@@ -209,6 +215,13 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         private static final int TYPE_HEADER = 0;
         private static final int TYPE_DATA = 1;
 
+        private final LayoutInflater mInflater;
+
+        public InfoAdapter() {
+            mInflater = getLayoutInflater2();
+            AssertUtils.assertNotNull(mInflater);
+        }
+
         @Override
         public int getItemViewType(int position) {
             if (position == 0) {
@@ -220,7 +233,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
 
         @Override
         public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new InfoHolder(getActivity().getLayoutInflater().inflate(viewType == TYPE_HEADER ?
+            return new InfoHolder(mInflater.inflate(viewType == TYPE_HEADER ?
                     R.layout.item_gallery_info_header : R.layout.item_gallery_info_data, parent, false));
         }
 

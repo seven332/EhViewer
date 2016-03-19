@@ -36,7 +36,6 @@ import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.ActivityHelper;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -90,7 +89,7 @@ public class CookieSignInScene extends BaseScene implements EditText.OnEditorAct
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ActivityHelper.showSoftInput(getActivity(), mIpbMemberId);
+        showSoftInput(mIpbMemberId);
     }
 
     @Override
@@ -144,7 +143,8 @@ public class CookieSignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     public void enter() {
-        if (null == mIpbMemberIdLayout || null == mIpbPassHashLayout ||
+        Context context = getContext2();
+        if (null == context || null == mIpbMemberIdLayout || null == mIpbPassHashLayout ||
                 null == mIpbMemberId || null == mIpbPassHash) {
             return;
         }
@@ -165,10 +165,10 @@ public class CookieSignInScene extends BaseScene implements EditText.OnEditorAct
             mIpbPassHashLayout.setError(null);
         }
 
-        ActivityHelper.hideSoftInput(getActivity());
+        hideSoftInput();
 
         if (!checkIpbMemberId(ipbMemberId) || !(checkIpbPassHash(ipbPassHash))) {
-            new AlertDialog.Builder(getContext()).setTitle(R.string.waring)
+            new AlertDialog.Builder(context).setTitle(R.string.waring)
                     .setMessage(R.string.wrong_cookie_warning)
                     .setNegativeButton(R.string.i_dont_think_so, null)
                     .setPositiveButton(R.string.i_will_check_it, new DialogInterface.OnClickListener() {
@@ -192,12 +192,12 @@ public class CookieSignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     private void storeCookie(String id, String hash) {
-        Context context = getContext();
+        Context context = getContext2();
         if (null == context) {
             return;
         }
 
-        EhUtils.signOut(getContext());
+        EhUtils.signOut(context);
 
         EhCookieStore store = EhApplication.getEhCookieStore(context);
         store.add(newCookie(EhCookieStore.KEY_IPD_MEMBER_ID, id, EhUrl.DOMAIN_E));

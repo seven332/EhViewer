@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -61,6 +62,7 @@ import com.hippo.ehviewer.client.data.FavListUrlBuilder;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.NotFoundException;
 import com.hippo.ehviewer.client.parser.FavoritesParser;
+import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.DrawerLifeCircle;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
@@ -68,7 +70,6 @@ import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.scene.StageActivity;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.widget.ContentLayout;
@@ -76,6 +77,7 @@ import com.hippo.widget.FabLayout;
 import com.hippo.widget.SearchBarMover;
 import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
 import com.hippo.widget.refreshlayout.RefreshLayout;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
@@ -181,7 +183,9 @@ public class FavoritesScene extends BaseScene implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mClient = EhApplication.getEhClient(getContext());
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        mClient = EhApplication.getEhClient(context);
         mFavCatArray = Settings.getFavCat();
 
         if (savedInstanceState == null) {
@@ -248,14 +252,16 @@ public class FavoritesScene extends BaseScene implements
         mSearchBar = (SearchBar) ViewUtils.$$(view, R.id.search_bar);
         mFabLayout = (FabLayout) ViewUtils.$$(view, R.id.fab_layout);
 
-        Resources resources = getResources();
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        Resources resources = context.getResources();
         int paddingTopSB = resources.getDimensionPixelOffset(R.dimen.list_padding_top_search_bar);
 
         mHelper = new FavoritesHelper();
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
-        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(getContext(), 0);
+        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(context, 0);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
@@ -265,8 +271,8 @@ public class FavoritesScene extends BaseScene implements
         mRecyclerView.setOnItemLongClickListener(this);
         mRecyclerView.setChoiceMode(EasyRecyclerView.CHOICE_MODE_MULTIPLE_CUSTOM);
         mRecyclerView.setCustomCheckedListener(this);
-        mAdapter = new FavoritesAdapter(LayoutInflater.from(getContext()),
-                getContext(), mRecyclerView, layoutManager, Settings.getListMode());
+        mAdapter = new FavoritesAdapter(getLayoutInflater2(),
+                getResources2(), mRecyclerView, layoutManager, Settings.getListMode());
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.register();
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop() + paddingTopSB,
@@ -277,9 +283,9 @@ public class FavoritesScene extends BaseScene implements
 
         refreshLayout.setHeaderTranslationY(paddingTopSB);
 
-        mLeftDrawable = new DrawerArrowDrawable(getContext());
+        mLeftDrawable = new DrawerArrowDrawable(context);
         mSearchBar.setLeftDrawable(mLeftDrawable);
-        mSearchBar.setRightDrawable(DrawableManager.getDrawable(getContext(), R.drawable.v_magnify_x24));
+        mSearchBar.setRightDrawable(DrawableManager.getDrawable(context, R.drawable.v_magnify_x24));
         mSearchBar.setHelper(this);
         mSearchBar.setAllowEmptySearch(false);
         updateSearchBar();
@@ -308,15 +314,16 @@ public class FavoritesScene extends BaseScene implements
     }
 
     private void guideCollections() {
-        if (!Settings.getGuideCollections()) {
+        Activity activity = getActivity2();
+        if (null == activity || !Settings.getGuideCollections()) {
             return;
         }
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Display display = activity.getWindowManager().getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
 
-        new ShowcaseView.Builder(getActivity())
+        new ShowcaseView.Builder(activity)
                 .withMaterialShowcase()
                 .setStyle(R.style.Guide)
                 .setTarget(new PointTarget(point.x, point.y / 3))
@@ -337,7 +344,8 @@ public class FavoritesScene extends BaseScene implements
     // keyword of mUrlBuilder, fav cat of mUrlBuilder, mFavCatArray.
     // They changed, call it
     private void updateSearchBar() {
-        if (mUrlBuilder == null || mSearchBar == null || mFavCatArray == null) {
+        Context context = getContext2();
+        if (null == context || null == mUrlBuilder || null == mSearchBar || null == mFavCatArray) {
             return;
         }
 
@@ -364,7 +372,7 @@ public class FavoritesScene extends BaseScene implements
 
         // Update hint
         if (!ObjectUtils.equal(favCatName, mOldFavCat)) {
-            Drawable searchImage = DrawableManager.getDrawable(getContext(), R.drawable.v_magnify_x24);
+            Drawable searchImage = DrawableManager.getDrawable(context, R.drawable.v_magnify_x24);
             SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
             ssb.append(getString(R.string.favorites_search_bar_hint, favCatName));
             int textSize = (int) (mSearchBar.getEditTextTextSize() * 1.25);
@@ -409,7 +417,8 @@ public class FavoritesScene extends BaseScene implements
     }
 
     private void showFavoritesInfoDialog() {
-        if (mFavCatArray == null || mFavCountArray == null) {
+        Context context = getContext2();
+        if (null == context || null == mFavCatArray || null == mFavCountArray) {
             return;
         }
 
@@ -419,7 +428,7 @@ public class FavoritesScene extends BaseScene implements
             sb.append(mFavCatArray[i]).append(": ").append(mFavCountArray[i]).append("\n");
         }
 
-        new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(context)
                 .setTitle(R.string.favorites_info)
                 .setMessage(sb.toString())
                 .show();
@@ -431,6 +440,9 @@ public class FavoritesScene extends BaseScene implements
         View view = inflater.inflate(R.layout.drawer_list, container, false);
         Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
         ListView listView = (ListView) view.findViewById(R.id.list_view);
+
+        final Context context = getContext2();
+        AssertUtils.assertNotNull(context);
 
         toolbar.setTitle(R.string.collections);
         toolbar.inflateMenu(R.menu.drawer_favorites);
@@ -448,7 +460,7 @@ public class FavoritesScene extends BaseScene implements
                         items[1] = getString(R.string.local_favorites);
                         String[] favCat = Settings.getFavCat();
                         System.arraycopy(favCat, 0, items, 2, 10);
-                        new AlertDialog.Builder(getContext())
+                        new AlertDialog.Builder(context)
                                 .setTitle(R.string.default_favorites_collection)
                                 .setItems(items, new DialogInterface.OnClickListener() {
                                     @Override
@@ -468,7 +480,7 @@ public class FavoritesScene extends BaseScene implements
         if (mFavCatArray != null) {
             Collections.addAll(mDrawerList, mFavCatArray);
         }
-        mDrawerAdapter = new ArrayAdapter<>(getContext(), R.layout.item_simple_list, mDrawerList);
+        mDrawerAdapter = new ArrayAdapter<>(context, R.layout.item_simple_list, mDrawerList);
         listView.setAdapter(mDrawerAdapter);
         listView.setOnItemClickListener(this);
 
@@ -656,7 +668,8 @@ public class FavoritesScene extends BaseScene implements
     @Override
     @Implemented(FabLayout.OnClickFabListener.class)
     public void onClickSecondaryFab(FabLayout view, FloatingActionButton fab, int position) {
-        if (mRecyclerView == null || mHelper == null || !mRecyclerView.isInCustomChoice()) {
+        Context context = getContext2();
+        if (null == context || null == mRecyclerView || null == mHelper || !mRecyclerView.isInCustomChoice()) {
             return;
         }
 
@@ -671,7 +684,7 @@ public class FavoritesScene extends BaseScene implements
         switch (position) {
             case 0: { // Delete
                 DeleteDialogHelper helper = new DeleteDialogHelper();
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(context)
                         .setTitle(R.string.delete_favorites_dialog_title)
                         .setMessage(getString(R.string.delete_favorites_dialog_message, mModifyGiList.size()))
                         .setPositiveButton(android.R.string.ok, helper)
@@ -685,7 +698,7 @@ public class FavoritesScene extends BaseScene implements
                 String[] array = new String[11];
                 array[0] = getString(R.string.local_favorites);
                 System.arraycopy(Settings.getFavCat(), 0, array, 1, 10);
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(context)
                         .setTitle(R.string.move_favorites_dialog_title)
                         .setItems(array, helper)
                         .setOnCancelListener(helper)
@@ -930,9 +943,9 @@ public class FavoritesScene extends BaseScene implements
 
     private class FavoritesAdapter extends GalleryAdapter {
 
-        public FavoritesAdapter(LayoutInflater inflater, Context context,
+        public FavoritesAdapter(LayoutInflater inflater, Resources resources,
                 RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
-            super(inflater, context, recyclerView, layoutManager, type);
+            super(inflater, resources, recyclerView, layoutManager, type);
         }
 
         @Override
@@ -951,7 +964,8 @@ public class FavoritesScene extends BaseScene implements
 
         @Override
         protected void getPageData(final int taskId, int type, int page) {
-            if (mUrlBuilder == null || mClient == null) {
+            MainActivity activity = getActivity2();
+            if (null == activity || null == mUrlBuilder || null == mClient ) {
                 return;
             }
 
@@ -973,7 +987,7 @@ public class FavoritesScene extends BaseScene implements
                     EhRequest request = new EhRequest();
                     request.setMethod(EhClient.METHOD_ADD_FAVORITES_RANGE);
                     request.setCallback(new AddFavoritesListener(getContext(),
-                            ((StageActivity) getActivity()).getStageId(), getTag(),
+                            activity.getStageId(), getTag(),
                             taskId, mUrlBuilder.getKeyword()));
                     request.setArgs(gidArray, tokenArray, mModifyFavCat);
                     mClient.execute(request);
@@ -996,7 +1010,7 @@ public class FavoritesScene extends BaseScene implements
                     EhRequest request = new EhRequest();
                     request.setMethod(EhClient.METHOD_MODIFY_FAVORITES);
                     request.setCallback(new GetFavoritesListener(getContext(),
-                            ((StageActivity) getActivity()).getStageId(), getTag(),
+                            activity.getStageId(), getTag(),
                             taskId, local, mUrlBuilder.getKeyword()));
                     request.setArgs(url, gidArray, mModifyFavCat, Settings.getShowJpnTitle());
                     mClient.execute(request);
@@ -1015,7 +1029,7 @@ public class FavoritesScene extends BaseScene implements
                 EhRequest request = new EhRequest();
                 request.setMethod(EhClient.METHOD_GET_FAVORITES);
                 request.setCallback(new GetFavoritesListener(getContext(),
-                        ((StageActivity) getActivity()).getStageId(), getTag(),
+                        activity.getStageId(), getTag(),
                         taskId, false, mUrlBuilder.getKeyword()));
                 request.setArgs(url, Settings.getShowJpnTitle());
                 mClient.execute(request);
@@ -1032,7 +1046,7 @@ public class FavoritesScene extends BaseScene implements
 
         @Override
         protected Context getContext() {
-            return FavoritesScene.this.getContext();
+            return FavoritesScene.this.getContext2();
         }
 
         @Override

@@ -339,7 +339,7 @@ public final class MainActivity extends StageActivity
             BaseScene baseScene = (BaseScene) scene;
             mRightDrawer.removeAllViews();
             View drawerView = baseScene.onCreateDrawerView(
-                    getLayoutInflater(), mRightDrawer, savedInstanceState);
+                    baseScene.getLayoutInflater2(), mRightDrawer, savedInstanceState);
             if (drawerView != null) {
                 mRightDrawer.addView(drawerView);
                 mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);

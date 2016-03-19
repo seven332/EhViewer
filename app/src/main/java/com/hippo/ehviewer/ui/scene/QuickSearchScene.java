@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
@@ -48,6 +49,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.List;
@@ -91,7 +93,10 @@ public final class QuickSearchScene extends ToolbarScene {
         TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mViewTransition = new ViewTransition(recyclerView, tip);
 
-        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_search);
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+
+        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_search);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
         tip.setText(R.string.no_quick_search);
@@ -103,7 +108,7 @@ public final class QuickSearchScene extends ToolbarScene {
         // drag & drop manager
         RecyclerViewDragDropManager dragDropManager = new RecyclerViewDragDropManager();
         dragDropManager.setDraggingItemShadowDrawable(
-                (NinePatchDrawable) getResources().getDrawable(R.drawable.shadow_8dp));
+                (NinePatchDrawable) context.getResources().getDrawable(R.drawable.shadow_8dp));
         // swipe manager
         RecyclerViewSwipeManager swipeManager = new RecyclerViewSwipeManager();
         RecyclerView.Adapter adapter = new QuickSearchAdapter();
@@ -114,7 +119,7 @@ public final class QuickSearchScene extends ToolbarScene {
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
         animator.setSupportsChangeAnimations(false);
         recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(animator);
         guardManager.attachRecyclerView(recyclerView);
@@ -181,10 +186,16 @@ public final class QuickSearchScene extends ToolbarScene {
             implements DraggableItemAdapter<QuickSearchHolder>,
             SwipeableItemAdapter<QuickSearchHolder> {
 
+        private final LayoutInflater mInflater;
+
+        public QuickSearchAdapter() {
+            mInflater = getLayoutInflater2();
+            AssertUtils.assertNotNull(mInflater);
+        }
+
         @Override
         public QuickSearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new QuickSearchHolder(getActivity().getLayoutInflater()
-                    .inflate(R.layout.item_label_list, parent, false));
+            return new QuickSearchHolder(mInflater.inflate(R.layout.item_label_list, parent, false));
         }
 
         @Override
@@ -269,14 +280,15 @@ public final class QuickSearchScene extends ToolbarScene {
         protected void onPerformAction() {
             super.onPerformAction();
 
+            Context context = getContext2();
             final List<QuickSearch> quickSearchList = mQuickSearchList;
-            if (quickSearchList == null || mPosition < 0 || mPosition >= quickSearchList.size()) {
+            if (null == context || null == quickSearchList || mPosition < 0 || mPosition >= quickSearchList.size()) {
                 return;
             }
 
             final QuickSearch quickSearch = quickSearchList.get(mPosition);
 
-            new AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(context)
                     .setTitle(R.string.delete_quick_search_title)
                     .setMessage(getString(R.string.delete_quick_search_message, quickSearch.name))
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

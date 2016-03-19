@@ -78,15 +78,18 @@ public class CrashScene extends BaseScene implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (mSend == v && null != mCrash) {
-            ActivityHelper.sendEmail(getActivity(), EhApplication.getDeveloperEmail(),
+        MainActivity activity = getActivity2();
+
+        if (mSend == v && null != mCrash && null != activity) {
+            ActivityHelper.sendEmail(activity, EhApplication.getDeveloperEmail(),
                     "I found a bug in EhViewer !", mCrash);
         }
         Crash.resetCrashFile();
 
         // Start new scene and finish it self
-        ((MainActivity) getActivity()).startSceneForCheckStep(
-                MainActivity.CHECK_STEP_CRASH, getArguments());
+        if (null != activity) {
+            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_CRASH, getArguments());
+        }
         finish();
     }
 }

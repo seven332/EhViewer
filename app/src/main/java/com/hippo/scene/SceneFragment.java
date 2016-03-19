@@ -97,14 +97,18 @@ public class SceneFragment extends Fragment {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         view.setTag(R.id.fragment_tag, getTag());
-        view.setBackgroundColor(getContext().getResources().getColor(R.color.background_light));
+        view.setBackgroundColor(getResources().getColor(R.color.background_light));
 
         // Notify
-        ((StageActivity) getActivity()).onSceneViewCreated(this, savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity instanceof StageActivity) {
+            ((StageActivity) activity).onSceneViewCreated(this, savedInstanceState);
+        }
     }
 
     @Override
@@ -112,14 +116,20 @@ public class SceneFragment extends Fragment {
         super.onDestroyView();
 
         // Notify
-        ((StageActivity) getActivity()).onSceneViewDestroyed(this);
+        FragmentActivity activity = getActivity();
+        if (activity instanceof StageActivity) {
+            ((StageActivity) activity).onSceneViewDestroyed(this);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        ((StageActivity) getActivity()).onSceneDestroyed(this);
+        FragmentActivity activity = getActivity();
+        if (activity instanceof StageActivity) {
+            ((StageActivity) activity).onSceneDestroyed(this);
+        }
     }
 
     void addRequest(String requestSceneTag, int requestCode) {

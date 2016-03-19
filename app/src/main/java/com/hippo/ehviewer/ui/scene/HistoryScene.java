@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -42,11 +43,11 @@ import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.scene.StageActivity;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -82,12 +83,15 @@ public class HistoryScene extends ToolbarScene
         TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mViewTransition = new ViewTransition(content, tip);
 
-        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_history);
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+
+        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_history);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 
         mList = EhDB.getHistoryLazyList();
-        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(getContext(), 0);
+        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(context, 0);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         recyclerView.setDrawSelectorOnTop(true);
@@ -95,14 +99,14 @@ public class HistoryScene extends ToolbarScene
         recyclerView.setClipToPadding(false);
         recyclerView.setOnItemClickListener(this);
         recyclerView.setOnItemLongClickListener(this);
-        mAdapter = new HistoryAdapter(LayoutInflater.from(getContext()),
-                getContext(), recyclerView, layoutManager, Settings.getListMode());
+        mAdapter = new HistoryAdapter(getLayoutInflater2(), getResources2(),
+                recyclerView, layoutManager, Settings.getListMode());
         recyclerView.setAdapter(mAdapter);
         mAdapter.register();
 
         fastScroller.attachToRecyclerView(recyclerView);
         HandlerDrawable handlerDrawable = new HandlerDrawable();
-        handlerDrawable.setColor(ResourcesUtils.getAttrColor(getContext(), R.attr.colorAccent));
+        handlerDrawable.setColor(ResourcesUtils.getAttrColor(context, R.attr.colorAccent));
         fastScroller.setHandlerDrawable(handlerDrawable);
 
         if (null != mList && mList.size() > 0) {
@@ -163,24 +167,26 @@ public class HistoryScene extends ToolbarScene
 
     @Override
     public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
-        if (null == mList) {
+        final Context context = getContext2();
+        final MainActivity activity = getActivity2();
+        if (null == context || null == activity || null == mList) {
             return false;
         }
 
         final GalleryInfo gi = mList.get(position);
-        new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(context)
                 .setTitle(EhUtils.getSuitableTitle(gi))
                 .setItems(R.array.gallery_list_menu_entries, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0: // Download
-                                CommonOperations.startDownload((MainActivity) getActivity(), gi, false);
+                                CommonOperations.startDownload(activity, gi, false);
                                 break;
                             case 1: // Favorites
-                                CommonOperations.addToFavorites(getActivity(), gi,
-                                        new addToFavoriteListener(getContext(),
-                                                ((StageActivity) getActivity()).getStageId(), getTag()));
+                                CommonOperations.addToFavorites(activity, gi,
+                                        new addToFavoriteListener(context,
+                                                activity.getStageId(), getTag()));
                                 break;
                         }
                     }
@@ -190,9 +196,9 @@ public class HistoryScene extends ToolbarScene
 
     private class HistoryAdapter extends GalleryAdapter {
 
-        public HistoryAdapter(LayoutInflater inflater, Context context,
+        public HistoryAdapter(LayoutInflater inflater, Resources resources,
                 RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
-            super(inflater, context, recyclerView, layoutManager, type);
+            super(inflater, resources, recyclerView, layoutManager, type);
         }
 
         @Nullable

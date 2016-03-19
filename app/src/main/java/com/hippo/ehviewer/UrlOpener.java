@@ -17,10 +17,12 @@
 package com.hippo.ehviewer;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.provider.Browser;
+import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -36,7 +38,7 @@ public final class UrlOpener {
     private UrlOpener() {
     }
 
-    public static void openUrl(Activity activity, String url, boolean ehUrl, boolean customTabs) {
+    public static void openUrl(@NonNull Context context, String url, boolean ehUrl, boolean customTabs) {
         if (TextUtils.isEmpty(url)) {
             return;
         }
@@ -47,17 +49,19 @@ public final class UrlOpener {
         if (ehUrl) {
             Announcer announcer = EhUrlOpener.parseUrl(url);
             if (null != announcer) {
-                intent = new Intent(activity, MainActivity.class);
+                intent = new Intent(context, MainActivity.class);
                 intent.setAction(StageActivity.ACTION_START_SCENE);
                 intent.putExtra(StageActivity.KEY_SCENE_NAME, announcer.getClazz().getName());
                 intent.putExtra(StageActivity.KEY_SCENE_ARGS, announcer.getArgs());
-                activity.startActivity(intent);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
                 return;
             }
         }
 
         // CustomTabs
-        if (customTabs) {
+        if (customTabs && context instanceof Activity) {
+            Activity activity = (Activity) context;
             String packageName = CustomTabsHelper.getPackageNameToUseFixed(activity);
             if (packageName != null) {
                 new CustomTabsIntent.Builder()
@@ -70,15 +74,12 @@ public final class UrlOpener {
         }
 
         // Intent.ACTION_VIEW
-        intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(uri);
-        PackageManager pm = activity.getPackageManager();
-        ResolveInfo ri = pm.resolveActivity(intent, 0);
-        if (ri != null) {
-            activity.startActivity(intent);
-            return;
+        intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
         }
-
-        Toast.makeText(activity, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
     }
 }

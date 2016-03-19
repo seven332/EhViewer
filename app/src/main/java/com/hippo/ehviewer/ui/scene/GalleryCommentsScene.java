@@ -18,7 +18,9 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,18 +50,18 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryComment;
+import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.SceneFragment;
-import com.hippo.scene.StageActivity;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
-import com.hippo.util.ActivityHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUrl;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.LinkifyTextView;
 import com.hippo.yorozuya.AnimationUtils;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;
@@ -143,19 +145,22 @@ public final class GalleryCommentsScene extends ToolbarScene
         mEditText = (EditText) ViewUtils.$$(mEditPanel, R.id.edit_text);
         mFab = (FloatingActionButton) ViewUtils.$$(view, R.id.fab);
 
-        int paddingBottomFab = getResources().getDimensionPixelOffset(R.dimen.list_padding_bottom_fab);
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        Resources resources = context.getResources();
+        int paddingBottomFab = resources.getDimensionPixelOffset(R.dimen.list_padding_bottom_fab);
 
-        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_weird_face);
+        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_weird_face);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 
         mAdapter = new CommentAdapter();
         recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
+        recyclerView.setLayoutManager(new LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL, getResources().getColor(R.color.divider),
-                LayoutUtils.dp2pix(getContext(), 1));
+                LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider),
+                LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
         recyclerView.addItemDecoration(decoration);
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
@@ -200,6 +205,11 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
+        Activity activity = getActivity2();
+        if (null == activity) {
+            return false;
+        }
+
         RecyclerView.ViewHolder holder = parent.getChildViewHolder(view);
         if (holder instanceof CommentHolder) {
             CommentHolder commentHolder = (CommentHolder) holder;
@@ -207,7 +217,7 @@ public final class GalleryCommentsScene extends ToolbarScene
             commentHolder.comment.clearCurrentSpan();
 
             if (span instanceof URLSpan) {
-                UrlOpener.openUrl(getActivity(), ((URLSpan) span).getURL(), true, true);
+                UrlOpener.openUrl(activity, ((URLSpan) span).getURL(), true, true);
                 return true;
             }
         }
@@ -322,6 +332,12 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     @Override
     public void onClick(View v) {
+        Context context = getContext2();
+        MainActivity activity = getActivity2();
+        if (null == context || null == activity) {
+            return;
+        }
+
         if (mFab == v) {
             if (!mInAnimation) {
                 showEditPanel(true);
@@ -341,10 +357,10 @@ public final class GalleryCommentsScene extends ToolbarScene
                 EhRequest request = new EhRequest()
                         .setMethod(EhClient.METHOD_GET_COMMENT_GALLERY)
                         .setArgs(url, comment)
-                        .setCallback(new CommentGalleryListener(getContext(),
-                                ((StageActivity) getActivity()).getStageId(), getTag()));
-                EhApplication.getEhClient(getContext()).execute(request);
-                ActivityHelper.hideSoftInput(getActivity());
+                        .setCallback(new CommentGalleryListener(context,
+                                activity.getStageId(), getTag()));
+                EhApplication.getEhClient(context).execute(request);
+                hideSoftInput();
                 hideEditPanel(true);
             }
         }
@@ -378,19 +394,30 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private class CommentAdapter extends RecyclerView.Adapter<CommentHolder> {
 
+        private final LayoutInflater mInflater;
+
+        public CommentAdapter() {
+            mInflater = getLayoutInflater2();
+            AssertUtils.assertNotNull(mInflater);
+        }
+
         @Override
         public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new CommentHolder(getActivity().getLayoutInflater()
-                    .inflate(R.layout.item_gallery_comment, parent, false));
+            return new CommentHolder(mInflater.inflate(R.layout.item_gallery_comment, parent, false));
         }
 
         @Override
         public void onBindViewHolder(CommentHolder holder, int position) {
+            Context context = getContext2();
+            if (null == context) {
+                return;
+            }
+
             GalleryComment comment = mComments[position];
             holder.user.setText(comment.user);
             holder.time.setText(ReadableTime.getTimeAgo(comment.time));
             holder.comment.setText(TextUrl.handleTextUrl(Html.fromHtml(comment.comment,
-                    new URLImageGetter(holder.comment, EhApplication.getConaco(getContext())), null)));
+                    new URLImageGetter(holder.comment, EhApplication.getConaco(context)), null)));
         }
 
         @Override

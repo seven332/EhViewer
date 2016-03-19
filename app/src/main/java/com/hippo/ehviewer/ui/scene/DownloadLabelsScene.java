@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
@@ -52,6 +53,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.List;
@@ -77,7 +79,7 @@ public class DownloadLabelsScene extends ToolbarScene {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mList = EhApplication.getDownloadManager(getContext()).getLabelList();
+        mList = EhApplication.getDownloadManager(getContext2()).getLabelList();
     }
 
     @Override
@@ -97,7 +99,9 @@ public class DownloadLabelsScene extends ToolbarScene {
         TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
-        Drawable drawable = DrawableManager.getDrawable(getContext(), R.drawable.big_label);
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_label);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
         tip.setText(R.string.no_download_label);
@@ -109,7 +113,7 @@ public class DownloadLabelsScene extends ToolbarScene {
         // drag & drop manager
         RecyclerViewDragDropManager dragDropManager = new RecyclerViewDragDropManager();
         dragDropManager.setDraggingItemShadowDrawable(
-                (NinePatchDrawable) getResources().getDrawable(R.drawable.shadow_8dp));
+                (NinePatchDrawable) context.getResources().getDrawable(R.drawable.shadow_8dp));
         // swipe manager
         RecyclerViewSwipeManager swipeManager = new RecyclerViewSwipeManager();
         RecyclerView.Adapter adapter = new LabelAdapter();
@@ -120,7 +124,7 @@ public class DownloadLabelsScene extends ToolbarScene {
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
         animator.setSupportsChangeAnimations(false);
         mRecyclerView.hasFixedSize();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(animator);
         guardManager.attachRecyclerView(mRecyclerView);
@@ -160,10 +164,15 @@ public class DownloadLabelsScene extends ToolbarScene {
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        Context context = getContext2();
+        if (null == context) {
+            return false;
+        }
+
         int id = item.getItemId();
         switch (id) {
             case R.id.action_add: {
-                EditTextDialogBuilder builder = new EditTextDialogBuilder(getContext(), null, getString(R.string.download_labels));
+                EditTextDialogBuilder builder = new EditTextDialogBuilder(context, null, getString(R.string.download_labels));
                 builder.setTitle(R.string.new_label_title);
                 builder.setPositiveButton(android.R.string.ok, null);
                 AlertDialog dialog = builder.show();
@@ -199,17 +208,22 @@ public class DownloadLabelsScene extends ToolbarScene {
 
         @Override
         public void onClick(View v) {
+            Context context = getContext2();
+            if (null == context) {
+                return;
+            }
+
             String text = mBuilder.getText();
             if (TextUtils.isEmpty(text)) {
                 mBuilder.setError(getString(R.string.label_text_is_empty));
             } else if (getString(R.string.default_download_label_name).equals(text)) {
                 mBuilder.setError(getString(R.string.label_text_is_invalid));
-            } else if (EhApplication.getDownloadManager(getContext()).containLabel(text)) {
+            } else if (EhApplication.getDownloadManager(context).containLabel(text)) {
                 mBuilder.setError(getString(R.string.label_text_exist));
             } else {
                 mBuilder.setError(null);
                 mDialog.dismiss();
-                EhApplication.getDownloadManager(getContext()).addLabel(text);
+                EhApplication.getDownloadManager(context).addLabel(text);
                 if (mAdapter != null && mList != null) {
                     mAdapter.notifyItemInserted(mList.size() - 1);
                 }
@@ -245,17 +259,22 @@ public class DownloadLabelsScene extends ToolbarScene {
 
         @Override
         public void onClick(View v) {
+            Context context = getContext2();
+            if (null == context) {
+                return;
+            }
+
             String text = mBuilder.getText();
             if (TextUtils.isEmpty(text)) {
                 mBuilder.setError(getString(R.string.label_text_is_empty));
             } else if (getString(R.string.default_download_label_name).equals(text)) {
                 mBuilder.setError(getString(R.string.label_text_is_invalid));
-            } else if (EhApplication.getDownloadManager(getContext()).containLabel(text)) {
+            } else if (EhApplication.getDownloadManager(context).containLabel(text)) {
                 mBuilder.setError(getString(R.string.label_text_exist));
             } else {
                 mBuilder.setError(null);
                 mDialog.dismiss();
-                EhApplication.getDownloadManager(getContext()).renameLabel(mOriginalLabel, text);
+                EhApplication.getDownloadManager(context).renameLabel(mOriginalLabel, text);
                 if (mAdapter != null) {
                     mAdapter.notifyItemChanged(mPosition);
                 }
@@ -282,7 +301,8 @@ public class DownloadLabelsScene extends ToolbarScene {
 
         @Override
         public void onClick(View v) {
-            if (mList == null || mRecyclerView == null) {
+            Context context = getContext2();
+            if (null == context || null == mList || null == mRecyclerView) {
                 return;
             }
 
@@ -294,7 +314,7 @@ public class DownloadLabelsScene extends ToolbarScene {
             if (label == v) {
                 DownloadLabel raw = mList.get(index);
                 EditTextDialogBuilder builder = new EditTextDialogBuilder(
-                        getContext(), raw.getLabel(), getString(R.string.download_labels));
+                        context, raw.getLabel(), getString(R.string.download_labels));
                 builder.setTitle(R.string.rename_label_title);
                 builder.setPositiveButton(android.R.string.ok, null);
                 AlertDialog dialog = builder.show();
@@ -312,10 +332,16 @@ public class DownloadLabelsScene extends ToolbarScene {
             implements DraggableItemAdapter<LabelHolder>,
             SwipeableItemAdapter<LabelHolder> {
 
+        private final LayoutInflater mInflater;
+
+        public LabelAdapter() {
+            mInflater = getLayoutInflater2();
+            AssertUtils.assertNotNull(mInflater);
+        }
+
         @Override
         public LabelHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new LabelHolder(getActivity().getLayoutInflater()
-                    .inflate(R.layout.item_label_list, parent, false));
+            return new LabelHolder(mInflater.inflate(R.layout.item_label_list, parent, false));
         }
 
         @Override
@@ -348,11 +374,12 @@ public class DownloadLabelsScene extends ToolbarScene {
 
         @Override
         public void onMoveItem(int fromPosition, int toPosition) {
-            if (fromPosition == toPosition) {
+            Context context = getContext2();
+            if (null == context || fromPosition == toPosition) {
                 return;
             }
 
-            EhApplication.getDownloadManager(getContext()).moveLabel(fromPosition, toPosition);
+            EhApplication.getDownloadManager(context).moveLabel(fromPosition, toPosition);
             if (mAdapter != null && mList != null) {
                 notifyItemMoved(fromPosition, toPosition);
             }
@@ -397,19 +424,20 @@ public class DownloadLabelsScene extends ToolbarScene {
         protected void onPerformAction() {
             super.onPerformAction();
 
+            final Context context = getContext2();
             final List<DownloadLabel> list = mList;
-            if (list == null || mPosition < 0 || mPosition >= list.size()) {
+            if (null == context || null == list || mPosition < 0 || mPosition >= list.size()) {
                 return;
             }
             final DownloadLabel label = list.get(mPosition);
 
-            new AlertDialog.Builder(getContext())
+            new AlertDialog.Builder(context)
                     .setTitle(R.string.delete_label_title)
                     .setMessage(getString(R.string.delete_label_message, label.getLabel()))
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            EhApplication.getDownloadManager(getContext()).deleteLabel(label.getLabel());
+                            EhApplication.getDownloadManager(context).deleteLabel(label.getLabel());
                         }
                     })
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {

@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -72,7 +73,6 @@ import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.scene.StageActivity;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
@@ -81,6 +81,7 @@ import com.hippo.widget.SearchBarMover;
 import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.AnimationUtils;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.SimpleHandler;
@@ -210,7 +211,9 @@ public final class GalleryListScene extends BaseScene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mClient = EhApplication.getEhClient(getContext());
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        mClient = EhApplication.getEhClient(context);
 
         if (savedInstanceState == null) {
             onInit();
@@ -291,11 +294,11 @@ public final class GalleryListScene extends BaseScene
     // Update search bar title, drawer checked item
     private void onUpdateUrlBuilder() {
         ListUrlBuilder builder = mUrlBuilder;
-        if (null == builder) {
+        Resources resources = getResources2();
+        if (null == resources || null == builder) {
             return;
         }
 
-        Resources resources = getResources();
         String keyword = builder.getKeyword();
         int category = builder.getCategory();
 
@@ -305,7 +308,7 @@ public final class GalleryListScene extends BaseScene
         }
 
         // Update title
-        String title = getSuitableTitleForUrlBuilder(getResources(), builder, true);
+        String title = getSuitableTitleForUrlBuilder(resources, builder, true);
         if (null == title) {
             title = resources.getString(R.string.search);
         }
@@ -334,7 +337,9 @@ public final class GalleryListScene extends BaseScene
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_list, container, false);
 
-        Resources resources = getContext().getResources();
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        Resources resources = context.getResources();
 
         View mainLayout = ViewUtils.$$(view, R.id.main_layout);
         ContentLayout contentLayout = (ContentLayout) ViewUtils.$$(mainLayout, R.id.content_layout);
@@ -355,7 +360,7 @@ public final class GalleryListScene extends BaseScene
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
-        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(getContext(), 0);
+        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(context, 0);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
@@ -363,8 +368,8 @@ public final class GalleryListScene extends BaseScene
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
-        mAdapter = new GalleryListAdapter(LayoutInflater.from(getContext()),
-                getContext(), mRecyclerView, layoutManager, Settings.getListMode());
+        mAdapter = new GalleryListAdapter(getLayoutInflater2(), getResources2(),
+                mRecyclerView, layoutManager, Settings.getListMode());
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.register();
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop() + paddingTopSB,
@@ -375,13 +380,13 @@ public final class GalleryListScene extends BaseScene
 
         refreshLayout.setHeaderTranslationY(paddingTopSB);
 
-        mLeftDrawable = new DrawerArrowDrawable(getContext());
-        mRightDrawable = new AddDeleteDrawable(getContext());
+        mLeftDrawable = new DrawerArrowDrawable(context);
+        mRightDrawable = new AddDeleteDrawable(context);
         mSearchBar.setLeftDrawable(mLeftDrawable);
         mSearchBar.setRightDrawable(mRightDrawable);
         mSearchBar.setHelper(this);
         mSearchBar.setOnStateChangeListener(this);
-        setSearchBarHint(getContext(), mSearchBar);
+        setSearchBarHint(context, mSearchBar);
 
         mSearchLayout.setHelper(this);
         mSearchLayout.setPadding(mSearchLayout.getPaddingLeft(), mSearchLayout.getPaddingTop() + paddingTopSB,
@@ -411,15 +416,16 @@ public final class GalleryListScene extends BaseScene
     }
 
     private void guideQuickSearch() {
-        if (!Settings.getGuideQuickSearch()) {
+        Activity activity = getActivity2();
+        if (null == activity || !Settings.getGuideQuickSearch()) {
             return;
         }
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Display display = activity.getWindowManager().getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
 
-        new ShowcaseView.Builder(getActivity())
+        new ShowcaseView.Builder(activity)
                 .withMaterialShowcase()
                 .setStyle(R.style.Guide)
                 .setTarget(new PointTarget(point.x, point.y / 3))
@@ -468,12 +474,13 @@ public final class GalleryListScene extends BaseScene
 
     private void showAddQuickSearchDialog(final List<QuickSearch> list,
             final ArrayAdapter<QuickSearch> adapter, final ListView listView, final TextView tip) {
-        if (null == mUrlBuilder) {
+        Context context = getContext2();
+        if (null == context || null == mUrlBuilder) {
             return;
         }
 
-        final EditTextDialogBuilder builder = new EditTextDialogBuilder(getContext(),
-                getSuitableTitleForUrlBuilder(getResources(), mUrlBuilder, false), getString(R.string.quick_search));
+        final EditTextDialogBuilder builder = new EditTextDialogBuilder(context,
+                getSuitableTitleForUrlBuilder(context.getResources(), mUrlBuilder, false), getString(R.string.quick_search));
         builder.setTitle(R.string.add_quick_search_dialog_title);
         builder.setPositiveButton(android.R.string.ok, null);
         final AlertDialog dialog = builder.show();
@@ -512,8 +519,11 @@ public final class GalleryListScene extends BaseScene
         final TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         final ListView listView = (ListView) ViewUtils.$$(view, R.id.list_view);
 
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+
         final List<QuickSearch> list = EhDB.getAllQuickSearch();
-        final ArrayAdapter<QuickSearch> adapter = new ArrayAdapter<>(getContext(), R.layout.item_simple_list, list);
+        final ArrayAdapter<QuickSearch> adapter = new ArrayAdapter<>(context, R.layout.item_simple_list, list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -634,24 +644,26 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
-        if (null == mHelper) {
+        final Context context = getContext2();
+        final MainActivity activity = getActivity2();
+        if (null == context || null == activity || null == mHelper) {
             return false;
         }
 
         final GalleryInfo gi = mHelper.getDataAt(position);
-        new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(context)
                 .setTitle(EhUtils.getSuitableTitle(gi))
                 .setItems(R.array.gallery_list_menu_entries, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0: // Download
-                                CommonOperations.startDownload((MainActivity) getActivity(), gi, false);
+                                CommonOperations.startDownload(activity, gi, false);
                                 break;
                             case 1: // Favorites
-                                CommonOperations.addToFavorites(getActivity(), gi,
-                                        new addToFavoriteListener(getContext(),
-                                                ((StageActivity) getActivity()).getStageId(), getTag()));
+                                CommonOperations.addToFavorites(activity, gi,
+                                        new addToFavoriteListener(context,
+                                                activity.getStageId(), getTag()));
                                 break;
                         }
                     }
@@ -945,9 +957,9 @@ public final class GalleryListScene extends BaseScene
 
     private class GalleryListAdapter extends GalleryAdapter {
 
-        public GalleryListAdapter(LayoutInflater inflater, Context context,
+        public GalleryListAdapter(LayoutInflater inflater, Resources resources,
                 RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
-            super(inflater, context, recyclerView, layoutManager, type);
+            super(inflater, resources, recyclerView, layoutManager, type);
         }
 
         @Override
@@ -966,7 +978,8 @@ public final class GalleryListScene extends BaseScene
 
         @Override
         protected void getPageData(int taskId, int type, int page) {
-            if (null == mClient || null == mUrlBuilder) {
+            MainActivity activity = getActivity2();
+            if (null == activity || null == mClient || null == mUrlBuilder) {
                 return;
             }
 
@@ -975,7 +988,7 @@ public final class GalleryListScene extends BaseScene
                 EhRequest request = new EhRequest();
                 request.setMethod(EhClient.METHOD_GET_WHATS_HOT);
                 request.setCallback(new GetWhatsHotListener(getContext(),
-                        ((StageActivity) getActivity()).getStageId(), getTag(), taskId));
+                        activity.getStageId(), getTag(), taskId));
                 request.setArgs();
                 mClient.execute(request);
             } else {
@@ -983,7 +996,7 @@ public final class GalleryListScene extends BaseScene
                 EhRequest request = new EhRequest();
                 request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
                 request.setCallback(new GetGalleryListListener(getContext(),
-                        ((StageActivity) getActivity()).getStageId(), getTag(), taskId));
+                        activity.getStageId(), getTag(), taskId));
                 request.setArgs(url);
                 mClient.execute(request);
             }
@@ -991,7 +1004,7 @@ public final class GalleryListScene extends BaseScene
 
         @Override
         protected Context getContext() {
-            return GalleryListScene.this.getContext();
+            return GalleryListScene.this.getContext2();
         }
 
         @Override

@@ -44,8 +44,6 @@ import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.scene.StageActivity;
-import com.hippo.util.ActivityHelper;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
@@ -148,7 +146,9 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         RippleSalon.addRipple(mRegister, true);
         RippleSalon.addRipple(mSignIn, true);
 
-        EhApplication application = (EhApplication) getContext().getApplicationContext();
+        Context context = getContext2();
+        AssertUtils.assertNotNull(container);
+        EhApplication application = (EhApplication) context.getApplicationContext();
         if (application.containGlobalStuff(mRequestId)) {
             // request exist
             showProgress(false);
@@ -163,7 +163,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
 
         // Show IME
         if (mProgress != null && View.INVISIBLE != mProgress.getVisibility()) {
-            ActivityHelper.showSoftInput(getActivity(), mUsername);
+            showSoftInput(mUsername);
         }
     }
 
@@ -215,8 +215,13 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
 
     @Override
     public void onClick(View v) {
+        MainActivity activity = getActivity2();
+        if (null == activity) {
+            return;
+        }
+
         if (mRegister == v) {
-            UrlOpener.openUrl(getActivity(), EhUrl.URL_REGISTER, false, true);
+            UrlOpener.openUrl(activity, EhUrl.URL_REGISTER, false, true);
         } else if (mSignIn == v) {
             signIn();
         } else if (mSignInViaWebView == v) {
@@ -243,7 +248,9 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     private void signIn() {
-        if (null == mUsername || null == mPassword || null == mUsernameLayout ||
+        Context context = getContext2();
+        MainActivity activity = getActivity2();
+        if (null == context || null == activity || null == mUsername || null == mPassword || null == mUsernameLayout ||
                 null == mPasswordLayout) {
             return;
         }
@@ -265,44 +272,57 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
             mPasswordLayout.setError(null);
         }
 
-        ActivityHelper.hideSoftInput(getActivity());
+        hideSoftInput();
         showProgress(true);
 
         // Clean up for sign in
-        EhUtils.signOut(getContext());
+        EhUtils.signOut(context);
 
-        EhCallback callback = new SignInListener(getContext(),
-                ((StageActivity) getActivity()).getStageId(), getTag());
-        mRequestId = ((EhApplication) getContext().getApplicationContext()).putGlobalStuff(callback);
+        EhCallback callback = new SignInListener(context,
+                activity.getStageId(), getTag());
+        mRequestId = ((EhApplication) context.getApplicationContext()).putGlobalStuff(callback);
         EhRequest request = new EhRequest()
                 .setMethod(EhClient.METHOD_SIGN_IN)
                 .setArgs(username, password)
                 .setCallback(callback);
-        EhApplication.getEhClient(getContext()).execute(request);
+        EhApplication.getEhClient(context).execute(request);
     }
 
     private void getProfile() {
-        ActivityHelper.hideSoftInput(getActivity());
+        Context context = getContext2();
+        MainActivity activity = getActivity2();
+        if (null == context || null == activity) {
+            return;
+        }
+
+        hideSoftInput();
         showProgress(true);
 
-        EhCallback callback = new GetProfileListener(getContext(),
-                ((StageActivity) getActivity()).getStageId(), getTag());
-        mRequestId = ((EhApplication) getContext().getApplicationContext()).putGlobalStuff(callback);
+        EhCallback callback = new GetProfileListener(context,
+                activity.getStageId(), getTag());
+        mRequestId = ((EhApplication) context.getApplicationContext()).putGlobalStuff(callback);
         EhRequest request = new EhRequest()
                 .setMethod(EhClient.METHOD_GET_PROFILE)
                 .setCallback(callback);
-        EhApplication.getEhClient(getContext()).execute(request);
+        EhApplication.getEhClient(context).execute(request);
     }
 
     private void redirectTo() {
         Settings.putNeedSignIn(false);
-        ((MainActivity) getActivity()).startSceneForCheckStep(
-                MainActivity.CHECK_STEP_SIGN_IN, getArguments());
+        MainActivity activity = getActivity2();
+        if (null != activity) {
+            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_SIGN_IN, getArguments());
+        }
         finish();
     }
 
     private void whetherToSkip() {
-        new AlertDialog.Builder(getContext())
+        Context context = getContext2();
+        if (null == context) {
+            return;
+        }
+
+        new AlertDialog.Builder(context)
                 .setTitle(R.string.sign_in_failed)
                 .setMessage(R.string.sign_in_failed_plain)
                 .setNegativeButton(android.R.string.cancel, null)
@@ -311,7 +331,12 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     public void onSignInSuccess() {
-        if (EhApplication.getEhCookieStore(getContext()).hasSignedIn()) {
+        Context context = getContext2();
+        if (null == context) {
+            return;
+        }
+
+        if (EhApplication.getEhCookieStore(context).hasSignedIn()) {
             getProfile();
         } else {
             hideProgress();
@@ -320,7 +345,12 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     public void onSignInFailure(Exception e) {
-        Toast.makeText(getContext(), ExceptionUtils.getReadableString(getContext(), e),
+        Context context = getContext2();
+        if (null == context) {
+            return;
+        }
+
+        Toast.makeText(context, ExceptionUtils.getReadableString(context, e),
                 Toast.LENGTH_SHORT).show();
         hideProgress();
         whetherToSkip();
@@ -332,7 +362,12 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
     }
 
     public void onGetProfileFailure(Exception e) {
-        Toast.makeText(getContext(), ExceptionUtils.getReadableString(getContext(), e),
+        Context context = getContext2();
+        if (null == context) {
+            return;
+        }
+
+        Toast.makeText(context, ExceptionUtils.getReadableString(context, e),
                 Toast.LENGTH_SHORT).show();
         hideProgress();
         whetherToSkip();

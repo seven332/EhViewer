@@ -16,11 +16,11 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -46,14 +46,16 @@ import com.hippo.ehviewer.client.data.GalleryPreview;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.ui.GalleryActivity;
+import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
-import com.hippo.scene.StageActivity;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.Slider;
 import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -85,7 +87,9 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mClient = EhApplication.getEhClient(getContext());
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        mClient = EhApplication.getEhClient(context);
         if (savedInstanceState == null) {
             onInit();
         } else {
@@ -130,13 +134,17 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         contentLayout.hideFastScroll();
         EasyRecyclerView recyclerView = contentLayout.getRecyclerView();
 
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        Resources resources = context.getResources();
+
         mAdapter = new GalleryPreviewAdapter();
         recyclerView.setAdapter(mAdapter);
-        int columnWidth = getResources().getDimensionPixelOffset(R.dimen.preview_grid_column_width);
-        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(getContext(), columnWidth);
+        int columnWidth = resources.getDimensionPixelOffset(R.dimen.preview_grid_column_width);
+        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(context, columnWidth);
         layoutManager.setStrategy(GridAutoSpanLayoutManager.STRATEGY_SUITABLE_SIZE);
         recyclerView.setLayoutManager(layoutManager);
-        int padding = LayoutUtils.dp2pix(getContext(), 4);
+        int padding = LayoutUtils.dp2pix(context, 4);
         recyclerView.setPadding(padding, padding, padding, padding);
         recyclerView.setClipToPadding(false);
         recyclerView.addItemDecoration(new MarginItemDecoration(padding));
@@ -182,6 +190,11 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        Context context = getContext2();
+        if (null == context) {
+            return false;
+        }
+
         int id = item.getItemId();
         switch (id) {
             case R.id.action_go_to:
@@ -191,12 +204,12 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
                 int pages = mHelper.getPages();
                 if (pages > 0 && mHelper.canGoTo()) {
                     GoToDialogHelper helper = new GoToDialogHelper(pages, mHelper.getPageForTop());
-                    AlertDialog dialog = new AlertDialog.Builder(getContext()).setTitle(R.string.go_to)
-                            .setView(helper.getView())
+                    AlertDialog dialog = new AlertDialog.Builder(context).setTitle(R.string.go_to)
+                            .setView(R.layout.dialog_go_to)
                             .setPositiveButton(android.R.string.ok, null)
                             .create();
                     dialog.show();
-                    helper.setPositiveButtonClickListener(dialog);
+                    helper.setDialog(dialog);
                 }
                 return true;
         }
@@ -210,7 +223,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        Context context = getContext();
+        Context context = getContext2();
         if (null != context && null != mHelper && null != mGalleryInfo) {
             GalleryPreview p = mHelper.getDataAt(position);
             Intent intent = new Intent(context, GalleryActivity.class);
@@ -237,9 +250,16 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
     private class GalleryPreviewAdapter extends RecyclerView.Adapter<GalleryPreviewHolder> {
 
+        private final LayoutInflater mInflater;
+
+        public GalleryPreviewAdapter() {
+            mInflater = getLayoutInflater2();
+            AssertUtils.assertNotNull(mInflater);
+        }
+
         @Override
         public GalleryPreviewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new GalleryPreviewHolder(getActivity().getLayoutInflater().inflate(R.layout.item_gallery_preview, parent, false));
+            return new GalleryPreviewHolder(mInflater.inflate(R.layout.item_gallery_preview, parent, false));
         }
 
         @Override
@@ -261,7 +281,8 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
         @Override
         protected void getPageData(final int taskId, int type, int page) {
-            if (null == mClient || null == mGalleryInfo) {
+            MainActivity activity = getActivity2();
+            if (null == activity || null == mClient || null == mGalleryInfo) {
                 onGetException(taskId, new EhException(getString(R.string.error_cannot_find_gallery)));
                 return;
             }
@@ -283,14 +304,14 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
             EhRequest request = new EhRequest();
             request.setMethod(EhClient.METHOD_GET_LARGE_PREVIEW_SET);
             request.setCallback(new GetLargePreviewSetListener(getContext(),
-                    ((StageActivity) getActivity()).getStageId(), getTag(), taskId, mGalleryInfo.gid, page));
+                    activity.getStageId(), getTag(), taskId, mGalleryInfo.gid, page));
             request.setArgs(url);
             mClient.execute(request);
         }
 
         @Override
         protected Context getContext() {
-            return GalleryPreviewsScene.this.getContext();
+            return GalleryPreviewsScene.this.getContext2();
         }
 
         @Override
@@ -387,35 +408,37 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
             DialogInterface.OnDismissListener {
 
         private final int mPages;
+        private final int mCurrentPage;
 
-        private final View mView;
-        private final Slider mSlider;
-
+        @Nullable
+        private Slider mSlider;
+        @Nullable
         private Dialog mDialog;
 
-        @SuppressLint("InflateParams")
         private GoToDialogHelper(int pages, int currentPage) {
             mPages = pages;
-            mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_go_to, null);
-            ((TextView) mView.findViewById(R.id.start)).setText("1");
-            ((TextView) mView.findViewById(R.id.end)).setText(String.format(Locale.US, "%d", pages));
-            mSlider = (Slider) mView.findViewById(R.id.slider);
-            mSlider.setRange(1, pages);
-            mSlider.setProgress(currentPage + 1);
+            mCurrentPage = currentPage;
         }
 
-        public View getView() {
-            return mView;
-        }
-
-        public void setPositiveButtonClickListener(AlertDialog dialog) {
+        public void setDialog(@NonNull AlertDialog dialog) {
             mDialog = dialog;
+
+            ((TextView) ViewUtils.$$(dialog, R.id.start)).setText(String.format(Locale.US, "%d", 1));
+            ((TextView) ViewUtils.$$(dialog, R.id.end)).setText(String.format(Locale.US, "%d", mPages));
+            mSlider = (Slider) ViewUtils.$$(dialog, R.id.slider);
+            mSlider.setRange(1, mPages);
+            mSlider.setProgress(mCurrentPage + 1);
+
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(this);
             dialog.setOnDismissListener(this);
         }
 
         @Override
         public void onClick(View v) {
+            if (null == mSlider) {
+                return;
+            }
+
             int page = mSlider.getProgress() - 1;
             if (page >= 0 && page < mPages && mHelper != null) {
                 mHelper.goTo(page);
@@ -431,6 +454,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         @Override
         public void onDismiss(DialogInterface dialog) {
             mDialog = null;
+            mSlider = null;
         }
     }
 }

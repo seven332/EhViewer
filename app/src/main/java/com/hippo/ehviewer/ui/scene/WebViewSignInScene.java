@@ -31,6 +31,7 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.yorozuya.AssertUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,9 +59,12 @@ public class WebViewSignInScene extends BaseScene {
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        EhUtils.signOut(getContext());
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+
+        EhUtils.signOut(context);
         CookieManager.getInstance().removeAllCookie();
-        mWebView = new WebView(getContext());
+        mWebView = new WebView(context);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new LoginWebViewClient());
         mWebView.loadUrl(EhUrl.URL_SIGN_IN);
@@ -106,7 +110,7 @@ public class WebViewSignInScene extends BaseScene {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            Context context = getContext();
+            Context context = getContext2();
             if (context == null) {
                 return;
             }

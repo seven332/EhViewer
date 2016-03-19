@@ -16,11 +16,11 @@
 
 package com.hippo.text;
 
-import android.app.Activity;
 import android.text.Layout;
 import android.text.NoCopySpan;
 import android.text.Selection;
 import android.text.Spannable;
+import android.text.method.MovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
@@ -40,11 +40,7 @@ public class LinkMovementMethod2 extends ScrollingMovementMethod {
     private static final int UP = 2;
     private static final int DOWN = 3;
 
-    private final Activity mActivity;
-
-    public LinkMovementMethod2(Activity activity) {
-        mActivity = activity;
-    }
+    private LinkMovementMethod2() {}
 
     @Override
     public boolean canSelectArbitrarily() {
@@ -227,7 +223,7 @@ public class LinkMovementMethod2 extends ScrollingMovementMethod {
                 if (action == MotionEvent.ACTION_UP) {
                     ClickableSpan span = link[0];
                     if (span instanceof URLSpan) {
-                        UrlOpener.openUrl(mActivity, ((URLSpan) span).getURL(), true, true);
+                        UrlOpener.openUrl(widget.getContext(), ((URLSpan) span).getURL(), true, true);
                     } else {
                         span.onClick(widget);
                     }
@@ -263,5 +259,13 @@ public class LinkMovementMethod2 extends ScrollingMovementMethod {
         }
     }
 
+    public static MovementMethod getInstance() {
+        if (sInstance == null)
+            sInstance = new LinkMovementMethod2();
+
+        return sInstance;
+    }
+
+    private static LinkMovementMethod2 sInstance;
     private static final Object FROM_BELOW = new NoCopySpan.Concrete();
 }

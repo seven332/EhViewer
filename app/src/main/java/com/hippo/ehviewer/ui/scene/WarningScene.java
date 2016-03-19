@@ -80,8 +80,10 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
             Settings.putShowWarning(false);
 
             // Start new scene and finish it self
-            ((MainActivity) getActivity()).startSceneForCheckStep(
-                    MainActivity.CHECK_STEP_WARNING, getArguments());
+            MainActivity activity = getActivity2();
+            if (null != activity) {
+                activity.startSceneForCheckStep(MainActivity.CHECK_STEP_WARNING, getArguments());
+            }
             finish();
         }
     }

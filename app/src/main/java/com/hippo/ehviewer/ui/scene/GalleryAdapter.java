@@ -17,11 +17,11 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -55,18 +55,16 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
     public static final int TYPE_GRID = 1;
 
     private final LayoutInflater mInflater;
-    private final Context mContext;
     private final Resources mResources;
     private final RecyclerView mRecyclerView;
     private final GridAutoSpanLayoutManager mLayoutManager;
     private RecyclerView.ItemDecoration mGirdDecoration;
     private int mType = TYPE_INVALID;
 
-    public GalleryAdapter(LayoutInflater inflater, Context context,
-            RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
+    public GalleryAdapter(@NonNull LayoutInflater inflater, @NonNull Resources resources,
+            @NonNull RecyclerView recyclerView, @NonNull GridAutoSpanLayoutManager layoutManager, int type) {
         mInflater = inflater;
-        mContext = context;
-        mResources = context.getResources();
+        mResources = resources;
         mRecyclerView = recyclerView;
         mLayoutManager = layoutManager;
 
