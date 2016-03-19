@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.hippo.widget.recyclerview;
+package com.hippo.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
-import com.hippo.widget.SimpleGridLayout;
 
 public class SimpleGridAutoSpanLayout extends SimpleGridLayout {
 
