@@ -23,6 +23,7 @@ import android.preference.PreferenceFragment;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.AppConfig;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.util.LogCat;
 import com.hippo.util.ReadableTime;
@@ -32,6 +33,7 @@ import java.io.File;
 public class AdvancedFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
     private static final String KEY_DUMP_LOGCAT = "dump_logcat";
+    private static final String KEY_CLEAR_MEMORY_CACHE = "clear_memory_cache";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,10 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
         addPreferencesFromResource(R.xml.advanced_settings);
 
         Preference dumpLogcat = findPreference(KEY_DUMP_LOGCAT);
+        Preference clearMemoryCache = findPreference(KEY_CLEAR_MEMORY_CACHE);
 
         dumpLogcat.setOnPreferenceClickListener(this);
+        clearMemoryCache.setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -61,6 +65,9 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
                     ok ? resources.getString(R.string.settings_advanced_dump_logcat_to, file.getPath()) :
                             resources.getString(R.string.settings_advanced_dump_logcat_failed), Toast.LENGTH_SHORT).show();
             return true;
+        } else if (KEY_CLEAR_MEMORY_CACHE.equals(key)) {
+            ((EhApplication) getActivity().getApplication()).clearMemoryCache();
+            Runtime.getRuntime().gc();
         }
         return false;
     }

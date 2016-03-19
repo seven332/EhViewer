@@ -373,6 +373,8 @@
     <string name="settings_advanced_clear_download_path_cache">清除畫廊下載路徑快取</string>
     <string name="settings_advanced_clear_download_path_cache_summary">畫廊下載路徑可能出錯了，導致重新下載。清除畫廊下載路徑快取可能解決這個問題。</string>
     <string name="settings_advanced_clear_download_path_cache_message">清除畫廊下載路徑快取？</string>
+    <string name="settings_advanced_clear_memory_cache">清理記憶體快取</string>
+    <string name="settings_advanced_clear_memory_cache_summary">清理縮圖、畫廊資訊的記憶體快取</string>
 
     <string name="settings_about">關於</string>
     <string name="settings_about_author">作者</string>

@@ -373,6 +373,8 @@
     <string name="settings_advanced_clear_download_path_cache">清除画廊下载路径缓存</string>
     <string name="settings_advanced_clear_download_path_cache_summary">画廊下载路径可能出错了，导致重新下载。清除画廊下载路径缓存可能解决这个问题。</string>
     <string name="settings_advanced_clear_download_path_cache_message">清除画廊下载路径缓存？</string>
+    <string name="settings_advanced_clear_memory_cache">清理内存缓存</string>
+    <string name="settings_advanced_clear_memory_cache_summary">清理缩略图、画廊信息的内存缓存</string>
 
     <string name="settings_about">关于</string>
     <string name="settings_about_author">作者</string>

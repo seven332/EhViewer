@@ -412,6 +412,8 @@
     <string name="settings_advanced_clear_download_path_cache">Clear download path cache</string>
     <string name="settings_advanced_clear_download_path_cache_summary">Gallery download path might be wrong and it need to be redownload. Clearing download path cache might solve the problem.</string>
     <string name="settings_advanced_clear_download_path_cache_message">Clear download path cache?</string>
+    <string name="settings_advanced_clear_memory_cache">Clear memory cache</string>
+    <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
 
     <string name="settings_about">About</string>
     <string name="settings_about_author">Author</string>

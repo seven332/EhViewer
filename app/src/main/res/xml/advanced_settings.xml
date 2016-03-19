@@ -34,4 +34,9 @@
         android:title="@string/settings_advanced_clear_download_path_cache"
         android:summary="@string/settings_advanced_clear_download_path_cache_summary"/>
 
+    <Preference
+        android:key="clear_memory_cache"
+        android:title="@string/settings_advanced_clear_memory_cache"
+        android:summary="@string/settings_advanced_clear_memory_cache_summary"/>
+
 </PreferenceScreen>
