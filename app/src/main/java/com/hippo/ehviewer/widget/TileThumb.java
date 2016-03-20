@@ -17,41 +17,36 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 
-import com.hippo.ehviewer.R;
 import com.hippo.widget.LoadImageView;
+import com.hippo.yorozuya.MathUtils;
 
 public class TileThumb extends LoadImageView {
 
-    private int mMargin;
+    private static final float MIN_ASPECT = 0.3f;
+    private static final float MAX_ASPECT = 2.0f;
+    private static final float DEFAULT_ASPECT = 0.67f;
 
     public TileThumb(Context context) {
         super(context);
-        init(context);
     }
 
     public TileThumb(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public TileThumb(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
     }
 
-    private void init(Context context) {
-        mMargin = context.getResources().getDimensionPixelOffset(R.dimen.gallery_grid_margin);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int spanSize = ((GridLayoutManager.LayoutParams) ((ViewGroup) getParent()).getLayoutParams()).getSpanSize();
-        int height = (int) ((width - (mMargin * (spanSize - 1))) / spanSize / 0.67f);
-        setMeasuredDimension(width, height);
+    public void setThumbSize(int thumbWidth, int thumbHeight) {
+        float aspect;
+        if (thumbWidth > 0 && thumbHeight > 0) {
+            aspect = MathUtils.clamp(thumbWidth / (float) thumbHeight, MIN_ASPECT, MAX_ASPECT);
+        } else {
+            aspect = DEFAULT_ASPECT;
+        }
+        setAspect(aspect);
     }
 }

@@ -23,8 +23,8 @@ import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +38,10 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.widget.TileThumb;
 import com.hippo.util.ApiHelper;
-import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
+import com.hippo.widget.recyclerview.AutoGridLayoutManager;
+import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 import com.hippo.yorozuya.Messenger;
 
 import java.lang.annotation.Retention;
@@ -58,19 +60,19 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
     private final LayoutInflater mInflater;
     private final Resources mResources;
     private final RecyclerView mRecyclerView;
-    private final GridAutoSpanLayoutManager mLayoutManager;
+    private final AutoStaggeredGridLayoutManager mLayoutManager;
     private RecyclerView.ItemDecoration mGirdDecoration;
-    private final GridLayoutManager.SpanSizeLookup mDefaultSpanSizeLookup;
-    private GridLayoutManager.SpanSizeLookup mThumbSpanSizeLookup;
     private int mType = TYPE_INVALID;
 
     public GalleryAdapter(@NonNull LayoutInflater inflater, @NonNull Resources resources,
-            @NonNull RecyclerView recyclerView, @NonNull GridAutoSpanLayoutManager layoutManager, int type) {
+            @NonNull RecyclerView recyclerView, int type) {
         mInflater = inflater;
         mResources = resources;
         mRecyclerView = recyclerView;
-        mLayoutManager = layoutManager;
-        mDefaultSpanSizeLookup = mLayoutManager.getSpanSizeLookup();
+        mLayoutManager = new AutoStaggeredGridLayoutManager(0, StaggeredGridLayoutManager.VERTICAL);
+
+        mRecyclerView.setAdapter(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         int paddingH = mResources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
         int paddingV = mResources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
@@ -93,8 +95,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
             case GalleryAdapter.TYPE_LIST: {
                 int columnWidth = mResources.getDimensionPixelOffset(R.dimen.gallery_list_column_width);
                 mLayoutManager.setColumnSize(columnWidth);
-                mLayoutManager.setStrategy(GridAutoSpanLayoutManager.STRATEGY_MIN_SIZE);
-                mLayoutManager.setSpanSizeLookup(mDefaultSpanSizeLookup);
+                mLayoutManager.setStrategy(AutoGridLayoutManager.STRATEGY_MIN_SIZE);
                 if (null != mGirdDecoration) {
                     mRecyclerView.removeItemDecoration(mGirdDecoration);
                 }
@@ -104,11 +105,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
             case GalleryAdapter.TYPE_GRID: {
                 int columnWidth = mResources.getDimensionPixelOffset(R.dimen.gallery_grid_column_width);
                 mLayoutManager.setColumnSize(columnWidth);
-                mLayoutManager.setStrategy(GridAutoSpanLayoutManager.STRATEGY_SUITABLE_SIZE);
-                if (null == mThumbSpanSizeLookup) {
-                    mThumbSpanSizeLookup = new ThumbSpanSizeLookup();
-                }
-                mLayoutManager.setSpanSizeLookup(mThumbSpanSizeLookup);
+                mLayoutManager.setStrategy(AutoGridLayoutManager.STRATEGY_SUITABLE_SIZE);
                 if (null == mGirdDecoration) {
                     mGirdDecoration = new MarginItemDecoration(
                             mResources.getDimensionPixelOffset(R.dimen.gallery_grid_margin) / 2);
@@ -169,6 +166,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
                 break;
             }
             case TYPE_GRID: {
+                ((TileThumb) holder.thumb).setThumbSize(gi.thumbWidth, gi.thumbHeight);
                 holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb);
                 View category = holder.category;
                 Drawable drawable = category.getBackground();
@@ -203,18 +201,5 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
     public void onReceive(int id, Object obj) {
         setType(Settings.getListMode());
         notifyDataSetChanged();
-    }
-
-    private class ThumbSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
-
-        @Override
-        public int getSpanSize(int position) {
-            GalleryInfo info = getDataAt(position);
-            if (info == null || info.thumbWidth <= info.thumbHeight) {
-                return 1;
-            } else {
-                return 2;
-            }
-        }
     }
 }

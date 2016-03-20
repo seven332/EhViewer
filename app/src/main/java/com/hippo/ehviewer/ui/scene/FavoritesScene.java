@@ -23,6 +23,7 @@ import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
@@ -75,7 +76,6 @@ import com.hippo.util.DrawableManager;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.SearchBarMover;
-import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ObjectUtils;
@@ -263,8 +263,8 @@ public class FavoritesScene extends BaseScene implements
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
-        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(context, 0);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mAdapter = new FavoritesAdapter(inflater, resources, mRecyclerView, Settings.getListMode());
+        mAdapter.register();
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
@@ -273,10 +273,6 @@ public class FavoritesScene extends BaseScene implements
         mRecyclerView.setOnItemLongClickListener(this);
         mRecyclerView.setChoiceMode(EasyRecyclerView.CHOICE_MODE_MULTIPLE_CUSTOM);
         mRecyclerView.setCustomCheckedListener(this);
-        mAdapter = new FavoritesAdapter(getLayoutInflater2(),
-                getResources2(), mRecyclerView, layoutManager, Settings.getListMode());
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.register();
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop() + paddingTopSB,
                 mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
 
@@ -955,9 +951,9 @@ public class FavoritesScene extends BaseScene implements
 
     private class FavoritesAdapter extends GalleryAdapter {
 
-        public FavoritesAdapter(LayoutInflater inflater, Resources resources,
-                RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
-            super(inflater, resources, recyclerView, layoutManager, type);
+        public FavoritesAdapter(@NonNull LayoutInflater inflater, @NonNull Resources resources,
+                @NonNull RecyclerView recyclerView, int type) {
+            super(inflater, resources, recyclerView, type);
         }
 
         @Override

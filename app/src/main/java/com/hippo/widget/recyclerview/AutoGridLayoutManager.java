@@ -23,7 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GridAutoSpanLayoutManager extends GridLayoutManager {
+public class AutoGridLayoutManager extends GridLayoutManager {
 
     public static final int STRATEGY_MIN_SIZE = 0;
     public static final int STRATEGY_SUITABLE_SIZE = 1;
@@ -34,12 +34,12 @@ public class GridAutoSpanLayoutManager extends GridLayoutManager {
 
     private List<OnUpdateSpanCountListener> mListeners;
 
-    public GridAutoSpanLayoutManager(Context context, int columnSize) {
+    public AutoGridLayoutManager(Context context, int columnSize) {
         super(context, 1);
         setColumnSize(columnSize);
     }
 
-    public GridAutoSpanLayoutManager(Context context, int columnSize, int orientation, boolean reverseLayout) {
+    public AutoGridLayoutManager(Context context, int columnSize, int orientation, boolean reverseLayout) {
         super(context, 1, orientation, reverseLayout);
         setColumnSize(columnSize);
     }

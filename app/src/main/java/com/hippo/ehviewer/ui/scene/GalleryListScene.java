@@ -79,7 +79,6 @@ import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.SearchBarMover;
-import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.AssertUtils;
@@ -363,18 +362,15 @@ public final class GalleryListScene extends BaseScene
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
-        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(context, 0);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mAdapter = new GalleryListAdapter(inflater, resources,
+                mRecyclerView, Settings.getListMode());
+        mAdapter.register();
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
-        mAdapter = new GalleryListAdapter(getLayoutInflater2(), getResources2(),
-                mRecyclerView, layoutManager, Settings.getListMode());
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.register();
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop() + paddingTopSB,
                 mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
 
@@ -994,9 +990,9 @@ public final class GalleryListScene extends BaseScene
 
     private class GalleryListAdapter extends GalleryAdapter {
 
-        public GalleryListAdapter(LayoutInflater inflater, Resources resources,
-                RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
-            super(inflater, resources, recyclerView, layoutManager, type);
+        public GalleryListAdapter(@NonNull LayoutInflater inflater,
+                @NonNull Resources resources, @NonNull RecyclerView recyclerView, int type) {
+            super(inflater, resources, recyclerView, type);
         }
 
         @Override
