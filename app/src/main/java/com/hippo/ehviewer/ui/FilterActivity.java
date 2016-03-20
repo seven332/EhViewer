@@ -78,18 +78,18 @@ public class FilterActivity extends ToolbarActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.hasFixedSize();
 
-        updateView();
+        updateView(false);
     }
 
-    private void updateView() {
+    private void updateView(boolean animation) {
         if (null == mViewTransition) {
             return;
         }
 
         if (null == mFilterList || 0 == mFilterList.size()) {
-            mViewTransition.showView(1);
+            mViewTransition.showView(1, animation);
         } else {
-            mViewTransition.showView(0);
+            mViewTransition.showView(0, animation);
         }
     }
 
@@ -173,7 +173,7 @@ public class FilterActivity extends ToolbarActivity {
                         if (null != mAdapter) {
                             mAdapter.notifyDataSetChanged();
                         }
-                        updateView();
+                        updateView(true);
                     }
                 }).show();
     }
@@ -224,7 +224,7 @@ public class FilterActivity extends ToolbarActivity {
             if (null != mAdapter) {
                 mAdapter.notifyDataSetChanged();
             }
-            updateView();
+            updateView(true);
 
             mDialog.dismiss();
             mDialog = null;
