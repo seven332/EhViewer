@@ -58,6 +58,7 @@ import com.hippo.ehviewer.ui.scene.GalleryPreviewsScene;
 import com.hippo.ehviewer.ui.scene.HistoryScene;
 import com.hippo.ehviewer.ui.scene.ProgressScene;
 import com.hippo.ehviewer.ui.scene.QuickSearchScene;
+import com.hippo.ehviewer.ui.scene.SelectSiteScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.ehviewer.ui.scene.WebViewSignInScene;
@@ -83,6 +84,7 @@ public final class MainActivity extends StageActivity
     public static final int CHECK_STEP_ANALYTICS = 1;
     public static final int CHECK_STEP_CRASH = 2;
     public static final int CHECK_STEP_SIGN_IN = 3;
+    public static final int CHECK_STEP_SELECT_SITE = 4;
 
     public static final String KEY_TARGET_SCENE = "target_scene";
     public static final String KEY_TARGET_ARGS = "target_args";
@@ -110,6 +112,7 @@ public final class MainActivity extends StageActivity
         registerLaunchMode(SignInScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(WebViewSignInScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(CookieSignInScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
+        registerLaunchMode(SelectSiteScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(GalleryListScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TOP);
         registerLaunchMode(QuickSearchScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(GalleryDetailScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
@@ -141,6 +144,11 @@ public final class MainActivity extends StageActivity
                     break;
                 }
             case CHECK_STEP_SIGN_IN:
+                if (Settings.getSelectSite()) {
+                    startScene(new Announcer(SelectSiteScene.class).setArgs(args));
+                    break;
+                }
+            case CHECK_STEP_SELECT_SITE:
                 String targetScene = null;
                 Bundle targetArgs = null;
                 if (null != args) {
@@ -184,6 +192,8 @@ public final class MainActivity extends StageActivity
             return new Announcer(CrashScene.class);
         } else if (EhUtils.needSignedIn(this)) {
             return new Announcer(SignInScene.class);
+        } else if (Settings.getSelectSite()) {
+            return new Announcer(SelectSiteScene.class);
         } else {
             Bundle args = new Bundle();
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
@@ -214,6 +224,11 @@ public final class MainActivity extends StageActivity
                 newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
                 newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(SignInScene.class).setArgs(newArgs);
+            } else if (Settings.getSelectSite()) {
+                Bundle newArgs = new Bundle();
+                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                return new Announcer(SelectSiteScene.class).setArgs(newArgs);
             }
         }
         return announcer;

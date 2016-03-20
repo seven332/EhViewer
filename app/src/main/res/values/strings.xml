@@ -19,6 +19,9 @@
 
     <string name="app_name">EhViewer</string>
 
+    <string name="site_e" translatable="false">e-hentai</string>
+    <string name="site_ex" translatable="false">exhentai</string>
+
     <!-- Category -->
     <string name="doujinshi" translatable="false">DOUJINSHI</string>
     <string name="manga" translatable="false">MANGA</string>
@@ -126,6 +129,11 @@
     <!-- Crash -->
     <string name="send">Send</string>
     <string name="crash_explain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
+
+    <!-- Select scene -->
+    <string name="select_scene">Which gallery site do you want to select?</string>
+    <string name="select_scene_explain">e-hentai: available for anyone\nexhentai: available for who signed in</string>
+    <string name="no_select">Please select one site</string>
 
     <!-- Update -->
     <string name="update">Update</string>

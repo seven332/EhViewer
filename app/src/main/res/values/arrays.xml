@@ -28,8 +28,8 @@
     </string-array>
 
     <string-array name="gallery_site_entries" translatable="false">
-        <item>e-hentai</item>
-        <item>exhentai</item>
+        <item>@string/site_e</item>
+        <item>@string/site_ex</item>
     </string-array>
 
     <string-array name="gallery_site_entry_values" translatable="false">

@@ -209,6 +209,17 @@ public class Settings {
         putBoolean(KEY_NEED_SIGN_IN, value);
     }
 
+    private static final String KEY_SELECT_SITE = "select_site";
+    private static final boolean DEFAULT_SELECT_SITE = true;
+
+    public static boolean getSelectSite() {
+        return getBoolean(KEY_SELECT_SITE, DEFAULT_SELECT_SITE);
+    }
+
+    public static void putSelectSite(boolean value) {
+        putBoolean(KEY_SELECT_SITE, value);
+    }
+
     /********************
      ****** Eh
      ********************/
