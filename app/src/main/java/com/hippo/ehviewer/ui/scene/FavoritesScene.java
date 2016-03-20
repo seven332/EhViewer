@@ -174,6 +174,8 @@ public class FavoritesScene extends BaseScene implements
         }
     };
 
+    private ShowcaseView mShowcaseView;
+
     @Override
     public int getNavCheckedItem() {
         return R.id.nav_favourite;
@@ -323,7 +325,7 @@ public class FavoritesScene extends BaseScene implements
         Point point = new Point();
         display.getSize(point);
 
-        new ShowcaseView.Builder(activity)
+        mShowcaseView = new ShowcaseView.Builder(activity)
                 .withMaterialShowcase()
                 .setStyle(R.style.Guide)
                 .setTarget(new PointTarget(point.x, point.y / 3))
@@ -334,6 +336,7 @@ public class FavoritesScene extends BaseScene implements
                 .setShowcaseEventListener(new SimpleShowcaseEventListener() {
                     @Override
                     public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        mShowcaseView = null;
                         ViewUtils.removeFromParent(showcaseView);
                         Settings.putGuideCollections(false);
                         openDrawer(Gravity.RIGHT);
@@ -393,6 +396,11 @@ public class FavoritesScene extends BaseScene implements
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        if (null != mShowcaseView) {
+            ViewUtils.removeFromParent(mShowcaseView);
+            mShowcaseView = null;
+        }
 
         if (null != mAdapter) {
             mAdapter.unregister();
@@ -497,6 +505,10 @@ public class FavoritesScene extends BaseScene implements
 
     @Override
     public void onBackPressed() {
+        if (null != mShowcaseView) {
+            return;
+        }
+
         if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
             mRecyclerView.outOfCustomChoiceMode();
         } else if (mSearchMode) {

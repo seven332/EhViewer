@@ -171,6 +171,8 @@ public final class GalleryListScene extends BaseScene
         }
     };
 
+    private ShowcaseView mShowcaseView;
+
     @Override
     public int getNavCheckedItem() {
         return mNavCheckedId;
@@ -425,7 +427,7 @@ public final class GalleryListScene extends BaseScene
         Point point = new Point();
         display.getSize(point);
 
-        new ShowcaseView.Builder(activity)
+        mShowcaseView = new ShowcaseView.Builder(activity)
                 .withMaterialShowcase()
                 .setStyle(R.style.Guide)
                 .setTarget(new PointTarget(point.x, point.y / 3))
@@ -436,6 +438,7 @@ public final class GalleryListScene extends BaseScene
                 .setShowcaseEventListener(new SimpleShowcaseEventListener() {
                     @Override
                     public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        mShowcaseView = null;
                         ViewUtils.removeFromParent(showcaseView);
                         Settings.putGuideQuickSearch(false);
                         openDrawer(Gravity.RIGHT);
@@ -446,6 +449,11 @@ public final class GalleryListScene extends BaseScene
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        if (null != mShowcaseView) {
+            ViewUtils.removeFromParent(mShowcaseView);
+            mShowcaseView = null;
+        }
 
         if (null != mSearchBarMover) {
             mSearchBarMover.cancelAnimation();
@@ -598,6 +606,10 @@ public final class GalleryListScene extends BaseScene
 
     @Override
     public void onBackPressed() {
+        if (null != mShowcaseView) {
+            return;
+        }
+
         boolean handle;
         switch (mState) {
             default:

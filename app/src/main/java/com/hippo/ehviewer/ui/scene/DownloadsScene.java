@@ -131,6 +131,8 @@ public class DownloadsScene extends ToolbarScene
     @Nullable
     private LinearLayoutManager mLayoutManager;
 
+    private ShowcaseView mShowcaseView;
+
     @Override
     public int getNavCheckedItem() {
         return R.id.nav_downloads;
@@ -321,7 +323,7 @@ public class DownloadsScene extends ToolbarScene
             return;
         }
 
-        new ShowcaseView.Builder(activity)
+        mShowcaseView = new ShowcaseView.Builder(activity)
                 .withMaterialShowcase()
                 .setStyle(R.style.Guide)
                 .setTarget(new ViewTarget(((DownloadHolder) holder).thumb))
@@ -332,6 +334,7 @@ public class DownloadsScene extends ToolbarScene
                 .setShowcaseEventListener(new SimpleShowcaseEventListener() {
                     @Override
                     public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        mShowcaseView = null;
                         ViewUtils.removeFromParent(showcaseView);
                         Settings.putGuideDownloadThumb(false);
                         guideDownloadLabels();
@@ -349,7 +352,7 @@ public class DownloadsScene extends ToolbarScene
         Point point = new Point();
         display.getSize(point);
 
-        new ShowcaseView.Builder(activity)
+        mShowcaseView = new ShowcaseView.Builder(activity)
                 .withMaterialShowcase()
                 .setStyle(R.style.Guide)
                 .setTarget(new PointTarget(point.x, point.y / 3))
@@ -360,6 +363,7 @@ public class DownloadsScene extends ToolbarScene
                 .setShowcaseEventListener(new SimpleShowcaseEventListener() {
                     @Override
                     public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        mShowcaseView = null;
                         ViewUtils.removeFromParent(showcaseView);
                         Settings.puttGuideDownloadLabels(false);
                         openDrawer(Gravity.RIGHT);
@@ -377,6 +381,11 @@ public class DownloadsScene extends ToolbarScene
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        if (null != mShowcaseView) {
+            ViewUtils.removeFromParent(mShowcaseView);
+            mShowcaseView = null;
+        }
 
         mRecyclerView = null;
         mFabLayout = null;
@@ -522,6 +531,10 @@ public class DownloadsScene extends ToolbarScene
 
     @Override
     public void onBackPressed() {
+        if (null != mShowcaseView) {
+            return;
+        }
+
         if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
             mRecyclerView.outOfCustomChoiceMode();
         } else {
