@@ -50,6 +50,7 @@ import android.widget.TextView;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
+import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.app.EditTextDialogBuilder;
 import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
@@ -480,6 +481,26 @@ public final class GalleryListScene extends BaseScene
         mFabAnimatorListener = null;
     }
 
+    private void showQuickSearchTipDialog(final List<QuickSearch> list,
+            final ArrayAdapter<QuickSearch> adapter, final ListView listView, final TextView tip) {
+        Context context = getContext2();
+        if (null == context) {
+            return;
+        }
+        final CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(
+                context, getString(R.string.add_quick_search_tip), getString(R.string.get_it), false);
+        builder.setTitle(R.string.readme);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (builder.isChecked()) {
+                    Settings.putQuickSearchTip(false);
+                }
+                showAddQuickSearchDialog(list, adapter, listView, tip);
+            }
+        }).show();
+    }
+
     private void showAddQuickSearchDialog(final List<QuickSearch> list,
             final ArrayAdapter<QuickSearch> adapter, final ListView listView, final TextView tip) {
         Context context = getContext2();
@@ -558,7 +579,11 @@ public final class GalleryListScene extends BaseScene
                 int id = item.getItemId();
                 switch (id) {
                     case R.id.action_add:
-                        showAddQuickSearchDialog(list, adapter, listView, tip);
+                        if (Settings.getQuickSearchTip()) {
+                            showQuickSearchTipDialog(list, adapter, listView, tip);
+                        } else {
+                            showAddQuickSearchDialog(list, adapter, listView, tip);
+                        }
                         break;
                     case R.id.action_settings:
                         startScene(new Announcer(QuickSearchScene.class));

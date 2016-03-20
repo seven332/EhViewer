@@ -175,6 +175,8 @@
     <string name="delete_quick_search_title">Delete Quick Search</string>
     <string name="delete_quick_search_message">Delete \"%s\"?</string>
     <string name="no_quick_search">Quick search will be shown here</string>
+    <string name="add_quick_search_tip">The state of gallery list will be saved as quick search. Apply search first if you want to save the state of search panel.</string>
+    <string name="readme">README</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 stars</string>

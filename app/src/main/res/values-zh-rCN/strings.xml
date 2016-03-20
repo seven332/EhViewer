@@ -133,6 +133,8 @@
     <string name="delete_quick_search_title">删除快速搜索</string>
     <string name="delete_quick_search_message">删除“%s”？</string>
     <string name="no_quick_search">这里是快速搜索</string>
+    <string name="add_quick_search_tip">画廊列表的状态将被保存为快速搜索。如果你想保存搜索面板的状态，请先执行搜索。</string>
+    <string name="readme">读我</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>

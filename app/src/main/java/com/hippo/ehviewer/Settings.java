@@ -220,6 +220,17 @@ public class Settings {
         putBoolean(KEY_SELECT_SITE, value);
     }
 
+    private static final String KEY_QUICK_SEARCH_TIP = "quick_search_tip";
+    private static final boolean DEFAULT_QUICK_SEARCH_TIP = true;
+
+    public static boolean getQuickSearchTip() {
+        return getBoolean(KEY_QUICK_SEARCH_TIP, DEFAULT_QUICK_SEARCH_TIP);
+    }
+
+    public static void putQuickSearchTip(boolean value) {
+        putBoolean(KEY_QUICK_SEARCH_TIP, value);
+    }
+
     /********************
      ****** Eh
      ********************/
