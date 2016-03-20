@@ -93,6 +93,10 @@ public class GalleryInfo implements Parcelable {
     public int thumbWidth;
     public int thumbHeight;
 
+    public int spanSize;
+    public int spanIndex;
+    public int spanGroupIndex;
+
     /**
      * language from title
      */
@@ -126,6 +130,11 @@ public class GalleryInfo implements Parcelable {
         dest.writeFloat(this.rating);
         dest.writeString(this.simpleLanguage);
         dest.writeStringArray(this.simpleTags);
+        dest.writeInt(this.thumbWidth);
+        dest.writeInt(this.thumbHeight);
+        dest.writeInt(this.spanSize);
+        dest.writeInt(this.spanIndex);
+        dest.writeInt(this.spanGroupIndex);
     }
 
     public GalleryInfo() {}
@@ -142,6 +151,11 @@ public class GalleryInfo implements Parcelable {
         this.rating = in.readFloat();
         this.simpleLanguage = in.readString();
         this.simpleTags = in.createStringArray();
+        this.thumbWidth = in.readInt();
+        this.thumbHeight = in.readInt();
+        this.spanSize = in.readInt();
+        this.spanIndex = in.readInt();
+        this.spanGroupIndex = in.readInt();
     }
 
     public static final Parcelable.Creator<GalleryInfo> CREATOR = new Parcelable.Creator<GalleryInfo>() {

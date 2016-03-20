@@ -20,6 +20,9 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GridAutoSpanLayoutManager extends GridLayoutManager {
 
     public static final int STRATEGY_MIN_SIZE = 0;
@@ -28,6 +31,8 @@ public class GridAutoSpanLayoutManager extends GridLayoutManager {
     private int mColumnSize = -1;
     private boolean mColumnSizeChanged = true;
     private int mStrategy;
+
+    private List<OnUpdateSpanCountListener> mListeners;
 
     public GridAutoSpanLayoutManager(Context context, int columnSize) {
         super(context, 1);
@@ -92,7 +97,30 @@ public class GridAutoSpanLayoutManager extends GridLayoutManager {
             }
             setSpanCount(spanCount);
             mColumnSizeChanged = false;
+
+            if (null != mListeners) {
+                for (int i = 0, n = mListeners.size(); i < n; i++) {
+                    mListeners.get(i).onUpdateSpanCount(spanCount);
+                }
+            }
         }
         super.onLayoutChildren(recycler, state);
+    }
+
+    public void addOnUpdateSpanCountListener(OnUpdateSpanCountListener listener) {
+        if (null == mListeners) {
+            mListeners = new ArrayList<>();
+        }
+        mListeners.add(listener);
+    }
+
+    public void removeOnUpdateSpanCountListener(OnUpdateSpanCountListener listener) {
+        if (null != mListeners) {
+            mListeners.remove(listener);
+        }
+    }
+
+    public interface OnUpdateSpanCountListener {
+        void onUpdateSpanCount(int spanCount);
     }
 }

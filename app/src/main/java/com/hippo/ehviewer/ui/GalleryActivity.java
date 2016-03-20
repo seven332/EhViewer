@@ -254,15 +254,10 @@ public class GalleryActivity extends EhActivity
             mSystemUiShowing = true;
         }
 
-        mClock = findViewById(R.id.clock);
-        mBattery = findViewById(R.id.battery);
-
-        if (mClock != null && !Settings.getShowClock()) {
-            mClock.setVisibility(View.GONE);
-        }
-        if (mBattery != null && !Settings.getShowBattery()) {
-            mBattery.setVisibility(View.GONE);
-        }
+        mClock = ViewUtils.$$(this, R.id.clock);
+        mBattery = ViewUtils.$$(this, R.id.battery);
+        mClock.setVisibility(Settings.getShowClock() ? View.VISIBLE : View.GONE);
+        mBattery.setVisibility(Settings.getShowBattery() ? View.VISIBLE : View.GONE);
 
         mSliderPanel = findViewById(R.id.slider_panel);
         mLeftText = (TextView) mSliderPanel.findViewById(R.id.left);
@@ -282,10 +277,10 @@ public class GalleryActivity extends EhActivity
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        if (Settings.getGuideGallery()) {
+        //if (Settings.getGuideGallery()) {
             FrameLayout mainLayout = (FrameLayout) ViewUtils.$$(this, R.id.main);
             mainLayout.addView(new GalleryGuideView(this));
-        }
+        //}
     }
 
     @Override

@@ -357,7 +357,7 @@ public class ContentLayout extends FrameLayout {
             mEmptyString = str;
         }
 
-        public List<E> getDat() {
+        public List<E> getData() {
             return mData;
         }
 
