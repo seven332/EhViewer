@@ -22,48 +22,47 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 
-import com.hippo.widget.Slider;
+public class SeekBarPanel extends LinearLayout {
 
-public class SliderPanel extends LinearLayout {
+    private SeekBar mSeekBar;
 
-    private Slider mSlider;
-
-    public SliderPanel(Context context) {
+    public SeekBarPanel(Context context) {
         super(context);
     }
 
-    public SliderPanel(Context context, AttributeSet attrs) {
+    public SeekBarPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SliderPanel(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SeekBarPanel(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
     public void onViewAdded(View child) {
-        if (child instanceof Slider) {
-            mSlider = (Slider) child;
+        if (child instanceof SeekBar) {
+            mSeekBar = (SeekBar) child;
         }
     }
 
     @Override
     public void onViewRemoved(View child) {
-        if (child == mSlider) {
-            mSlider = null;
+        if (child == mSeekBar) {
+            mSeekBar = null;
         }
     }
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
-        if (mSlider == null) {
+        if (mSeekBar == null) {
             return super.onTouchEvent(event);
         } else {
-            final float offsetX = -mSlider.getLeft();
-            final float offsetY = -mSlider.getTop();
+            final float offsetX = -mSeekBar.getLeft();
+            final float offsetY = -mSeekBar.getTop();
             event.offsetLocation(offsetX, offsetY);
-            mSlider.onTouchEvent(event);
+            mSeekBar.onTouchEvent(event);
             event.offsetLocation(-offsetX, -offsetY);
             return true;
         }

@@ -47,8 +47,8 @@
         app:color="@color/secondary_text_dark"
         app:warningColor="@color/red_500"/>
 
-    <com.hippo.ehviewer.widget.SliderPanel
-        android:id="@+id/slider_panel"
+    <com.hippo.ehviewer.widget.SeekBarPanel
+        android:id="@+id/seek_bar_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -65,9 +65,8 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_horizontal"/>
 
-        <com.hippo.widget.Slider
-            android:id="@+id/slider"
-            style="@style/Slider.Dark"
+        <com.hippo.ehviewer.widget.ReversibleSeekBar
+            android:id="@+id/seek_bar"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
@@ -80,5 +79,5 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_horizontal"/>
 
-    </com.hippo.ehviewer.widget.SliderPanel>
+    </com.hippo.ehviewer.widget.SeekBarPanel>
 </FrameLayout>

@@ -36,6 +36,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,12 +54,12 @@ import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.ehviewer.widget.GalleryGuideView;
+import com.hippo.ehviewer.widget.ReversibleSeekBar;
 import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.SystemUiHelper;
-import com.hippo.widget.Slider;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.ConcurrentPool;
 import com.hippo.yorozuya.SimpleAnimatorListener;
@@ -68,7 +69,7 @@ import com.hippo.yorozuya.ViewUtils;
 import java.io.File;
 
 public class GalleryActivity extends EhActivity
-        implements GalleryProviderListener, Slider.OnSetProgressListener,
+        implements GalleryProviderListener, SeekBar.OnSeekBarChangeListener,
         GalleryView.Listener {
 
     public static final String ACTION_DIR = "dir";
@@ -107,13 +108,13 @@ public class GalleryActivity extends EhActivity
     @Nullable
     private View mBattery;
     @Nullable
-    private View mSliderPanel;
+    private View mSeekBarPanel;
     @Nullable
     private TextView mLeftText;
     @Nullable
     private TextView mRightText;
     @Nullable
-    private Slider mSlider;
+    private ReversibleSeekBar mSeekBar;
 
     private int mLayoutMode;
     private int mSize;
@@ -124,8 +125,8 @@ public class GalleryActivity extends EhActivity
     private final Runnable mRequestLayoutSliderTask = new Runnable() {
         @Override
         public void run() {
-            if (mSliderPanel != null) {
-                mSliderPanel.requestLayout();
+            if (mSeekBarPanel != null) {
+                mSeekBarPanel.requestLayout();
             }
         }
     };
@@ -133,8 +134,8 @@ public class GalleryActivity extends EhActivity
     private final SimpleAnimatorListener mHideSliderListener = new SimpleAnimatorListener() {
         @Override
         public void onAnimationEnd(Animator animation) {
-            if (mSliderPanel != null) {
-                mSliderPanel.setVisibility(View.INVISIBLE);
+            if (mSeekBarPanel != null) {
+                mSeekBarPanel.setVisibility(View.INVISIBLE);
             }
         }
     };
@@ -142,8 +143,8 @@ public class GalleryActivity extends EhActivity
     private final Runnable mHideSliderRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mSliderPanel != null) {
-                hideSlider(mSliderPanel);
+            if (mSeekBarPanel != null) {
+                hideSlider(mSeekBarPanel);
             }
         }
     };
@@ -259,11 +260,11 @@ public class GalleryActivity extends EhActivity
         mClock.setVisibility(Settings.getShowClock() ? View.VISIBLE : View.GONE);
         mBattery.setVisibility(Settings.getShowBattery() ? View.VISIBLE : View.GONE);
 
-        mSliderPanel = findViewById(R.id.slider_panel);
-        mLeftText = (TextView) mSliderPanel.findViewById(R.id.left);
-        mRightText = (TextView) mSliderPanel.findViewById(R.id.right);
-        mSlider = (Slider) mSliderPanel.findViewById(R.id.slider);
-        mSlider.setOnSetProgressListener(this);
+        mSeekBarPanel = findViewById(R.id.seek_bar_panel);
+        mLeftText = (TextView) mSeekBarPanel.findViewById(R.id.left);
+        mRightText = (TextView) mSeekBarPanel.findViewById(R.id.right);
+        mSeekBar = (ReversibleSeekBar) mSeekBarPanel.findViewById(R.id.seek_bar);
+        mSeekBar.setOnSeekBarChangeListener(this);
 
         mSize = mGalleryProvider.size();
         mCurrentIndex = startPage;
@@ -277,10 +278,10 @@ public class GalleryActivity extends EhActivity
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        //if (Settings.getGuideGallery()) {
+        if (Settings.getGuideGallery()) {
             FrameLayout mainLayout = (FrameLayout) ViewUtils.$$(this, R.id.main);
             mainLayout.addView(new GalleryGuideView(this));
-        //}
+        }
     }
 
     @Override
@@ -297,10 +298,10 @@ public class GalleryActivity extends EhActivity
             mGalleryProvider = null;
         }
 
-        mSliderPanel = null;
+        mSeekBarPanel = null;
         mLeftText = null;
         mRightText = null;
-        mSlider = null;
+        mSeekBar = null;
     }
 
     @Override
@@ -429,7 +430,7 @@ public class GalleryActivity extends EhActivity
 
     @SuppressLint("SetTextI18n")
     private void updateSlider() {
-        if (mSlider == null || mRightText == null || mLeftText == null || mSize <= 0 || mCurrentIndex < 0) {
+        if (mSeekBar == null || mRightText == null || mLeftText == null || mSize <= 0 || mCurrentIndex < 0) {
             return;
         }
 
@@ -438,16 +439,16 @@ public class GalleryActivity extends EhActivity
         if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
             start = mRightText;
             end = mLeftText;
-            mSlider.setReverse(true);
+            mSeekBar.setReverse(true);
         } else {
             start = mLeftText;
             end = mRightText;
-            mSlider.setReverse(false);
+            mSeekBar.setReverse(false);
         }
         start.setText(Integer.toString(mCurrentIndex + 1));
         end.setText(Integer.toString(mSize));
-        mSlider.setRange(1, mSize);
-        mSlider.setProgress(mCurrentIndex + 1);
+        mSeekBar.setMax(mSize - 1);
+        mSeekBar.setProgress(mCurrentIndex);
     }
 
     @Override
@@ -530,21 +531,31 @@ public class GalleryActivity extends EhActivity
     }
 
     @Override
-    public void onSetProgress(Slider slider, int newProgress, int oldProgress,
-            boolean byUser, boolean confirm) {
-        if (confirm && byUser && mGalleryView != null) {
-            mGalleryView.setCurrentPage(newProgress - 1);
+    @SuppressLint("SetTextI18n")
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        TextView start;
+        if (mLayoutMode == GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT) {
+            start = mRightText;
+        } else {
+            start = mLeftText;
+        }
+        if (fromUser && null != start) {
+            start.setText(Integer.toString(progress + 1));
         }
     }
 
     @Override
-    public void onFingerDown() {
+    public void onStartTrackingTouch(SeekBar seekBar) {
         SimpleHandler.getInstance().removeCallbacks(mHideSliderRunnable);
     }
 
     @Override
-    public void onFingerUp() {
+    public void onStopTrackingTouch(SeekBar seekBar) {
         SimpleHandler.getInstance().postDelayed(mHideSliderRunnable, HIDE_SLIDER_DELAY);
+        int progress = seekBar.getProgress();
+        if (progress != mCurrentIndex && null != mGalleryView) {
+            mGalleryView.setCurrentPage(progress);
+        }
     }
 
     @Override
@@ -786,16 +797,16 @@ public class GalleryActivity extends EhActivity
         }
 
         private void onTapSliderArea() {
-            if (mSliderPanel == null || mSize <= 0 || mCurrentIndex < 0) {
+            if (mSeekBarPanel == null || mSize <= 0 || mCurrentIndex < 0) {
                 return;
             }
 
             SimpleHandler.getInstance().removeCallbacks(mHideSliderRunnable);
 
-            if (mSliderPanel.getVisibility() == View.VISIBLE) {
-                hideSlider(mSliderPanel);
+            if (mSeekBarPanel.getVisibility() == View.VISIBLE) {
+                hideSlider(mSeekBarPanel);
             } else {
-                showSlider(mSliderPanel);
+                showSlider(mSeekBarPanel);
                 SimpleHandler.getInstance().postDelayed(mHideSliderRunnable, HIDE_SLIDER_DELAY);
             }
         }
