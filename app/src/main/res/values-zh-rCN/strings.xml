@@ -282,6 +282,8 @@
 
     <!-- History -->
     <string name="no_history">这里是阅读历史</string>
+    <string name="clear_all">全部清除</string>
+    <string name="clear_all_history">清除所有阅读历史？</string>
 
     <!-- Filter -->
     <string name="filter">过滤</string>

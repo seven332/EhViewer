@@ -23,37 +23,49 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionDefault;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
+import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
+import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.HistoryInfo;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.MainActivity;
+import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
-import com.hippo.widget.recyclerview.GridAutoSpanLayoutManager;
+import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 import de.greenrobot.dao.query.LazyList;
 
-// TODO No grid for history
 public class HistoryScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
         EasyRecyclerView.OnItemLongClickListener{
@@ -64,9 +76,9 @@ public class HistoryScene extends ToolbarScene
     @Nullable
     private ViewTransition mViewTransition;
     @Nullable
-    private HistoryAdapter mAdapter;
+    private RecyclerView.Adapter<?> mAdapter;
     @Nullable
-    private LazyList<HistoryInfo> mList;
+    private LazyList<HistoryInfo> mLazyList;
 
     @Override
     public int getNavCheckedItem() {
@@ -86,13 +98,24 @@ public class HistoryScene extends ToolbarScene
 
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
+        Resources resources = context.getResources();
 
         Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_history);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 
-        mList = EhDB.getHistoryLazyList();
-        GridAutoSpanLayoutManager layoutManager = new GridAutoSpanLayoutManager(context, 0);
+        RecyclerViewTouchActionGuardManager guardManager = new RecyclerViewTouchActionGuardManager();
+        guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+        guardManager.setEnabled(true);
+        RecyclerViewSwipeManager swipeManager = new RecyclerViewSwipeManager();
+        mAdapter = new HistoryAdapter();
+        mAdapter.setHasStableIds(true);
+        mAdapter = swipeManager.createWrappedAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+        animator.setSupportsChangeAnimations(false);
+        recyclerView.setItemAnimator(animator);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         recyclerView.setDrawSelectorOnTop(true);
@@ -100,21 +123,19 @@ public class HistoryScene extends ToolbarScene
         recyclerView.setClipToPadding(false);
         recyclerView.setOnItemClickListener(this);
         recyclerView.setOnItemLongClickListener(this);
-        mAdapter = new HistoryAdapter(getLayoutInflater2(), getResources2(),
-                recyclerView, layoutManager, Settings.getListMode());
-        recyclerView.setAdapter(mAdapter);
-        mAdapter.register();
+        int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
+        int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
+        recyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+        guardManager.attachRecyclerView(recyclerView);
+        swipeManager.attachRecyclerView(recyclerView);
 
         fastScroller.attachToRecyclerView(recyclerView);
         HandlerDrawable handlerDrawable = new HandlerDrawable();
         handlerDrawable.setColor(ResourcesUtils.getAttrColor(context, R.attr.colorAccent));
         fastScroller.setHandlerDrawable(handlerDrawable);
 
-        if (null != mList && mList.size() > 0) {
-            mViewTransition.showView(0);
-        } else {
-            mViewTransition.showView(1);
-        }
+        updateLazyList();
+        updateView(false);
 
         return view;
     }
@@ -130,17 +151,34 @@ public class HistoryScene extends ToolbarScene
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (null != mList) {
-            mList.close();
-            mList = null;
-        }
-        if (null != mAdapter) {
-            mAdapter.unregister();
-            mAdapter = null;
+        if (null != mLazyList) {
+            mLazyList.close();
+            mLazyList = null;
         }
 
         mViewTransition = null;
         mAdapter = null;
+    }
+
+    // Remember to notify
+    private void updateLazyList() {
+        LazyList<HistoryInfo> lazyList = EhDB.getHistoryLazyList();
+        if (mLazyList != null) {
+            mLazyList.close();
+        }
+        mLazyList = lazyList;
+    }
+
+    private void updateView(boolean animation) {
+        if (null == mAdapter || null == mViewTransition) {
+            return;
+        }
+
+        if (mAdapter.getItemCount() == 0) {
+            mViewTransition.showView(1, animation);
+        } else {
+            mViewTransition.showView(0, animation);
+        }
     }
 
     @Override
@@ -149,14 +187,55 @@ public class HistoryScene extends ToolbarScene
     }
 
     @Override
+    public int getMenuResId() {
+        return R.menu.scene_history;
+    }
+
+    private void showClearAllDialog() {
+        new AlertDialog.Builder(getContext2())
+                .setMessage(R.string.clear_all_history)
+                .setPositiveButton(R.string.clear_all, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (DialogInterface.BUTTON_POSITIVE != which || null == mAdapter) {
+                            return;
+                        }
+
+                        EhDB.clearHistoryInfo();
+                        updateLazyList();
+                        mAdapter.notifyDataSetChanged();
+                        updateView(true);
+                    }
+                }).show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        // Skip when in choice mode
+        Context context = getContext2();
+        if (null == context) {
+            return false;
+        }
+
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_clear_all: {
+                showClearAllDialog();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        if (null == mList) {
+        if (null == mLazyList) {
             return false;
         }
 
         Bundle args = new Bundle();
         args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
-        args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, mList.get(position));
+        args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, mLazyList.get(position));
         Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
         View thumb;
         if (ApiHelper.SUPPORT_TRANSITION && null != (thumb = view.findViewById(R.id.thumb))) {
@@ -170,11 +249,11 @@ public class HistoryScene extends ToolbarScene
     public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
         final Context context = getContext2();
         final MainActivity activity = getActivity2();
-        if (null == context || null == activity || null == mList) {
+        if (null == context || null == activity || null == mLazyList) {
             return false;
         }
 
-        final GalleryInfo gi = mList.get(position);
+        final GalleryInfo gi = mLazyList.get(position);
         new AlertDialog.Builder(context)
                 .setTitle(EhUtils.getSuitableTitle(gi))
                 .setItems(R.array.gallery_list_menu_entries, new DialogInterface.OnClickListener() {
@@ -195,22 +274,124 @@ public class HistoryScene extends ToolbarScene
         return true;
     }
 
-    private class HistoryAdapter extends GalleryAdapter {
+    private class HistoryHolder extends AbstractSwipeableItemViewHolder {
 
-        public HistoryAdapter(LayoutInflater inflater, Resources resources,
-                RecyclerView recyclerView, GridAutoSpanLayoutManager layoutManager, int type) {
-            super(inflater, resources, recyclerView, layoutManager, type);
+        public final LoadImageView thumb;
+        public final TextView title;
+        public final TextView uploader;
+        public final SimpleRatingView rating;
+        public final TextView category;
+        public final TextView posted;
+        public final TextView simpleLanguage;
+
+        public HistoryHolder(View itemView) {
+            super(itemView);
+
+            thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
+            title = (TextView) itemView.findViewById(R.id.title);
+            uploader = (TextView) itemView.findViewById(R.id.uploader);
+            rating = (SimpleRatingView) itemView.findViewById(R.id.rating);
+            category = (TextView) itemView.findViewById(R.id.category);
+            posted = (TextView) itemView.findViewById(R.id.posted);
+            simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
         }
 
-        @Nullable
         @Override
-        public GalleryInfo getDataAt(int position) {
-            return null != mList ? mList.get(position) : null;
+        public View getSwipeableContainerView() {
+            return itemView;
+        }
+    }
+
+    private class HistoryAdapter extends RecyclerView.Adapter<HistoryHolder>
+            implements SwipeableItemAdapter<HistoryHolder> {
+
+        private final LayoutInflater mInflater;
+
+        public HistoryAdapter() {
+            mInflater = getLayoutInflater2();
+        }
+
+        @Override
+        public long getItemId(int position) {
+            if (null == mLazyList) {
+                return super.getItemId(position);
+            } else {
+                return mLazyList.get(position).gid;
+            }
+        }
+
+        @Override
+        public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new HistoryHolder(mInflater.inflate(R.layout.item_gallery_list, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(HistoryHolder holder, int position) {
+            if (null == mLazyList) {
+                return;
+            }
+
+            GalleryInfo gi = mLazyList.get(position);
+            holder.thumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb);
+            holder.title.setText(EhUtils.getSuitableTitle(gi));
+            holder.uploader.setText(gi.uploader);
+            holder.rating.setRating(gi.rating);
+            TextView category = holder.category;
+            String newCategoryText = EhUtils.getCategory(gi.category);
+            if (!newCategoryText.equals(category.getText())) {
+                category.setText(newCategoryText);
+                category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
+            }
+            holder.posted.setText(gi.posted);
+            holder.simpleLanguage.setText(gi.simpleLanguage);
         }
 
         @Override
         public int getItemCount() {
-            return null != mList ? mList.size() : 0;
+            return null != mLazyList ? mLazyList.size() : 0;
+        }
+
+        @Override
+        public int onGetSwipeReactionType(HistoryHolder holder, int position, int x, int y) {
+            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
+        }
+
+        @Override
+        public void onSetSwipeBackground(HistoryHolder holder, int position, int type) {}
+
+        @Override
+        public SwipeResultAction onSwipeItem(HistoryHolder holder, int position, int result) {
+            switch (result) {
+                case SwipeableItemConstants.RESULT_SWIPED_LEFT:
+                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
+                    return new SwipeResultActionClear(position);
+                case SwipeableItemConstants.RESULT_CANCELED:
+                default:
+                    return new SwipeResultActionDefault();
+            }
+        }
+    }
+
+    private class SwipeResultActionClear extends SwipeResultActionRemoveItem {
+
+        private final int mPosition;
+
+        protected SwipeResultActionClear(int position) {
+            mPosition = position;
+        }
+
+        @Override
+        protected void onPerformAction() {
+            super.onPerformAction();
+            if (null == mLazyList || null == mAdapter) {
+                return;
+            }
+
+            HistoryInfo info = mLazyList.get(mPosition);
+            EhDB.deleteHistoryInfo(info);
+            updateLazyList();
+            mAdapter.notifyItemRemoved(mPosition);
+            updateView(true);
         }
     }
 

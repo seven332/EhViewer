@@ -542,6 +542,16 @@ public class EhDB {
         }
     }
 
+    public static synchronized void deleteHistoryInfo(HistoryInfo info) {
+        HistoryDao dao = sDaoSession.getHistoryDao();
+        dao.delete(info);
+    }
+
+    public static synchronized void clearHistoryInfo() {
+        HistoryDao dao = sDaoSession.getHistoryDao();
+        dao.deleteAll();
+    }
+
     public static synchronized List<Filter> getAllFilter() {
         return sDaoSession.getFilterDao().queryBuilder().list();
     }

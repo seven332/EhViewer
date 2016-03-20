@@ -322,6 +322,8 @@
 
     <!-- History -->
     <string name="no_history">Viewed galleries will be shown here</string>
+    <string name="clear_all">Clear all</string>
+    <string name="clear_all_history">Clear all history?</string>
 
     <!-- Filter -->
     <string name="filter">Filter</string>
