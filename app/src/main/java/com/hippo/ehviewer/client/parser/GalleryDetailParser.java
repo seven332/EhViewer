@@ -204,7 +204,13 @@ public class GalleryDetailParser {
 
             Elements tags = element.child(1).children();
             for (int i = 0, n = tags.size(); i < n; i++) {
-                group.addTag(tags.get(i).text());
+                String tag = tags.get(i).text();
+                // Sometimes parody tag is followed with '|' and english translate, just remove them
+                int index = tag.indexOf('|');
+                if (index >= 0) {
+                    tag = tag.substring(0, index);
+                }
+                group.addTag(tag);
             }
 
             return group.size() > 0 ? group : null;
