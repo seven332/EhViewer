@@ -61,7 +61,6 @@ import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.FavListUrlBuilder;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.exception.NotFoundException;
 import com.hippo.ehviewer.client.parser.FavoritesParser;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.DrawerLifeCircle;
@@ -260,6 +259,7 @@ public class FavoritesScene extends BaseScene implements
         int paddingTopSB = resources.getDimensionPixelOffset(R.dimen.list_padding_top_search_bar);
 
         mHelper = new FavoritesHelper();
+        mHelper.setEmptyString(resources.getString(R.string.gallery_list_empty_hit));
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
@@ -844,6 +844,7 @@ public class FavoritesScene extends BaseScene implements
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void onGetFavoritesLocal(String keyword, int taskId) {
         if (mHelper != null && mHelper.isCurrentTask(taskId)) {
             List<GalleryInfo> list;
@@ -853,7 +854,8 @@ public class FavoritesScene extends BaseScene implements
                 list = EhDB.searchLocalFavorites(keyword);
             }
             if (list.size() == 0) {
-                mHelper.onGetException(taskId, new NotFoundException());
+                mHelper.setPages(taskId, 0);
+                mHelper.onGetPageData(taskId, Collections.EMPTY_LIST);
             } else {
                 mHelper.setPages(taskId, 1);
                 mHelper.onGetPageData(taskId, list);
