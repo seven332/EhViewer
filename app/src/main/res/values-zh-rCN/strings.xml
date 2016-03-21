@@ -46,6 +46,8 @@
     <string name="i_will_check_it">好的</string>
     <string name="i_dont_think_so">我没输错</string>
 
+    <string name="invalid_download_location">似乎下载路径不可用。请到重新设置下载路径。</string>
+
     <string name="error_bad_status_code">错误的状态码：%d</string>
     <string name="error_timeout">超时</string>
     <string name="error_unknown_host">未知主机</string>

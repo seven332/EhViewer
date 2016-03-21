@@ -62,6 +62,8 @@
     <string name="i_will_check_it">I will check it</string>
     <string name="i_dont_think_so">I don\'t think so</string>
 
+    <string name="invalid_download_location">It seems download location is not available. Please set it in Settings.</string>
+
     <string name="error_status_code_400" translatable="false">Bad Request</string>
     <string name="error_status_code_401" translatable="false">Unauthorized</string>
     <string name="error_status_code_402" translatable="false">Payment Required</string>

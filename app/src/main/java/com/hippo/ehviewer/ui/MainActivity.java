@@ -29,6 +29,7 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -66,6 +67,7 @@ import com.hippo.ehviewer.ui.scene.WebViewSignInScene;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
+import com.hippo.unifile.UniFile;
 import com.hippo.util.PermissionRequester;
 import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.ViewUtils;
@@ -308,9 +310,22 @@ public final class MainActivity extends StageActivity
         if (savedInstanceState == null) {
             onInit();
             CommonOperations.checkUpdate(this, false);
+            checkDownloadLocation();
         } else {
             onRestore(savedInstanceState);
         }
+    }
+
+    private void checkDownloadLocation() {
+        UniFile uniFile = Settings.getDownloadLocation();
+        if (null != uniFile && uniFile.ensureDir()) {
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.waring)
+                .setMessage(R.string.invalid_download_location)
+                .setPositiveButton(R.string.get_it, null)
+                .show();
     }
 
     private void onInit() {
