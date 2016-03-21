@@ -17,6 +17,8 @@
 package com.hippo.ehviewer.ui;
 
 import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -116,24 +118,34 @@ public class GalleryActivity extends EhActivity
     @Nullable
     private ReversibleSeekBar mSeekBar;
 
+    private ObjectAnimator mSeekBarPanelAnimator;
+
     private int mLayoutMode;
     private int mSize;
     private int mCurrentIndex;
 
     private final ConcurrentPool<NotifyTask> mNotifyTaskPool = new ConcurrentPool<>(3);
 
-    private final Runnable mRequestLayoutSliderTask = new Runnable() {
+    private final ValueAnimator.AnimatorUpdateListener mUpdateSliderListener = new ValueAnimator.AnimatorUpdateListener() {
         @Override
-        public void run() {
-            if (mSeekBarPanel != null) {
+        public void onAnimationUpdate(ValueAnimator animation) {
+            if (null != mSeekBarPanel) {
                 mSeekBarPanel.requestLayout();
             }
+        }
+    };
+
+    private final SimpleAnimatorListener mShowSliderListener = new SimpleAnimatorListener() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            mSeekBarPanelAnimator = null;
         }
     };
 
     private final SimpleAnimatorListener mHideSliderListener = new SimpleAnimatorListener() {
         @Override
         public void onAnimationEnd(Animator animation) {
+            mSeekBarPanelAnimator = null;
             if (mSeekBarPanel != null) {
                 mSeekBarPanel.setVisibility(View.INVISIBLE);
             }
@@ -260,10 +272,10 @@ public class GalleryActivity extends EhActivity
         mClock.setVisibility(Settings.getShowClock() ? View.VISIBLE : View.GONE);
         mBattery.setVisibility(Settings.getShowBattery() ? View.VISIBLE : View.GONE);
 
-        mSeekBarPanel = findViewById(R.id.seek_bar_panel);
-        mLeftText = (TextView) mSeekBarPanel.findViewById(R.id.left);
-        mRightText = (TextView) mSeekBarPanel.findViewById(R.id.right);
-        mSeekBar = (ReversibleSeekBar) mSeekBarPanel.findViewById(R.id.seek_bar);
+        mSeekBarPanel = ViewUtils.$$(this, R.id.seek_bar_panel);
+        mLeftText = (TextView) ViewUtils.$$(mSeekBarPanel, R.id.left);
+        mRightText = (TextView) ViewUtils.$$(mSeekBarPanel, R.id.right);
+        mSeekBar = (ReversibleSeekBar) ViewUtils.$$(mSeekBarPanel, R.id.seek_bar);
         mSeekBar.setOnSeekBarChangeListener(this);
 
         mSize = mGalleryProvider.size();
@@ -603,19 +615,34 @@ public class GalleryActivity extends EhActivity
     }
 
     private void showSlider(View sliderPanel) {
+        if (null != mSeekBarPanelAnimator) {
+            mSeekBarPanelAnimator.cancel();
+            mSeekBarPanelAnimator = null;
+        }
+
         sliderPanel.setTranslationY(sliderPanel.getHeight());
         sliderPanel.setVisibility(View.VISIBLE);
-        sliderPanel.animate().translationY(0.0f).setDuration(SLIDER_ANIMATION_DURING)
-                .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR)
-                .setListener(null).start();
-        // Request layout ensure show it
-        SimpleHandler.getInstance().post(mRequestLayoutSliderTask);
+
+        mSeekBarPanelAnimator = ObjectAnimator.ofFloat(sliderPanel, "translationY", 0.0f);
+        mSeekBarPanelAnimator.setDuration(SLIDER_ANIMATION_DURING);
+        mSeekBarPanelAnimator.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
+        mSeekBarPanelAnimator.addUpdateListener(mUpdateSliderListener);
+        mSeekBarPanelAnimator.addListener(mShowSliderListener);
+        mSeekBarPanelAnimator.start();
     }
 
     private void hideSlider(View sliderPanel) {
-        sliderPanel.animate().translationY(sliderPanel.getHeight()).setDuration(SLIDER_ANIMATION_DURING)
-                .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR)
-                .setListener(mHideSliderListener).start();
+        if (null != mSeekBarPanelAnimator) {
+            mSeekBarPanelAnimator.cancel();
+            mSeekBarPanelAnimator = null;
+        }
+
+        mSeekBarPanelAnimator = ObjectAnimator.ofFloat(sliderPanel, "translationY", sliderPanel.getHeight());
+        mSeekBarPanelAnimator.setDuration(SLIDER_ANIMATION_DURING);
+        mSeekBarPanelAnimator.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
+        mSeekBarPanelAnimator.addUpdateListener(mUpdateSliderListener);
+        mSeekBarPanelAnimator.addListener(mHideSliderListener);
+        mSeekBarPanelAnimator.start();
     }
 
     private class GalleryMenuHelper implements DialogInterface.OnClickListener {
