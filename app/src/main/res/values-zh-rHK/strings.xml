@@ -332,6 +332,9 @@
     <string name="settings_eh_excluded_tag_namespaces_summary">在默認搜索中排除指定標籤組</string>
     <string name="settings_eh_excluded_languages">排除語言</string>
     <string name="settings_eh_excluded_languages_summary">在主頁與搜索中隱藏指定語言的畫廊</string>
+    <string name="settings_eh_hath_proxy">H@H </string>
+    <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
+    <string name="settings_eh_hath_proxy_summary_2">未設置</string>
     <string name="settings_eh_show_jpn_title">顯示日文標題</string>
     <string name="settings_eh_show_jpn_title_summary_on">嘗試顯示日文標題。這會使獲取畫廊列表花費更多時間</string>
     <string name="settings_eh_show_jpn_title_summary_off">顯示默認標題。一般是英文標題</string>
@@ -437,6 +440,15 @@
     <string name="language_vietnamese">越南語</string>
     <string name="language_na">N/A</string>
     <string name="language_other">其他</string>
+
+    <string name="enable">啟用</string>
+    <string name="enabled">已啟用</string>
+    <string name="disabled">未啟用</string>
+    <string name="ip">IP</string>
+    <string name="port">端口</string>
+    <string name="Passkey">密鑰</string>
+    <string name="domain_not_supported">不支持域名</string>
+    <string name="invalid_port">無效的端口</string>
 
     <!-- License -->
     <string name="license">開源許可</string>

@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.client;
 
-import android.text.TextUtils;
+import com.hippo.network.InetValidator;
 
 /**
  * Some configurable stuff about EH. It ends up cookie.
@@ -623,8 +623,10 @@ public class EhConfig implements Cloneable {
     }
 
     private void updateUconfig() {
-        String hahClientIpPort = (TextUtils.isEmpty(hahClientIp) || hahClientPort == -1) ?
-                "" : hahClientIp + "%3A" + hahClientPort;
+        String hahClientIpPort = (InetValidator.isValidInet4Address(hahClientIp) &&
+                InetValidator.isValidInetPort(hahClientPort)) ?
+                hahClientIp + "%3A" + hahClientPort : "";
+        String hahClientPasskey = null == this.hahClientPasskey ? "" : this.hahClientPasskey;
         mUconfig = KEY_LOAD_FROM_HAH + "_" + loadFromHAH + "-" +
                 KEY_SCALE_WIDTH + "_" + scaleWidth + "-" +
                 KEY_SCALE_HEIGHT + "_" + scaleHeight + "-" +

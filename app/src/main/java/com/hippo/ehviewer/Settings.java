@@ -298,6 +298,72 @@ public class Settings {
         putString(KEY_EXCLUDED_LANGUAGES, value);
     }
 
+    private static final String KEY_HATH_PROXY = "hath_proxy";
+    private static final boolean DEFAULT_HATH_PROXY = false;
+
+    public static boolean getHathProxy() {
+        return getBoolean(KEY_HATH_PROXY, DEFAULT_HATH_PROXY);
+    }
+
+    public static void putHathProxy(boolean value) {
+        if (value) {
+            sEhConfig.hahClientIp = Settings.getHathIp();
+            sEhConfig.hahClientPort = Settings.getHathPort();
+            sEhConfig.hahClientPasskey = Settings.getHathPasskey();
+        } else {
+            sEhConfig.hahClientIp = DEFAULT_HATH_IP;
+            sEhConfig.hahClientPort = DEFAULT_HATH_PORT;
+            sEhConfig.hahClientPasskey = DEFAULT_HATH_PASSKEY;
+        }
+        sEhConfig.setDirty();
+        putBoolean(KEY_HATH_PROXY, value);
+    }
+
+    private static final String KEY_HATH_IP = "hath_ip";
+    private static final String DEFAULT_HATH_IP = null;
+
+    public static String getHathIp() {
+        return getString(KEY_HATH_IP, DEFAULT_HATH_IP);
+    }
+
+    public static void putHathIp(String value) {
+        if (Settings.getHathProxy()) {
+            sEhConfig.hahClientIp = value;
+            sEhConfig.setDirty();
+        }
+        putString(KEY_HATH_IP, value);
+    }
+
+    private static final String KEY_HATH_PORT = "hath_port";
+    private static final int DEFAULT_HATH_PORT = -1;
+
+    public static int getHathPort() {
+        return getInt(KEY_HATH_PORT, DEFAULT_HATH_PORT);
+    }
+
+    public static void putHathPort(int value) {
+        if (Settings.getHathProxy()) {
+            sEhConfig.hahClientPort = value;
+            sEhConfig.setDirty();
+        }
+        putInt(KEY_HATH_PORT, value);
+    }
+
+    private static final String KEY_HATH_PASSKEY = "hath_passkey";
+    private static final String DEFAULT_HATH_PASSKEY = null;
+
+    public static String getHathPasskey() {
+        return getString(KEY_HATH_PASSKEY, DEFAULT_HATH_PASSKEY);
+    }
+
+    public static void putHathPasskey(String value) {
+        if (Settings.getHathProxy()) {
+            sEhConfig.hahClientPasskey = value;
+            sEhConfig.setDirty();
+        }
+        putString(KEY_HATH_PASSKEY, value);
+    }
+
     /********************
      ****** Read
      ********************/
