@@ -199,6 +199,7 @@
     <string name="torrent_count">Torrent (%d)</string>
     <string name="share">Share</string>
     <string name="rate">Rate</string>
+    <string name="similar_gallery">Similar</string>
     <string name="no_tags">No tags</string>
     <string name="no_comments">No comments</string>
     <string name="no_more_comments">No more comments</string>

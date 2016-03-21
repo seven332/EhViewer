@@ -195,6 +195,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private TextView mShare;
     @Nullable
     private TextView mRate;
+    @Nullable
+    private TextView mSimilar;
     // Tags
     @Nullable
     private LinearLayout mTags;
@@ -451,15 +453,18 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mTorrent = (TextView) ViewUtils.$$(mActions, R.id.torrent);
         mShare = (TextView) ViewUtils.$$(mActions, R.id.share);
         mRate = (TextView) ViewUtils.$$(mActions, R.id.rate);
+        mSimilar = (TextView) ViewUtils.$$(mActions, R.id.similar);
         RippleSalon.addRipple(mHeartGroup, false);
         RippleSalon.addRipple(mTorrent, false);
         RippleSalon.addRipple(mShare, false);
         RippleSalon.addRipple(mRate, false);
+        RippleSalon.addRipple(mSimilar, false);
         mHeartGroup.setOnClickListener(this);
         mTorrent.setOnClickListener(this);
         mShare.setOnClickListener(this);
         mRate.setOnClickListener(this);
-        ensureActionDrawable();
+        mSimilar.setOnClickListener(this);
+        ensureActionDrawable(context);
 
         mTags = (LinearLayout) ViewUtils.$$(belowHeader, R.id.tags);
         mNoTags = (TextView) ViewUtils.$$(mTags, R.id.no_tags);
@@ -545,6 +550,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mTorrent = null;
         mShare = null;
         mRate = null;
+        mSimilar = null;
 
         mTags = null;
         mNoTags = null;
@@ -617,9 +623,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         text.setCompoundDrawables(null, drawable, null, null);
     }
 
-    private void ensureActionDrawable() {
-        Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+    private void ensureActionDrawable(Context context) {
         Drawable heart = DrawableManager.getDrawable(context, R.drawable.v_heart_primary_x48);
         setActionDrawable(mHeart, heart);
         Drawable heartOutline = DrawableManager.getDrawable(context, R.drawable.v_heart_outline_primary_x48);
@@ -630,6 +634,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         setActionDrawable(mShare, share);
         Drawable rate = DrawableManager.getDrawable(context, R.drawable.v_thumb_up_primary_x48);
         setActionDrawable(mRate, rate);
+        Drawable similar = DrawableManager.getDrawable(context, R.drawable.v_similar_primary_x48);
+        setActionDrawable(mSimilar, similar);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -982,6 +988,40 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         });
     }
 
+    @Nullable
+    private static String getArtist(GalleryTagGroup[] tagGroups) {
+        if (null == tagGroups) {
+            return null;
+        }
+        for (GalleryTagGroup tagGroup: tagGroups) {
+            if ("artist".equals(tagGroup.groupName) && tagGroup.size() > 0) {
+                return tagGroup.getTagAt(0);
+            }
+        }
+        return null;
+    }
+
+    private void showSimilarGalleryList() {
+        GalleryDetail gd = mGalleryDetail;
+        if (null == gd) {
+            return;
+        }
+        String artist = getArtist(gd.tags);
+        if (null != artist) {
+            ListUrlBuilder lub = new ListUrlBuilder();
+            lub.setMode(ListUrlBuilder.MODE_TAG);
+            lub.setKeyword("artist:" + artist);
+            GalleryListScene.startScene(this, lub);
+            return;
+        }
+        if (null != gd.uploader) {
+            ListUrlBuilder lub = new ListUrlBuilder();
+            lub.setMode(ListUrlBuilder.MODE_UPLOADER);
+            lub.setKeyword(gd.uploader);
+            GalleryListScene.startScene(this, lub);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         Context context = getContext2();
@@ -1088,6 +1128,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     .setPositiveButton(android.R.string.ok, helper)
                     .show();
             helper.setDialog(dialog, mGalleryDetail.rating);
+        } else if (mSimilar == v) {
+            showSimilarGalleryList();
         } else if (mComments == v) {
             if (mGalleryDetail == null) {
                 return;

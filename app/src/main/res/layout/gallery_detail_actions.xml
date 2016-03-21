@@ -29,7 +29,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:paddingLeft="@dimen/keyline_margin"
-        android:paddingRight="@dimen/keyline_margin">
+        android:paddingRight="@dimen/keyline_margin"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -86,6 +89,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/rate"
+                android:drawablePadding="8dp"
+                android:textColor="@color/primary_text_light"/>
+
+            <TextView
+                android:id="@+id/similar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/similar_gallery"
                 android:drawablePadding="8dp"
                 android:textColor="@color/primary_text_light"/>
 
