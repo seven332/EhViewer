@@ -16,6 +16,9 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -25,14 +28,17 @@ import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.ui.MainActivity;
+import com.hippo.hardware.ShakeDetector;
 import com.hippo.widget.lockpattern.LockPatternUtils;
 import com.hippo.widget.lockpattern.LockPatternView;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.List;
 
-public class SecurityScene extends BaseScene implements LockPatternView.OnPatternListener {
+public class SecurityScene extends BaseScene implements
+        LockPatternView.OnPatternListener, ShakeDetector.OnShakeListener {
 
     private static final int MAX_RETRY_TIMES = 5;
 
@@ -41,15 +47,58 @@ public class SecurityScene extends BaseScene implements LockPatternView.OnPatter
     @Nullable
     private LockPatternView mPatternView;
 
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
+
     private int mRetryTimes;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        if (null != mSensorManager) {
+            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            if (null != mAccelerometer) {
+                mShakeDetector = new ShakeDetector();
+                mShakeDetector.setOnShakeListener(this);
+            }
+        }
+
         if (null == savedInstanceState) {
             mRetryTimes = MAX_RETRY_TIMES;
         } else {
             mRetryTimes = savedInstanceState.getInt(KEY_RETRY_TIMES);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mSensorManager = null;
+        mAccelerometer = null;
+        mShakeDetector = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (null != mShakeDetector) {
+            mSensorManager.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (null != mShakeDetector) {
+            mSensorManager.unregisterListener(mShakeDetector);
         }
     }
 
@@ -106,6 +155,19 @@ public class SecurityScene extends BaseScene implements LockPatternView.OnPatter
             if (mRetryTimes <= 0) {
                 finish();
             }
+        }
+    }
+
+    @Override
+    public void onShake(int count) {
+        if (count == 10) {
+            MainActivity activity = getActivity2();
+            if (null == activity) {
+                return;
+            }
+            Settings.putSecurity("");
+            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_SECURITY, getArguments());
+            finish();
         }
     }
 }
