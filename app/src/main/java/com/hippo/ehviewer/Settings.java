@@ -680,6 +680,17 @@ public class Settings {
         putBoolean(KEY_SAVE_PARSE_ERROR_BODY, value);
     }
 
+    public static final String KEY_SECURITY = "security";
+    public static final String DEFAULT_SECURITY = "";
+
+    public static String getSecurity() {
+        return getString(KEY_SECURITY, DEFAULT_SECURITY);
+    }
+
+    public static void putSecurity(String value) {
+        putString(KEY_SECURITY, value);
+    }
+
     /********************
      ****** Guide
      ********************/

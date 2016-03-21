@@ -300,6 +300,11 @@
     <string name="delete_filter">刪除過濾項：%s？</string>
     <string name="filter_tip">標題過濾項：排除標題含有該關鍵字的畫廊。\n\n上傳者過濾項：排除該上傳者上傳的畫廊。\n\n標籤過濾項：排除包含該關鍵字的畫廊，這會使獲取畫廊列表花費更多時間。</string>
 
+    <!-- Set Security -->
+    <string name="set_pattern_protection">設置圖案保護</string>
+    <string name="set_pattern_protection_tip">繪製圖案來設置圖案保護\n留空來取消圖案保護</string>
+    <string name="set">設置</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -385,6 +390,9 @@
     <string name="settings_advanced_clear_download_path_cache_message">清除畫廊下載路徑緩存？</string>
     <string name="settings_advanced_clear_memory_cache">清理內存緩存</string>
     <string name="settings_advanced_clear_memory_cache_summary">清理縮略圖、畫廊信息的內存緩存</string>
+    <string name="settings_advanced_pattern_protection_title">圖案保護</string>
+    <string name="settings_advanced_pattern_protection_not_set">未設置圖案保護</string>
+    <string name="settings_advanced_pattern_protection_set">已設置圖案保護</string>
 
     <string name="settings_about">關於</string>
     <string name="settings_about_author">作者</string>

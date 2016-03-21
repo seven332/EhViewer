@@ -93,6 +93,12 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/filter"/>
 
+        <activity
+            android:name="com.hippo.ehviewer.ui.SetSecurityActivity"
+            android:configChanges="screenSize|uiMode"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/set_pattern_protection"/>
+
         <service
             android:name="com.hippo.ehviewer.download.DownloadService"
             android:icon="@mipmap/ic_launcher"

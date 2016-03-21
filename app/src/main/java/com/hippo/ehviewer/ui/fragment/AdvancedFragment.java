@@ -20,11 +20,13 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.util.LogCat;
 import com.hippo.util.ReadableTime;
 
@@ -34,6 +36,7 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
 
     private static final String KEY_DUMP_LOGCAT = "dump_logcat";
     private static final String KEY_CLEAR_MEMORY_CACHE = "clear_memory_cache";
+    private static final String KEY_PATTERN_PROTECTION = "pattern_protection";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,16 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
 
         dumpLogcat.setOnPreferenceClickListener(this);
         clearMemoryCache.setOnPreferenceClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Preference patternProtection = findPreference(KEY_PATTERN_PROTECTION);
+        patternProtection.setSummary(TextUtils.isEmpty(Settings.getSecurity()) ?
+                R.string.settings_advanced_pattern_protection_not_set :
+                R.string.settings_advanced_pattern_protection_set);
     }
 
     @Override

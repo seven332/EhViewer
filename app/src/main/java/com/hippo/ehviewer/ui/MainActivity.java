@@ -58,6 +58,7 @@ import com.hippo.ehviewer.ui.scene.GalleryPreviewsScene;
 import com.hippo.ehviewer.ui.scene.HistoryScene;
 import com.hippo.ehviewer.ui.scene.ProgressScene;
 import com.hippo.ehviewer.ui.scene.QuickSearchScene;
+import com.hippo.ehviewer.ui.scene.SecurityScene;
 import com.hippo.ehviewer.ui.scene.SelectSiteScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
@@ -76,15 +77,14 @@ public final class MainActivity extends StageActivity
 
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
-    private static final int REQUEST_CODE_UPDATE_PROFILE = 0;
-
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
 
-    public static final int CHECK_STEP_WARNING = 0;
-    public static final int CHECK_STEP_ANALYTICS = 1;
-    public static final int CHECK_STEP_CRASH = 2;
-    public static final int CHECK_STEP_SIGN_IN = 3;
-    public static final int CHECK_STEP_SELECT_SITE = 4;
+    public static final int CHECK_STEP_SECURITY = 0;
+    public static final int CHECK_STEP_WARNING = 1;
+    public static final int CHECK_STEP_ANALYTICS = 2;
+    public static final int CHECK_STEP_CRASH = 3;
+    public static final int CHECK_STEP_SIGN_IN = 4;
+    public static final int CHECK_STEP_SELECT_SITE = 5;
 
     public static final String KEY_TARGET_SCENE = "target_scene";
     public static final String KEY_TARGET_ARGS = "target_args";
@@ -106,6 +106,7 @@ public final class MainActivity extends StageActivity
     private int mNavCheckedItem = 0;
 
     static {
+        registerLaunchMode(SecurityScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(WarningScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(AnalyticsScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(CrashScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
@@ -128,6 +129,11 @@ public final class MainActivity extends StageActivity
 
     public void startSceneForCheckStep(int checkStep, Bundle args) {
         switch (checkStep) {
+            case CHECK_STEP_SECURITY:
+                if (Settings.getShowWarning()) {
+                    startScene(new Announcer(WarningScene.class).setArgs(args));
+                    break;
+                }
             case CHECK_STEP_WARNING:
                 if (Settings.getAskAnalytics()) {
                     startScene(new Announcer(AnalyticsScene.class).setArgs(args));
@@ -184,7 +190,9 @@ public final class MainActivity extends StageActivity
     @Nullable
     @Override
     protected Announcer getLaunchAnnouncer() {
-        if (Settings.getShowWarning()) {
+        if (!TextUtils.isEmpty(Settings.getSecurity())) {
+            return new Announcer(SecurityScene.class);
+        } else if (Settings.getShowWarning()) {
             return new Announcer(WarningScene.class);
         } else if (Settings.getAskAnalytics()) {
             return new Announcer(AnalyticsScene.class);
@@ -204,7 +212,12 @@ public final class MainActivity extends StageActivity
     // Sometimes scene can't show directly
     private Announcer processAnnouncer(Announcer announcer) {
         if (0 == getSceneCount()) {
-            if (Settings.getShowWarning()) {
+            if (!TextUtils.isEmpty(Settings.getSecurity())) {
+                Bundle newArgs = new Bundle();
+                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                return new Announcer(SecurityScene.class).setArgs(newArgs);
+            } else if (Settings.getShowWarning()) {
                 Bundle newArgs = new Bundle();
                 newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
                 newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());

@@ -39,4 +39,10 @@
         android:title="@string/settings_advanced_clear_memory_cache"
         android:summary="@string/settings_advanced_clear_memory_cache_summary"/>
 
+    <com.hippo.preference.ActivityPreference
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:key="pattern_protection"
+        android:title="@string/settings_advanced_pattern_protection_title"
+        app:activity="com.hippo.ehviewer.ui.SetSecurityActivity"/>
+
 </PreferenceScreen>
