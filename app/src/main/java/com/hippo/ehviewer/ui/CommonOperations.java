@@ -39,12 +39,15 @@ import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.text.Html;
+import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IOUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -284,6 +287,26 @@ public final class CommonOperations {
                     }, activity.getString(R.string.remember_download_label), false)
                     .setTitle(R.string.download)
                     .show();
+        }
+    }
+
+    public static void ensureNoMediaFile(UniFile file) {
+        if (null == file) {
+            return;
+        }
+
+        UniFile noMedia = file.createFile(".nomedia");
+        if (null == noMedia) {
+            return;
+        }
+
+        InputStream is = null;
+        try {
+            is = noMedia.openInputStream();
+        } catch (IOException e) {
+            // Ignore
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 }

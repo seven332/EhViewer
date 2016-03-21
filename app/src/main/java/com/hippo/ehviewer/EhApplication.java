@@ -39,6 +39,7 @@ import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.spider.SpiderDen;
+import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
@@ -107,6 +108,8 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         if (Settings.getEnableAnalytics()) {
             Analytics.start(this);
         }
+
+        CommonOperations.ensureNoMediaFile(Settings.getDownloadLocation());
 
         // Update version code
         try {

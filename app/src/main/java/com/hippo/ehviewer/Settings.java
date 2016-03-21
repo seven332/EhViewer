@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.data.FavListUrlBuilder;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.ehviewer.gallery.gl.ImageView;
+import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
@@ -480,6 +481,8 @@ public class Settings {
         putString(KEY_DOWNLOAD_SAVE_PATH, uri.getEncodedPath());
         putString(KEY_DOWNLOAD_SAVE_QUERY, uri.getEncodedQuery());
         putString(KEY_DOWNLOAD_SAVE_FRAGMENT, uri.getEncodedFragment());
+
+        CommonOperations.ensureNoMediaFile(location);
     }
 
     private static final String KEY_RECENT_DOWNLOAD_LABEL = "recent_download_label";
