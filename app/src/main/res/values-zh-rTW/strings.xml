@@ -113,6 +113,8 @@
     <string name="search_specify_gallery">指定畫廊</string>
     <string name="search_enable_advance">啟用高階選項</string>
 
+    <string name="search_tip">一般搜尋：就是搜尋。\n\n指定上傳者：列出該上傳者上傳的畫廊。其他選項會被忽略。\n\n指定標籤：列出含有該標籤的畫廊。其他選項會被忽略。\n\n指定畫廊：跳轉至該畫廊。關鍵字應為“gid token”。</string>
+
     <string name="search_sname">搜尋畫廊</string>
     <string name="search_stags">搜尋畫廊標籤</string>
     <string name="search_sdesc">搜尋畫廊描述</string>

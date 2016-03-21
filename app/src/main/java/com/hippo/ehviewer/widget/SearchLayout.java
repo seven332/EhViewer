@@ -280,7 +280,9 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
     @Override
     public void onClick(View v) {
         if (mNormalSearchModeHelp == v) {
-            new AlertDialog.Builder(getContext()).setTitle("TODO").setMessage("TODO").show();
+            new AlertDialog.Builder(getContext())
+                    .setMessage(R.string.search_tip)
+                    .show();
         }
     }
 

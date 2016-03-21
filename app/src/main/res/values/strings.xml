@@ -155,6 +155,8 @@
     <string name="search_specify_gallery">Specify gallery</string>
     <string name="search_enable_advance">Enable advance options</string>
 
+    <string name="search_tip">Normal search: Just search.\n\nSpecify uploader: List galleries which uploaded by the uploader. Other options will be ignored.\n\nSpecify tag: List galleries which contains the tag. Only one tag accepted. Other options will be ignored.\n\nSpecify gallery: Go to the gallery. The keyword should be \"gid token\".</string>
+
     <string name="search_sname">Search Gallery</string>
     <string name="search_stags">Search Gallery Tags</string>
     <string name="search_sdesc">Search Gallery Description</string>
