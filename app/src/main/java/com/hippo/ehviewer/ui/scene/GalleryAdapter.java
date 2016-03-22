@@ -200,6 +200,5 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
     @Override
     public void onReceive(int id, Object obj) {
         setType(Settings.getListMode());
-        notifyDataSetChanged();
     }
 }
