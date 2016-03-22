@@ -500,12 +500,21 @@ public final class GalleryListScene extends BaseScene
     private void showAddQuickSearchDialog(final List<QuickSearch> list,
             final ArrayAdapter<QuickSearch> adapter, final ListView listView, final TextView tip) {
         Context context = getContext2();
-        if (null == context || null == mUrlBuilder) {
+        final ListUrlBuilder urlBuilder = mUrlBuilder;
+        if (null == context || null == urlBuilder) {
             return;
         }
 
+        // Check duplicate
+        for (QuickSearch q: list) {
+            if (urlBuilder.equalsQuickSearch(q)) {
+                showTip(getString(R.string.duplicate_quick_search, q.name), LENGTH_SHORT);
+                return;
+            }
+        }
+
         final EditTextDialogBuilder builder = new EditTextDialogBuilder(context,
-                getSuitableTitleForUrlBuilder(context.getResources(), mUrlBuilder, false), getString(R.string.quick_search));
+                getSuitableTitleForUrlBuilder(context.getResources(), urlBuilder, false), getString(R.string.quick_search));
         builder.setTitle(R.string.add_quick_search_dialog_title);
         builder.setPositiveButton(android.R.string.ok, null);
         final AlertDialog dialog = builder.show();
@@ -513,24 +522,35 @@ public final class GalleryListScene extends BaseScene
             @Override
             public void onClick(View v) {
                 String text = builder.getText().trim();
+
+                // Check name empty
                 if (TextUtils.isEmpty(text)) {
                     builder.setError(getString(R.string.name_is_empty));
-                } else {
-                    builder.setError(null);
-                    dialog.dismiss();
-                    QuickSearch quickSearch = mUrlBuilder.toQuickSearch();
-                    quickSearch.name = text;
-                    EhDB.insertQuickSearch(quickSearch);
-                    list.add(quickSearch);
-                    adapter.notifyDataSetChanged();
+                    return;
+                }
 
-                    if (0 == list.size()) {
-                        tip.setVisibility(View.VISIBLE);
-                        listView.setVisibility(View.GONE);
-                    } else {
-                        tip.setVisibility(View.GONE);
-                        listView.setVisibility(View.VISIBLE);
+                // Check name duplicate
+                for (QuickSearch q: list) {
+                    if (text.equals(q.name)) {
+                        builder.setError(getString(R.string.duplicate_name));
+                        return;
                     }
+                }
+
+                builder.setError(null);
+                dialog.dismiss();
+                QuickSearch quickSearch = urlBuilder.toQuickSearch();
+                quickSearch.name = text;
+                EhDB.insertQuickSearch(quickSearch);
+                list.add(quickSearch);
+                adapter.notifyDataSetChanged();
+
+                if (0 == list.size()) {
+                    tip.setVisibility(View.VISIBLE);
+                    listView.setVisibility(View.GONE);
+                } else {
+                    tip.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
                 }
             }
         });

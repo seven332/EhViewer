@@ -48,9 +48,6 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
     public static final int MODE_WHATS_HOT = 0x3;
     public static final int MODE_IMAGE_SEARCH = 0x4;
 
-    public static final int ALL_CATEGORT = EhUtils.UNKNOWN - 1;
-    //DOUJINSHI|MANGA|ARTIST_CG|GAME_CG|WESTERN|NON_H|IMAGE_SET|COSPLAY|ASIAN_PORN|MISC;
-
     public static final int DEFAULT_ADVANCE = AdvanceSearchTable.SNAME | AdvanceSearchTable.STAGS;
     public static final int DEFAULT_MIN_RATING = 2;
 
@@ -164,6 +161,30 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         q.advanceSearch = mAdvanceSearch;
         q.minRating = mMinRating;
         return q;
+    }
+
+    public boolean equalsQuickSearch(QuickSearch q) {
+        if (null == q) {
+            return false;
+        }
+
+        if (q.mode != mMode) {
+            return false;
+        }
+        if (q.category != mCategory) {
+            return false;
+        }
+        if (!StringUtils.equals(q.keyword, mKeyword)) {
+            return false;
+        }
+        if (q.advanceSearch != mAdvanceSearch) {
+            return false;
+        }
+        if (q.minRating != mMinRating) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

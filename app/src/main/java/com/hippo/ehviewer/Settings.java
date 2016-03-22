@@ -26,8 +26,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.FavListUrlBuilder;
-import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.gallery.gl.GalleryView;
 import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.ehviewer.ui.CommonOperations;
@@ -261,7 +261,7 @@ public class Settings {
     }
 
     public static final String KEY_DEFAULT_CATEGORIES = "default_categories";
-    public static final int DEFAULT_DEFAULT_CATEGORIES = ListUrlBuilder.ALL_CATEGORT;
+    public static final int DEFAULT_DEFAULT_CATEGORIES = EhUtils.ALL_CATEGORY;
 
     public static int getDefaultCategories() {
         return getInt(KEY_DEFAULT_CATEGORIES, DEFAULT_DEFAULT_CATEGORIES);
