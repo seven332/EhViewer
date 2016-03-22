@@ -16,7 +16,10 @@
 
 package com.hippo.ehviewer.client.parser;
 
+import com.hippo.ehviewer.GetText;
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.JsoupUtils;
 import com.hippo.yorozuya.AssertUtils;
@@ -45,6 +48,9 @@ public class FavoritesParser {
 
     @SuppressWarnings("ConstantConditions")
     public static Result parse(String body) throws Exception {
+        if (body.contains("This page requires you to log on.</p>")) {
+            throw new EhException(GetText.getString(R.string.need_sign_in));
+        }
         String[] catArray = new String[10];
         int[] countArray = new int[10];
         int current;

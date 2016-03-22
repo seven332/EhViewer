@@ -474,6 +474,7 @@
     <string name="let_me_select">讓我選擇</string>
     <string name="favorites_info">收藏資訊</string>
     <string name="collections">收藏夾</string>
+    <string name="need_sign_in">需要登入</string>
 
     <!-- Progress Scene -->
     <string name="error_something_wrong_happened">被玩壞了</string>
