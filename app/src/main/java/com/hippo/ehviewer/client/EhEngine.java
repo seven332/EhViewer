@@ -201,7 +201,7 @@ public class EhEngine {
         }
 
         // Filter title and uploader
-        List<GalleryInfo> list = result.galleryInfos;
+        List<GalleryInfo> list = result.galleryInfoList;
         for (int i = 0, n = list.size(); i < n; i++) {
             GalleryInfo info = list.get(i);
             if (!sEhFilter.filterTitle(info) || !sEhFilter.filterUploader(info)) {

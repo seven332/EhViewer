@@ -1074,7 +1074,7 @@ public final class GalleryListScene extends BaseScene
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId) && isViewCreated()) {
             mHelper.setPages(taskId, result.pages);
-            mHelper.onGetPageData(taskId, result.galleryInfos);
+            mHelper.onGetPageData(taskId, result.galleryInfoList);
             SimpleHandler.getInstance().post(mReturnSearchBarRunnable);
         }
     }

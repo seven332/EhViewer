@@ -90,7 +90,7 @@ public class FavoritesParser {
         re.current = current;
         re.limit = limit;
         re.pages = result.pages;
-        re.galleryInfoList = result.galleryInfos;
+        re.galleryInfoList = result.galleryInfoList;
 
         return re;
     }

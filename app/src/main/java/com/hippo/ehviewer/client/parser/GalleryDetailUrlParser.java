@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.client.parser;
 
+import android.support.annotation.Nullable;
+
 import com.hippo.ehviewer.client.EhUrl;
 
 import java.util.regex.Matcher;
@@ -30,6 +32,7 @@ public final class GalleryDetailUrlParser {
     public static final Pattern URL_PATTERN = Pattern.compile("http://(?:" +
             EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_G + "|" + EhUrl.DOMAIN_LOFI + ")/g/(\\d+)/(\\w+)");
 
+    @Nullable
     public static Result parse(String url) {
         if (url == null) {
             return null;
