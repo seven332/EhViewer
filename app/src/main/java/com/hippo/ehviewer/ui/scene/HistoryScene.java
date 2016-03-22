@@ -16,10 +16,12 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -326,6 +328,7 @@ public class HistoryScene extends ToolbarScene
         }
 
         @Override
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public void onBindViewHolder(HistoryHolder holder, int position) {
             if (null == mLazyList) {
                 return;
@@ -344,6 +347,12 @@ public class HistoryScene extends ToolbarScene
             }
             holder.posted.setText(gi.posted);
             holder.simpleLanguage.setText(gi.simpleLanguage);
+
+            // Update transition name
+            if (ApiHelper.SUPPORT_TRANSITION) {
+                long gid = gi.gid;
+                holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
+            }
         }
 
         @Override
