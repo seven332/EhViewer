@@ -56,6 +56,7 @@
         android:paddingRight="16dp"
         android:orientation="horizontal"
         android:background="@color/gallery_slider_background"
+        android:fitsSystemWindows="true"
         android:visibility="invisible">
 
         <TextView

@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -66,5 +67,12 @@ public class SeekBarPanel extends LinearLayout {
             event.offsetLocation(-offsetX, -offsetY);
             return true;
         }
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    protected boolean fitSystemWindows(Rect insets) {
+        insets.top = 0;
+        return super.fitSystemWindows(insets);
     }
 }

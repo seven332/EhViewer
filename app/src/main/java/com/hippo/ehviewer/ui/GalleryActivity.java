@@ -82,7 +82,6 @@ public class GalleryActivity extends EhActivity
     public static final String KEY_FILENAME = "filename";
     public static final String KEY_GALLERY_INFO = "gallery_info";
     public static final String KEY_PAGE = "page";
-    public static final String KEY_SHOWING = "showing";
     public static final String KEY_CURRENT_INDEX = "current_index";
 
     private static final long SLIDER_ANIMATION_DURING = 150;
@@ -103,7 +102,6 @@ public class GalleryActivity extends EhActivity
 
     @Nullable
     private SystemUiHelper mSystemUiHelper;
-    private boolean mSystemUiShowing = false;
 
     @Nullable
     private View mClock;
@@ -211,7 +209,6 @@ public class GalleryActivity extends EhActivity
         if (mGalleryInfo != null) {
             outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
         }
-        outState.putBoolean(KEY_SHOWING, mSystemUiShowing);
         outState.putInt(KEY_PAGE, mPage);
         outState.putInt(KEY_CURRENT_INDEX, mCurrentIndex);
     }
@@ -234,7 +231,7 @@ public class GalleryActivity extends EhActivity
         mGalleryProvider.start();
 
         setContentView(R.layout.activity_gallery);
-        GLRootView glRootView = (GLRootView) findViewById(R.id.gl_root_view);
+        GLRootView glRootView = (GLRootView) ViewUtils.$$(this, R.id.gl_root_view);
         mGalleryProvider.setGLRoot(glRootView);
         mUploader = new ImageTexture.Uploader(glRootView);
 
@@ -259,13 +256,7 @@ public class GalleryActivity extends EhActivity
         }
         mSystemUiHelper = new SystemUiHelper(this, systemUiLevel,
                 SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
-        if (savedInstanceState == null || !savedInstanceState.getBoolean(KEY_SHOWING, false)) {
-            mSystemUiHelper.hide();
-            mSystemUiShowing = false;
-        } else {
-            mSystemUiHelper.show();
-            mSystemUiShowing = true;
-        }
+        mSystemUiHelper.hide();
 
         mClock = ViewUtils.$$(this, R.id.clock);
         mBattery = ViewUtils.$$(this, R.id.battery);
@@ -314,6 +305,8 @@ public class GalleryActivity extends EhActivity
         mLeftText = null;
         mRightText = null;
         mSeekBar = null;
+
+        SimpleHandler.getInstance().removeCallbacks(mHideSliderRunnable);
     }
 
     @Override
@@ -337,14 +330,6 @@ public class GalleryActivity extends EhActivity
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-
-        if (hasFocus && mSystemUiHelper != null) {
-            if (mSystemUiShowing) {
-                mSystemUiHelper.show();
-            } else {
-                mSystemUiHelper.hide();
-            }
-        }
     }
 
     @Override
@@ -629,6 +614,10 @@ public class GalleryActivity extends EhActivity
         mSeekBarPanelAnimator.addUpdateListener(mUpdateSliderListener);
         mSeekBarPanelAnimator.addListener(mShowSliderListener);
         mSeekBarPanelAnimator.start();
+
+        if (null != mSystemUiHelper) {
+            mSystemUiHelper.show();
+        }
     }
 
     private void hideSlider(View sliderPanel) {
@@ -643,6 +632,10 @@ public class GalleryActivity extends EhActivity
         mSeekBarPanelAnimator.addUpdateListener(mUpdateSliderListener);
         mSeekBarPanelAnimator.addListener(mHideSliderListener);
         mSeekBarPanelAnimator.start();
+
+        if (null != mSystemUiHelper) {
+            mSystemUiHelper.hide();
+        }
     }
 
     private class GalleryMenuHelper implements DialogInterface.OnClickListener {
