@@ -102,6 +102,8 @@ public class DownloadsScene extends ToolbarScene
 
     private static final String TAG = DownloadsScene.class.getSimpleName();
 
+    public static final String KEY_GID = "gid";
+
     public static final String KEY_ACTION = "action";
     private static final String KEY_LABEL = "label";
 
@@ -133,15 +135,43 @@ public class DownloadsScene extends ToolbarScene
 
     private ShowcaseView mShowcaseView;
 
+    private int mInitPosition = -1;
+
     @Override
     public int getNavCheckedItem() {
         return R.id.nav_downloads;
     }
 
-    private void handleArguments(Bundle args) {
-        if (args != null && ACTION_CLEAR_DOWNLOAD_SERVICE.equals(args.getString(KEY_ACTION))) {
+    private boolean handleArguments(Bundle args) {
+        if (null == args) {
+            return false;
+        }
+
+        if (ACTION_CLEAR_DOWNLOAD_SERVICE.equals(args.getString(KEY_ACTION))) {
             DownloadService.clear();
         }
+
+        long gid;
+        if (null != mDownloadManager && -1L != (gid = args.getLong(KEY_GID, -1L))) {
+            DownloadInfo info = mDownloadManager.getDownloadInfo(gid);
+            if (null != info) {
+                mLabel = info.getLabel();
+                updateForLabel();
+                updateView();
+
+                // Get position
+                if (null != mList) {
+                    int position = mList.indexOf(info);
+                    if (position >= 0 && null != mRecyclerView) {
+                        mRecyclerView.scrollToPosition(position);
+                    } else {
+                        mInitPosition = position;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -152,8 +182,6 @@ public class DownloadsScene extends ToolbarScene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        handleArguments(getArguments());
 
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
@@ -218,8 +246,10 @@ public class DownloadsScene extends ToolbarScene
     }
 
     private void onInit() {
-        mLabel = Settings.getRecentDownloadLabel();
-        updateForLabel();
+        if (!handleArguments(getArguments())) {
+            mLabel = Settings.getRecentDownloadLabel();
+            updateForLabel();
+        }
     }
 
     private void onRestore(@NonNull Bundle savedInstanceState) {
@@ -274,6 +304,10 @@ public class DownloadsScene extends ToolbarScene
         int paddingH = context.getResources().getDimensionPixelOffset(R.dimen.list_content_margin_h);
         int paddingV = context.getResources().getDimensionPixelOffset(R.dimen.list_content_margin_v);
         mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+        if (mInitPosition >= 0) {
+            mRecyclerView.scrollToPosition(mInitPosition);
+            mInitPosition = -1;
+        }
 
         fastScroller.attachToRecyclerView(mRecyclerView);
         HandlerDrawable handlerDrawable = new HandlerDrawable();

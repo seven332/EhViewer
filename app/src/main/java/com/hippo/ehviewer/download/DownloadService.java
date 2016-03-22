@@ -209,15 +209,6 @@ public class DownloadService extends Service implements DownloadManager.Download
         stopAllIntent.setAction(ACTION_STOP_ALL);
         PendingIntent piStopAll = PendingIntent.getService(this, 0, stopAllIntent, 0);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(DownloadsScene.KEY_ACTION, DownloadsScene.ACTION_CLEAR_DOWNLOAD_SERVICE);
-        Intent activityIntent = new Intent(this, MainActivity.class);
-        activityIntent.setAction(StageActivity.ACTION_START_SCENE);
-        activityIntent.putExtra(StageActivity.KEY_SCENE_NAME, DownloadsScene.class.getName());
-        activityIntent.putExtra(StageActivity.KEY_SCENE_ARGS, bundle);
-        PendingIntent piActivity = PendingIntent.getActivity(DownloadService.this, 0,
-                activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         mDownloadingBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setOngoing(true)
@@ -225,8 +216,7 @@ public class DownloadService extends Service implements DownloadManager.Download
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setColor(getResources().getColor(R.color.colorPrimary))
                 .addAction(R.drawable.ic_pause_x24, getString(R.string.stat_download_action_stop_all), piStopAll)
-                .setShowWhen(false)
-                .setContentIntent(piActivity);
+                .setShowWhen(false);
 
         mDownloadingDelay = new NotificationDelay(this, mNotifyManager, mDownloadingBuilder, ID_DOWNLOADING);
     }
@@ -297,10 +287,20 @@ public class DownloadService extends Service implements DownloadManager.Download
 
         ensureDownloadingBuilder();
 
+        Bundle bundle = new Bundle();
+        bundle.putLong(DownloadsScene.KEY_GID, info.gid);
+        Intent activityIntent = new Intent(this, MainActivity.class);
+        activityIntent.setAction(StageActivity.ACTION_START_SCENE);
+        activityIntent.putExtra(StageActivity.KEY_SCENE_NAME, DownloadsScene.class.getName());
+        activityIntent.putExtra(StageActivity.KEY_SCENE_ARGS, bundle);
+        PendingIntent piActivity = PendingIntent.getActivity(DownloadService.this, 0,
+                activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         mDownloadingBuilder.setContentTitle(EhUtils.getSuitableTitle(info))
                 .setContentText(null)
                 .setContentInfo(null)
-                .setProgress(0, 0, true);
+                .setProgress(0, 0, true)
+                .setContentIntent(piActivity);
 
         mDownloadingDelay.startForeground();
     }

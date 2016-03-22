@@ -168,6 +168,11 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         return mMap.get(label);
     }
 
+    @Nullable
+    public DownloadInfo getDownloadInfo(long gid) {
+        return mAllInfoMap.get(gid);
+    }
+
     public int getDownloadState(long gid) {
         DownloadInfo info = mAllInfoMap.get(gid);
         if (null != info) {
