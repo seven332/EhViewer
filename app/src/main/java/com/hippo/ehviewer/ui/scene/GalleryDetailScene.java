@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -69,8 +70,8 @@ import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
-import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
+import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.dao.Filter;
@@ -102,7 +103,6 @@ import com.hippo.yorozuya.ViewUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
-import java.util.Locale;
 
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener,
         com.hippo.ehviewer.download.DownloadManager.DownloadInfoListener,
@@ -715,7 +715,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         if (ACTION_GALLERY_INFO.equals(mAction) && mGalleryInfo != null) {
             GalleryInfo gi = mGalleryInfo;
-            mThumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb, true);
+            mThumb.load(EhCacheKeyFactory.getThumbKey(gi.gid), gi.thumb);
             mTitle.setText(EhUtils.getSuitableTitle(gi));
             mUploader.setText(gi.uploader);
             mCategory.setText(EhUtils.getCategory(gi.category));
@@ -756,7 +756,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         Resources resources = getResources2();
         AssertUtils.assertNotNull(resources);
 
-        mThumb.load(EhCacheKeyFactory.getThumbKey(gd.gid), gd.thumb, true);
+        mThumb.load(EhCacheKeyFactory.getThumbKey(gd.gid), gd.thumb);
         mTitle.setText(EhUtils.getSuitableTitle(gd));
         mUploader.setText(gd.uploader);
         mCategory.setText(EhUtils.getCategory(gd.category));
@@ -861,6 +861,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void bindPreviews(GalleryDetail gd) {
         LayoutInflater inflater = getLayoutInflater2();
         Resources resources = getResources2();
@@ -869,7 +870,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         mGridLayout.removeAllViews();
-        LargePreviewSet previewSet = gd.previewSet;
+        PreviewSet previewSet = gd.previewSet;
         if (gd.previewPages <= 0 || previewSet == null || previewSet.size() == 0) {
             mPreviewText.setText(R.string.no_previews);
             return;
@@ -886,14 +887,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             View view = inflater.inflate(R.layout.item_gallery_preview, mGridLayout, false);
             mGridLayout.addView(view);
 
-            int index = previewSet.getIndexAt(i);
-            String imageUrl = previewSet.getImageUrlAt(i);
             LoadImageView image = (LoadImageView) view.findViewById(R.id.image);
-            image.load(EhCacheKeyFactory.getLargePreviewKey(gd.gid, index), imageUrl, true);
+            previewSet.load(image, gd.gid, i);
             image.setTag(R.id.index, i);
             image.setOnClickListener(this);
             TextView text = (TextView) view.findViewById(R.id.text);
-            text.setText(String.format(Locale.US, "%d", index + 1));
+            text.setText(Integer.toString(previewSet.getPosition(i) + 1));
         }
     }
 
@@ -1602,9 +1601,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
             // Put gallery detail to cache
             EhApplication.getGalleryDetailCache(getApplication()).put(result.gid, result);
-            EhApplication.getLargePreviewSetCache(getApplication()).put(
-                    EhCacheKeyFactory.getLargePreviewSetKey(result.gid, 0), result.previewSet);
-            EhApplication.getPreviewPagesCache(getApplication()).put(result.gid, result.previewPages);
 
             // Add history
             EhDB.putHistoryInfo(result);

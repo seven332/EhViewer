@@ -36,7 +36,6 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.data.GalleryDetail;
-import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.ehviewer.ui.CommonOperations;
@@ -75,8 +74,6 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     private BitmapHelper mBitmapHelper;
     private Conaco<Bitmap> mConaco;
     private LruCache<Long, GalleryDetail> mGalleryDetailCache;
-    private LruCache<String, LargePreviewSet> mLargePreviewSetCache;
-    private LruCache<Long, Integer> mPreviewPagesCache;
     private SimpleDiskCache mSpiderInfoCache;
     private DownloadManager mDownloadManager;
 
@@ -130,12 +127,6 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         }
         if (null != mGalleryDetailCache) {
             mGalleryDetailCache.evictAll();
-        }
-        if (null != mLargePreviewSetCache) {
-            mLargePreviewSetCache.evictAll();
-        }
-        if (null != mPreviewPagesCache) {
-            mPreviewPagesCache.evictAll();
         }
     }
 
@@ -267,26 +258,6 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
             application.mGalleryDetailCache = new LruCache<>(25);
         }
         return application.mGalleryDetailCache;
-    }
-
-    @NonNull
-    public static LruCache<String, LargePreviewSet> getLargePreviewSetCache(@NonNull Context context) {
-        EhApplication application = ((EhApplication) context.getApplicationContext());
-        if (application.mLargePreviewSetCache == null) {
-            // Max size 50, 3 min timeout
-            application.mLargePreviewSetCache = new LruCache<>(50);
-        }
-        return application.mLargePreviewSetCache;
-    }
-
-    @NonNull
-    public static LruCache<Long, Integer> getPreviewPagesCache(@NonNull Context context) {
-        EhApplication application = ((EhApplication) context.getApplicationContext());
-        if (application.mPreviewPagesCache == null) {
-            // Max size 50, 3 min timeout
-            application.mPreviewPagesCache = new LruCache<>(50);
-        }
-        return application.mPreviewPagesCache;
     }
 
     @NonNull

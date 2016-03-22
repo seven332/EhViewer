@@ -19,36 +19,54 @@ package com.hippo.ehviewer.client.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.hippo.ehviewer.client.EhCacheKeyFactory;
+import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.IntList;
 
 import java.util.ArrayList;
 
-public class LargePreviewSet implements Parcelable {
+public class LargePreviewSet extends PreviewSet {
 
-    private final IntList mIndexList;
+    private final IntList mPositionList;
     private final ArrayList<String> mImageUrlList;
     private final ArrayList<String> mPageUrlList;
 
-    public int size() {
-        return mImageUrlList.size();
-    }
-
     public void addItem(int index, String imageUrl, String pageUrl) {
-        mIndexList.add(index);
+        mPositionList.add(index);
         mImageUrlList.add(imageUrl);
         mPageUrlList.add(pageUrl);
     }
 
-    public int getIndexAt(int index) {
-        return mIndexList.get(index);
+    @Override
+    public int size() {
+        return mImageUrlList.size();
     }
 
-    public String getImageUrlAt(int index) {
-        return mImageUrlList.get(index);
+    @Override
+    public int getPosition(int index) {
+        return mPositionList.get(index);
     }
 
+    @Override
     public String getPageUrlAt(int index) {
         return mPageUrlList.get(index);
+    }
+
+    @Override
+    public GalleryPreview getGalleryPreview(long gid, int index) {
+        GalleryPreview galleryPreview = new GalleryPreview();
+        galleryPreview.position = mPositionList.get(index);
+        galleryPreview.imageKey = EhCacheKeyFactory.getLargePreviewKey(gid, galleryPreview.position);
+        galleryPreview.imageUrl = mImageUrlList.get(index);
+        galleryPreview.pageUrl = mPageUrlList.get(index);
+        return galleryPreview;
+    }
+
+    @Override
+    public void load(LoadImageView view, long gid, int index) {
+        view.resetClip();
+        view.load(EhCacheKeyFactory.getLargePreviewKey(gid, mPositionList.get(index)),
+                mImageUrlList.get(index));
     }
 
     @Override
@@ -58,19 +76,19 @@ public class LargePreviewSet implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.mIndexList, flags);
+        dest.writeParcelable(this.mPositionList, flags);
         dest.writeStringList(this.mImageUrlList);
         dest.writeStringList(this.mPageUrlList);
     }
 
     public LargePreviewSet() {
-        mIndexList = new IntList();
+        mPositionList = new IntList();
         mImageUrlList = new ArrayList<>();
         mPageUrlList = new ArrayList<>();
     }
 
     protected LargePreviewSet(Parcel in) {
-        this.mIndexList = in.readParcelable(IntList.class.getClassLoader());
+        this.mPositionList = in.readParcelable(IntList.class.getClassLoader());
         this.mImageUrlList = in.createStringArrayList();
         this.mPageUrlList = in.createStringArrayList();
     }

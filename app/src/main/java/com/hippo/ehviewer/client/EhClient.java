@@ -45,7 +45,7 @@ public class EhClient {
     public static final int METHOD_GET_GALLERY_LIST = 1;
     public static final int METHOD_FILL_GALLERY_LIST_BY_API = 2;
     public static final int METHOD_GET_GALLERY_DETAIL = 3;
-    public static final int METHOD_GET_LARGE_PREVIEW_SET = 4;
+    public static final int METHOD_GET_PREVIEW_SET = 4;
     public static final int METHOD_GET_RATE_GALLERY = 5;
     public static final int METHOD_GET_COMMENT_GALLERY = 6;
     public static final int METHOD_GET_GALLERY_TOKEN = 7;
@@ -155,8 +155,8 @@ public class EhClient {
                         return EhEngine.fillGalleryListByApi(this, mOkHttpClient, (List<GalleryInfo>) params[0]);
                     case METHOD_GET_GALLERY_DETAIL:
                         return EhEngine.getGalleryDetail(this, mOkHttpClient, (String) params[0]);
-                    case METHOD_GET_LARGE_PREVIEW_SET:
-                        return EhEngine.getLargePreviewSet(this, mOkHttpClient, (String) params[0]);
+                    case METHOD_GET_PREVIEW_SET:
+                        return EhEngine.getPreviewSet(this, mOkHttpClient, (String) params[0]);
                     case METHOD_GET_RATE_GALLERY:
                         return EhEngine.rateGallery(this, mOkHttpClient, (Long) params[0], (String) params[1], (Float) params[2]);
                     case METHOD_GET_COMMENT_GALLERY:

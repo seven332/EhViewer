@@ -27,7 +27,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.data.LargePreviewSet;
+import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.ParseException;
@@ -309,7 +309,7 @@ public class EhEngine {
     }
 
 
-    public static Pair<LargePreviewSet, Integer> getLargePreviewSet(
+    public static Pair<PreviewSet, Integer> getPreviewSet(
             EhClient.Task task, OkHttpClient okHttpClient, String url) throws Exception {
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
@@ -326,9 +326,8 @@ public class EhEngine {
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            Document document = Jsoup.parse(body);
-            return Pair.create(GalleryDetailParser.parseLargePreviewSet(document, body),
-                    GalleryDetailParser.parsePreviewPages(document, body));
+            return Pair.create(GalleryDetailParser.parsePreviewSet(body),
+                    GalleryDetailParser.parsePreviewPages(body));
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;

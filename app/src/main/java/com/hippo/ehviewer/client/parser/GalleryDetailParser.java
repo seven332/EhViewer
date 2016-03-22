@@ -25,6 +25,7 @@ import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
 import com.hippo.ehviewer.client.data.NormalPreviewSet;
+import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.OffensiveException;
 import com.hippo.ehviewer.client.exception.ParseException;
@@ -129,7 +130,7 @@ public class GalleryDetailParser {
         galleryDetail.tags = parseTagGroups(document);
         galleryDetail.comments = parseComments(document);
         galleryDetail.previewPages = parsePreviewPages(document, body);
-        galleryDetail.previewSet = parseLargePreviewSet(document, body);
+        galleryDetail.previewSet = parsePreviewSet(body);
         return galleryDetail;
     }
 
@@ -377,10 +378,18 @@ public class GalleryDetailParser {
         }
     }
 
+    public static PreviewSet parsePreviewSet(String body) throws ParseException {
+        try {
+            return parseLargePreviewSet(body);
+        } catch (ParseException e) {
+            return parseNormalPreviewSet(body);
+        }
+    }
+
     /**
      * Parse large previews with regular expressions
      */
-    public static LargePreviewSet parseLargePreviewSet(Document document, String body) throws ParseException {
+    private static LargePreviewSet parseLargePreviewSet(Document document, String body) throws ParseException {
         try {
             LargePreviewSet largePreviewSet = new LargePreviewSet();
             Element gdt = document.getElementById("gdt");
@@ -407,7 +416,7 @@ public class GalleryDetailParser {
     /**
      * Parse large previews with regular expressions
      */
-    public static LargePreviewSet parseLargePreviewSet(String body) throws ParseException {
+    private static LargePreviewSet parseLargePreviewSet(String body) throws ParseException {
         Matcher m = LARGE_PREVIEW_PATTERN.matcher(body);
         LargePreviewSet largePreviewSet = new LargePreviewSet();
 
@@ -426,7 +435,7 @@ public class GalleryDetailParser {
     /**
      * Parse normal previews with regular expressions
      */
-    public static NormalPreviewSet parseNormalPreviewSet(String body) throws ParseException {
+    private static NormalPreviewSet parseNormalPreviewSet(String body) throws ParseException {
         Matcher m = NORMAL_PREVIEW_PATTERN.matcher(body);
         NormalPreviewSet normalPreviewSet = new NormalPreviewSet();
         while (m.find()) {

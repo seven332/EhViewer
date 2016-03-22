@@ -34,6 +34,7 @@ import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.Unikery;
 import com.hippo.conaco.ValueHolder;
+import com.hippo.drawable.PreciselyClipDrawable;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 
@@ -48,6 +49,11 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Bitma
     private String mUrl;
     private DataContainer mContainer;
     private boolean mUseNetwork;
+
+    private int mOffsetX = Integer.MIN_VALUE;
+    private int mOffsetY = Integer.MIN_VALUE;
+    private int mClipWidth = Integer.MIN_VALUE;
+    private int mClipHeight = Integer.MIN_VALUE;
 
     private ValueHolder<Bitmap> mHolder;
 
@@ -152,6 +158,20 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Bitma
         load(key, url, null, true);
     }
 
+    public void setClip(int offsetX, int offsetY, int clipWidth, int clipHeight) {
+        mOffsetX = offsetX;
+        mOffsetY = offsetY;
+        mClipWidth = clipWidth;
+        mClipHeight = clipHeight;
+    }
+
+    public void resetClip() {
+        mOffsetX = Integer.MIN_VALUE;
+        mOffsetY = Integer.MIN_VALUE;
+        mClipWidth = Integer.MIN_VALUE;
+        mClipHeight = Integer.MIN_VALUE;
+    }
+
     public void load(String key, String url, boolean useNetwork) {
         load(key, url, null, useNetwork);
     }
@@ -251,6 +271,10 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Bitma
         mHolder = holder;
         Bitmap bitmap = holder.getValue();
         Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+
+        if (Integer.MIN_VALUE != mOffsetX) {
+            drawable = new PreciselyClipDrawable(drawable, mOffsetX, mOffsetY, mClipWidth, mClipHeight);
+        }
 
         if ((source == Conaco.Source.DISK || source == Conaco.Source.NETWORK)) {
             Drawable[] layers = new Drawable[2];

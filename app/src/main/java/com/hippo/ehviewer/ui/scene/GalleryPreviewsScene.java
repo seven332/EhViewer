@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,13 +38,12 @@ import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryPreview;
-import com.hippo.ehviewer.client.data.LargePreviewSet;
+import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
@@ -54,7 +54,6 @@ import com.hippo.widget.Slider;
 import com.hippo.widget.recyclerview.AutoGridLayoutManager;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
-import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
@@ -229,7 +228,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
             Intent intent = new Intent(context, GalleryActivity.class);
             intent.setAction(GalleryActivity.ACTION_EH);
             intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, mGalleryInfo);
-            intent.putExtra(GalleryActivity.KEY_PAGE, p.index);
+            intent.putExtra(GalleryActivity.KEY_PAGE, p.getPosition());
             startActivity(intent);
         }
         return true;
@@ -263,11 +262,12 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         }
 
         @Override
+        @SuppressLint("SetTextI18n")
         public void onBindViewHolder(GalleryPreviewHolder holder, int position) {
-            if (null != mHelper && null != mGalleryInfo) {
+            if (null != mHelper) {
                 GalleryPreview preview = mHelper.getDataAt(position);
-                holder.image.load(EhCacheKeyFactory.getLargePreviewKey(mGalleryInfo.gid, preview.index), preview.imageUrl);
-                holder.text.setText(String.format(Locale.US, "%d", preview.index + 1));
+                preview.load(holder.image);
+                holder.text.setText(Integer.toString(preview.getPosition() + 1));
             }
         }
 
@@ -287,24 +287,11 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
                 return;
             }
 
-            final LargePreviewSet previewSet = EhApplication.getLargePreviewSetCache(
-                    getContext()).get(EhCacheKeyFactory.getLargePreviewSetKey(mGalleryInfo.gid, page));
-            final Integer pages = EhApplication.getPreviewPagesCache(getContext()).get(mGalleryInfo.gid);
-            if (previewSet != null && pages != null) {
-                SimpleHandler.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onGetLargePreviewSetSuccess(Pair.create(previewSet, pages), taskId);
-                    }
-                });
-                return;
-            }
-
             String url = EhUrl.getGalleryDetailUrl(mGalleryInfo.gid, mGalleryInfo.token, page, false);
             EhRequest request = new EhRequest();
-            request.setMethod(EhClient.METHOD_GET_LARGE_PREVIEW_SET);
-            request.setCallback(new GetLargePreviewSetListener(getContext(),
-                    activity.getStageId(), getTag(), taskId, mGalleryInfo.gid, page));
+            request.setMethod(EhClient.METHOD_GET_PREVIEW_SET);
+            request.setCallback(new GetPreviewSetListener(getContext(),
+                    activity.getStageId(), getTag(), taskId));
             request.setArgs(url);
             mClient.execute(request);
         }
@@ -336,17 +323,13 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         }
     }
 
-    private void onGetLargePreviewSetSuccess(Pair<LargePreviewSet, Integer> result, int taskId) {
-        if (mHelper != null && mHelper.isCurrentTask(taskId) && isViewCreated()) {
-            LargePreviewSet previewSet = result.first;
+    private void onGetPreviewSetSuccess(Pair<PreviewSet, Integer> result, int taskId) {
+        if (null != mHelper && mHelper.isCurrentTask(taskId) && null != mGalleryInfo) {
+            PreviewSet previewSet = result.first;
             int size = previewSet.size();
             ArrayList<GalleryPreview> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                GalleryPreview preview = new GalleryPreview();
-                preview.imageUrl = previewSet.getImageUrlAt(i);
-                preview.pageUrl = previewSet.getPageUrlAt(i);
-                preview.index = previewSet.getIndexAt(i);
-                list.add(preview);
+                list.add(previewSet.getGalleryPreview(mGalleryInfo.gid, i));
             }
 
             mHelper.setPages(taskId, result.second);
@@ -354,34 +337,26 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         }
     }
 
-    private void onGetLargePreviewSetFailure(Exception e, int taskId) {
-        if (mHelper != null && mHelper.isCurrentTask(taskId) && isViewCreated()) {
+    private void onGetPreviewSetFailure(Exception e, int taskId) {
+        if (mHelper != null && mHelper.isCurrentTask(taskId)) {
             mHelper.onGetException(taskId, e);
         }
     }
 
-    private static class GetLargePreviewSetListener extends EhCallback<GalleryPreviewsScene, Pair<LargePreviewSet, Integer>> {
+    private static class GetPreviewSetListener extends EhCallback<GalleryPreviewsScene, Pair<PreviewSet, Integer>> {
 
         private final int mTaskId;
-        private final long mGid;
-        private final int mPage;
 
-        public GetLargePreviewSetListener(Context context, int stageId, String sceneTag, int taskId, long gid, int page) {
+        public GetPreviewSetListener(Context context, int stageId, String sceneTag, int taskId) {
             super(context, stageId, sceneTag);
             mTaskId = taskId;
-            mGid = gid;
-            mPage = page;
         }
 
         @Override
-        public void onSuccess(Pair<LargePreviewSet, Integer> result) {
-            EhApplication.getLargePreviewSetCache(getApplication()).put(
-                    EhCacheKeyFactory.getLargePreviewSetKey(mGid, mPage), result.first);
-            EhApplication.getPreviewPagesCache(getApplication()).put(mGid, result.second);
-
+        public void onSuccess(Pair<PreviewSet, Integer> result) {
             GalleryPreviewsScene scene = getScene();
             if (scene != null) {
-                scene.onGetLargePreviewSetSuccess(result, mTaskId);
+                scene.onGetPreviewSetSuccess(result, mTaskId);
             }
         }
 
@@ -389,7 +364,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         public void onFailure(Exception e) {
             GalleryPreviewsScene scene = getScene();
             if (scene != null) {
-                scene.onGetLargePreviewSetFailure(e, mTaskId);
+                scene.onGetPreviewSetFailure(e, mTaskId);
             }
         }
 

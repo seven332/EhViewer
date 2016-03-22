@@ -37,8 +37,7 @@ public class GalleryDetail extends GalleryInfo {
     public GalleryTagGroup[] tags;
     public GalleryComment[] comments;
     public int previewPages;
-    public LargePreviewSet previewSet;
-
+    public PreviewSet previewSet;
 
     @Override
     public int describeContents() {
@@ -94,7 +93,7 @@ public class GalleryDetail extends GalleryInfo {
             this.comments = null;
         }
         this.previewPages = in.readInt();
-        this.previewSet = in.readParcelable(LargePreviewSet.class.getClassLoader());
+        this.previewSet = in.readParcelable(PreviewSet.class.getClassLoader());
     }
 
     public static final Creator<GalleryDetail> CREATOR = new Creator<GalleryDetail>() {

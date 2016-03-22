@@ -37,8 +37,7 @@ import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhRequestBuilder;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.data.LargePreviewSet;
-import com.hippo.ehviewer.client.data.NormalPreviewSet;
+import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.Image509Exception;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
@@ -680,23 +679,12 @@ public class SpiderQueen implements Runnable {
     }
 
     private void readPreviews(String body, SpiderInfo spiderInfo) throws ParseException {
-        try {
-            NormalPreviewSet previewSet = GalleryDetailParser.parseNormalPreviewSet(body);
-            spiderInfo.previewPerPage = previewSet.size();
-            for (int i = 0, n = previewSet.size(); i < n; i++) {
-                GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
-                if (result != null) {
-                    spiderInfo.pTokenMap.put(result.page, result.pToken);
-                }
-            }
-        } catch (ParseException e) {
-            LargePreviewSet previewSet = GalleryDetailParser.parseLargePreviewSet(body);
-            spiderInfo.previewPerPage = previewSet.size();
-            for (int i = 0, n = previewSet.size(); i < n; i++) {
-                GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
-                if (result != null) {
-                    spiderInfo.pTokenMap.put(result.page, result.pToken);
-                }
+        PreviewSet previewSet = GalleryDetailParser.parsePreviewSet(body);
+        spiderInfo.previewPerPage = previewSet.size();
+        for (int i = 0, n = previewSet.size(); i < n; i++) {
+            GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
+            if (result != null) {
+                spiderInfo.pTokenMap.put(result.page, result.pToken);
             }
         }
     }
