@@ -21,9 +21,11 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+
+import com.hippo.ehviewer.R;
+import com.hippo.yorozuya.ViewUtils;
 
 public class SeekBarPanel extends LinearLayout {
 
@@ -42,17 +44,9 @@ public class SeekBarPanel extends LinearLayout {
     }
 
     @Override
-    public void onViewAdded(View child) {
-        if (child instanceof SeekBar) {
-            mSeekBar = (SeekBar) child;
-        }
-    }
-
-    @Override
-    public void onViewRemoved(View child) {
-        if (child == mSeekBar) {
-            mSeekBar = null;
-        }
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        mSeekBar = (SeekBar) ViewUtils.$$(this, R.id.seek_bar);
     }
 
     @Override
