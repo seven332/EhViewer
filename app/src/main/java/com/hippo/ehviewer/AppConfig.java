@@ -34,6 +34,7 @@ public class AppConfig {
     private static final String CRASH = "crash";
     private static final String PARSE_ERROR = "parse_error";
     private static final String LOGCAT = "logcat";
+    private static final String DATA = "data";
 
     private static Context sContext;
 
@@ -101,6 +102,11 @@ public class AppConfig {
     @Nullable
     public static File getExternalLogcatDir() {
         return getDirInExternalAppDir(LOGCAT);
+    }
+
+    @Nullable
+    public static File getExternalDataDir() {
+        return getDirInExternalAppDir(DATA);
     }
 
     @Nullable

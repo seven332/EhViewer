@@ -402,6 +402,10 @@
     <string name="settings_advanced_pattern_protection_title">圖案保護</string>
     <string name="settings_advanced_pattern_protection_not_set">未設置圖案保護</string>
     <string name="settings_advanced_pattern_protection_set">已設置圖案保護</string>
+    <string name="settings_advanced_export_data">導出數據</string>
+    <string name="settings_advanced_export_data_summary">保存數據至外置存儲器，例如下載列表，快速搜索列表</string>
+    <string name="settings_advanced_export_data_to">已導出數據至 %s</string>
+    <string name="settings_advanced_export_data_failed">導出數據失敗</string>
 
     <string name="settings_about">關於</string>
     <string name="settings_about_author">作者</string>

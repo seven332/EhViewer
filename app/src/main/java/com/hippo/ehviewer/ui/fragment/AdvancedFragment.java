@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.fragment;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.util.LogCat;
@@ -37,6 +39,7 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
     private static final String KEY_DUMP_LOGCAT = "dump_logcat";
     private static final String KEY_CLEAR_MEMORY_CACHE = "clear_memory_cache";
     private static final String KEY_PATTERN_PROTECTION = "pattern_protection";
+    private static final String KEY_EXPORT_DATA = "export_data";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,11 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
 
         Preference dumpLogcat = findPreference(KEY_DUMP_LOGCAT);
         Preference clearMemoryCache = findPreference(KEY_CLEAR_MEMORY_CACHE);
+        Preference exportData = findPreference(KEY_EXPORT_DATA);
 
         dumpLogcat.setOnPreferenceClickListener(this);
         clearMemoryCache.setOnPreferenceClickListener(this);
+        exportData.setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -81,7 +86,38 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
         } else if (KEY_CLEAR_MEMORY_CACHE.equals(key)) {
             ((EhApplication) getActivity().getApplication()).clearMemoryCache();
             Runtime.getRuntime().gc();
+        } else if (KEY_EXPORT_DATA.equals(key)) {
+            File dir = AppConfig.getExternalDataDir();
+            if (dir != null) {
+                File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db");
+                if (EhDB.export(getActivity(), file)) {
+                    Toast.makeText(getActivity(),
+                            getString(R.string.settings_advanced_export_data_to, file.getPath()), Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            }
+            Toast.makeText(getActivity(),R.string.settings_advanced_export_data_failed, Toast.LENGTH_SHORT).show();
+            return false;
         }
         return false;
     }
+
+
+    private static boolean exportData(Context context) {
+        File dir = AppConfig.getExternalAppDir();
+        if (null == dir) {
+            return false;
+        }
+        File file = new File(ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".json");
+
+
+
+
+
+
+
+
+        return true;
+    }
+
 }

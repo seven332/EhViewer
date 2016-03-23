@@ -444,6 +444,10 @@
     <string name="settings_advanced_pattern_protection_title">Pattern protection</string>
     <string name="settings_advanced_pattern_protection_not_set">Pattern protection has not been set</string>
     <string name="settings_advanced_pattern_protection_set">Pattern protection has been set</string>
+    <string name="settings_advanced_export_data">Export data</string>
+    <string name="settings_advanced_export_data_summary">Save data to external storage, such as download list, quick search list</string>
+    <string name="settings_advanced_export_data_to">Exported data to %s</string>
+    <string name="settings_advanced_export_data_failed">Export data failed</string>
 
     <string name="settings_about">About</string>
     <string name="settings_about_author">Author</string>

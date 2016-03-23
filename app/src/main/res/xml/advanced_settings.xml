@@ -45,4 +45,9 @@
         android:title="@string/settings_advanced_pattern_protection_title"
         app:activity="com.hippo.ehviewer.ui.SetSecurityActivity"/>
 
+    <Preference
+        android:key="export_data"
+        android:title="@string/settings_advanced_export_data"
+        android:summary="@string/settings_advanced_export_data_summary"/>
+
 </PreferenceScreen>

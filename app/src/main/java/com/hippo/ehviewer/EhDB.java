@@ -43,8 +43,16 @@ import com.hippo.ehviewer.dao.LocalFavoritesDao;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.dao.QuickSearchDao;
 import com.hippo.util.SqlUtils;
+import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.sparse.SparseJLArray;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -564,4 +572,172 @@ public class EhDB {
     public static synchronized void deleteFilter(Filter filter) {
         sDaoSession.getFilterDao().delete(filter);
     }
+
+    public static synchronized boolean export(Context context, File file) {
+        File dbFile = context.getDatabasePath("eh.db");
+        if (null == dbFile || !dbFile.isFile()) {
+            return false;
+        }
+        if (null == file || !FileUtils.ensureFile(file)) {
+            return false;
+        }
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(dbFile);
+            os = new FileOutputStream(file);
+            IOUtils.copy(is, os);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
+        }
+        // Delete failed file
+        file.delete();
+        return false;
+    }
+
+
+
+    /*
+    public static synchronized void write(OutputStream os) throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put("version", DaoMaster.SCHEMA_VERSION);
+        jo.put("data", getDBJson());
+
+
+
+    }
+
+    private static JSONObject getDBJson() throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put(DownloadsDao.TABLENAME, getDownloadsDaoJson());
+        jo.put(DownloadLabelDao.TABLENAME, getDownloadLabelDaoJson());
+        jo.put(DownloadDirnameDao.TABLENAME, getDownloadDirnameDaoJson());
+
+
+
+        return jo;
+    }
+
+    private static JSONArray getDownloadsDaoJson() {
+        DownloadsDao dao = sDaoSession.getDownloadsDao();
+        JSONArray ja = new JSONArray();
+        LazyList<DownloadInfo> list = dao.queryBuilder().listLazy();
+        for (DownloadInfo info: list) {
+            JSONObject jo = getDownloadInfoJson(info);
+            if (null != jo) {
+                ja.put(jo);
+            }
+        }
+        list.close();
+        return ja;
+    }
+
+    private static JSONObject getDownloadInfoJson(DownloadInfo info) {
+        try {
+            JSONObject jo = new JSONObject();
+            jo.put("gid", info.gid);
+            jo.put("token", info.token);
+            jo.put("title", info.title);
+            jo.put("titleJpn", info.titleJpn);
+            jo.put("thumb", info.thumb);
+            jo.put("category", info.category);
+            jo.put("posted", info.posted);
+            jo.put("uploader", info.uploader);
+            jo.put("rating", info.rating);
+            jo.put("simpleLanguage", info.simpleLanguage);
+            jo.put("state", info.state);
+            jo.put("legacy", info.legacy);
+            jo.put("time", info.time);
+            jo.put("label", info.label);
+            return jo;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static JSONArray getDownloadLabelDaoJson() {
+        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
+        JSONArray ja = new JSONArray();
+        LazyList<DownloadLabel> list = dao.queryBuilder().listLazy();
+        for (DownloadLabel label: list) {
+            JSONObject jo = getDownloadLabelJson(label);
+            if (null != jo) {
+                ja.put(jo);
+            }
+        }
+        list.close();
+        return ja;
+    }
+
+    private static JSONObject getDownloadLabelJson(DownloadLabel label) {
+        try {
+            JSONObject jo = new JSONObject();
+            jo.put("label", label.getLabel());
+            jo.put("time", label.getTime());
+            return jo;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static JSONArray getDownloadDirnameDaoJson() {
+        DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
+        JSONArray ja = new JSONArray();
+        LazyList<DownloadDirname> list = dao.queryBuilder().listLazy();
+        for (DownloadDirname dirname: list) {
+            JSONObject jo = getDownloadDirnameJson(dirname);
+            if (null != jo) {
+                ja.put(jo);
+            }
+        }
+        list.close();
+        return ja;
+    }
+
+    private static JSONObject getDownloadDirnameJson(DownloadDirname dirname) {
+        try {
+            JSONObject jo = new JSONObject();
+            jo.put("gid", dirname.getGid());
+            jo.put("dirname", dirname.getDirname());
+            return jo;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static JSONArray getHistoryDaoJson() {
+        HistoryDao dao = sDaoSession.getHistoryDao();
+        JSONArray ja = new JSONArray();
+        LazyList<HistoryInfo> list = dao.queryBuilder().listLazy();
+        for (HistoryInfo info: list) {
+            JSONObject jo = getDownloadDirnameJson(info);
+            if (null != jo) {
+                ja.put(jo);
+            }
+        }
+        list.close();
+        return ja;
+    }
+
+    private static JSONObject getHistoryInfoJson(HistoryInfo info) {
+        try {
+            JSONObject jo = new JSONObject();
+
+
+
+
+            return jo;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    */
 }
