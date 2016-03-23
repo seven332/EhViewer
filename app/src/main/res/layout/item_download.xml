@@ -70,44 +70,29 @@
         android:textColor="@android:color/white"
         android:textAllCaps="true"/>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/thumb"
         android:layout_alignParentRight="true"
-        android:paddingRight="8dp"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="8dp">
-
-            <ImageView
-                android:id="@+id/start"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="8dp"
-                app:srcCompat="@drawable/v_play_x24"/>
-
-            <ImageView
-                android:id="@+id/stop"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="8dp"
-                app:srcCompat="@drawable/v_pause_x24"/>
-
-        </FrameLayout>
+        android:paddingRight="8dp">
 
         <ImageView
-            android:id="@+id/delete"
+            android:id="@+id/start"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="8dp"
-            app:srcCompat="@drawable/v_close_x24"/>
+            app:srcCompat="@drawable/v_play_x24"/>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/stop"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            app:srcCompat="@drawable/v_pause_x24"/>
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/state"

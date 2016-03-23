@@ -1021,7 +1021,6 @@ public class DownloadsScene extends ToolbarScene
         public final TextView category;
         public final View start;
         public final View stop;
-        public final View delete;
         public final TextView state;
         public final ProgressBar progressBar;
         public final TextView percent;
@@ -1037,7 +1036,6 @@ public class DownloadsScene extends ToolbarScene
             category = (TextView) itemView.findViewById(R.id.category);
             start = itemView.findViewById(R.id.start);
             stop = itemView.findViewById(R.id.stop);
-            delete = itemView.findViewById(R.id.delete);
             state = (TextView) itemView.findViewById(R.id.state);
             progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
             percent = (TextView) itemView.findViewById(R.id.percent);
@@ -1047,10 +1045,8 @@ public class DownloadsScene extends ToolbarScene
             thumb.setOnClickListener(this);
             start.setOnClickListener(this);
             stop.setOnClickListener(this);
-            delete.setOnClickListener(this);
             RippleSalon.addRipple(start, false);
             RippleSalon.addRipple(stop, false);
-            RippleSalon.addRipple(delete, false);
         }
 
         @Override
@@ -1089,16 +1085,6 @@ public class DownloadsScene extends ToolbarScene
                 if (null != mDownloadManager) {
                     mDownloadManager.stopDownload(list.get(index).gid);
                 }
-            } else if (delete == v) {
-                GalleryInfo galleryInfo = list.get(index);
-                CheckBoxDialogBuilder builder = new CheckBoxDialogBuilder(context,
-                        getString(R.string.download_remove_dialog_message, EhUtils.getSuitableTitle(galleryInfo)),
-                        getString(R.string.download_remove_dialog_check_text),
-                        Settings.getRemoveImageFiles());
-                DeleteDialogHelper helper = new DeleteDialogHelper(galleryInfo, builder);
-                builder.setTitle(R.string.download_remove_dialog_title)
-                        .setPositiveButton(android.R.string.ok, helper)
-                        .show();
             }
         }
     }
