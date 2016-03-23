@@ -125,7 +125,7 @@ public class GalleryListParser {
             } else {
                 String html = it2.html();
                 int index1 = html.indexOf('~');
-                int index2 = html.lastIndexOf('~');
+                int index2 = StringUtils.ordinalIndexOf(html, '~', 2);
                 if (index1 < index2) {
                     gi.thumb = "http://" +StringUtils.replace(html.substring(index1 + 1, index2), "~", "/");
                 } else {
