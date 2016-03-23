@@ -1005,6 +1005,14 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         if (null == gd) {
             return;
         }
+        String keyword = EhUtils.extractTitle(gd.title);
+        if (null != keyword) {
+            ListUrlBuilder lub = new ListUrlBuilder();
+            lub.setMode(ListUrlBuilder.MODE_NORMAL);
+            lub.setKeyword(keyword);
+            GalleryListScene.startScene(this, lub);
+            return;
+        }
         String artist = getArtist(gd.tags);
         if (null != artist) {
             ListUrlBuilder lub = new ListUrlBuilder();

@@ -18,11 +18,14 @@ package com.hippo.ehviewer.client;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+
+import java.util.regex.Pattern;
 
 public class EhUtils {
 
@@ -43,6 +46,9 @@ public class EhUtils {
     public static final int BG_COLOR_ASIAN_PORN = 0xff9575cd;
     public static final int BG_COLOR_MISC = 0xfff06292;
     public static final int BG_COLOR_UNKNOWN = Color.BLACK;
+
+    public static final Pattern PATTERN_TITLE_PREFIX = Pattern.compile("^(?:(?:\\([^\\)]*\\))|(?:\\[[^\\]]*\\])|(?:\\{[^\\}]*\\})|(?:~[^~]*~)|\\s+)*");
+    public static final Pattern PATTERN_TITLE_SUFFIX = Pattern.compile("(?:(?:\\([^\\)]*\\))|(?:\\[[^\\]]*\\])|(?:\\{[^\\}]*\\})|(?:~[^~]*~)|\\s+)*$");
 
     private static final int[] CATEGORY_VALUES = {
             EhConfig.MISC,
@@ -134,6 +140,20 @@ public class EhUtils {
             return TextUtils.isEmpty(gi.titleJpn) ? gi.title : gi.titleJpn;
         } else {
             return TextUtils.isEmpty(gi.title) ? gi.titleJpn : gi.title;
+        }
+    }
+
+    @Nullable
+    public static String extractTitle(String title) {
+        if (null == title) {
+            return null;
+        }
+        title = PATTERN_TITLE_PREFIX.matcher(title).replaceFirst("");
+        title = PATTERN_TITLE_SUFFIX.matcher(title).replaceFirst("");
+        if (title.isEmpty()) {
+            return null;
+        } else {
+            return title;
         }
     }
 }
