@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.ui.scene;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -44,6 +46,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
@@ -52,6 +55,7 @@ import com.hippo.annotation.Implemented;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
+import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -77,7 +81,9 @@ import com.hippo.widget.FabLayout;
 import com.hippo.widget.SearchBarMover;
 import com.hippo.widget.refreshlayout.RefreshLayout;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ObjectUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -85,7 +91,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// TODO Bug for FavoritesScene and GalleryListScene, if list view of SearchBar expand first, RecyclerView padding top will be wrong
 // TODO Get favorite, modify favorite, add favorite, what a mess!
 public class FavoritesScene extends BaseScene implements
         EasyRecyclerView.OnItemClickListener, EasyRecyclerView.OnItemLongClickListener,
@@ -98,8 +103,6 @@ public class FavoritesScene extends BaseScene implements
     private static final String KEY_SEARCH_MODE = "search_mode";
     private static final String KEY_HAS_FIRST_REFRESH = "has_first_refresh";
     private static final String KEY_FAV_COUNT_ARRAY = "fav_count_array";
-    private static final String KEY_ALL_COUNT = "all_count";
-    private static final String KEY_ALL_LIMIT = "all_limit";
 
     @Nullable
     @ViewLifeCircle
@@ -146,8 +149,6 @@ public class FavoritesScene extends BaseScene implements
 
     @Nullable
     private int[] mFavCountArray;
-    private int mAllCount = -1;
-    private int mAllLimit = -1;
 
     private boolean mHasFirstRefresh;
     private boolean mSearchMode;
@@ -210,8 +211,6 @@ public class FavoritesScene extends BaseScene implements
         mSearchMode = savedInstanceState.getBoolean(KEY_SEARCH_MODE);
         mHasFirstRefresh = savedInstanceState.getBoolean(KEY_HAS_FIRST_REFRESH);
         mFavCountArray = savedInstanceState.getIntArray(KEY_FAV_COUNT_ARRAY);
-        mAllCount = savedInstanceState.getInt(KEY_ALL_COUNT);
-        mAllLimit = savedInstanceState.getInt(KEY_ALL_LIMIT);
     }
 
     @Override
@@ -228,8 +227,6 @@ public class FavoritesScene extends BaseScene implements
         outState.putParcelable(KEY_URL_BUILDER, mUrlBuilder);
         outState.putBoolean(KEY_SEARCH_MODE, mSearchMode);
         outState.putIntArray(KEY_FAV_COUNT_ARRAY, mFavCountArray);
-        outState.putInt(KEY_ALL_COUNT, mAllCount);
-        outState.putInt(KEY_ALL_LIMIT, mAllLimit);
     }
 
     @Override
@@ -420,22 +417,85 @@ public class FavoritesScene extends BaseScene implements
         mOldKeyword = null;
     }
 
+    private class InfoHolder extends RecyclerView.ViewHolder {
+
+        private final TextView key;
+        private final TextView value;
+
+        public InfoHolder(View itemView) {
+            super(itemView);
+            key = (TextView) ViewUtils.$$(itemView, R.id.key);
+            value = (TextView) ViewUtils.$$(itemView, R.id.value);
+        }
+    }
+
+    private class InfoAdapter extends RecyclerView.Adapter<InfoHolder> {
+
+        private static final int TYPE_HEADER = 0;
+        private static final int TYPE_DATA = 1;
+
+        private final LayoutInflater mInflater;
+
+        public InfoAdapter(LayoutInflater inflater) {
+            mInflater = inflater;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return 0 == position ? TYPE_HEADER : TYPE_DATA;
+        }
+
+        @Override
+        public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new InfoHolder(mInflater.inflate(TYPE_HEADER == viewType ?
+                    R.layout.item_favorite_info_header : R.layout.item_favorite_info_data, parent, false));
+        }
+
+        @Override
+        @SuppressLint("SetTextI18n")
+        public void onBindViewHolder(InfoHolder holder, int position) {
+            if (0 == position) {
+                holder.key.setText(R.string.collections);
+                holder.value.setText(R.string.count);
+                holder.itemView.setEnabled(false);
+            } else {
+                if (null == mFavCatArray || null == mFavCountArray ||
+                        mFavCatArray.length < position || mFavCountArray.length < position) {
+                    return;
+                }
+                holder.key.setText(mFavCatArray[position - 1]);
+                holder.value.setText(Integer.toString(mFavCountArray[position - 1]));
+                holder.itemView.setEnabled(true);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return 11;
+        }
+    }
+
+    @SuppressLint("InflateParams")
     private void showFavoritesInfoDialog() {
         Context context = getContext2();
         if (null == context || null == mFavCatArray || null == mFavCountArray) {
             return;
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(mAllCount).append("/").append(mAllLimit).append("\n");
-        for (int i = 0, n = 10; i < n; i++) {
-            sb.append(mFavCatArray[i]).append(": ").append(mFavCountArray[i]).append("\n");
-        }
-
-        new AlertDialog.Builder(context)
-                .setTitle(R.string.favorites_info)
-                .setMessage(sb.toString())
-                .show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        context = builder.getContext();
+        final LayoutInflater inflater = LayoutInflater.from(context);
+        EasyRecyclerView rv = (EasyRecyclerView) inflater.inflate(R.layout.dialog_favorite_info, null);
+        rv.setAdapter(new InfoAdapter(inflater));
+        rv.setLayoutManager(new LinearLayoutManager(context));
+        LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
+                LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider),
+                LayoutUtils.dp2pix(context, 1));
+        decoration.setPadding(ResourcesUtils.getAttrDimensionPixelOffset(context, R.attr.dialogPreferredPadding));
+        rv.addItemDecoration(decoration);
+        rv.setSelector(RippleSalon.generateRippleDrawable(false));
+        rv.setClipToPadding(false);
+        builder.setView(rv).show();
     }
 
     @Override
@@ -823,12 +883,6 @@ public class FavoritesScene extends BaseScene implements
             }
 
             mFavCountArray = result.countArray;
-            if (result.current != -1) {
-                mAllCount = result.current;
-            }
-            if (result.limit != -1) {
-                mAllLimit = result.limit;
-            }
 
             updateSearchBar();
             mHelper.setPages(taskId, result.pages);

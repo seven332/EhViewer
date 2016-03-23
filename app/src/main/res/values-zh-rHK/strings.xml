@@ -476,6 +476,7 @@
     <string name="let_me_select">讓我選擇</string>
     <string name="favorites_info">收藏信息</string>
     <string name="collections">收藏夾</string>
+    <string name="count">數量</string>
     <string name="need_sign_in">需要登錄</string>
 
     <!-- Progress Scene -->

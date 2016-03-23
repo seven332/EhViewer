@@ -30,35 +30,27 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FavoritesParser {
-
-    private static final Pattern LIMIT_PATTERN = Pattern.compile("Currently Used Favorite Slots: ([\\d,]+) / ([\\d,]+)");
 
     public static class Result {
         public String[] catArray; // Size 10
         public int[] countArray; // Size 10
-        public int current; // -1 for error
-        public int limit; // -1 for error
         public int pages;
         public List<GalleryInfo> galleryInfoList;
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static Result parse(String body) throws Exception {
         if (body.contains("This page requires you to log on.</p>")) {
             throw new EhException(GetText.getString(R.string.need_sign_in));
         }
         String[] catArray = new String[10];
         int[] countArray = new int[10];
-        int current;
-        int limit;
 
         try {
             Document d = Jsoup.parse(body);
             Element ido = JsoupUtils.getElementByClass(d, "ido");
+            //noinspection ConstantConditions
             Elements fps = ido.getElementsByClass("fp");
             // Last one is "fp fps"
             AssertUtils.assertEqualsEx(11, fps.size());
@@ -67,15 +59,6 @@ public class FavoritesParser {
                 Element fp = fps.get(i);
                 countArray[i] = ParserUtils.parseInt(fp.child(0).text());
                 catArray[i] = ParserUtils.trim(fp.child(2).text());
-            }
-
-            Matcher m = LIMIT_PATTERN.matcher(body);
-            if (m.find()) {
-                current = ParserUtils.parseInt(m.group(1));
-                limit = ParserUtils.parseInt(m.group(2));
-            } else {
-                current = -1;
-                limit = -1;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,8 +70,6 @@ public class FavoritesParser {
         Result re = new Result();
         re.catArray = catArray;
         re.countArray = countArray;
-        re.current = current;
-        re.limit = limit;
         re.pages = result.pages;
         re.galleryInfoList = result.galleryInfoList;
 

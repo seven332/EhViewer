@@ -523,6 +523,7 @@
     <string name="let_me_select">Let me select</string>
     <string name="favorites_info">Favorites info</string>
     <string name="collections">Collections</string>
+    <string name="count">Count</string>
     <string name="need_sign_in">Signing in is required</string>
 
     <!-- Progress Scene -->
