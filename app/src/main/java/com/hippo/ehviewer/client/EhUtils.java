@@ -47,8 +47,13 @@ public class EhUtils {
     public static final int BG_COLOR_MISC = 0xfff06292;
     public static final int BG_COLOR_UNKNOWN = Color.BLACK;
 
-    public static final Pattern PATTERN_TITLE_PREFIX = Pattern.compile("^(?:(?:\\([^\\)]*\\))|(?:\\[[^\\]]*\\])|(?:\\{[^\\}]*\\})|(?:~[^~]*~)|\\s+)*");
-    public static final Pattern PATTERN_TITLE_SUFFIX = Pattern.compile("(?:(?:\\([^\\)]*\\))|(?:\\[[^\\]]*\\])|(?:\\{[^\\}]*\\})|(?:~[^~]*~)|\\s+)*$");
+    // Remove [XXX], (XXX), {XXX}, ~XXX~ stuff
+    public static final Pattern PATTERN_TITLE_PREFIX = Pattern.compile(
+            "^(?:(?:\\([^\\)]*\\))|(?:\\[[^\\]]*\\])|(?:\\{[^\\}]*\\})|(?:~[^~]*~)|\\s+)*");
+    // Remove [XXX], (XXX), {XXX}, ~XXX~ stuff and something like ch. 1-23
+    public static final Pattern PATTERN_TITLE_SUFFIX = Pattern.compile(
+            "(?:\\s+ch.[\\s\\d-]+)?(?:(?:\\([^\\)]*\\))|(?:\\[[^\\]]*\\])|(?:\\{[^\\}]*\\})|(?:~[^~]*~)|\\s+)*$",
+            Pattern.CASE_INSENSITIVE);
 
     private static final int[] CATEGORY_VALUES = {
             EhConfig.MISC,
@@ -150,6 +155,13 @@ public class EhUtils {
         }
         title = PATTERN_TITLE_PREFIX.matcher(title).replaceFirst("");
         title = PATTERN_TITLE_SUFFIX.matcher(title).replaceFirst("");
+        // Sometimes title is combined by romaji and english translation.
+        // Only need romaji.
+        // TODO But not sure every '|' means that
+        int index = title.indexOf('|');
+        if (index >= 0) {
+            title = title.substring(0, index);
+        }
         if (title.isEmpty()) {
             return null;
         } else {
