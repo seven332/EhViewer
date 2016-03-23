@@ -102,6 +102,7 @@ public class GalleryActivity extends EhActivity
 
     @Nullable
     private SystemUiHelper mSystemUiHelper;
+    private boolean mShowSystemUi;
 
     @Nullable
     private View mClock;
@@ -257,6 +258,7 @@ public class GalleryActivity extends EhActivity
         mSystemUiHelper = new SystemUiHelper(this, systemUiLevel,
                 SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
         mSystemUiHelper.hide();
+        mShowSystemUi = false;
 
         mClock = ViewUtils.$$(this, R.id.clock);
         mBattery = ViewUtils.$$(this, R.id.battery);
@@ -330,6 +332,14 @@ public class GalleryActivity extends EhActivity
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus && mSystemUiHelper != null) {
+            if (mShowSystemUi) {
+                mSystemUiHelper.show();
+            } else {
+                mSystemUiHelper.hide();
+            }
+        }
     }
 
     @Override
@@ -617,6 +627,7 @@ public class GalleryActivity extends EhActivity
 
         if (null != mSystemUiHelper) {
             mSystemUiHelper.show();
+            mShowSystemUi = true;
         }
     }
 
@@ -635,6 +646,7 @@ public class GalleryActivity extends EhActivity
 
         if (null != mSystemUiHelper) {
             mSystemUiHelper.hide();
+            mShowSystemUi = false;
         }
     }
 
