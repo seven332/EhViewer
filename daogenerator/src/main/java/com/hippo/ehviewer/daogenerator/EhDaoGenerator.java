@@ -95,7 +95,7 @@ public class EhDaoGenerator {
         entity.setClassNameDao("DownloadLabelDao");
         entity.addIdProperty();
         entity.addStringProperty("label");
-        entity.addLongProperty("time");
+        entity.addLongProperty("time").notNull();
     }
 
     private static void addDownloadDirname(Schema schema) {
