@@ -346,15 +346,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else {
             onRestore(savedInstanceState);
         }
-
-        long gid = getGid();
-        if (gid != -1) {
-            Context context = getContext2();
-            AssertUtils.assertNotNull(context);
-            mDownloadState = EhApplication.getDownloadManager(context).getDownloadState(gid);
-        } else {
-            mDownloadState = DownloadInfo.STATE_INVALID;
-        }
     }
 
     private void onInit() {
@@ -394,6 +385,16 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
+        // Get download state
+        long gid = getGid();
+        if (gid != -1) {
+            Context context = getContext2();
+            AssertUtils.assertNotNull(context);
+            mDownloadState = EhApplication.getDownloadManager(context).getDownloadState(gid);
+        } else {
+            mDownloadState = DownloadInfo.STATE_INVALID;
+        }
+
         View view = inflater.inflate(R.layout.scene_gallery_detail, container, false);
 
         ViewGroup main = (ViewGroup) ViewUtils.$$(view, R.id.main);
