@@ -209,6 +209,10 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
         return mEditText.getText().toString();
     }
 
+    public void cursorToEnd() {
+        mEditText.setSelection(mEditText.getText().length());
+    }
+
     public void setTitle(String title) {
         mTitleTextView.setText(title);
     }

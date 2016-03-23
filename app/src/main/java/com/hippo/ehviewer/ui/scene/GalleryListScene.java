@@ -307,6 +307,7 @@ public final class GalleryListScene extends BaseScene
         // Update search edit text
         if (!TextUtils.isEmpty(keyword) && null != mSearchBar) {
             mSearchBar.setText(keyword);
+            mSearchBar.cursorToEnd();
         }
 
         // Update title
