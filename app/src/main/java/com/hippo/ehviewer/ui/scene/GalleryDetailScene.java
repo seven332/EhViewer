@@ -1308,16 +1308,22 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         switch (mDownloadState) {
             default:
             case DownloadInfo.STATE_INVALID:
-            case DownloadInfo.STATE_NONE:
                 mDownload.setText(R.string.download);
                 break;
+            case DownloadInfo.STATE_NONE:
+                mDownload.setText(R.string.download_state_none);
+                break;
             case DownloadInfo.STATE_WAIT:
+                mDownload.setText(R.string.download_state_wait);
+                break;
             case DownloadInfo.STATE_DOWNLOAD:
                 mDownload.setText(R.string.download_state_downloading);
                 break;
             case DownloadInfo.STATE_FINISH:
-            case DownloadInfo.STATE_FAILED:
                 mDownload.setText(R.string.download_state_downloaded);
+                break;
+            case DownloadInfo.STATE_FAILED:
+                mDownload.setText(R.string.download_state_failed);
                 break;
         }
     }
