@@ -39,6 +39,12 @@
         app:entryValues="@array/preload_image_entry_values"
         android:defaultValue="5"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="download_origin_image"
+        android:title="@string/settings_download_download_origin_image"
+        android:summary="@string/settings_download_download_origin_image_summary"
+        android:defaultValue="false"/>
+
     <Preference
         android:key="restore_download_items"
         android:title="@string/settings_download_restore_download_items"

@@ -24,6 +24,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.MimeTypeMap;
@@ -52,6 +53,7 @@ import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.StringUtils;
+import com.hippo.yorozuya.Utilities;
 import com.hippo.yorozuya.io.InputStreamPipe;
 import com.hippo.yorozuya.io.OutputStreamPipe;
 import com.hippo.yorozuya.sparse.SparseJLArray;
@@ -72,6 +74,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -1015,7 +1018,11 @@ public class SpiderQueen implements Runnable {
                     break;
                 }
 
-                imageUrl = result.imageUrl;
+                if (Settings.getDownloadOriginImage() && !TextUtils.isEmpty(result.originImageUrl)) {
+                    imageUrl = result.originImageUrl;
+                } else {
+                    imageUrl = result.imageUrl;
+                }
                 skipHathKey = result.skipHathKey;
 
                 // If it is force request, skip first image
@@ -1027,28 +1034,40 @@ public class SpiderQueen implements Runnable {
                     Log.d(TAG, imageUrl);
                 }
 
-                // Start download image
-                OutputStreamPipe pipe = mSpiderDen.openOutputStreamPipe(
-                        index, MimeTypeMap.getFileExtensionFromUrl(imageUrl));
-                if (pipe == null) {
-                    // Can't get pipe
-                    error = GetText.getString(R.string.error_write_failed);
-                    break;
-                }
-
                 // Download image
+                OutputStreamPipe pipe = null;
                 InputStream is = null;
                 try {
                     if (DEBUG_LOG) {
                         Log.d(TAG, "Start download image " + index);
                     }
 
-                    Response response = mHttpClient.newCall(new EhRequestBuilder(imageUrl).build()).execute();
+                    Call call = mHttpClient.newCall(new EhRequestBuilder(imageUrl).build());
+                    Response response = call.execute();
                     if (response.code() >= 400) {
                         // Maybe 404
+                        call.cancel();
                         continue;
                     }
                     ResponseBody responseBody = response.body();
+
+                    // Get extension
+                    String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(
+                            responseBody.contentType().toString());
+                    // Ensure extension
+                    if (!Utilities.contain(GalleryProvider.SUPPORT_IMAGE_EXTENSIONS, extension)) {
+                        extension = GalleryProvider.SUPPORT_IMAGE_EXTENSIONS[0];
+                    }
+
+                    // Get out put pipe
+                    pipe = mSpiderDen.openOutputStreamPipe(index, extension);
+                    if (null == pipe) {
+                        // Can't get pipe
+                        error = GetText.getString(R.string.error_write_failed);
+                        call.cancel();
+                        break;
+                    }
+
                     long contentLength = responseBody.contentLength();
                     is = responseBody.byteStream();
                     pipe.obtain();
@@ -1060,6 +1079,7 @@ public class SpiderQueen implements Runnable {
                     while (!Thread.currentThread().isInterrupted()) {
                         int bytesRead = is.read(data);
                         if (bytesRead == -1) {
+                            call.cancel();
                             break;
                         }
                         os.write(data, 0, bytesRead);
@@ -1090,8 +1110,10 @@ public class SpiderQueen implements Runnable {
                     error = GetText.getString(R.string.error_socket);
                 } finally {
                     IOUtils.closeQuietly(is);
-                    pipe.close();
-                    pipe.release();
+                    if (null != pipe) {
+                        pipe.close();
+                        pipe.release();
+                    }
 
                     if (DEBUG_LOG) {
                         Log.d(TAG, "End download image " + index);

@@ -381,6 +381,8 @@
     <string name="settings_download_multi_thread_download_summary">最多同时下载 %s 张图片</string>
     <string name="settings_download_preload_image">预载图片</string>
     <string name="settings_download_preload_image_summary">向后预载 %s 张图片</string>
+    <string name="settings_download_download_origin_image">下载原图</string>
+    <string name="settings_download_download_origin_image_summary">这很危险！勾选此项会导致下载配额迅速流失</string>
     <string name="settings_download_restoring">恢复中</string>
     <string name="settings_download_restore_not_found">未找到可恢复下载项</string>
     <string name="settings_download_restore_failed">恢复失败</string>

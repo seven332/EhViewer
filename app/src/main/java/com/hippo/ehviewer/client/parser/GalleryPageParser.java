@@ -19,25 +19,31 @@ package com.hippo.ehviewer.client.parser;
 import android.text.TextUtils;
 
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.yorozuya.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GalleryPageParser {
 
-    private static final Pattern IMAGE_URL_PATTERN = Pattern.compile("<div id=\"i3\"><a[^>]+><img id=\"img\" src=\"([^\"]+)\"");
-    private static final Pattern SKIP_HATH_KEY_PATTERN = Pattern.compile("onclick=\"return nl\\('([^\\)]+)'\\)");
+    private static final Pattern PATTERN_IMAGE_URL = Pattern.compile("<div id=\"i3\"><a[^>]+><img id=\"img\" src=\"([^\"]+)\"");
+    private static final Pattern PATTERN_SKIP_HATH_KEY = Pattern.compile("onclick=\"return nl\\('([^\\)]+)'\\)");
+    private static final Pattern PATTERN_ORIGIN_IMAGE_URL = Pattern.compile("<div id=\"i7\" class=\"if\"> &nbsp; <img[^>]+/> <a href=\"([^\"]+)\">");
 
     public static Result parse(String body) throws ParseException {
         Matcher m;
         Result result = new Result();
-        m = IMAGE_URL_PATTERN.matcher(body);
+        m = PATTERN_IMAGE_URL.matcher(body);
         if (m.find()) {
-            result.imageUrl = ParserUtils.trim(m.group(1));
+            result.imageUrl = StringUtils.unescapeXml(StringUtils.trim(m.group(1)));
         }
-        m = SKIP_HATH_KEY_PATTERN.matcher(body);
+        m = PATTERN_SKIP_HATH_KEY.matcher(body);
         if (m.find()) {
-            result.skipHathKey = ParserUtils.trim(m.group(1));
+            result.skipHathKey = StringUtils.unescapeXml(StringUtils.trim(m.group(1)));
+        }
+        m = PATTERN_ORIGIN_IMAGE_URL.matcher(body);
+        if (m.find()) {
+            result.originImageUrl = StringUtils.unescapeXml(StringUtils.trim(m.group(1)));
         }
         if (!TextUtils.isEmpty(result.imageUrl) && !TextUtils.isEmpty(result.skipHathKey)) {
             return result;
@@ -49,5 +55,6 @@ public class GalleryPageParser {
     public static class Result {
         public String imageUrl;
         public String skipHathKey;
+        public String originImageUrl;
     }
 }

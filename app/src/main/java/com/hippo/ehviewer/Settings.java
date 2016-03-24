@@ -540,6 +540,17 @@ public class Settings {
         putIntToStr(KEY_PRELOAD_IMAGE, value);
     }
 
+    private static final String KEY_DOWNLOAD_ORIGIN_IMAGE = "download_origin_image";
+    private static final boolean DEFAULT_DOWNLOAD_ORIGIN_IMAGE = false;
+
+    public static boolean getDownloadOriginImage() {
+        return getBoolean(KEY_DOWNLOAD_ORIGIN_IMAGE, DEFAULT_DOWNLOAD_ORIGIN_IMAGE);
+    }
+
+    public static void putDownloadOriginImage(boolean value) {
+        putBoolean(KEY_DOWNLOAD_ORIGIN_IMAGE, value);
+    }
+
     /********************
      ****** Favorites
      ********************/

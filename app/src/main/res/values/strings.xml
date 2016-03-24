@@ -421,6 +421,8 @@
     <string name="settings_download_multi_thread_download_summary">Up to %s images</string>
     <string name="settings_download_preload_image">Preload image</string>
     <string name="settings_download_preload_image_summary">Preload next %s image</string>
+    <string name="settings_download_download_origin_image">Download original image</string>
+    <string name="settings_download_download_origin_image_summary">It is dangerous! You may get 509 error</string>
     <string name="settings_download_restore_download_items">Restore download items</string>
     <string name="settings_download_restore_download_items_summary">Restore all download items in download location</string>
     <string name="settings_download_restoring">Restoring</string>
