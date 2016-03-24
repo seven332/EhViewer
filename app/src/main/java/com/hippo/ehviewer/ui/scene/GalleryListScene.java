@@ -336,7 +336,7 @@ public final class GalleryListScene extends BaseScene
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView2(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_list, container, false);
 
@@ -1096,7 +1096,7 @@ public final class GalleryListScene extends BaseScene
 
     private void onGetGalleryListSuccess(GalleryListParser.Result result, int taskId) {
         if (mHelper != null && mSearchBarMover != null &&
-                mHelper.isCurrentTask(taskId) && isViewCreated()) {
+                mHelper.isCurrentTask(taskId)) {
             mHelper.setPages(taskId, result.pages);
             mHelper.onGetPageData(taskId, result.galleryInfoList);
             SimpleHandler.getInstance().post(mReturnSearchBarRunnable);
@@ -1105,7 +1105,7 @@ public final class GalleryListScene extends BaseScene
 
     private void onGetGalleryListFailure(Exception e, int taskId) {
         if (mHelper != null && mSearchBarMover != null &&
-                mHelper.isCurrentTask(taskId) && isViewCreated()) {
+                mHelper.isCurrentTask(taskId)) {
             mHelper.onGetException(taskId, e);
         }
     }
@@ -1121,7 +1121,7 @@ public final class GalleryListScene extends BaseScene
 
     private void onGetWhatsHotFailure(Exception e, int taskId) {
         if (mHelper != null && mSearchBarMover != null &&
-                mHelper.isCurrentTask(taskId) && isViewCreated()) {
+                mHelper.isCurrentTask(taskId)) {
             mHelper.onGetException(taskId, e);
         }
     }

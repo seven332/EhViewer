@@ -383,7 +383,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView2(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
         // Get download state
         long gid = getGid();
@@ -1291,9 +1291,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     break;
                 }
                 mGalleryDetail.comments = comments;
-                if (!isViewCreated()) {
-                    break;
-                }
                 bindComments(comments);
                 break;
             default:
@@ -1411,11 +1408,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private void onGetGalleryDetailSuccess(GalleryDetail result) {
         mGalleryDetail = result;
-        if (isViewCreated()) {
-            updateDownloadState();
-            adjustViewVisibility(STATE_NORMAL, true);
-            bindViewSecond();
-        }
+        updateDownloadState();
+        adjustViewVisibility(STATE_NORMAL, true);
+        bindViewSecond();
     }
 
     private void onGetGalleryDetailFailure(Exception e) {

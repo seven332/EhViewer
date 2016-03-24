@@ -65,7 +65,8 @@ public class CookieSignInScene extends BaseScene implements EditText.OnEditorAct
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView2(LayoutInflater inflater,
+            @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_cookie_sign_in, container, false);
         mIpbMemberIdLayout = (TextInputLayout) ViewUtils.$$(view, R.id.ipb_member_id_layout);
         mIpbMemberId = mIpbMemberIdLayout.getEditText();

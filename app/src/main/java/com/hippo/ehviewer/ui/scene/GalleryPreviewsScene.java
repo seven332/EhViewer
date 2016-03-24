@@ -128,7 +128,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
     @Nullable
     @Override
-    public View onCreateView2(LayoutInflater inflater,
+    public View onCreateView3(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ContentLayout contentLayout = (ContentLayout) inflater.inflate(
                 R.layout.scene_gallery_previews, container, false);

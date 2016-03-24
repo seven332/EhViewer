@@ -114,7 +114,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView2(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_login, container, false);
 

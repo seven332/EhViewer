@@ -91,7 +91,7 @@ public class HistoryScene extends ToolbarScene
 
     @Nullable
     @Override
-    public View onCreateView2(LayoutInflater inflater,
+    public View onCreateView3(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_history, container, false);
         View content = ViewUtils.$$(view, R.id.content);

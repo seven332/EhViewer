@@ -87,7 +87,7 @@ public final class QuickSearchScene extends ToolbarScene {
     @SuppressWarnings("deprecation")
     @Nullable
     @Override
-    public View onCreateView2(LayoutInflater inflater,
+    public View onCreateView3(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_label_list, container, false);
 

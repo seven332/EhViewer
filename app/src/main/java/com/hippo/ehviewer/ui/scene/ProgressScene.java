@@ -162,7 +162,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_progress, container, false);
         View progress = ViewUtils.$$(view, R.id.progress);

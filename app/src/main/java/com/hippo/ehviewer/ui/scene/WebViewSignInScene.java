@@ -57,7 +57,7 @@ public class WebViewSignInScene extends BaseScene {
     @Override
     @SuppressWarnings("deprecation")
     @SuppressLint("SetJavaScriptEnabled")
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Context context = getContext2();
         AssertUtils.assertNotNull(context);

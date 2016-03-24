@@ -22,8 +22,10 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.annotation.StyleRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +40,7 @@ public abstract class BaseScene extends SceneFragment {
     public static final int LENGTH_SHORT = 0;
     public static final int LENGTH_LONG = 1;
 
-    private boolean mViewCreated;
+    private Context mThemeContext;
 
     public void updateAvatar() {
         FragmentActivity activity = getActivity();
@@ -124,10 +126,22 @@ public abstract class BaseScene extends SceneFragment {
     public void onDestroyDrawerView() {
     }
 
+    @Nullable
+    @Override
+    public final View onCreateView(LayoutInflater inflater,
+            @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return onCreateView2(LayoutInflater.from(getContext2()), container, savedInstanceState);
+    }
+
+    @Nullable
+    public View onCreateView2(LayoutInflater inflater,
+            @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return null;
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mViewCreated = true;
 
         // Update left drawer locked state
         if (needShowLeftDrawer()) {
@@ -143,19 +157,17 @@ public abstract class BaseScene extends SceneFragment {
         ActivityHelper.hideSoftInput(getActivity());
     }
 
-    @Override
-    public void onDestroyView() {
-        mViewCreated = false;
-        super.onDestroyView();
+    public void createThemeContext(@StyleRes int style) {
+        mThemeContext = new ContextThemeWrapper(getContext(), style);
     }
 
-    public boolean isViewCreated() {
-        return mViewCreated;
+    public void destroyThemeContext() {
+        mThemeContext = null;
     }
 
     @Nullable
     public Context getContext2() {
-        return super.getContext();
+        return null != mThemeContext ? mThemeContext : super.getContext();
     }
 
     @Nullable
@@ -180,12 +192,7 @@ public abstract class BaseScene extends SceneFragment {
 
     @Nullable
     public LayoutInflater getLayoutInflater2() {
-        FragmentActivity activity = getActivity();
-        if (null != activity) {
-            return activity.getLayoutInflater();
-        } else {
-            return null;
-        }
+        return LayoutInflater.from(getContext2());
     }
 
     public void hideSoftInput() {

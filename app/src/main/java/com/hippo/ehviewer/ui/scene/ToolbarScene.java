@@ -39,20 +39,20 @@ public abstract class ToolbarScene extends BaseScene {
     private CharSequence mTempTitle;
 
     @Nullable
-    public View onCreateView2(LayoutInflater inflater,
+    public View onCreateView3(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return null;
     }
 
     @Nullable
     @Override
-    public final View onCreateView(LayoutInflater inflater,
+    public final View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_toolbar, container, false);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         FrameLayout contentPanel = (FrameLayout) view.findViewById(R.id.content_panel);
 
-        View contentView = onCreateView2(inflater, contentPanel, savedInstanceState);
+        View contentView = onCreateView3(inflater, contentPanel, savedInstanceState);
         if (contentView == null) {
             return null;
         } else {

@@ -47,7 +47,7 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView2(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_warning, container, false);
 
