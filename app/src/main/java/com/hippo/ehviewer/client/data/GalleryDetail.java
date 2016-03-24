@@ -31,9 +31,9 @@ public class GalleryDetail extends GalleryInfo {
     public String size;
     public String resize;
     public int pages;
-    public int favoredTimes;
-    public boolean isFavored;
-    public int ratedTimes;
+    public int favoriteCount;
+    public boolean isFavorited;
+    public int ratingCount;
     public GalleryTagGroup[] tags;
     public GalleryComment[] comments;
     public int previewPages;
@@ -55,9 +55,9 @@ public class GalleryDetail extends GalleryInfo {
         dest.writeString(this.size);
         dest.writeString(this.resize);
         dest.writeInt(this.pages);
-        dest.writeInt(this.favoredTimes);
-        dest.writeByte(isFavored ? (byte) 1 : (byte) 0);
-        dest.writeInt(this.ratedTimes);
+        dest.writeInt(this.favoriteCount);
+        dest.writeByte(isFavorited ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.ratingCount);
         dest.writeParcelableArray(this.tags, 0);
         dest.writeParcelableArray(this.comments, 0);
         dest.writeInt(this.previewPages);
@@ -77,9 +77,9 @@ public class GalleryDetail extends GalleryInfo {
         this.size = in.readString();
         this.resize = in.readString();
         this.pages = in.readInt();
-        this.favoredTimes = in.readInt();
-        this.isFavored = in.readByte() != 0;
-        this.ratedTimes = in.readInt();
+        this.favoriteCount = in.readInt();
+        this.isFavorited = in.readByte() != 0;
+        this.ratingCount = in.readInt();
         Parcelable[] array = in.readParcelableArray(GalleryTagGroup.class.getClassLoader());
         if (array != null) {
             this.tags = Arrays.copyOf(array, array.length, GalleryTagGroup[].class);

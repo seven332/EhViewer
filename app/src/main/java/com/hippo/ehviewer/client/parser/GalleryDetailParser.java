@@ -171,7 +171,7 @@ public class GalleryDetailParser {
             gd.visible = "";
             gd.size = "";
             gd.pages = 0;
-            gd.favoredTimes = 0;
+            gd.favoriteCount = 0;
             try {
                 Elements es = gdd.child(0).child(0).children();
                 for (int i = 0, n = es.size(); i < n; i++) {
@@ -184,10 +184,10 @@ public class GalleryDetailParser {
             // Rating count
             Element rating_count = gm.getElementById("rating_count");
             if (null != rating_count) {
-                gd.ratedTimes = NumberUtils.parseIntSafely(
+                gd.ratingCount = NumberUtils.parseIntSafely(
                         StringUtils.trim(rating_count.text()), 0);
             } else {
-                gd.ratedTimes = 0;
+                gd.ratingCount = 0;
             }
 
             // Rating
@@ -208,9 +208,9 @@ public class GalleryDetailParser {
                 gd.rating = Float.NaN;
             }
 
-            // isFavored
+            // isFavorited
             Element gdf = gm.getElementById("gdf");
-            gd.isFavored = null != gdf && !StringUtils.trim(gdf.text()).equals("Add to Favorites");
+            gd.isFavorited = null != gdf && !StringUtils.trim(gdf.text()).equals("Add to Favorites");
         } catch (Exception e) {
             throw new ParseException("Can't parse gallery detail", body);
         }
@@ -244,17 +244,17 @@ public class GalleryDetailParser {
         } else if (key.startsWith("Favorited")) {
             switch (value) {
                 case "Never":
-                    gd.favoredTimes = 0;
+                    gd.favoriteCount = 0;
                     break;
                 case "Once":
-                    gd.favoredTimes = 1;
+                    gd.favoriteCount = 1;
                     break;
                 default:
                     int index = value.indexOf(' ');
                     if (index == -1) {
-                        gd.favoredTimes = 0;
+                        gd.favoriteCount = 0;
                     } else {
-                        gd.favoredTimes = NumberUtils.parseIntSafely(value.substring(0, index), 0);
+                        gd.favoriteCount = NumberUtils.parseIntSafely(value.substring(0, index), 0);
                     }
                     break;
             }

@@ -222,9 +222,9 @@
     <string name="key_pages">頁數</string>
     <string name="key_size">大小</string>
     <string name="key_resize">壓縮情況</string>
-    <string name="key_favorites">收藏次數</string>
+    <string name="key_favorite_count">收藏次數</string>
     <string name="key_favorited">收藏</string>
-    <string name="key_rates">評價次數</string>
+    <string name="key_rating_count">評價次數</string>
     <string name="key_rating">評分</string>
     <string name="key_torrents">種子個數</string>
     <string name="key_torrent_url">種子</string>

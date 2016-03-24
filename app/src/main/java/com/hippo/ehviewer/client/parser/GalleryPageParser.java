@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 
 public class GalleryPageParser {
 
-    private static Pattern IMAGE_URL_PATTERN = Pattern.compile("<div id=\"i3\"><a[^>]+><img id=\"img\" src=\"([^\"]+)\"");
-    private static Pattern SKIP_HATH_KEY_PATTERN = Pattern.compile("onclick=\"return nl\\('([^\\)]+)'\\)");
+    private static final Pattern IMAGE_URL_PATTERN = Pattern.compile("<div id=\"i3\"><a[^>]+><img id=\"img\" src=\"([^\"]+)\"");
+    private static final Pattern SKIP_HATH_KEY_PATTERN = Pattern.compile("onclick=\"return nl\\('([^\\)]+)'\\)");
 
     public static Result parse(String body) throws ParseException {
         Matcher m;

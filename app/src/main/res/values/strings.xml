@@ -265,9 +265,9 @@
     <string name="key_pages">Pages</string>
     <string name="key_size">Size</string>
     <string name="key_resize">Resize</string>
-    <string name="key_favorites">Favorites</string>
+    <string name="key_favorite_count">Favorite count</string>
     <string name="key_favorited">Favorited</string>
-    <string name="key_rates">Rates</string>
+    <string name="key_rating_count">Rating count</string>
     <string name="key_rating">Rating</string>
     <string name="key_torrents">Torrents</string>
     <string name="key_torrent_url">Torrent Url</string>

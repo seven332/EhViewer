@@ -734,7 +734,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             return;
         }
 
-        if (gd.isFavored || EhDB.containLocalFavorites(gd.gid)) {
+        if (gd.isFavorited || EhDB.containLocalFavorites(gd.gid)) {
             mHeart.setVisibility(View.VISIBLE);
             mHeartOutline.setVisibility(View.GONE);
         } else {
@@ -769,9 +769,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 R.plurals.page_count, gd.pages, gd.pages));
         mSize.setText(gd.size);
         mPosted.setText(gd.posted);
-        mFavoredTimes.setText(resources.getString(R.string.favored_times, gd.favoredTimes));
+        mFavoredTimes.setText(resources.getString(R.string.favored_times, gd.favoriteCount));
 
-        mRatingText.setText(getAllRatingText(gd.rating, gd.ratedTimes));
+        mRatingText.setText(getAllRatingText(gd.rating, gd.ratingCount));
         mRating.setRating(gd.rating);
 
         updateFavoriteDrawable();
@@ -936,10 +936,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    private String getAllRatingText(float rating, int ratedTimes) {
+    private String getAllRatingText(float rating, int ratingCount) {
         Resources resources = getResources2();
         AssertUtils.assertNotNull(resources);
-        return resources.getString(R.string.rating_text, getRatingText(rating, resources), rating, ratedTimes);
+        return resources.getString(R.string.rating_text, getRatingText(rating, resources), rating, ratingCount);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -1093,7 +1093,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     EhDB.removeLocalFavorites(mGalleryDetail.gid);
                     remove = true;
                 }
-                if (mGalleryDetail.isFavored) {
+                if (mGalleryDetail.isFavorited) {
                     mModifingFavorites = true;
                     CommonOperations.removeFromFavorites(activity, mGalleryDetail,
                             new ModifyFavoritesListener(context,
@@ -1425,12 +1425,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private void onRateGallerySuccess(RateGalleryParser.Result result) {
         if (mGalleryDetail != null) {
             mGalleryDetail.rating = result.rating;
-            mGalleryDetail.ratedTimes = result.ratedTimes;
+            mGalleryDetail.ratingCount = result.ratingCount;
         }
 
         // Update UI
         if (mRatingText != null && mRating != null) {
-            mRatingText.setText(getAllRatingText(result.rating, result.ratedTimes));
+            mRatingText.setText(getAllRatingText(result.rating, result.ratingCount));
             mRating.setRating(result.rating);
         }
     }
@@ -1438,7 +1438,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private void onModifyFavoritesSuccess(boolean addOrRemove) {
         mModifingFavorites = false;
         if (mGalleryDetail != null) {
-            mGalleryDetail.isFavored = !addOrRemove;
+            mGalleryDetail.isFavorited = !addOrRemove;
             updateFavoriteDrawable();
         }
     }
@@ -1703,7 +1703,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 GalleryDetail gd = EhApplication.getGalleryDetailCache(getApplication()).get(mGid);
                 if (gd != null) {
                     gd.rating = result.rating;
-                    gd.ratedTimes = result.ratedTimes;
+                    gd.ratingCount = result.ratingCount;
                 }
             }
         }

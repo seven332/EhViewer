@@ -25,7 +25,7 @@ public class RateGalleryParser {
 
     public static class Result {
         public float rating;
-        public int ratedTimes;
+        public int ratingCount;
     }
 
     public static Result parse(String body) throws Exception {
@@ -33,7 +33,7 @@ public class RateGalleryParser {
             JSONObject jsonObject = new JSONObject(body);
             Result result = new Result();
             result.rating = (float)jsonObject.getDouble("rating_avg");
-            result.ratedTimes = jsonObject.getInt("rating_cnt");
+            result.ratingCount = jsonObject.getInt("rating_cnt");
             return result;
         } catch (JSONException e) {
             Exception exception = new ParseException("Can't parse rate gallery", body);
