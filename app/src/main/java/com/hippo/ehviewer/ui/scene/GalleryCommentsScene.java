@@ -78,6 +78,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     private String mToken;
     private GalleryComment[] mComments;
 
+    private EasyRecyclerView mRecyclerView;
     private FloatingActionButton mFab;
     private View mEditPanel;
     private ImageView mSendImage;
@@ -138,7 +139,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_comments, container, false);
-        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
         TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mEditPanel = ViewUtils.$$(view, R.id.edit_panel);
         mSendImage = (ImageView) ViewUtils.$$(mEditPanel, R.id.send);
@@ -155,25 +156,25 @@ public final class GalleryCommentsScene extends ToolbarScene
         tip.setCompoundDrawables(null, drawable, null, null);
 
         mAdapter = new CommentAdapter();
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context,
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
                 LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider),
                 LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
-        recyclerView.addItemDecoration(decoration);
-        recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setOnItemClickListener(this);
-        recyclerView.setOnItemLongClickListener(this);
-        recyclerView.setPadding(recyclerView.getPaddingLeft(), recyclerView.getPaddingTop(),
-                recyclerView.getPaddingRight(), recyclerView.getPaddingBottom() + paddingBottomFab);
+        mRecyclerView.addItemDecoration(decoration);
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setOnItemClickListener(this);
+        mRecyclerView.setOnItemLongClickListener(this);
+        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop(),
+                mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom() + paddingBottomFab);
 
         mSendImage.setOnClickListener(this);
         mFab.setOnClickListener(this);
 
-        mViewTransition = new ViewTransition(recyclerView, tip);
+        mViewTransition = new ViewTransition(mRecyclerView, tip);
 
         if (mComments == null || mComments.length <= 0) {
             mViewTransition.showView(1);
@@ -187,6 +188,12 @@ public final class GalleryCommentsScene extends ToolbarScene
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        if (null != mRecyclerView) {
+            mRecyclerView.stopScroll();
+            mRecyclerView = null;
+        }
+
         mAdapter = null;
         mViewTransition = null;
     }

@@ -405,8 +405,11 @@ public class FavoritesScene extends BaseScene implements
             }
             mHelper = null;
         }
+        if (null != mRecyclerView) {
+            mRecyclerView.stopScroll();
+            mRecyclerView = null;
+        }
 
-        mRecyclerView = null;
         mSearchBar = null;
         mFabLayout = null;
 

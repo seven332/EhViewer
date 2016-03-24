@@ -76,6 +76,8 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
      View life cycle
      ---------------*/
     @Nullable
+    private EasyRecyclerView mRecyclerView;
+    @Nullable
     private GalleryPreviewAdapter mAdapter;
     @Nullable
     private GalleryPreviewHelper mHelper;
@@ -131,23 +133,23 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         ContentLayout contentLayout = (ContentLayout) inflater.inflate(
                 R.layout.scene_gallery_previews, container, false);
         contentLayout.hideFastScroll();
-        EasyRecyclerView recyclerView = contentLayout.getRecyclerView();
+        mRecyclerView = contentLayout.getRecyclerView();
 
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
         Resources resources = context.getResources();
 
         mAdapter = new GalleryPreviewAdapter();
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
         int columnWidth = resources.getDimensionPixelOffset(R.dimen.preview_grid_column_width);
         AutoGridLayoutManager layoutManager = new AutoGridLayoutManager(context, columnWidth);
         layoutManager.setStrategy(AutoGridLayoutManager.STRATEGY_SUITABLE_SIZE);
-        recyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(layoutManager);
         int padding = LayoutUtils.dp2pix(context, 4);
-        recyclerView.setPadding(padding, padding, padding, padding);
-        recyclerView.setClipToPadding(false);
-        recyclerView.addItemDecoration(new MarginItemDecoration(padding));
-        recyclerView.setOnItemClickListener(this);
+        mRecyclerView.setPadding(padding, padding, padding, padding);
+        mRecyclerView.setClipToPadding(false);
+        mRecyclerView.addItemDecoration(new MarginItemDecoration(padding));
+        mRecyclerView.setOnItemClickListener(this);
 
         mHelper = new GalleryPreviewHelper();
         contentLayout.setHelper(mHelper);
@@ -170,6 +172,10 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
                 mHasFirstRefresh = false;
             }
             mHelper = null;
+        }
+        if (null != mRecyclerView) {
+            mRecyclerView.stopScroll();
+            mRecyclerView = null;
         }
 
         mAdapter = null;

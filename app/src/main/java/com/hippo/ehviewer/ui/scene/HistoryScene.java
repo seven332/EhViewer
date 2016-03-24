@@ -76,6 +76,8 @@ public class HistoryScene extends ToolbarScene
      View life cycle
      ---------------*/
     @Nullable
+    private EasyRecyclerView mRecyclerView;
+    @Nullable
     private ViewTransition mViewTransition;
     @Nullable
     private RecyclerView.Adapter<?> mAdapter;
@@ -93,7 +95,7 @@ public class HistoryScene extends ToolbarScene
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_history, container, false);
         View content = ViewUtils.$$(view, R.id.content);
-        EasyRecyclerView recyclerView = (EasyRecyclerView) ViewUtils.$$(content, R.id.recycler_view);
+        mRecyclerView = (EasyRecyclerView) ViewUtils.$$(content, R.id.recycler_view);
         FastScroller fastScroller = (FastScroller) ViewUtils.$$(content, R.id.fast_scroller);
         TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mViewTransition = new ViewTransition(content, tip);
@@ -113,25 +115,25 @@ public class HistoryScene extends ToolbarScene
         mAdapter = new HistoryAdapter();
         mAdapter.setHasStableIds(true);
         mAdapter = swipeManager.createWrappedAdapter(mAdapter);
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
         animator.setSupportsChangeAnimations(false);
-        recyclerView.setItemAnimator(animator);
+        mRecyclerView.setItemAnimator(animator);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
-        recyclerView.setDrawSelectorOnTop(true);
-        recyclerView.hasFixedSize();
-        recyclerView.setClipToPadding(false);
-        recyclerView.setOnItemClickListener(this);
-        recyclerView.setOnItemLongClickListener(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setDrawSelectorOnTop(true);
+        mRecyclerView.hasFixedSize();
+        mRecyclerView.setClipToPadding(false);
+        mRecyclerView.setOnItemClickListener(this);
+        mRecyclerView.setOnItemLongClickListener(this);
         int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
         int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
-        recyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
-        guardManager.attachRecyclerView(recyclerView);
-        swipeManager.attachRecyclerView(recyclerView);
+        mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+        guardManager.attachRecyclerView(mRecyclerView);
+        swipeManager.attachRecyclerView(mRecyclerView);
 
-        fastScroller.attachToRecyclerView(recyclerView);
+        fastScroller.attachToRecyclerView(mRecyclerView);
         HandlerDrawable handlerDrawable = new HandlerDrawable();
         handlerDrawable.setColor(ResourcesUtils.getAttrColor(context, R.attr.colorAccent));
         fastScroller.setHandlerDrawable(handlerDrawable);
@@ -156,6 +158,10 @@ public class HistoryScene extends ToolbarScene
         if (null != mLazyList) {
             mLazyList.close();
             mLazyList = null;
+        }
+        if (null != mRecyclerView) {
+            mRecyclerView.stopScroll();
+            mRecyclerView = null;
         }
 
         mViewTransition = null;

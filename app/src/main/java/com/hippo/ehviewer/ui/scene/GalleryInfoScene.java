@@ -57,6 +57,9 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
     @Nullable
     private ArrayList<String> mValues;
 
+    @Nullable
+    private EasyRecyclerView mRecyclerView;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,19 +159,19 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
 
-        EasyRecyclerView recyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
+        mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
         InfoAdapter adapter = new InfoAdapter();
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
                 LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider),
                 LayoutUtils.dp2pix(context, 1));
         decoration.setPadding(context.getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
-        recyclerView.addItemDecoration(decoration);
-        recyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
-        recyclerView.setClipToPadding(false);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setOnItemClickListener(this);
+        mRecyclerView.addItemDecoration(decoration);
+        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setClipToPadding(false);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setOnItemClickListener(this);
         return view;
     }
 
@@ -177,6 +180,16 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         super.onViewCreated(view, savedInstanceState);
         setTitle(R.string.gallery_info);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (null != mRecyclerView) {
+            mRecyclerView.stopScroll();
+            mRecyclerView = null;
+        }
     }
 
     @Override

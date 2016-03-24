@@ -420,6 +420,10 @@ public class DownloadsScene extends ToolbarScene
             ViewUtils.removeFromParent(mShowcaseView);
             mShowcaseView = null;
         }
+        if (null != mRecyclerView) {
+            mRecyclerView.stopScroll();
+            mRecyclerView = null;
+        }
 
         mRecyclerView = null;
         mFabLayout = null;

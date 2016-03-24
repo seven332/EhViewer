@@ -147,7 +147,11 @@ public class DownloadLabelsScene extends ToolbarScene {
     public void onDestroyView() {
         super.onDestroyView();
 
-        mRecyclerView = null;
+        if (null != mRecyclerView) {
+            mRecyclerView.stopScroll();
+            mRecyclerView = null;
+        }
+
         mViewTransition = null;
         mAdapter = null;
     }

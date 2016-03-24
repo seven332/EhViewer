@@ -452,7 +452,7 @@ public final class GalleryListScene extends BaseScene
             ViewUtils.removeFromParent(mShowcaseView);
             mShowcaseView = null;
         }
-
+        SimpleHandler.getInstance().removeCallbacks(mReturnSearchBarRunnable);
         if (null != mSearchBarMover) {
             mSearchBarMover.cancelAnimation();
             mSearchBarMover = null;
@@ -467,8 +467,11 @@ public final class GalleryListScene extends BaseScene
             }
             mHelper = null;
         }
+        if (null != mRecyclerView) {
+            mRecyclerView.stopScroll();
+            mRecyclerView = null;
+        }
 
-        mRecyclerView = null;
         mSearchLayout = null;
         mSearchBar = null;
         mFab = null;
