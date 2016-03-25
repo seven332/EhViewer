@@ -32,9 +32,7 @@ import android.widget.TextView;
 
 import com.hippo.drawable.TriangleDrawable;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
-import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -42,12 +40,11 @@ import com.hippo.ehviewer.widget.TileThumb;
 import com.hippo.util.ApiHelper;
 import com.hippo.widget.recyclerview.AutoGridLayoutManager;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
-import com.hippo.yorozuya.Messenger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implements Messenger.Receiver {
+abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
 
     @IntDef({TYPE_LIST, TYPE_GRID})
     @Retention(RetentionPolicy.SOURCE)
@@ -187,18 +184,5 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> implem
             long gid = gi.gid;
             holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
         }
-    }
-
-    public void register() {
-        Messenger.getInstance().register(Constants.MESSAGE_ID_LIST_MODE, this);
-    }
-
-    public void unregister() {
-        Messenger.getInstance().unregister(Constants.MESSAGE_ID_LIST_MODE, this);
-    }
-
-    @Override
-    public void onReceive(int id, Object obj) {
-        setType(Settings.getListMode());
     }
 }

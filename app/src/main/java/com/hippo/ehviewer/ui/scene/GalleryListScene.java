@@ -263,6 +263,7 @@ public final class GalleryListScene extends BaseScene
         Resources resources = context.getResources();
         Drawable searchImage = DrawableManager.getDrawable(context, R.drawable.v_magnify_x24);
         SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
+        // TODO hint for e-hentai
         ssb.append(resources.getString(R.string.gallery_list_search_bar_hint));
         int textSize = (int) (searchBar.getEditTextTextSize() * 1.25);
         if (searchImage != null) {
@@ -365,7 +366,6 @@ public final class GalleryListScene extends BaseScene
 
         mAdapter = new GalleryListAdapter(inflater, resources,
                 mRecyclerView, Settings.getListMode());
-        mAdapter.register();
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
@@ -457,10 +457,6 @@ public final class GalleryListScene extends BaseScene
             mSearchBarMover.cancelAnimation();
             mSearchBarMover = null;
         }
-        if (null != mAdapter) {
-            mAdapter.unregister();
-            mAdapter = null;
-        }
         if (null != mHelper) {
             if (1 == mHelper.getShownViewIndex()) {
                 mHasFirstRefresh = false;
@@ -472,6 +468,7 @@ public final class GalleryListScene extends BaseScene
             mRecyclerView = null;
         }
 
+        mAdapter = null;
         mSearchLayout = null;
         mSearchBar = null;
         mFab = null;

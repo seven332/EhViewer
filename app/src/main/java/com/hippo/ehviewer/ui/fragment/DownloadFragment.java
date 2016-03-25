@@ -314,6 +314,8 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
                             Toast.LENGTH_SHORT).show();
 
                     mDialog.dismiss();
+
+                    getActivity().setResult(Activity.RESULT_OK);
                 }
 
                 @Override

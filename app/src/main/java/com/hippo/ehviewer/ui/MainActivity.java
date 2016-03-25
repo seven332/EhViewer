@@ -79,6 +79,8 @@ public final class MainActivity extends StageActivity
 
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
+    private static final int REQUEST_CODE_SETTINGS = 0;
+
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
 
     public static final int CHECK_STEP_SECURITY = 0;
@@ -522,7 +524,7 @@ public final class MainActivity extends StageActivity
             startScene(new Announcer(DownloadsScene.class));
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_CODE_SETTINGS);
         }
 
         if (id != R.id.nav_stub && mDrawerLayout != null) {
@@ -530,5 +532,19 @@ public final class MainActivity extends StageActivity
         }
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_SETTINGS:
+                if (RESULT_OK == resultCode) {
+                    refreshTopScene();
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
     }
 }

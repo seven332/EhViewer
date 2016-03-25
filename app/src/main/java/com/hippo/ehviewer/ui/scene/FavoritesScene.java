@@ -261,7 +261,6 @@ public class FavoritesScene extends BaseScene implements
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
         mAdapter = new FavoritesAdapter(inflater, resources, mRecyclerView, Settings.getListMode());
-        mAdapter.register();
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
@@ -395,10 +394,6 @@ public class FavoritesScene extends BaseScene implements
             mShowcaseView = null;
         }
 
-        if (null != mAdapter) {
-            mAdapter.unregister();
-            mAdapter = null;
-        }
         if (null != mHelper) {
             if (1 == mHelper.getShownViewIndex()) {
                 mHasFirstRefresh = false;
@@ -409,6 +404,8 @@ public class FavoritesScene extends BaseScene implements
             mRecyclerView.stopScroll();
             mRecyclerView = null;
         }
+
+        mAdapter = null;
 
         mSearchBar = null;
         mFabLayout = null;

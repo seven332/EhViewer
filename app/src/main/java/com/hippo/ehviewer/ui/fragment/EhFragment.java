@@ -16,14 +16,13 @@
 
 package com.hippo.ehviewer.ui.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
-import com.hippo.ehviewer.Constants;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
-import com.hippo.yorozuya.Messenger;
 
 public class EhFragment extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener {
@@ -33,16 +32,21 @@ public class EhFragment extends PreferenceFragment
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.eh_settings);
 
+        Preference gallerySite = findPreference(Settings.KEY_GALLERY_SITE);
         Preference listMode = findPreference(Settings.KEY_LIST_MODE);
 
+        gallerySite.setOnPreferenceChangeListener(this);
         listMode.setOnPreferenceChangeListener(this);
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
-        if (Settings.KEY_LIST_MODE.equals(key)) {
-            Messenger.getInstance().notify(Constants.MESSAGE_ID_LIST_MODE, null);
+        if (Settings.KEY_GALLERY_SITE.equals(key)) {
+            getActivity().setResult(Activity.RESULT_OK);
+            return true;
+        } else if (Settings.KEY_LIST_MODE.equals(key)) {
+            getActivity().setResult(Activity.RESULT_OK);
             return true;
         }
         return true;

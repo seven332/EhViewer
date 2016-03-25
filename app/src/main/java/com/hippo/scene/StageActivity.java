@@ -309,7 +309,7 @@ public abstract class StageActivity extends EhActivity {
                     }
 
                     // Commit
-                    transaction.commit();
+                    transaction.commitAllowingStateLoss();
 
                     // New arguments
                     if (args != null && fragment instanceof SceneFragment) {
@@ -382,7 +382,7 @@ public abstract class StageActivity extends EhActivity {
         transaction.add(getContainerViewId(), newScene, newTag);
 
         // Commit
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
 
         // Check request
         if (announcer.requestFrom != null) {
@@ -458,7 +458,7 @@ public abstract class StageActivity extends EhActivity {
         }
 
         // Commit
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
 
         if (!createNewScene && args != null) {
             // TODO Call onNewArguments when view created ?
@@ -536,7 +536,7 @@ public abstract class StageActivity extends EhActivity {
             transaction.attach(next);
         }
         transaction.remove(scene);
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
 
         // Remove tag
         mSceneTagList.remove(index);
@@ -545,6 +545,22 @@ public abstract class StageActivity extends EhActivity {
         if (scene instanceof SceneFragment) {
             ((SceneFragment) scene).returnResult(this);
         }
+    }
+
+    public void refreshTopScene() {
+        int index = mSceneTagList.size() - 1;
+        if (index < 0) {
+            return;
+        }
+        String tag = mSceneTagList.get(index);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(tag);
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.detach(fragment);
+        transaction.attach(fragment);
+        transaction.commitAllowingStateLoss();
     }
 
     @Override

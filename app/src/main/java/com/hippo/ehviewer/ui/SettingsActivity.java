@@ -189,7 +189,7 @@ public final class SettingsActivity extends EhPreferenceActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_FRAGMENT) {
             if (resultCode == RESULT_OK) {
-                setResult(RESULT_OK, data);
+                setResult(RESULT_OK);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
