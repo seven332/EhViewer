@@ -16,7 +16,10 @@
 
 package com.hippo.ehviewer.ui.fragment;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -33,6 +36,7 @@ import com.hippo.util.LogCat;
 import com.hippo.util.ReadableTime;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class AdvancedFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -40,6 +44,7 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
     private static final String KEY_CLEAR_MEMORY_CACHE = "clear_memory_cache";
     private static final String KEY_PATTERN_PROTECTION = "pattern_protection";
     private static final String KEY_EXPORT_DATA = "export_data";
+    private static final String KEY_IMPORT_DATA = "import_data";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,10 +54,12 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
         Preference dumpLogcat = findPreference(KEY_DUMP_LOGCAT);
         Preference clearMemoryCache = findPreference(KEY_CLEAR_MEMORY_CACHE);
         Preference exportData = findPreference(KEY_EXPORT_DATA);
+        Preference importData = findPreference(KEY_IMPORT_DATA);
 
         dumpLogcat.setOnPreferenceClickListener(this);
         clearMemoryCache.setOnPreferenceClickListener(this);
         exportData.setOnPreferenceClickListener(this);
+        importData.setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -90,34 +97,44 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
             File dir = AppConfig.getExternalDataDir();
             if (dir != null) {
                 File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db");
-                if (EhDB.export(getActivity(), file)) {
+                if (EhDB.exportDB(getActivity(), file)) {
                     Toast.makeText(getActivity(),
                             getString(R.string.settings_advanced_export_data_to, file.getPath()), Toast.LENGTH_SHORT).show();
                     return true;
                 }
             }
             Toast.makeText(getActivity(),R.string.settings_advanced_export_data_failed, Toast.LENGTH_SHORT).show();
-            return false;
+            return true;
+        } else if (KEY_IMPORT_DATA.equals(key)) {
+            importData(getActivity());
+            getActivity().setResult(Activity.RESULT_OK);
+            return true;
         }
         return false;
     }
 
-
-    private static boolean exportData(Context context) {
-        File dir = AppConfig.getExternalAppDir();
+    private static void importData(final Context context) {
+        final File dir = AppConfig.getExternalDataDir();
         if (null == dir) {
-            return false;
+            Toast.makeText(context, R.string.cant_get_data_dir, Toast.LENGTH_SHORT).show();
+            return;
         }
-        File file = new File(ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".json");
-
-
-
-
-
-
-
-
-        return true;
+        final String[] files = dir.list();
+        if (null == files || files.length <= 0) {
+            Toast.makeText(context, R.string.cant_find_any_data, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Arrays.sort(files);
+        new AlertDialog.Builder(context).setItems(files, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                File file = new File(dir, files[which]);
+                String error = EhDB.importDB(context, file);
+                if (null == error) {
+                    error = context.getString(R.string.settings_advanced_import_data_successfully);
+                }
+                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+            }
+        }).show();
     }
-
 }

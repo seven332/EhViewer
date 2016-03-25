@@ -450,6 +450,9 @@
     <string name="settings_advanced_export_data_summary">Save data to external storage, such as download list, quick search list</string>
     <string name="settings_advanced_export_data_to">Exported data to %s</string>
     <string name="settings_advanced_export_data_failed">Export data failed</string>
+    <string name="settings_advanced_import_data">Import data</string>
+    <string name="settings_advanced_import_data_summary">Load data which saved before</string>
+    <string name="settings_advanced_import_data_successfully">Import data successfully</string>
 
     <string name="settings_about">About</string>
     <string name="settings_about_author">Author</string>
@@ -481,6 +484,10 @@
     <string name="Passkey">Passkey</string>
     <string name="domain_not_supported">Domain is not supported</string>
     <string name="invalid_port">Invalid port</string>
+
+    <string name="cant_get_data_dir">Can\'t get data dir</string>
+    <string name="cant_find_any_data">Can\'t find any data</string>
+    <string name="cant_read_the_file">Can\'t read the file</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">Excluded languages</string>

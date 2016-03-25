@@ -42,9 +42,11 @@ import com.hippo.ehviewer.dao.LocalFavoriteInfo;
 import com.hippo.ehviewer.dao.LocalFavoritesDao;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.dao.QuickSearchDao;
+import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.util.SqlUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.sparse.SparseJLArray;
 
 import java.io.File;
@@ -83,10 +85,14 @@ public class EhDB {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            switch (oldVersion) {
-                case 1: // 1 to 2
-                    FilterDao.createTable(db, true);
-            }
+            upgradeDB(db, oldVersion);
+        }
+    }
+
+    private static void upgradeDB(SQLiteDatabase db, int oldVersion) {
+        switch (oldVersion) {
+            case 1: // 1 to 2
+                FilterDao.createTable(db, true);
         }
     }
 
@@ -393,6 +399,14 @@ public class EhDB {
         return raw;
     }
 
+    public static synchronized DownloadLabel addDownloadLabel(DownloadLabel raw) {
+        // Reset id
+        raw.setId(null);
+        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
+        raw.setId(dao.insert(raw));
+        return raw;
+    }
+
     public static synchronized void updateDownloadLabel(DownloadLabel raw) {
         DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
         dao.update(raw);
@@ -489,6 +503,7 @@ public class EhDB {
 
     public static synchronized void insertQuickSearch(QuickSearch quickSearch) {
         QuickSearchDao dao = sDaoSession.getQuickSearchDao();
+        quickSearch.id = null;
         quickSearch.time = System.currentTimeMillis();
         quickSearch.id = dao.insert(quickSearch);
     }
@@ -550,6 +565,19 @@ public class EhDB {
         }
     }
 
+    public static synchronized void putHistoryInfo(List<HistoryInfo> historyInfoList) {
+        HistoryDao dao = sDaoSession.getHistoryDao();
+        for (HistoryInfo info: historyInfoList) {
+            if (null == dao.load(info.gid)) {
+                dao.insert(info);
+            }
+        }
+
+        List<HistoryInfo> list = dao.queryBuilder().orderDesc(HistoryDao.Properties.Time)
+                .limit(-1).offset(MAX_HISTORY_COUNT).list();
+        dao.deleteInTx(list);
+    }
+
     public static synchronized void deleteHistoryInfo(HistoryInfo info) {
         HistoryDao dao = sDaoSession.getHistoryDao();
         dao.delete(info);
@@ -565,15 +593,15 @@ public class EhDB {
     }
 
     public static synchronized void addFilter(Filter filter) {
-        long id = sDaoSession.getFilterDao().insert(filter);
-        filter.setId(id);
+        filter.setId(null);
+        filter.setId(sDaoSession.getFilterDao().insert(filter));
     }
 
     public static synchronized void deleteFilter(Filter filter) {
         sDaoSession.getFilterDao().delete(filter);
     }
 
-    public static synchronized boolean export(Context context, File file) {
+    public static synchronized boolean exportDB(Context context, File file) {
         File dbFile = context.getDatabasePath("eh.db");
         if (null == dbFile || !dbFile.isFile()) {
             return false;
@@ -599,145 +627,85 @@ public class EhDB {
         return false;
     }
 
-
-
-    /*
-    public static synchronized void write(OutputStream os) throws JSONException {
-        JSONObject jo = new JSONObject();
-        jo.put("version", DaoMaster.SCHEMA_VERSION);
-        jo.put("data", getDBJson());
-
-
-
-    }
-
-    private static JSONObject getDBJson() throws JSONException {
-        JSONObject jo = new JSONObject();
-        jo.put(DownloadsDao.TABLENAME, getDownloadsDaoJson());
-        jo.put(DownloadLabelDao.TABLENAME, getDownloadLabelDaoJson());
-        jo.put(DownloadDirnameDao.TABLENAME, getDownloadDirnameDaoJson());
-
-
-
-        return jo;
-    }
-
-    private static JSONArray getDownloadsDaoJson() {
-        DownloadsDao dao = sDaoSession.getDownloadsDao();
-        JSONArray ja = new JSONArray();
-        LazyList<DownloadInfo> list = dao.queryBuilder().listLazy();
-        for (DownloadInfo info: list) {
-            JSONObject jo = getDownloadInfoJson(info);
-            if (null != jo) {
-                ja.put(jo);
-            }
-        }
-        list.close();
-        return ja;
-    }
-
-    private static JSONObject getDownloadInfoJson(DownloadInfo info) {
+    /**
+     * @param file The db file
+     * @return error string, null for no error
+     */
+    public static synchronized String importDB(Context context, File file) {
         try {
-            JSONObject jo = new JSONObject();
-            jo.put("gid", info.gid);
-            jo.put("token", info.token);
-            jo.put("title", info.title);
-            jo.put("titleJpn", info.titleJpn);
-            jo.put("thumb", info.thumb);
-            jo.put("category", info.category);
-            jo.put("posted", info.posted);
-            jo.put("uploader", info.uploader);
-            jo.put("rating", info.rating);
-            jo.put("simpleLanguage", info.simpleLanguage);
-            jo.put("state", info.state);
-            jo.put("legacy", info.legacy);
-            jo.put("time", info.time);
-            jo.put("label", info.label);
-            return jo;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static JSONArray getDownloadLabelDaoJson() {
-        DownloadLabelDao dao = sDaoSession.getDownloadLabelDao();
-        JSONArray ja = new JSONArray();
-        LazyList<DownloadLabel> list = dao.queryBuilder().listLazy();
-        for (DownloadLabel label: list) {
-            JSONObject jo = getDownloadLabelJson(label);
-            if (null != jo) {
-                ja.put(jo);
+            SQLiteDatabase db = SQLiteDatabase.openDatabase(
+                    file.getPath(), null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+            int newVersion = DaoMaster.SCHEMA_VERSION;
+            int oldVersion = db.getVersion();
+            if (oldVersion < newVersion) {
+                upgradeDB(db, oldVersion);
+                db.setVersion(newVersion);
+            } else if (oldVersion > newVersion) {
+                return context.getString(R.string.cant_read_the_file);
             }
-        }
-        list.close();
-        return ja;
-    }
 
-    private static JSONObject getDownloadLabelJson(DownloadLabel label) {
-        try {
-            JSONObject jo = new JSONObject();
-            jo.put("label", label.getLabel());
-            jo.put("time", label.getTime());
-            return jo;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+            DaoMaster daoMaster = new DaoMaster(db);
+            DaoSession session = daoMaster.newSession();
 
-    private static JSONArray getDownloadDirnameDaoJson() {
-        DownloadDirnameDao dao = sDaoSession.getDownloadDirnameDao();
-        JSONArray ja = new JSONArray();
-        LazyList<DownloadDirname> list = dao.queryBuilder().listLazy();
-        for (DownloadDirname dirname: list) {
-            JSONObject jo = getDownloadDirnameJson(dirname);
-            if (null != jo) {
-                ja.put(jo);
+            // Downloads
+            DownloadManager manager = EhApplication.getDownloadManager(context);
+            List<DownloadInfo> downloadInfoList = session.getDownloadsDao().queryBuilder().list();
+            manager.addDownload(downloadInfoList);
+
+            // Download label
+            List<DownloadLabel> downloadLabelList = session.getDownloadLabelDao().queryBuilder().list();
+            manager.addDownloadLabel(downloadLabelList);
+
+            // Download dirname
+            List<DownloadDirname> downloadDirnameList = session.getDownloadDirnameDao().queryBuilder().list();
+            for (DownloadDirname dirname: downloadDirnameList) {
+                putDownloadDirname(dirname.getGid(), dirname.getDirname());
             }
-        }
-        list.close();
-        return ja;
-    }
 
-    private static JSONObject getDownloadDirnameJson(DownloadDirname dirname) {
-        try {
-            JSONObject jo = new JSONObject();
-            jo.put("gid", dirname.getGid());
-            jo.put("dirname", dirname.getDirname());
-            return jo;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+            // History
+            List<HistoryInfo> historyInfoList = session.getHistoryDao().queryBuilder().list();
+            putHistoryInfo(historyInfoList);
 
-    private static JSONArray getHistoryDaoJson() {
-        HistoryDao dao = sDaoSession.getHistoryDao();
-        JSONArray ja = new JSONArray();
-        LazyList<HistoryInfo> list = dao.queryBuilder().listLazy();
-        for (HistoryInfo info: list) {
-            JSONObject jo = getDownloadDirnameJson(info);
-            if (null != jo) {
-                ja.put(jo);
+            // QuickSearch
+            List<QuickSearch> quickSearchList = session.getQuickSearchDao().queryBuilder().list();
+            List<QuickSearch> currentQuickSearchList = sDaoSession.getQuickSearchDao().queryBuilder().list();
+            for (QuickSearch quickSearch: quickSearchList) {
+                String name = quickSearch.name;
+                for (QuickSearch q: currentQuickSearchList) {
+                    if (ObjectUtils.equal(q.name, name)) {
+                        // The same name
+                        name = null;
+                        break;
+                    }
+                }
+                if (null == name) {
+                    continue;
+                }
+                insertQuickSearch(quickSearch);
             }
-        }
-        list.close();
-        return ja;
-    }
 
-    private static JSONObject getHistoryInfoJson(HistoryInfo info) {
-        try {
-            JSONObject jo = new JSONObject();
+            // LocalFavorites
+            List<LocalFavoriteInfo> localFavoriteInfoList = session.getLocalFavoritesDao().queryBuilder().list();
+            for (LocalFavoriteInfo info: localFavoriteInfoList) {
+                putLocalFavorites(info);
+            }
 
+            // Bookmarks
+            // TODO
 
+            // Filter
+            List<Filter> filterList = session.getFilterDao().queryBuilder().list();
+            List<Filter> currentFilterList = sDaoSession.getFilterDao().queryBuilder().list();
+            for (Filter filter: filterList) {
+                if (!currentFilterList.contains(filter)) {
+                    addFilter(filter);
+                }
+            }
 
-
-            return jo;
-        } catch (JSONException e) {
-            e.printStackTrace();
             return null;
+        } catch (Exception e) {
+            // Ignore
+            return context.getString(R.string.cant_read_the_file);
         }
     }
-    */
 }

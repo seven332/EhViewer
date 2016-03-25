@@ -353,6 +353,61 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
+    public void addDownload(List<DownloadInfo> downloadInfoList) {
+        for (DownloadInfo info: downloadInfoList) {
+            if (containDownloadInfo(info.gid)) {
+                // Contain
+                return;
+            }
+
+            // Ensure download state
+            if (DownloadInfo.STATE_WAIT == info.state ||
+                    DownloadInfo.STATE_DOWNLOAD == info.state) {
+                info.state = DownloadInfo.STATE_NONE;
+            }
+
+            // Add to label download list
+            LinkedList<DownloadInfo> list = getInfoListForLabel(info.label);
+            if (null == list) {
+                // Can't find the label in label list
+                list = new LinkedList<>();
+                mMap.put(info.label, list);
+                if (!containLabel(info.label)) {
+                    // Add label to DB and list
+                    mLabelList.add(EhDB.addDownloadLabel(info.label));
+                }
+            }
+            list.add(info);
+            // Sort
+            Collections.sort(list, DATE_DESC_COMPARATOR);
+
+            // Add to all download list and map
+            mAllInfoList.add(info);
+            mAllInfoMap.put(info.gid, info);
+
+            // Save to
+            EhDB.putDownloadInfo(info);
+        }
+
+        // Sort all download list
+        Collections.sort(mAllInfoList, DATE_DESC_COMPARATOR);
+
+        // Notify
+        for (DownloadInfoListener l: mDownloadInfoListeners) {
+            l.onReload();
+        }
+    }
+
+    public void addDownloadLabel(List<DownloadLabel> downloadLabelList) {
+        for (DownloadLabel label: downloadLabelList) {
+            String labelString = label.getLabel();
+            if (!containLabel(labelString)) {
+                mMap.put(labelString, new LinkedList<DownloadInfo>());
+                mLabelList.add(EhDB.addDownloadLabel(label));
+            }
+        }
+    }
+
     public void addDownload(GalleryInfo galleryInfo, @Nullable String label) {
         if (containDownloadInfo(galleryInfo.gid)) {
             // Contain
@@ -620,7 +675,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             srcList.remove(info);
             dstList.add(info);
             info.label = label;
-            Collections.sort(dstList, sDateDescComparator);
+            Collections.sort(dstList, DATE_DESC_COMPARATOR);
 
             // Save to DB
             EhDB.putDownloadInfo(info);
@@ -720,7 +775,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
 
         // Sort
-        Collections.sort(mDefaultInfoList, sDateDescComparator);
+        Collections.sort(mDefaultInfoList, DATE_DESC_COMPARATOR);
 
         // Notify listener
         for (DownloadInfoListener l: mDownloadInfoListeners) {
@@ -1079,7 +1134,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         }
     }
 
-    private static final Comparator<DownloadInfo> sDateDescComparator = new Comparator<DownloadInfo>() {
+    private static final Comparator<DownloadInfo> DATE_DESC_COMPARATOR = new Comparator<DownloadInfo>() {
         @Override
         public int compare(DownloadInfo lhs, DownloadInfo rhs) {
             return lhs.time - rhs.time > 0 ? -1 : 1;

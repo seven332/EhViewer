@@ -408,6 +408,9 @@
     <string name="settings_advanced_export_data_summary">保存數據至外置存儲器，例如下載列表，快速搜索列表</string>
     <string name="settings_advanced_export_data_to">已導出數據至 %s</string>
     <string name="settings_advanced_export_data_failed">導出數據失敗</string>
+    <string name="settings_advanced_import_data">導入數據</string>
+    <string name="settings_advanced_import_data_summary">從置存儲器已導出的數據</string>
+    <string name="settings_advanced_import_data_successfully">導入數據成功</string>
 
     <string name="settings_about">關於</string>
     <string name="settings_about_author">作者</string>
@@ -461,6 +464,10 @@
     <string name="Passkey">密鑰</string>
     <string name="domain_not_supported">不支持域名</string>
     <string name="invalid_port">無效的端口</string>
+
+    <string name="cant_get_data_dir">無法獲取數據文件夾</string>
+    <string name="cant_find_any_data">找不到任何數據</string>
+    <string name="cant_read_the_db_file">無法讀取文件</string>
 
     <!-- License -->
     <string name="license">開源許可</string>

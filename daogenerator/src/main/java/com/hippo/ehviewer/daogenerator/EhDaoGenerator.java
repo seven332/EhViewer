@@ -496,6 +496,17 @@ public class EhDaoGenerator {
         // Set field public
         javaClass.getField("mode").setPublic();
         javaClass.getField("text").setPublic();
+        // Add equals method
+        javaClass.addImport("com.hippo.yorozuya.ObjectUtils");
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic boolean equals(Object o) {\n" +
+                "\t\tif (!(o instanceof Filter)) {\n" +
+                "\t\t\treturn false;\n" +
+                "\t\t}\n" +
+                "\n" +
+                "\t\tFilter filter = (Filter) o;\n" +
+                "\t\treturn filter.mode == mode && ObjectUtils.equal(filter.text, text);\n" +
+                "\t}");
 
         FileWriter fileWriter = new FileWriter(FILTER_PATH);
         fileWriter.write(javaClass.toString());
