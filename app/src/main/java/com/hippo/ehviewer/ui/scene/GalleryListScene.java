@@ -508,14 +508,6 @@ public final class GalleryListScene extends BaseScene
             return;
         }
 
-        // Check duplicate
-        for (QuickSearch q: list) {
-            if (urlBuilder.equalsQuickSearch(q)) {
-                showTip(getString(R.string.duplicate_quick_search, q.name), LENGTH_SHORT);
-                return;
-            }
-        }
-
         final EditTextDialogBuilder builder = new EditTextDialogBuilder(context,
                 getSuitableTitleForUrlBuilder(context.getResources(), urlBuilder, false), getString(R.string.quick_search));
         builder.setTitle(R.string.add_quick_search_dialog_title);
