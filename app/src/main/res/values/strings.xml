@@ -143,7 +143,8 @@
     <string name="update_to_date">EhViewer is update to date</string>
 
     <!-- Gallery List -->
-    <string name="gallery_list_search_bar_hint">Search ExHentai</string>
+    <string name="gallery_list_search_bar_hint_exhentai">Search ExHentai</string>
+    <string name="gallery_list_search_bar_hint_e_hentai">Search E-Hentai</string>
     <string name="gallery_list_empty_hit">The World is Big and the panda sit alone</string>
 
     <string name="search">Search</string>

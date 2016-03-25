@@ -101,7 +101,8 @@
     <string name="update_to_date">EhViewer 已是最新版本</string>
 
     <!-- Gallery List -->
-    <string name="gallery_list_search_bar_hint">搜尋 ExHentai</string>
+    <string name="gallery_list_search_bar_hint_exhentai">搜尋 ExHentai</string>
+    <string name="gallery_list_search_bar_hint_e_hentai">搜尋 E-Hentai</string>
     <string name="gallery_list_empty_hit">什麼都沒有找到</string>
 
     <string name="search">搜尋</string>
