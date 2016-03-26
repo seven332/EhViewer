@@ -233,10 +233,8 @@
     <string name="remove_from_favorite_success">Removed from favorites</string>
     <string name="add_to_favorite_failure">Failed to add to favorites</string>
     <string name="remove_from_favorite_failure">Failed to remove from favorites</string>
-    <string name="block_the_uploader">Block the uploader \"%s\"?</string>
-    <string name="block_the_tag">Block the tag \"%s\"?</string>
-    <string name="uploader_blocked">The uploader \"%s\" is blocked</string>
-    <string name="tag_blocked">The tag \"%s\" is blocked</string>
+    <string name="block_the_uploader">Add the uploader \"%s\" to filter list?</string>
+    <string name="filter_added">Filter added</string>
 
     <!-- Rating -->
     <string name="rating10">MASTERPIECE</string>
@@ -352,6 +350,7 @@
     <string name="delete_filter">Delete filter \"%s\"?</string>
     <string name="tip">Tip</string>
     <string name="add_filter">Add filter</string>
+    <string name="show_definition">Show definition</string>
     <string name="filter_text">Filter text</string>
     <string name="filter_tip">Title Filter: exclude the gallery whose title contains the word.\n\nUploader Filter: exclude the gallery which was uploaded by the uploader.\n\nTag Filter: exclude the gallery which contain the tag, it takes more time to get gallery list.\n\nTag Namespace Filter: exclude the gallery which contain the tag namespace, it takes more time to get gallery list.</string>
 

@@ -190,10 +190,8 @@
     <string name="remove_from_favorite_success">移除收藏</string>
     <string name="add_to_favorite_failure">新增收藏失敗</string>
     <string name="remove_from_favorite_failure">移除收藏失敗</string>
-    <string name="block_the_uploader">遮蔽上傳者“%s”？</string>
-    <string name="block_the_tag">遮蔽標籤“%s”？</string>
-    <string name="uploader_blocked">已遮蔽上傳者“%s”</string>
-    <string name="tag_blocked">已遮蔽標籤“%s”</string>
+    <string name="block_the_uploader">新增上傳者過濾項“%s”？</string>
+    <string name="filter_added">已新增過濾項</string>
 
     <!-- Rating -->
     <string name="rating10">根本把持不住</string>
@@ -309,6 +307,7 @@
     <string name="delete_filter">刪除過濾項“%s”？</string>
     <string name="tip">提示</string>
     <string name="add_filter">新增過濾項</string>
+    <string name="show_definition">檢視定義</string>
     <string name="filter_text">過濾項文字</string>
     <string name="filter_tip">標題過濾項：排除標題含有該關鍵字的畫廊。\n\n上傳者過濾項：排除該上傳者上傳的畫廊。\n\n標籤過濾項：排除包含該標籤的畫廊，這會使獲取畫廊列表花費更多時間。\n\n標籤組過濾項：排除包含該標籤組的畫廊，這會使獲取畫廊列表花費更多時間。</string>
 

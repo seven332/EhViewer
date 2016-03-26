@@ -1204,32 +1204,46 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                         filter.text = uploader;
                         EhFilter.getInstance().addFilter(filter);
 
-                        showTip(getString(R.string.uploader_blocked, uploader), LENGTH_SHORT);
+                        showTip(R.string.filter_added, LENGTH_SHORT);
                     }
                 }).show();
     }
 
-    private void showBlockTagDialog(final String tag) {
-        Context context = getContext2();
+    private void addTagFilter(String tag) {
+        Filter filter = new Filter();
+        filter.mode = EhFilter.MODE_TAG;
+        filter.text = tag;
+        EhFilter.getInstance().addFilter(filter);
+        showTip(R.string.filter_added, LENGTH_SHORT);
+    }
+
+    private void showTagDialog(final String tag) {
+        final Context context = getContext2();
         if (null == context) {
             return;
         }
+        String temp;
+        int index = tag.indexOf(':');
+        if (index >= 0) {
+            temp = tag.substring(index + 1);
+        } else {
+            temp = tag;
+        }
+        final String tag2 = temp;
 
         new AlertDialog.Builder(context)
-                .setMessage(getString(R.string.block_the_tag, tag))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setTitle(tag)
+                .setItems(R.array.tag_menu_entries, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (DialogInterface.BUTTON_POSITIVE != which) {
-                            return;
+                        switch (which) {
+                            case 0:
+                                UrlOpener.openUrl(context, EhUrl.getTagDefinitionUrl(tag2), false, true);
+                                break;
+                            case 1:
+                                addTagFilter(tag);
+                                break;
                         }
-
-                        Filter filter = new Filter();
-                        filter.mode = EhFilter.MODE_TAG;
-                        filter.text = tag;
-                        EhFilter.getInstance().addFilter(filter);
-
-                        showTip(getString(R.string.tag_blocked, tag), LENGTH_SHORT);
                     }
                 }).show();
     }
@@ -1252,7 +1266,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else {
             String tag = (String) v.getTag(R.id.tag);
             if (null != tag) {
-                showBlockTagDialog(tag);
+                showTagDialog(tag);
                 return true;
             }
         }

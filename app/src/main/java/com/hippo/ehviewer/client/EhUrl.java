@@ -95,4 +95,8 @@ public class EhUrl {
     public static String getAddFavorites(long gid, String token) {
         return getHost() + "gallerypopups.php?gid=" + gid + "&t=" + token + "&act=addfav";
     }
+
+    public static String getTagDefinitionUrl(String tag) {
+        return "https://ehwiki.org/wiki/" + tag.replace(' ', '_');
+    }
 }

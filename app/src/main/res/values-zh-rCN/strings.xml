@@ -190,10 +190,8 @@
     <string name="remove_from_favorite_success">移除收藏</string>
     <string name="add_to_favorite_failure">添加收藏失败</string>
     <string name="remove_from_favorite_failure">移除收藏失败</string>
-    <string name="block_the_uploader">屏蔽上传者“%s”？</string>
-    <string name="block_the_tag">屏蔽标签“%s”？</string>
-    <string name="uploader_blocked">已屏蔽上传者“%s”</string>
-    <string name="tag_blocked">已屏蔽标签“%s”</string>
+    <string name="block_the_uploader">添加上传者过滤项“%s”？</string>
+    <string name="filter_added">已添加过滤项</string>
 
     <!-- Rating -->
     <string name="rating10">根本把持不住</string>
@@ -309,6 +307,7 @@
     <string name="delete_filter">删除过滤项“%s”？</string>
     <string name="tip">提示</string>
     <string name="add_filter">添加过滤项</string>
+    <string name="show_definition">查看定义</string>
     <string name="filter_text">过滤项文本</string>
     <string name="filter_tip">标题过滤项：排除标题含有该关键字的画廊。\n\n上传者过滤项：排除该上传者上传的画廊。\n\n标签过滤项：排除包含该标签的画廊，这会使获取画廊列表花费更多时间。\n\n标签组过滤项：排除包含该标签组的画廊，这会使获取画廊列表花费更多时间。</string>
 
