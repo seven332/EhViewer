@@ -23,7 +23,7 @@
     android:viewportHeight="24">
 
     <path
-        android:fillColor="@color/primary_drawable_light"
+        android:fillColor="@color/yellow_800"
         android:pathData="@string/pd_star_half"/>
 
 </vector>
