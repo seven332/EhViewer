@@ -41,7 +41,6 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.ui.MainActivity;
-import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.util.ExceptionUtils;
@@ -143,9 +142,6 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         mSignInViaWebView.setOnClickListener(this);
         mSignInViaCookies.setOnClickListener(this);
         mSkipSigningIn.setOnClickListener(this);
-
-        RippleSalon.addRipple(mRegister, true);
-        RippleSalon.addRipple(mSignIn, true);
 
         Context context = getContext2();
         AssertUtils.assertNotNull(container);

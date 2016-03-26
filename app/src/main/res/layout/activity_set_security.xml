@@ -52,7 +52,6 @@
     </FrameLayout>
 
     <android.support.v7.widget.ButtonBarLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

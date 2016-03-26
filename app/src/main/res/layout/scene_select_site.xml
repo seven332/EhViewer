@@ -22,83 +22,102 @@
     android:padding="@dimen/keyline_margin"
     android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
+    <com.hippo.widget.MaxSizeContainer
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:fillViewport="true">
+        android:layout_gravity="center_horizontal"
+        app:maxWidth="@dimen/single_max_width">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:text="@string/select_scene"/>
+                android:orientation="vertical">
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <RadioGroup
-                android:id="@+id/radio_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp">
-
-                <RadioButton
-                    android:id="@+id/site_e"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/site_e"/>
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:text="@string/select_scene"/>
 
-                <RadioButton
-                    android:id="@+id/site_ex"
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <RadioGroup
+                    android:id="@+id/radio_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/site_ex"/>
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/keyline_margin">
 
-            </RadioGroup>
+                    <RadioButton
+                        android:id="@+id/site_e"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/keyline_margin"
+                        android:gravity="center_vertical"
+                        android:textSize="@dimen/text_medium"
+                        android:text="@string/site_e"/>
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+                    <RadioButton
+                        android:id="@+id/site_ex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:textSize="@dimen/text_medium"
+                        android:text="@string/site_ex"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/select_scene_explain"/>
+                </RadioGroup>
 
-        </LinearLayout>
-    </ScrollView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_scene_explain"/>
 
-    <LinearLayout
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+        </ScrollView>
+    </com.hippo.widget.MaxSizeContainer>
+
+    <android.support.v7.widget.ButtonBarLayout
+        android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="bottom"
+        style="?attr/buttonBarStyle">
 
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <TextView
+        <Button
             android:id="@+id/ok"
-            style="@style/CardButton"
+            style="?attr/buttonBarPositiveButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="@dimen/keyline_margin"
-            android:text="@android:string/ok"
-            android:textColor="@android:color/white"
-            android:background="@drawable/card_teal_2dp"/>
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold"
+            android:text="@android:string/ok"/>
 
-    </LinearLayout>
+    </android.support.v7.widget.ButtonBarLayout>
 </LinearLayout>

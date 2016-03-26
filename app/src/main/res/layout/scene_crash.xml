@@ -57,33 +57,36 @@
         </ScrollView>
     </com.hippo.widget.MaxSizeContainer>
 
-    <LinearLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.ButtonBarLayout
+        android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="bottom"
+        style="?attr/buttonBarStyle">
 
-        <TextView
+        <Button
             android:id="@+id/cancel"
-            style="@style/CardButton"
+            style="?attr/buttonBarNegativeButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="@dimen/keyline_margin"
-            android:text="@android:string/cancel"
-            android:textColor="@android:color/white"
-            android:background="@drawable/card_purple_2dp"/>
+            android:textStyle="bold"
+            android:text="@android:string/cancel"/>
 
-        <TextView
+        <Button
             android:id="@+id/send"
-            style="@style/CardButton"
+            style="?attr/buttonBarPositiveButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="@dimen/keyline_margin"
-            android:text="@string/send"
-            android:textColor="@android:color/white"
-            android:background="@drawable/card_teal_2dp"/>
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold"
+            android:text="@string/send"/>
 
-    </LinearLayout>
+    </android.support.v7.widget.ButtonBarLayout>
 </LinearLayout>

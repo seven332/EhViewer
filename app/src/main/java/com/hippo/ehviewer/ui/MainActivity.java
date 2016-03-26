@@ -134,27 +134,27 @@ public final class MainActivity extends StageActivity
     public void startSceneForCheckStep(int checkStep, Bundle args) {
         switch (checkStep) {
             case CHECK_STEP_SECURITY:
-                if (Settings.getShowWarning()) {
+                if (true || Settings.getShowWarning()) {
                     startScene(new Announcer(WarningScene.class).setArgs(args));
                     break;
                 }
             case CHECK_STEP_WARNING:
-                if (Settings.getAskAnalytics()) {
+                if (true || Settings.getAskAnalytics()) {
                     startScene(new Announcer(AnalyticsScene.class).setArgs(args));
                     break;
                 }
             case CHECK_STEP_ANALYTICS:
-                if (Crash.hasCrashFile()) {
+                if (true || Crash.hasCrashFile()) {
                     startScene(new Announcer(CrashScene.class).setArgs(args));
                     break;
                 }
             case CHECK_STEP_CRASH:
-                if (EhUtils.needSignedIn(this)) {
+                if (true || EhUtils.needSignedIn(this)) {
                     startScene(new Announcer(SignInScene.class).setArgs(args));
                     break;
                 }
             case CHECK_STEP_SIGN_IN:
-                if (Settings.getSelectSite()) {
+                if (true || Settings.getSelectSite()) {
                     startScene(new Announcer(SelectSiteScene.class).setArgs(args));
                     break;
                 }
@@ -196,7 +196,7 @@ public final class MainActivity extends StageActivity
     protected Announcer getLaunchAnnouncer() {
         if (!TextUtils.isEmpty(Settings.getSecurity())) {
             return new Announcer(SecurityScene.class);
-        } else if (Settings.getShowWarning()) {
+        } else if (true || Settings.getShowWarning()) {
             return new Announcer(WarningScene.class);
         } else if (Settings.getAskAnalytics()) {
             return new Announcer(AnalyticsScene.class);

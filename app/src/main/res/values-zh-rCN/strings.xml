@@ -74,7 +74,7 @@
     <string name="error_cant_save_image">无法保存图片</string>
     <string name="error_invalid_number">非法数字</string>
 
-    <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的后果负责。您是否愿意继续使用该应用？</string>
+    <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的任何后果负责。</string>
     <string name="error_username_cannot_empty">用户名不可为空</string>
     <string name="error_password_cannot_empty">密码不可为空</string>
     <string name="skip_signing_in">跳过登陆</string>
@@ -86,6 +86,8 @@
     <string name="you_rejected_me">好痛</string>
     <string name="analytics_explain">您同意让开发者收集您的设备信息与使用情况吗？这将对开发有很大帮助。&lt;br&gt;&lt;br&gt;数据统计服务由 Google Analytics 提供，其隐私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 查看。&lt;br&gt;&lt;br&gt;若您同意参与数据统计，您的设备信息与应用使用情况将会被记录，其包括但不限于：Android API 版本、设备型号、语言所在地、本应用版本号、会话时长、应用功能使用次数。开发者承诺以下信息并不会被记录：电话号码、电子邮件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意参与数据统计之前，您的信息不会被记录。&lt;br&gt;&lt;br&gt;被记录的数据会由 Google Analytics 进行分析，分析报表仅可被本应用开发者访问。</string>
     <string name="get_it">知道了</string>
+    <string name="accept">接受</string>
+    <string name="reject">拒绝</string>
 
     <!-- Crash -->
     <string name="send">发送</string>
