@@ -64,8 +64,8 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private static final float[] LEFT_AREA = {0.0f, 0.0f, 1.0f / 3.0f, 1f};
     private static final float[] RIGHT_AREA = {2.0f / 3.0f, 0.0f, 1.0f, 1f};
-    private static final float[] MENU_AREA = {1.0f / 3.0f, 0.0f, 2.0f / 3.0f, 2.0f / 3.0f};
-    private static final float[] SLIDER_AREA = {1.0f / 3.0f, 2.0f / 3.0f, 2.0f / 3.0f, 1.0f};
+    private static final float[] MENU_AREA = {1.0f / 3.0f, 0.0f, 2.0f / 3.0f, 1.0f / 2.0f};
+    private static final float[] SLIDER_AREA = {1.0f / 3.0f, 1.0f / 2.0f, 2.0f / 3.0f, 1.0f};
 
     private static final int METHOD_ON_SINGLE_TAP_UP = 0;
     private static final int METHOD_ON_SINGLE_TAP_CONFIRMED = 1;

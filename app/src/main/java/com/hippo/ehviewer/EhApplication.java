@@ -108,6 +108,8 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
 
         CommonOperations.ensureNoMediaFile(Settings.getDownloadLocation());
 
+        update();
+
         // Update version code
         try {
             PackageInfo pi= getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -118,6 +120,13 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
 
         if (DEBUG_NATIVE_MEMORY) {
             debugNativeMemory();
+        }
+    }
+
+    private void update() {
+        int version = Settings.getVersionCode();
+        if (version < 52) {
+            Settings.putGuideGallery(true);
         }
     }
 

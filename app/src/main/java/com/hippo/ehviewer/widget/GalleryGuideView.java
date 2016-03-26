@@ -130,9 +130,9 @@ public class GalleryGuideView extends ViewGroup implements View.OnClickListener 
                 mRightText.measure(MeasureSpec.makeMeasureSpec(widthSize / 3, MeasureSpec.EXACTLY),
                         MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
                 mMenuText.measure(MeasureSpec.makeMeasureSpec(widthSize / 3, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(heightSize * 2 / 3, MeasureSpec.EXACTLY));
+                        MeasureSpec.makeMeasureSpec(heightSize / 2, MeasureSpec.EXACTLY));
                 mProgressText.measure(MeasureSpec.makeMeasureSpec(widthSize / 3, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(heightSize / 3, MeasureSpec.EXACTLY));
+                        MeasureSpec.makeMeasureSpec(heightSize / 2, MeasureSpec.EXACTLY));
                 break;
             default:
             case 1:
@@ -153,8 +153,8 @@ public class GalleryGuideView extends ViewGroup implements View.OnClickListener 
             case 0:
                 mLeftText.layout(0, 0, width / 3, height);
                 mRightText.layout(width * 2 / 3, 0, width, height);
-                mMenuText.layout(width / 3, 0, width * 2 / 3, height * 2 / 3);
-                mProgressText.layout(width / 3, height * 2 / 3, width * 2 / 3, height);
+                mMenuText.layout(width / 3, 0, width * 2 / 3, height / 2);
+                mProgressText.layout(width / 3, height / 2, width * 2 / 3, height);
                 break;
             default:
             case 1:
@@ -179,9 +179,9 @@ public class GalleryGuideView extends ViewGroup implements View.OnClickListener 
             mPoints[7] = h;
 
             mPoints[8] = w / 3;
-            mPoints[9] = h * 2 / 3;
+            mPoints[9] = h / 2;
             mPoints[10] = w * 2 / 3;
-            mPoints[11] = h * 2 / 3;
+            mPoints[11] = h / 2;
         }
     }
 
