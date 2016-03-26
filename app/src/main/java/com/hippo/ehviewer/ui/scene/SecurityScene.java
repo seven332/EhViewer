@@ -54,6 +54,11 @@ public class SecurityScene extends BaseScene implements
     private int mRetryTimes;
 
     @Override
+    public boolean needShowLeftDrawer() {
+        return false;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
