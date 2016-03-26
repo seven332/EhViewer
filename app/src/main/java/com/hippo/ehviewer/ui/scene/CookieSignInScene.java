@@ -35,7 +35,6 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
-import com.hippo.rippleold.RippleSalon;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -79,8 +78,6 @@ public class CookieSignInScene extends BaseScene implements EditText.OnEditorAct
         mIpbPassHash.setOnEditorActionListener(this);
 
         mOk.setOnClickListener(this);
-
-        RippleSalon.addRipple(mOk, true);
 
         return view;
     }

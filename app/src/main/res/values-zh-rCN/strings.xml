@@ -39,7 +39,7 @@
 
     <string name="default_display_name">Little Hippo</string>
 
-    <string name="cookie_explain">Cookie 是存储在浏览器里的一小块数据。如果您不清楚 Cookie 什么或者怎么获取 Cookie，最好搜索一下。\n\n可以通过输入特定的 Cookie 来登陆。</string>
+    <string name="cookie_explain">Cookie 是存储在浏览器里的一小块数据。如果您不清楚 Cookie 什么或者怎么获取 Cookie，最好搜索一下。\n\n请输入特定的 Cookie 来登陆。</string>
     <string name="text_is_empty">文本为空</string>
     <string name="waring">警告</string>
     <string name="wrong_cookie_warning">看起来您输入的 Cookie 是错误的，最好检查一下。</string>

@@ -39,7 +39,7 @@
 
     <string name="default_display_name">Little Hippo</string>
 
-    <string name="cookie_explain">Cookie 是存儲在瀏覽器裏的一小塊數據。如果您不清楚 Cookie 什麼或者怎麼獲取 Cookie，最好搜索一下。\n\n可以通過輸入特定的 Cookie 來登陸。</string>
+    <string name="cookie_explain">Cookie 是存儲在瀏覽器裏的一小塊數據。如果您不清楚 Cookie 什麼或者怎麼獲取 Cookie，最好搜索一下。\n\n請輸入特定的 Cookie 來登陸。</string>
     <string name="text_is_empty">文本為空</string>
     <string name="waring">警告</string>
     <string name="wrong_cookie_warning">看起來您輸入的 Cookie 是錯誤的，最好檢查一下。</string>

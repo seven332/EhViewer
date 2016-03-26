@@ -55,7 +55,7 @@
 
     <string name="default_display_name">Little Hippo</string>
 
-    <string name="cookie_explain">A cookie is a small piece of data stored in web browser. Search it if you don\'t know what it is or how to get it.\n\nYou can sign in by entering special cookies.</string>
+    <string name="cookie_explain">A cookie is a small piece of data stored in web browser. Search it if you don\'t know what it is or how to get it.\n\nPlease enter special cookies to sign in.</string>
     <string name="text_is_empty">Text is empty</string>
     <string name="waring">Warning</string>
     <string name="wrong_cookie_warning">It seems that the cookies you entered are wrong. You\'d better check them.</string>
