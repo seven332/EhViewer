@@ -190,7 +190,7 @@ public final class GalleryListScene extends BaseScene
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             if (dy >= mHideActionFabSlop) {
                 hideActionFab();
-            } else if (dy < 0) {
+            } else if (dy <= -mHideActionFabSlop / 2) {
                 showActionFab();
             }
         }
