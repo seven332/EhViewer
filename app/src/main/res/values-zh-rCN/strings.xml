@@ -69,7 +69,7 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">无效链接</string>
     <string name="error_get_ptoken_error">获取 pToken 错误</string>
-    <string name="error_invalid_specify_gallery">指定画廊的关键字应该看起来像 \"618395 0439fa3666\"</string>
+    <string name="error_invalid_specify_gallery">指定画廊的关键字应该看起来像 “618395 0439fa3666”</string>
     <string name="error_cant_create_temp_file">无法创建临时文件</string>
     <string name="error_cant_save_image">无法保存图片</string>
     <string name="error_invalid_number">非法数字</string>
@@ -190,10 +190,10 @@
     <string name="remove_from_favorite_success">移除收藏</string>
     <string name="add_to_favorite_failure">添加收藏失败</string>
     <string name="remove_from_favorite_failure">移除收藏失败</string>
-    <string name="block_the_uploader">屏蔽上传者：%s？</string>
-    <string name="block_the_tag">屏蔽标签：%s？</string>
-    <string name="uploader_blocked">已屏蔽上传者 \"%s\"</string>
-    <string name="tag_blocked">已屏蔽标签 \"%s\"</string>
+    <string name="block_the_uploader">屏蔽上传者“%s”？</string>
+    <string name="block_the_tag">屏蔽标签“%s”？</string>
+    <string name="uploader_blocked">已屏蔽上传者“%s”</string>
+    <string name="tag_blocked">已屏蔽标签“%s”</string>
 
     <!-- Rating -->
     <string name="rating10">根本把持不住</string>
@@ -290,9 +290,6 @@
     <string name="rename_label_title">重命名标签</string>
     <string name="delete_label_title">删除标签</string>
     <string name="delete_label_message">删除“%s”？</string>
-    <string name="tip">提示</string>
-    <string name="add_filter">添加过滤项</string>
-    <string name="filter_text">过滤项文本</string>
 
     <!-- History -->
     <string name="no_history">这里是阅读历史</string>
@@ -305,11 +302,15 @@
     <string name="filter_title">标题</string>
     <string name="filter_uploader">上传者</string>
     <string name="filter_tag">标签</string>
-    <string name="delete_title_filter">删除标题过滤项：%s？</string>
-    <string name="delete_uploader_filter">删除上传者过滤项：%s？</string>
-    <string name="delete_tag_filter">删除标签过滤项：%s？</string>
-    <string name="delete_filter">删除过滤项：%s？</string>
-    <string name="filter_tip">标题过滤项：排除标题含有该关键字的画廊。\n\n上传者过滤项：排除该上传者上传的画廊。\n\n标签过滤项：排除包含该关键字的画廊，这会使获取画廊列表花费更多时间。</string>
+    <string name="filter_tag_namespace">标签组</string>
+    <string name="delete_title_filter">删除标题过滤项“%s”？</string>
+    <string name="delete_uploader_filter">删除上传者过滤项“%s”？</string>
+    <string name="delete_tag_filter">删除标签过滤项“%s”？</string>
+    <string name="delete_filter">删除过滤项“%s”？</string>
+    <string name="tip">提示</string>
+    <string name="add_filter">添加过滤项</string>
+    <string name="filter_text">过滤项文本</string>
+    <string name="filter_tip">标题过滤项：排除标题含有该关键字的画廊。\n\n上传者过滤项：排除该上传者上传的画廊。\n\n标签过滤项：排除包含该标签的画廊，这会使获取画廊列表花费更多时间。\n\n标签组过滤项：排除包含该标签组的画廊，这会使获取画廊列表花费更多时间。</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">设置图案保护</string>
@@ -350,7 +351,7 @@
     <string name="settings_eh_show_jpn_title_summary_on">尝试显示日文标题。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
     <string name="settings_eh_filter">过滤</string>
-    <string name="settings_eh_filter_summary">过滤标题，上传者和标签</string>
+    <string name="settings_eh_filter_summary">过滤标题，上传者，标签和标签组</string>
 
     <string name="settings_read">阅读</string>
     <string name="settings_read_reading_direction_title">阅读方向</string>
@@ -379,7 +380,7 @@
     <string name="settings_download_invalid_download_location">无效的下载路径</string>
     <string name="settings_download_cant_get_download_location">无法获取下载路径</string>
     <string name="settings_download_pick_dir_kk">在 KitKat 中您无法把数据写入外置 SD 卡，除非您做了奇怪的事情</string>
-    <string name="settings_download_pick_dir_l">Lollipop 提供了新的写入外置 SD 卡的 API。如果您想把下载路径设置到外置 SD 卡上，点击 \"文档\" 按钮</string>
+    <string name="settings_download_pick_dir_l">Lollipop 提供了新的写入外置 SD 卡的 API。如果您想把下载路径设置到外置 SD 卡上，点击“文档”按钮</string>
     <string name="settings_download_document">文档</string>
     <string name="settings_download_restore_download_items">恢复下载项</string>
     <string name="settings_download_restore_download_items_summary">恢复下载目录里的所有下载项</string>
@@ -472,7 +473,7 @@
 
     <string name="cant_get_data_dir">无法获取数据文件夹</string>
     <string name="cant_find_any_data">找不到任何数据</string>
-    <string name="cant_read_the_db_file">无法读取文件</string>
+    <string name="cant_read_the_file">无法读取文件</string>
 
     <!-- License -->
     <string name="license">开源许可</string>

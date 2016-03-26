@@ -331,16 +331,19 @@ public class FilterActivity extends ToolbarActivity {
         private final List<Filter> mTitleFilterList;
         private final List<Filter> mUploaderFilterList;
         private final List<Filter> mTagFilterList;
+        private final List<Filter> mTagNamespaceFilterList;
 
         private Filter mTitleHeader;
         private Filter mUploaderHeader;
         private Filter mTagHeader;
+        private Filter mTagNamespaceHeader;
 
         public FilterList() {
             mEhFilter = EhFilter.getInstance();
             mTitleFilterList = mEhFilter.getTitleFilterList();
             mUploaderFilterList = mEhFilter.getUploaderFilterList();
             mTagFilterList = mEhFilter.getTagFilterList();
+            mTagNamespaceFilterList = mEhFilter.getTagNamespaceFilterList();
         }
 
         public int size() {
@@ -350,6 +353,8 @@ public class FilterActivity extends ToolbarActivity {
             size = mUploaderFilterList.size();
             count += 0 == size ? 0 : size + 1;
             size = mTagFilterList.size();
+            count += 0 == size ? 0 : size + 1;
+            size = mTagNamespaceFilterList.size();
             count += 0 == size ? 0 : size + 1;
             return count;
         }
@@ -381,6 +386,15 @@ public class FilterActivity extends ToolbarActivity {
             return mTagHeader;
         }
 
+        private Filter getTagNamespaceHeader() {
+            if (null == mTagNamespaceHeader) {
+                mTagNamespaceHeader = new Filter();
+                mTagNamespaceHeader.mode = MODE_HEADER;
+                mTagNamespaceHeader.text = getString(R.string.filter_tag_namespace);
+            }
+            return mTagNamespaceHeader;
+        }
+
         public Filter get(int index) {
             int size = mTitleFilterList.size();
             if (0 != size) {
@@ -410,6 +424,17 @@ public class FilterActivity extends ToolbarActivity {
                     return getTagHeader();
                 } else if (index <= size) {
                     return mTagFilterList.get(index - 1);
+                } else {
+                    index -= size + 1;
+                }
+            }
+
+            size = mTagNamespaceFilterList.size();
+            if (0 != size) {
+                if (index == 0) {
+                    return getTagNamespaceHeader();
+                } else if (index <= size) {
+                    return mTagNamespaceFilterList.get(index - 1);
                 } else {
                     index -= size + 1;
                 }

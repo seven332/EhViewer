@@ -136,6 +136,7 @@
         <item>@string/filter_title</item>
         <item>@string/filter_uploader</item>
         <item>@string/filter_tag</item>
+        <item>@string/filter_tag_namespace</item>
     </string-array>
 
 </resources>

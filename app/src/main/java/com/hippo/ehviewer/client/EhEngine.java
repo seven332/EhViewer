@@ -218,7 +218,7 @@ public class EhEngine {
             // Filter tag
             for (int i = 0, n = list.size(); i < n; i++) {
                 GalleryInfo info = list.get(i);
-                if (!sEhFilter.filterTag(info)) {
+                if (!sEhFilter.filterTag(info) || !sEhFilter.filterTagNamespace(info)) {
                     list.remove(i);
                     i--;
                     n--;
@@ -616,29 +616,9 @@ public class EhEngine {
             throw e;
         }
 
-        // Filter title
-        for (int i = 0, n = list.size(); i < n; i++) {
-            GalleryInfo info = list.get(i);
-            if (!sEhFilter.filterTitle(info)) {
-                list.remove(i);
-                i--;
-                n--;
-            }
-        }
-
         if (list.size() > 0) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
-
-            // Filter uploader and tag
-            for (int i = 0, n = list.size(); i < n; i++) {
-                GalleryInfo info = list.get(i);
-                if (!sEhFilter.filterUploader(info) || !sEhFilter.filterTag(info)) {
-                    list.remove(i);
-                    i--;
-                    n--;
-                }
-            }
         }
 
         return list;

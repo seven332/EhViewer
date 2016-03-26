@@ -69,7 +69,7 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">無效連結</string>
     <string name="error_get_ptoken_error">獲取 pToken 錯誤</string>
-    <string name="error_invalid_specify_gallery">指定畫廊的關鍵字應該看起來像 \"618395 0439fa3666\"</string>
+    <string name="error_invalid_specify_gallery">指定畫廊的關鍵字應該看起來像 “618395 0439fa3666”</string>
     <string name="error_cant_create_temp_file">無法建立臨時檔案</string>
     <string name="error_cant_save_image">無法儲存圖片</string>
     <string name="error_invalid_number">非法數字</string>
@@ -190,10 +190,10 @@
     <string name="remove_from_favorite_success">移除收藏</string>
     <string name="add_to_favorite_failure">新增收藏失敗</string>
     <string name="remove_from_favorite_failure">移除收藏失敗</string>
-    <string name="block_the_uploader">遮蔽上傳者：%s？</string>
-    <string name="block_the_tag">遮蔽標籤：%s？</string>
-    <string name="uploader_blocked">已遮蔽上傳者 \"%s\"</string>
-    <string name="tag_blocked">已遮蔽標籤 \"%s\"</string>
+    <string name="block_the_uploader">遮蔽上傳者“%s”？</string>
+    <string name="block_the_tag">遮蔽標籤“%s”？</string>
+    <string name="uploader_blocked">已遮蔽上傳者“%s”</string>
+    <string name="tag_blocked">已遮蔽標籤“%s”</string>
 
     <!-- Rating -->
     <string name="rating10">根本把持不住</string>
@@ -290,9 +290,6 @@
     <string name="rename_label_title">重新命名標籤</string>
     <string name="delete_label_title">刪除標籤</string>
     <string name="delete_label_message">刪除“%s”？</string>
-    <string name="tip">提示</string>
-    <string name="add_filter">新增過濾項</string>
-    <string name="filter_text">過濾項文字</string>
 
     <!-- History -->
     <string name="no_history">這裡是閱讀歷史</string>
@@ -305,11 +302,15 @@
     <string name="filter_title">標題</string>
     <string name="filter_uploader">上傳者</string>
     <string name="filter_tag">標籤</string>
-    <string name="delete_title_filter">刪除標題過濾項：%s？</string>
-    <string name="delete_uploader_filter">刪除上傳者過濾項：%s？</string>
-    <string name="delete_tag_filter">刪除標籤過濾項：%s？</string>
-    <string name="delete_filter">刪除過濾項：%s？</string>
-    <string name="filter_tip">標題過濾項：排除標題含有該關鍵字的畫廊。\n\n上傳者過濾項：排除該上傳者上傳的畫廊。\n\n標籤過濾項：排除包含該關鍵字的畫廊，這會使獲取畫廊列表花費更多時間。</string>
+    <string name="filter_tag_namespace">標籤組</string>
+    <string name="delete_title_filter">刪除標題過濾項“%s”？</string>
+    <string name="delete_uploader_filter">刪除上傳者過濾項“%s”？</string>
+    <string name="delete_tag_filter">刪除標籤過濾項“%s”？</string>
+    <string name="delete_filter">刪除過濾項“%s”？</string>
+    <string name="tip">提示</string>
+    <string name="add_filter">新增過濾項</string>
+    <string name="filter_text">過濾項文字</string>
+    <string name="filter_tip">標題過濾項：排除標題含有該關鍵字的畫廊。\n\n上傳者過濾項：排除該上傳者上傳的畫廊。\n\n標籤過濾項：排除包含該標籤的畫廊，這會使獲取畫廊列表花費更多時間。\n\n標籤組過濾項：排除包含該標籤組的畫廊，這會使獲取畫廊列表花費更多時間。</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">設定圖案保護</string>
@@ -350,7 +351,7 @@
     <string name="settings_eh_show_jpn_title_summary_on">嘗試顯示日文標題。這會使獲取畫廊列表花費更多時間</string>
     <string name="settings_eh_show_jpn_title_summary_off">顯示預設標題。一般是英文標題</string>
     <string name="settings_eh_filter">過濾</string>
-    <string name="settings_eh_filter_summary">過濾標題，上傳者和標籤</string>
+    <string name="settings_eh_filter_summary">過濾標題，上傳者，標籤和標籤組</string>
 
     <string name="settings_read">閱讀</string>
     <string name="settings_read_reading_direction_title">閱讀方向</string>
@@ -379,7 +380,7 @@
     <string name="settings_download_invalid_download_location">無效的下載路徑</string>
     <string name="settings_download_cant_get_download_location">無法獲取下載路徑</string>
     <string name="settings_download_pick_dir_kk">在 KitKat 中您無法把資料寫入外接 SD 卡，除非您做了奇怪的事情</string>
-    <string name="settings_download_pick_dir_l">Lollipop 提供了新的寫入外接 SD 卡的 API。如果您想把下載路徑設定到外接 SD 卡上，點選 \"文件\" 按鈕</string>
+    <string name="settings_download_pick_dir_l">Lollipop 提供了新的寫入外接 SD 卡的 API。如果您想把下載路徑設定到外接 SD 卡上，點選“文件”按鈕</string>
     <string name="settings_download_document">文件</string>
     <string name="settings_download_restore_download_items">恢復下載項</string>
     <string name="settings_download_restore_download_items_summary">恢復下載目錄裡的所有下載項</string>
@@ -472,7 +473,7 @@
 
     <string name="cant_get_data_dir">無法獲取資料資料夾</string>
     <string name="cant_find_any_data">找不到任何資料</string>
-    <string name="cant_read_the_db_file">無法讀取檔案</string>
+    <string name="cant_read_the_file">無法讀取檔案</string>
 
     <!-- License -->
     <string name="license">開源許可</string>

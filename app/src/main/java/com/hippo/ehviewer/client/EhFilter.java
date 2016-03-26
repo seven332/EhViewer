@@ -32,10 +32,12 @@ public final class EhFilter {
     public static final int MODE_TITLE = 0;
     public static final int MODE_UPLOADER = 1;
     public static final int MODE_TAG = 2;
+    public static final int MODE_TAG_NAMESPACE = 3;
 
     private final List<Filter> mTitleFilterList = new ArrayList<>();
     private final List<Filter> mUploaderFilterList = new ArrayList<>();
     private final List<Filter> mTagFilterList = new ArrayList<>();
+    private final List<Filter> mTagNamespaceFilterList = new ArrayList<>();
 
     private static EhFilter sInstance;
 
@@ -62,6 +64,10 @@ public final class EhFilter {
                     filter.text = filter.text.toLowerCase();
                     mTagFilterList.add(filter);
                     break;
+                case MODE_TAG_NAMESPACE:
+                    filter.text = filter.text.toLowerCase();
+                    mTagNamespaceFilterList.add(filter);
+                    break;
                 default:
                     Log.d(TAG, "Unknown mode: " + filter.mode);
                     break;
@@ -81,6 +87,10 @@ public final class EhFilter {
         return mTagFilterList;
     }
 
+    public List<Filter> getTagNamespaceFilterList() {
+        return mTagNamespaceFilterList;
+    }
+
     public synchronized void addFilter(Filter filter) {
         EhDB.addFilter(filter);
 
@@ -93,7 +103,12 @@ public final class EhFilter {
                 mUploaderFilterList.add(filter);
                 break;
             case MODE_TAG:
+                filter.text = filter.text.toLowerCase();
                 mTagFilterList.add(filter);
+                break;
+            case MODE_TAG_NAMESPACE:
+                filter.text = filter.text.toLowerCase();
+                mTagNamespaceFilterList.add(filter);
                 break;
             default:
                 Log.d(TAG, "Unknown mode: " + filter.mode);
@@ -114,6 +129,9 @@ public final class EhFilter {
             case MODE_TAG:
                 mTagFilterList.remove(filter);
                 break;
+            case MODE_TAG_NAMESPACE:
+                mTagNamespaceFilterList.remove(filter);
+                break;
             default:
                 Log.d(TAG, "Unknown mode: " + filter.mode);
                 break;
@@ -121,7 +139,7 @@ public final class EhFilter {
     }
 
     public synchronized boolean needCallApi() {
-        return 0 != mTagFilterList.size();
+        return 0 != mTagFilterList.size() || 0 != mTagNamespaceFilterList.size();
     }
 
     public synchronized boolean filterTitle(GalleryInfo info) {
@@ -212,6 +230,41 @@ public final class EhFilter {
             for (String tag: tags) {
                 for (int i = 0, n = filters.size(); i < n; i++) {
                     if (matchTag(tag, filters.get(i).text)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean matchTagNamespace(String tag, String filter) {
+        if (null == tag || null == filter) {
+            return false;
+        }
+
+        String tagNamespace;
+        int index = tag.indexOf(':');
+        if (index >= 0) {
+            tagNamespace = tag.substring(0, index);
+            return tagNamespace.equals(filter);
+        } else {
+            return false;
+        }
+    }
+
+    public synchronized boolean filterTagNamespace(GalleryInfo info) {
+        if (null == info) {
+            return false;
+        }
+
+        String[] tags = info.simpleTags;
+        List<Filter> filters = mTagNamespaceFilterList;
+        if (null != tags && filters.size() > 0) {
+            for (String tag: tags) {
+                for (int i = 0, n = filters.size(); i < n; i++) {
+                    if (matchTagNamespace(tag, filters.get(i).text)) {
                         return false;
                     }
                 }
