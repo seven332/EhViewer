@@ -33,6 +33,8 @@ public class ViewTransition {
     private Animator mAnimator1;
     private Animator mAnimator2;
 
+    private OnShowViewListener mOnShowViewListener;
+
     public ViewTransition(View... views) {
         if (views.length < 2) {
             throw new IllegalStateException("You must pass view to ViewTransition");
@@ -45,6 +47,10 @@ public class ViewTransition {
 
         mViews = views;
         showView(0, false);
+    }
+
+    public void setOnShowViewListener(OnShowViewListener listener) {
+        mOnShowViewListener = listener;
     }
 
     public int getShownViewIndex() {
@@ -97,6 +103,10 @@ public class ViewTransition {
                 }
             }
 
+            if (null != mOnShowViewListener) {
+                mOnShowViewListener.onShowView(views[oldShownView], views[shownView]);
+            }
+
             return true;
         } else {
             return false;
@@ -127,5 +137,9 @@ public class ViewTransition {
         });
         oa2.start();
         mAnimator2 = oa2;
+    }
+
+    public interface OnShowViewListener {
+        void onShowView(View hiddenView, View shownView);
     }
 }

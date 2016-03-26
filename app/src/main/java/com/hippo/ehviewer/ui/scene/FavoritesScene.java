@@ -165,15 +165,6 @@ public class FavoritesScene extends BaseScene implements
     // For modify action
     private boolean mModifyAdd;
 
-    private final Runnable mReturnSearchBarRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mSearchBarMover != null) {
-                mSearchBarMover.returnSearchBarPosition();
-            }
-        }
-    };
-
     private ShowcaseView mShowcaseView;
 
     @Override
@@ -887,7 +878,6 @@ public class FavoritesScene extends BaseScene implements
             updateSearchBar();
             mHelper.setPages(taskId, result.pages);
             mHelper.onGetPageData(taskId, result.galleryInfoList);
-            SimpleHandler.getInstance().post(mReturnSearchBarRunnable);
         }
     }
 
@@ -914,7 +904,6 @@ public class FavoritesScene extends BaseScene implements
                 mHelper.setPages(taskId, 1);
                 mHelper.onGetPageData(taskId, list);
             }
-            SimpleHandler.getInstance().post(mReturnSearchBarRunnable);
         }
     }
 
@@ -1101,14 +1090,6 @@ public class FavoritesScene extends BaseScene implements
         }
 
         @Override
-        protected void onHideRecyclerView() {
-            super.onHideRecyclerView();
-            if (mSearchBarMover != null) {
-                mSearchBarMover.showSearchBar();
-            }
-        }
-
-        @Override
         protected Context getContext() {
             return FavoritesScene.this.getContext2();
         }
@@ -1136,6 +1117,22 @@ public class FavoritesScene extends BaseScene implements
         protected void notifyItemRangeInserted(int positionStart, int itemCount) {
             if (mAdapter != null) {
                 mAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            }
+        }
+
+        @Override
+        public void onShowView(View hiddenView, View shownView) {
+            if (null != mSearchBarMover) {
+                mSearchBarMover.showSearchBar();
+            }
+        }
+
+        @Override
+        protected void onScrollToPosition(int postion) {
+            if (0 == postion) {
+                if (null != mSearchBarMover) {
+                    mSearchBarMover.showSearchBar();
+                }
             }
         }
     }

@@ -41,18 +41,49 @@
         android:layout_marginTop="8dp"/>
 
     <com.hippo.widget.FabLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fab_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingRight="@dimen/corner_fab_margin"
         android:paddingBottom="@dimen/corner_fab_margin">
 
         <android.support.design.widget.FloatingActionButton
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            app:srcCompat="@drawable/v_go_to_dark_x24"
+            app:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.Design.FloatingActionButton.Mini"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/v_refresh_dark_x24"
+            app:backgroundTint="?attr/colorPrimary"
+            style="@style/Widget.Design.FloatingActionButton.Mini"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Design.FloatingActionButton"/>
+
+    </com.hippo.widget.FabLayout>
+
+    <com.hippo.widget.FabLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/corner_fab_margin"
+        android:paddingBottom="@dimen/corner_fab_margin">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/search_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_magnify_dark_x24"
+            android:visibility="invisible"
+            android:scaleX="0"
+            android:scaleY="0"
             style="@style/Widget.Design.FloatingActionButton"/>
 
     </com.hippo.widget.FabLayout>

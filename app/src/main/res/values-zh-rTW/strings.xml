@@ -72,6 +72,7 @@
     <string name="error_invalid_specify_gallery">指定畫廊的關鍵字應該看起來像 \"618395 0439fa3666\"</string>
     <string name="error_cant_create_temp_file">無法建立臨時檔案</string>
     <string name="error_cant_save_image">無法儲存圖片</string>
+    <string name="error_invalid_number">非法數字</string>
 
     <string name="app_waring">本應用中內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用作者不會對由本應用造成的後果負責。您是否願意繼續使用該應用？</string>
     <string name="error_username_cannot_empty">使用者名稱不可為空</string>
@@ -142,6 +143,8 @@
     <string name="readme">讀我</string>
     <string name="duplicate_quick_search">已存在相同的快速搜尋，名稱為“%s”。</string>
     <string name="duplicate_name">已存在相同名稱</string>
+
+    <string name="go_to_hint">第 %1$d 頁，共 %2$d 頁</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 星</string>

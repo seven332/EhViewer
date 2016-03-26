@@ -163,7 +163,7 @@ public class ContentLayout extends FrameLayout {
         super.onRestoreInstanceState(mContentHelper.restoreInstanceState(state));
     }
 
-    public abstract static class ContentHelper<E extends Parcelable> {
+    public abstract static class ContentHelper<E extends Parcelable> implements ViewTransition.OnShowViewListener {
 
         private static final String TAG = ContentHelper.class.getSimpleName();
 
@@ -287,8 +287,8 @@ public class ContentLayout extends FrameLayout {
         private final LayoutManagerUtils.OnScrollToPositionListener mOnScrollToPositionListener =
                 new LayoutManagerUtils.OnScrollToPositionListener() {
                     @Override
-                    public void onScrollToPosition() {
-                        ContentHelper.this.onScrollToPosition();
+                    public void onScrollToPosition(int position) {
+                        ContentHelper.this.onScrollToPosition(position);
                     }
                 };
 
@@ -307,6 +307,7 @@ public class ContentLayout extends FrameLayout {
             mTipView.setCompoundDrawables(null, drawable, null, null);
 
             mViewTransition = new ViewTransition(mContentView, mProgressView, mTipView);
+            mViewTransition.setOnShowViewListener(this);
 
             mRecyclerView.addOnScrollListener(mOnScrollListener);
             mRefreshLayout.setOnRefreshListener(mOnRefreshListener);
@@ -335,11 +336,10 @@ public class ContentLayout extends FrameLayout {
 
         protected abstract void notifyItemRangeInserted(int positionStart, int itemCount);
 
-        protected void onScrollToPosition() {
-        }
+        protected void onScrollToPosition(int postion) {}
 
-        protected void onHideRecyclerView() {
-        }
+        @Override
+        public void onShowView(View hiddenView, View shownView) {}
 
         public int getShownViewIndex() {
             return mViewTransition.getShownViewIndex();
@@ -459,7 +459,7 @@ public class ContentLayout extends FrameLayout {
                             // RecyclerView scroll
                             mRecyclerView.stopScroll();
                             LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
-                            onScrollToPosition();
+                            onScrollToPosition(0);
                         }
                         break;
                     case TYPE_PRE_PAGE:
@@ -489,7 +489,7 @@ public class ContentLayout extends FrameLayout {
                                         // RecyclerView scroll, to top
                                         mRecyclerView.stopScroll();
                                         LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
-                                        onScrollToPosition();
+                                        onScrollToPosition(0);
                                     }
                                 }
                             } else {
@@ -518,7 +518,7 @@ public class ContentLayout extends FrameLayout {
                             } else {
                                 mRecyclerView.stopScroll();
                                 LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
-                                onScrollToPosition();
+                                onScrollToPosition(0);
                             }
                         }
                         break;
@@ -546,7 +546,7 @@ public class ContentLayout extends FrameLayout {
                                         // RecyclerView scroll
                                         mRecyclerView.stopScroll();
                                         LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), oldDataSize, 0);
-                                        onScrollToPosition();
+                                        onScrollToPosition(oldDataSize);
                                     }
                                 }
                             } else {
@@ -570,11 +570,10 @@ public class ContentLayout extends FrameLayout {
                             if (mCurrentTaskType == TYPE_NEXT_PAGE_KEEP_POS) {
                                 mRecyclerView.stopScroll();
                                 mRecyclerView.smoothScrollBy(0, mNextPageScrollSize);
-                                onScrollToPosition();
                             } else {
                                 mRecyclerView.stopScroll();
                                 LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), oldDataSize, 0);
-                                onScrollToPosition();
+                                onScrollToPosition(oldDataSize);
                             }
                         }
                         break;
@@ -618,7 +617,7 @@ public class ContentLayout extends FrameLayout {
                             // RecyclerView scroll
                             mRecyclerView.stopScroll();
                             LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), 0, 0);
-                            onScrollToPosition();
+                            onScrollToPosition(0);
                         }
                         break;
                     case TYPE_REFRESH_PAGE:
@@ -655,7 +654,7 @@ public class ContentLayout extends FrameLayout {
                             if (newIndexEnd > oldIndexEnd && newIndexEnd > 0) {
                                 mRecyclerView.stopScroll();
                                 LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), newIndexEnd - 1, 0);
-                                onScrollToPosition();
+                                onScrollToPosition(newIndexEnd - 1);
                             }
                         }
                         break;
@@ -697,16 +696,12 @@ public class ContentLayout extends FrameLayout {
         }
 
         public void showProgressBar(boolean animation) {
-            if (mViewTransition.showView(1, animation)) {
-                onHideRecyclerView();
-            }
+            mViewTransition.showView(1, animation);
         }
 
         public void showText(CharSequence text) {
             mTipView.setText(text);
-            if (mViewTransition.showView(2)) {
-                onHideRecyclerView();
-            }
+            mViewTransition.showView(2);
         }
 
         public void showEmptyString() {
@@ -799,11 +794,11 @@ public class ContentLayout extends FrameLayout {
         }
 
         public int getPageForTop() {
-            return getPageForPosition(LayoutManagerUtils.getFirstVisibleItemPostion(mRecyclerView.getLayoutManager()));
+            return getPageForPosition(LayoutManagerUtils.getFirstVisibleItemPosition(mRecyclerView.getLayoutManager()));
         }
 
         public int getPageForBottom() {
-            return getPageForPosition(LayoutManagerUtils.getLastVisibleItemPostion(mRecyclerView.getLayoutManager()));
+            return getPageForPosition(LayoutManagerUtils.getLastVisibleItemPosition(mRecyclerView.getLayoutManager()));
         }
 
         public boolean canGoTo() {
@@ -825,7 +820,7 @@ public class ContentLayout extends FrameLayout {
                 int position = getPageStart(page);
                 mRecyclerView.stopScroll();
                 LayoutManagerUtils.scrollToPositionWithOffset(mRecyclerView.getLayoutManager(), position, 0);
-                onScrollToPosition();
+                onScrollToPosition(position);
             } else if (page == mStartPage - 1) {
                 mRefreshLayout.setFooterRefreshing(false);
                 mRefreshLayout.setHeaderRefreshing(true);
