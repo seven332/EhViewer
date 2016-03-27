@@ -38,6 +38,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hippo.reveal.ViewAnimationUtils;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.EhApplication;
@@ -62,9 +63,6 @@ import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;
-
-import io.codetail.animation.SupportAnimator;
-import io.codetail.animation.ViewAnimationUtils;
 
 public final class GalleryCommentsScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
@@ -276,12 +274,11 @@ public final class GalleryCommentsScene extends ToolbarScene
                 mEditPanel.setVisibility(View.VISIBLE);
                 int halfW = mEditPanel.getWidth() / 2;
                 int halfH = mEditPanel.getHeight() / 2;
-                SupportAnimator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH, 0,
-                        (float) Math.hypot(halfW, halfH));
-                animator.setDuration(300L);
-                animator.addListener(new SupportAnimator.SimpleAnimatorListener() {
+                Animator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH, 0,
+                        (float) Math.hypot(halfW, halfH)).setDuration(300L);
+                animator.addListener(new SimpleAnimatorListener() {
                     @Override
-                    public void onAnimationEnd() {
+                    public void onAnimationEnd(Animator a) {
                         mInAnimation = false;
                     }
                 });
@@ -311,12 +308,11 @@ public final class GalleryCommentsScene extends ToolbarScene
         mInAnimation = true;
         int halfW = mEditPanel.getWidth() / 2;
         int halfH = mEditPanel.getHeight() / 2;
-        SupportAnimator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH,
-                (float) Math.hypot(halfW, halfH), 0.0f);
-        animator.setDuration(300L);
-        animator.addListener(new SupportAnimator.SimpleAnimatorListener() {
+        Animator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH,
+                (float) Math.hypot(halfW, halfH), 0.0f).setDuration(300L);
+        animator.addListener(new SimpleAnimatorListener() {
             @Override
-            public void onAnimationEnd() {
+            public void onAnimationEnd(Animator a) {
                 mEditPanel.setVisibility(View.GONE);
                 mFab.setVisibility(View.VISIBLE);
                 int fabStartX = mEditPanel.getLeft() + (mEditPanel.getWidth() / 2) - (mFab.getWidth() / 2);
