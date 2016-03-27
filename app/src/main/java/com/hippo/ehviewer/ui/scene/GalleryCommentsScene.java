@@ -350,7 +350,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     @Nullable
     private String getGalleryDetailUrl() {
         if (mGid != -1 && mToken != null) {
-            return EhUrl.getGalleryDetailUrl(mGid, mToken, 0, true);
+            return EhUrl.getGalleryDetailUrl(mGid, mToken, 0, false);
         } else {
             return null;
         }

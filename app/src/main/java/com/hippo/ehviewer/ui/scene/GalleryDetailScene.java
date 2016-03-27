@@ -602,7 +602,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private boolean request() {
         Context context = getContext2();
         MainActivity activity = getActivity2();
-        String url = getGalleryDetailUrl(true);
+        String url = getGalleryDetailUrl(false);
         if (null == context || null == activity || null == url) {
             return false;
         }
