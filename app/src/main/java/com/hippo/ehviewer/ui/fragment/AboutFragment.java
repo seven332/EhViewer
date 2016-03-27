@@ -98,7 +98,7 @@ public class AboutFragment extends PreferenceFragment
             UrlOpener.openUrl(getActivity(), "https://github.com/seven332/EhViewer",
                     false, true);
         } else if (KEY_CHANGELOG.equals(key)) {
-            UrlOpener.openUrl(getActivity(), "http://www.ehviewer.com/changlog",
+            UrlOpener.openUrl(getActivity(), "http://www.ehviewer.com/changelog",
                     false, true);
         } else if (KEY_DONATE.equals(key)) {
             new AlertDialog.Builder(getActivity())
