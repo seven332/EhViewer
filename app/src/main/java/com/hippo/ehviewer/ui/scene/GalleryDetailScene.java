@@ -36,6 +36,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
@@ -45,7 +46,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -79,6 +79,7 @@ import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
+import com.hippo.reveal.ViewAnimationUtils;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -639,7 +640,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         setActionDrawable(mSimilar, similar);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private boolean createCircularReveal() {
         if (mColorBg == null) {
             return false;
@@ -647,7 +647,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         int w = mColorBg.getWidth();
         int h = mColorBg.getHeight();
-        if (mColorBg.isAttachedToWindow() && w != 0 && h != 0) {
+        if (ViewCompat.isAttachedToWindow(mColorBg) && w != 0 && h != 0) {
             ViewAnimationUtils.createCircularReveal(mColorBg, w / 2, h / 2, 0,
                     (float) Math.hypot(w / 2, h / 2)).setDuration(300).start();
             return true;
@@ -692,8 +692,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 break;
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP &&
-                (oldState == STATE_INIT || oldState == STATE_FAILED || oldState == STATE_REFRESH) &&
+        if ((oldState == STATE_INIT || oldState == STATE_FAILED || oldState == STATE_REFRESH) &&
                 (state == STATE_NORMAL || state == STATE_REFRESH_HEADER)) {
             if (!createCircularReveal()) {
                 SimpleHandler.getInstance().post(new Runnable() {
