@@ -38,7 +38,7 @@
         android:text="@string/no_one_comments_gallery"
         style="@style/TextAppearance.AppCompat.Medium"/>
 
-    <LinearLayout
+    <io.codetail.widget.RevealLinearLayout
         android:id="@+id/edit_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                 app:srcCompat="@drawable/v_send_dark_x24"/>
 
         </LinearLayout>
-    </LinearLayout>
+    </io.codetail.widget.RevealLinearLayout>
 
     <com.hippo.widget.FabLayout
         android:layout_width="match_parent"

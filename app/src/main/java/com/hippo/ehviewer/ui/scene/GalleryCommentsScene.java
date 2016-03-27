@@ -17,12 +17,10 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -35,7 +33,6 @@ import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -65,6 +62,9 @@ import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;
+
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
 
 public final class GalleryCommentsScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
@@ -236,8 +236,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         return false;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void showEditPanelWithAnimationL() {
+    private void showEditPanelWithAnimation() {
         mInAnimation = true;
         mFab.setTranslationX(0.0f);
         mFab.setTranslationY(0.0f);
@@ -254,11 +253,12 @@ public final class GalleryCommentsScene extends ToolbarScene
                 mEditPanel.setVisibility(View.VISIBLE);
                 int halfW = mEditPanel.getWidth() / 2;
                 int halfH = mEditPanel.getHeight() / 2;
-                Animator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH, 0,
-                        (float) Math.hypot(halfW, halfH)).setDuration(300);
-                animator.addListener(new SimpleAnimatorListener() {
+                SupportAnimator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH, 0,
+                        (float) Math.hypot(halfW, halfH));
+                animator.setDuration(300L);
+                animator.addListener(new SupportAnimator.SimpleAnimatorListener() {
                     @Override
-                    public void onAnimationEnd(Animator animation) {
+                    public void onAnimationEnd() {
                         mInAnimation = false;
                     }
                 });
@@ -269,29 +269,23 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private void showEditPanel(boolean animation) {
         if (animation) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                showEditPanelWithAnimationL();
-            } else {
-                // TODO Add animation for pre-L
-                mFab.setVisibility(View.INVISIBLE);
-                mEditPanel.setVisibility(View.VISIBLE);
-            }
+            showEditPanelWithAnimation();
         } else {
             mFab.setVisibility(View.INVISIBLE);
             mEditPanel.setVisibility(View.VISIBLE);
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void hideEditPanelWithAnimationL() {
+    private void hideEditPanelWithAnimation() {
         mInAnimation = true;
         int halfW = mEditPanel.getWidth() / 2;
         int halfH = mEditPanel.getHeight() / 2;
-        Animator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH,
-                (float) Math.hypot(halfW, halfH), 0.0f).setDuration(300L);
-        animator.addListener(new SimpleAnimatorListener() {
+        SupportAnimator animator = ViewAnimationUtils.createCircularReveal(mEditPanel, halfW, halfH,
+                (float) Math.hypot(halfW, halfH), 0.0f);
+        animator.setDuration(300L);
+        animator.addListener(new SupportAnimator.SimpleAnimatorListener() {
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd() {
                 mEditPanel.setVisibility(View.GONE);
                 mFab.setVisibility(View.VISIBLE);
                 int fabStartX = mEditPanel.getLeft() + (mEditPanel.getWidth() / 2) - (mFab.getWidth() / 2);
@@ -315,13 +309,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private void hideEditPanel(boolean animation) {
         if (animation) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                hideEditPanelWithAnimationL();
-            } else {
-                // TODO Add animation for pre-L
-                mFab.setVisibility(View.VISIBLE);
-                mEditPanel.setVisibility(View.INVISIBLE);
-            }
+            hideEditPanelWithAnimation();
         } else {
             mFab.setVisibility(View.VISIBLE);
             mEditPanel.setVisibility(View.INVISIBLE);
