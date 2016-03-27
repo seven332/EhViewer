@@ -76,15 +76,22 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private long mGid;
     private String mToken;
+    @Nullable
     private GalleryComment[] mComments;
 
+    @Nullable
     private EasyRecyclerView mRecyclerView;
+    @Nullable
     private FloatingActionButton mFab;
+    @Nullable
     private View mEditPanel;
+    @Nullable
     private ImageView mSendImage;
+    @Nullable
     private EditText mEditText;
-
+    @Nullable
     private CommentAdapter mAdapter;
+    @Nullable
     private ViewTransition mViewTransition;
 
     private boolean mInAnimation = false;
@@ -139,7 +146,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     public View onCreateView3(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_gallery_comments, container, false);
-        mRecyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
         TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
         mEditPanel = ViewUtils.$$(view, R.id.edit_panel);
         mSendImage = (ImageView) ViewUtils.$$(mEditPanel, R.id.send);
@@ -176,11 +183,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
-        if (mComments == null || mComments.length <= 0) {
-            mViewTransition.showView(1);
-        } else {
-            mViewTransition.showView(0);
-        }
+        updateView(false);
 
         return view;
     }
@@ -194,6 +197,10 @@ public final class GalleryCommentsScene extends ToolbarScene
             mRecyclerView = null;
         }
 
+        mFab = null;
+        mEditPanel = null;
+        mSendImage = null;
+        mEditText = null;
         mAdapter = null;
         mViewTransition = null;
     }
@@ -236,7 +243,23 @@ public final class GalleryCommentsScene extends ToolbarScene
         return false;
     }
 
+    private void updateView(boolean animation) {
+        if (null == mViewTransition) {
+            return;
+        }
+
+        if (mComments == null || mComments.length <= 0) {
+            mViewTransition.showView(1, animation);
+        } else {
+            mViewTransition.showView(0, animation);
+        }
+    }
+
     private void showEditPanelWithAnimation() {
+        if (null == mFab || null == mEditPanel) {
+            return;
+        }
+
         mInAnimation = true;
         mFab.setTranslationX(0.0f);
         mFab.setTranslationY(0.0f);
@@ -271,12 +294,20 @@ public final class GalleryCommentsScene extends ToolbarScene
         if (animation) {
             showEditPanelWithAnimation();
         } else {
+            if (null == mFab || null == mEditPanel) {
+                return;
+            }
+
             mFab.setVisibility(View.INVISIBLE);
             mEditPanel.setVisibility(View.VISIBLE);
         }
     }
 
     private void hideEditPanelWithAnimation() {
+        if (null == mFab || null == mEditPanel) {
+            return;
+        }
+
         mInAnimation = true;
         int halfW = mEditPanel.getWidth() / 2;
         int halfH = mEditPanel.getHeight() / 2;
@@ -311,6 +342,10 @@ public final class GalleryCommentsScene extends ToolbarScene
         if (animation) {
             hideEditPanelWithAnimation();
         } else {
+            if (null == mFab || null == mEditPanel) {
+                return;
+            }
+
             mFab.setVisibility(View.VISIBLE);
             mEditPanel.setVisibility(View.INVISIBLE);
         }
@@ -329,7 +364,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     public void onClick(View v) {
         Context context = getContext2();
         MainActivity activity = getActivity2();
-        if (null == context || null == activity) {
+        if (null == context || null == activity || null == mEditText) {
             return;
         }
 
@@ -366,7 +401,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         if (mInAnimation) {
             return;
         }
-        if (mEditPanel.getVisibility() == View.VISIBLE) {
+        if (null != mEditPanel && mEditPanel.getVisibility() == View.VISIBLE) {
             hideEditPanel(true);
         } else {
             finish();
@@ -404,7 +439,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         @Override
         public void onBindViewHolder(CommentHolder holder, int position) {
             Context context = getContext2();
-            if (null == context) {
+            if (null == context || null == mComments) {
                 return;
             }
 
@@ -423,7 +458,9 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private void onCommentGallerySuccess(GalleryComment[] result) {
         mComments = result;
-        mAdapter.notifyDataSetChanged();
+        if (null != mAdapter) {
+            mAdapter.notifyDataSetChanged();
+        }
         Bundle re = new Bundle();
         re.putParcelableArray(KEY_COMMENTS, result);
         setResult(SceneFragment.RESULT_OK, re);
@@ -432,6 +469,8 @@ public final class GalleryCommentsScene extends ToolbarScene
         if (mEditText != null) {
             mEditText.setText("");
         }
+
+        updateView(true);
     }
 
     private static class CommentGalleryListener extends EhCallback<GalleryCommentsScene, GalleryComment[]> {
