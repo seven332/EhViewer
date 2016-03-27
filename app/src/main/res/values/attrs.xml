@@ -133,4 +133,8 @@
         <attr name="activity" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="UrlPreference">
+        <attr name="url" format="string"/>
+    </declare-styleable>
+
 </resources>

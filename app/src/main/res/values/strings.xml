@@ -463,13 +463,10 @@
     <string name="settings_about_author">Author</string>
     <string name="settings_about_author_summary" translatable="false">Hippo &lt;ehviewersu$gmail.com&gt;</string>
     <string name="settings_about_google_plus">Google+ Community</string>
-    <string name="settings_about_google_plus_summary" translatable="false">https://plus.google.com/communities/103823982034655188459</string>
     <string name="settings_about_website">Website</string>
-    <string name="settings_about_website_summary" translatable="false">http://www.ehviewer.com</string>
     <string name="settings_about_source">Source</string>
-    <string name="settings_about_source_summary" translatable="false">https://github.com/seven332/EhViewer</string>
     <string name="settings_about_changelog">Changelog</string>
-    <string name="settings_about_changelog_summary" translatable="false">http://www.ehviewer.com/changlog</string>
+    <string name="settings_about_help">Help</string>
     <string name="settings_about_license">License</string>
     <string name="settings_about_license_summary">EhViewer is made possible by many open source projects</string>
     <string name="settings_about_donate">Donate</string>

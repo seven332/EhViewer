@@ -25,7 +25,6 @@ import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
-import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.util.ActivityHelper;
 
@@ -34,11 +33,6 @@ public class AboutFragment extends PreferenceFragment
         Preference.OnPreferenceClickListener {
 
     private static final String KEY_AUTHOR = "author";
-    private static final String KEY_GOOGLE_PLUS = "google_plus";
-    private static final String KEY_WEBSITE = "website";
-    private static final String KEY_SOURCE = "source";
-    private static final String KEY_CHANGELOG = "changelog";
-    private static final String KEY_LICENSE = "license";
     private static final String KEY_DONATE = "donate";
     private static final String KEY_CHECK_FOR_UPDATES = "check_for_updates";
 
@@ -48,11 +42,7 @@ public class AboutFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.about_settings);
 
         Preference author = findPreference(KEY_AUTHOR);
-        Preference googlePlus = findPreference(KEY_GOOGLE_PLUS);
         Preference enableAnalytics = findPreference(Settings.KEY_ENABLE_ANALYTICS);
-        Preference website = findPreference(KEY_WEBSITE);
-        Preference source = findPreference(KEY_SOURCE);
-        Preference changelog = findPreference(KEY_CHANGELOG);
         Preference donate = findPreference(KEY_DONATE);
         Preference checkForUpdate = findPreference(KEY_CHECK_FOR_UPDATES);
 
@@ -60,10 +50,6 @@ public class AboutFragment extends PreferenceFragment
         donate.setSummary(getString(R.string.settings_about_donate_summary).replace('$', '@'));
 
         author.setOnPreferenceClickListener(this);
-        googlePlus.setOnPreferenceClickListener(this);
-        website.setOnPreferenceClickListener(this);
-        source.setOnPreferenceClickListener(this);
-        changelog.setOnPreferenceClickListener(this);
         donate.setOnPreferenceClickListener(this);
         checkForUpdate.setOnPreferenceClickListener(this);
 
@@ -88,18 +74,6 @@ public class AboutFragment extends PreferenceFragment
         if (KEY_AUTHOR.equals(key)) {
             ActivityHelper.sendEmail(getActivity(), EhApplication.getDeveloperEmail(),
                     "About EhViewer", null);
-        } else if (KEY_GOOGLE_PLUS.equals(key)) {
-            UrlOpener.openUrl(getActivity(), "https://plus.google.com/communities/103823982034655188459",
-                    false, true);
-        } else if (KEY_WEBSITE.equals(key)) {
-            UrlOpener.openUrl(getActivity(), "http://www.ehviewer.com",
-                    false, true);
-        } else if (KEY_SOURCE.equals(key)) {
-            UrlOpener.openUrl(getActivity(), "https://github.com/seven332/EhViewer",
-                    false, true);
-        } else if (KEY_CHANGELOG.equals(key)) {
-            UrlOpener.openUrl(getActivity(), "http://www.ehviewer.com/changelog",
-                    false, true);
         } else if (KEY_DONATE.equals(key)) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.settings_about_donate)

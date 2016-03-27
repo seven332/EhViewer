@@ -23,25 +23,30 @@
         android:key="author"
         android:title="@string/settings_about_author"/>
 
-    <Preference
+    <com.hippo.preference.UrlPreference
         android:key="google_plus"
         android:title="@string/settings_about_google_plus"
-        android:summary="@string/settings_about_google_plus_summary"/>
+        app:url="https://plus.google.com/communities/103823982034655188459"/>
 
-    <Preference
+    <com.hippo.preference.UrlPreference
         android:key="website"
         android:title="@string/settings_about_website"
-        android:summary="@string/settings_about_website_summary"/>
+        app:url="http://www.ehviewer.com"/>
 
-    <Preference
+    <com.hippo.preference.UrlPreference
         android:key="source"
         android:title="@string/settings_about_source"
-        android:summary="@string/settings_about_source_summary"/>
+        app:url="https://github.com/seven332/EhViewer"/>
 
-    <Preference
+    <com.hippo.preference.UrlPreference
         android:key="changelog"
         android:title="@string/settings_about_changelog"
-        android:summary="@string/settings_about_changelog_summary"/>
+        app:url="http://www.ehviewer.com/changelog"/>
+
+    <com.hippo.preference.UrlPreference
+        android:key="help"
+        android:title="@string/settings_about_help"
+        app:url="http://www.ehviewer.com/help"/>
 
     <com.hippo.preference.ActivityPreference
         android:key="license"

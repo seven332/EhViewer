@@ -423,6 +423,7 @@
     <string name="settings_about_website">網站</string>
     <string name="settings_about_source">源碼</string>
     <string name="settings_about_changelog">更新日誌</string>
+    <string name="settings_about_help">幫助</string>
     <string name="settings_about_license">開源許可</string>
     <string name="settings_about_license_summary">EhViewer 的誕生離不開許多開源項目</string>
     <string name="settings_about_donate">捐贈</string>
