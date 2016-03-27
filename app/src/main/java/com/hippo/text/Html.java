@@ -136,7 +136,7 @@ public class Html {
      *
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
-    public static Spanned fromHtml(String source, ImageGetter imageGetter,
+    public static SpannableStringBuilder fromHtml(String source, ImageGetter imageGetter,
             TagHandler tagHandler) {
         Parser parser = new Parser();
         try {
@@ -462,7 +462,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         mReader = parser;
     }
 
-    public Spanned convert() {
+    public SpannableStringBuilder convert() {
 
         mReader.setContentHandler(this);
         try {

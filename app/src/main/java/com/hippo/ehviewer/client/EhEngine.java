@@ -41,6 +41,7 @@ import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.ehviewer.client.parser.TorrentParser;
+import com.hippo.ehviewer.client.parser.VoteCommentParser;
 import com.hippo.ehviewer.client.parser.WhatsHotParser;
 import com.hippo.network.StatusCodeException;
 import com.hippo.util.ReadableTime;
@@ -667,6 +668,42 @@ public class EhEngine {
             headers = response.headers();
             body = response.body().string();
             return getProfileInternal(task, okHttpClient, ForumsParser.parse(body));
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    public static VoteCommentParser.Result voteComment(EhClient.Task task, OkHttpClient okHttpClient,
+            long gid, String token, long commentId, int commentVote) throws Exception {
+        final JSONObject json = new JSONObject();
+        json.put("method", "votecomment");
+        json.put("apiuid", APIUID);
+        json.put("apikey", APIKEY);
+        json.put("gid", gid);
+        json.put("token", token);
+        json.put("comment_id", commentId);
+        json.put("comment_vote", commentVote);
+        final RequestBody requestBody = RequestBody.create(JSON, json.toString());
+        String url = EhUrl.getApiUrl();
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig())
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return VoteCommentParser.parse(body, commentVote);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;

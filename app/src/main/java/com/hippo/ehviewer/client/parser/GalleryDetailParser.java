@@ -18,6 +18,7 @@ package com.hippo.ehviewer.client.parser;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryComment;
@@ -342,11 +343,35 @@ public class GalleryDetailParser {
     public static GalleryComment parseComment(Element element) {
         try {
             GalleryComment comment = new GalleryComment();
+            // Id
+            Element a = element.previousElementSibling();
+            String name = a.attr("name");
+            comment.id = Integer.parseInt(StringUtils.trim(name).substring(1));
+            // Vote up and vote down
+            Element c4 = JsoupUtils.getElementByClass(element, "c4");
+            if (null != c4) {
+                Elements es = c4.children();
+                if (2 == es.size()) {
+                    comment.voteUp = !TextUtils.isEmpty(StringUtils.trim(es.get(0).attr("style")));
+                    comment.voteDown = !TextUtils.isEmpty(StringUtils.trim(es.get(1).attr("style")));
+                }
+            }
+            // Score
+            Element c5 = JsoupUtils.getElementByClass(element, "c5");
+            if (null != c5) {
+                Elements es = c5.children();
+                if (!es.isEmpty()) {
+                    comment.score = NumberUtils.parseIntSafely(StringUtils.trim(es.get(0).text()), 0);
+                }
+            }
+            // time
             Element c3 = JsoupUtils.getElementByClass(element, "c3");
             String temp = c3.ownText();
             temp = temp.substring("Posted on ".length(), temp.length() - " by:  ".length());
             comment.time = WEB_COMMENT_DATE_FORMAT.parse(temp).getTime();
+            // user
             comment.user = c3.child(0).text();
+            // comment
             comment.comment = JsoupUtils.getElementByClass(element, "c6").html();
             return comment;
         } catch (Exception e) {

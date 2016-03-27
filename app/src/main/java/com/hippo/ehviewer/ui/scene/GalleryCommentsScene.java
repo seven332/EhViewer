@@ -18,19 +18,32 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +51,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hippo.reveal.ViewAnimationUtils;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.EhApplication;
@@ -48,7 +60,9 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryComment;
+import com.hippo.ehviewer.client.parser.VoteCommentParser;
 import com.hippo.ehviewer.ui.MainActivity;
+import com.hippo.reveal.ViewAnimationUtils;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.SceneFragment;
 import com.hippo.text.Html;
@@ -66,7 +80,9 @@ import com.hippo.yorozuya.ViewUtils;
 
 public final class GalleryCommentsScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
-        EasyRecyclerView.OnItemLongClickListener, View.OnClickListener {
+        View.OnClickListener {
+
+    public static final String TAG = GalleryCommentsScene.class.getSimpleName();
 
     public static final String KEY_GID = "gid";
     public static final String KEY_TOKEN = "token";
@@ -172,9 +188,13 @@ public final class GalleryCommentsScene extends ToolbarScene
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOnItemClickListener(this);
-        mRecyclerView.setOnItemLongClickListener(this);
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop(),
                 mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom() + paddingBottomFab);
+        // Cancel change animator
+        RecyclerView.ItemAnimator itemAnimator = mRecyclerView.getItemAnimator();
+        if (itemAnimator instanceof DefaultItemAnimator) {
+            ((DefaultItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
+        }
 
         mSendImage.setOnClickListener(this);
         mFab.setOnClickListener(this);
@@ -215,6 +235,62 @@ public final class GalleryCommentsScene extends ToolbarScene
         onBackPressed();
     }
 
+    private void voteComment(long id, int vote) {
+        Context context = getContext2();
+        MainActivity activity = getActivity2();
+        if (null == context || null == activity) {
+            return;
+        }
+
+        EhRequest request = new EhRequest()
+                .setMethod(EhClient.METHOD_VOTE_COMMENT)
+                .setArgs(mGid, mToken, id, vote)
+                .setCallback(new VoteCommentListener(context,
+                        activity.getStageId(), getTag()));
+        EhApplication.getEhClient(context).execute(request);
+    }
+
+    private void showCommentDialog(final int position) {
+        final Context context = getContext2();
+        if (null == context || null == mComments || position >= mComments.length || position < 0) {
+            return;
+        }
+
+        final GalleryComment comment = mComments[position];
+        String[] menuArray;
+        Resources resources = context.getResources();
+        if (0 == comment.id) {
+            // 0 id is uploader comment, can't vote
+            menuArray = new String[1];
+            menuArray[0] = resources.getString(R.string.copy_comment_text);
+        } else {
+            menuArray = new String[3];
+            menuArray[0] = resources.getString(R.string.copy_comment_text);
+            menuArray[1] = resources.getString(comment.voteUp ? R.string.cancel_vote_up : R.string.vote_up);
+            menuArray[2] = resources.getString(comment.voteDown ? R.string.cancel_vote_down : R.string.vote_down);
+        }
+
+        new AlertDialog.Builder(context)
+                .setItems(menuArray, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0: // Copy
+                                ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                                cmb.setPrimaryClip(ClipData.newPlainText(null, comment.comment));
+                                showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
+                                break;
+                            case 1: // Vote up
+                                voteComment(comment.id, 1);
+                                break;
+                            case 2: // Vote down
+                                voteComment(comment.id, -1);
+                                break;
+                        }
+                    }
+                }).show();
+    }
+
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         Activity activity = getActivity2();
@@ -233,12 +309,10 @@ public final class GalleryCommentsScene extends ToolbarScene
                 return true;
             }
         }
-        return false;
-    }
 
-    @Override
-    public boolean onItemLongClick(EasyRecyclerView parent, View view, int position, long id) {
-        return false;
+        showCommentDialog(position);
+
+        return true;
     }
 
     private void updateView(boolean animation) {
@@ -406,9 +480,9 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private class CommentHolder extends RecyclerView.ViewHolder {
 
-        public TextView user;
-        public TextView time;
-        public LinkifyTextView comment;
+        public final TextView user;
+        public final TextView time;
+        public final LinkifyTextView comment;
 
         public CommentHolder(View itemView) {
             super(itemView);
@@ -432,6 +506,24 @@ public final class GalleryCommentsScene extends ToolbarScene
             return new CommentHolder(mInflater.inflate(R.layout.item_gallery_comment, parent, false));
         }
 
+        public CharSequence generateComment(Context context, TextView textView, GalleryComment comment) {
+            SpannableStringBuilder ssb = Html.fromHtml(comment.comment, new URLImageGetter(textView,
+                    EhApplication.getConaco(context)), null);
+
+            if (0 != comment.id && 0 != comment.score) {
+                int score = comment.score;
+                String scoreString = score > 0 ? "+" + score : Integer.toString(score);
+                SpannableString ss = new SpannableString(scoreString);
+                ss.setSpan(new RelativeSizeSpan(0.8f), 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new StyleSpan(Typeface.BOLD), 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.secondary_text_default_light))
+                        , 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ssb.append("  ").append(ss);
+            }
+
+            return TextUrl.handleTextUrl(ssb);
+        }
+
         @Override
         public void onBindViewHolder(CommentHolder holder, int position) {
             Context context = getContext2();
@@ -442,8 +534,7 @@ public final class GalleryCommentsScene extends ToolbarScene
             GalleryComment comment = mComments[position];
             holder.user.setText(comment.user);
             holder.time.setText(ReadableTime.getTimeAgo(comment.time));
-            holder.comment.setText(TextUrl.handleTextUrl(Html.fromHtml(comment.comment,
-                    new URLImageGetter(holder.comment, EhApplication.getConaco(context)), null)));
+            holder.comment.setText(generateComment(context, holder.comment, comment));
         }
 
         @Override
@@ -471,6 +562,37 @@ public final class GalleryCommentsScene extends ToolbarScene
         updateView(true);
     }
 
+    private void onVoteCommentSuccess(VoteCommentParser.Result result) {
+        if (null == mAdapter || null == mComments) {
+            return;
+        }
+
+        int position = -1;
+        for (int i = 0, n = mComments.length; i < n; i++) {
+            GalleryComment comment = mComments[i];
+            if (comment.id == result.id) {
+                position = i;
+                break;
+            }
+        }
+
+        if (-1 == position) {
+            Log.d(TAG, "Can't find comment with id " + result.id);
+            return;
+        }
+
+        // Update comment
+        GalleryComment comment = mComments[position];
+        comment.score = result.score;
+        if (result.expectVote > 0) {
+            comment.voteUp = 0 != result.vote;
+        } else {
+            comment.voteDown = 0 != result.vote;
+        }
+
+        mAdapter.notifyItemChanged(position);
+    }
+
     private static class CommentGalleryListener extends EhCallback<GalleryCommentsScene, GalleryComment[]> {
 
         public CommentGalleryListener(Context context, int stageId, String sceneTag) {
@@ -495,6 +617,39 @@ public final class GalleryCommentsScene extends ToolbarScene
         @Override
         public void onCancel() {
         }
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryCommentsScene;
+        }
+    }
+
+    private static class VoteCommentListener extends EhCallback<GalleryCommentsScene, VoteCommentParser.Result> {
+
+        public VoteCommentListener(Context context, int stageId, String sceneTag) {
+            super(context, stageId, sceneTag);
+        }
+
+        @Override
+        public void onSuccess(VoteCommentParser.Result result) {
+            showTip(result.expectVote > 0 ?
+                    (0 != result.vote ? R.string.vote_up_successfully : R.string.cancel_vote_up_successfully) :
+                    (0 != result.vote ? R.string.vote_down_successfully : R.string.cancel_vote_down_successfully),
+                    LENGTH_SHORT);
+
+            GalleryCommentsScene scene = getScene();
+            if (scene != null) {
+                scene.onVoteCommentSuccess(result);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            showTip(R.string.vote_failed, LENGTH_SHORT);
+        }
+
+        @Override
+        public void onCancel() {}
 
         @Override
         public boolean isInstance(SceneFragment scene) {

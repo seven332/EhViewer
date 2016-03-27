@@ -21,6 +21,11 @@ import android.os.Parcelable;
 
 public class GalleryComment implements Parcelable {
 
+    // 0 for uploader comment. can't vote
+    public long id;
+    public int score;
+    public boolean voteUp;
+    public boolean voteDown;
     public long time;
     public String user;
     public String comment;
@@ -32,6 +37,10 @@ public class GalleryComment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeInt(this.score);
+        dest.writeByte(voteUp ? (byte) 1 : (byte) 0);
+        dest.writeByte(voteDown ? (byte) 1 : (byte) 0);
         dest.writeLong(this.time);
         dest.writeString(this.user);
         dest.writeString(this.comment);
@@ -41,16 +50,22 @@ public class GalleryComment implements Parcelable {
     }
 
     protected GalleryComment(Parcel in) {
+        this.id = in.readLong();
+        this.score = in.readInt();
+        this.voteUp = in.readByte() != 0;
+        this.voteDown = in.readByte() != 0;
         this.time = in.readLong();
         this.user = in.readString();
         this.comment = in.readString();
     }
 
     public static final Creator<GalleryComment> CREATOR = new Creator<GalleryComment>() {
+        @Override
         public GalleryComment createFromParcel(Parcel source) {
             return new GalleryComment(source);
         }
 
+        @Override
         public GalleryComment[] newArray(int size) {
             return new GalleryComment[size];
         }
