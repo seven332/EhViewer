@@ -453,10 +453,12 @@ public final class GalleryCommentsScene extends ToolbarScene
     }
 
     private void onCommentGallerySuccess(GalleryComment[] result) {
-        mComments = result;
-        if (null != mAdapter) {
-            mAdapter.notifyDataSetChanged();
+        if (null == mAdapter) {
+            return;
         }
+
+        mComments = result;
+        mAdapter.notifyDataSetChanged();
         Bundle re = new Bundle();
         re.putParcelableArray(KEY_COMMENTS, result);
         setResult(SceneFragment.RESULT_OK, re);
