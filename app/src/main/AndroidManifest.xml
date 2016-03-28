@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +14,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
 -->
-
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hippo.ehviewer">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hippo.ehviewer" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -36,7 +35,7 @@
         android:largeHeap="true">
 
         <activity
-            android:name="com.hippo.ehviewer.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.Main"
             android:launchMode="singleTask"
@@ -46,7 +45,6 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -70,7 +68,6 @@
             </intent-filter>
 
         </activity>
-
         <activity
             android:name="com.hippo.ehviewer.ui.DumpBrowsableActivity"
             android:configChanges="screenSize|uiMode"
@@ -89,12 +86,12 @@
             android:name="com.hippo.ehviewer.ui.DictImportActivity"
             android:configChanges="screenSize|uiMode"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
-
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.EDIT" />
                 <action android:name="android.intent.action.PICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -123,50 +120,49 @@
         </activity-alias>
 
         <activity
-            android:name="com.hippo.ehviewer.ui.GalleryActivity"
+            android:name=".ui.GalleryActivity"
             android:configChanges="screenSize|uiMode"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.Gallery" />
-
         <activity
-            android:name="com.hippo.ehviewer.ui.SettingsActivity"
+            android:name=".ui.SettingsActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme" />
-
         <activity
-            android:name="com.hippo.ehviewer.ui.ExcludedLanguagesActivity"
+            android:name=".ui.ExcludedLanguagesActivity"
             android:configChanges="screenSize|uiMode"
             android:label="@string/excluded_languages"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
-            android:name="com.hippo.ehviewer.ui.DirPickerActivity"
+            android:name=".ui.DirPickerActivity"
             android:configChanges="screenSize|uiMode"
             android:label="@string/dir_picker"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
-            android:name="com.hippo.ehviewer.ui.LicenseActivity"
+            android:name=".ui.LicenseActivity"
             android:configChanges="screenSize|uiMode"
             android:label="@string/license"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
-            android:name="com.hippo.ehviewer.ui.FilterActivity"
+            android:name=".ui.FilterActivity"
             android:configChanges="screenSize|uiMode"
             android:label="@string/filter"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
-            android:name="com.hippo.ehviewer.ui.SetSecurityActivity"
+            android:name=".ui.SetSecurityActivity"
             android:configChanges="screenSize|uiMode"
             android:label="@string/set_pattern_protection"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name="com.hippo.ehviewer.download.DownloadService"
+            android:name=".download.DownloadService"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/download_service_label" />
-
+        <service
+            android:name="com.hippo.dict.DictImportService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
+
 </manifest>
