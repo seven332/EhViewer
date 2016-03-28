@@ -688,6 +688,10 @@ public final class GalleryCommentsScene extends ToolbarScene
         }
 
         mAdapter.notifyItemChanged(position);
+
+        Bundle re = new Bundle();
+        re.putParcelableArray(KEY_COMMENTS, mComments);
+        setResult(SceneFragment.RESULT_OK, re);
     }
 
     private static class CommentGalleryListener extends EhCallback<GalleryCommentsScene, GalleryComment[]> {
