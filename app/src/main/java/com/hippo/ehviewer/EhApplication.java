@@ -59,7 +59,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
 
     private static final String TAG = EhApplication.class.getSimpleName();
 
-    public static final boolean BETA = true;
+    public static final boolean BETA = false;
 
     private static final boolean DEBUG_CONACO = false;
     private static final boolean DEBUG_NATIVE_MEMORY = false;
