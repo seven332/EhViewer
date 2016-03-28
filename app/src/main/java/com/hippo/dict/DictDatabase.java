@@ -21,18 +21,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.JsonReader;
+import android.util.Log;
 
 import com.hippo.util.SqlUtils;
 import com.hippo.yorozuya.Say;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,12 +47,13 @@ public class DictDatabase {
     public static final String COLUMN_DATA = "data";
     public static final String COLUMN_DICT = "dict";
 
-    private static final String DATABASE_NAME = "search_database.db";
+    private static final String DATABASE_NAME = "dict_database.db";
     private static final String TABLE_DICT = "dict";
     private static final String SEPARATOR = "@@@";
     private SQLiteDatabase mDatabase;
-
     private static DictDatabase sInstance;
+
+    private String mDict;
 
     public static DictDatabase getInstance(Context context) {
         if (sInstance == null) {
@@ -86,7 +89,12 @@ public class DictDatabase {
             while (!cursor.isAfterLast()) {
                 String data = cursor.getString(queryIndex);
                 String datas[] = data.split(SEPARATOR);
-                queryList.add(data);
+                for (String item : datas) {
+                    if (TextUtils.isEmpty(item) || data.equals(prefix)) {
+                        continue;
+                    }
+                    queryList.add(item);
+                }
                 cursor.moveToNext();
             }
         }
@@ -94,16 +102,56 @@ public class DictDatabase {
         return queryList.toArray(new String[queryList.size()]);
     }
 
-    public void importDict(final String dictPath) throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(dictPath);
+    public void importDict(final Uri dictUri, final DictImportService.ProcessListener listener) throws IOException, URISyntaxException {
+        int process = 0;
+        File dictFile = new File(dictUri.getPath());
+        FileInputStream fileInputStream = new FileInputStream(dictFile);
         JsonReader jsonReader = new JsonReader(new InputStreamReader(
                 fileInputStream, "UTF-8"));
+
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
-            Say.d(TAG, jsonReader.nextString());
+            String field = jsonReader.nextName();
+            if (field.equals("dict")) {
+                mDict = jsonReader.nextString();
+            } else if (field.equals("data")) {
+                praseData(jsonReader);
+                listener.process(process);
+                process++;
+            }
         }
         jsonReader.endObject();
         jsonReader.close();
+    }
+
+    private void praseData(JsonReader jsonReader) throws IOException {
+        jsonReader.beginArray();
+        while (jsonReader.hasNext()) {
+            praseSingleData(jsonReader);
+        }
+        jsonReader.endArray();
+    }
+
+    private void praseSingleData(JsonReader jsonReader) throws IOException {
+
+        StringBuilder sb = new StringBuilder();
+        String parent = "";
+        sb.append(SEPARATOR);
+        jsonReader.beginObject();
+        while (jsonReader.hasNext()) {
+            String name = jsonReader.nextName();
+            String content = jsonReader.nextString();
+            if (name.equals("parent")) {
+                parent = content;
+            } else {
+                sb.append(content);
+                sb.append(SEPARATOR);
+            }
+        }
+        jsonReader.endObject();
+
+        Log.d(TAG, parent + " " + sb.toString());
+        addQuery(sb.toString(), parent, mDict);
     }
 
     public void addQuery(String data, String parent, String dict) {
@@ -149,7 +197,6 @@ public class DictDatabase {
             Say.e(TAG, "truncateHistory", e);
         }
     }
-
 
     /**
      * Builds the database.  This version has extra support for using the version field
