@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -74,9 +75,15 @@ import com.hippo.view.ViewTransition;
 import com.hippo.widget.LinkifyTextView;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.LayoutUtils;
+import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
+import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.ViewUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class GalleryCommentsScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
@@ -260,42 +267,119 @@ public final class GalleryCommentsScene extends ToolbarScene
         EhApplication.getEhClient(context).execute(request);
     }
 
-    private void showCommentDialog(final int position) {
+    private class InfoHolder extends RecyclerView.ViewHolder {
+
+        private final TextView key;
+        private final TextView value;
+
+        public InfoHolder(View itemView) {
+            super(itemView);
+            key = (TextView) ViewUtils.$$(itemView, R.id.key);
+            value = (TextView) ViewUtils.$$(itemView, R.id.value);
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    public void showVoteStatusDialog(Context context, String voteStatus) {
+        String[] temp = StringUtils.split(voteStatus, ',');
+        final int length = temp.length;
+        final String[] userArray = new String[length];
+        final String[] voteArray = new String[length];
+        for (int i = 0; i < length; i++) {
+            String str = StringUtils.trim(temp[i]);
+            int index = str.lastIndexOf(' ');
+            if (index < 0) {
+                Log.d(TAG, "Something wrong happened about vote state");
+                userArray[i] = str;
+                voteArray[i] = "";
+            } else {
+                userArray[i] = StringUtils.trim(str.substring(0, index));
+                voteArray[i] = StringUtils.trim(str.substring(index + 1));
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        context = builder.getContext();
+        final LayoutInflater inflater = LayoutInflater.from(context);
+        EasyRecyclerView rv = (EasyRecyclerView) inflater.inflate(R.layout.dialog_recycler_view, null);
+        rv.setAdapter(new RecyclerView.Adapter<InfoHolder>() {
+            @Override
+            public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new InfoHolder(inflater.inflate(R.layout.item_favorite_info_data, parent, false));
+            }
+
+            @Override
+            public void onBindViewHolder(InfoHolder holder, int position) {
+                holder.key.setText(userArray[position]);
+                holder.value.setText(voteArray[position]);
+            }
+
+            @Override
+            public int getItemCount() {
+                return length;
+            }
+        });
+        rv.setLayoutManager(new LinearLayoutManager(context));
+        LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
+                LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider),
+                LayoutUtils.dp2pix(context, 1));
+        decoration.setPadding(ResourcesUtils.getAttrDimensionPixelOffset(context, R.attr.dialogPreferredPadding));
+        rv.addItemDecoration(decoration);
+        rv.setSelector(RippleSalon.generateRippleDrawable(false));
+        rv.setClipToPadding(false);
+        builder.setView(rv).show();
+    }
+
+    private void showCommentDialog(int position) {
         final Context context = getContext2();
         if (null == context || null == mComments || position >= mComments.length || position < 0) {
             return;
         }
 
         final GalleryComment comment = mComments[position];
-        String[] menuArray;
+        List<String> menu = new ArrayList<>();
+        final IntList menuId = new IntList();
         Resources resources = context.getResources();
         if (0 == comment.id || mApiUid < 0) {
             // 0 id is uploader comment, can't vote
             // Not sign in, can't vote
-            menuArray = new String[1];
-            menuArray[0] = resources.getString(R.string.copy_comment_text);
+            menu.add(resources.getString(R.string.copy_comment_text));
+            menuId.add(R.id.copy);
         } else {
-            menuArray = new String[3];
-            menuArray[0] = resources.getString(R.string.copy_comment_text);
-            menuArray[1] = resources.getString(comment.voteUp ? R.string.cancel_vote_up : R.string.vote_up);
-            menuArray[2] = resources.getString(comment.voteDown ? R.string.cancel_vote_down : R.string.vote_down);
+            menu.add(resources.getString(R.string.copy_comment_text));
+            menuId.add(R.id.copy);
+            menu.add(resources.getString(comment.voteUp ? R.string.cancel_vote_up : R.string.vote_up));
+            menuId.add(R.id.vote_up);
+            menu.add(resources.getString(comment.voteDown ? R.string.cancel_vote_down : R.string.vote_down));
+            menuId.add(R.id.vote_down);
+        }
+        if (!TextUtils.isEmpty(comment.voteState)) {
+            menu.add(resources.getString(R.string.check_vote_status));
+            menuId.add(R.id.check_vote_status);
         }
 
         new AlertDialog.Builder(context)
-                .setItems(menuArray, new DialogInterface.OnClickListener() {
+                .setItems(menu.toArray(new String[menu.size()]), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0: // Copy
+                        if (which < 0 || which >= menuId.size()) {
+                           return;
+                        }
+                        int id = menuId.get(which);
+                        switch (id) {
+                            case R.id.copy:
                                 ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                                 cmb.setPrimaryClip(ClipData.newPlainText(null, comment.comment));
                                 showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
                                 break;
-                            case 1: // Vote up
+                            case R.id.vote_up:
                                 voteComment(comment.id, 1);
                                 break;
-                            case 2: // Vote down
+                            case R.id.vote_down:
                                 voteComment(comment.id, -1);
+                                break;
+                            case R.id.check_vote_status:
+                                showVoteStatusDialog(context, comment.voteState);
                                 break;
                         }
                     }

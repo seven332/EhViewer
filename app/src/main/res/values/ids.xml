@@ -22,4 +22,9 @@
 
     <item name="fragment_tag" type="id"/>
 
+    <item name="copy" type="id"/>
+    <item name="vote_up" type="id"/>
+    <item name="vote_down" type="id"/>
+    <item name="check_vote_status" type="id"/>
+
 </resources>

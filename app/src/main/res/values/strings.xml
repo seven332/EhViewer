@@ -291,6 +291,7 @@
     <string name="vote_down_successfully">Vote down successfully</string>
     <string name="cancel_vote_down_successfully">Cancel down-vote successfully</string>
     <string name="vote_failed">Vote failed</string>
+    <string name="check_vote_status">Check vote status</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">Gallery Previews</string>

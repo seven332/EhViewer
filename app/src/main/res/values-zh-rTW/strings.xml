@@ -248,6 +248,7 @@
     <string name="vote_down_successfully">已欽定為垃圾評論</string>
     <string name="cancel_vote_down_successfully">已不再欽定為垃圾評論</string>
     <string name="vote_failed">投票失敗</string>
+    <string name="check_vote_status">檢視投票情況</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">畫廊預覽</string>

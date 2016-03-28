@@ -358,6 +358,11 @@ public class GalleryDetailParser {
                     comment.voteDown = !TextUtils.isEmpty(StringUtils.trim(es.get(1).attr("style")));
                 }
             }
+            // Vote state
+            Element c7 = JsoupUtils.getElementByClass(element, "c7");
+            if (null != c7) {
+                comment.voteState = StringUtils.trim(c7.text());
+            }
             // Score
             Element c5 = JsoupUtils.getElementByClass(element, "c5");
             if (null != c5) {

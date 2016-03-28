@@ -476,7 +476,7 @@ public class FavoritesScene extends BaseScene implements
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         context = builder.getContext();
         final LayoutInflater inflater = LayoutInflater.from(context);
-        EasyRecyclerView rv = (EasyRecyclerView) inflater.inflate(R.layout.dialog_favorite_info, null);
+        EasyRecyclerView rv = (EasyRecyclerView) inflater.inflate(R.layout.dialog_recycler_view, null);
         rv.setAdapter(new InfoAdapter(inflater));
         rv.setLayoutManager(new LinearLayoutManager(context));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
