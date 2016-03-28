@@ -54,7 +54,7 @@ import java.util.regex.Pattern;
 public class GalleryDetailParser {
 
     private static final Pattern PATTERN_ERROR = Pattern.compile("<div class=\"d\">\n<p>([^<]+)</p>");
-    private static final Pattern PATTERN_DETAIL = Pattern.compile("var gid = (\\d+).+?var token = \"([a-f0-9]+)\"", Pattern.DOTALL);
+    private static final Pattern PATTERN_DETAIL = Pattern.compile("var gid = (\\d+);.+?var token = \"([a-f0-9]+)\";.+?var apiuid = ([\\-\\d]+);.+?var apikey = \"([a-f0-9]+)\";", Pattern.DOTALL);
     private static final Pattern PATTERN_TORRENT = Pattern.compile("<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>");
     private static final Pattern PATTERN_TAG_GROUP = Pattern.compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
     private static final Pattern PATTERN_TAG = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
@@ -109,6 +109,8 @@ public class GalleryDetailParser {
         if (matcher.find()) {
             gd.gid = Long.parseLong(matcher.group(1));
             gd.token = matcher.group(2);
+            gd.apiUid = NumberUtils.parseLongSafely(matcher.group(3), -1L);
+            gd.apiKey = matcher.group(4);
         } else {
             throw new ParseException("Can't parse gallery detail", body);
         }

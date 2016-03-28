@@ -1127,6 +1127,10 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             if (mGalleryDetail == null) {
                 return;
             }
+            if (mGalleryDetail.apiUid < 0) {
+                showTip(R.string.sign_in_first, LENGTH_SHORT);
+                return;
+            }
             RateDialogHelper helper = new RateDialogHelper();
             Dialog dialog = new AlertDialog.Builder(context)
                     .setTitle(R.string.rate)
@@ -1142,6 +1146,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 return;
             }
             Bundle args = new Bundle();
+            args.putLong(GalleryCommentsScene.KEY_API_UID, mGalleryDetail.apiUid);
+            args.putString(GalleryCommentsScene.KEY_API_KEY, mGalleryDetail.apiKey);
             args.putLong(GalleryCommentsScene.KEY_GID, mGalleryDetail.gid);
             args.putString(GalleryCommentsScene.KEY_TOKEN, mGalleryDetail.token);
             args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments);
@@ -1689,7 +1695,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
             EhRequest request = new EhRequest()
                     .setMethod(EhClient.METHOD_GET_RATE_GALLERY)
-                    .setArgs(mGalleryDetail.gid, mGalleryDetail.token, mRatingBar.getRating())
+                    .setArgs(mGalleryDetail.apiUid, mGalleryDetail.apiKey,
+                            mGalleryDetail.gid, mGalleryDetail.token, mRatingBar.getRating())
                     .setCallback(new RateGalleryListener(context,
                             activity.getStageId(), getTag(), mGalleryDetail.gid));
             EhApplication.getEhClient(context).execute(request);

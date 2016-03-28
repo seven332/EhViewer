@@ -36,6 +36,7 @@
     <string name="display_name_dialog_title">输入昵称</string>
     <string name="display_name">昵称</string>
     <string name="display_name_is_empty">昵称为空</string>
+    <string name="sign_in_first">请先登录</string>
 
     <string name="default_display_name">Little Hippo</string>
 

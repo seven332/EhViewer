@@ -77,9 +77,6 @@ public class EhEngine {
     private static final String SAD_PANDA_TYPE = "image/gif";
     private static final String SAD_PANDA_LENGTH = "9615";
 
-    public static final long APIUID = 1363542;
-    public static final String APIKEY = "f4b5407ab1727b9d08d7";
-
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static EhFilter sEhFilter;
@@ -336,11 +333,12 @@ public class EhEngine {
     }
 
     public static RateGalleryParser.Result rateGallery(EhClient.Task task,
-            OkHttpClient okHttpClient, long gid, String token, float rating) throws Exception {
+            OkHttpClient okHttpClient, long apiUid, String apiKey, long gid,
+            String token, float rating) throws Exception {
         final JSONObject json = new JSONObject();
         json.put("method", "rategallery");
-        json.put("apiuid", APIUID);
-        json.put("apikey", APIKEY);
+        json.put("apiuid", apiUid);
+        json.put("apikey", apiKey);
         json.put("gid", gid);
         json.put("token", token);
         json.put("rating", (int) Math.ceil(rating * 2));
@@ -675,11 +673,11 @@ public class EhEngine {
     }
 
     public static VoteCommentParser.Result voteComment(EhClient.Task task, OkHttpClient okHttpClient,
-            long gid, String token, long commentId, int commentVote) throws Exception {
+            long apiUid, String apiKey, long gid, String token, long commentId, int commentVote) throws Exception {
         final JSONObject json = new JSONObject();
         json.put("method", "votecomment");
-        json.put("apiuid", APIUID);
-        json.put("apikey", APIKEY);
+        json.put("apiuid", apiUid);
+        json.put("apikey", apiKey);
         json.put("gid", gid);
         json.put("token", token);
         json.put("comment_id", commentId);

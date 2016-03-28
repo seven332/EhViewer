@@ -36,6 +36,7 @@
     <string name="display_name_dialog_title">輸入暱稱</string>
     <string name="display_name">暱稱</string>
     <string name="display_name_is_empty">暱稱為空</string>
+    <string name="sign_in_first">請先登錄</string>
 
     <string name="default_display_name">Little Hippo</string>
 

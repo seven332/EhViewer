@@ -159,7 +159,7 @@ public class EhClient {
                     case METHOD_GET_PREVIEW_SET:
                         return EhEngine.getPreviewSet(this, mOkHttpClient, (String) params[0]);
                     case METHOD_GET_RATE_GALLERY:
-                        return EhEngine.rateGallery(this, mOkHttpClient, (Long) params[0], (String) params[1], (Float) params[2]);
+                        return EhEngine.rateGallery(this, mOkHttpClient, (Long) params[0], (String) params[1], (Long) params[2], (String) params[3], (Float) params[4]);
                     case METHOD_GET_COMMENT_GALLERY:
                         return EhEngine.commentGallery(this, mOkHttpClient, (String) params[0], (String) params[1]);
                     case METHOD_GET_GALLERY_TOKEN:
@@ -179,7 +179,7 @@ public class EhClient {
                     case METHOD_GET_PROFILE:
                         return EhEngine.getProfile(this, mOkHttpClient);
                     case METHOD_VOTE_COMMENT:
-                        return EhEngine.voteComment(this, mOkHttpClient, (Long) params[0], (String) params[1], (Long) params[2], (Integer) params[3]);
+                        return EhEngine.voteComment(this, mOkHttpClient, (Long) params[0], (String) params[1], (Long) params[2], (String) params[3], (Long) params[4], (Integer) params[5]);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

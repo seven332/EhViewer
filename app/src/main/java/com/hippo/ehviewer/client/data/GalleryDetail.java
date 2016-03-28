@@ -23,6 +23,8 @@ import java.util.Arrays;
 
 public class GalleryDetail extends GalleryInfo {
 
+    public long apiUid = -1L;
+    public String apiKey;
     public int torrentCount;
     public String torrentUrl;
     public String parent;

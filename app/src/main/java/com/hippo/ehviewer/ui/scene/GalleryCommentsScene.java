@@ -84,10 +84,14 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     public static final String TAG = GalleryCommentsScene.class.getSimpleName();
 
+    public static final String KEY_API_UID = "api_uid";
+    public static final String KEY_API_KEY = "api_key";
     public static final String KEY_GID = "gid";
     public static final String KEY_TOKEN = "token";
     public static final String KEY_COMMENTS = "comments";
 
+    private long mApiUid;
+    private String mApiKey;
     private long mGid;
     private String mToken;
     @Nullable
@@ -126,7 +130,9 @@ public final class GalleryCommentsScene extends ToolbarScene
             return;
         }
 
-        mGid = args.getLong(KEY_GID, -1);
+        mApiUid = args.getLong(KEY_API_UID, -1L);
+        mApiKey = args.getString(KEY_API_KEY);
+        mGid = args.getLong(KEY_GID, -1L);
         mToken = args.getString(KEY_TOKEN, null);
         Parcelable[] parcelables = args.getParcelableArray(KEY_COMMENTS);
         if (parcelables instanceof GalleryComment[]) {
@@ -139,7 +145,9 @@ public final class GalleryCommentsScene extends ToolbarScene
     }
 
     private void onRestore(@NonNull Bundle savedInstanceState) {
-        mGid = savedInstanceState.getLong(KEY_GID, -1);
+        mApiUid = savedInstanceState.getLong(KEY_API_UID, -1L);
+        mApiKey = savedInstanceState.getString(KEY_API_KEY);
+        mGid = savedInstanceState.getLong(KEY_GID, -1L);
         mToken = savedInstanceState.getString(KEY_TOKEN, null);
         Parcelable[] parcelables = savedInstanceState.getParcelableArray(KEY_COMMENTS);
         if (parcelables instanceof GalleryComment[]) {
@@ -150,6 +158,8 @@ public final class GalleryCommentsScene extends ToolbarScene
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putLong(KEY_API_UID, mApiUid);
+        outState.putString(KEY_API_KEY, mApiKey);
         outState.putLong(KEY_GID, mGid);
         outState.putString(KEY_TOKEN, mToken);
         outState.putParcelableArray(KEY_COMMENTS, mComments);
@@ -244,7 +254,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         EhRequest request = new EhRequest()
                 .setMethod(EhClient.METHOD_VOTE_COMMENT)
-                .setArgs(mGid, mToken, id, vote)
+                .setArgs(mApiUid, mApiKey, mGid, mToken, id, vote)
                 .setCallback(new VoteCommentListener(context,
                         activity.getStageId(), getTag()));
         EhApplication.getEhClient(context).execute(request);
@@ -259,8 +269,9 @@ public final class GalleryCommentsScene extends ToolbarScene
         final GalleryComment comment = mComments[position];
         String[] menuArray;
         Resources resources = context.getResources();
-        if (0 == comment.id) {
+        if (0 == comment.id || mApiUid < 0) {
             // 0 id is uploader comment, can't vote
+            // Not sign in, can't vote
             menuArray = new String[1];
             menuArray[0] = resources.getString(R.string.copy_comment_text);
         } else {
@@ -586,8 +597,10 @@ public final class GalleryCommentsScene extends ToolbarScene
         comment.score = result.score;
         if (result.expectVote > 0) {
             comment.voteUp = 0 != result.vote;
+            comment.voteDown = false;
         } else {
             comment.voteDown = 0 != result.vote;
+            comment.voteUp = false;
         }
 
         mAdapter.notifyItemChanged(position);

@@ -52,6 +52,7 @@
     <string name="display_name_dialog_title">Enter Display Name</string>
     <string name="display_name">Display name</string>
     <string name="display_name_is_empty">Display name is empty</string>
+    <string name="sign_in_first">Please sign in first</string>
 
     <string name="default_display_name">Little Hippo</string>
 
