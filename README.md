@@ -72,3 +72,5 @@ Here is the libraries
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+ic_launcher 图标为 Hippo Seven 所有，所有权利保留
