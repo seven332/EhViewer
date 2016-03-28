@@ -53,6 +53,8 @@ typedef struct
   int buffer_index;
   void* backup;
   bool partially;
+  // Use extra buffer to avoid blink
+  void* shown_buffer;
   PatchHeadInputStream* patch_head_input_stream;
 } GIF;
 

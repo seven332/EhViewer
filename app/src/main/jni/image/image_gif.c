@@ -117,6 +117,7 @@ void* GIF_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
   GIF* gif = NULL;
   GifFileType* gif_file = NULL;
   void* buffer = NULL;
+  void*shown_buffer = NULL;
   GIF_FRAME_INFO* frame_info_array = NULL;
   int i;
 
@@ -140,8 +141,11 @@ void* GIF_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
 
   // Buffer
   buffer = malloc(gif_file->SWidth * gif_file->SHeight * sizeof(RGBA));
-  if (buffer == NULL) {
+  shown_buffer = malloc(gif_file->SWidth * gif_file->SHeight * sizeof(RGBA));
+  if (buffer == NULL || shown_buffer == NULL) {
     WTF_OM;
+    free(buffer);
+    free(shown_buffer);
     DGifCloseFile(gif_file, &error_code);
     free(gif);
     close_patch_head_input_stream(get_env(), patch_head_input_stream);
@@ -226,6 +230,7 @@ void* GIF_decode(JNIEnv* env, PatchHeadInputStream* patch_head_input_stream, boo
   gif->buffer = buffer;
   gif->buffer_index = -1;
   gif->backup = NULL;
+  gif->shown_buffer = shown_buffer;
 
   GIF_advance(gif);
 
@@ -293,7 +298,7 @@ void GIF_render(GIF* gif, int src_x, int src_y,
     void* dst, int dst_w, int dst_h, int dst_x, int dst_y,
     int width, int height, bool fill_blank, int default_color)
 {
-  copy_pixels(gif->buffer, gif->gif_file->SWidth, gif->gif_file->SHeight, src_x, src_y,
+  copy_pixels(gif->shown_buffer, gif->gif_file->SWidth, gif->gif_file->SHeight, src_x, src_y,
       dst, dst_w, dst_h, dst_x, dst_y,
       width, height, fill_blank, default_color);
 }
@@ -454,6 +459,9 @@ void GIF_advance(GIF* gif)
 
   blend(gif->gif_file, index, gif->buffer, frame_info.tran);
 
+  // Copy to shown buffer
+  memcpy(gif->shown_buffer, gif->buffer, (size_t) (gif->gif_file->SWidth * gif->gif_file->SHeight * 4));
+
   gif->buffer_index = index;
 }
 
@@ -489,6 +497,9 @@ void GIF_recycle(GIF* gif)
 
   free(gif->backup);
   gif->backup = NULL;
+
+  free(gif->shown_buffer);
+  gif->shown_buffer = NULL;
 
   if (gif->patch_head_input_stream != NULL) {
     close_patch_head_input_stream(get_env(), gif->patch_head_input_stream);
