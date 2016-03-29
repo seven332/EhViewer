@@ -49,6 +49,7 @@ import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.PriorityThreadFactory;
@@ -71,7 +72,9 @@ import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.Call;
@@ -84,7 +87,7 @@ public class SpiderQueen implements Runnable {
 
     private static final String TAG = SpiderQueen.class.getSimpleName();
     private static final AtomicInteger sIdGenerator = new AtomicInteger();
-    private static final boolean DEBUG_LOG = false;
+    private static final boolean DEBUG_LOG = true;
 
     @IntDef({MODE_READ, MODE_DOWNLOAD})
     @Retention(RetentionPolicy.SOURCE)
@@ -129,16 +132,15 @@ public class SpiderQueen implements Runnable {
     @Nullable
     private volatile Thread mQueenThread;
     private final Object mQueenLock = new Object();
-    private final ThreadFactory mThreadFactory = new PriorityThreadFactory(
-            SpiderWorker.class.getSimpleName(), Process.THREAD_PRIORITY_BACKGROUND);
 
     @Nullable
     private Thread mDecoderThread;
     private final Stack<Integer> mDecodeRequestStack = new Stack<>();
     private final AtomicInteger mDecodingIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
 
-    private volatile Thread[] mWorkers;
     private final Object mWorkerLock = new Object();
+    private ThreadPoolExecutor mWorkerPoolExecutor;
+    private int mWorkerCount;
 
     private final Object mPTokenLock = new Object();
     private volatile SpiderInfo mSpiderInfo;
@@ -166,7 +168,7 @@ public class SpiderQueen implements Runnable {
 
     private final List<OnSpiderListener> mSpiderListeners = new ArrayList<>();
 
-    private final int mSpiderWorkerNumber;
+    private final int mWorkerMaxCount;
     private final int mPreloadNumber;
 
     private SpiderQueen(EhApplication application, @NonNull GalleryInfo galleryInfo) {
@@ -175,8 +177,12 @@ public class SpiderQueen implements Runnable {
         mGalleryInfo = galleryInfo;
         mSpiderDen = new SpiderDen(mGalleryInfo);
 
-        mSpiderWorkerNumber = Settings.getMultiThreadDownload();
-        mPreloadNumber = Settings.getPreloadImage();
+        mWorkerMaxCount = MathUtils.clamp(Settings.getMultiThreadDownload(), 1, 10);
+        mPreloadNumber = MathUtils.clamp(Settings.getPreloadImage(), 0, 100);
+
+        mWorkerPoolExecutor = new ThreadPoolExecutor(mWorkerMaxCount, mWorkerMaxCount,
+                0, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),
+                new PriorityThreadFactory(SpiderWorker.class.getSimpleName(), Process.THREAD_PRIORITY_BACKGROUND));
     }
 
     public void addOnSpiderListener(OnSpiderListener listener) {
@@ -541,17 +547,13 @@ public class SpiderQueen implements Runnable {
 
     private void ensureWorkers() {
         synchronized (mWorkerLock) {
-            if (mWorkers == null) {
-                mWorkers = new Thread[mSpiderWorkerNumber];
+            if (null == mWorkerPoolExecutor) {
+                Log.e(TAG, "Try to start worker after stopped");
+                return;
             }
 
-            for (int i = 0, n = mWorkers.length; i < n; i++) {
-                if (mWorkers[i] == null) {
-                    SpiderWorker worker = new SpiderWorker(i);
-                    Thread thread = mThreadFactory.newThread(worker);
-                    mWorkers[i] = thread;
-                    thread.start();
-                }
+            for (; mWorkerCount < mWorkerMaxCount; mWorkerCount++) {
+                mWorkerPoolExecutor.execute(new SpiderWorker());
             }
         }
     }
@@ -887,18 +889,9 @@ public class SpiderQueen implements Runnable {
 
         // Interrupt all workers
         synchronized (mWorkerLock) {
-            if (mWorkers != null) {
-                for (int i = 0, n = mWorkers.length; i < n; i++) {
-                    Thread thread = mWorkers[i];
-                    if (thread != null) {
-                        thread.interrupt();
-                        mWorkers[i] = null;
-                    }
-                }
-                mWorkers = null;
-            }
+            mWorkerPoolExecutor.shutdownNow();
+            mWorkerPoolExecutor = null;
         }
-
         notifyFinish();
 
         if (DEBUG_LOG) {
@@ -908,11 +901,9 @@ public class SpiderQueen implements Runnable {
 
     private class SpiderWorker implements Runnable {
 
-        private final int mWorkerIndex;
         private final long mGid;
 
-        public SpiderWorker(int workerIndex) {
-            mWorkerIndex = workerIndex;
+        public SpiderWorker() {
             mGid = mGalleryInfo.gid;
         }
 
@@ -1242,25 +1233,15 @@ public class SpiderQueen implements Runnable {
 
             while (!Thread.currentThread().isInterrupted() && runInternal());
 
-
-            boolean finish = true;
+            boolean finish;
             // Clear in spider worker array
             synchronized (mWorkerLock) {
-                if (mWorkers != null && mWorkerIndex < mWorkers.length &&
-                        mWorkers[mWorkerIndex] == Thread.currentThread()) {
-                    mWorkers[mWorkerIndex] = null;
+                mWorkerCount--;
+                if (mWorkerCount < 0) {
+                    Log.e(TAG, "WTF, mWorkerCount < 0, not thread safe or something wrong");
+                    mWorkerCount = 0;
                 }
-                if (mWorkers != null) {
-                    for (Thread mWorker : mWorkers) {
-                        if (null != mWorker) {
-                            finish = false;
-                            break;
-                        }
-                    }
-                }
-                if (finish) {
-                    mWorkers = null;
-                }
+                finish = mWorkerCount <= 0;
             }
 
             if (finish) {
