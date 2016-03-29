@@ -920,7 +920,7 @@ public final class GalleryListScene extends BaseScene
             fab.setScaleY(0.0f);
             mSearchFab.setVisibility(View.VISIBLE);
             mSearchFab.setScaleX(1.0f);
-            mSearchFab.setScaleX(1.0f);
+            mSearchFab.setScaleY(1.0f);
         }
     }
 
@@ -955,7 +955,7 @@ public final class GalleryListScene extends BaseScene
             fab.setScaleY(1.0f);
             mSearchFab.setVisibility(View.INVISIBLE);
             mSearchFab.setScaleX(0.0f);
-            mSearchFab.setScaleX(0.0f);
+            mSearchFab.setScaleY(0.0f);
         }
     }
 
