@@ -83,11 +83,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+// TODO mWorkerPoolExecutor looks like a useless stuff, just use thread, wait when no request, interrupt when close
 public class SpiderQueen implements Runnable {
 
     private static final String TAG = SpiderQueen.class.getSimpleName();
     private static final AtomicInteger sIdGenerator = new AtomicInteger();
-    private static final boolean DEBUG_LOG = true;
+    private static final boolean DEBUG_LOG = false;
 
     @IntDef({MODE_READ, MODE_DOWNLOAD})
     @Retention(RetentionPolicy.SOURCE)
