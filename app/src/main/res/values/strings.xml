@@ -416,7 +416,11 @@
     <string name="settings_eh_filter_summary">Filter by title, uploader, tag and tag namespace</string>
 
     <string name="settings_read">Read</string>
-    <string name="settings_read_reading_direction_title">Reading direction</string>
+    <string name="settings_read_screen_rotation">Screen orientation</string>
+    <string name="settings_read_screen_rotation_default">Default</string>
+    <string name="settings_read_screen_rotation_portrait">Portrait</string>
+    <string name="settings_read_screen_rotation_landscape">Landscape</string>
+    <string name="settings_read_reading_direction">Reading direction</string>
     <string name="settings_read_reading_direction_left_to_right">Left to right</string>
     <string name="settings_read_reading_direction_right_to_Left">Right to left</string>
     <string name="settings_read_reading_direction_top_to_bottom">Top to bottom</string>

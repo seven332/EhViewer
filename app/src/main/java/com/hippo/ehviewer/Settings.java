@@ -368,6 +368,17 @@ public class Settings {
     /********************
      ****** Read
      ********************/
+    private static final String KEY_SCREEN_ROTATION = "screen_rotation";
+    private static final int DEFAULT_SCREEN_ROTATION = 0;
+
+    public static int getScreenRotation() {
+        return getIntFromStr(KEY_SCREEN_ROTATION, DEFAULT_SCREEN_ROTATION);
+    }
+
+    public static void putScreenRotation(int value) {
+        putIntToStr(KEY_SCREEN_ROTATION, value);
+    }
+
     private static final String KEY_READING_DIRECTION = "reading_direction";
     private static final int DEFAULT_READING_DIRECTION = GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT;
 

@@ -374,7 +374,11 @@
     <string name="settings_eh_filter_summary">過濾標題，上傳者，標籤和標籤組</string>
 
     <string name="settings_read">閲讀</string>
-    <string name="settings_read_reading_direction_title">閲讀方向</string>
+    <string name="settings_read_screen_rotation">屏幕方向</string>
+    <string name="settings_read_screen_rotation_default">系統默認</string>
+    <string name="settings_read_screen_rotation_portrait">豎屏</string>
+    <string name="settings_read_screen_rotation_landscape">橫屏</string>
+    <string name="settings_read_reading_direction">閲讀方向</string>
     <string name="settings_read_reading_direction_left_to_right">從左至右</string>
     <string name="settings_read_reading_direction_right_to_Left">從右至左</string>
     <string name="settings_read_reading_direction_top_to_bottom">從上至下</string>

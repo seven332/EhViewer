@@ -23,6 +23,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -282,6 +283,22 @@ public class GalleryActivity extends EhActivity
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+
+        // Orientation
+        int orientation;
+        switch (Settings.getScreenRotation()) {
+            default:
+            case 0:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+                break;
+            case 1:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
+                break;
+            case 2:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+                break;
+        }
+        setRequestedOrientation(orientation);
 
         if (Settings.getGuideGallery()) {
             FrameLayout mainLayout = (FrameLayout) ViewUtils.$$(this, R.id.main);
@@ -653,6 +670,7 @@ public class GalleryActivity extends EhActivity
     private class GalleryMenuHelper implements DialogInterface.OnClickListener {
 
         private final View mView;
+        private final Spinner mScreenRotation;
         private final Spinner mReadingDirection;
         private final Spinner mScaleMode;
         private final Spinner mStartPosition;
@@ -664,6 +682,7 @@ public class GalleryActivity extends EhActivity
         @SuppressLint("InflateParams")
         public GalleryMenuHelper(Context context) {
             mView = LayoutInflater.from(context).inflate(R.layout.dialog_gallery_menu, null);
+            mScreenRotation = (Spinner) mView.findViewById(R.id.screen_rotation);
             mReadingDirection = (Spinner) mView.findViewById(R.id.reading_direction);
             mScaleMode = (Spinner) mView.findViewById(R.id.page_scaling);
             mStartPosition = (Spinner) mView.findViewById(R.id.start_position);
@@ -672,6 +691,7 @@ public class GalleryActivity extends EhActivity
             mShowBattery = (SwitchCompat) mView.findViewById(R.id.show_battery);
             mVolumePage = (SwitchCompat) mView.findViewById(R.id.volume_page);
 
+            mScreenRotation.setSelection(Settings.getScreenRotation());
             mReadingDirection.setSelection(Settings.getReadingDirection());
             mScaleMode.setSelection(Settings.getPageScaling());
             mStartPosition.setSelection(Settings.getStartPosition());
@@ -687,6 +707,7 @@ public class GalleryActivity extends EhActivity
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
+            int screenRotation = mScreenRotation.getSelectedItemPosition();
             int layoutMode = GalleryView.sanitizeLayoutMode(mReadingDirection.getSelectedItemPosition());
             int scaleMode = ImageView.sanitizeScaleMode(mScaleMode.getSelectedItemPosition());
             int startPosition = ImageView.sanitizeStartPosition(mStartPosition.getSelectedItemPosition());
@@ -695,6 +716,7 @@ public class GalleryActivity extends EhActivity
             boolean showBattery = mShowBattery.isChecked();
             boolean volumePage = mVolumePage.isChecked();
 
+            Settings.putScreenRotation(screenRotation);
             Settings.putReadingDirection(layoutMode);
             Settings.putPageScaling(scaleMode);
             Settings.putStartPosition(startPosition);
@@ -703,6 +725,20 @@ public class GalleryActivity extends EhActivity
             Settings.putShowBattery(showBattery);
             Settings.putVolumePage(volumePage);
 
+            int orientation;
+            switch (screenRotation) {
+                default:
+                case 0:
+                    orientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+                    break;
+                case 1:
+                    orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
+                    break;
+                case 2:
+                    orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+                    break;
+            }
+            setRequestedOrientation(orientation);
             if (mGalleryView != null) {
                 mGalleryView.setLayoutMode(layoutMode);
                 mGalleryView.setScaleMode(scaleMode);

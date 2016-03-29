@@ -40,7 +40,30 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settings_read_reading_direction_title"
+                android:text="@string/settings_read_screen_rotation"
+                android:textColor="@color/primary_text_dark"/>
+
+            <com.hippo.widget.CuteSpinner
+                android:id="@+id/screen_rotation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_gravity="center_vertical"
+                android:entries="@array/screen_rotation_entries"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:text="@string/settings_read_reading_direction"
                 android:textColor="@color/primary_text_dark"/>
 
             <com.hippo.widget.CuteSpinner

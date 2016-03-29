@@ -20,8 +20,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.hippo.preference.ListPreference
+        android:key="screen_rotation"
+        android:title="@string/settings_read_screen_rotation"
+        android:summary="%s"
+        app:entries="@array/screen_rotation_entries"
+        app:entryValues="@array/screen_rotation_entry_values"
+        android:defaultValue="0"/>
+
+    <com.hippo.preference.ListPreference
         android:key="reading_direction"
-        android:title="@string/settings_read_reading_direction_title"
+        android:title="@string/settings_read_reading_direction"
         android:summary="%s"
         app:entries="@array/reading_direction_entries"
         app:entryValues="@array/reading_direction_entry_values"
