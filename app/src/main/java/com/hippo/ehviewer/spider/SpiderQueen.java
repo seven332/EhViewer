@@ -690,7 +690,9 @@ public class SpiderQueen implements Runnable {
         for (int i = 0, n = previewSet.size(); i < n; i++) {
             GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
             if (result != null) {
-                spiderInfo.pTokenMap.put(result.page, result.pToken);
+                synchronized (mPTokenLock) {
+                    spiderInfo.pTokenMap.put(result.page, result.pToken);
+                }
             }
         }
     }
@@ -735,7 +737,11 @@ public class SpiderQueen implements Runnable {
             // Save to local
             writeSpiderInfoToLocal(mSpiderInfo);
 
-            return mSpiderInfo.pTokenMap.get(index);
+            String pToken;
+            synchronized (mPTokenLock) {
+                pToken = mSpiderInfo.pTokenMap.get(index);
+            }
+            return pToken;
         } catch (Exception e) {
             return null;
         }
