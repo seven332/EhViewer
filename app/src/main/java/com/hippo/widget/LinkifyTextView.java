@@ -72,13 +72,15 @@ public class LinkifyTextView extends TextView {
                 y += getScrollY();
 
                 Layout layout = getLayout();
-                int line = layout.getLineForVertical(y);
-                int off = layout.getOffsetForHorizontal(line, x);
+                if (null != layout) {
+                    int line = layout.getLineForVertical(y);
+                    int off = layout.getOffsetForHorizontal(line, x);
 
-                ClickableSpan[] spans = ((Spanned)getText()).getSpans(off, off, ClickableSpan.class);
+                    ClickableSpan[] spans = ((Spanned)getText()).getSpans(off, off, ClickableSpan.class);
 
-                if (spans.length > 0) {
-                    mCurrentSpan = spans[0];
+                    if (spans.length > 0) {
+                        mCurrentSpan = spans[0];
+                    }
                 }
             }
         }
