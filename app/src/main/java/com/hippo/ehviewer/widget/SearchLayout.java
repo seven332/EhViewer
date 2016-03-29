@@ -16,8 +16,10 @@
 
 package com.hippo.ehviewer.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
@@ -39,6 +41,7 @@ import android.widget.TextView;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
+import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.rippleold.RippleSalon;
 import com.hippo.widget.RadioGridGroup;
 import com.hippo.yorozuya.ViewUtils;
@@ -47,9 +50,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnCheckedChangeListener,
-        View.OnClickListener {
+        View.OnClickListener, ImageSearchLayout.Helper {
 
-    @IntDef({SEARCH_MODE_NORMAL, SEARCH_MODE_IMAGE, SEARCH_MODE_SPECIFY})
+    @IntDef({SEARCH_MODE_NORMAL, SEARCH_MODE_IMAGE})
     @Retention(RetentionPolicy.SOURCE)
     private @interface SearchMode {}
 
@@ -59,22 +62,19 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
 
     public static final int SEARCH_MODE_NORMAL = 0;
     public static final int SEARCH_MODE_IMAGE = 1;
-    public static final int SEARCH_MODE_SPECIFY = 2;
 
     private static final int ITEM_TYPE_NORMAL = 0;
     private static final int ITEM_TYPE_NORMAL_ADVANCE = 1;
     private static final int ITEM_TYPE_IMAGE = 2;
-    private static final int ITEM_TYPE_SPECIFY = 3;
-    private static final int ITEM_TYPE_ACTION = 4;
+    private static final int ITEM_TYPE_ACTION = 3;
 
     private static final int[] SEARCH_ITEM_COUNT_ARRAY = {
-            3, 2, 2
+            3, 2
     };
 
     private static final int[][] SEARCH_ITEM_TYPE = {
             {ITEM_TYPE_NORMAL, ITEM_TYPE_NORMAL_ADVANCE, ITEM_TYPE_ACTION}, // SEARCH_MODE_NORMAL
             {ITEM_TYPE_IMAGE, ITEM_TYPE_ACTION}, // SEARCH_MODE_IMAGE
-            {ITEM_TYPE_SPECIFY, ITEM_TYPE_ACTION} // SEARCH_MODE_SPECIFY
     };
 
     private LayoutInflater mInflater;
@@ -86,13 +86,15 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
     private CategoryTable mCategoryTable;
     private RadioGridGroup mNormalSearchMode;
     private ImageView mNormalSearchModeHelp;
-    private View mSearchTagHelp;
     private SwitchCompat mEnableAdvanceSwitch;
 
     private View mAdvanceView;
     private AdvanceSearchTable mTableAdvanceSearch;
 
+    private ImageSearchLayout mImageView;
+
     private View mActionView;
+    private TextView mAction;
 
     private LinearLayoutManager mLayoutManager;
     private SearchAdapter mAdapter;
@@ -109,26 +111,23 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         init(context);
     }
 
+    @SuppressLint("InflateParams")
     private void init(Context context) {
         Resources resources = context.getResources();
         mInflater = LayoutInflater.from(context);
 
         mLayoutManager = new LinearLayoutManager(context);
         mAdapter = new SearchAdapter();
-        //mAnimator = new SearchItemAnimator(this);
         setLayoutManager(mLayoutManager);
         setAdapter(mAdapter);
         setHasFixedSize(true);
         setClipToPadding(false);
-        //setItemAnimator(mAnimator);
         int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
         int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
         setPadding(paddingV, paddingH, paddingV, paddingH);
 
-        FrameLayout frameLayout = new FrameLayout(context);
-
         // Create normal view
-        View normalView = mInflater.inflate(R.layout.search_normal, frameLayout, false);
+        View normalView = mInflater.inflate(R.layout.search_normal, null);
         mNormalView = normalView;
         mCategoryTable = (CategoryTable) normalView.findViewById(R.id.search_category_table);
         mNormalSearchMode = (RadioGridGroup) normalView.findViewById(R.id.normal_search_mode);
@@ -140,11 +139,17 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         mEnableAdvanceSwitch.setSwitchPadding(resources.getDimensionPixelSize(R.dimen.switch_padding));
 
         // Create advance view
-        mAdvanceView = mInflater.inflate(R.layout.search_advance, frameLayout, false);
+        mAdvanceView = mInflater.inflate(R.layout.search_advance, null);
         mTableAdvanceSearch = (AdvanceSearchTable) mAdvanceView.findViewById(R.id.search_advance_search_table);
 
+        // Create image view
+        mImageView = (ImageSearchLayout) mInflater.inflate(R.layout.search_image, null);
+        mImageView.setHelper(this);
+
         // Create action view
-        mActionView = new View(context);// TODO mInflater.inflate(R.layout.search_action, frameLayout, false);
+        mActionView = mInflater.inflate(R.layout.search_action, null);
+        mAction = (TextView) mActionView.findViewById(R.id.action);
+        mAction.setOnClickListener(this);
     }
 
     public void setHelper(Helper helper) {
@@ -155,12 +160,24 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         mLayoutManager.scrollToPositionWithOffset(0, 0);
     }
 
+    public void setImageUri(Uri imageUri) {
+        mImageView.setImageUri(imageUri);
+    }
+
+    @Override
+    public void onSelectImage() {
+        if (mHelper != null) {
+            mHelper.onSelectImage();
+        }
+    }
+
     @Override
     protected void dispatchSaveInstanceState(@NonNull SparseArray<Parcelable> container) {
         super.dispatchSaveInstanceState(container);
 
         mNormalView.saveHierarchyState(container);
         mAdvanceView.saveHierarchyState(container);
+        mImageView.saveHierarchyState(container);
         mActionView.saveHierarchyState(container);
     }
 
@@ -170,6 +187,7 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
 
         mNormalView.restoreHierarchyState(container);
         mAdvanceView.restoreHierarchyState(container);
+        mImageView.restoreHierarchyState(container);
         mActionView.restoreHierarchyState(container);
     }
 
@@ -214,29 +232,35 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         return R.id.search_specify_gallery == mNormalSearchMode.getCheckedRadioButtonId();
     }
 
-    // TODO image search
-    public void formatListUrlBuilder(ListUrlBuilder urlBuilder, String query) {
+    public void formatListUrlBuilder(ListUrlBuilder urlBuilder, String query) throws EhException {
         urlBuilder.reset();
 
-        int nsMode = mNormalSearchMode.getCheckedRadioButtonId();
-        switch (nsMode) {
-            default:
-            case R.id.search_normal_search:
-                urlBuilder.setMode(ListUrlBuilder.MODE_NORMAL);
+        switch (mSearchMode) {
+            case SEARCH_MODE_NORMAL:
+                int nsMode = mNormalSearchMode.getCheckedRadioButtonId();
+                switch (nsMode) {
+                    default:
+                    case R.id.search_normal_search:
+                        urlBuilder.setMode(ListUrlBuilder.MODE_NORMAL);
+                        break;
+                    case R.id.search_specify_uploader:
+                        urlBuilder.setMode(ListUrlBuilder.MODE_UPLOADER);
+                        break;
+                    case R.id.search_specify_tag:
+                        urlBuilder.setMode(ListUrlBuilder.MODE_TAG);
+                        break;
+                }
+                urlBuilder.setKeyword(query);
+                urlBuilder.setCategory(mCategoryTable.getCategory());
+                if (mEnableAdvance) {
+                    urlBuilder.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
+                    urlBuilder.setMinRating(mTableAdvanceSearch.getMinRating());
+                }
                 break;
-            case R.id.search_specify_uploader:
-                urlBuilder.setMode(ListUrlBuilder.MODE_UPLOADER);
+            case SEARCH_MODE_IMAGE:
+                urlBuilder.setMode(ListUrlBuilder.MODE_IMAGE_SEARCH);
+                mImageView.formatListUrlBuilder(urlBuilder);
                 break;
-            case R.id.search_specify_tag:
-                urlBuilder.setMode(ListUrlBuilder.MODE_TAG);
-                break;
-        }
-
-        urlBuilder.setKeyword(query);
-        urlBuilder.setCategory(mCategoryTable.getCategory());
-        if (mEnableAdvance) {
-            urlBuilder.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
-            urlBuilder.setMinRating(mTableAdvanceSearch.getMinRating());
         }
     }
 
@@ -263,7 +287,7 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         int oldItemCount = mAdapter.getItemCount();
 
         mSearchMode++;
-        if (mSearchMode > SEARCH_MODE_SPECIFY) {
+        if (mSearchMode > SEARCH_MODE_IMAGE) {
             mSearchMode = SEARCH_MODE_NORMAL;
         }
 
@@ -271,6 +295,19 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
 
         mAdapter.notifyItemRangeRemoved(0, oldItemCount - 1);
         mAdapter.notifyItemRangeInserted(0, newItemCount - 1);
+
+        // Update action text
+        int resId;
+        switch (mSearchMode) {
+            default:
+            case SEARCH_MODE_NORMAL:
+                resId = R.string.image_search;
+                break;
+            case SEARCH_MODE_IMAGE:
+                resId = R.string.keyword_search;
+                break;
+        }
+        mAction.setText(resId);
 
         if (mHelper != null) {
             mHelper.onChangeSearchMode();
@@ -283,6 +320,8 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
             new AlertDialog.Builder(getContext())
                     .setMessage(R.string.search_tip)
                     .show();
+        } else if (mAction == v) {
+            toggleSearchMode();
         }
     }
 
@@ -321,6 +360,17 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
                 mActionView.setLayoutParams(new RecyclerView.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT));
+                int resId;
+                switch (mSearchMode) {
+                    default:
+                    case SEARCH_MODE_NORMAL:
+                        resId = R.string.image_search;
+                        break;
+                    case SEARCH_MODE_IMAGE:
+                        resId = R.string.keyword_search;
+                        break;
+                }
+                mAction.setText(resId);
                 view = mActionView;
             } else {
                 view = mInflater.inflate(R.layout.search_category, parent, false);
@@ -337,6 +387,11 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
                         ViewUtils.removeFromParent(mAdvanceView);
                         content.addView(mAdvanceView);
                         break;
+                    case ITEM_TYPE_IMAGE:
+                        title.setText(R.string.search_image);
+                        ViewUtils.removeFromParent(mImageView);
+                        content.addView(mImageView);
+                        break;
                 }
             }
 
@@ -351,5 +406,6 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
 
     public interface Helper {
         void onChangeSearchMode();
+        void onSelectImage();
     }
 }

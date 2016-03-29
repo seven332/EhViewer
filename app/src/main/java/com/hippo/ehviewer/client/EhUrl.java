@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.client;
 
+import android.support.annotation.NonNull;
+
 import com.hippo.ehviewer.Settings;
 import com.hippo.network.UrlBuilder;
 
@@ -98,5 +100,16 @@ public class EhUrl {
 
     public static String getTagDefinitionUrl(String tag) {
         return "https://ehwiki.org/wiki/" + tag.replace(' ', '_');
+    }
+
+    @NonNull
+    public static String getImageSearchUrl() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_G:
+                return "http://ul.e-hentai.org/image_lookup.php";
+            case SITE_EX:
+                return "http://ul.exhentai.org/image_lookup.php";
+        }
     }
 }

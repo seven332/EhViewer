@@ -78,6 +78,8 @@
     <dimen name="search_category_padding_v">16dp</dimen>
     <dimen name="search_category_title_height">48dp</dimen>
 
+    <dimen name="image_search_max_size">240dp</dimen>
+
     <!-- Switch padding -->
     <dimen name="switch_padding">8dp</dimen>
 

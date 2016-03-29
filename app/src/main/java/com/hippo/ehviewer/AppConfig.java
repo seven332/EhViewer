@@ -113,4 +113,20 @@ public class AppConfig {
     public static File createExternalTempFile() {
         return FileUtils.createTempFile(getExternalTempDir(), null);
     }
+
+    @Nullable
+    public static File getTempDir() {
+        File dir = sContext.getCacheDir();
+        File file;
+        if (null != dir && FileUtils.ensureDirectory(file = new File(dir, TEMP))) {
+            return file;
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static File createTempFile() {
+        return FileUtils.createTempFile(getTempDir(), null);
+    }
 }

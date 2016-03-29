@@ -43,6 +43,7 @@ import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
 import com.hippo.text.Html;
+import com.hippo.util.BitmapUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.SimpleHandler;
@@ -97,6 +98,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         SpiderDen.initialize(this);
         EhDB.initialize(this);
         EhEngine.initialize();
+        BitmapUtils.initialize(this);
 
         if (EhDB.needMerge()) {
             EhDB.mergeOldDB(this);

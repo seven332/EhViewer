@@ -153,6 +153,9 @@
 
     <string name="search">Search</string>
 
+    <string name="keyword_search">Keyword Search</string>
+    <string name="image_search">Image Search</string>
+
     <string name="search_normal">Normal Search</string>
     <string name="search_advance">Advance Options</string>
     <string name="search_image">Image Search</string>
@@ -173,6 +176,12 @@
     <string name="search_sdt2">Search Downvoted Tags</string>
     <string name="search_sh">Show Expunged Galleries</string>
     <string name="search_sr">Minimum Rating:</string>
+
+    <string name="select_image">Select image</string>
+    <string name="search_uss">Use similarity scan</string>
+    <string name="search_osc">Only search covers</string>
+    <string name="search_se">Show expunged</string>
+    <string name="select_image_first">Please select image first</string>
 
     <string name="add_to_favourites">Add to favourites</string>
 

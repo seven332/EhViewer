@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -68,6 +69,7 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
+import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.ui.CommonOperations;
@@ -90,6 +92,7 @@ import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;
 
+import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
@@ -105,6 +108,8 @@ public final class GalleryListScene extends BaseScene
     private @interface State {}
 
     private static final int BACK_PRESSED_INTERVAL = 2000;
+
+    public final static int REQUEST_CODE_SELECT_IMAGE = 0;
 
     public final static String KEY_ACTION = "action";
     public final static String ACTION_HOMEPAGE = "action_homepage";
@@ -1111,7 +1116,12 @@ public final class GalleryListScene extends BaseScene
                 startScene(new Announcer(GalleryDetailScene.class).setArgs(args));
                 return;
             } else {
-                mSearchLayout.formatListUrlBuilder(mUrlBuilder, query);
+                try {
+                    mSearchLayout.formatListUrlBuilder(mUrlBuilder, query);
+                } catch (EhException e) {
+                    showTip(e.getMessage(), LENGTH_LONG);
+                    return;
+                }
             }
         } else {
             mUrlBuilder.reset();
@@ -1177,6 +1187,15 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
+    @Override
+    public void onSelectImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                getString(R.string.select_image)), REQUEST_CODE_SELECT_IMAGE);
+    }
+
     // SearchBarMover.Helper
     @Override
     public boolean isValidView(RecyclerView recyclerView) {
@@ -1205,6 +1224,17 @@ public final class GalleryListScene extends BaseScene
         args.putString(KEY_ACTION, ACTION_LIST_URL_BUILDER);
         args.putParcelable(KEY_LIST_URL_BUILDER, lub);
         scene.startScene(new Announcer(GalleryListScene.class).setArgs(args));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (REQUEST_CODE_SELECT_IMAGE == requestCode) {
+            if (Activity.RESULT_OK == resultCode && null != mSearchLayout && null != data) {
+                mSearchLayout.setImageUri(data.getData());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private class GalleryListAdapter extends GalleryAdapter {
@@ -1242,6 +1272,14 @@ public final class GalleryListScene extends BaseScene
                 request.setCallback(new GetWhatsHotListener(getContext(),
                         activity.getStageId(), getTag(), taskId));
                 request.setArgs();
+                mClient.execute(request);
+            } else if (ListUrlBuilder.MODE_IMAGE_SEARCH == mUrlBuilder.getMode()) {
+                EhRequest request = new EhRequest();
+                request.setMethod(EhClient.METHOD_IMAGE_SEARCH);
+                request.setCallback(new GetGalleryListListener(getContext(),
+                        activity.getStageId(), getTag(), taskId));
+                request.setArgs(new File(mUrlBuilder.getImagePath()), mUrlBuilder.isUseSimilarityScan(),
+                        mUrlBuilder.isOnlySearchCovers(), mUrlBuilder.isShowExpunged());
                 mClient.execute(request);
             } else {
                 String url = mUrlBuilder.build();

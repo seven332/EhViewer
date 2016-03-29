@@ -62,6 +62,11 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
     private int mAdvanceSearch = -1;
     private int mMinRating = -1;
 
+    private String mImagePath;
+    private boolean mUseSimilarityScan;
+    private boolean mOnlySearchCovers;
+    private boolean mShowExpunged;
+
     /**
      * Make this ListUrlBuilder point to homepage
      */
@@ -72,6 +77,10 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mKeyword = null;
         mAdvanceSearch = -1;
         mMinRating = -1;
+        mImagePath = null;
+        mUseSimilarityScan = false;
+        mOnlySearchCovers = false;
+        mShowExpunged = false;
     }
 
     @Override
@@ -132,6 +141,38 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mMinRating = minRating;
     }
 
+    public String getImagePath() {
+        return mImagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        mImagePath = imagePath;
+    }
+
+    public boolean isUseSimilarityScan() {
+        return mUseSimilarityScan;
+    }
+
+    public void setUseSimilarityScan(boolean useSimilarityScan) {
+        mUseSimilarityScan = useSimilarityScan;
+    }
+
+    public boolean isOnlySearchCovers() {
+        return mOnlySearchCovers;
+    }
+
+    public void setOnlySearchCovers(boolean onlySearchCovers) {
+        mOnlySearchCovers = onlySearchCovers;
+    }
+
+    public boolean isShowExpunged() {
+        return mShowExpunged;
+    }
+
+    public void setShowExpunged(boolean showExpunged) {
+        mShowExpunged = showExpunged;
+    }
+
     /**
      * Make them the same
      * @param lub The template
@@ -143,6 +184,10 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mKeyword = lub.mKeyword;
         mAdvanceSearch = lub.mAdvanceSearch;
         mMinRating = lub.mMinRating;
+        mImagePath = lub.mImagePath;
+        mUseSimilarityScan = lub.mUseSimilarityScan;
+        mOnlySearchCovers = lub.mOnlySearchCovers;
+        mShowExpunged = lub.mShowExpunged;
     }
 
     public void set(QuickSearch q) {
@@ -413,6 +458,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 }
                 return sb.toString();
             }
+            case MODE_IMAGE_SEARCH:
+                return EhUrl.getImageSearchUrl();
         }
     }
 
@@ -429,22 +476,30 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         dest.writeString(this.mKeyword);
         dest.writeInt(this.mAdvanceSearch);
         dest.writeInt(this.mMinRating);
+        dest.writeString(this.mImagePath);
+        dest.writeByte(mUseSimilarityScan ? (byte) 1 : (byte) 0);
+        dest.writeByte(mOnlySearchCovers ? (byte) 1 : (byte) 0);
+        dest.writeByte(mShowExpunged ? (byte) 1 : (byte) 0);
     }
 
-    public ListUrlBuilder() {}
+    public ListUrlBuilder() {
+    }
 
     @SuppressWarnings("WrongConstant")
     protected ListUrlBuilder(Parcel in) {
-        mMode = in.readInt();
-        mPageIndex = in.readInt();
-        mCategory = in.readInt();
-        mKeyword = in.readString();
-        mAdvanceSearch = in.readInt();
-        mMinRating = in.readInt();
+        this.mMode = in.readInt();
+        this.mPageIndex = in.readInt();
+        this.mCategory = in.readInt();
+        this.mKeyword = in.readString();
+        this.mAdvanceSearch = in.readInt();
+        this.mMinRating = in.readInt();
+        this.mImagePath = in.readString();
+        this.mUseSimilarityScan = in.readByte() != 0;
+        this.mOnlySearchCovers = in.readByte() != 0;
+        this.mShowExpunged = in.readByte() != 0;
     }
 
-    public static final Parcelable.Creator<ListUrlBuilder> CREATOR = new Parcelable.Creator<ListUrlBuilder>() {
-
+    public static final Creator<ListUrlBuilder> CREATOR = new Creator<ListUrlBuilder>() {
         @Override
         public ListUrlBuilder createFromParcel(Parcel source) {
             return new ListUrlBuilder(source);

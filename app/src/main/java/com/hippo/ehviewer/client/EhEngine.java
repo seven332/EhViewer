@@ -64,6 +64,7 @@ import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -77,7 +78,8 @@ public class EhEngine {
     private static final String SAD_PANDA_TYPE = "image/gif";
     private static final String SAD_PANDA_LENGTH = "9615";
 
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
 
     public static EhFilter sEhFilter;
 
@@ -260,7 +262,7 @@ public class EhEngine {
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url)
-                .post(RequestBody.create(JSON, json.toString()))
+                .post(RequestBody.create(MEDIA_TYPE_JSON, json.toString()))
                 .build();
         Call call = okHttpClient.newCall(request);
 
@@ -342,7 +344,7 @@ public class EhEngine {
         json.put("gid", gid);
         json.put("token", token);
         json.put("rating", (int) Math.ceil(rating * 2));
-        final RequestBody requestBody = RequestBody.create(JSON, json.toString());
+        final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, task.getEhConfig())
@@ -404,7 +406,7 @@ public class EhEngine {
                 .put("method", "gtoken")
                 .put("pagelist", new JSONArray().put(
                         new JSONArray().put(gid).put(gtoken).put(page + 1)));
-        final RequestBody requestBody = RequestBody.create(JSON, json.toString());
+        final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, task.getEhConfig())
@@ -682,7 +684,7 @@ public class EhEngine {
         json.put("token", token);
         json.put("comment_id", commentId);
         json.put("comment_vote", commentVote);
-        final RequestBody requestBody = RequestBody.create(JSON, json.toString());
+        final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, task.getEhConfig())
@@ -706,5 +708,95 @@ public class EhEngine {
             throwException(call, code, headers, body, e);
             throw e;
         }
+    }
+
+    /**
+     * @param image Must be jpeg
+     */
+    public static GalleryListParser.Result imageSearch(EhClient.Task task, OkHttpClient okHttpClient,
+            File image, boolean uss, boolean osc, boolean se) throws Exception {
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM);
+        builder.addPart(
+                Headers.of("Content-Disposition", "form-data; name=\"sfile\"; filename=\"a.jpg\""),
+                RequestBody.create(MEDIA_TYPE_JPEG, image)
+        );
+        if (uss) {
+            builder.addPart(
+                    Headers.of("Content-Disposition", "form-data; name=\"fs_similar\""),
+                    RequestBody.create(null, "on")
+            );
+        }
+        if (osc) {
+            builder.addPart(
+                    Headers.of("Content-Disposition", "form-data; name=\"fs_covers\""),
+                    RequestBody.create(null, "on")
+            );
+        }
+        if (se) {
+            builder.addPart(
+                    Headers.of("Content-Disposition", "form-data; name=\"fs_exp\""),
+                    RequestBody.create(null, "on")
+            );
+        }
+        builder.addPart(
+                Headers.of("Content-Disposition", "form-data; name=\"f_sfile\""),
+                RequestBody.create(null, "File Search")
+        );
+        String url = EhUrl.getImageSearchUrl();
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, task.getEhConfig())
+                .post(builder.build())
+                .build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        task.setCall(call);
+
+        String body = null;
+        Headers headers = null;
+        GalleryListParser.Result result;
+        int code = -1;
+        try {
+            Response response = call.execute();
+
+            Log.d(TAG, "" + response.request().url().toString());
+
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            result = GalleryListParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+
+        // Filter title and uploader
+        List<GalleryInfo> list = result.galleryInfoList;
+        for (int i = 0, n = list.size(); i < n; i++) {
+            GalleryInfo info = list.get(i);
+            if (!sEhFilter.filterTitle(info) || !sEhFilter.filterUploader(info)) {
+                list.remove(i);
+                i--;
+                n--;
+            }
+        }
+
+        if (list.size() > 0 && (Settings.getShowJpnTitle() || sEhFilter.needCallApi())) {
+            // Fill by api
+            fillGalleryListByApi(task, okHttpClient, list);
+
+            // Filter tag
+            for (int i = 0, n = list.size(); i < n; i++) {
+                GalleryInfo info = list.get(i);
+                if (!sEhFilter.filterTag(info) || !sEhFilter.filterTagNamespace(info)) {
+                    list.remove(i);
+                    i--;
+                    n--;
+                }
+            }
+        }
+
+        return result;
     }
 }

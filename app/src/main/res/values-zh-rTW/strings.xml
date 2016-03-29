@@ -111,6 +111,9 @@
 
     <string name="search">搜尋</string>
 
+    <string name="keyword_search">關鍵字搜尋</string>
+    <string name="image_search">圖片搜尋</string>
+
     <string name="search_normal">普通搜尋</string>
     <string name="search_advance">高階選項</string>
     <string name="search_image">圖片搜尋</string>
@@ -131,6 +134,12 @@
     <string name="search_sdt2">搜尋差評標籤</string>
     <string name="search_sh">顯示被刪除的畫廊</string>
     <string name="search_sr">最低評分：</string>
+
+    <string name="select_image">選擇圖片</string>
+    <string name="search_uss">使用相似搜尋</string>
+    <string name="search_osc">只搜尋封面</string>
+    <string name="search_se">顯示被刪除的畫廊</string>
+    <string name="select_image_first">請先選擇圖片</string>
 
     <string name="add_to_favourites">收藏</string>
 

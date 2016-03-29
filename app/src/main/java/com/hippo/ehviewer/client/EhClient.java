@@ -25,6 +25,7 @@ import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -57,6 +58,7 @@ public class EhClient {
     public static final int METHOD_GET_WHATS_HOT = 13;
     public static final int METHOD_GET_PROFILE = 14;
     public static final int METHOD_VOTE_COMMENT = 15;
+    public static final int METHOD_IMAGE_SEARCH = 16;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -180,6 +182,8 @@ public class EhClient {
                         return EhEngine.getProfile(this, mOkHttpClient);
                     case METHOD_VOTE_COMMENT:
                         return EhEngine.voteComment(this, mOkHttpClient, (Long) params[0], (String) params[1], (Long) params[2], (String) params[3], (Long) params[4], (Integer) params[5]);
+                    case METHOD_IMAGE_SEARCH:
+                        return EhEngine.imageSearch(this, mOkHttpClient, (File) params[0], (Boolean) params[1], (Boolean) params[2], (Boolean) params[3]);
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }

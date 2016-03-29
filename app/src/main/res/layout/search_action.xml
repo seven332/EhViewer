@@ -13,27 +13,26 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
+
+<android.support.v7.widget.ButtonBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    style="?attr/buttonBarStyle">
 
-    <TextView
-        android:id="@+id/search_action_1"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/action"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="1"/>
+        android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
+        style="?attr/buttonBarPositiveButtonStyle"/>
 
-    <TextView
-        android:id="@+id/search_action_2"
-        android:layout_width="wrap_content"
+    <Space
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="2"/>
+        android:layout_weight="1"/>
 
-</LinearLayout>
+</android.support.v7.widget.ButtonBarLayout>
