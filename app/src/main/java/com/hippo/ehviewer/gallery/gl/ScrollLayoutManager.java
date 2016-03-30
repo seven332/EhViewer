@@ -801,7 +801,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             Rect bound = page.bounds();
             int pageTop = bound.top;
             int pageBottom = bound.bottom;
-            if ((pageTop > 0 && pageTop < height) || (pageBottom > 0 && pageBottom < height)) {
+            if ((pageTop >= 0 && pageTop < height) || (pageBottom > 0 && pageBottom <= height) ||
+                    (pageTop < 0 && pageBottom > height)) {
                 return page.getIndex();
             }
         }
