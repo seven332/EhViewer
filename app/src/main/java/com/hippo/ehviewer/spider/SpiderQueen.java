@@ -1044,7 +1044,7 @@ public class SpiderQueen implements Runnable {
                     Response response = call.execute();
                     if (response.code() >= 400) {
                         // Maybe 404
-                        call.cancel();
+                        response.body().close();
                         continue;
                     }
                     ResponseBody responseBody = response.body();
@@ -1062,7 +1062,7 @@ public class SpiderQueen implements Runnable {
                     if (null == pipe) {
                         // Can't get pipe
                         error = GetText.getString(R.string.error_write_failed);
-                        call.cancel();
+                        response.body().close();
                         break;
                     }
 
@@ -1077,7 +1077,7 @@ public class SpiderQueen implements Runnable {
                     while (!Thread.currentThread().isInterrupted()) {
                         int bytesRead = is.read(data);
                         if (bytesRead == -1) {
-                            call.cancel();
+                            response.body().close();
                             break;
                         }
                         os.write(data, 0, bytesRead);
