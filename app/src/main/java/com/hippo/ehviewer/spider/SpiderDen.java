@@ -76,6 +76,11 @@ public final class SpiderDen {
         if (dir != null) {
             // Read from DB
             String dirname = EhDB.getDownloadDirname(galleryInfo.gid);
+            if (null != dirname) {
+                // Some dirname may be invalid in some version
+                dirname = FileUtils.sanitizeFilename(dirname);
+                EhDB.putDownloadDirname(galleryInfo.gid, dirname);
+            }
 
             // Find it
             if (null == dirname) {
@@ -126,6 +131,17 @@ public final class SpiderDen {
 
     private boolean ensureDownloadDir() {
         return mDownloadDir != null && mDownloadDir.ensureDir();
+    }
+
+    public boolean isReady() {
+        switch (mMode) {
+            case SpiderQueen.MODE_READ:
+                return sCache != null;
+            case SpiderQueen.MODE_DOWNLOAD:
+                return mDownloadDir != null && mDownloadDir.isDirectory();
+            default:
+                return false;
+        }
     }
 
     @Nullable

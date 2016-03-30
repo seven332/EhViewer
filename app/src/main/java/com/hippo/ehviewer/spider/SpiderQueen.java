@@ -1238,7 +1238,7 @@ public class SpiderQueen implements Runnable {
                 Log.i(TAG, Thread.currentThread().getName() + ": start");
             }
 
-            while (!Thread.currentThread().isInterrupted() && runInternal());
+            while (mSpiderDen.isReady() && !Thread.currentThread().isInterrupted() && runInternal());
 
             boolean finish;
             // Clear in spider worker array
