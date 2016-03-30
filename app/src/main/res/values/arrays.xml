@@ -82,7 +82,7 @@
         <item>@string/settings_read_screen_rotation_landscape</item>
     </string-array>
 
-    <string-array name="screen_rotation_entry_values">
+    <string-array name="screen_rotation_entry_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
