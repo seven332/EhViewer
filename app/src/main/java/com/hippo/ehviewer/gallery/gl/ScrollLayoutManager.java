@@ -47,6 +47,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     private String mErrorStr;
     private GLTextureView mErrorView;
     private final LinkedList<GalleryPageView> mPages = new LinkedList<>();
+    private final LinkedList<GalleryPageView> mTempPages = new LinkedList<>();
 
     private int mOffset;
     private int mDeltaX;
@@ -152,127 +153,198 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         return page;
     }
 
-    private void fillPages() {
-        GalleryView.Adapter adapter = mAdapter;
-        GalleryView galleryView = mGalleryView;
-        int width = galleryView.getWidth();
-        int height = galleryView.getHeight();
-        int size = adapter.size();
-
-        int minY = (int) (-height * RESERVATIONS);
-
-        // Remove useless top view
-        Iterator<GalleryPageView> pages = mPages.iterator();
-        int nextTop = mOffset;
-        while (pages.hasNext()) {
-            GalleryPageView page = pages.next();
-            nextTop += page.getHeight() + mInterval;
-            if (nextTop < minY) {
-                removePage(page);
-                pages.remove();
-                // Update offset
-                mOffset = nextTop;
-                if (mIndex < size - 1) {
-                    mIndex++;
-                } else {
-                    Log.e(TAG, "The page is out of show range, but it has no next page");
+    private GalleryPageView getPageForIndex(List<GalleryPageView> pages, int index, boolean remove) {
+        for (Iterator<GalleryPageView> iterator = pages.iterator(); iterator.hasNext();) {
+            GalleryPageView page = iterator.next();
+            if (index == page.getIndex()) {
+                if (remove) {
+                    iterator.remove();
                 }
+                return page;
+            }
+        }
+        return null;
+    }
+
+    private void fillPages(int startIndex, int startOffset) {
+        final GalleryView.Adapter adapter = mAdapter;
+        final GalleryView galleryView = mGalleryView;
+        final LinkedList<GalleryPageView> pages = mPages;
+        final LinkedList<GalleryPageView> tempPages = mTempPages;
+        final int width = galleryView.getWidth();
+        final int height = galleryView.getHeight();
+        final int size = adapter.size();
+        final int interval = mInterval;
+        final int minY = (int) (-height * RESERVATIONS);
+        final int maxY = (int) (height * (1 + RESERVATIONS));
+        final int widthSpec = GLView.MeasureSpec.makeMeasureSpec(width, GLView.MeasureSpec.EXACTLY);
+        final int heightSpec = GLView.MeasureSpec.makeMeasureSpec(height, GLView.MeasureSpec.UNSPECIFIED);
+
+        // Fix start index and start offset
+        if (startIndex < 0) {
+            startIndex = 0;
+            startOffset = 0;
+        } else if (startIndex >= size) {
+            startIndex = size - 1;
+            startOffset = 0;
+        } else if (startOffset < minY) {
+            while (true) {
+                GalleryPageView page = getPageForIndex(pages, startIndex, false);
+                if (null == page) {
+                    startOffset = minY;
+                    break;
+                } else {
+                    page.measure(widthSpec, heightSpec);
+                    if (startOffset + page.getHeight() > minY) {
+                        break;
+                    } else if (size - 1 == startIndex) {
+                        startOffset = 0;
+                        break;
+                    } else {
+                        ++startIndex;
+                        startOffset += page.getHeight() + interval;
+                        if (startOffset >= minY) {
+                            break;
+                        }
+                    }
+                }
+            }
+        } else if (startOffset >= maxY) {
+            if (0 == startIndex) {
+                startOffset = 0;
             } else {
-                break;
+                --startIndex;
+                int startBottomOffset = startOffset - interval;
+                while (true) {
+                    GalleryPageView page = getPageForIndex(pages, startIndex, false);
+                    if (null == page) {
+                        startOffset = maxY - 1;
+                        break;
+                    } else {
+                        page.measure(widthSpec, heightSpec);
+                        startOffset = startBottomOffset - page.getHeight();
+                        if (startOffset < maxY) {
+                            break;
+                        } else if (0 == startIndex) {
+                            startOffset = 0;
+                            break;
+                        } else {
+                            --startIndex;
+                            startBottomOffset = startOffset - interval;
+                        }
+                    }
+                }
             }
         }
 
-        // Fill missing top
-        int oldOffset = mOffset;
-        int y = oldOffset;
-        int widthSpec = GLView.MeasureSpec.makeMeasureSpec(width, GLView.MeasureSpec.EXACTLY);
-        int heightSpec = GLView.MeasureSpec.makeMeasureSpec(height, GLView.MeasureSpec.UNSPECIFIED);
-        int pageSize = 0;
-        while (y >= minY && mIndex > 0) {
-            mIndex--;
+        // Put page to temp list
+        tempPages.addAll(pages);
+        pages.clear();
 
-            GalleryPageView page = obtainPage();
+        // Layout start page
+        GalleryPageView page = getPageForIndex(tempPages, startIndex, true);
+        if (null == page) {
+            page = obtainPage();
             galleryView.addComponent(page);
-            mAdapter.bind(page, mIndex);
-            mPages.add(0, page);
-
-            // Add interval
-            y -= mInterval;
-
-            // Measure and layout
-            page.measure(widthSpec, heightSpec);
-            page.layout(0, y - page.getMeasuredHeight(), width, y);
-
-            // Update y
-            y -= page.getMeasuredHeight();
-
-            // size increase
-            pageSize++;
+            adapter.bind(page, startIndex);
         }
-        mOffset = y;
+        pages.add(page);
+        page.measure(widthSpec, heightSpec);
+        page.layout(0, startOffset, width, startOffset + page.getMeasuredHeight());
 
-        // Fix offset, ensure it is not positive
-        if (mOffset > 0) {
-            int offset = mOffset;
-            // Update offset
-            mOffset = 0;
-            oldOffset -= offset;
-            // Translate pages
-            pages = mPages.iterator();
-            for (int i = 0; i < pageSize; i++) {
-                pages.next().offsetTopAndBottom(-offset);
-            }
-        }
+        // Prepare for check up and down
+        int bottomOffset = startOffset - interval;
+        int topOffset = startOffset + page.getMeasuredHeight() + interval;
 
-        // Fill from oldOffset
-        int maxY = (int) (height * (1 + RESERVATIONS));
-        y = oldOffset;
-        pages = mPages.iterator();
-        for (int i = 0; i < pageSize; i++) {
-            pages.next();
-        }
-        int index = mIndex + pageSize;
-        // Do fill
-        while (true) {
-            GalleryPageView page;
-            if (pages == null || !pages.hasNext()) {
-                pages = null;
-                // New page
+        // Check up
+        int index = startIndex - 1;
+        while (bottomOffset > minY && index >= 0) {
+            page = getPageForIndex(tempPages, index, true);
+            if (null == page) {
                 page = obtainPage();
                 galleryView.addComponent(page);
-                mAdapter.bind(page, index);
-                mPages.add(page);
-            } else {
-                page = pages.next();
+                adapter.bind(page, index);
             }
-
-            // Measure and layout
+            pages.addFirst(page);
             page.measure(widthSpec, heightSpec);
-            page.layout(0, y, width, y + page.getMeasuredHeight());
+            page.layout(0, bottomOffset - page.getMeasuredHeight(), width, bottomOffset);
+            // Update
+            bottomOffset -= page.getMeasuredHeight() + interval;
+            index--;
+        }
 
-            // size increase
-            pageSize++;
-
-            // Update y and check out of range
-            y += page.getMeasuredHeight();
-            if (y > maxY) {
-                break;
+        // Avoid space in top
+        page = pages.getFirst();
+        if (0 == page.getIndex() && page.bounds().top > 0) {
+            int offset = -page.bounds().top;
+            for (GalleryPageView p: pages) {
+                p.offsetTopAndBottom(offset);
             }
+            topOffset += offset;
+        }
 
-            y += mInterval;
-
-            // Check has next
-            if (index >= size - 1) {
-                break;
+        // Check down
+        index = startIndex + 1;
+        while (topOffset < maxY && index < size) {
+            page = getPageForIndex(tempPages, index, true);
+            if (null == page) {
+                page = obtainPage();
+                galleryView.addComponent(page);
+                adapter.bind(page, index);
             }
-
+            pages.addLast(page);
+            page.measure(widthSpec, heightSpec);
+            page.layout(0, topOffset, width, topOffset + page.getMeasuredHeight());
+            // Update
+            topOffset += page.getMeasuredHeight() + interval;
             index++;
         }
 
-        // Remove useless page
-        while (mPages.size() > pageSize) {
-            GalleryPageView page = mPages.removeLast();
-            removePage(page);
+        // Avoid space in bottom
+        if (size - 1 == pages.getLast().getIndex()) {
+            while (true) {
+                page = pages.getLast();
+                int pagesBottom = page.bounds().bottom;
+                if (pagesBottom >= height) {
+                    break;
+                }
+                page = pages.getFirst();
+                index = page.getIndex();
+                if (0 == index) {
+                    break;
+                }
+                --index;
+                int pagesTop = page.bounds().top;
+
+                page = getPageForIndex(tempPages, index, true);
+                if (null == page) {
+                    page = obtainPage();
+                    galleryView.addComponent(page);
+                    adapter.bind(page, index);
+                }
+                pages.addFirst(page);
+                page.measure(widthSpec, heightSpec);
+
+                int offset = Math.min(height - pagesBottom, page.getMeasuredHeight());
+                for (GalleryPageView p: pages) {
+                    p.offsetTopAndBottom(offset);
+                }
+                int bottom = pagesTop - interval + offset;
+                page.layout(0, bottom - page.getMeasuredHeight(), width, bottom);
+            }
+        }
+
+        // Remove remain page
+        for (GalleryPageView p : tempPages) {
+            removePage(p);
+        }
+        tempPages.clear();
+
+        // Update state
+        if (!pages.isEmpty()) {
+            page = pages.getFirst();
+            mIndex = page.getIndex();
+            mOffset = page.bounds().top;
         }
     }
 
@@ -360,56 +432,30 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 }
             }
 
-            fillPages();
-
-            // Ensure first shown loaded page top is the same
-            if (firstShownLoadedPage != null && mFirstShownLoadedPageIndex == firstShownLoadedPage.getIndex()) {
-                int newTop = firstShownLoadedPage.bounds().top;
-                if (firstShownLoadedPageTop != newTop) {
-                    mOffset += firstShownLoadedPageTop - newTop;
-                    fillPages();
-                }
+            int startIndex;
+            int startOffset;
+            if (null != firstShownLoadedPage) {
+                startIndex = mFirstShownLoadedPageIndex;
+                startOffset = firstShownLoadedPageTop;
+            } else {
+                startIndex = mIndex;
+                startOffset = mOffset;
             }
-
-            // Avoid page not fill bottom, but has previous
-            while (true) {
-                int bottomDist = height - pages.getLast().bounds().bottom;
-                int topDist = 0 - pages.getFirst().bounds().top;
-                if (bottomDist > 0 && topDist > 0) {
-                    int translate = Math.min(bottomDist, topDist);
-                    // Update offset
-                    mOffset += translate;
-                    // Translate pages
-                    for (GalleryPageView page : pages) {
-                        page.offsetTopAndBottom(-translate);
-                    }
-                    // Break if no previous
-                    if (mIndex <= 0) {
-                        break;
-                    }
-                    // Refill pages
-                    fillPages();
-                    // Break if last page bottom fit gallery view bottom
-                    if (bottomDist <= topDist) {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            }
+            fillPages(startIndex, startOffset);
 
             // Get first shown loaded image
             mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
             for (GalleryPageView page : mPages) {
                 // Check first shown loaded page
-                if (mScrollUp && !page.isLoaded()) {
+                if (!page.isLoaded()) {
                     continue;
                 }
 
                 Rect bound = page.bounds();
                 int pageTop = bound.top;
                 int pageBottom = bound.bottom;
-                if ((pageTop > 0 && pageTop < height) || (pageBottom > 0 && pageBottom < height)) {
+                if ((pageTop >= 0 && pageTop < height) || (pageBottom > 0 && pageBottom <= height) ||
+                        (pageTop < 0 && pageBottom > height)) {
                     mFirstShownLoadedPageIndex = page.getIndex();
                     break;
                 }
@@ -506,12 +552,12 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             if (remainY < 0) { // Try to show top
                 int limit;
                 if (mIndex > 0) {
-                    limit = (int) (-height * RESERVATIONS);
+                    limit = (int) (-height * RESERVATIONS) + mInterval;
                 } else {
                     limit = 0;
                 }
 
-                if (mOffset - remainY < limit) {
+                if (mOffset - remainY <= limit) {
                     mOffset -= remainY;
                     remainY = 0;
                     requestFill = true;
@@ -521,6 +567,9 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                     if (mIndex > 0) {
                         mOffset = limit;
                         remainY = remainY + limit - mOffset;
+                        // Offset one pixel to avoid infinite loop
+                        ++mOffset;
+                        ++remainY;
                         galleryView.forceFill();
                         requestFill = false;
                         mDeltaX = 0;
@@ -544,14 +593,14 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
                 int limit;
                 if (hasNext) {
-                    limit = (int) (height * (1 + RESERVATIONS));
+                    limit = (int) (height * (1 + RESERVATIONS)) - mInterval;
                 } else {
                     limit = height;
                 }
                 // Fix limit for page not fill screen
                 limit = Math.min(bottom, limit);
 
-                if (bottom - remainY > limit) {
+                if (bottom - remainY >= limit) {
                     mOffset -= remainY;
                     remainY = 0;
                     requestFill = true;
@@ -561,6 +610,9 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                     if (hasNext) {
                         mOffset -= bottom - limit;
                         remainY = remainY + limit - bottom;
+                        // Offset one pixel to avoid infinite loop
+                        --mOffset;
+                        --remainY;
                         galleryView.forceFill();
                         requestFill = false;
                         mDeltaX = 0;
