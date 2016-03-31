@@ -45,7 +45,7 @@
         android:summary="@string/settings_download_download_origin_image_summary"
         android:defaultValue="false"/>
 
-    <Preference
+    <com.hippo.ehviewer.preference.RestoreDownloadPreference
         android:key="restore_download_items"
         android:title="@string/settings_download_restore_download_items"
         android:summary="@string/settings_download_restore_download_items_summary"/>

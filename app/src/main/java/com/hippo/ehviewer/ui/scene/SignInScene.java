@@ -144,7 +144,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         mSkipSigningIn.setOnClickListener(this);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(container);
+        AssertUtils.assertNotNull(context);
         EhApplication application = (EhApplication) context.getApplicationContext();
         if (application.containGlobalStuff(mRequestId)) {
             mSigningIn = true;

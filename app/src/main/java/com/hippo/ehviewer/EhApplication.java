@@ -28,7 +28,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
@@ -46,13 +45,15 @@ import com.hippo.text.Html;
 import com.hippo.util.BitmapUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.OkHttpClient;
 
@@ -67,8 +68,8 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
-    private final AtomicInteger mIdGenerator = new AtomicInteger();
-    private final SparseArray<Object> mGlobalStuffMap = new SparseArray<>();
+    private final IntIdGenerator mIdGenerator = new IntIdGenerator();
+    private final WeakHashMap<Integer, Object> mGlobalStuffMap = new WeakHashMap<>();
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
     private OkHttpClient mOkHttpClient;
@@ -162,13 +163,13 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     }
 
     public int putGlobalStuff(@NonNull Object o) {
-        int id = mIdGenerator.getAndDecrement();
+        int id = mIdGenerator.nextId();
         mGlobalStuffMap.put(id, o);
         return id;
     }
 
     public boolean containGlobalStuff(int id) {
-        return mGlobalStuffMap.indexOfKey(id) >= 0;
+        return mGlobalStuffMap.containsKey(id);
     }
 
     public Object getGlobalStuff(int id) {
@@ -176,24 +177,11 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     }
 
     public Object removeGlobalStuff(int id) {
-        int index = mGlobalStuffMap.indexOfKey(id);
-        if (index >= 0) {
-            Object o = mGlobalStuffMap.valueAt(index);
-            mGlobalStuffMap.removeAt(index);
-            return o;
-        } else {
-            return null;
-        }
+        return mGlobalStuffMap.remove(id);
     }
 
     public boolean removeGlobalStuff(Object o) {
-        int index = mGlobalStuffMap.indexOfValue(o);
-        if (index >= 0) {
-            mGlobalStuffMap.removeAt(index);
-            return true;
-        } else {
-            return false;
-        }
+        return mGlobalStuffMap.values().removeAll(Collections.singleton(o));
     }
 
     public static EhCookieStore getEhCookieStore(@NonNull Context context) {
