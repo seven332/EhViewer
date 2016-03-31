@@ -545,6 +545,8 @@
     <string name="language_na">N/A</string>
     <string name="language_other">Other</string>
 
+    <string name="please_wait">Pleas wait</string>
+
     <!-- License -->
     <string name="license">License</string>
 

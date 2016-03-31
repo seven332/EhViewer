@@ -489,6 +489,8 @@
     <string name="language_na">N/A</string>
     <string name="language_other">其他</string>
 
+    <string name="please_wait">请稍候</string>
+
     <string name="enable">启用</string>
     <string name="enabled">已启用</string>
     <string name="disabled">未启用</string>
