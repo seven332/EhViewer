@@ -122,7 +122,7 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
 
     private void showDirPickerDialogKK() {
         new AlertDialog.Builder(getActivity()).setMessage(R.string.settings_download_pick_dir_kk)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.settings_download_continue, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         openDirPicker();
@@ -146,7 +146,7 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
         };
 
         new AlertDialog.Builder(getActivity()).setMessage(R.string.settings_download_pick_dir_l)
-                .setPositiveButton(android.R.string.ok, listener)
+                .setPositiveButton(R.string.settings_download_continue, listener)
                 .setNeutralButton(R.string.settings_download_document, listener)
                 .show();
     }

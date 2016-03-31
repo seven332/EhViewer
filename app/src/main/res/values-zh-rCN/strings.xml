@@ -403,9 +403,10 @@
     <string name="settings_download_download_location">下载路径</string>
     <string name="settings_download_invalid_download_location">无效的下载路径</string>
     <string name="settings_download_cant_get_download_location">无法获取下载路径</string>
-    <string name="settings_download_pick_dir_kk">在 KitKat 中您无法把数据写入外置 SD 卡，除非您做了奇怪的事情</string>
+    <string name="settings_download_pick_dir_kk">在 KitKat 中您无法把数据写入外置 SD 卡，除非您做了奇怪的事情。不过 &lt;SD card&gt;/Android/data/com.hippo.ehviewer 这个路径比较特殊，是可以写入的。</string>
     <string name="settings_download_pick_dir_l">Lollipop 提供了新的写入外置 SD 卡的 API。如果您想把下载路径设置到外置 SD 卡上，点击“文档”按钮</string>
     <string name="settings_download_document">文档</string>
+    <string name="settings_download_continue">继续</string>
     <string name="settings_download_restore_download_items">恢复下载项</string>
     <string name="settings_download_restore_download_items_summary">恢复下载目录里的所有下载项</string>
     <string name="settings_download_multi_thread_download">下载线程数</string>
