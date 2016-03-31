@@ -55,7 +55,9 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.hippo.beerbelly.BeerBelly;
 import com.hippo.drawable.RoundSideRectDrawable;
+import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -98,9 +100,14 @@ import com.hippo.widget.ProgressView;
 import com.hippo.widget.ProgressiveRatingBar;
 import com.hippo.widget.SimpleGridAutoSpanLayout;
 import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
@@ -198,6 +205,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private TextView mRate;
     @Nullable
     private TextView mSimilar;
+    @Nullable
+    private TextView mSearchCover;
     // Tags
     @Nullable
     private LinearLayout mTags;
@@ -456,16 +465,19 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mShare = (TextView) ViewUtils.$$(mActions, R.id.share);
         mRate = (TextView) ViewUtils.$$(mActions, R.id.rate);
         mSimilar = (TextView) ViewUtils.$$(mActions, R.id.similar);
+        mSearchCover = (TextView) ViewUtils.$$(mActions, R.id.search_cover);
         RippleSalon.addRipple(mHeartGroup, false);
         RippleSalon.addRipple(mTorrent, false);
         RippleSalon.addRipple(mShare, false);
         RippleSalon.addRipple(mRate, false);
         RippleSalon.addRipple(mSimilar, false);
+        RippleSalon.addRipple(mSearchCover, false);
         mHeartGroup.setOnClickListener(this);
         mTorrent.setOnClickListener(this);
         mShare.setOnClickListener(this);
         mRate.setOnClickListener(this);
         mSimilar.setOnClickListener(this);
+        mSearchCover.setOnClickListener(this);
         ensureActionDrawable(context);
 
         mTags = (LinearLayout) ViewUtils.$$(belowHeader, R.id.tags);
@@ -553,6 +565,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mShare = null;
         mRate = null;
         mSimilar = null;
+        mSearchCover = null;
 
         mTags = null;
         mNoTags = null;
@@ -638,6 +651,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         setActionDrawable(mRate, rate);
         Drawable similar = DrawableManager.getDrawable(context, R.drawable.v_similar_primary_x48);
         setActionDrawable(mSimilar, similar);
+        Drawable searchCover = DrawableManager.getDrawable(context, R.drawable.v_file_find_primary_x48);
+        setActionDrawable(mSearchCover, searchCover);
     }
 
     private boolean createCircularReveal() {
@@ -1029,6 +1044,39 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    private void showCoverGalleryList() {
+        Context context = getContext2();
+        if (null == context) {
+            return;
+        }
+        long gid = getGid();
+        if (-1L == gid) {
+            return;
+        }
+        File temp = AppConfig.createTempFile();
+        if (null == temp) {
+            return;
+        }
+        BeerBelly beerBelly = EhApplication.getConaco(context).getBeerBelly();
+
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(temp);
+            if (beerBelly.pullFromDiskCache(EhCacheKeyFactory.getThumbKey(gid), os)) {
+                ListUrlBuilder lub = new ListUrlBuilder();
+                lub.setMode(ListUrlBuilder.MODE_IMAGE_SEARCH);
+                lub.setImagePath(temp.getPath());
+                lub.setUseSimilarityScan(true);
+                lub.setShowExpunged(true);
+                GalleryListScene.startScene(this, lub);
+            }
+        } catch (FileNotFoundException e) {
+            // Ignore
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         Context context = getContext2();
@@ -1141,6 +1189,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             helper.setDialog(dialog, mGalleryDetail.rating);
         } else if (mSimilar == v) {
             showSimilarGalleryList();
+        } else if (mSearchCover == v) {
+            showCoverGalleryList();
         } else if (mComments == v) {
             if (mGalleryDetail == null) {
                 return;

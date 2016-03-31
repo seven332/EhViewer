@@ -101,6 +101,15 @@
                 android:drawablePadding="8dp"
                 android:textColor="@color/primary_text_light"/>
 
+            <TextView
+                android:id="@+id/search_cover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/search_cover"
+                android:drawablePadding="8dp"
+                android:textColor="@color/primary_text_light"/>
+
         </LinearLayout>
     </HorizontalScrollView>
 
