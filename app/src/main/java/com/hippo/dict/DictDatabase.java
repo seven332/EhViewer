@@ -27,14 +27,12 @@ import android.util.JsonReader;
 import android.util.Log;
 
 import com.hippo.util.SqlUtils;
-import com.hippo.yorozuya.Say;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,6 +52,7 @@ public class DictDatabase {
     private static DictDatabase sInstance;
 
     private String mDict;
+    private boolean abortFlag;
 
     public static DictDatabase getInstance(Context context) {
         if (sInstance == null) {
@@ -114,7 +113,16 @@ public class DictDatabase {
             String field = jsonReader.nextName();
             if (field.equals("dict")) {
                 mDict = jsonReader.nextString();
+                Log.d(TAG,"prase the dict name -- " + mDict);
             } else if (field.equals("data")) {
+                synchronized (this) {
+                    if (abortFlag) {
+                        Log.d(TAG,"import abort delect the dict -- " + mDict);
+                        deletDict(mDict);
+                        return;
+                    }
+                }
+
                 praseData(jsonReader);
                 listener.process(process);
                 process++;
@@ -133,7 +141,6 @@ public class DictDatabase {
     }
 
     private void praseSingleData(JsonReader jsonReader) throws IOException {
-
         StringBuilder sb = new StringBuilder();
         String parent = "";
         sb.append(SEPARATOR);
@@ -156,7 +163,7 @@ public class DictDatabase {
 
     public void addQuery(String data, String parent, String dict) {
         // Delete old first
-        deleteQuery(data);
+        deletDict(data);
         // Add it to database
         ContentValues values = new ContentValues();
         values.put(COLUMN_DATA, data);
@@ -165,37 +172,12 @@ public class DictDatabase {
         mDatabase.insert(TABLE_DICT, null, values);
     }
 
-    public void deleteQuery(final String query) {
-        // mDatabase.delete(TABLE_DICT, COLUMN_QUERY + "=?", new String[]{query});
+    public void deletDict(String dict) {
+        mDatabase.delete(TABLE_DICT, COLUMN_DICT + "=?", new String[]{dict});
     }
 
-    public void clearQuery() {
-        truncateHistory(0);
-    }
-
-    /**
-     * Reduces the length of the history table, to prevent it from growing too large.
-     *
-     * @param maxEntries Max entries to leave in the table. 0 means remove all entries.
-     */
-    protected void truncateHistory(int maxEntries) {
-        if (maxEntries < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        try {
-            // null means "delete all".  otherwise "delete but leave n newest"
-            String selection = null;
-            if (maxEntries > 0) {
-                selection = "_id IN " +
-                        "(SELECT _id FROM " + TABLE_DICT +
-                        " ORDER BY " + COLUMN_DATA + " DESC" +
-                        " LIMIT -1 OFFSET " + String.valueOf(maxEntries) + ")";
-            }
-            mDatabase.delete(TABLE_DICT, selection, null);
-        } catch (RuntimeException e) {
-            Say.e(TAG, "truncateHistory", e);
-        }
+    public void importAbort() {
+        abortFlag = true;
     }
 
     /**
