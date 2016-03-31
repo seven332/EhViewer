@@ -115,6 +115,10 @@ public final class ImageSearchLayout extends LinearLayout implements View.OnClic
 
         Context context = getContext();
         UniFile file = UniFile.fromUri(context, imageUri);
+        if (null == file) {
+            return;
+        }
+
         try {
             int maxSize = context.getResources().getDimensionPixelOffset(R.dimen.image_search_max_size);
             Bitmap bitmap = BitmapUtils.decodeStream(new UniFileInputStreamPipe(file), maxSize, maxSize);
