@@ -143,7 +143,7 @@ public class EhEngine {
         }
     }
 
-    public static String signIn(EhClient.Task task, OkHttpClient okHttpClient,
+    public static String signIn(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String username, String password) throws Exception {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("UserName", username)
@@ -153,13 +153,15 @@ public class EhEngine {
                 .add("temporary_https", "off");
         String url = EhUrl.API_SIGN_IN;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig())
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -176,14 +178,16 @@ public class EhEngine {
         }
     }
 
-    public static GalleryListParser.Result getGalleryList(EhClient.Task task, OkHttpClient okHttpClient,
+    public static GalleryListParser.Result getGalleryList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -230,7 +234,7 @@ public class EhEngine {
     }
 
     // At least, GalleryInfo contain valid gid and token
-    public static List<GalleryInfo> fillGalleryListByApi(EhClient.Task task, OkHttpClient okHttpClient,
+    public static List<GalleryInfo> fillGalleryListByApi(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             List<GalleryInfo> galleryInfoList) throws Exception {
         // We can only request 25 items one time at most
         final int MAX_REQUEST_SIZE = 25;
@@ -245,7 +249,7 @@ public class EhEngine {
         return galleryInfoList;
     }
 
-    private static void doFillGalleryListByApi(EhClient.Task task, OkHttpClient okHttpClient,
+    private static void doFillGalleryListByApi(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             List<GalleryInfo> galleryInfoList) throws Exception {
         JSONObject json = new JSONObject();
         json.put("method", "gdata");
@@ -267,7 +271,9 @@ public class EhEngine {
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -284,14 +290,16 @@ public class EhEngine {
         }
     }
 
-    public static GalleryDetail getGalleryDetail(EhClient.Task task, OkHttpClient okHttpClient,
+    public static GalleryDetail getGalleryDetail(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -310,13 +318,15 @@ public class EhEngine {
 
 
     public static Pair<PreviewSet, Integer> getPreviewSet(
-            EhClient.Task task, OkHttpClient okHttpClient, String url) throws Exception {
+            @Nullable EhClient.Task task, OkHttpClient okHttpClient, String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -334,7 +344,7 @@ public class EhEngine {
         }
     }
 
-    public static RateGalleryParser.Result rateGallery(EhClient.Task task,
+    public static RateGalleryParser.Result rateGallery(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, long apiUid, String apiKey, long gid,
             String token, float rating) throws Exception {
         final JSONObject json = new JSONObject();
@@ -347,13 +357,15 @@ public class EhEngine {
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig())
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -370,19 +382,21 @@ public class EhEngine {
         }
     }
 
-    public static GalleryComment[] commentGallery(EhClient.Task task,
+    public static GalleryComment[] commentGallery(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, String url, String comment) throws Exception {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("commenttext", comment)
                 .add("postcomment", "Post New");
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig())
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -400,7 +414,7 @@ public class EhEngine {
         }
     }
 
-    public static String getGalleryToken(EhClient.Task task, OkHttpClient okHttpClient,
+    public static String getGalleryToken(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             long gid, String gtoken, int page) throws Exception {
         JSONObject json = new JSONObject()
                 .put("method", "gtoken")
@@ -409,13 +423,15 @@ public class EhEngine {
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig())
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -432,14 +448,16 @@ public class EhEngine {
         }
     }
 
-    public static FavoritesParser.Result getFavorites(EhClient.Task task, OkHttpClient okHttpClient,
+    public static FavoritesParser.Result getFavorites(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url, boolean callApi) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -467,7 +485,7 @@ public class EhEngine {
      * @param dstCat -1 for delete, 0 - 9 for cloud favorite, others throw Exception
      * @param note max 250 characters
      */
-    public static Void addFavorites(EhClient.Task task, OkHttpClient okHttpClient,
+    public static Void addFavorites(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             long gid, String token, int dstCat, String note) throws Exception {
         String catStr;
         if (dstCat == -1) {
@@ -484,13 +502,15 @@ public class EhEngine {
         builder.add("submit", "Apply Changes");
         String url = EhUrl.getAddFavorites(gid, token);
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig())
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -509,7 +529,7 @@ public class EhEngine {
         return null;
     }
 
-    public static Void addFavoritesRange(EhClient.Task task, OkHttpClient okHttpClient,
+    public static Void addFavoritesRange(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             long[] gidArray, String[] tokenArray, int dstCat) throws Exception {
         AssertUtils.assertEqualsEx(gidArray.length, tokenArray.length);
         for (int i = 0, n = gidArray.length; i < n; i++) {
@@ -518,7 +538,7 @@ public class EhEngine {
         return null;
     }
 
-    public static FavoritesParser.Result modifyFavorites(EhClient.Task task, OkHttpClient okHttpClient,
+    public static FavoritesParser.Result modifyFavorites(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url, long[] gidArray, int dstCat, boolean callApi) throws Exception {
         String catStr;
         if (dstCat == -1) {
@@ -535,13 +555,15 @@ public class EhEngine {
         }
         builder.add("apply", "Apply");
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig())
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -565,14 +587,16 @@ public class EhEngine {
         return result;
     }
 
-    public static Pair<String, String>[] getTorrentList(EhClient.Task task, OkHttpClient okHttpClient,
+    public static Pair<String, String>[] getTorrentList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -592,15 +616,17 @@ public class EhEngine {
         return result;
     }
 
-    public static List<GalleryInfo> getWhatsHot(EhClient.Task task,
+    public static List<GalleryInfo> getWhatsHot(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient) throws Exception {
         String url = EhUrl.HOST_G;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -625,14 +651,16 @@ public class EhEngine {
         return list;
     }
 
-    private static ProfileParser.Result getProfileInternal(EhClient.Task task,
+    private static ProfileParser.Result getProfileInternal(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -649,15 +677,17 @@ public class EhEngine {
         }
     }
 
-    public static ProfileParser.Result getProfile(EhClient.Task task,
+    public static ProfileParser.Result getProfile(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient) throws Exception {
         String url = EhUrl.URL_FORUMS;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -674,7 +704,7 @@ public class EhEngine {
         }
     }
 
-    public static VoteCommentParser.Result voteComment(EhClient.Task task, OkHttpClient okHttpClient,
+    public static VoteCommentParser.Result voteComment(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             long apiUid, String apiKey, long gid, String token, long commentId, int commentVote) throws Exception {
         final JSONObject json = new JSONObject();
         json.put("method", "votecomment");
@@ -687,13 +717,15 @@ public class EhEngine {
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig())
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
@@ -713,7 +745,7 @@ public class EhEngine {
     /**
      * @param image Must be jpeg
      */
-    public static GalleryListParser.Result imageSearch(EhClient.Task task, OkHttpClient okHttpClient,
+    public static GalleryListParser.Result imageSearch(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             File image, boolean uss, boolean osc, boolean se) throws Exception {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
@@ -745,13 +777,15 @@ public class EhEngine {
         );
         String url = EhUrl.getImageSearchUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, task.getEhConfig())
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
-        task.setCall(call);
+        if (null != task) {
+            task.setCall(call);
+        }
 
         String body = null;
         Headers headers = null;
