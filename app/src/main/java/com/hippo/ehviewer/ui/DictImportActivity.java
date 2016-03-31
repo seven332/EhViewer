@@ -17,8 +17,8 @@ import com.hippo.ehviewer.R;
 
 public class DictImportActivity extends AppCompatActivity {
 
-    private final static String TAG = DictImportActivity.class.getSimpleName();
-
+    private final static String TAG = "DictImportActivity";
+    private DictImportService serviceBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +33,15 @@ public class DictImportActivity extends AppCompatActivity {
         Button importBtn = (Button) findViewById(R.id.btn_import);
         importBtn.setText(importBtn.getText() + getIntent().getData().toString());
         final Uri dictUri = getIntent().getData();
+
         importBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (serviceBinder == null) {
+                    // todo error tip
+                }
 
+                serviceBinder.importDict(dictUri);
             }
         });
     }
@@ -56,6 +61,8 @@ public class DictImportActivity extends AppCompatActivity {
                     Log.i(TAG, "process " + progress);
                 }
             });
+
+            Log.d(TAG,"connect to service");
         }
     };
 }
