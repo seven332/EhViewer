@@ -27,6 +27,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
@@ -45,7 +46,8 @@ import com.hippo.ehviewer.R;
  * actual preference controls.
  */
 public abstract class DialogPreference extends Preference implements
-        DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
+        DialogInterface.OnClickListener, DialogInterface.OnDismissListener,
+        PreferenceManager.OnActivityDestroyListener {
 
     private static final String KEY_SUPER = "super";
     private static final String KEY_IS_DIALOG_SHOWING = "is_dialog_showing";
@@ -272,6 +274,8 @@ public abstract class DialogPreference extends Preference implements
 
         onPrepareDialogBuilder(mBuilder);
 
+        PreferenceUtils.registerOnActivityDestroyListener(this, this);
+
         // Create the dialog
         final AlertDialog dialog = mDialog = mBuilder.create();
         if (state != null) {
@@ -336,6 +340,8 @@ public abstract class DialogPreference extends Preference implements
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        PreferenceUtils.unregisterOnActivityDestroyListener(this, this);
+
         mDialog = null;
         onDialogClosed(mWhichButtonClicked == DialogInterface.BUTTON_POSITIVE);
     }
@@ -357,6 +363,15 @@ public abstract class DialogPreference extends Preference implements
      */
     public Dialog getDialog() {
         return mDialog;
+    }
+
+    @Override
+    public void onActivityDestroy() {
+        if (mDialog == null || !mDialog.isShowing()) {
+            return;
+        }
+
+        mDialog.dismiss();
     }
 
     @Override
