@@ -48,7 +48,6 @@ import com.hippo.yorozuya.sparse.SparseJLArray;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-// TODO Stop and delete action should not pass through DownloadService
 public class DownloadService extends Service implements DownloadManager.DownloadListener {
 
     public static final String ACTION_START = "start";

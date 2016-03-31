@@ -83,7 +83,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-// TODO mWorkerPoolExecutor looks like a useless stuff, just use thread, wait when no request, interrupt when close
 public class SpiderQueen implements Runnable {
 
     private static final String TAG = SpiderQueen.class.getSimpleName();
