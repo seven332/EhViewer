@@ -90,6 +90,7 @@ import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
+import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.io.File;
@@ -559,6 +560,12 @@ public final class GalleryListScene extends BaseScene
         Context context = getContext2();
         final ListUrlBuilder urlBuilder = mUrlBuilder;
         if (null == context || null == urlBuilder) {
+            return;
+        }
+
+        // Can't add image search as quick search
+        if (ListUrlBuilder.MODE_IMAGE_SEARCH == urlBuilder.getMode()) {
+            showTip(R.string.image_search_not_quick_search, LENGTH_SHORT);
             return;
         }
 
@@ -1278,7 +1285,8 @@ public final class GalleryListScene extends BaseScene
                 request.setMethod(EhClient.METHOD_IMAGE_SEARCH);
                 request.setCallback(new GetGalleryListListener(getContext(),
                         activity.getStageId(), getTag(), taskId));
-                request.setArgs(new File(mUrlBuilder.getImagePath()), mUrlBuilder.isUseSimilarityScan(),
+                request.setArgs(new File(StringUtils.avoidNull(mUrlBuilder.getImagePath())),
+                        mUrlBuilder.isUseSimilarityScan(),
                         mUrlBuilder.isOnlySearchCovers(), mUrlBuilder.isShowExpunged());
                 mClient.execute(request);
             } else {

@@ -154,6 +154,7 @@
     <string name="no_quick_search">這裏是快速搜索</string>
     <string name="add_quick_search_tip">畫廊列表的狀態將被保存為快速搜索。如果你想保存搜索面板的狀態，請先執行搜索。</string>
     <string name="readme">讀我</string>
+    <string name="image_search_not_quick_search">無法添加圖片搜索為快速搜索</string>
     <string name="duplicate_quick_search">已存在相同的快速搜索，名稱為“%s”。</string>
     <string name="duplicate_name">已存在相同名稱</string>
 

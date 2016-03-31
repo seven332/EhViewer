@@ -19,6 +19,7 @@ package com.hippo.ehviewer.client.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.hippo.ehviewer.client.EhConfig;
@@ -141,6 +142,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mMinRating = minRating;
     }
 
+    @Nullable
     public String getImagePath() {
         return mImagePath;
     }
@@ -196,6 +198,10 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mKeyword = q.keyword;
         mAdvanceSearch = q.advanceSearch;
         mMinRating = q.minRating;
+        mImagePath = null;
+        mUseSimilarityScan = false;
+        mOnlySearchCovers = false;
+        mShowExpunged = false;
     }
 
     public QuickSearch toQuickSearch() {
