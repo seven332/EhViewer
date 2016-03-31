@@ -25,6 +25,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -48,10 +49,6 @@ import com.hippo.ehviewer.R;
 public abstract class DialogPreference extends Preference implements
         DialogInterface.OnClickListener, DialogInterface.OnDismissListener,
         PreferenceManager.OnActivityDestroyListener {
-
-    private static final String KEY_SUPER = "super";
-    private static final String KEY_IS_DIALOG_SHOWING = "is_dialog_showing";
-    private static final String KEY_DIALOG_BUNDLE = "dialog_bundle";
 
     private AlertDialog.Builder mBuilder;
 
@@ -381,25 +378,59 @@ public abstract class DialogPreference extends Preference implements
             return superState;
         }
 
-        final Bundle myState = new Bundle();
-        myState.putParcelable(KEY_SUPER, superState);
-        myState.putBoolean(KEY_IS_DIALOG_SHOWING, true);
-        myState.putBundle(KEY_DIALOG_BUNDLE, mDialog.onSaveInstanceState());
+        final SavedState myState = new SavedState(superState);
+        myState.isDialogShowing = true;
+        myState.dialogBundle = mDialog.onSaveInstanceState();
         return myState;
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        if (state == null || !state.getClass().equals(Bundle.class)) {
+        if (state == null || !state.getClass().equals(SavedState.class)) {
             // Didn't save state for us in onSaveInstanceState
             super.onRestoreInstanceState(state);
             return;
         }
 
-        Bundle myState = (Bundle) state;
-        super.onRestoreInstanceState(myState.getParcelable(KEY_SUPER));
-        if (myState.getBoolean(KEY_IS_DIALOG_SHOWING)) {
-            showDialog(myState.getBundle(KEY_DIALOG_BUNDLE));
+        SavedState myState = (SavedState) state;
+        super.onRestoreInstanceState(myState.getSuperState());
+        if (myState.isDialogShowing) {
+            showDialog(myState.dialogBundle);
         }
+    }
+
+    private static class SavedState extends BaseSavedState {
+        boolean isDialogShowing;
+        Bundle dialogBundle;
+
+        public SavedState(Parcel source) {
+            super(source);
+            isDialogShowing = source.readInt() == 1;
+            dialogBundle = source.readBundle(DialogPreference.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeInt(isDialogShowing ? 1 : 0);
+            dest.writeBundle(dialogBundle);
+        }
+
+        public SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    @Override
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    @Override
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
     }
 }
