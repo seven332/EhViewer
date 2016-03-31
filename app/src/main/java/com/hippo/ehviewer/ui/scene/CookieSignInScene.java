@@ -18,6 +18,7 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -78,6 +79,25 @@ public class CookieSignInScene extends BaseScene implements EditText.OnEditorAct
         mIpbPassHash.setOnEditorActionListener(this);
 
         mOk.setOnClickListener(this);
+
+        // Try to get old version cookie info
+        Context context = getContext2();
+        AssertUtils.assertNotNull(context);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("eh_info", 0);
+        String ipbMemberId = sharedPreferences.getString("ipb_member_id", null);
+        String ipbPassHash = sharedPreferences.getString("ipb_pass_hash", null);
+        boolean getIt = false;
+        if (!TextUtils.isEmpty(ipbMemberId)) {
+            mIpbMemberId.setText(ipbMemberId);
+            getIt = true;
+        }
+        if (!TextUtils.isEmpty(ipbPassHash)) {
+            mIpbPassHash.setText(ipbPassHash);
+            getIt = true;
+        }
+        if (getIt) {
+            showTip(R.string.found_cookies, LENGTH_SHORT);
+        }
 
         return view;
     }

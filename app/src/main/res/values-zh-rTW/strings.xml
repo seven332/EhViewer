@@ -46,6 +46,7 @@
     <string name="wrong_cookie_warning">看起來您輸入的 Cookie 是錯誤的，最好檢查一下。</string>
     <string name="i_will_check_it">好的</string>
     <string name="i_dont_think_so">我沒輸錯</string>
+    <string name="found_cookies">找到舊版 Cookie</string>
 
     <string name="invalid_download_location">似乎下載路徑不可用。請到重新設定下載路徑。</string>
 
@@ -80,7 +81,7 @@
     <string name="error_password_cannot_empty">密碼不可為空</string>
     <string name="skip_signing_in">跳過登陸</string>
     <string name="sign_in_failed">登陸失敗</string>
-    <string name="sign_in_failed_plain">這可能是網站更新導致的，也有可能是發生了奇怪的事情。您可以選擇在登陸按鈕下方通過網頁登陸或者輸入 cookie，或者跳過登陸。跳過登陸可能導致無法正常使用應用。</string>
+    <string name="sign_in_failed_plain">這可能是網站更新導致的，也有可能是發生了奇怪的事情。您可以選擇在登陸按鈕下方通過網頁登陸或者輸入 cookie，或者跳過登陸。跳過登陸可能導致無法正常使用應用。如果你已經在 0.6.x 版登陸過了，請優先嚐試選擇“通過 Cookie 登陸”。</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">點選重試</string>
     <string name="write_rationale">EhViewer 將申請裝置儲存空間訪問許可權以便下載畫廊。您願意授權嗎？</string>
