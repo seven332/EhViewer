@@ -128,7 +128,7 @@
             android:layout_marginLeft="@dimen/keyline_margin"
             android:layout_marginRight="@dimen/keyline_margin"
             android:orientation="horizontal"
-            android:background="@drawable/card_white_2dp">
+            android:background="@drawable/card_white_no_padding_2dp">
 
             <TextView
                 android:id="@+id/download"

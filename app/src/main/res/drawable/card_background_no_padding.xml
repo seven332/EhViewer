@@ -18,7 +18,7 @@
 <selector
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_activated="true" android:drawable="@drawable/card_grey_2dp"/>
-    <item android:drawable="@drawable/card_white_2dp"/>
+    <item android:state_activated="true" android:drawable="@drawable/card_grey_no_padding_2dp"/>
+    <item android:drawable="@drawable/card_white_no_padding_2dp"/>
 
 </selector>
