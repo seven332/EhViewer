@@ -70,6 +70,8 @@ import com.hippo.scene.StageActivity;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.PermissionRequester;
 import com.hippo.widget.LoadImageView;
+import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
+import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 public final class MainActivity extends StageActivity
@@ -97,7 +99,7 @@ public final class MainActivity extends StageActivity
      Whole life cycle
      ---------------*/
     @Nullable
-    private DrawerLayout mDrawerLayout;
+    private SlidingDrawerLayout mDrawerLayout;
     @Nullable
     private NavigationView mNavView;
     @Nullable
@@ -290,13 +292,14 @@ public final class MainActivity extends StageActivity
     protected void onCreate2(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
 
-        mDrawerLayout = (DrawerLayout) ViewUtils.$$(this, R.id.draw_view);
+        mDrawerLayout = (SlidingDrawerLayout) ViewUtils.$$(this, R.id.draw_view);
         mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
         mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
         View headerLayout = mNavView.getHeaderView(0);
         mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
         mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
 
+        mDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         // Pre-L need shadow drawable
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
@@ -387,9 +390,9 @@ public final class MainActivity extends StageActivity
                     baseScene.getLayoutInflater2(), mRightDrawer, savedInstanceState);
             if (drawerView != null) {
                 mRightDrawer.addView(drawerView);
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
+                mDrawerLayout.setDrawerLockMode(SlidingDrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
             } else {
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+                mDrawerLayout.setDrawerLockMode(SlidingDrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
             }
         }
     }

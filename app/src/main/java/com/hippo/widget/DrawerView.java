@@ -23,7 +23,7 @@ import android.widget.FrameLayout;
 
 import com.hippo.yorozuya.LayoutUtils;
 
-public class DrawView extends FrameLayout {
+public class DrawerView extends FrameLayout {
 
     private static final int DEFAULT_MAX_WIDTH = 280;
 
@@ -33,17 +33,17 @@ public class DrawView extends FrameLayout {
 
     private int mMaxWidth;
 
-    public DrawView(Context context) {
+    public DrawerView(Context context) {
         super(context);
         init(context, null);
     }
 
-    public DrawView(Context context, AttributeSet attrs) {
+    public DrawerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public DrawView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public DrawerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
