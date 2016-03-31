@@ -110,7 +110,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         }
 
         CommonOperations.ensureNoMediaFile(Settings.getDownloadLocation());
-
+        clearTempDir();
         update();
 
         // Update version code
@@ -123,6 +123,17 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
 
         if (DEBUG_NATIVE_MEMORY) {
             debugNativeMemory();
+        }
+    }
+
+    private void clearTempDir() {
+        File dir = AppConfig.getTempDir();
+        if (null != dir) {
+            FileUtils.deleteContent(dir);
+        }
+        dir = AppConfig.getExternalTempDir();
+        if (null != dir) {
+            FileUtils.deleteContent(dir);
         }
     }
 
