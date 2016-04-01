@@ -162,7 +162,12 @@ public class EhDB {
                         gi.category = cursor.getInt(4);
                         gi.thumb = cursor.getString(5);
                         gi.uploader = cursor.getString(6);
-                        gi.rating = cursor.getFloat(7);
+                        try {
+                            // In 0.6.x version, NaN is stored
+                            gi.rating = cursor.getFloat(7);
+                        } catch (Exception e) {
+                            gi.rating = -1.0f;
+                        }
 
                         map.put(gi.gid, gi);
 

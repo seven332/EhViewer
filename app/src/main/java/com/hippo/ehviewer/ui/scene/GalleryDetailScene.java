@@ -913,7 +913,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private static String getRatingText(float rating, Resources resources) {
         String undefine = "(´_ゝ`)";
-        if (Float.isNaN(rating)) {
+        if (-1.0f == rating) {
             return undefine;
         }
 

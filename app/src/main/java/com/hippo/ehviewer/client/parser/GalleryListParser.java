@@ -162,10 +162,10 @@ public class GalleryListParser {
         // Rating
         Element it4r = JsoupUtils.getElementByClass(e, "it4r");
         if (null != it4r) {
-            gi.rating = NumberUtils.parseFloatSafely(parseRating(it4r.attr("style")), Float.NaN);
+            gi.rating = NumberUtils.parseFloatSafely(parseRating(it4r.attr("style")), -1.0f);
         } else {
             Log.w(TAG, "Can't parse gallery info rating");
-            gi.rating = Float.NaN;
+            gi.rating = -1.0f;
         }
         // Uploader
         Element itu = JsoupUtils.getElementByClass(e, "itu");

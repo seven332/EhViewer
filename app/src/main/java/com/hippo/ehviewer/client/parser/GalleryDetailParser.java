@@ -198,7 +198,7 @@ public class GalleryDetailParser {
             if (null != rating_label) {
                 String ratingStr = StringUtils.trim(rating_label.text());
                 if ("Not Yet Rated".equals(ratingStr)) {
-                    gd.rating = Float.NaN;
+                    gd.rating = -1.0f;
                 } else {
                     int index = ratingStr.indexOf(' ');
                     if (index == -1 || index >= ratingStr.length()) {
@@ -208,7 +208,7 @@ public class GalleryDetailParser {
                     }
                 }
             } else {
-                gd.rating = Float.NaN;
+                gd.rating = -1.0f;
             }
 
             // isFavorited
