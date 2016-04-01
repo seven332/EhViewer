@@ -1227,10 +1227,14 @@ public final class GalleryListScene extends BaseScene
     }
 
     public static void startScene(SceneFragment scene, ListUrlBuilder lub) {
+        scene.startScene(getStartAnnouncer(lub));
+    }
+
+    public static Announcer getStartAnnouncer(ListUrlBuilder lub) {
         Bundle args = new Bundle();
         args.putString(KEY_ACTION, ACTION_LIST_URL_BUILDER);
         args.putParcelable(KEY_LIST_URL_BUILDER, lub);
-        scene.startScene(new Announcer(GalleryListScene.class).setArgs(args));
+        return new Announcer(GalleryListScene.class).setArgs(args);
     }
 
     @Override

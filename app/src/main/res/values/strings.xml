@@ -154,8 +154,8 @@
 
     <string name="search">Search</string>
 
-    <string name="keyword_search">Keyword Search</string>
-    <string name="image_search">Image Search</string>
+    <string name="keyword_search">Keyword search</string>
+    <string name="image_search">Image search</string>
 
     <string name="search_normal">Normal Search</string>
     <string name="search_advance">Advance Options</string>

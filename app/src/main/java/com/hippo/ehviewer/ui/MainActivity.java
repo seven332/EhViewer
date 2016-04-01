@@ -19,6 +19,8 @@ package com.hippo.ehviewer.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -39,11 +41,13 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.ui.scene.AnalyticsScene;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.CookieSignInScene;
@@ -64,15 +68,23 @@ import com.hippo.ehviewer.ui.scene.SelectSiteScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.ehviewer.ui.scene.WebViewSignInScene;
+import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.BitmapUtils;
 import com.hippo.util.PermissionRequester;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -253,6 +265,38 @@ public final class MainActivity extends StageActivity
         return announcer;
     }
 
+    private File saveImageToTempFile(UniFile file) {
+        if (null == file) {
+            return null;
+        }
+
+        Bitmap bitmap = null;
+        try {
+            bitmap = BitmapUtils.decodeStream(new UniFileInputStreamPipe(file), -1, -1, 500 * 500, false, false, null);
+        } catch (OutOfMemoryError e) {
+            // Ignore
+        }
+        if (null == bitmap) {
+            return null;
+        }
+
+        File temp = AppConfig.createTempFile();
+        if (null == temp) {
+            return null;
+        }
+
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(temp);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
+            return temp;
+        } catch (IOException e) {
+            return null;
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
+    }
+
     private boolean handleIntent(Intent intent) {
         if (intent == null) {
             return false;
@@ -264,6 +308,29 @@ public final class MainActivity extends StageActivity
             if (announcer != null) {
                 startScene(processAnnouncer(announcer));
                 return true;
+            }
+        } else if (Intent.ACTION_SEND.equals(action)) {
+            String type = intent.getType();
+            if ("text/plain".equals(type)) {
+                ListUrlBuilder builder = new ListUrlBuilder();
+                builder.setKeyword(intent.getStringExtra(Intent.EXTRA_TEXT));
+                startScene(processAnnouncer(GalleryListScene.getStartAnnouncer(builder)));
+                return true;
+            } else if (type.startsWith("image/")) {
+                Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (null != uri) {
+                    UniFile file = UniFile.fromUri(this, uri);
+                    File temp = saveImageToTempFile(file);
+                    if (null != temp) {
+                        ListUrlBuilder builder = new ListUrlBuilder();
+                        builder.setMode(ListUrlBuilder.MODE_IMAGE_SEARCH);
+                        builder.setImagePath(temp.getPath());
+                        builder.setUseSimilarityScan(true);
+                        builder.setShowExpunged(true);
+                        startScene(processAnnouncer(GalleryListScene.getStartAnnouncer(builder)));
+                        return true;
+                    }
+                }
             }
         }
 
