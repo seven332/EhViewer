@@ -150,5 +150,18 @@
             android:text="@string/settings_read_volume_page"
             android:textColor="@color/primary_text_dark"/>
 
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/custom_screen_lightness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_read_custom_screen_lightness"
+            android:textColor="@color/primary_text_dark"/>
+
+        <SeekBar
+            android:id="@+id/screen_lightness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="200"/>
+
     </LinearLayout>
 </com.hippo.widget.IndicatingScrollView>

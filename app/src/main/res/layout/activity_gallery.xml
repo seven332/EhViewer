@@ -87,4 +87,10 @@
             android:gravity="center_horizontal"/>
 
     </com.hippo.ehviewer.widget.SeekBarPanel>
+
+    <com.hippo.widget.ColorView
+        android:id="@+id/mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>

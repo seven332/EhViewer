@@ -443,6 +443,8 @@
     <string name="settings_read_show_clock">Show clock</string>
     <string name="settings_read_show_battery">Show battery</string>
     <string name="settings_read_volume_page">Use volume key to turn pages</string>
+    <string name="settings_read_custom_screen_lightness">Custom screen lightness</string>
+    <string name="settings_read_screen_lightness">Screen lightness</string>
 
     <string name="settings_download">Download</string>
     <string name="settings_download_download_location">Download location</string>

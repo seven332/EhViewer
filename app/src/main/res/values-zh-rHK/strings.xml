@@ -401,6 +401,8 @@
     <string name="settings_read_show_clock">顯示時鐘</string>
     <string name="settings_read_show_battery">顯示電量</string>
     <string name="settings_read_volume_page">使用音量鍵翻頁</string>
+    <string name="settings_read_custom_screen_lightness">自定義屏幕亮度</string>
+    <string name="settings_read_screen_lightness">屏幕亮度</string>
 
     <string name="settings_download">下載</string>
     <string name="settings_download_download_location">下載路徑</string>

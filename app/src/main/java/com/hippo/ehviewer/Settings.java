@@ -459,6 +459,28 @@ public class Settings {
         putBoolean(KEY_VOLUME_PAGE, value);
     }
 
+    private static final String KEY_CUSTOM_SCREEN_LIGHTNESS = "custom_screen_lightness";
+    private static final boolean DEFAULT_CUSTOM_SCREEN_LIGHTNESS = false;
+
+    public static boolean getCustomScreenLightness() {
+        return getBoolean(KEY_CUSTOM_SCREEN_LIGHTNESS, DEFAULT_CUSTOM_SCREEN_LIGHTNESS);
+    }
+
+    public static void putCustomScreenLightness(boolean value) {
+        putBoolean(KEY_CUSTOM_SCREEN_LIGHTNESS, value);
+    }
+
+    private static final String KEY_SCREEN_LIGHTNESS = "screen_lightness";
+    private static final int DEFAULT_SCREEN_LIGHTNESS = 50;
+
+    public static int getScreenLightness() {
+        return getInt(KEY_SCREEN_LIGHTNESS, DEFAULT_SCREEN_LIGHTNESS);
+    }
+
+    public static void putScreenLightness(int value) {
+        putInt(KEY_SCREEN_LIGHTNESS, value);
+    }
+
     /********************
      ****** Download
      ********************/

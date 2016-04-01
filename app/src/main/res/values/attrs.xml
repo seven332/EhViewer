@@ -137,4 +137,8 @@
         <attr name="url" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="SeekBarPreference">
+        <attr name="max" format="integer"/>
+    </declare-styleable>
+
 </resources>

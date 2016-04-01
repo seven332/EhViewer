@@ -71,4 +71,16 @@
         android:title="@string/settings_read_volume_page"
         android:defaultValue="false"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="custom_screen_lightness"
+        android:title="@string/settings_read_custom_screen_lightness"
+        android:defaultValue="false"/>
+
+    <com.hippo.preference.SeekBarPreference
+        android:key="screen_lightness"
+        android:title="@string/settings_read_screen_lightness"
+        android:dependency="custom_screen_lightness"
+        app:max="200"
+        android:defaultValue="50"/>
+
 </PreferenceScreen>

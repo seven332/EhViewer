@@ -36,8 +36,10 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -63,8 +65,10 @@ import com.hippo.gl.view.GLRootView;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.SystemUiHelper;
+import com.hippo.widget.ColorView;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.ConcurrentPool;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
@@ -105,6 +109,8 @@ public class GalleryActivity extends EhActivity
     private SystemUiHelper mSystemUiHelper;
     private boolean mShowSystemUi;
 
+    @Nullable
+    private ColorView mMaskView;
     @Nullable
     private View mClock;
     @Nullable
@@ -261,6 +267,7 @@ public class GalleryActivity extends EhActivity
         mSystemUiHelper.hide();
         mShowSystemUi = false;
 
+        mMaskView = (ColorView) ViewUtils.$$(this, R.id.mask);
         mClock = ViewUtils.$$(this, R.id.clock);
         mBattery = ViewUtils.$$(this, R.id.battery);
         mClock.setVisibility(Settings.getShowClock() ? View.VISIBLE : View.GONE);
@@ -300,6 +307,9 @@ public class GalleryActivity extends EhActivity
         }
         setRequestedOrientation(orientation);
 
+        // Screen lightness
+        setScreenLightness(Settings.getCustomScreenLightness(), Settings.getScreenLightness());
+
         if (Settings.getGuideGallery()) {
             FrameLayout mainLayout = (FrameLayout) ViewUtils.$$(this, R.id.main);
             mainLayout.addView(new GalleryGuideView(this));
@@ -320,6 +330,9 @@ public class GalleryActivity extends EhActivity
             mGalleryProvider = null;
         }
 
+        mMaskView = null;
+        mClock = null;
+        mBattery = null;
         mSeekBarPanel = null;
         mLeftText = null;
         mRightText = null;
@@ -667,6 +680,34 @@ public class GalleryActivity extends EhActivity
         }
     }
 
+    /**
+     * @param lightness 0 - 200
+     */
+    private void setScreenLightness(boolean enable, int lightness) {
+        if (null == mMaskView) {
+            return;
+        }
+
+        Window w = getWindow();
+        WindowManager.LayoutParams lp = w.getAttributes();
+        if (enable) {
+            lightness = MathUtils.clamp(lightness, 0, 200);
+            if (lightness > 100) {
+                mMaskView.setColor(0);
+                // Avoid BRIGHTNESS_OVERRIDE_OFF,
+                // screen may be off when lp.screenBrightness is 0.0f
+                lp.screenBrightness = Math.max((lightness - 100) / 100.0f, 0.01f);
+            } else {
+                mMaskView.setColor(MathUtils.lerp(0xde, 0x00, lightness / 100.0f) << 24);
+                lp.screenBrightness = 0.01f;
+            }
+        } else {
+            mMaskView.setColor(0);
+            lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        }
+        w.setAttributes(lp);
+    }
+
     private class GalleryMenuHelper implements DialogInterface.OnClickListener {
 
         private final View mView;
@@ -678,6 +719,8 @@ public class GalleryActivity extends EhActivity
         private final SwitchCompat mShowClock;
         private final SwitchCompat mShowBattery;
         private final SwitchCompat mVolumePage;
+        private final SwitchCompat mCustomScreenLightness;
+        private final SeekBar mScreenLightness;
 
         @SuppressLint("InflateParams")
         public GalleryMenuHelper(Context context) {
@@ -690,6 +733,8 @@ public class GalleryActivity extends EhActivity
             mShowClock = (SwitchCompat) mView.findViewById(R.id.show_clock);
             mShowBattery = (SwitchCompat) mView.findViewById(R.id.show_battery);
             mVolumePage = (SwitchCompat) mView.findViewById(R.id.volume_page);
+            mCustomScreenLightness = (SwitchCompat) mView.findViewById(R.id.custom_screen_lightness);
+            mScreenLightness = (SeekBar) mView.findViewById(R.id.screen_lightness);
 
             mScreenRotation.setSelection(Settings.getScreenRotation());
             mReadingDirection.setSelection(Settings.getReadingDirection());
@@ -699,6 +744,16 @@ public class GalleryActivity extends EhActivity
             mShowClock.setChecked(Settings.getShowClock());
             mShowBattery.setChecked(Settings.getShowBattery());
             mVolumePage.setChecked(Settings.getVolumePage());
+            mCustomScreenLightness.setChecked(Settings.getCustomScreenLightness());
+            mScreenLightness.setProgress(Settings.getScreenLightness());
+            mScreenLightness.setEnabled(Settings.getCustomScreenLightness());
+
+            mCustomScreenLightness.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mScreenLightness.setEnabled(isChecked);
+                }
+            });
         }
 
         public View getView() {
@@ -715,6 +770,8 @@ public class GalleryActivity extends EhActivity
             boolean showClock = mShowClock.isChecked();
             boolean showBattery = mShowBattery.isChecked();
             boolean volumePage = mVolumePage.isChecked();
+            boolean customScreenLightness = mCustomScreenLightness.isChecked();
+            int screenLightness = mScreenLightness.getProgress();
 
             Settings.putScreenRotation(screenRotation);
             Settings.putReadingDirection(layoutMode);
@@ -724,6 +781,8 @@ public class GalleryActivity extends EhActivity
             Settings.putShowClock(showClock);
             Settings.putShowBattery(showBattery);
             Settings.putVolumePage(volumePage);
+            Settings.putCustomScreenLightness(customScreenLightness);
+            Settings.putScreenLightness(screenLightness);
 
             int orientation;
             switch (screenRotation) {
@@ -755,6 +814,7 @@ public class GalleryActivity extends EhActivity
             if (mBattery != null) {
                 mBattery.setVisibility(showBattery ? View.VISIBLE : View.GONE);
             }
+            setScreenLightness(customScreenLightness, screenLightness);
 
             // Update slider
             mLayoutMode = layoutMode;

@@ -109,4 +109,9 @@
     <dimen name="lock_pattern_dot_size">12dp</dimen>
     <dimen name="lock_pattern_dot_size_activated">28dp</dimen>
 
+    <!-- Custom preference -->
+    <dimen name="preference_widget_width">48dp</dimen>
+    <dimen name="preference_item_padding_side">8dip</dimen>
+    <dimen name="preference_item_padding_inner">8dip</dimen>
+
 </resources>
