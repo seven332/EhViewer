@@ -25,7 +25,11 @@ import android.view.View;
 
 import com.hippo.ehviewer.R;
 import com.hippo.util.DrawableManager;
+import com.hippo.yorozuya.MathUtils;
 
+/**
+ * 5 stars, from 0 to 10
+ */
 public class SimpleRatingView extends View {
 
     private Drawable mStarDrawable;
@@ -96,7 +100,7 @@ public class SimpleRatingView extends View {
     public void setRating(float rating) {
         if (mRating != rating) {
             mRating = rating;
-            int ratingInt = (int) Math.ceil(rating * 2);
+            int ratingInt = MathUtils.clamp((int) Math.ceil(rating * 2), 0, 10);
             if (mRatingInt != ratingInt) {
                 mRatingInt = ratingInt;
                 invalidate();
