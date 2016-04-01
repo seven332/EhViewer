@@ -881,7 +881,8 @@ public final class GalleryListScene extends BaseScene
             mShowActionFab = true;
             View fab = mFabLayout.getPrimaryFab();
             fab.setVisibility(View.VISIBLE);
-            fab.animate().scaleX(1.0f).scaleY(1.0f).setListener(null)
+            fab.setRotation(-45.0f);
+            fab.animate().scaleX(1.0f).scaleY(1.0f).rotation(0.0f).setListener(null)
                     .setDuration(ANIMATE_TIME).setStartDelay(0L)
                     .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR).start();
         }
@@ -916,7 +917,8 @@ public final class GalleryListScene extends BaseScene
                         .setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR).start();
             }
             mSearchFab.setVisibility(View.VISIBLE);
-            mSearchFab.animate().scaleX(1.0f).scaleY(1.0f).setListener(null)
+            mSearchFab.setRotation(-45.0f);
+            mSearchFab.animate().scaleX(1.0f).scaleY(1.0f).rotation(0.0f).setListener(null)
                     .setDuration(ANIMATE_TIME).setStartDelay(delay)
                     .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR).start();
         } else {
@@ -950,7 +952,8 @@ public final class GalleryListScene extends BaseScene
             }
             View fab = mFabLayout.getPrimaryFab();
             fab.setVisibility(View.VISIBLE);
-            fab.animate().scaleX(1.0f).scaleY(1.0f).setListener(null)
+            fab.setRotation(-45.0f);
+            fab.animate().scaleX(1.0f).scaleY(1.0f).rotation(0.0f).setListener(null)
                     .setDuration(ANIMATE_TIME).setStartDelay(delay)
                     .setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR).start();
 

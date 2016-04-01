@@ -490,7 +490,8 @@ public final class GalleryCommentsScene extends ToolbarScene
                 mFab.setY(fabStartY);
                 mFab.setScaleX(0.0f);
                 mFab.setScaleY(0.0f);
-                mFab.animate().translationX(0.0f).translationY(0.0f).scaleX(1.0f).scaleY(1.0f)
+                mFab.setRotation(-45.0f);
+                mFab.animate().translationX(0.0f).translationY(0.0f).scaleX(1.0f).scaleY(1.0f).rotation(0.0f)
                         .setInterpolator(AnimationUtils.SLOW_FAST_SLOW_INTERPOLATOR)
                         .setDuration(300L).setListener(new SimpleAnimatorListener() {
                     @Override

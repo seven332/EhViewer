@@ -256,14 +256,20 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
 
 
     private void setPrimaryFabAnimation(final View child, final boolean expanded, boolean delay) {
+        float startRotation;
+        float endRotation;
         float startScale;
         float endScale;
         Interpolator interpolator;
         if (expanded) {
+            startRotation = -45.0f;
+            endRotation = 0.0f;
             startScale = 0.0f;
             endScale = 1.0f;
             interpolator = AnimationUtils.FAST_SLOW_INTERPOLATOR;
         } else {
+            startRotation = 0.0f;
+            endRotation = 0.0f;
             startScale  = 1.0f;
             endScale = 0.0f;
             interpolator = AnimationUtils.SLOW_FAST_INTERPOLATOR;
@@ -271,9 +277,11 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
 
         child.setScaleX(startScale);
         child.setScaleY(startScale);
+        child.setRotation(startRotation);
         child.animate()
                 .scaleX(endScale)
                 .scaleY(endScale)
+                .rotation(endRotation)
                 .setStartDelay(delay ? ANIMATE_TIME : 0L)
                 .setDuration(ANIMATE_TIME)
                 .setInterpolator(interpolator)
