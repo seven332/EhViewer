@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -139,8 +140,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     private int mFitPaddingTop = 0;
     private int mFitPaddingBottom = 0;
 
-    private int mStatusBarColor = Color.BLACK;
-    private int mNavigationBarColor = Color.BLACK;
+    private Paint mStatusBarPaint;
+    private Paint mNavigationBarPaint;
 
     private static int sDefaultMinDrawerMargin = 56;
 
@@ -214,6 +215,10 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         mAnimator.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
         mCancelAnimation = false;
         mDrawerElevation = LayoutUtils.dp2pix(context, DRAWER_ELEVATION);
+        mStatusBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        mStatusBarPaint.setColor(Color.BLACK);
+        mNavigationBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        mNavigationBarPaint.setColor(Color.BLACK);
 
         setWillNotDraw(false);
     }
@@ -978,11 +983,11 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     }
 
     public void setStatusBarColor(int statusBarColor) {
-        mStatusBarColor = statusBarColor;
+        mStatusBarPaint.setColor(statusBarColor);
     }
 
     public void setNavigationBarColor(int navigationBarColor) {
-        mNavigationBarColor = navigationBarColor;
+        mNavigationBarPaint.setColor(navigationBarColor);
     }
 
     @Override
@@ -1012,18 +1017,12 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         super.onDraw(canvas);
 
         if (mFitPaddingTop != 0) {
-            int saved = canvas.save();
-            canvas.clipRect(0, 0, getWidth(), mFitPaddingTop);
-            canvas.drawColor(mStatusBarColor);
-            canvas.restoreToCount(saved);
+            canvas.drawRect(0, 0, getWidth(), mFitPaddingTop, mStatusBarPaint);
         }
 
         if (mFitPaddingBottom != 0) {
-            int saved = canvas.save();
             int height = getHeight();
-            canvas.clipRect(0, height - mFitPaddingBottom, getWidth(), height);
-            canvas.drawColor(mNavigationBarColor);
-            canvas.restoreToCount(saved);
+            canvas.drawRect(0, height - mFitPaddingBottom, getWidth(), height, mNavigationBarPaint);
         }
     }
 
