@@ -18,8 +18,7 @@
 <com.hippo.widget.SafeCoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,8 +30,7 @@
         <com.hippo.ehviewer.widget.EhStageLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"/>
+            android:layout_height="match_parent"/>
 
         <android.support.design.widget.NavigationView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -41,7 +39,6 @@
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:maxWidth="@dimen/drawer_max_width"
-            android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header_main"
             app:menu="@menu/nav_drawer_main"/>
 
