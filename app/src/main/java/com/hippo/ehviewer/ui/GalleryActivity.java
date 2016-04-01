@@ -254,7 +254,7 @@ public class GalleryActivity extends EhActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             systemUiLevel = SystemUiHelper.LEVEL_IMMERSIVE;
         } else {
-            systemUiLevel = SystemUiHelper.LEVEL_LOW_PROFILE;
+            systemUiLevel = SystemUiHelper.LEVEL_HIDE_STATUS_BAR;
         }
         mSystemUiHelper = new SystemUiHelper(this, systemUiLevel,
                 SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
