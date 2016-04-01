@@ -99,6 +99,16 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             Build.VERSION.SDK_INT >= 21;
     private static final int DRAWER_ELEVATION = 10; //dp
 
+    private static final SlidingDrawerLayoutInsetsHelper INSETS_HELPER;
+
+    static {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            INSETS_HELPER = new SlidingDrawerLayoutInsetsHelperL();
+        } else {
+            INSETS_HELPER = null;
+        }
+    }
+
     private float mDrawerElevation;
 
     private int mMinDrawerMargin;
@@ -221,6 +231,10 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         mNavigationBarPaint.setColor(Color.BLACK);
 
         setWillNotDraw(false);
+
+        if (INSETS_HELPER != null) {
+            INSETS_HELPER.setupForWindowInsets(this);
+        }
     }
 
     public void setDrawerListener(DrawerListener listener) {
