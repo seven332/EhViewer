@@ -223,6 +223,14 @@ public class GalleryActivity extends EhActivity
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        if (Settings.getReadingFullscreen() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window w = getWindow();
+            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
@@ -256,16 +264,18 @@ public class GalleryActivity extends EhActivity
         glRootView.setContentPane(mGalleryView);
 
         // System UI helper
-        int systemUiLevel;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            systemUiLevel = SystemUiHelper.LEVEL_IMMERSIVE;
-        } else {
-            systemUiLevel = SystemUiHelper.LEVEL_HIDE_STATUS_BAR;
+        if (Settings.getReadingFullscreen()) {
+            int systemUiLevel;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                systemUiLevel = SystemUiHelper.LEVEL_IMMERSIVE;
+            } else {
+                systemUiLevel = SystemUiHelper.LEVEL_HIDE_STATUS_BAR;
+            }
+            mSystemUiHelper = new SystemUiHelper(this, systemUiLevel,
+                    SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
+            mSystemUiHelper.hide();
+            mShowSystemUi = false;
         }
-        mSystemUiHelper = new SystemUiHelper(this, systemUiLevel,
-                SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES | SystemUiHelper.FLAG_IMMERSIVE_STICKY);
-        mSystemUiHelper.hide();
-        mShowSystemUi = false;
 
         mMaskView = (ColorView) ViewUtils.$$(this, R.id.mask);
         mClock = ViewUtils.$$(this, R.id.clock);
@@ -719,6 +729,7 @@ public class GalleryActivity extends EhActivity
         private final SwitchCompat mShowClock;
         private final SwitchCompat mShowBattery;
         private final SwitchCompat mVolumePage;
+        private final SwitchCompat mReadingFullscreen;
         private final SwitchCompat mCustomScreenLightness;
         private final SeekBar mScreenLightness;
 
@@ -733,6 +744,7 @@ public class GalleryActivity extends EhActivity
             mShowClock = (SwitchCompat) mView.findViewById(R.id.show_clock);
             mShowBattery = (SwitchCompat) mView.findViewById(R.id.show_battery);
             mVolumePage = (SwitchCompat) mView.findViewById(R.id.volume_page);
+            mReadingFullscreen = (SwitchCompat) mView.findViewById(R.id.reading_fullscreen);
             mCustomScreenLightness = (SwitchCompat) mView.findViewById(R.id.custom_screen_lightness);
             mScreenLightness = (SeekBar) mView.findViewById(R.id.screen_lightness);
 
@@ -744,6 +756,7 @@ public class GalleryActivity extends EhActivity
             mShowClock.setChecked(Settings.getShowClock());
             mShowBattery.setChecked(Settings.getShowBattery());
             mVolumePage.setChecked(Settings.getVolumePage());
+            mReadingFullscreen.setChecked(Settings.getReadingFullscreen());
             mCustomScreenLightness.setChecked(Settings.getCustomScreenLightness());
             mScreenLightness.setProgress(Settings.getScreenLightness());
             mScreenLightness.setEnabled(Settings.getCustomScreenLightness());
@@ -770,8 +783,11 @@ public class GalleryActivity extends EhActivity
             boolean showClock = mShowClock.isChecked();
             boolean showBattery = mShowBattery.isChecked();
             boolean volumePage = mVolumePage.isChecked();
+            boolean readingFullscreen = mReadingFullscreen.isChecked();
             boolean customScreenLightness = mCustomScreenLightness.isChecked();
             int screenLightness = mScreenLightness.getProgress();
+
+            boolean oldReadingFullscreen = Settings.getReadingFullscreen();
 
             Settings.putScreenRotation(screenRotation);
             Settings.putReadingDirection(layoutMode);
@@ -781,6 +797,7 @@ public class GalleryActivity extends EhActivity
             Settings.putShowClock(showClock);
             Settings.putShowBattery(showBattery);
             Settings.putVolumePage(volumePage);
+            Settings.putReadingFullscreen(readingFullscreen);
             Settings.putCustomScreenLightness(customScreenLightness);
             Settings.putScreenLightness(screenLightness);
 
@@ -819,6 +836,10 @@ public class GalleryActivity extends EhActivity
             // Update slider
             mLayoutMode = layoutMode;
             updateSlider();
+
+            if (oldReadingFullscreen != readingFullscreen) {
+                recreate();
+            }
         }
     }
 

@@ -459,6 +459,17 @@ public class Settings {
         putBoolean(KEY_VOLUME_PAGE, value);
     }
 
+    private static final String KEY_READING_FULLSCREEN = "reading_fullscreen";
+    private static final boolean VALUE_READING_FULLSCREEN = true;
+
+    public static boolean getReadingFullscreen() {
+        return getBoolean(KEY_READING_FULLSCREEN, VALUE_READING_FULLSCREEN);
+    }
+
+    public static void putReadingFullscreen(boolean value) {
+        putBoolean(KEY_READING_FULLSCREEN, value);
+    }
+
     private static final String KEY_CUSTOM_SCREEN_LIGHTNESS = "custom_screen_lightness";
     private static final boolean DEFAULT_CUSTOM_SCREEN_LIGHTNESS = false;
 
