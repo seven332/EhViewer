@@ -54,15 +54,9 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
 
         if (mSpiderQueen != null) {
             mSpiderQueen.removeOnSpiderListener(this);
-            final SpiderQueen spiderQueen = mSpiderQueen;
+            // Activity recreate may called, so wait 3000s
+            SimpleHandler.getInstance().postDelayed(new ReleaseTask(mSpiderQueen), 3000);
             mSpiderQueen = null;
-            // Activity recreate may called
-            SimpleHandler.getInstance().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SpiderQueen.releaseSpiderQueen(spiderQueen, SpiderQueen.MODE_READ);
-                }
-            }, 3000);
         }
     }
 
@@ -199,5 +193,22 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     @Override
     public void onGetImageFailure(int index, String error) {
         notifyPageFailed(index, error);
+    }
+
+    private static class ReleaseTask implements Runnable {
+
+        private SpiderQueen mSpiderQueen;
+
+        public ReleaseTask(SpiderQueen spiderQueen) {
+            mSpiderQueen = spiderQueen;
+        }
+
+        @Override
+        public void run() {
+            if (null != mSpiderQueen) {
+                SpiderQueen.releaseSpiderQueen(mSpiderQueen, SpiderQueen.MODE_READ);
+                mSpiderQueen = null;
+            }
+        }
     }
 }
