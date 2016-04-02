@@ -425,6 +425,10 @@
     <string name="settings_download_restore_not_found">未找到可恢復下載項</string>
     <string name="settings_download_restore_failed">恢復失敗</string>
     <string name="settings_download_restore_successfully">成功恢復 %s 項</string>
+    <string name="settings_download_clean_redundancy">清理下載冗餘</string>
+    <string name="settings_download_clean_redundancy_summary">清理下載目錄中不在下載列表裡的圖片檔案</string>
+    <string name="settings_download_clean_redundancy_no_redundancy">未發現冗餘</string>
+    <string name="settings_download_clean_redundancy_done">完成冗餘清理，共清理 %d 項</string>
 
     <string name="settings_advanced">高階</string>
     <string name="settings_advanced_save_parse_error_body">解析失敗時儲存頁面內容</string>

@@ -50,4 +50,9 @@
         android:title="@string/settings_download_restore_download_items"
         android:summary="@string/settings_download_restore_download_items_summary"/>
 
+    <com.hippo.ehviewer.preference.CleanRedundancyPreference
+        android:key="clean_redundancy"
+        android:title="@string/settings_download_clean_redundancy"
+        android:summary="@string/settings_download_clean_redundancy_summary"/>
+
 </PreferenceScreen>
