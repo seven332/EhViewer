@@ -24,41 +24,42 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="48dp">
 
             <ImageView
                 android:id="@+id/search_menu"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="left|center_vertical"
-                android:padding="16dp"/>
+                android:padding="12dp"/>
 
             <TextView
                 android:id="@+id/search_title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="56dp"
-                android:layout_marginRight="56dp"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/text_large"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
+                android:textSize="@dimen/text_little_large"
                 android:textColor="@color/secondary_text_light"
                 android:singleLine="true"
                 android:maxLines="1"/>
 
             <ImageView
                 android:id="@+id/search_action"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="right|center_vertical"
-                android:padding="16dp"/>
+                android:padding="12dp"/>
 
             <com.hippo.ehviewer.widget.SearchEditText
                 android:id="@+id/search_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="56dp"
-                android:layout_marginRight="56dp"
+                android:layout_marginLeft="48dp"
+                android:layout_marginRight="48dp"
+                android:textSize="@dimen/text_little_small"
                 android:background="@null"
                 android:singleLine="true"
                 android:maxLines="1"
