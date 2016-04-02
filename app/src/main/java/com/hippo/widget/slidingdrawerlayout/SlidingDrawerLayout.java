@@ -99,6 +99,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             Build.VERSION.SDK_INT >= 21;
     private static final int DRAWER_ELEVATION = 10; //dp
 
+    private static final int MIN_DRAWER_MARGIN = 56;
+
     private static final SlidingDrawerLayoutInsetsHelper INSETS_HELPER;
 
     static {
@@ -153,8 +155,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
     private Paint mStatusBarPaint;
     private Paint mNavigationBarPaint;
 
-    private static int sDefaultMinDrawerMargin = 56;
-
     /**
      * Listener for monitoring events about drawers.
      */
@@ -190,15 +190,6 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         void onDrawerStateChanged(View drawerView, int newState);
     }
 
-    /**
-     * minMargin should be app bar height in Material design
-     *
-     * @param minMargin
-     */
-    public static void setDefaultMinDrawerMargin(int minMargin) {
-        sDefaultMinDrawerMargin = minMargin;
-    }
-
     public SlidingDrawerLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
@@ -217,7 +208,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         mRightState = STATE_CLOSED;
         mLeftPercent = 0.0f;
         mRightPercent = 0.0f;
-        mMinDrawerMargin = sDefaultMinDrawerMargin;
+        mMinDrawerMargin = LayoutUtils.dp2pix(context, MIN_DRAWER_MARGIN);
         mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
         mAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
         mAnimator.addUpdateListener(this);
@@ -536,8 +527,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
                     }
                 }
                 final int drawerWidthSpec = getChildMeasureSpec(widthMeasureSpec,
-                        lp.leftMargin + lp.rightMargin,
-                        Math.min(widthSize - mMinDrawerMargin, lp.width));
+                        lp.leftMargin + lp.rightMargin + mMinDrawerMargin,
+                        Math.min(widthSize, lp.width));
                 final int drawerHeightSpec = getChildMeasureSpec(heightMeasureSpec,
                         lp.topMargin + lp.bottomMargin + paddingTop + paddingBottom,
                         lp.height);
