@@ -361,6 +361,10 @@
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">詳情</string>
     <string name="settings_eh_list_mode_thumb">縮圖</string>
+    <string name="settings_eh_thumb_size">縮圖大小</string>
+    <string name="settings_eh_thumb_size_large">大</string>
+    <string name="settings_eh_thumb_size_middle">中</string>
+    <string name="settings_eh_thumb_size_small">小</string>
     <string name="settings_eh_default_categories">主頁分類顯示</string>
     <string name="settings_eh_default_categories_summary">預設在主頁所顯示的分類</string>
     <string name="settings_eh_excluded_tag_namespaces">排除標籤組</string>

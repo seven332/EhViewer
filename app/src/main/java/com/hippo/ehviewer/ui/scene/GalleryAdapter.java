@@ -33,6 +33,7 @@ import android.widget.TextView;
 import com.hippo.drawable.TriangleDrawable;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -100,7 +101,20 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                 break;
             }
             case GalleryAdapter.TYPE_GRID: {
-                int columnWidth = mResources.getDimensionPixelOffset(R.dimen.gallery_grid_column_width);
+                int columnWidthId;
+                switch (Settings.getThumbSize()) {
+                    case 0:
+                        columnWidthId = R.dimen.gallery_grid_column_width_large;
+                        break;
+                    default:
+                    case 1:
+                        columnWidthId = R.dimen.gallery_grid_column_width_middle;
+                        break;
+                    case 2:
+                        columnWidthId = R.dimen.gallery_grid_column_width_small;
+                        break;
+                }
+                int columnWidth = mResources.getDimensionPixelOffset(columnWidthId);
                 mLayoutManager.setColumnSize(columnWidth);
                 mLayoutManager.setStrategy(AutoGridLayoutManager.STRATEGY_SUITABLE_SIZE);
                 if (null == mGirdDecoration) {

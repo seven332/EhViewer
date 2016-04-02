@@ -253,6 +253,13 @@ public class Settings {
         return getIntFromStr(KEY_LIST_MODE, DEFAULT_LIST_MODE);
     }
 
+    public static final String KEY_THUMB_SIZE = "thumb_size";
+    private static final int DEFAULT_THUMB_SIZE = 1;
+
+    public static int getThumbSize() {
+        return getIntFromStr(KEY_THUMB_SIZE, DEFAULT_THUMB_SIZE);
+    }
+
     private static final String KEY_SHOW_JPN_TITLE = "show_jpn_title";
     private static final boolean DEFAULT_SHOW_JPN_TITLE = false;
 

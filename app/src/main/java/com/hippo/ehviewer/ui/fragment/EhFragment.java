@@ -34,9 +34,11 @@ public class EhFragment extends PreferenceFragment
 
         Preference gallerySite = findPreference(Settings.KEY_GALLERY_SITE);
         Preference listMode = findPreference(Settings.KEY_LIST_MODE);
+        Preference thumbSize = findPreference(Settings.KEY_THUMB_SIZE);
 
         gallerySite.setOnPreferenceChangeListener(this);
         listMode.setOnPreferenceChangeListener(this);
+        thumbSize.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -48,6 +50,8 @@ public class EhFragment extends PreferenceFragment
         } else if (Settings.KEY_LIST_MODE.equals(key)) {
             getActivity().setResult(Activity.RESULT_OK);
             return true;
+        } else if (Settings.KEY_THUMB_SIZE.equals(key)) {
+            getActivity().setResult(Activity.RESULT_OK);
         }
         return true;
     }

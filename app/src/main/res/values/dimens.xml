@@ -48,7 +48,9 @@
     <dimen name="list_padding_bottom_fab">80dp</dimen>
 
     <dimen name="gallery_list_column_width">320dp</dimen>
-    <dimen name="gallery_grid_column_width">120dp</dimen>
+    <dimen name="gallery_grid_column_width_large">160dp</dimen>
+    <dimen name="gallery_grid_column_width_middle">120dp</dimen>
+    <dimen name="gallery_grid_column_width_small">80dp</dimen>
     <dimen name="gallery_grid_margin">8dp</dimen>
 
     <dimen name="preview_grid_column_width">120dp</dimen>

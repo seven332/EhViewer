@@ -403,6 +403,10 @@
     <string name="settings_eh_list_mode">List mode</string>
     <string name="settings_eh_list_mode_detail">Detail</string>
     <string name="settings_eh_list_mode_thumb">Thumb</string>
+    <string name="settings_eh_thumb_size">Thumb size</string>
+    <string name="settings_eh_thumb_size_large">Large</string>
+    <string name="settings_eh_thumb_size_middle">Middle</string>
+    <string name="settings_eh_thumb_size_small">Small</string>
     <string name="settings_eh_default_categories">Categories on Homepage</string>
     <string name="settings_eh_default_categories_summary">The categories shown as default on Homepage</string>
     <string name="settings_eh_excluded_languages">Excluded languages</string>
