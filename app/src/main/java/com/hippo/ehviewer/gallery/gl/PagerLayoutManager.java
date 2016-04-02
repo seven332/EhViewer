@@ -449,9 +449,8 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
         image.getScaleDefault(scales);
         float scale = image.getScale();
         float endScale = scales[0];
-        for (int i = 0, size = scales.length; i < size; i++) {
-            float value = scales[i];
-            if (scale < value) {
+        for (float value: scales) {
+            if (scale < value - 0.01f) {
                 endScale = value;
                 break;
             }
