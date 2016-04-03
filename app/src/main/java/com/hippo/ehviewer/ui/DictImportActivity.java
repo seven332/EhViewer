@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.hippo.dict.DictImportService;
 import com.hippo.ehviewer.R;
+import com.hippo.util.TextUrl;
 
 public class DictImportActivity extends AppCompatActivity {
 
@@ -36,14 +37,14 @@ public class DictImportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, getIntent().getData().toString());
+
         setContentView(R.layout.activity_dict_improt);
 
         Intent intent = new Intent(DictImportActivity.this, DictImportService.class);
         Log.d(TAG, "[onCreate] bind service");
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
         startService(intent);
-        mDictUri = getIntent().getData();
+
 
         importBtn = (Button) findViewById(R.id.btn_confirm);
         cancelBtn = (Button) findViewById(R.id.btn_cancel);
@@ -52,12 +53,11 @@ public class DictImportActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.bar_import);
         progressTipView = (TextView) findViewById(R.id.tv_progress);
         tipView = (TextView) findViewById(R.id.tv_tip);
-        tipView.setText(getFileName(mDictUri.toString()));
+
 
         importBtn.setOnClickListener(confirmListener);
         cancelBtn.setOnClickListener(cancelListener);
         hideBtn.setOnClickListener(hideListener);
-
     }
 
     private ServiceConnection conn = new ServiceConnection() {
@@ -70,6 +70,14 @@ public class DictImportActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             serviceBinder = ((DictImportService.DictImportServiceBinder) service).getService();
             serviceBinder.setOnProgressListener(importListener);
+
+            // if we are doing a task,we load improt infomation from service
+            // and ignore the newer import task
+            if (serviceBinder.isRunning()) {
+                initFromSerivce();
+            } else {
+                initFromIntent();
+            }
 
             Log.d(TAG, "connect to service");
         }
@@ -155,14 +163,24 @@ public class DictImportActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private String getFileName(String path) {
 
-        if (path == null) {
-            return path;
-        }
+    private void initFromSerivce() {
+        mDictUri = serviceBinder.getUri();
+        Log.d(TAG, "[initFromSerivce] " + mDictUri.toString());
 
-        int start = path.lastIndexOf("/");
-        return start == -1 ? path : path.substring(start + 1);
-
+        mTotal = serviceBinder.getMax();
+        progressBar.setMax(mTotal);
+        importBtn.setVisibility(View.GONE);
+        hideBtn.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+        tipView.setText(TextUrl.getFileName(mDictUri.toString()));
+        cancelBtn.setOnClickListener(abortListener);
     }
+
+    private void initFromIntent() {
+        mDictUri = getIntent().getData();
+        Log.d(TAG, "[initFromIntent] " + mDictUri.toString());
+        tipView.setText(TextUrl.getFileName(mDictUri.toString()));
+    }
+
 }

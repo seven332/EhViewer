@@ -8,6 +8,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.hippo.util.TextUrl;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +20,15 @@ public class DictImportService extends Service {
     private List<ProcessListener> mListeners = new ArrayList<>();
     private ProcessListener mDictProcessListener;
     private AsyncTask mImportAsyncTask;
+    private DictNotification mDictNotification;
+
+    // current task information
+    private int mMax;
+    private Uri mDictUri;
+    private boolean mRunningFlag = false;
 
     public DictImportService() {
+
     }
 
     private Binder serviceBinder = new DictImportServiceBinder();
@@ -33,10 +42,12 @@ public class DictImportService extends Service {
     public void onCreate() {
         super.onCreate();
         mDictManager = new DictManager(this);
+        mDictNotification = new DictNotification(this);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -76,9 +87,23 @@ public class DictImportService extends Service {
         mDictManager.importAbort();
     }
 
+    public Uri getUri() {
+        return mDictUri;
+    }
+
+    public int getMax() {
+        return mMax;
+    }
+
+    public boolean isRunning() {
+        return mRunningFlag;
+    }
+
     public void setOnProgressListener(ProcessListener onProgressListener) {
         if (onProgressListener != null) {
             mListeners.add(onProgressListener);
+            mListeners.remove(mDictNotification.mNotificationListener);
+            mDictNotification.stopNotify();
         }
     }
 
@@ -86,14 +111,23 @@ public class DictImportService extends Service {
         if (onProgressListener != null) {
             mListeners.remove(onProgressListener);
         }
+
+        // if there is no listener in listener list,we is in the backgroud mostly
+        // we post the process progress to a notification
+        if (mListeners.size() == 0) {
+            mDictNotification.setMax(mMax);
+            mDictNotification.setFileName(TextUrl.getFileName(mDictUri.toString()));
+            mListeners.add(mDictNotification.mNotificationListener);
+
+        }
     }
 
     class ImportAsyncTask extends AsyncTask<Void, Integer, Void> {
 
-        public Uri mDictUri;
 
         public ImportAsyncTask(Uri dictUri) {
             mDictUri = dictUri;
+            mRunningFlag = true;
             mDictProcessListener = new ProcessListener() {
                 @Override
                 public void process(int progress) {
@@ -104,6 +138,7 @@ public class DictImportService extends Service {
                 @Override
                 public void processTotal(int total) {
                     Log.d(TAG, "process total " + total);
+                    mMax = total;
                     for (ProcessListener listener : mListeners) {
                         listener.processTotal(total);
                     }
@@ -111,7 +146,7 @@ public class DictImportService extends Service {
 
                 @Override
                 public void processComplete() {
-                    // let async task handle this
+                    // we don't do any thing here,let async task handle this
                     Log.d(TAG, "processComplete");
                 }
 
@@ -144,6 +179,7 @@ public class DictImportService extends Service {
             for (ProcessListener listener : mListeners) {
                 listener.processComplete();
             }
+            mRunningFlag = false;
         }
     }
 }
