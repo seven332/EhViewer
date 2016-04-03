@@ -85,6 +85,9 @@ public class DictImportService extends Service {
         // fixme this i just set a flag to abort the prase thread,it may cause a exception
         // it there may be a elegant way to shut the worker thread down
         mDictManager.importAbort();
+
+        // for go die
+        mImportAsyncTask.cancel(true);
     }
 
     public Uri getUri() {
@@ -123,7 +126,6 @@ public class DictImportService extends Service {
     }
 
     class ImportAsyncTask extends AsyncTask<Void, Integer, Void> {
-
 
         public ImportAsyncTask(Uri dictUri) {
             mDictUri = dictUri;
@@ -180,6 +182,18 @@ public class DictImportService extends Service {
                 listener.processComplete();
             }
             mRunningFlag = false;
+            DictImportService.this.godie();
         }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            DictImportService.this.godie();
+        }
+    }
+
+    public void godie() {
+        Log.d(TAG, "[godie] task done or abort,go to die");
+        this.stopSelf();
     }
 }
