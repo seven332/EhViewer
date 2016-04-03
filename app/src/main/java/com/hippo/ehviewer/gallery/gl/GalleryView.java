@@ -114,6 +114,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     private boolean mEnableRequestFill = true;
     private boolean mRequestFill = false;
+    private boolean mWillFill = false;
 
     private boolean mScale = false;
     private boolean mScroll = false;
@@ -311,7 +312,9 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     public void requestFill() {
         if (mEnableRequestFill) {
             mRequestFill = true;
-            invalidate();
+            if (!mWillFill) {
+                invalidate();
+            }
         }
     }
 
@@ -803,6 +806,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @Override
     public void render(GLCanvas canvas) {
+        mWillFill = true;
         int oldCurrentIndex = mCurrentIndex.get();
 
         // Dispatch method
@@ -814,6 +818,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         }
 
         fill();
+        mWillFill = false;
 
         super.render(canvas);
         mEdgeView.render(canvas);
