@@ -121,7 +121,7 @@ public class WebViewSignInScene extends BaseScene {
         }
 
         private void addCookie(Context context, String domain, Cookie cookie) {
-            EhApplication.getEhCookieStore(context).add(EhCookieStore.newCookie(cookie, domain, true, true));
+            EhApplication.getEhCookieStore(context).add(EhCookieStore.newCookie(cookie, domain, true, true, true));
         }
 
         @Override

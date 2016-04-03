@@ -34,6 +34,7 @@ import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhEngine;
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.spider.SpiderDen;
@@ -55,6 +56,8 @@ import java.util.List;
 import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cookie;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 public class EhApplication extends SceneApplication implements Thread.UncaughtExceptionHandler {
@@ -141,6 +144,29 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         int version = Settings.getVersionCode();
         if (version < 52) {
             Settings.putGuideGallery(true);
+        }
+        if (version < 56) { // Make cookie long live
+            HttpUrl eUrl = HttpUrl.parse(EhUrl.HOST_E);
+            HttpUrl exUrl = HttpUrl.parse(EhUrl.HOST_EX);
+            EhCookieStore cookieStore = getEhCookieStore(this);
+
+            Cookie c;
+            c = cookieStore.get(eUrl, EhCookieStore.KEY_IPD_MEMBER_ID);
+            if (null != c) {
+                cookieStore.add(EhCookieStore.newCookie(c, c.domain(), true, true, true));
+            }
+            c = cookieStore.get(eUrl, EhCookieStore.KEY_IPD_PASS_HASH);
+            if (null != c) {
+                cookieStore.add(EhCookieStore.newCookie(c, c.domain(), true, true, true));
+            }
+            c = cookieStore.get(exUrl, EhCookieStore.KEY_IPD_MEMBER_ID);
+            if (null != c) {
+                cookieStore.add(EhCookieStore.newCookie(c, c.domain(), true, true, true));
+            }
+            c = cookieStore.get(exUrl, EhCookieStore.KEY_IPD_PASS_HASH);
+            if (null != c) {
+                cookieStore.add(EhCookieStore.newCookie(c, c.domain(), true, true, true));
+            }
         }
     }
 

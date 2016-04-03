@@ -16,6 +16,8 @@
 
 package com.hippo.okhttp;
 
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -176,6 +178,35 @@ public class CookieDBStore implements CookieJar {
         }
     }
 
+    private Cookie getInternal(HttpUrl url, String name, List<CookieWithID> cookies) {
+        for (Iterator<CookieWithID> i = cookies.iterator(); i.hasNext();) {
+            CookieWithID cwi = i.next();
+            Cookie cookie = cwi.cookie;
+            // Check expired
+            if (hasExpired(cookie)) {
+                // Remove from list
+                i.remove();
+                // Remove from DB
+                CookieDB.removeCookie(cwi.id);
+            } else if (cookie.name().equals(name) && cookie.matches(url)) {
+                return cookie;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public synchronized Cookie get(HttpUrl url, String name) {
+        String host = url.host();
+        for (String key : map.keySet()) {
+            if (domainMatch(host, key)) {
+                List<CookieWithID> cookies = map.get(key);
+                return getInternal(url, name, cookies);
+            }
+        }
+        return null;
+    }
+
     public synchronized List<Cookie> get(HttpUrl url) {
         List<Cookie> result = new ArrayList<>();
 
@@ -185,6 +216,7 @@ public class CookieDBStore implements CookieJar {
                 List<CookieWithID> cookies = map.get(key);
                 // cookies can not be null
                 getInternal(url, cookies, result);
+                break;
             }
         }
 

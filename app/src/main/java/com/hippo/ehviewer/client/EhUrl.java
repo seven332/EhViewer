@@ -31,6 +31,7 @@ public class EhUrl {
     public static final String DOMAIN_G = "g.e-hentai.org";
     public static final String DOMAIN_LOFI = "lofi.e-hentai.org";
 
+    public static final String HOST_E = "http://" + DOMAIN_E + "/";
     public static final String HOST_EX = "http://" + DOMAIN_EX + "/";
     public static final String HOST_G = "http://" + DOMAIN_G + "/";
 

@@ -49,11 +49,15 @@ public class EhCookieStore extends CookieDBStore {
                 contain(EhUrl.DOMAIN_EX, KEY_IPD_PASS_HASH);
     }
 
-    public static Cookie newCookie(Cookie cookie, String newDomain, boolean forcePersistent, boolean forceNotHostOnly) {
+    public static Cookie newCookie(Cookie cookie, String newDomain, boolean forcePersistent,
+            boolean forceLongLive, boolean forceNotHostOnly) {
         Cookie.Builder builder = new Cookie.Builder();
         builder.name(cookie.name());
         builder.value(cookie.value());
-        if (cookie.persistent()) {
+
+        if (forceLongLive) {
+            builder.expiresAt(Long.MAX_VALUE);
+        } else if (cookie.persistent()) {
             builder.expiresAt(cookie.expiresAt());
         } else if (forcePersistent) {
             builder.expiresAt(Long.MAX_VALUE);
@@ -125,7 +129,9 @@ public class EhCookieStore extends CookieDBStore {
                 // Save id and hash for exhentai
                 if (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
                         KEY_IPD_PASS_HASH.equals(cookie.name())) {
-                    result.add(newCookie(cookie, EhUrl.DOMAIN_EX, false, false));
+                    result.add(newCookie(cookie, EhUrl.DOMAIN_E, true, true, true));
+                    result.add(newCookie(cookie, EhUrl.DOMAIN_EX, true, true, true));
+                    continue;
                 }
             }
 
