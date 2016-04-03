@@ -500,6 +500,7 @@ public class EhEngine {
         builder.add("favnote", note != null ? note : "");
         // submit=Add+to+Favorites is not necessary, just use submit=Apply+Changes all the time
         builder.add("submit", "Apply Changes");
+        builder.add("update", "1");
         String url = EhUrl.getAddFavorites(gid, token);
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
