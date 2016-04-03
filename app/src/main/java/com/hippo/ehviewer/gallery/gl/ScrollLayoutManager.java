@@ -786,24 +786,39 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         scale = mScale / oldScale;
 
         if (oldScale != mScale) {
+            GalleryPageView page = null;
             // Keep scale page origin position
-            for (GalleryPageView page : mPages) {
-                if (page.bounds().top < focusY) {
-                    mKeepTopPageIndex = page.getIndex();
-                    mKeepTop = page.bounds().top;
+            for (GalleryPageView p : mPages) {
+                if (p.bounds().top < focusY) {
+                    page = p;
                 } else {
                     break;
                 }
             }
 
-            mGalleryView.forceFill();
-            int oldKeepTop = mKeepTop;
-            mKeepTop = INVALID_TOP;
+            if (null != page) {
+                mKeepTopPageIndex = page.getIndex();
+                mKeepTop = page.bounds().top;
 
-            // Apply scroll
-            int newOffsetX = (int) (focusX - ((focusX - mOffsetX) * scale));
-            int newKeepTop = (int) (focusY - ((focusY - oldKeepTop) * scale));
-            scrollInternal(mOffsetX - newOffsetX, oldKeepTop - newKeepTop, false, focusX, focusY);
+                mGalleryView.forceFill();
+                int oldKeepTop = mKeepTop;
+                mKeepTop = INVALID_TOP;
+
+                // Apply scroll
+                int newOffsetX = (int) (focusX - ((focusX - mOffsetX) * scale));
+                int newKeepTop;
+                if (page.isLoaded()) {
+                    newKeepTop = (int) (focusY - ((focusY - oldKeepTop) * scale));
+                } else {
+                    newKeepTop = oldKeepTop;
+                }
+                scrollInternal(mOffsetX - newOffsetX, oldKeepTop - newKeepTop, false, focusX, focusY);
+            } else {
+                Log.e(TAG, "Can't find target page");
+                mKeepTopPageIndex = GalleryPageView.INVALID_INDEX;
+                mKeepTop = INVALID_TOP;
+                mGalleryView.forceFill();
+            }
         }
     }
 
