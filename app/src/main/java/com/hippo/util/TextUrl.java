@@ -56,4 +56,13 @@ public final class TextUrl {
 
         return spannable == null ? content : spannable;
     }
+
+    public static String getFileName(String path) {
+        if (path == null) {
+            return path;
+        }
+
+        int start = path.lastIndexOf("/");
+        return start == -1 ? path : path.substring(start + 1);
+    }
 }
