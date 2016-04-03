@@ -446,6 +446,7 @@
     <string name="settings_advanced_clear_download_path_cache_message">清除畫廊下載路徑快取？</string>
     <string name="settings_advanced_clear_memory_cache">清理記憶體快取</string>
     <string name="settings_advanced_clear_memory_cache_summary">清理縮圖、畫廊資訊的記憶體快取</string>
+    <string name="settings_advanced_read_cache_size">閱讀快取大小</string>
     <string name="settings_advanced_pattern_protection_title">圖案保護</string>
     <string name="settings_advanced_pattern_protection_not_set">未設定圖案保護</string>
     <string name="settings_advanced_pattern_protection_set">已設定圖案保護</string>

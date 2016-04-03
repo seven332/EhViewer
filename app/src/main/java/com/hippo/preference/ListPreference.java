@@ -25,6 +25,7 @@ import android.support.annotation.ArrayRes;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.hippo.ehviewer.R;
 
@@ -139,6 +140,9 @@ public class ListPreference extends DialogPreference {
      * @param value The value to set for the key.
      */
     public void setValue(String value) {
+
+        Log.d("TAG", "value = " + value);
+
         // Always persist/notify the first time.
         final boolean changed = !TextUtils.equals(mValue, value);
         if (changed || !mValueSet) {

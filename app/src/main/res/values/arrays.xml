@@ -144,6 +144,22 @@
         <item>4</item>
     </string-array>
 
+    <string-array name="read_cache_size_entries" translatable="false">
+        <item>40 MB</item>
+        <item>80 MB</item>
+        <item>160 MB</item>
+        <item>320 MB</item>
+        <item>640 MB</item>
+    </string-array>
+
+    <string-array name="read_cache_size_entry_values" translatable="false">
+        <item>40</item>
+        <item>80</item>
+        <item>160</item>
+        <item>320</item>
+        <item>640</item>
+    </string-array>
+
     <string-array name="page_menu_entries">
         <item>@string/page_menu_refresh</item>
         <item>@string/page_menu_share</item>

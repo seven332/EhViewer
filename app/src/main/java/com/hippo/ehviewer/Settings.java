@@ -822,6 +822,13 @@ public class Settings {
         putString(KEY_SECURITY, value);
     }
 
+    public static final String KEY_READ_CACHE_SIZE = "read_cache_size";
+    public static final int DEFAULT_READ_CACHE_SIZE = 160;
+
+    public static int getReadCacheSize() {
+        return getIntFromStr(KEY_READ_CACHE_SIZE, DEFAULT_READ_CACHE_SIZE);
+    }
+
     /********************
      ****** Guide
      ********************/

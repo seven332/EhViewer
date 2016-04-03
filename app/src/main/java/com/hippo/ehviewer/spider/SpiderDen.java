@@ -34,6 +34,7 @@ import com.hippo.unifile.FilenameFilter;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Utilities;
 import com.hippo.yorozuya.io.InputStreamPipe;
 import com.hippo.yorozuya.io.OutputStreamPipe;
@@ -54,7 +55,8 @@ public final class SpiderDen {
     private static SimpleDiskCache sCache;
 
     public static void initialize(Context context) {
-        sCache = new SimpleDiskCache(new File(context.getCacheDir(), "image"), 160 * 1024 * 1024);
+        sCache = new SimpleDiskCache(new File(context.getCacheDir(), "image"),
+                MathUtils.clamp(Settings.getReadCacheSize(), 40, 640) * 1024 * 1024);
     }
 
     private static class StartWithFilenameFilter implements FilenameFilter {

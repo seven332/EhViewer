@@ -488,6 +488,7 @@
     <string name="settings_advanced_clear_download_path_cache_message">Clear download path cache?</string>
     <string name="settings_advanced_clear_memory_cache">Clear memory cache</string>
     <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
+    <string name="settings_advanced_read_cache_size">Read cache size</string>
     <string name="settings_advanced_pattern_protection_title">Pattern protection</string>
     <string name="settings_advanced_pattern_protection_not_set">Pattern protection has not been set</string>
     <string name="settings_advanced_pattern_protection_set">Pattern protection has been set</string>

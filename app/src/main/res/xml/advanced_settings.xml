@@ -39,6 +39,15 @@
         android:title="@string/settings_advanced_clear_memory_cache"
         android:summary="@string/settings_advanced_clear_memory_cache_summary"/>
 
+    <com.hippo.preference.ListPreference
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:key="read_cache_size"
+        android:title="@string/settings_advanced_read_cache_size"
+        android:summary="%s"
+        app:entries="@array/read_cache_size_entries"
+        app:entryValues="@array/read_cache_size_entry_values"
+        android:defaultValue="160"/>
+
     <com.hippo.preference.ActivityPreference
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:key="pattern_protection"
