@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DictManager {
 
     // pattern for language
-    private static final String enRegEx = "[0-9a-zA-Z\\s]";
+    private static final String enRegEx = "^[0-9a-zA-Z_\\s]+$";
     // private static final String zhRegEx = "";
 
     private DictDatabase mDictDatabase;
@@ -45,9 +47,9 @@ public class DictManager {
     }
 
     public boolean filter(String item) {
-        return true;
-//        Pattern en = Pattern.compile(enRegEx);
-//        Matcher m = en.matcher(item);
-//        return m.matches();
+        // return true;
+        Pattern en = Pattern.compile(enRegEx);
+        Matcher m = en.matcher(item);
+        return m.matches();
     }
 }
