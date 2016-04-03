@@ -329,7 +329,6 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         new AlertDialog.Builder(context)
                 .setTitle(R.string.sign_in_failed)
                 .setMessage(R.string.sign_in_failed_plain)
-                .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.get_it, null)
                 .show();
     }
