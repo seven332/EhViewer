@@ -33,8 +33,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class DictDatabase {
@@ -52,7 +52,8 @@ public class DictDatabase {
     private static DictDatabase sInstance;
 
     private String mDict;
-    private boolean abortFlag;
+    private Integer mNum;
+    private boolean abortFlag = false;
 
     public static DictDatabase getInstance(Context context) {
         if (sInstance == null) {
@@ -67,7 +68,7 @@ public class DictDatabase {
     }
 
     public String[] getSuggestions(String prefix) {
-        List<String> queryList = new LinkedList<>();
+        Set<String> queryList = new HashSet<>();
 
         // TODO add limit
         if (TextUtils.isEmpty(prefix)) {
@@ -102,7 +103,7 @@ public class DictDatabase {
     }
 
     public void importDict(final Uri dictUri, final DictImportService.ProcessListener listener) throws IOException, URISyntaxException {
-        int process = 0;
+        abortFlag = false;
         File dictFile = new File(dictUri.getPath());
         FileInputStream fileInputStream = new FileInputStream(dictFile);
         JsonReader jsonReader = new JsonReader(new InputStreamReader(
@@ -113,57 +114,25 @@ public class DictDatabase {
             String field = jsonReader.nextName();
             if (field.equals("dict")) {
                 mDict = jsonReader.nextString();
-                Log.d(TAG,"prase the dict name -- " + mDict);
+                Log.d(TAG, "prase the dict name -- " + mDict);
             } else if (field.equals("data")) {
-                synchronized (this) {
-                    if (abortFlag) {
-                        Log.d(TAG,"import abort delect the dict -- " + mDict);
-                        deletDict(mDict);
-                        return;
-                    }
-                }
+                deletDict(mDict);
+                praseData(jsonReader, listener);
 
-                praseData(jsonReader);
-                listener.process(process);
-                process++;
+            } else if (field.equals("num")) {
+                mNum = jsonReader.nextInt();
+                listener.processTotal(mNum);
+                Log.d(TAG, "prase the item number -- " + mNum);
             }
         }
         jsonReader.endObject();
         jsonReader.close();
+        listener.processComplete();
     }
 
-    private void praseData(JsonReader jsonReader) throws IOException {
-        jsonReader.beginArray();
-        while (jsonReader.hasNext()) {
-            praseSingleData(jsonReader);
-        }
-        jsonReader.endArray();
-    }
-
-    private void praseSingleData(JsonReader jsonReader) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String parent = "";
-        sb.append(SEPARATOR);
-        jsonReader.beginObject();
-        while (jsonReader.hasNext()) {
-            String name = jsonReader.nextName();
-            String content = jsonReader.nextString();
-            if (name.equals("parent")) {
-                parent = content;
-            } else {
-                sb.append(content);
-                sb.append(SEPARATOR);
-            }
-        }
-        jsonReader.endObject();
-
-        Log.d(TAG, parent + " " + sb.toString());
-        addQuery(sb.toString(), parent, mDict);
-    }
-
-    public void addQuery(String data, String parent, String dict) {
+    public void addItem(String data, String parent, String dict) {
         // Delete old first
-        deletDict(data);
+        // deletDict(data);
         // Add it to database
         ContentValues values = new ContentValues();
         values.put(COLUMN_DATA, data);
@@ -173,10 +142,12 @@ public class DictDatabase {
     }
 
     public void deletDict(String dict) {
+        Log.d(TAG, "[deletDict] dict:" + dict);
         mDatabase.delete(TABLE_DICT, COLUMN_DICT + "=?", new String[]{dict});
     }
 
     public void importAbort() {
+        Log.d(TAG, "[importAbort] set abortFlag true");
         abortFlag = true;
     }
 
@@ -207,4 +178,45 @@ public class DictDatabase {
             onCreate(db);
         }
     }
+
+    private void praseData(JsonReader jsonReader, final DictImportService.ProcessListener listener) throws IOException {
+        int process = 1;
+        jsonReader.beginArray();
+        while (jsonReader.hasNext()) {
+            synchronized (this) {
+                if (abortFlag) {
+                    Log.d(TAG, "[praseData] import abort,delect the dict -- " + mDict);
+                    deletDict(mDict);
+                    return;
+                }
+            }
+
+            praseSingleData(jsonReader);
+            listener.process(process);
+            process++;
+        }
+        jsonReader.endArray();
+    }
+
+    private void praseSingleData(JsonReader jsonReader) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String parent = "";
+        sb.append(SEPARATOR);
+        jsonReader.beginObject();
+        while (jsonReader.hasNext()) {
+            String name = jsonReader.nextName();
+            String content = jsonReader.nextString();
+            if (name.equals("parent")) {
+                parent = content;
+            } else {
+                sb.append(content);
+                sb.append(SEPARATOR);
+            }
+        }
+        jsonReader.endObject();
+
+        Log.d(TAG, "[praseSingleData] item:" + parent + " " + sb.toString());
+        addItem(sb.toString(), parent, mDict);
+    }
+
 }

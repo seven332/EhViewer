@@ -44,6 +44,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hippo.dict.DictDatabase;
+import com.hippo.dict.DictManager;
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.AnimationUtils;
@@ -86,7 +87,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     private ViewTransition mViewTransition;
 
     private SearchDatabase mSearchDatabase;
-    private DictDatabase mDictDatabase;
+    private DictManager mDictManager;
     private List<String> mSuggestionList;
     private ArrayAdapter mSuggestionAdapter;
 
@@ -116,7 +117,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
         setBackgroundResource(R.drawable.card_white_no_padding_2dp);
 
         mSearchDatabase = SearchDatabase.getInstance(getContext());
-        mDictDatabase = DictDatabase.getInstance(getContext());
+        mDictManager = new DictManager(getContext());
 
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.widget_search_bar, this);
@@ -173,11 +174,11 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
     private void updateSuggestions() {
         String prefix = mEditText.getText().toString();
-        String[] dictSuggestions = mDictDatabase.getSuggestions(prefix);
+        String[] dictSuggestions = mDictManager.getSuggestions(prefix);
         String[] suggestions = mSearchDatabase.getSuggestions(prefix);
 
         mSuggestionList.clear();
-        Collections.addAll(mSuggestionList,dictSuggestions);
+        Collections.addAll(mSuggestionList, dictSuggestions);
         Collections.addAll(mSuggestionList, suggestions);
         if (mSuggestionList.size() == 0) {
             removeListHeader();
@@ -486,10 +487,15 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
     public interface Helper {
         void onClickTitle();
+
         void onClickLeftIcon();
+
         void onClickRightIcon();
+
         void onSearchEditTextClick();
+
         void onApplySearch(String query);
+
         void onSearchEditTextBackPressed();
     }
 
