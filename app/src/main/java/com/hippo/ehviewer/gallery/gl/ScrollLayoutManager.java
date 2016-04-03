@@ -42,11 +42,13 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     private static final int INTERVAL = 24;
 
-    private static final float RESERVATIONS = 0.5f;
+    private static final float RESERVATION = 1f;
 
     private static final float MAX_SCALE = 2.0f;
-    private static final float MIN_SCALE = 0.5f;
+    private static final float MIN_SCALE = 1.0f;
     private static final float SCALE_ERROR = 0.01f;
+
+    private static final int INVALID_TOP = Integer.MAX_VALUE;
 
     private GalleryView.Adapter mAdapter;
 
@@ -61,7 +63,9 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
     private int mOffsetY;
     private int mDeltaX;
     private int mDeltaY;
-    private int mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
+    private int mKeepTopPageIndex = GalleryPageView.INVALID_INDEX;
+    private int mKeepTop = INVALID_TOP;
+    private int mFirstShownPageIndex = GalleryPageView.INVALID_INDEX;
     private boolean mScrollUp;
     private boolean mFlingUp;
     private boolean mStopAnimationFinger;
@@ -91,7 +95,9 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         mOffsetY = 0;
         mDeltaX = 0;
         mDeltaY = 0;
-        mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
+        mKeepTopPageIndex = GalleryPageView.INVALID_INDEX;
+        mKeepTop = INVALID_TOP;
+        mFirstShownPageIndex = GalleryPageView.INVALID_INDEX;
         mScrollUp = false;
         mFlingUp = false;
         mStopAnimationFinger = false;
@@ -181,6 +187,19 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         return null;
     }
 
+    private boolean isInScreen(GalleryPageView page) {
+        int height = mGalleryView.getHeight();
+        Rect bound = page.bounds();
+        int pageTop = bound.top;
+        int pageBottom = bound.bottom;
+        return (pageTop >= 0 && pageTop < height) || (pageBottom > 0 && pageBottom <= height) ||
+                (pageTop < 0 && pageBottom > height);
+    }
+
+    private float getReservation() {
+        return Math.max(RESERVATION, (((1 + 2 * RESERVATION) * mScale) - 1) / 2);
+    }
+
     private void fillPages(int startIndex, int startOffset) {
         final GalleryView.Adapter adapter = mAdapter;
         final GalleryView galleryView = mGalleryView;
@@ -191,8 +210,9 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         final int pageWidth = (int) (width * mScale);
         final int size = adapter.size();
         final int interval = mInterval;
-        final int minY = (int) (-height * RESERVATIONS);
-        final int maxY = (int) (height * (1 + RESERVATIONS));
+        final float reservation = getReservation();
+        final int minY = (int) (-height * reservation);
+        final int maxY = (int) (height * (1 + reservation));
         final int widthSpec = GLView.MeasureSpec.makeMeasureSpec(pageWidth, GLView.MeasureSpec.EXACTLY);
         final int heightSpec = GLView.MeasureSpec.makeMeasureSpec(height, GLView.MeasureSpec.UNSPECIFIED);
 
@@ -378,7 +398,6 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         GalleryView galleryView = mGalleryView;
         AssertUtils.assertNotEquals("The PagerLayoutManager is not attached", adapter, null);
 
-        int height = galleryView.getHeight();
         int size = adapter.size();
         String errorStr = adapter.getError();
 
@@ -442,48 +461,50 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 removeAllPages();
             }
 
-            // Find first shown loaded page top
-            GalleryPageView firstShownLoadedPage = null;
-            int firstShownLoadedPageTop = mOffsetY;
-            if (mFirstShownLoadedPageIndex != GalleryPageView.INVALID_INDEX) {
+            // Find keep index and keep top
+            int keepTop = INVALID_TOP;
+            int keepTopIndex;
+            if (GalleryPageView.INVALID_INDEX != mKeepTopPageIndex) {
+                keepTopIndex = mKeepTopPageIndex;
+                keepTop = mKeepTop;
+            } else if (GalleryPageView.INVALID_INDEX != mFirstShownPageIndex) {
+                keepTopIndex = mFirstShownPageIndex;
+            } else {
+                keepTopIndex = GalleryPageView.INVALID_INDEX;
+            }
+            if (GalleryPageView.INVALID_INDEX != keepTopIndex && INVALID_TOP == keepTop) {
+                keepTop = mOffsetY;
                 for (GalleryPageView page : pages) {
-                    // Check first shown loaded page
-                    if (mFirstShownLoadedPageIndex == page.getIndex()) {
-                        firstShownLoadedPage = page;
+                    // Check keep page
+                    if (keepTopIndex == page.getIndex()) {
                         break;
                     }
-                    firstShownLoadedPageTop += page.getHeight() + mInterval;
+                    keepTop += page.getHeight() + mInterval;
                 }
             }
 
             int startIndex;
             int startOffset;
-            if (null != firstShownLoadedPage) {
-                startIndex = mFirstShownLoadedPageIndex;
-                startOffset = firstShownLoadedPageTop;
+            if (GalleryPageView.INVALID_INDEX != keepTopIndex) {
+                startIndex = keepTopIndex;
+                startOffset = keepTop;
             } else {
                 startIndex = mIndex;
                 startOffset = mOffsetY;
             }
             fillPages(startIndex, startOffset);
 
-            // Get first shown loaded image
-            mFirstShownLoadedPageIndex = GalleryPageView.INVALID_INDEX;
-            if (mScrollUp || mFlingUp) {
-                for (GalleryPageView page : mPages) {
-                    // Check first shown loaded page
-                    if (!page.isLoaded()) {
-                        continue;
-                    }
+            // Get first shown image
+            mFirstShownPageIndex = GalleryPageView.INVALID_INDEX;
+            for (GalleryPageView page : mPages) {
+                // Check first shown loaded page
+                if ((mScrollUp || mFlingUp) && !page.isLoaded()) {
+                    continue;
+                }
 
-                    Rect bound = page.bounds();
-                    int pageTop = bound.top;
-                    int pageBottom = bound.bottom;
-                    if ((pageTop >= 0 && pageTop < height) || (pageBottom > 0 && pageBottom <= height) ||
-                            (pageTop < 0 && pageBottom > height)) {
-                        mFirstShownLoadedPageIndex = page.getIndex();
-                        break;
-                    }
+                if (isInScreen(page)) {
+                    mFirstShownPageIndex = page.getIndex();
+                    break;
                 }
             }
         }
@@ -511,9 +532,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
         float startScale = mScale;
         float endScale;
-        if (startScale < 1.0f - SCALE_ERROR) {
-            endScale = 1.0f;
-        } else if (startScale < MAX_SCALE - SCALE_ERROR) {
+        if (startScale < MAX_SCALE - SCALE_ERROR) {
             endScale = MAX_SCALE;
         } else {
             endScale = MIN_SCALE;
@@ -585,6 +604,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         int width = galleryView.getWidth();
         int height = galleryView.getHeight();
         int pageWidth = (int) (width * mScale);
+        final float reservation = getReservation();
         boolean requestFill = false;
         boolean result = false;
 
@@ -611,7 +631,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             if (remainY < 0) { // Try to show top
                 int limit;
                 if (mIndex > 0) {
-                    limit = (int) (-height * RESERVATIONS) + mInterval;
+                    limit = (int) (-height * reservation) + mInterval;
                 } else {
                     limit = 0;
                 }
@@ -652,7 +672,7 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
                 int limit;
                 if (hasNext) {
-                    limit = (int) (height * (1 + RESERVATIONS)) - mInterval;
+                    limit = (int) (height * (1 + reservation)) - mInterval;
                 } else {
                     limit = height;
                 }
@@ -700,6 +720,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onScroll(float dx, float dy, float totalX, float totalY, float x, float y) {
+        mKeepTopPageIndex = GalleryPageView.INVALID_INDEX;
+        mKeepTop = INVALID_TOP;
         mScrollUp = dy < 0;
         scrollInternal(dx, dy, false, x, y);
     }
@@ -710,6 +732,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             return;
         }
 
+        mKeepTopPageIndex = GalleryPageView.INVALID_INDEX;
+        mKeepTop = INVALID_TOP;
         mFlingUp = velocityY > 0;
 
         int maxX;
@@ -753,16 +777,33 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onScale(float focusX, float focusY, float scale) {
+        if (mPages.isEmpty()) {
+            return;
+        }
+
         float oldScale = mScale;
         mScale = MathUtils.clamp(oldScale * scale, MIN_SCALE, MAX_SCALE);
         scale = mScale / oldScale;
 
-        mGalleryView.forceFill();
+        if (oldScale != mScale) {
+            // Keep scale page origin position
+            for (GalleryPageView page : mPages) {
+                if (page.bounds().top < focusY) {
+                    mKeepTopPageIndex = page.getIndex();
+                    mKeepTop = page.bounds().top;
+                } else {
+                    break;
+                }
+            }
 
-        if (1.0f != scale) {
+            mGalleryView.forceFill();
+            int oldKeepTop = mKeepTop;
+            mKeepTop = INVALID_TOP;
+
+            // Apply scroll
             int newOffsetX = (int) (focusX - ((focusX - mOffsetX) * scale));
-            int newOffsetY = (int) (focusY - ((focusY - mOffsetY) * scale));
-            scrollInternal(mOffsetX - newOffsetX, mOffsetY - newOffsetY, false, focusX, focusY);
+            int newKeepTop = (int) (focusY - ((focusY - oldKeepTop) * scale));
+            scrollInternal(mOffsetX - newOffsetX, oldKeepTop - newKeepTop, false, focusX, focusY);
         }
     }
 
@@ -810,6 +851,9 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             return;
         }
 
+        ///////
+        // UP
+        ///////
         GalleryView galleryView = mGalleryView;
         if (mIndex == 0 && mOffsetY >= 0) {
             GLEdgeView edgeView = galleryView.getEdgeView();
@@ -819,13 +863,37 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         } else {
             // Cancel all animations
             cancelAllAnimations();
-            mOffsetY += galleryView.getHeight() / 2;
-            // Backup offset
-            int offset = mOffsetY;
-            // Reset parameters
-            resetParameters();
-            // Restore offset
-            mOffsetY = offset;
+
+            // Get first shown page
+            GalleryPageView previousPage = null;
+            GalleryPageView firstShownPage = null;
+            for (GalleryPageView p: mPages) {
+                if (isInScreen(p)) {
+                    firstShownPage = p;
+                    break;
+                }
+                previousPage = p;
+            }
+
+            int height = galleryView.getHeight();
+            int maxOffset = height - mInterval;
+            if (null == firstShownPage) {
+                Log.e(TAG, "Can't find first shown page when paging left");
+                mOffsetY += height / 2;
+            } else {
+                int firstShownTop = firstShownPage.bounds().top;
+                if (firstShownTop >= 0) {
+                    if (null == previousPage) {
+                        Log.e(TAG, "Can't find previous page when paging left and offsetY == 0");
+                        mOffsetY += height / 2;
+                    } else {
+                        mOffsetY += Math.min(maxOffset, -previousPage.bounds().top);
+                    }
+                } else {
+                    mOffsetY += Math.min(maxOffset, -firstShownTop);
+                }
+            }
+
             // Request fill
             mGalleryView.requestFill();
         }
@@ -838,6 +906,9 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             return;
         }
 
+        /////////
+        // DOWN
+        /////////
         GalleryView galleryView = mGalleryView;
         getBottomState();
         int bottom = mBottomStateBottom;
@@ -850,13 +921,38 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
         } else {
             // Cancel all animations
             cancelAllAnimations();
-            mOffsetY -= galleryView.getHeight() / 2;
-            // Backup offset
-            int offset = mOffsetY;
-            // Reset parameters
-            resetParameters();
-            // Restore offset
-            mOffsetY = offset;
+
+            // Get first shown page
+            GalleryPageView lastShownPage = null;
+            GalleryPageView nextPage = null;
+            for (GalleryPageView p: mPages) {
+                if (isInScreen(p)) {
+                    lastShownPage = p;
+                } else if (null != lastShownPage) {
+                    nextPage = p;
+                    break;
+                }
+            }
+
+            int height = galleryView.getHeight();
+            int maxOffset = height - mInterval;
+            if (null == lastShownPage) {
+                Log.e(TAG, "Can't find last shown page when paging left");
+                mOffsetY -= height / 2;
+            } else {
+                int lastShownBottom = lastShownPage.bounds().bottom;
+                if (lastShownBottom <= height) {
+                    if (null == nextPage) {
+                        Log.e(TAG, "Can't find previous page when paging left and offsetY == 0");
+                        mOffsetY -= height / 2;
+                    } else {
+                        mOffsetY -= Math.min(maxOffset, nextPage.bounds().bottom - height);
+                    }
+                } else {
+                    mOffsetY -= Math.min(maxOffset, lastShownBottom - height);
+                }
+            }
+
             // Request fill
             mGalleryView.requestFill();
         }
@@ -879,13 +975,8 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public int getCurrentIndex() {
-        int height = mGalleryView.getHeight();
         for (GalleryPageView page : mPages) {
-            Rect bound = page.bounds();
-            int pageTop = bound.top;
-            int pageBottom = bound.bottom;
-            if ((pageTop >= 0 && pageTop < height) || (pageBottom > 0 && pageBottom <= height) ||
-                    (pageTop < 0 && pageBottom > height)) {
+            if (isInScreen(page)) {
                 return page.getIndex();
             }
         }
@@ -899,9 +990,13 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
             // Can't get size now, assume size is MAX
             size = Integer.MAX_VALUE;
         }
-        if (index == mIndex || index < 0 || index >= size) {
+        if (index < 0 || index >= size) {
             return;
         }
+
+        mKeepTopPageIndex = index;
+        mKeepTop = INVALID_TOP;
+
         if (mPages.isEmpty()) {
             mIndex = index;
         } else {
@@ -918,24 +1013,17 @@ public class ScrollLayoutManager extends GalleryView.LayoutManager {
                 // Cancel all animations
                 cancelAllAnimations();
                 mOffsetY -= targetPage.bounds().top;
-                // Backup offset
-                int offset = mOffsetY;
-                // Reset parameters
-                resetParameters();
-                // Restore offset
-                mOffsetY = offset;
                 // Request fill
                 mGalleryView.requestFill();
             } else {
                 mIndex = index;
+                mOffsetY = 0;
                 // Cancel all animations
                 cancelAllAnimations();
                 // Remove all view
                 removeProgress();
                 removeErrorView();
                 removeAllPages();
-                // Reset parameters
-                resetParameters();
                 // Request fill
                 mGalleryView.requestFill();
             }
