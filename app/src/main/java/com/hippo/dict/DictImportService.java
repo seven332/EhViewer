@@ -8,14 +8,16 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DictImportService extends Service {
     private static final String TAG = "DictImportSerevice";
 
-    private DictDatabase mDictDatabase;
-    private List<ProcessListener> mListeners;
+    private DictManager mDictManager;
+    private List<ProcessListener> mListeners = new ArrayList<>();
     private ProcessListener mDictProcessListener;
+    private AsyncTask mImportAsyncTask;
 
     public DictImportService() {
     }
@@ -30,8 +32,7 @@ public class DictImportService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mDictDatabase = DictDatabase.getInstance(this);
-
+        mDictManager = new DictManager(this);
     }
 
     @Override
@@ -41,6 +42,10 @@ public class DictImportService extends Service {
 
     public interface ProcessListener {
         void process(int progress);
+
+        void processTotal(int total);
+
+        void processComplete();
     }
 
     public class DictImportServiceBinder extends Binder {
@@ -55,7 +60,20 @@ public class DictImportService extends Service {
         }
 
         Log.d(TAG, "start import async task");
-        new ImportAsyncTask(dictUri).execute();
+        mImportAsyncTask = new ImportAsyncTask(dictUri).execute();
+    }
+
+    public void abortImport() {
+        if (mImportAsyncTask == null) {
+            Log.e(TAG, "mImportAsyncTask is null");
+            return;
+        }
+
+        Log.d(TAG, "[abortImport] improt abort");
+
+        // fixme this i just set a flag to abort the prase thread,it may cause a exception
+        // it there may be a elegant way to shut the worker thread down
+        mDictManager.importAbort();
     }
 
     public void setOnProgressListener(ProcessListener onProgressListener) {
@@ -64,7 +82,13 @@ public class DictImportService extends Service {
         }
     }
 
-    class ImportAsyncTask extends AsyncTask<Void, Integer, Integer> {
+    public void removeOnProgressListener(ProcessListener onProgressListener) {
+        if (onProgressListener != null) {
+            mListeners.remove(onProgressListener);
+        }
+    }
+
+    class ImportAsyncTask extends AsyncTask<Void, Integer, Void> {
 
         public Uri mDictUri;
 
@@ -73,15 +97,31 @@ public class DictImportService extends Service {
             mDictProcessListener = new ProcessListener() {
                 @Override
                 public void process(int progress) {
+                    Log.d(TAG, "[process] progress:" + progress);
                     publishProgress(progress);
                 }
+
+                @Override
+                public void processTotal(int total) {
+                    Log.d(TAG, "process total " + total);
+                    for (ProcessListener listener : mListeners) {
+                        listener.processTotal(total);
+                    }
+                }
+
+                @Override
+                public void processComplete() {
+                    // let async task handle this
+                    Log.d(TAG, "processComplete");
+                }
+
             };
         }
 
         @Override
-        protected Integer doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
             try {
-                mDictDatabase.importDict(mDictUri, mDictProcessListener);
+                mDictManager.importDict(mDictUri, mDictProcessListener);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -99,11 +139,11 @@ public class DictImportService extends Service {
         }
 
         @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            Log.d(TAG,"cancel the import task");
-            mDictDatabase.importAbort();
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            for (ProcessListener listener : mListeners) {
+                listener.processComplete();
+            }
         }
-
     }
 }

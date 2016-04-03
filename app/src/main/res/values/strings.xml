@@ -612,6 +612,9 @@
     <string name="guide_gallery_progress">Progress</string>
     <string name="guide_gallery_long_click">Long click to open page menu</string>
 
+    <!-- Dict -->
+    <string name="dict_import">Import dict</string>
+
     <!-- Readable Time -->
     <string name="from_the_future">From the future</string>
     <string name="just_now">Just now</string>

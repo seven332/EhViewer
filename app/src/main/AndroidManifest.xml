@@ -86,7 +86,9 @@
             android:name="com.hippo.ehviewer.ui.DictImportActivity"
             android:configChanges="screenSize|uiMode"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.Dialog"
+            android:label="@string/dict_import"
+            android:icon="@mipmap/ic_launcher">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.EDIT" />
