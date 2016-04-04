@@ -533,6 +533,11 @@
 
     <!-- Dict -->
     <string name="dict_import">導入字典</string>
+    <string name="dict_confirm">確認</string>
+    <string name="dict_abort">取消</string>
+    <string name="dict_cancel">取消</string>
+    <string name="dict_hide">隐藏</string>
+    <string name="dict_done">完成</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">選擇文件夾</string>

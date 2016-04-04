@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.NotificationCompat;
 
 import com.hippo.ehviewer.R;
@@ -18,6 +17,7 @@ public class DictNotification {
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private int mMax = 100;
+    private int mId = 1;
 
     private PendingIntent mImportIntent;
     private PendingIntent mDoneIntent;
@@ -69,16 +69,16 @@ public class DictNotification {
         mBuilder.setContentIntent(mImportIntent);
         mBuilder.setProgress(mMax, progress, false);
         mBuilder.setContentText(progress + "/" + mMax);
-        mNotifyManager.notify(1, mBuilder.build());
+        mNotifyManager.notify(mId, mBuilder.build());
     }
 
     public void notifyDone() {
         mBuilder.setContentIntent(mDoneIntent);
         mBuilder.setOngoing(false);
-        mNotifyManager.notify(1, mBuilder.build());
+        mNotifyManager.notify(mId, mBuilder.build());
     }
 
     public void stopNotify() {
-        mNotifyManager.cancel(1);
+        mNotifyManager.cancel(mId);
     }
 }

@@ -23,7 +23,7 @@ public class DictImportService extends Service {
     private DictNotification mDictNotification;
 
     // current task information
-    private int mMax;
+    private int mItemNum;
     private Uri mDictUri;
     private boolean mRunningFlag = false;
 
@@ -68,25 +68,28 @@ public class DictImportService extends Service {
     public void importDict(Uri dictUri) {
         if (dictUri == null) {
             // TODO error tip
+            Log.e(TAG, "[importDict] dictUri is null");
+            return;
         }
 
-        Log.d(TAG, "start import async task");
+        Log.d(TAG, "[importDict] start import async task");
         mImportAsyncTask = new ImportAsyncTask(dictUri).execute();
     }
 
     public void abortImport() {
         if (mImportAsyncTask == null) {
-            Log.e(TAG, "mImportAsyncTask is null");
+            Log.e(TAG, "[abortImport] mImportAsyncTask is null");
             return;
         }
 
         Log.d(TAG, "[abortImport] improt abort");
 
-        // fixme this i just set a flag to abort the prase thread,it may cause a exception
+        // fixme
+        // this i just set a flag to abort the prase thread,it may cause a exception
         // it there may be a elegant way to shut the worker thread down
         mDictManager.importAbort();
 
-        // for go die
+        // just for service go die
         mImportAsyncTask.cancel(true);
     }
 
@@ -94,8 +97,8 @@ public class DictImportService extends Service {
         return mDictUri;
     }
 
-    public int getMax() {
-        return mMax;
+    public int getItemNum() {
+        return mItemNum;
     }
 
     public boolean isRunning() {
@@ -116,9 +119,9 @@ public class DictImportService extends Service {
         }
 
         // if there is no listener in listener list,we is in the backgroud mostly
-        // we post the process progress to a notification
+        // we post the process progress informantion to a notification
         if (mListeners.size() == 0) {
-            mDictNotification.setMax(mMax);
+            mDictNotification.setMax(mItemNum);
             mDictNotification.setFileName(TextUrl.getFileName(mDictUri.toString()));
             mListeners.add(mDictNotification.mNotificationListener);
 
@@ -140,7 +143,7 @@ public class DictImportService extends Service {
                 @Override
                 public void processTotal(int total) {
                     Log.d(TAG, "process total " + total);
-                    mMax = total;
+                    mItemNum = total;
                     for (ProcessListener listener : mListeners) {
                         listener.processTotal(total);
                     }
@@ -169,7 +172,7 @@ public class DictImportService extends Service {
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
 
-            Log.d(TAG, "process item " + progress[0]);
+            Log.d(TAG, "[onProgressUpdate] process item " + progress[0]);
             for (ProcessListener listener : mListeners) {
                 listener.process(progress[0]);
             }

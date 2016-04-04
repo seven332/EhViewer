@@ -7,10 +7,8 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,19 +17,19 @@ import com.hippo.dict.DictImportService;
 import com.hippo.ehviewer.R;
 import com.hippo.util.TextUrl;
 
-public class DictImportActivity extends AppCompatActivity {
+public class DictImportActivity extends EhActivity {
 
     private final static String TAG = "DictImportActivity";
     private DictImportService serviceBinder;
-    private int mTotal = 0;
+    private int mItemNum = 0;
 
-    private Button importBtn;
-    private Button cancelBtn;
-    private Button hideBtn;
+    private Button mConfirmBtn;
+    private Button mCancelBtn;
+    private Button mHideBtn;
 
-    private ProgressBar progressBar;
-    private TextView progressTipView;
-    private TextView tipView;
+    private ProgressBar mProgressBar;
+    private TextView mProgressTipView;
+    private TextView mTipView;
     private Uri mDictUri;
 
     @Override
@@ -46,24 +44,23 @@ public class DictImportActivity extends AppCompatActivity {
         startService(intent);
 
 
-        importBtn = (Button) findViewById(R.id.btn_confirm);
-        cancelBtn = (Button) findViewById(R.id.btn_cancel);
-        hideBtn = (Button) findViewById(R.id.btn_hide);
+        mConfirmBtn = (Button) findViewById(R.id.btn_confirm);
+        mCancelBtn = (Button) findViewById(R.id.btn_cancel);
+        mHideBtn = (Button) findViewById(R.id.btn_hide);
 
-        progressBar = (ProgressBar) findViewById(R.id.bar_import);
-        progressTipView = (TextView) findViewById(R.id.tv_progress);
-        tipView = (TextView) findViewById(R.id.tv_tip);
+        mProgressBar = (ProgressBar) findViewById(R.id.bar_import);
+        mProgressTipView = (TextView) findViewById(R.id.tv_progress);
+        mTipView = (TextView) findViewById(R.id.tv_tip);
 
-
-        importBtn.setOnClickListener(confirmListener);
-        cancelBtn.setOnClickListener(cancelListener);
-        hideBtn.setOnClickListener(hideListener);
+        mConfirmBtn.setOnClickListener(confirmListener);
+        mCancelBtn.setOnClickListener(cancelListener);
+        mHideBtn.setOnClickListener(hideListener);
     }
 
     private ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+            Log.w(TAG, "[onServiceConnected] disconnect to service");
         }
 
         @Override
@@ -79,28 +76,28 @@ public class DictImportActivity extends AppCompatActivity {
                 initFromIntent();
             }
 
-            Log.d(TAG, "connect to service");
+            Log.d(TAG, "[onServiceConnected] connect to service");
         }
     };
 
     private DictImportService.ProcessListener importListener = new DictImportService.ProcessListener() {
         @Override
         public void process(int progress) {
-            Log.i(TAG, "process " + progress);
-            progressBar.setProgress(progress);
-            progressTipView.setText(progress + "/" + mTotal);
+            Log.i(TAG, "[process] " + progress);
+            mProgressBar.setProgress(progress);
+            mProgressTipView.setText(progress + "/" + mItemNum);
         }
 
         @Override
         public void processTotal(int total) {
-            mTotal = total;
-            progressBar.setMax(mTotal);
+            mItemNum = total;
+            mProgressBar.setMax(mItemNum);
         }
 
         @Override
         public void processComplete() {
-            cancelBtn.setText("完成");
-            hideBtn.setVisibility(View.GONE);
+            mCancelBtn.setText(getResources().getString(R.string.dict_done));
+            mHideBtn.setVisibility(View.GONE);
         }
     };
 
@@ -130,20 +127,20 @@ public class DictImportActivity extends AppCompatActivity {
             Log.d(TAG, "[onClick] confirm");
             if (serviceBinder == null) {
                 // todo error tip
+                Log.e(TAG, "[onClick] service is not connected");
                 return;
             }
             if (mDictUri == null) {
                 // todo error tip
+                Log.e(TAG, "[onClick] mDictUri is not be init");
                 return;
             }
-
-
             serviceBinder.importDict(mDictUri);
 
             view.setVisibility(View.GONE);
-            cancelBtn.setOnClickListener(abortListener);
-            hideBtn.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.VISIBLE);
+            mCancelBtn.setOnClickListener(abortListener);
+            mHideBtn.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.VISIBLE);
 
         }
     };
@@ -166,21 +163,26 @@ public class DictImportActivity extends AppCompatActivity {
 
     private void initFromSerivce() {
         mDictUri = serviceBinder.getUri();
+        if (mDictUri == null) {
+            Log.e(TAG, "[initFromSerivce] error use of initFromeService,you may use initFromIntent instead");
+            return;
+        }
+
         Log.d(TAG, "[initFromSerivce] " + mDictUri.toString());
 
-        mTotal = serviceBinder.getMax();
-        progressBar.setMax(mTotal);
-        importBtn.setVisibility(View.GONE);
-        hideBtn.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.VISIBLE);
-        tipView.setText(TextUrl.getFileName(mDictUri.toString()));
-        cancelBtn.setOnClickListener(abortListener);
+        mItemNum = serviceBinder.getItemNum();
+        mProgressBar.setMax(mItemNum);
+        mConfirmBtn.setVisibility(View.GONE);
+        mHideBtn.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mTipView.setText(TextUrl.getFileName(mDictUri.toString()));
+        mCancelBtn.setOnClickListener(abortListener);
     }
 
     private void initFromIntent() {
         mDictUri = getIntent().getData();
         Log.d(TAG, "[initFromIntent] " + mDictUri.toString());
-        tipView.setText(TextUrl.getFileName(mDictUri.toString()));
+        mTipView.setText(TextUrl.getFileName(mDictUri.toString()));
     }
 
 }
