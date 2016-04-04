@@ -29,7 +29,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
@@ -43,7 +42,6 @@ import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -333,7 +331,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
                 .show();
     }
 
-    public void onSignInSuccess() {
+    public void onSignInEnd() {
         Context context = getContext2();
         if (null == context) {
             return;
@@ -348,34 +346,9 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         }
     }
 
-    public void onSignInFailure(Exception e) {
-        Context context = getContext2();
-        if (null == context) {
-            return;
-        }
-
-        mSigningIn = false;
-        Toast.makeText(context, ExceptionUtils.getReadableString(context, e),
-                Toast.LENGTH_SHORT).show();
-        hideProgress();
-        whetherToSkip();
-    }
-
-    public void onGetProfileSuccess() {
+    public void onGetProfileEnd() {
         mSigningIn = false;
         updateAvatar();
-        redirectTo();
-    }
-
-    public void onGetProfileFailure(Exception e) {
-        Context context = getContext2();
-        if (null == context) {
-            return;
-        }
-
-        mSigningIn = false;
-        Toast.makeText(context, ExceptionUtils.getReadableString(context, e),
-                Toast.LENGTH_SHORT).show();
         redirectTo();
     }
 
@@ -392,7 +365,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
 
             SignInScene scene = getScene();
             if (scene != null) {
-                scene.onSignInSuccess();
+                scene.onSignInEnd();
             }
         }
 
@@ -403,7 +376,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
 
             SignInScene scene = getScene();
             if (scene != null) {
-                scene.onSignInFailure(e);
+                scene.onSignInEnd();
             }
         }
 
@@ -432,7 +405,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
 
             SignInScene scene = getScene();
             if (scene != null) {
-                scene.onGetProfileSuccess();
+                scene.onGetProfileEnd();
             }
         }
 
@@ -443,7 +416,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
 
             SignInScene scene = getScene();
             if (scene != null) {
-                scene.onGetProfileFailure(e);
+                scene.onGetProfileEnd();
             }
         }
 
