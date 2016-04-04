@@ -376,8 +376,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         mSigningIn = false;
         Toast.makeText(context, ExceptionUtils.getReadableString(context, e),
                 Toast.LENGTH_SHORT).show();
-        hideProgress();
-        whetherToSkip();
+        redirectTo();
     }
 
     private class SignInListener extends EhCallback<SignInScene, String> {
