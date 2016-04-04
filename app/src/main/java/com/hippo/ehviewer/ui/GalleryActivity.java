@@ -352,24 +352,6 @@ public class GalleryActivity extends EhActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (null != mGalleryView) {
-            mGalleryView.pause();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (null != mGalleryView) {
-            mGalleryView.resume();
-        }
-    }
-
-    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 

@@ -88,9 +88,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int METHOD_SET_SCALE_MODE = 18;
     private static final int METHOD_SET_START_POSITION = 19;
     private static final int METHOD_ON_ATTACH_TO_ROOT = 20;
-    private static final int METHOD_ON_DETACH_FROM_ROOT = 21;
-    private static final int METHOD_PAUSE = 22;
-    private static final int METHOD_RESUME = 23;
 
     private final Context mContext;
     private MovableTextTexture mPageTextTexture;
@@ -248,40 +245,17 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         postMethod(METHOD_ON_ATTACH_TO_ROOT);
     }
 
-    private void onDetachFromRootInternal() {
+    @Override
+    public void onDetachFromRoot() {
+        // When detached, render() will not be called. So do it here
         detachLayoutManager();
         if (null != mPageTextTexture) {
             mPageTextTexture.recycle();
             mPageTextTexture = null;
         }
-    }
 
-    @Override
-    public void onDetachFromRoot() {
         super.onDetachFromRoot();
         mEdgeView.onDetachFromRoot();
-        postMethod(METHOD_ON_DETACH_FROM_ROOT);
-    }
-
-    private void pauseInternal() {
-        mPause = true;
-    }
-
-    public void pause() {
-        postMethod(METHOD_PAUSE);
-    }
-
-    private void resumeInternal() {
-        if (mPause) {
-            mPause = false;
-            if (null != mLayoutManager) {
-                mLayoutManager.bindUnloadedPage();
-            }
-        }
-    }
-
-    public void resume() {
-        postMethod(METHOD_RESUME);
     }
 
     @LayoutMode
@@ -788,15 +762,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
                 case METHOD_ON_ATTACH_TO_ROOT:
                     onAttachToRootInternal();
                     break;
-                case METHOD_ON_DETACH_FROM_ROOT:
-                    onDetachFromRootInternal();
-                    break;
-                case METHOD_PAUSE:
-                    pauseInternal();
-                    break;
-                case METHOD_RESUME:
-                    resumeInternal();
-                    break;
             }
         }
 
@@ -979,8 +944,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
         public abstract boolean onUpdateAnimation(long time);
 
         public abstract void onDataChanged();
-
-        public abstract void bindUnloadedPage();
 
         public abstract void onPageLeft();
 
