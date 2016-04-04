@@ -573,28 +573,34 @@ public class GLRootView extends GLSurfaceView
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         unfreeze();
         super.surfaceChanged(holder, format, w, h);
+
+        requestLayoutContentPane();
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         unfreeze();
         super.surfaceCreated(holder);
+
+        if (mContentView != null && !mContentView.isAttachedToRoot()) {
+            mContentView.attachToRoot(this);
+        }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         unfreeze();
         super.surfaceDestroyed(holder);
+
+        if (mContentView != null && mContentView.isAttachedToRoot()) {
+            mContentView.detachFromRoot();
+        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         unfreeze();
         super.onDetachedFromWindow();
-
-        if (mContentView != null) {
-            mContentView.detachFromRoot();
-        }
     }
 
     /**
