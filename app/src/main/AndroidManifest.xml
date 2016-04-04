@@ -85,10 +85,10 @@
         <activity
             android:name="com.hippo.ehviewer.ui.DictImportActivity"
             android:configChanges="screenSize|uiMode"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.Dialog"
+            android:icon="@mipmap/ic_launcher"
             android:label="@string/dict_import"
-            android:icon="@mipmap/ic_launcher">
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.EDIT" />
@@ -98,8 +98,12 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="file" />
-                <data android:mimeType="*/*" />
-                <data android:pathPattern="*.ehdict" />
+                <data android:mimeType="text/*" />
+                <data android:host="*" />
+                <!-- we should open the specify ehdict file
+                    but it seem don't work in some popular file manager like es and re
+                <data android:pathPattern=".*\\.ehdict" />
+                -->
             </intent-filter>
         </activity>
 
@@ -163,7 +167,7 @@
         <service
             android:name="com.hippo.dict.DictImportService"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
         </service>
     </application>
 
