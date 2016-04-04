@@ -604,6 +604,11 @@
 
     <!-- Dict -->
     <string name="dict_import">Import dict</string>
+    <string name="dict_confirm">Ok</string>
+    <string name="dict_abort">abort</string>
+    <string name="dict_cancel">cancel</string>
+    <string name="dict_hide">hide</string>
+    <string name="dict_done">done</string>
 
     <!-- Readable Time -->
     <string name="from_the_future">From the future</string>
