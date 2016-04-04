@@ -30,8 +30,20 @@ public class EhConfig implements Cloneable {
 
     /**
      * The key of load images through the Hentai@Home Network
+     * @see #LOAD_FROM_HAH_YES
+     * @see #LOAD_FROM_HAH_NO
      */
     private static final String KEY_LOAD_FROM_HAH = "uh";
+    /**
+     * The key of Image Size Settings
+     * @see #IMAGE_SIZE_AUTO
+     * @see #IMAGE_SIZE_780X
+     * @see #IMAGE_SIZE_980X
+     * @see #IMAGE_SIZE_1280X
+     * @see #IMAGE_SIZE_1600X
+     * @see #IMAGE_SIZE_2400X
+     */
+    private static final String KEY_IMAGE_SIZE = "xr";
     /**
      * The key of scale images width
      */
@@ -41,17 +53,41 @@ public class EhConfig implements Cloneable {
      */
     private static final String KEY_SCALE_HEIGHT = "ry";
     /**
+     * The key of Gallery Name Display
+     * @see #GALLERY_TITLE_DEFAULT
+     * @see #GALLERY_TITLE_JAPANESE
+     */
+    private static final String KEY_GALLERY_TITLE = "tl";
+    /**
      * The key of the behavior for downloading archiver
+     * @see #ARCHIVER_DOWNLOAD_MAMS
+     * @see #ARCHIVER_DOWNLOAD_MAAS
+     * @see #ARCHIVER_DOWNLOAD_AAMS
+     * @see #ARCHIVER_DOWNLOAD_AAAS
      */
     private static final String KEY_ARCHIVER_DOWNLOAD = "ar";
     /**
      * The key of display mode would you like to use on the front and search pages
+     * @see #LAYOUT_MODE_LIST
+     * @see #LAYOUT_MODE_THUMB
      */
     private static final String KEY_LAYOUT_MODE = "dm";
+    /**
+     * The key for show popular
+     * @see #POPULAR_YES
+     * @see #POPULAR_NO
+     */
+    private static final String KEY_POPULAR = "prn";
     /**
      * The key of categories would you like to view as default on the front page
      */
     private static final String KEY_DEFAULT_CATEGORIES = "cats";
+    /**
+     * The key for favorites sort
+     * @see #FAVORITES_SORT_GALLERY_UPDATE_TIME
+     * @see #FAVORITES_SORT_FAVORITED_TIME
+     */
+    private static final String KEY_FAVORITES_SORT = "fs";
     /**
      * The key of exclude certain namespaces from a default tag search
      */
@@ -62,34 +98,55 @@ public class EhConfig implements Cloneable {
     private static final String KEY_EXCLUDED_LANGUAGES = "xl";
     /**
      * The key of how many results would you like per page for the index/search page and torrent search pages
+     * @see #RESULT_COUNT_25
+     * @see #RESULT_COUNT_50
+     * @see #RESULT_COUNT_100
+     * @see #RESULT_COUNT_200
      */
     private static final String KEY_RESULT_COUNT = "rc";
     /**
      * The key of mouse-over thumb
+     * @see #MOUSE_OVER_YES
+     * @see #MOUSE_OVER_NO
      */
-    private static final String KEY_MOUSE_OVER = "tl";
+    private static final String KEY_MOUSE_OVER = "lt";
     /**
      * The key of preview size
+     * @see #PREVIEW_SIZE_NORMAL
+     * @see #PREVIEW_SIZE_LARGE
      */
     private static final String KEY_PREVIEW_SIZE = "ts";
     /**
      * The key of preview row per page
+     * @see #PREVIEW_ROW_4
+     * @see #PREVIEW_ROW_10
+     * @see #PREVIEW_ROW_20
+     * @see #PREVIEW_ROW_40
      */
     private static final String KEY_PREVIEW_ROW = "tr";
     /**
      * The key of sort order for gallery comments
+     * @see #COMMENTS_SORT_OLDEST_FIRST
+     * @see #COMMENTS_SORT_RECENT_FIRST
+     * @see #COMMENTS_SORT_HIGHEST_SCORE_FIRST
      */
     private static final String KEY_COMMENTS_SORT = "cs";
     /**
      * The key of show gallery comment votes
+     * @see #COMMENTS_VOTES_POP
+     * @see #COMMENTS_VOTES_ALWAYS
      */
     private static final String KEY_COMMENTS_VOTES = "sc";
     /**
      * The key of sort order for gallery tags
+     * @see #TAGS_SORT_ALPHABETICAL
+     * @see #TAGS_SORT_POWER
      */
     private static final String KEY_TAGS_SORT = "to";
     /**
      * The key of show gallery page numbers
+     * @see #SHOW_GALLERY_INDEX_NO
+     * @see #SHOW_GALLERY_INDEX_YES
      */
     private static final String KEY_SHOW_GALLERY_INDEX = "pn";
     /**
@@ -104,22 +161,33 @@ public class EhConfig implements Cloneable {
     private static final String KEY_HAH_CLIENT_PASSKEY = "hk";
     /**
      * The key of enable Tag Flagging
+     * @see #ENABLE_TAG_FLAGGING_NO
+     * @see #ENABLE_TAG_FLAGGING_YES
      */
     private static final String KEY_ENABLE_TAG_FLAGGING = "tf";
     /**
      * The key of always display the original images instead of the resampled versions
+     * @see #ALWAYS_ORIGINAL_NO
+     * @see #ALWAYS_ORIGINAL_YES
      */
     private static final String KEY_ALWAYS_ORIGINAL = "oi";
     /**
      * The key of enable the multi-Page Viewer
+     * @see #MULTI_PAGE_NO
+     * @see #MULTI_PAGE_YES
      */
     private static final String KEY_MULTI_PAGE = "qb";
     /**
      * The key of multi-Page Viewer Display Style
+     * @see #MULTI_PAGE_STYLE_C
+     * @see #MULTI_PAGE_STYLE_N
+     * @see #MULTI_PAGE_STYLE_Y
      */
     private static final String KEY_MULTI_PAGE_STYLE = "ms";
     /**
      * The key of multi-Page Viewer Thumbnail Pane
+     * @see #MULTI_PAGE_THUMB_HIDE
+     * @see #MULTI_PAGE_THUMB_SHOW
      */
     private static final String KEY_MULTI_PAGE_THUMB = "mt";
 
@@ -141,6 +209,40 @@ public class EhConfig implements Cloneable {
      * do not load images through the Hentai@Home Network
      */
     public static final String LOAD_FROM_HAH_NO = "n";
+
+    /**
+     * Image Size Auto
+     */
+    private static final String IMAGE_SIZE_AUTO = "0";
+    /**
+     * Image Size 780x
+     */
+    private static final String IMAGE_SIZE_780X = "1";
+    /**
+     * Image Size 980x
+     */
+    private static final String IMAGE_SIZE_980X = "2";
+    /**
+     * Image Size 1280x
+     */
+    private static final String IMAGE_SIZE_1280X = "3";
+    /**
+     * Image Size 1600x
+     */
+    private static final String IMAGE_SIZE_1600X = "4";
+    /**
+     * Image Size 2400x
+     */
+    private static final String IMAGE_SIZE_2400X = "5";
+
+    /**
+     * Default gallery title
+     */
+    private static final String GALLERY_TITLE_DEFAULT = "r";
+    /**
+     * Japanese gallery title
+     */
+    private static final String GALLERY_TITLE_JAPANESE = "j";
 
     /**
      * Manual Accept, Manual Start
@@ -167,6 +269,15 @@ public class EhConfig implements Cloneable {
      * Thumbnail View on the front and search pages
      */
     public static final String LAYOUT_MODE_THUMB = "t";
+
+    /**
+     * Show popular
+     */
+    private static final String POPULAR_YES = "y";
+    /**
+     * Don't show popular
+     */
+    private static final String POPULAR_NO = "n";
 
     public static final int MISC = 0x1;
     public static final int DOUJINSHI = 0x2;
@@ -238,6 +349,15 @@ public class EhConfig implements Cloneable {
     public static final String OTHER_ORIGINAL = "255";
     public static final String OTHER_TRANSLATED = "1279";
     public static final String OTHER_REWRITE = "2303";
+
+    /**
+     * Sort favorites by last gallery update time
+     */
+    private static final String FAVORITES_SORT_GALLERY_UPDATE_TIME = "p";
+    /**
+     * Sort favorites by favorited time
+     */
+    private static final String FAVORITES_SORT_FAVORITED_TIME = "f";
 
     /**
      * 25 results per page for the index/search page and torrent search pages
@@ -413,6 +533,14 @@ public class EhConfig implements Cloneable {
     public String loadFromHAH = LOAD_FROM_HAH_YES;
 
     /**
+     * Image Size<br/>
+     * key: {@link #KEY_IMAGE_SIZE}<br/>
+     * value: {@link #IMAGE_SIZE_AUTO}, {@link #IMAGE_SIZE_780X}, {@link #IMAGE_SIZE_980X},
+     *        {@link #IMAGE_SIZE_1280X}, {@link #IMAGE_SIZE_1600X}, {@link #IMAGE_SIZE_2400X}
+     */
+    public String imageSize = IMAGE_SIZE_AUTO;
+
+    /**
      * Scale width<br/>
      * key: {@link #KEY_SCALE_WIDTH}<br/>
      * value: 0 for no limit
@@ -425,6 +553,13 @@ public class EhConfig implements Cloneable {
      * value: 0 for no limit
      */
     public int scaleHeight = 0;
+
+    /**
+     * Gallery title<br/>
+     * key: {@link #KEY_GALLERY_TITLE}<br/>
+     * value: {@link #GALLERY_TITLE_DEFAULT}, {@link #GALLERY_TITLE_JAPANESE}
+     */
+    public String galleryTitle = GALLERY_TITLE_DEFAULT;
 
     /**
      * The default behavior for downloading an archiver<br/>
@@ -443,12 +578,26 @@ public class EhConfig implements Cloneable {
     public String layoutMode = LAYOUT_MODE_LIST;
 
     /**
+     * Show popular or not<br/>
+     * key: {@link #KEY_POPULAR}<br/>
+     * value: {@link #POPULAR_YES}, {@link #POPULAR_NO}
+     */
+    public String popular = POPULAR_YES;
+
+    /**
      * Default categories on the front page<br/>
      * key: {@link #KEY_DEFAULT_CATEGORIES}<br/>
      * value: the value of categories, for multiple use & operation,
      * 0 for none
      */
     public int defaultCategories = 0;
+
+    /**
+     * <br/>
+     * key: {@link #KEY_FAVORITES_SORT}<br/>
+     * value: {@link #FAVORITES_SORT_GALLERY_UPDATE_TIME}, {@link #FAVORITES_SORT_FAVORITED_TIME}
+     */
+    public String favoritesSort = FAVORITES_SORT_FAVORITED_TIME;
 
     /**
      * Certain namespaces excluded from a default tag search<br/>
@@ -628,11 +777,15 @@ public class EhConfig implements Cloneable {
                 hahClientIp + "%3A" + hahClientPort : "";
         String hahClientPasskey = null == this.hahClientPasskey ? "" : this.hahClientPasskey;
         mUconfig = KEY_LOAD_FROM_HAH + "_" + loadFromHAH + "-" +
+                KEY_IMAGE_SIZE + "_" + imageSize + "-" +
                 KEY_SCALE_WIDTH + "_" + scaleWidth + "-" +
                 KEY_SCALE_HEIGHT + "_" + scaleHeight + "-" +
+                KEY_GALLERY_TITLE + "_" + galleryTitle + "-" +
                 KEY_ARCHIVER_DOWNLOAD + "_" + archiverDownload + "-" +
                 KEY_LAYOUT_MODE + "_" + layoutMode + "-" +
+                KEY_POPULAR + "_" + popular + "-" +
                 KEY_DEFAULT_CATEGORIES + "_" + defaultCategories + "-" +
+                KEY_FAVORITES_SORT + "_" + favoritesSort + "-" +
                 KEY_EXCLUDED_NAMESPACES + "_" + excludedNamespaces + "-" +
                 KEY_EXCLUDED_LANGUAGES + "_" + excludedLanguages + "-" +
                 KEY_RESULT_COUNT + "_" + resultCount + "-" +
