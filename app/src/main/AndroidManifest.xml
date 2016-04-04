@@ -82,6 +82,8 @@
                 <data android:host="g.e-hentai.org"/>
                 <data android:host="lofi.e-hentai.org"/>
                 <data android:pathPrefix="/g/"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.hippo.ehviewer.ui.DictImportActivity"
             android:configChanges="screenSize|uiMode"
