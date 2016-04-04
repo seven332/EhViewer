@@ -213,27 +213,27 @@ public class EhConfig implements Cloneable {
     /**
      * Image Size Auto
      */
-    private static final String IMAGE_SIZE_AUTO = "0";
+    public static final String IMAGE_SIZE_AUTO = "a";
     /**
      * Image Size 780x
      */
-    private static final String IMAGE_SIZE_780X = "1";
+    public static final String IMAGE_SIZE_780X = "780";
     /**
      * Image Size 980x
      */
-    private static final String IMAGE_SIZE_980X = "2";
+    public static final String IMAGE_SIZE_980X = "980";
     /**
      * Image Size 1280x
      */
-    private static final String IMAGE_SIZE_1280X = "3";
+    public static final String IMAGE_SIZE_1280X = "1280";
     /**
      * Image Size 1600x
      */
-    private static final String IMAGE_SIZE_1600X = "4";
+    public static final String IMAGE_SIZE_1600X = "1600";
     /**
      * Image Size 2400x
      */
-    private static final String IMAGE_SIZE_2400X = "5";
+    public static final String IMAGE_SIZE_2400X = "2400";
 
     /**
      * Default gallery title

@@ -35,7 +35,9 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.ui.DirPickerActivity;
 import com.hippo.unifile.UniFile;
 
-public class DownloadFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class DownloadFragment extends PreferenceFragment implements
+        Preference.OnPreferenceChangeListener,
+        Preference.OnPreferenceClickListener {
 
     public static final int REQUEST_CODE_PICK_IMAGE_DIR = 0;
     public static final int REQUEST_CODE_PICK_IMAGE_DIR_L = 1;
@@ -50,9 +52,12 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.download_settings);
 
+        Preference imageSize = findPreference(Settings.KEY_IMAGE_SIZE);
         mDownloadLocation = findPreference(KEY_DOWNLOAD_LOCATION);
 
         onUpdateDownloadLocation();
+
+        imageSize.setOnPreferenceChangeListener(this);
 
         if (mDownloadLocation != null) {
             mDownloadLocation.setOnPreferenceClickListener(this);
@@ -180,5 +185,17 @@ public class DownloadFragment extends PreferenceFragment implements Preference.O
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        String key = preference.getKey();
+        if (Settings.KEY_IMAGE_SIZE.equals(key)) {
+            if (newValue instanceof String) {
+                Settings.putImageSize((String) newValue);
+            }
+            return true;
+        }
+        return false;
     }
 }

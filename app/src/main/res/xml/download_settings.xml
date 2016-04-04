@@ -39,6 +39,14 @@
         app:entryValues="@array/preload_image_entry_values"
         android:defaultValue="5"/>
 
+    <com.hippo.preference.ListPreference
+        android:key="image_size"
+        android:title="@string/settings_download_image_size"
+        android:summary="@string/settings_download_image_size_summary"
+        app:entries="@array/image_size_entries"
+        app:entryValues="@array/image_size_entry_values"
+        android:defaultValue="a"/>
+
     <com.hippo.preference.SwitchPreference
         android:key="download_origin_image"
         android:title="@string/settings_download_download_origin_image"

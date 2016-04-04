@@ -55,6 +55,7 @@ public class Settings {
 
     private static EhConfig loadEhConfig() {
         EhConfig ehConfig= new EhConfig();
+        ehConfig.imageSize = getImageSize();
         ehConfig.excludedLanguages = getExcludedLanguages();
         ehConfig.defaultCategories = getDefaultCategories();
         ehConfig.excludedNamespaces = getExcludedTagNamespaces();
@@ -589,6 +590,19 @@ public class Settings {
 
     public static void putPreloadImage(int value) {
         putIntToStr(KEY_PRELOAD_IMAGE, value);
+    }
+
+    public static final String KEY_IMAGE_SIZE = "image_size";
+    public static final String DEFAULT_IMAGE_SIZE = EhConfig.IMAGE_SIZE_AUTO;
+
+    public static String getImageSize() {
+        return getString(KEY_IMAGE_SIZE, DEFAULT_IMAGE_SIZE);
+    }
+
+    public static void putImageSize(String value) {
+        sEhConfig.imageSize = value;
+        sEhConfig.setDirty();
+        putString(KEY_IMAGE_SIZE, value);
     }
 
     private static final String KEY_DOWNLOAD_ORIGIN_IMAGE = "download_origin_image";
