@@ -329,12 +329,12 @@ public class DownloadsScene extends ToolbarScene
 
     private void guide() {
         if (Settings.getGuideDownloadThumb()) {
-            SimpleHandler.getInstance().post(new Runnable() {
+            SimpleHandler.getInstance().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     guideDownloadThumb();
                 }
-            });
+            }, 300);
         } else {
             guideDownloadLabels();
         }
