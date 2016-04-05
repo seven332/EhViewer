@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/keyline_margin">
+    android:paddingLeft="?attr/dialogPreferredPadding"
+    android:paddingTop="@dimen/abc_dialog_padding_top_material"
+    android:paddingRight="?attr/dialogPreferredPadding">
 
     <RelativeLayout
         android:id="@+id/layout_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tv_tip"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <ProgressBar
             android:id="@+id/bar_import"
@@ -23,8 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_tip"
             android:max="100"
-            android:visibility="invisible" />
-
+            android:visibility="invisible"/>
 
         <TextView
             android:id="@+id/tv_progress"
@@ -33,23 +34,29 @@
             android:layout_alignBaseline="@id/tv_tip"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/bar_import" />
+            android:layout_below="@id/bar_import"/>
+
     </RelativeLayout>
 
-
-    <LinearLayout
-        android:id="@+id/layout_buttongroup"
+    <android.support.v7.widget.ButtonBarLayout
+        android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="bottom"
+        style="?attr/buttonBarStyle">
 
         <Button
             android:id="@+id/btn_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@android:string/cancel" />
+            android:text="@android:string/cancel"
+            style="?attr/buttonBarPositiveButtonStyle"/>
 
         <Button
             android:id="@+id/btn_hide"
@@ -57,13 +64,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/hide"
-            android:visibility="gone" />
+            android:visibility="gone"
+            style="?attr/buttonBarPositiveButtonStyle"/>
 
         <Button
             android:id="@+id/btn_confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/_import" />
-    </LinearLayout>
+            android:text="@string/_import"
+            style="?attr/buttonBarPositiveButtonStyle"/>
+
+    </android.support.v7.widget.ButtonBarLayout>
 </LinearLayout>
