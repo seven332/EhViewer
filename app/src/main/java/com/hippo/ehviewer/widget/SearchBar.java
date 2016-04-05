@@ -43,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.hippo.dict.DictDatabase;
 import com.hippo.dict.DictManager;
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;

@@ -60,7 +60,6 @@ public class SearchDatabase {
     public String[] getSuggestions(String prefix) {
         List<String> queryList = new LinkedList<>();
 
-        // TODO add limit
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM ").append(TABLE_SUGGESTIONS);
         if (!TextUtils.isEmpty(prefix)) {
