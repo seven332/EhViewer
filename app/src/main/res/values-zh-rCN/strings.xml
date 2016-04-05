@@ -525,12 +525,12 @@
     <string name="license">开源许可</string>
 
     <!-- Dict -->
+    <string name="import_dict_service">导入字典服务</string>
     <string name="dict_import">导入字典</string>
-    <string name="dict_confirm">确认</string>
-    <string name="dict_abort">取消</string>
-    <string name="dict_cancel">取消</string>
-    <string name="dict_hide">隐藏</string>
-    <string name="dict_done">完成</string>
+    <string name="_import">导入</string>
+    <string name="abort">中止</string>
+    <string name="hide">隐藏</string>
+    <string name="done">完成</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">选择文件夹</string>

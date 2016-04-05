@@ -14,16 +14,16 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hippo.ehviewer" >
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<manifest
+    package="com.hippo.ehviewer"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
 
     <application
         android:name="com.hippo.ehviewer.EhApplication"
@@ -35,7 +35,7 @@
         android:largeHeap="true">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.hippo.ehviewer.ui.MainActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.Main"
             android:launchMode="singleTask"
@@ -45,6 +45,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -68,6 +69,7 @@
             </intent-filter>
 
         </activity>
+
         <activity
             android:name="com.hippo.ehviewer.ui.DumpBrowsableActivity"
             android:configChanges="screenSize|uiMode"
@@ -82,30 +84,6 @@
                 <data android:host="g.e-hentai.org"/>
                 <data android:host="lofi.e-hentai.org"/>
                 <data android:pathPrefix="/g/"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.hippo.ehviewer.ui.DictImportActivity"
-            android:configChanges="screenSize|uiMode"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/dict_import"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.Dialog">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <action android:name="android.intent.action.PICK" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="file" />
-                <data android:mimeType="text/*" />
-                <data android:host="*" />
-                <!-- we should open the specify ehdict file
-                    but it seem don't work in some popular file manager like es and re
-                <data android:pathPattern=".*\\.ehdict" />
-                -->
             </intent-filter>
         </activity>
 
@@ -128,49 +106,81 @@
         </activity-alias>
 
         <activity
-            android:name=".ui.GalleryActivity"
+            android:name="com.hippo.ehviewer.ui.DictImportActivity"
             android:configChanges="screenSize|uiMode"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/dict_import"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.Gallery" />
+            android:theme="@style/AppTheme.Dialog">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*\\.ehdict"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:mimeType="*/*"/>
+                <data android:pathPattern=".*\\.ehdict"/>
+            </intent-filter>
+        </activity>
+
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name="com.hippo.ehviewer.ui.GalleryActivity"
             android:configChanges="screenSize|uiMode"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.Gallery"
+            android:launchMode="singleTask"/>
+
         <activity
-            android:name=".ui.ExcludedLanguagesActivity"
+            android:name="com.hippo.ehviewer.ui.SettingsActivity"
             android:configChanges="screenSize|uiMode"
-            android:label="@string/excluded_languages"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme"/>
+
         <activity
-            android:name=".ui.DirPickerActivity"
+            android:name="com.hippo.ehviewer.ui.ExcludedLanguagesActivity"
             android:configChanges="screenSize|uiMode"
-            android:label="@string/dir_picker"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/excluded_languages"/>
+
         <activity
-            android:name=".ui.LicenseActivity"
+            android:name="com.hippo.ehviewer.ui.DirPickerActivity"
             android:configChanges="screenSize|uiMode"
-            android:label="@string/license"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/dir_picker"/>
+
         <activity
-            android:name=".ui.FilterActivity"
+            android:name="com.hippo.ehviewer.ui.LicenseActivity"
             android:configChanges="screenSize|uiMode"
-            android:label="@string/filter"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/license"/>
+
         <activity
-            android:name=".ui.SetSecurityActivity"
+            android:name="com.hippo.ehviewer.ui.FilterActivity"
             android:configChanges="screenSize|uiMode"
-            android:label="@string/set_pattern_protection"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/filter"/>
+
+        <activity
+            android:name="com.hippo.ehviewer.ui.SetSecurityActivity"
+            android:configChanges="screenSize|uiMode"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/set_pattern_protection"/>
 
         <service
-            android:name=".download.DownloadService"
+            android:name="com.hippo.ehviewer.download.DownloadService"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/download_service_label" />
+            android:label="@string/download_service_label"/>
+
         <service
             android:name="com.hippo.dict.DictImportService"
-            android:enabled="true"
-            android:exported="true">
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/import_dict_service">
         </service>
     </application>
-
 </manifest>

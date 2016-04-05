@@ -96,7 +96,7 @@ public class DictImportActivity extends EhActivity {
 
         @Override
         public void processComplete() {
-            mCancelBtn.setText(getResources().getString(R.string.dict_done));
+            mCancelBtn.setText(getResources().getString(R.string.done));
             mHideBtn.setVisibility(View.GONE);
         }
     };

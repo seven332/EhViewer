@@ -49,14 +49,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/dict_cancel" />
+            android:text="@android:string/cancel" />
 
         <Button
             android:id="@+id/btn_hide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/dict_hide"
+            android:text="@string/hide"
             android:visibility="gone" />
 
         <Button
@@ -64,6 +64,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/dict_confirm" />
+            android:text="@string/_import" />
     </LinearLayout>
 </LinearLayout>

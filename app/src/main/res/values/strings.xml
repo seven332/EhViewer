@@ -567,6 +567,14 @@
     <!-- License -->
     <string name="license">License</string>
 
+    <!-- Dict -->
+    <string name="import_dict_service">Import dict service</string>
+    <string name="dict_import">Import dict</string>
+    <string name="_import">Import</string>
+    <string name="abort">Abort</string>
+    <string name="hide">Hide</string>
+    <string name="done">Done</string>
+
     <!-- Dir Picker-->
     <string name="dir_picker">Dir picker</string>
     <string name="directory_not_writable">The directory is not writable</string>
@@ -604,14 +612,6 @@
     <string name="guide_gallery_menu">Menu</string>
     <string name="guide_gallery_progress">Progress</string>
     <string name="guide_gallery_long_click">Long click to open page menu</string>
-
-    <!-- Dict -->
-    <string name="dict_import">Import dict</string>
-    <string name="dict_confirm">Ok</string>
-    <string name="dict_abort">abort</string>
-    <string name="dict_cancel">cancel</string>
-    <string name="dict_hide">hide</string>
-    <string name="dict_done">done</string>
 
     <!-- Readable Time -->
     <string name="from_the_future">From the future</string>
