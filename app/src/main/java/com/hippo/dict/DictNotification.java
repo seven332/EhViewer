@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.os.SystemClock;
 import android.support.v7.app.NotificationCompat;
 
 import com.hippo.ehviewer.R;
@@ -18,6 +20,7 @@ public class DictNotification {
     private final NotificationCompat.Builder mBuilder;
     private int mMax = 100;
     private final int mId = 1;
+    private long mLastUpdateTime;
 
     private final PendingIntent mImportIntent;
     private final PendingIntent mDoneIntent;
@@ -29,11 +32,14 @@ public class DictNotification {
         mBuilder = new NotificationCompat.Builder(mContext);
 
         mImportIntent = PendingIntent.getActivity(context, 0, new Intent(context, DictImportActivity.class), 0);
-        mDoneIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        mDoneIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         mBuilder.setContentTitle(mContext.getResources().getString(R.string.dict_import))
                 .setContentText("0/" + mMax)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_import)
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher))
                 .setContentIntent(mImportIntent)
                 .setOngoing(true);
     }
@@ -62,10 +68,16 @@ public class DictNotification {
     }
 
     public void setFileName(String fileName) {
-        mBuilder.setContentTitle(mContext.getResources().getString(R.string.dict_import) + " " + fileName);
+        mBuilder.setContentTitle(mContext.getString(R.string.dict_import) + " " + fileName);
     }
 
     public void notify(int progress) {
+        // Avoid update frequently
+        long now = SystemClock.currentThreadTimeMillis();
+        if (now - mLastUpdateTime < 500L) {
+            return;
+        }
+        mLastUpdateTime = now;
         mBuilder.setContentIntent(mImportIntent);
         mBuilder.setProgress(mMax, progress, false);
         mBuilder.setContentText(progress + "/" + mMax);
@@ -74,7 +86,11 @@ public class DictNotification {
 
     public void notifyDone() {
         mBuilder.setContentIntent(mDoneIntent);
+        mBuilder.setContentTitle(mContext.getString(R.string.dict_import_successfully));
+        mBuilder.setContentText(mMax + "/" + mMax);
+        mBuilder.setProgress(0, 0, false);
         mBuilder.setOngoing(false);
+        mBuilder.setAutoCancel(true);
         mNotifyManager.notify(mId, mBuilder.build());
     }
 
