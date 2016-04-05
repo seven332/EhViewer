@@ -527,6 +527,7 @@
     <!-- Dict -->
     <string name="import_dict_service">導入字典服務</string>
     <string name="dict_import">導入字典</string>
+    <string name="dict_import_successfully">導入字典成功</string>
     <string name="_import">導入</string>
     <string name="abort">中止</string>
     <string name="hide">隱藏</string>
