@@ -36,6 +36,7 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DictDatabase {
 
@@ -55,6 +56,8 @@ public class DictDatabase {
     private String mDictName;
     private boolean mAbortFlag = false;
 
+    private final AtomicBoolean mBusyFlag = new AtomicBoolean();
+
     public static DictDatabase getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new DictDatabase(context.getApplicationContext());
@@ -68,7 +71,7 @@ public class DictDatabase {
     }
 
     public String[] getSuggestions(String prefix) {
-        if (TextUtils.isEmpty(prefix)) {
+        if (TextUtils.isEmpty(prefix) || mBusyFlag.get()) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
 
@@ -133,6 +136,10 @@ public class DictDatabase {
     }
 
     public void deleteDict(String dict) {
+        if (mBusyFlag.get()) {
+            return;
+        }
+
         if (DEBUG) {
             Log.d(TAG, "[deleteDict] dict:" + dict);
         }
@@ -175,6 +182,7 @@ public class DictDatabase {
     }
 
     private void parseData(JsonReader jsonReader, final DictImportService.ProcessListener listener) throws IOException {
+        mBusyFlag.lazySet(true);
         int process = 1;
         SQLiteStatement insStmt = mDatabase.compileStatement("INSERT INTO " + TABLE_DICT + " VALUES (?, ?, ?);");
         mDatabase.beginTransaction();
@@ -199,6 +207,7 @@ public class DictDatabase {
             mDatabase.setTransactionSuccessful();
         } finally {
             mDatabase.endTransaction();
+            mBusyFlag.lazySet(false);
         }
     }
 
