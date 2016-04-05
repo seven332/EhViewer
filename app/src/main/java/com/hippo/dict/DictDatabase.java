@@ -27,6 +27,7 @@ import android.util.JsonReader;
 import android.util.Log;
 
 import com.hippo.util.SqlUtils;
+import com.hippo.yorozuya.ArrayUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,10 +44,10 @@ public class DictDatabase {
 
     public static final String COLUMN_PARENT = "parent";
     public static final String COLUMN_DATA = "data";
-    public static final String COLUMN_DICT = "dict";
+    public static final String COLUMN_DICT = "dict_name";
 
     private static final String DATABASE_NAME = "dict_database.db";
-    private static final String TABLE_DICT = "dict";
+    private static final String TABLE_DICT = "dictionary";
     private static final String SEPARATOR = "@@@";
     private final SQLiteDatabase mDatabase;
     private static DictDatabase sInstance;
@@ -67,22 +68,14 @@ public class DictDatabase {
     }
 
     public String[] getSuggestions(String prefix) {
-        Set<String> queryList = new HashSet<>();
-
-        // TODO add limit
         if (TextUtils.isEmpty(prefix)) {
-            return queryList.toArray(new String[queryList.size()]);
+            return ArrayUtils.EMPTY_STRING_ARRAY;
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT * FROM ").append(TABLE_DICT);
-        sb.append(" WHERE ").append(COLUMN_DATA).append(" LIKE '")
-                .append("%").append(SEPARATOR)
-                .append(SqlUtils.sqlEscapeString(prefix))
-                .append(SEPARATOR).append("%'")
-                .append(" LIMIT 5");
-        Cursor cursor = mDatabase.rawQuery(sb.toString(), null);
-
+        String command = "SELECT * FROM " + TABLE_DICT + " WHERE " + COLUMN_DATA +
+                " MATCH '" + SqlUtils.sqlEscapeString(prefix) + "' LIMIT 5;";
+        Cursor cursor = mDatabase.rawQuery(command, null);
+        Set<String> queryList = new HashSet<>();
         int queryIndex = cursor.getColumnIndex(COLUMN_DATA);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
@@ -166,11 +159,11 @@ public class DictDatabase {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + TABLE_DICT + " (" +
-                    "_id INTEGER PRIMARY KEY" +
-                    "," + COLUMN_DATA + " TEXT" +
-                    "," + COLUMN_PARENT + " TEXT" +
-                    "," + COLUMN_DICT + " TEXT" +
+            db.execSQL("CREATE VIRTUAL TABLE " + TABLE_DICT + " USING fts4 (" +
+                    COLUMN_DATA +
+                    ", " + COLUMN_PARENT +
+                    ", " + COLUMN_DICT +
+                    ", tokenize=icu th_ZH" +
                     ");");
         }
 
@@ -183,8 +176,7 @@ public class DictDatabase {
 
     private void parseData(JsonReader jsonReader, final DictImportService.ProcessListener listener) throws IOException {
         int process = 1;
-        SQLiteStatement insStmt = mDatabase.compileStatement("INSERT INTO " + TABLE_DICT +
-                " (" + COLUMN_DATA + ", " + COLUMN_PARENT + ", " + COLUMN_DICT + ") VALUES (?, ?, ?);");
+        SQLiteStatement insStmt = mDatabase.compileStatement("INSERT INTO " + TABLE_DICT + " VALUES (?, ?, ?);");
         mDatabase.beginTransaction();
         jsonReader.beginArray();
         try {
@@ -203,9 +195,9 @@ public class DictDatabase {
                 listener.process(process);
                 process++;
             }
+            jsonReader.endArray();
             mDatabase.setTransactionSuccessful();
         } finally {
-            jsonReader.endArray();
             mDatabase.endTransaction();
         }
     }
