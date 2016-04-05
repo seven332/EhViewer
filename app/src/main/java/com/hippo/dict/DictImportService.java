@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DictImportService extends Service {
-    private static final String TAG = "DictImportSerevice";
+    private static final String TAG = "DictImportService";
 
     private DictManager mDictManager;
-    private List<ProcessListener> mListeners = new ArrayList<>();
+    private final List<ProcessListener> mListeners = new ArrayList<>();
     private ProcessListener mDictProcessListener;
     private AsyncTask mImportAsyncTask;
     private DictNotification mDictNotification;
@@ -27,11 +27,9 @@ public class DictImportService extends Service {
     private Uri mDictUri;
     private boolean mRunningFlag = false;
 
-    public DictImportService() {
+    public DictImportService() {}
 
-    }
-
-    private Binder serviceBinder = new DictImportServiceBinder();
+    private final Binder serviceBinder = new DictImportServiceBinder();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -82,10 +80,10 @@ public class DictImportService extends Service {
             return;
         }
 
-        Log.d(TAG, "[abortImport] improt abort");
+        Log.d(TAG, "[abortImport] import abort");
 
         // fixme
-        // this i just set a flag to abort the prase thread,it may cause a exception
+        // this i just set a flag to abort the parse thread,it may cause a exception
         // it there may be a elegant way to shut the worker thread down
         mDictManager.importAbort();
 
@@ -118,8 +116,8 @@ public class DictImportService extends Service {
             mListeners.remove(onProgressListener);
         }
 
-        // if there is no listener in listener list,we is in the backgroud mostly
-        // we post the process progress informantion to a notification
+        // if there is no listener in listener list,we is in the background mostly
+        // we post the process progress information to a notification
         if (mListeners.size() == 0 && null != mDictUri) {
             mDictNotification.setMax(mItemNum);
             mDictNotification.setFileName(TextUrl.getFileName(mDictUri.toString()));
@@ -184,18 +182,18 @@ public class DictImportService extends Service {
                 listener.processComplete();
             }
             mRunningFlag = false;
-            DictImportService.this.godie();
+            DictImportService.this.goDie();
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            DictImportService.this.godie();
+            DictImportService.this.goDie();
         }
     }
 
-    public void godie() {
-        Log.d(TAG, "[godie] task done or abort,go to die");
+    public void goDie() {
+        Log.d(TAG, "[goDie] task done or abort,go to die");
         this.stopSelf();
     }
 }

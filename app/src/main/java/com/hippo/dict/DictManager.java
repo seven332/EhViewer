@@ -16,7 +16,7 @@ public class DictManager {
     private static final String enRegEx = "^[0-9a-zA-Z_\\s]+$";
     // private static final String zhRegEx = "";
 
-    private DictDatabase mDictDatabase;
+    private final DictDatabase mDictDatabase;
 
     public DictManager(Context context) {
         mDictDatabase = DictDatabase.getInstance(context);
@@ -28,7 +28,7 @@ public class DictManager {
     }
 
     public void deletDict(String dict) {
-        mDictDatabase.deletDict(dict);
+        mDictDatabase.deleteDict(dict);
     }
 
     public String[] getSuggestions(String prefix) {

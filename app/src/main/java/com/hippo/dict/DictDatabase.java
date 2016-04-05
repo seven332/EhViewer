@@ -16,7 +16,6 @@ package com.hippo.dict;
  * limitations under the License.
  */
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -86,10 +85,10 @@ public class DictDatabase {
         int queryIndex = cursor.getColumnIndex(COLUMN_DATA);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                String data = cursor.getString(queryIndex);
-                String datas[] = data.split(SEPARATOR);
-                for (String item : datas) {
-                    if (TextUtils.isEmpty(item) || data.equals(prefix)) {
+                String datum = cursor.getString(queryIndex);
+                String data[] = datum.split(SEPARATOR);
+                for (String item : data) {
+                    if (TextUtils.isEmpty(item) || datum.equals(prefix)) {
                         continue;
                     }
                     queryList.add(item);
@@ -113,14 +112,14 @@ public class DictDatabase {
             String field = jsonReader.nextName();
             if (field.equals("dict")) {
                 mDictName = jsonReader.nextString();
-                Log.d(TAG, "[importDict] prase the dict name -- " + mDictName);
+                Log.d(TAG, "[importDict] parse the dict name -- " + mDictName);
             } else if (field.equals("data")) {
-                deletDict(mDictName);
-                praseData(jsonReader, listener);
+                deleteDict(mDictName);
+                parseData(jsonReader, listener);
             } else if (field.equals("num")) {
                 int itemNum = jsonReader.nextInt();
                 listener.processTotal(itemNum);
-                Log.d(TAG, "[importDict] prase the item number -- " + itemNum);
+                Log.d(TAG, "[importDict] parse the item number -- " + itemNum);
             }
         }
         jsonReader.endObject();
@@ -128,16 +127,8 @@ public class DictDatabase {
         listener.processComplete();
     }
 
-    public void addItem(String data, String parent, String dict) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_DATA, data);
-        values.put(COLUMN_PARENT, parent);
-        values.put(COLUMN_DICT, dict);
-        mDatabase.insert(TABLE_DICT, null, values);
-    }
-
-    public void deletDict(String dict) {
-        Log.d(TAG, "[deletDict] dict:" + dict);
+    public void deleteDict(String dict) {
+        Log.d(TAG, "[deleteDict] dict:" + dict);
         mDatabase.delete(TABLE_DICT, COLUMN_DICT + "=?", new String[]{dict});
     }
 
@@ -174,7 +165,7 @@ public class DictDatabase {
         }
     }
 
-    private void praseData(JsonReader jsonReader, final DictImportService.ProcessListener listener) throws IOException {
+    private void parseData(JsonReader jsonReader, final DictImportService.ProcessListener listener) throws IOException {
         int process = 1;
         SQLiteStatement insStmt = mDatabase.compileStatement("INSERT INTO " + TABLE_DICT +
                 " (" + COLUMN_DATA + ", " + COLUMN_PARENT + ", " + COLUMN_DICT + ") VALUES (?, ?, ?);");
@@ -184,13 +175,13 @@ public class DictDatabase {
             while (jsonReader.hasNext()) {
                 synchronized (this) {
                     if (mAbortFlag) {
-                        Log.d(TAG, "[praseData] import abort,delect the dict -- " + mDictName);
-                        deletDict(mDictName);
+                        Log.d(TAG, "[parseData] import abort, delete the dict -- " + mDictName);
+                        deleteDict(mDictName);
                         return;
                     }
                 }
 
-                praseSingleData(jsonReader, insStmt);
+                parseSingleData(jsonReader, insStmt);
                 listener.process(process);
                 process++;
             }
@@ -201,7 +192,7 @@ public class DictDatabase {
         }
     }
 
-    private void praseSingleData(JsonReader jsonReader, SQLiteStatement insStmt) throws IOException {
+    private void parseSingleData(JsonReader jsonReader, SQLiteStatement insStmt) throws IOException {
         StringBuilder sb = new StringBuilder();
         String parent = "";
         sb.append(SEPARATOR);
@@ -218,7 +209,7 @@ public class DictDatabase {
         }
         jsonReader.endObject();
 
-        Log.d(TAG, "[praseSingleData] item:" + parent + " " + sb.toString());
+        Log.d(TAG, "[parseSingleData] item:" + parent + " " + sb.toString());
         insStmt.bindString(1, sb.toString());
         insStmt.bindString(2, parent);
         insStmt.bindString(3, mDictName);

@@ -13,14 +13,14 @@ import com.hippo.ehviewer.ui.MainActivity;
 
 public class DictNotification {
 
-    private Context mContext;
-    private NotificationManager mNotifyManager;
-    private NotificationCompat.Builder mBuilder;
+    private final Context mContext;
+    private final NotificationManager mNotifyManager;
+    private final NotificationCompat.Builder mBuilder;
     private int mMax = 100;
-    private int mId = 1;
+    private final int mId = 1;
 
-    private PendingIntent mImportIntent;
-    private PendingIntent mDoneIntent;
+    private final PendingIntent mImportIntent;
+    private final PendingIntent mDoneIntent;
 
     public DictNotification(Context context) {
 
