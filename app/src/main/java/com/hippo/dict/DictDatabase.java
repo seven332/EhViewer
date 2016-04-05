@@ -67,7 +67,7 @@ public class DictDatabase {
         mDatabase = databaseHelper.getWritableDatabase();
     }
 
-    public String[] getSuggestions(String prefix) {
+    public String[] getEnSuggestions(String prefix) {
         Set<String> queryList = new HashSet<>();
 
         // TODO add limit
@@ -82,6 +82,40 @@ public class DictDatabase {
                 .append(SqlUtils.sqlEscapeString(prefix))
                 .append(SEPARATOR).append("%'")
                 .append(" LIMIT 5");
+        Cursor cursor = mDatabase.rawQuery(sb.toString(), null);
+
+        int queryIndex = cursor.getColumnIndex(COLUMN_DATA);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String data = cursor.getString(queryIndex);
+                String datas[] = data.split(SEPARATOR);
+                for (String item : datas) {
+                    if (TextUtils.isEmpty(item) || data.equals(prefix)) {
+                        continue;
+                    }
+                    queryList.add(item);
+                }
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return queryList.toArray(new String[queryList.size()]);
+    }
+
+    public String[] getPrefixSuggestions(String prefix) {
+        Set<String> queryList = new HashSet<>();
+
+        // TODO add limit
+        if (TextUtils.isEmpty(prefix)) {
+            return queryList.toArray(new String[queryList.size()]);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT * FROM ").append(TABLE_DICT);
+        sb.append(" WHERE ").append(COLUMN_DATA).append(" LIKE '")
+                .append("%").append(SEPARATOR)
+                .append(SqlUtils.sqlEscapeString(prefix))
+                .append("%'").append(" LIMIT 15");
         Cursor cursor = mDatabase.rawQuery(sb.toString(), null);
 
         int queryIndex = cursor.getColumnIndex(COLUMN_DATA);

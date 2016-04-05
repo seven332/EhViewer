@@ -43,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.hippo.dict.DictDatabase;
 import com.hippo.dict.DictManager;
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;
@@ -174,11 +173,9 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
     private void updateSuggestions() {
         String prefix = mEditText.getText().toString();
-        String[] dictSuggestions = mDictManager.getSuggestions(prefix);
-        String[] suggestions = mSearchDatabase.getSuggestions(prefix);
 
+        String[] suggestions = mSearchDatabase.getSuggestions(prefix);
         mSuggestionList.clear();
-        Collections.addAll(mSuggestionList, dictSuggestions);
         Collections.addAll(mSuggestionList, suggestions);
         if (mSuggestionList.size() == 0) {
             removeListHeader();
@@ -186,6 +183,16 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
             addListHeader();
         }
         mSuggestionAdapter.notifyDataSetChanged();
+
+        final DictManager.OnDictQueryResultListener listener = new DictManager.OnDictQueryResultListener() {
+            @Override
+            public void getResult(String[] result) {
+                Collections.addAll(mSuggestionList, result);
+                mSuggestionAdapter.notifyDataSetChanged();
+            }
+        };
+        mDictManager.getEnSuggestions(prefix, listener);
+        mDictManager.getPreFixSuggestions(prefix, listener);
     }
 
     public void setAllowEmptySearch(boolean allowEmptySearch) {
