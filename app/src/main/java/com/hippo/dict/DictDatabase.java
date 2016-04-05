@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.JsonReader;
@@ -36,7 +37,6 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
-
 public class DictDatabase {
 
     private static final String TAG = DictDatabase.class.getSimpleName();
@@ -48,11 +48,10 @@ public class DictDatabase {
     private static final String DATABASE_NAME = "dict_database.db";
     private static final String TABLE_DICT = "dict";
     private static final String SEPARATOR = "@@@";
-    private SQLiteDatabase mDatabase;
+    private final SQLiteDatabase mDatabase;
     private static DictDatabase sInstance;
 
     private String mDictName;
-    private Integer mItemNum;
     private boolean mAbortFlag = false;
 
     public static DictDatabase getInstance(Context context) {
@@ -118,11 +117,10 @@ public class DictDatabase {
             } else if (field.equals("data")) {
                 deletDict(mDictName);
                 praseData(jsonReader, listener);
-
             } else if (field.equals("num")) {
-                mItemNum = jsonReader.nextInt();
-                listener.processTotal(mItemNum);
-                Log.d(TAG, "[importDict] prase the item number -- " + mItemNum);
+                int itemNum = jsonReader.nextInt();
+                listener.processTotal(itemNum);
+                Log.d(TAG, "[importDict] prase the item number -- " + itemNum);
             }
         }
         jsonReader.endObject();
@@ -178,24 +176,32 @@ public class DictDatabase {
 
     private void praseData(JsonReader jsonReader, final DictImportService.ProcessListener listener) throws IOException {
         int process = 1;
+        SQLiteStatement insStmt = mDatabase.compileStatement("INSERT INTO " + TABLE_DICT +
+                " (" + COLUMN_DATA + ", " + COLUMN_PARENT + ", " + COLUMN_DICT + ") VALUES (?, ?, ?);");
+        mDatabase.beginTransaction();
         jsonReader.beginArray();
-        while (jsonReader.hasNext()) {
-            synchronized (this) {
-                if (mAbortFlag) {
-                    Log.d(TAG, "[praseData] import abort,delect the dict -- " + mDictName);
-                    deletDict(mDictName);
-                    return;
+        try {
+            while (jsonReader.hasNext()) {
+                synchronized (this) {
+                    if (mAbortFlag) {
+                        Log.d(TAG, "[praseData] import abort,delect the dict -- " + mDictName);
+                        deletDict(mDictName);
+                        return;
+                    }
                 }
-            }
 
-            praseSingleData(jsonReader);
-            listener.process(process);
-            process++;
+                praseSingleData(jsonReader, insStmt);
+                listener.process(process);
+                process++;
+            }
+            mDatabase.setTransactionSuccessful();
+        } finally {
+            jsonReader.endArray();
+            mDatabase.endTransaction();
         }
-        jsonReader.endArray();
     }
 
-    private void praseSingleData(JsonReader jsonReader) throws IOException {
+    private void praseSingleData(JsonReader jsonReader, SQLiteStatement insStmt) throws IOException {
         StringBuilder sb = new StringBuilder();
         String parent = "";
         sb.append(SEPARATOR);
@@ -213,7 +219,9 @@ public class DictDatabase {
         jsonReader.endObject();
 
         Log.d(TAG, "[praseSingleData] item:" + parent + " " + sb.toString());
-        addItem(sb.toString(), parent, mDictName);
+        insStmt.bindString(1, sb.toString());
+        insStmt.bindString(2, parent);
+        insStmt.bindString(3, mDictName);
+        insStmt.executeInsert();
     }
-
 }
