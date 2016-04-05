@@ -20,6 +20,8 @@ import com.hippo.util.TextUrl;
 public class DictImportActivity extends EhActivity {
 
     private final static String TAG = "DictImportActivity";
+    private static final boolean DEBUG = false;
+
     private DictImportService serviceBinder;
     private int mItemNum = 0;
 
@@ -39,7 +41,9 @@ public class DictImportActivity extends EhActivity {
         setContentView(R.layout.activity_dict_improt);
 
         Intent intent = new Intent(DictImportActivity.this, DictImportService.class);
-        Log.d(TAG, "[onCreate] bind service");
+        if (DEBUG) {
+            Log.d(TAG, "[onCreate] bind service");
+        }
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
         startService(intent);
 
@@ -57,10 +61,12 @@ public class DictImportActivity extends EhActivity {
         mHideBtn.setOnClickListener(hideListener);
     }
 
-    private ServiceConnection conn = new ServiceConnection() {
+    private final ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.w(TAG, "[onServiceConnected] disconnect to service");
+            if (DEBUG) {
+                Log.w(TAG, "[onServiceConnected] disconnect to service");
+            }
         }
 
         @Override
@@ -71,19 +77,23 @@ public class DictImportActivity extends EhActivity {
             // if we are doing a task,we load improt infomation from service
             // and ignore the newer import task
             if (serviceBinder.isRunning()) {
-                initFromSerivce();
+                initFromService();
             } else {
                 initFromIntent();
             }
 
-            Log.d(TAG, "[onServiceConnected] connect to service");
+            if (DEBUG) {
+                Log.d(TAG, "[onServiceConnected] connect to service");
+            }
         }
     };
 
-    private DictImportService.ProcessListener importListener = new DictImportService.ProcessListener() {
+    private final DictImportService.ProcessListener importListener = new DictImportService.ProcessListener() {
         @Override
         public void process(int progress) {
-            Log.i(TAG, "[process] " + progress);
+            if (DEBUG) {
+                Log.i(TAG, "[process] " + progress);
+            }
             mProgressBar.setProgress(progress);
             mProgressTipView.setText(progress + "/" + mItemNum);
         }
@@ -102,18 +112,19 @@ public class DictImportActivity extends EhActivity {
     };
 
 
-    private View.OnClickListener cancelListener = new View.OnClickListener() {
+    private final View.OnClickListener cancelListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             DictImportActivity.this.finish();
         }
     };
 
-    private View.OnClickListener abortListener = new View.OnClickListener() {
+    private final View.OnClickListener abortListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
-            Log.d(TAG, "[onClick] abort");
+            if (DEBUG) {
+                Log.d(TAG, "[onClick] abort");
+            }
             if (serviceBinder != null) {
                 serviceBinder.abortImport();
             }
@@ -121,18 +132,24 @@ public class DictImportActivity extends EhActivity {
         }
     };
 
-    private View.OnClickListener confirmListener = new View.OnClickListener() {
+    private final View.OnClickListener confirmListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Log.d(TAG, "[onClick] confirm");
+            if (DEBUG) {
+                Log.d(TAG, "[onClick] confirm");
+            }
             if (serviceBinder == null) {
                 // todo error tip
-                Log.e(TAG, "[onClick] service is not connected");
+                if (DEBUG) {
+                    Log.e(TAG, "[onClick] service is not connected");
+                }
                 return;
             }
             if (mDictUri == null) {
                 // todo error tip
-                Log.e(TAG, "[onClick] mDictUri is not be init");
+                if (DEBUG) {
+                    Log.e(TAG, "[onClick] mDictUri is not be init");
+                }
                 return;
             }
             serviceBinder.importDict(mDictUri);
@@ -145,10 +162,12 @@ public class DictImportActivity extends EhActivity {
         }
     };
 
-    private View.OnClickListener hideListener = new View.OnClickListener() {
+    private final View.OnClickListener hideListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Log.d(TAG, "[onClick] hide");
+            if (DEBUG) {
+                Log.d(TAG, "[onClick] hide");
+            }
             DictImportActivity.this.finish();
         }
     };
@@ -161,14 +180,18 @@ public class DictImportActivity extends EhActivity {
     }
 
 
-    private void initFromSerivce() {
+    private void initFromService() {
         mDictUri = serviceBinder.getUri();
         if (mDictUri == null) {
-            Log.e(TAG, "[initFromSerivce] error use of initFromeService,you may use initFromIntent instead");
+            if (DEBUG) {
+                Log.e(TAG, "[initFromService] error use of initFromService,you may use initFromIntent instead");
+            }
             return;
         }
 
-        Log.d(TAG, "[initFromSerivce] " + mDictUri.toString());
+        if (DEBUG) {
+            Log.d(TAG, "[initFromService] " + mDictUri.toString());
+        }
 
         mItemNum = serviceBinder.getItemNum();
         mProgressBar.setMax(mItemNum);
@@ -181,7 +204,9 @@ public class DictImportActivity extends EhActivity {
 
     private void initFromIntent() {
         mDictUri = getIntent().getData();
-        Log.d(TAG, "[initFromIntent] " + mDictUri.toString());
+        if (DEBUG) {
+            Log.d(TAG, "[initFromIntent] " + mDictUri.toString());
+        }
         mTipView.setText(TextUrl.getFileName(mDictUri.toString()));
     }
 

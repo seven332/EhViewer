@@ -39,6 +39,7 @@ import java.util.Set;
 public class DictDatabase {
 
     private static final String TAG = DictDatabase.class.getSimpleName();
+    private static final boolean DEBUG = false;
 
     public static final String COLUMN_PARENT = "parent";
     public static final String COLUMN_DATA = "data";
@@ -113,14 +114,18 @@ public class DictDatabase {
             String field = jsonReader.nextName();
             if (field.equals("dict")) {
                 mDictName = jsonReader.nextString();
-                Log.d(TAG, "[importDict] parse the dict name -- " + mDictName);
+                if (DEBUG) {
+                    Log.d(TAG, "[importDict] parse the dict name -- " + mDictName);
+                }
             } else if (field.equals("num")) {
                 if (TextUtils.isEmpty(mDictName)) {
                     break;
                 }
                 itemNum = jsonReader.nextInt();
                 listener.processTotal(itemNum);
-                Log.d(TAG, "[importDict] parse the item number -- " + itemNum);
+                if (DEBUG) {
+                    Log.d(TAG, "[importDict] parse the item number -- " + itemNum);
+                }
             } else if (field.equals("data")) {
                 if (TextUtils.isEmpty(mDictName) || itemNum <= 0) {
                     break;
@@ -135,12 +140,16 @@ public class DictDatabase {
     }
 
     public void deleteDict(String dict) {
-        Log.d(TAG, "[deleteDict] dict:" + dict);
+        if (DEBUG) {
+            Log.d(TAG, "[deleteDict] dict:" + dict);
+        }
         mDatabase.delete(TABLE_DICT, COLUMN_DICT + "=?", new String[]{dict});
     }
 
     public void importAbort() {
-        Log.d(TAG, "[importAbort] set mAbortFlag true");
+        if (DEBUG) {
+            Log.d(TAG, "[importAbort] set mAbortFlag true");
+        }
         mAbortFlag = true;
     }
 
@@ -182,7 +191,9 @@ public class DictDatabase {
             while (jsonReader.hasNext()) {
                 synchronized (this) {
                     if (mAbortFlag) {
-                        Log.d(TAG, "[parseData] import abort, delete the dict -- " + mDictName);
+                        if (DEBUG) {
+                            Log.d(TAG, "[parseData] import abort, delete the dict -- " + mDictName);
+                        }
                         deleteDict(mDictName);
                         return;
                     }
@@ -216,7 +227,9 @@ public class DictDatabase {
         }
         jsonReader.endObject();
 
-        Log.d(TAG, "[parseSingleData] item:" + parent + " " + sb.toString());
+        if (DEBUG) {
+            Log.d(TAG, "[parseSingleData] item:" + parent + " " + sb.toString());
+        }
         insStmt.bindString(1, sb.toString());
         insStmt.bindString(2, parent);
         insStmt.bindString(3, mDictName);

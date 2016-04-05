@@ -15,6 +15,7 @@ import java.util.List;
 
 public class DictImportService extends Service {
     private static final String TAG = "DictImportService";
+    private static final boolean DEBUG = false;
 
     private DictManager mDictManager;
     private final List<ProcessListener> mListeners = new ArrayList<>();
@@ -66,21 +67,29 @@ public class DictImportService extends Service {
     public void importDict(Uri dictUri) {
         if (dictUri == null) {
             // TODO error tip
-            Log.e(TAG, "[importDict] dictUri is null");
+            if (DEBUG) {
+                Log.e(TAG, "[importDict] dictUri is null");
+            }
             return;
         }
 
-        Log.d(TAG, "[importDict] start import async task");
+        if (DEBUG) {
+            Log.d(TAG, "[importDict] start import async task");
+        }
         mImportAsyncTask = new ImportAsyncTask(dictUri).execute();
     }
 
     public void abortImport() {
         if (mImportAsyncTask == null) {
-            Log.e(TAG, "[abortImport] mImportAsyncTask is null");
+            if (DEBUG) {
+                Log.e(TAG, "[abortImport] mImportAsyncTask is null");
+            }
             return;
         }
 
-        Log.d(TAG, "[abortImport] import abort");
+        if (DEBUG) {
+            Log.d(TAG, "[abortImport] import abort");
+        }
 
         // fixme
         // this i just set a flag to abort the parse thread,it may cause a exception
@@ -133,13 +142,17 @@ public class DictImportService extends Service {
             mDictProcessListener = new ProcessListener() {
                 @Override
                 public void process(int progress) {
-                    Log.d(TAG, "[process] progress:" + progress);
+                    if (DEBUG) {
+                        Log.d(TAG, "[process] progress:" + progress);
+                    }
                     publishProgress(progress);
                 }
 
                 @Override
                 public void processTotal(int total) {
-                    Log.d(TAG, "process total " + total);
+                    if (DEBUG) {
+                        Log.d(TAG, "process total " + total);
+                    }
                     mItemNum = total;
                     for (ProcessListener listener : mListeners) {
                         listener.processTotal(total);
@@ -149,7 +162,9 @@ public class DictImportService extends Service {
                 @Override
                 public void processComplete() {
                     // we don't do any thing here,let async task handle this
-                    Log.d(TAG, "processComplete");
+                    if (DEBUG) {
+                        Log.d(TAG, "processComplete");
+                    }
                 }
 
             };
@@ -169,7 +184,9 @@ public class DictImportService extends Service {
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
 
-            Log.d(TAG, "[onProgressUpdate] process item " + progress[0]);
+            if (DEBUG) {
+                Log.d(TAG, "[onProgressUpdate] process item " + progress[0]);
+            }
             for (ProcessListener listener : mListeners) {
                 listener.process(progress[0]);
             }
@@ -193,7 +210,9 @@ public class DictImportService extends Service {
     }
 
     public void goDie() {
-        Log.d(TAG, "[goDie] task done or abort,go to die");
+        if (DEBUG) {
+            Log.d(TAG, "[goDie] task done or abort,go to die");
+        }
         this.stopSelf();
     }
 }
