@@ -120,11 +120,10 @@ public class DictImportService extends Service {
 
         // if there is no listener in listener list,we is in the backgroud mostly
         // we post the process progress informantion to a notification
-        if (mListeners.size() == 0) {
+        if (mListeners.size() == 0 && null != mDictUri) {
             mDictNotification.setMax(mItemNum);
             mDictNotification.setFileName(TextUrl.getFileName(mDictUri.toString()));
             mListeners.add(mDictNotification.mNotificationListener);
-
         }
     }
 
