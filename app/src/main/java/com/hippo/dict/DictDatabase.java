@@ -102,6 +102,7 @@ public class DictDatabase {
 
     public void importDict(final Uri dictUri, final DictImportService.ProcessListener listener) throws IOException, URISyntaxException {
         mAbortFlag = false;
+        int itemNum = -1;
         File dictFile = new File(dictUri.getPath());
         FileInputStream fileInputStream = new FileInputStream(dictFile);
         JsonReader jsonReader = new JsonReader(new InputStreamReader(
@@ -113,13 +114,19 @@ public class DictDatabase {
             if (field.equals("dict")) {
                 mDictName = jsonReader.nextString();
                 Log.d(TAG, "[importDict] parse the dict name -- " + mDictName);
-            } else if (field.equals("data")) {
-                deleteDict(mDictName);
-                parseData(jsonReader, listener);
             } else if (field.equals("num")) {
-                int itemNum = jsonReader.nextInt();
+                if (TextUtils.isEmpty(mDictName)) {
+                    break;
+                }
+                itemNum = jsonReader.nextInt();
                 listener.processTotal(itemNum);
                 Log.d(TAG, "[importDict] parse the item number -- " + itemNum);
+            } else if (field.equals("data")) {
+                if (TextUtils.isEmpty(mDictName) || itemNum <= 0) {
+                    break;
+                }
+                deleteDict(mDictName);
+                parseData(jsonReader, listener);
             }
         }
         jsonReader.endObject();
