@@ -445,6 +445,17 @@ public class Settings {
         putBoolean(KEY_SHOW_CLOCK, value);
     }
 
+    private static final String KEY_SHOW_PROGRESS = "gallery_show_progress";
+    private static final boolean DEFAULT_SHOW_PROGRESS = true;
+
+    public static boolean getShowProgress() {
+        return getBoolean(KEY_SHOW_PROGRESS, DEFAULT_SHOW_PROGRESS);
+    }
+
+    public static void putShowProgress(boolean value) {
+        putBoolean(KEY_SHOW_PROGRESS, value);
+    }
+
     private static final String KEY_SHOW_BATTERY = "gallery_show_battery";
     private static final boolean DEFAULT_SHOW_BATTERY = true;
 

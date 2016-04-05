@@ -35,6 +35,14 @@
         android:layout_marginRight="@dimen/gallery_widget_margin_h"
         android:textColor="@color/secondary_text_dark"/>
 
+    <TextView
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/gallery_widget_margin_v"
+        android:textColor="@color/secondary_text_dark"/>
+
     <com.hippo.widget.BatteryView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/battery"

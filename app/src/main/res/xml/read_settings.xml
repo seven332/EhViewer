@@ -62,6 +62,11 @@
         android:defaultValue="true"/>
 
     <com.hippo.preference.SwitchPreference
+        android:key="gallery_show_progress"
+        android:title="@string/settings_read_show_progress"
+        android:defaultValue="true"/>
+
+    <com.hippo.preference.SwitchPreference
         android:key="gallery_show_battery"
         android:title="@string/settings_read_show_battery"
         android:defaultValue="true"/>

@@ -114,6 +114,8 @@ public class GalleryActivity extends EhActivity
     @Nullable
     private View mClock;
     @Nullable
+    private TextView mProgress;
+    @Nullable
     private View mBattery;
     @Nullable
     private View mSeekBarPanel;
@@ -279,8 +281,10 @@ public class GalleryActivity extends EhActivity
 
         mMaskView = (ColorView) ViewUtils.$$(this, R.id.mask);
         mClock = ViewUtils.$$(this, R.id.clock);
+        mProgress = (TextView) ViewUtils.$$(this, R.id.progress);
         mBattery = ViewUtils.$$(this, R.id.battery);
         mClock.setVisibility(Settings.getShowClock() ? View.VISIBLE : View.GONE);
+        mProgress.setVisibility(Settings.getShowProgress() ? View.VISIBLE : View.GONE);
         mBattery.setVisibility(Settings.getShowBattery() ? View.VISIBLE : View.GONE);
 
         mSeekBarPanel = ViewUtils.$$(this, R.id.seek_bar_panel);
@@ -342,6 +346,7 @@ public class GalleryActivity extends EhActivity
 
         mMaskView = null;
         mClock = null;
+        mProgress = null;
         mBattery = null;
         mSeekBarPanel = null;
         mLeftText = null;
@@ -454,6 +459,18 @@ public class GalleryActivity extends EhActivity
             return mGalleryView.findPageByIndex(index);
         } else {
             return null;
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateProgress() {
+        if (mProgress == null) {
+            return;
+        }
+        if (mSize <= 0 || mCurrentIndex < 0) {
+            mProgress.setText(null);
+        } else {
+            mProgress.setText((mCurrentIndex + 1) + "/" + mSize);
         }
     }
 
@@ -709,6 +726,7 @@ public class GalleryActivity extends EhActivity
         private final Spinner mStartPosition;
         private final SwitchCompat mKeepScreenOn;
         private final SwitchCompat mShowClock;
+        private final SwitchCompat mShowProgress;
         private final SwitchCompat mShowBattery;
         private final SwitchCompat mVolumePage;
         private final SwitchCompat mReadingFullscreen;
@@ -724,6 +742,7 @@ public class GalleryActivity extends EhActivity
             mStartPosition = (Spinner) mView.findViewById(R.id.start_position);
             mKeepScreenOn = (SwitchCompat) mView.findViewById(R.id.keep_screen_on);
             mShowClock = (SwitchCompat) mView.findViewById(R.id.show_clock);
+            mShowProgress = (SwitchCompat) mView.findViewById(R.id.show_progress);
             mShowBattery = (SwitchCompat) mView.findViewById(R.id.show_battery);
             mVolumePage = (SwitchCompat) mView.findViewById(R.id.volume_page);
             mReadingFullscreen = (SwitchCompat) mView.findViewById(R.id.reading_fullscreen);
@@ -736,6 +755,7 @@ public class GalleryActivity extends EhActivity
             mStartPosition.setSelection(Settings.getStartPosition());
             mKeepScreenOn.setChecked(Settings.getKeepScreenOn());
             mShowClock.setChecked(Settings.getShowClock());
+            mShowProgress.setChecked(Settings.getShowProgress());
             mShowBattery.setChecked(Settings.getShowBattery());
             mVolumePage.setChecked(Settings.getVolumePage());
             mReadingFullscreen.setChecked(Settings.getReadingFullscreen());
@@ -763,6 +783,7 @@ public class GalleryActivity extends EhActivity
             int startPosition = ImageView.sanitizeStartPosition(mStartPosition.getSelectedItemPosition());
             boolean keepScreenOn = mKeepScreenOn.isChecked();
             boolean showClock = mShowClock.isChecked();
+            boolean showProgress = mShowProgress.isChecked();
             boolean showBattery = mShowBattery.isChecked();
             boolean volumePage = mVolumePage.isChecked();
             boolean readingFullscreen = mReadingFullscreen.isChecked();
@@ -777,6 +798,7 @@ public class GalleryActivity extends EhActivity
             Settings.putStartPosition(startPosition);
             Settings.putKeepScreenOn(keepScreenOn);
             Settings.putShowClock(showClock);
+            Settings.putShowProgress(showProgress);
             Settings.putShowBattery(showBattery);
             Settings.putVolumePage(volumePage);
             Settings.putReadingFullscreen(readingFullscreen);
@@ -809,6 +831,9 @@ public class GalleryActivity extends EhActivity
             }
             if (mClock != null) {
                 mClock.setVisibility(showClock ? View.VISIBLE : View.GONE);
+            }
+            if (mProgress != null) {
+                mProgress.setVisibility(showProgress ? View.VISIBLE : View.GONE);
             }
             if (mBattery != null) {
                 mBattery.setVisibility(showBattery ? View.VISIBLE : View.GONE);
@@ -956,10 +981,12 @@ public class GalleryActivity extends EhActivity
                 case KEY_SIZE:
                     GalleryActivity.this.mSize = mValue;
                     updateSlider();
+                    updateProgress();
                     break;
                 case KEY_CURRENT_INDEX:
                     GalleryActivity.this.mCurrentIndex = mValue;
                     updateSlider();
+                    updateProgress();
                     break;
                 case KEY_TAP_MENU_AREA:
                     onTapMenuArea();

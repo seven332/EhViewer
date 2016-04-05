@@ -445,6 +445,7 @@
     <string name="settings_read_start_position_center">Center</string>
     <string name="settings_read_keep_screen_on">Keep screen on</string>
     <string name="settings_read_show_clock">Show clock</string>
+    <string name="settings_read_show_progress">Show progress</string>
     <string name="settings_read_show_battery">Show battery</string>
     <string name="settings_read_volume_page">Use volume key to turn pages</string>
     <string name="settings_read_reading_fullscreen">Fullscreen</string>
