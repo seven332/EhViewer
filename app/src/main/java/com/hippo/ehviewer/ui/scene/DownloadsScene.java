@@ -45,6 +45,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -87,7 +88,6 @@ import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LongList;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
-import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
@@ -328,13 +328,18 @@ public class DownloadsScene extends ToolbarScene
     }
 
     private void guide() {
-        if (Settings.getGuideDownloadThumb()) {
-            SimpleHandler.getInstance().postDelayed(new Runnable() {
+        if (Settings.getGuideDownloadThumb() && null != mRecyclerView) {
+            mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
-                public void run() {
-                    guideDownloadThumb();
+                public void onGlobalLayout() {
+                    if (Settings.getGuideDownloadThumb()) {
+                        guideDownloadThumb();
+                    }
+                    if (null != mRecyclerView) {
+                        ViewUtils.removeOnGlobalLayoutListener(mRecyclerView.getViewTreeObserver(), this);
+                    }
                 }
-            }, 300);
+            });
         } else {
             guideDownloadLabels();
         }
