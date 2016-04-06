@@ -8,12 +8,16 @@ android {
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
-        minSdkVersion 16
+        minSdkVersion 15
         targetSdkVersion 23
         versionCode 57
         versionName "1.0.4"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW"
+    }
+
+    lintOptions {
+        abortOnError true
     }
 
     buildTypes {
