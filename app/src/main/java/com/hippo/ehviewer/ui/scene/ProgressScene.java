@@ -226,7 +226,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
 
         if (null != context && null != mViewTransition && null != mTip) {
             // Show tip
-            mError = ExceptionUtils.getReadableString(context, e);
+            mError = ExceptionUtils.getReadableString(e);
             mViewTransition.showView(1);
             mTip.setText(mError);
         }

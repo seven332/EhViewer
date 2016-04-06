@@ -670,7 +670,7 @@ public class ContentLayout extends FrameLayout {
                 String readableError;
                 if (e != null) {
                     e.printStackTrace();
-                    readableError = ExceptionUtils.getReadableString(getContext(), e);
+                    readableError = ExceptionUtils.getReadableString(e);
                 } else {
                     readableError = getContext().getString(R.string.error_unknown);
                 }

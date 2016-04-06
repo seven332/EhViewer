@@ -17,15 +17,16 @@
 package com.hippo.util;
 
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.network.StatusCodeException;
 
 import org.apache.http.conn.ConnectTimeoutException;
 
+import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -36,28 +37,30 @@ public final class ExceptionUtils {
     private static final String TAG = ExceptionUtils.class.getSimpleName();
 
     @NonNull
-    public static String getReadableString(@NonNull Context context, @NonNull Exception e) {
-        if (e instanceof ConnectTimeoutException ||
+    public static String getReadableString(@NonNull Exception e) {
+        if (e instanceof MalformedURLException) {
+            return GetText.getString(R.string.error_invalid_url);
+        } else if (e instanceof ConnectTimeoutException ||
                 e instanceof SocketTimeoutException) {
-            return context.getString(R.string.error_timeout);
+            return GetText.getString(R.string.error_timeout);
         } else if (e instanceof UnknownHostException) {
-            return context.getString(R.string.error_unknown_host);
+            return GetText.getString(R.string.error_unknown_host);
         } else if (e instanceof StatusCodeException) {
             StatusCodeException sce = (StatusCodeException) e;
             StringBuilder sb = new StringBuilder();
-            sb.append(context.getString(R.string.error_bad_status_code, sce.getResponseCode()));
+            sb.append(GetText.getString(R.string.error_bad_status_code, sce.getResponseCode()));
             if (sce.isIdentifiedResponseCode()) {
                 sb.append(", ").append(sce.getMessage());
             }
             return sb.toString();
         } else if (e instanceof ProtocolException && e.getMessage().startsWith("Too many follow-up requests:")) {
-            return context.getString(R.string.error_redirection);
+            return GetText.getString(R.string.error_redirection);
         } else if (e instanceof ProtocolException || e instanceof SocketException) {
-            return context.getString(R.string.error_socket);
+            return GetText.getString(R.string.error_socket);
         } else if (e instanceof EhException) {
             return e.getMessage();
         } else {
-            return context.getString(R.string.error_unknown);
+            return GetText.getString(R.string.error_unknown);
         }
     }
 }

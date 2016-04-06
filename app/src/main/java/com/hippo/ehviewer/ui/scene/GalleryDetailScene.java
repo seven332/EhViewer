@@ -1487,7 +1487,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         e.printStackTrace();
         Context context = getContext2();
         if (null != context && null != mTip) {
-            String error = ExceptionUtils.getReadableString(context, e);
+            String error = ExceptionUtils.getReadableString(e);
             mTip.setText(error);
             adjustViewVisibility(STATE_FAILED, true);
         }
@@ -1659,7 +1659,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 mProgressView.setVisibility(View.GONE);
                 mErrorText.setVisibility(View.VISIBLE);
                 mListView.setVisibility(View.GONE);
-                mErrorText.setText(ExceptionUtils.getReadableString(context, e));
+                mErrorText.setText(ExceptionUtils.getReadableString(e));
             }
         }
 
