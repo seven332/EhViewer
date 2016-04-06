@@ -101,20 +101,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                 break;
             }
             case GalleryAdapter.TYPE_GRID: {
-                int columnWidthId;
-                switch (Settings.getThumbSize()) {
-                    case 0:
-                        columnWidthId = R.dimen.gallery_grid_column_width_large;
-                        break;
-                    default:
-                    case 1:
-                        columnWidthId = R.dimen.gallery_grid_column_width_middle;
-                        break;
-                    case 2:
-                        columnWidthId = R.dimen.gallery_grid_column_width_small;
-                        break;
-                }
-                int columnWidth = mResources.getDimensionPixelOffset(columnWidthId);
+                int columnWidth = mResources.getDimensionPixelOffset(Settings.getThumbSizeResId());
                 mLayoutManager.setColumnSize(columnWidth);
                 mLayoutManager.setStrategy(AutoGridLayoutManager.STRATEGY_SUITABLE_SIZE);
                 if (null == mGirdDecoration) {

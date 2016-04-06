@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -259,6 +260,19 @@ public class Settings {
 
     public static int getThumbSize() {
         return getIntFromStr(KEY_THUMB_SIZE, DEFAULT_THUMB_SIZE);
+    }
+
+    @DimenRes
+    public static int getThumbSizeResId() {
+        switch (getThumbSize()) {
+            case 0:
+                return R.dimen.gallery_grid_column_width_large;
+            default:
+            case 1:
+                return R.dimen.gallery_grid_column_width_middle;
+            case 2:
+                return R.dimen.gallery_grid_column_width_small;
+        }
     }
 
     private static final String KEY_SHOW_JPN_TITLE = "show_jpn_title";
