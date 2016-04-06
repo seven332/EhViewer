@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 
 public class GalleryPageParser {
 
-    private static final Pattern PATTERN_IMAGE_URL = Pattern.compile("<div id=\"i3\"><a[^>]+><img id=\"img\" src=\"([^\"]+)\"");
+    private static final Pattern PATTERN_IMAGE_URL = Pattern.compile("<(?:/iframe|div id=\"i3\")[^>]*><a[^>]+><img[^>]*src=\"(.+?)\"");
     private static final Pattern PATTERN_SKIP_HATH_KEY = Pattern.compile("onclick=\"return nl\\('([^\\)]+)'\\)");
-    private static final Pattern PATTERN_ORIGIN_IMAGE_URL = Pattern.compile("<div id=\"i7\" class=\"if\"> &nbsp; <img[^>]+/> <a href=\"([^\"]+)\">");
+    private static final Pattern PATTERN_ORIGIN_IMAGE_URL = Pattern.compile("<a href=\"([^\"]+)fullimg.php([^\"]+)\">");
 
     public static Result parse(String body) throws ParseException {
         Matcher m;
@@ -43,9 +43,10 @@ public class GalleryPageParser {
         }
         m = PATTERN_ORIGIN_IMAGE_URL.matcher(body);
         if (m.find()) {
-            result.originImageUrl = StringUtils.unescapeXml(StringUtils.trim(m.group(1)));
+            result.originImageUrl = StringUtils.unescapeXml(m.group(1)) + "fullimg.php" + StringUtils.unescapeXml(m.group(2));
         }
-        if (!TextUtils.isEmpty(result.imageUrl) && !TextUtils.isEmpty(result.skipHathKey)) {
+
+        if (!TextUtils.isEmpty(result.imageUrl)) {
             return result;
         } else {
             throw new ParseException("Parse image url and skip hath key error", body);
