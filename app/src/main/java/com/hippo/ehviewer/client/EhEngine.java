@@ -36,6 +36,7 @@ import com.hippo.ehviewer.client.parser.ForumsParser;
 import com.hippo.ehviewer.client.parser.GalleryApiParser;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
+import com.hippo.ehviewer.client.parser.GalleryPageParser;
 import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
 import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
@@ -44,9 +45,7 @@ import com.hippo.ehviewer.client.parser.TorrentParser;
 import com.hippo.ehviewer.client.parser.VoteCommentParser;
 import com.hippo.ehviewer.client.parser.WhatsHotParser;
 import com.hippo.network.StatusCodeException;
-import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.AssertUtils;
-import com.hippo.yorozuya.IOUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,9 +53,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,33 +83,6 @@ public class EhEngine {
         sEhFilter = EhFilter.getInstance();
     }
 
-    private static void saveParseErrorBody(ParseException e) {
-        File dir = AppConfig.getExternalParseErrorDir();
-        if (null == dir) {
-            return;
-        }
-
-        File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".txt");
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(file);
-            String message = e.getMessage();
-            String body = e.getBody();
-            if (null != message) {
-                os.write(message.getBytes("utf-8"));
-                os.write('\n');
-            }
-            if (null != body) {
-                os.write(body.getBytes("utf-8"));
-            }
-            os.flush();
-        } catch (IOException e1) {
-            // Ignore
-        } finally {
-            IOUtils.closeQuietly(os);
-        }
-    }
-
     private static void throwException(Call call, int code, @Nullable Headers headers,
             @Nullable String body, Exception e) throws Exception {
         if (call.isCanceled()) {
@@ -132,7 +101,7 @@ public class EhEngine {
                 throw new EhException(body);
             } else {
                 if (Settings.getSaveParseErrorBody()) {
-                    saveParseErrorBody((ParseException) e);
+                    AppConfig.saveParseErrorBody((ParseException) e);
                 }
                 throw new EhException(GetText.getString(R.string.error_parse_error));
             }
@@ -833,5 +802,31 @@ public class EhEngine {
         }
 
         return result;
+    }
+
+    public static GalleryPageParser.Result getGalleryPage(@Nullable EhClient.Task task,
+            OkHttpClient okHttpClient, String url) throws Exception {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        if (null != task) {
+            task.setCall(call);
+        }
+
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return GalleryPageParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
     }
 }

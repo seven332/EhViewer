@@ -20,9 +20,15 @@ import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 
+import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IOUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class AppConfig {
 
@@ -128,5 +134,32 @@ public class AppConfig {
     @Nullable
     public static File createTempFile() {
         return FileUtils.createTempFile(getTempDir(), null);
+    }
+
+    public static void saveParseErrorBody(ParseException e) {
+        File dir = getExternalParseErrorDir();
+        if (null == dir) {
+            return;
+        }
+
+        File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".txt");
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            String message = e.getMessage();
+            String body = e.getBody();
+            if (null != message) {
+                os.write(message.getBytes("utf-8"));
+                os.write('\n');
+            }
+            if (null != body) {
+                os.write(body.getBytes("utf-8"));
+            }
+            os.flush();
+        } catch (IOException e1) {
+            // Ignore
+        } finally {
+            IOUtils.closeQuietly(os);
+        }
     }
 }
