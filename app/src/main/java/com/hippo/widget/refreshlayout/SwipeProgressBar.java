@@ -20,6 +20,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
+import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.View;
@@ -35,6 +37,9 @@ import android.view.animation.Interpolator;
  * trigger a refresh).
  */
 final class SwipeProgressBar {
+
+    private static final boolean SUPPORT_CLIPRECT_DIFFERENCE =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
 
     // Default progress animation colors are grays.
     private final static int COLOR1 = 0xB3000000;
@@ -136,12 +141,20 @@ final class SwipeProgressBar {
     }
 
     void draw(Canvas canvas) {
+        // API < 18 do not support clipRect(Region.Op.DIFFERENCE).
+        // So draw twice for finish animation
+        if (draw(canvas, true)) {
+            draw(canvas, false);
+        }
+    }
+
+    private boolean draw(Canvas canvas, boolean first) {
         Rect bounds = mBounds;
         final int width = bounds.width();
-        final int height = bounds.height();
         final int cx = bounds.centerX();
         final int cy = bounds.centerY();
         boolean drawTriggerWhileFinishing = false;
+        boolean drawAgain = false;
         int restoreCount = canvas.save();
         canvas.clipRect(bounds);
 
@@ -158,7 +171,7 @@ final class SwipeProgressBar {
                 // don't repost.
                 if ((now - mFinishTime) >= FINISH_ANIMATION_DURATION_MS) {
                     mFinishTime = 0;
-                    return;
+                    return false;
                 }
 
                 // Otherwise, use a 0 opacity alpha layer to clear the animation
@@ -169,8 +182,20 @@ final class SwipeProgressBar {
                 float pct = (finishProgress / 100f);
                 // Radius of the circle is half of the screen.
                 float clearRadius = width / 2 * INTERPOLATOR.getInterpolation(pct);
-                mClipRect.set(cx - clearRadius, 0, cx + clearRadius, height);
-                canvas.saveLayerAlpha(mClipRect, 0, 0);
+                if (SUPPORT_CLIPRECT_DIFFERENCE) {
+                    mClipRect.set(cx - clearRadius, bounds.top, cx + clearRadius, bounds.bottom);
+                    canvas.clipRect(mClipRect, Region.Op.DIFFERENCE);
+                } else {
+                    if (first) {
+                        // First time left
+                        drawAgain = true;
+                        mClipRect.set(bounds.left, bounds.top, cx - clearRadius, bounds.bottom);
+                    } else {
+                        // Second time right
+                        mClipRect.set(cx + clearRadius, bounds.top, bounds.right, bounds.bottom);
+                    }
+                    canvas.clipRect(mClipRect);
+                }
                 // Only draw the trigger if there is a space in the center of
                 // this refreshing view that needs to be filled in by the
                 // trigger. If the progress view is just still animating, let it
@@ -239,6 +264,7 @@ final class SwipeProgressBar {
             }
         }
         canvas.restoreToCount(restoreCount);
+        return drawAgain;
     }
 
     private void drawTrigger(Canvas canvas, int cx, int cy) {
