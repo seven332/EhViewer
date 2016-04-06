@@ -35,6 +35,7 @@ import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhConfig;
+import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.EhRequestBuilder;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -48,6 +49,7 @@ import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.ehviewer.gallery.gl.GalleryPageView;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.OSUtils;
@@ -64,7 +66,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -963,17 +964,13 @@ public class SpiderQueen implements Runnable {
         }
 
         private GalleryPageParser.Result getImageUrl(long gid, int index, String pToken,
-                String skipHathKey) throws IOException, ParseException, Image509Exception {
+                String skipHathKey) throws Exception {
             String url = EhUrl.getPageUrl(gid, index, pToken);
             if (skipHathKey != null) {
                 url = url + "?nl=" + skipHathKey;
             }
-            if (DEBUG_LOG) {
-                Log.d(TAG, url);
-            }
-            Response response = mHttpClient.newCall(new EhRequestBuilder(url).build()).execute();
-            String body = response.body().string();
-            GalleryPageParser.Result result = GalleryPageParser.parse(body);
+
+            GalleryPageParser.Result result = EhEngine.getGalleryPage(null, mHttpClient, url);
             if (StringUtils.endsWith(result.imageUrl, URL_509_SUFFIX_ARRAY)) {
                 // Get 509
                 // Notify listeners
@@ -993,17 +990,18 @@ public class SpiderQueen implements Runnable {
 
             // Try twice
             for (int i = 0; i < 2; i++) {
+                if (i > 0 && TextUtils.isEmpty(skipHathKey)) {
+                    // No need to get image url twice without skip hath key
+                    break;
+                }
+
                 GalleryPageParser.Result result = null;
                 try {
                     result = getImageUrl(gid, index, pToken, skipHathKey);
-                } catch (MalformedURLException e) {
-                    error = GetText.getString(R.string.error_invalid_url);
-                } catch (IOException e) {
-                    error = GetText.getString(R.string.error_socket);
-                } catch (ParseException e) {
-                    error = GetText.getString(R.string.error_parse_error);
                 } catch (Image509Exception e) {
                     error = GetText.getString(R.string.error_509);
+                } catch (Exception e) {
+                    error = ExceptionUtils.getReadableString(e);
                 }
                 if (result == null) {
                     // Get image url failed
