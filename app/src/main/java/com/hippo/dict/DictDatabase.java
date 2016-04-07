@@ -29,9 +29,9 @@ import android.util.Log;
 import com.hippo.util.SqlUtils;
 import com.hippo.yorozuya.ArrayUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.HashSet;
@@ -97,13 +97,14 @@ public class DictDatabase {
         return queryList.toArray(new String[queryList.size()]);
     }
 
-    public void importDict(final Uri dictUri, final DictImportService.ProcessListener listener) throws IOException, URISyntaxException {
+    public void importDict(Context context, final Uri dictUri, final DictImportService.ProcessListener listener) throws IOException, URISyntaxException {
         mAbortFlag = false;
         int itemNum = -1;
-        File dictFile = new File(dictUri.getPath());
-        FileInputStream fileInputStream = new FileInputStream(dictFile);
-        JsonReader jsonReader = new JsonReader(new InputStreamReader(
-                fileInputStream, "UTF-8"));
+        InputStream inputStream = context.getContentResolver().openInputStream(dictUri);
+        if (null == inputStream) {
+            throw new FileNotFoundException("Can't find " + dictUri);
+        }
+        JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
 
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {

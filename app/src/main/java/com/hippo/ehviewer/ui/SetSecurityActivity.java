@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.hippo.ehviewer.R;
@@ -60,6 +61,17 @@ public class SetSecurityActivity extends ToolbarActivity implements View.OnClick
     protected void onDestroy() {
         super.onDestroy();
         mPatternView = null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

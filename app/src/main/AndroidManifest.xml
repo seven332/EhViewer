@@ -161,6 +161,12 @@
             android:label="@string/license"/>
 
         <activity
+            android:name="com.hippo.ehviewer.ui.DictActivity"
+            android:configChanges="screenSize|uiMode"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/dict"/>
+
+        <activity
             android:name="com.hippo.ehviewer.ui.FilterActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.NoActionBar"

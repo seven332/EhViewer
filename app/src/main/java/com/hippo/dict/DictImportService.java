@@ -173,7 +173,7 @@ public class DictImportService extends Service {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                mDictManager.importDict(mDictUri, mDictProcessListener);
+                mDictManager.importDict(DictImportService.this, mDictUri, mDictProcessListener);
             } catch (Exception e) {
                 e.printStackTrace();
             }

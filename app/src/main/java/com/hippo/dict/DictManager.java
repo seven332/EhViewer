@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO Singleton
+// TODO Add add-dict callback for DictActivity
 public class DictManager {
 
     // pattern for language
@@ -22,9 +24,9 @@ public class DictManager {
         mDictDatabase = DictDatabase.getInstance(context);
     }
 
-    public void importDict(final Uri dictUri, final DictImportService.ProcessListener listener)
+    public void importDict(Context context, final Uri dictUri, final DictImportService.ProcessListener listener)
             throws IOException, URISyntaxException {
-        mDictDatabase.importDict(dictUri, listener);
+        mDictDatabase.importDict(context, dictUri, listener);
     }
 
     public void deletDict(String dict) {
