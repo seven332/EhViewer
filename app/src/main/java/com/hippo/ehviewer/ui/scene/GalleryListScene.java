@@ -418,8 +418,6 @@ public final class GalleryListScene extends BaseScene
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
-        mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop() + paddingTopSB,
-                mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 
         fastScroller.setPadding(fastScroller.getPaddingLeft(), fastScroller.getPaddingTop() + paddingTopSB,

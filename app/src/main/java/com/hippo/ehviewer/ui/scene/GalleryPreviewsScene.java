@@ -146,11 +146,12 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         AutoGridLayoutManager layoutManager = new AutoGridLayoutManager(context, columnWidth);
         layoutManager.setStrategy(AutoGridLayoutManager.STRATEGY_SUITABLE_SIZE);
         mRecyclerView.setLayoutManager(layoutManager);
-        int padding = LayoutUtils.dp2pix(context, 4);
-        mRecyclerView.setPadding(padding, padding, padding, padding);
         mRecyclerView.setClipToPadding(false);
-        mRecyclerView.addItemDecoration(new MarginItemDecoration(padding));
         mRecyclerView.setOnItemClickListener(this);
+        int padding = LayoutUtils.dp2pix(context, 4);
+        MarginItemDecoration decoration = new MarginItemDecoration(padding, padding, padding, padding, padding);
+        mRecyclerView.addItemDecoration(decoration);
+        decoration.applyPaddings(mRecyclerView);
 
         mHelper = new GalleryPreviewHelper();
         contentLayout.setHelper(mHelper);
