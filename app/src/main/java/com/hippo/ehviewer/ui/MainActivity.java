@@ -390,7 +390,8 @@ public final class MainActivity extends StageActivity
 
     private void checkDownloadLocation() {
         UniFile uniFile = Settings.getDownloadLocation();
-        if (null != uniFile && uniFile.ensureDir()) {
+        // null == uniFile for first start
+        if (null == uniFile || uniFile.ensureDir()) {
             return;
         }
         new AlertDialog.Builder(this)
