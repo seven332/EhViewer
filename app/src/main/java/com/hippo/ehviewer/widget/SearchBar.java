@@ -53,6 +53,7 @@ import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class SearchBar extends FrameLayout implements View.OnClickListener,
@@ -172,7 +173,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     }
 
     private void updateSuggestions() {
-        String prefix = mEditText.getText().toString();
+        final String prefix = mEditText.getText().toString();
 
         String[] suggestions = mSearchDatabase.getSuggestions(prefix);
         mSuggestionList.clear();
@@ -187,12 +188,19 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
         final DictManager.OnDictQueryResultListener listener = new DictManager.OnDictQueryResultListener() {
             @Override
             public void getResult(String[] result) {
-                Collections.addAll(mSuggestionList, result);
+                HashSet<String> set = new HashSet<>();
+                set.addAll(mSuggestionList);
+                Collections.addAll(set, result);
+                mSuggestionList.clear();
+                mSuggestionList.addAll(set);
+                mSuggestionList.remove(prefix);
+                Collections.sort(mSuggestionList);
                 mSuggestionAdapter.notifyDataSetChanged();
             }
         };
         mDictManager.getEnSuggestions(prefix, listener);
-        mDictManager.getPreFixSuggestions(prefix, listener);
+        mDictManager.getKeywordSuggestions(prefix, listener);
+        mDictManager.getPrefixSuggestions(prefix, listener);
     }
 
     public void setAllowEmptySearch(boolean allowEmptySearch) {
