@@ -25,8 +25,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +46,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemView
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
+import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
@@ -62,6 +63,7 @@ import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.LoadImageView;
+import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
@@ -119,7 +121,10 @@ public class HistoryScene extends ToolbarScene
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
         animator.setSupportsChangeAnimations(false);
         mRecyclerView.setItemAnimator(animator);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        AutoStaggeredGridLayoutManager layoutManager = new AutoStaggeredGridLayoutManager(
+                0, StaggeredGridLayoutManager.VERTICAL);
+        layoutManager.setColumnSize(resources.getDimensionPixelOffset(R.dimen.gallery_list_column_width));
+        layoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
@@ -127,9 +132,12 @@ public class HistoryScene extends ToolbarScene
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnItemLongClickListener(this);
-        int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
-        int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
-        mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+        int interval = resources.getDimensionPixelOffset(R.dimen.gallery_list_interval);
+        int paddingH = resources.getDimensionPixelOffset(R.dimen.gallery_list_margin_h);
+        int paddingV = resources.getDimensionPixelOffset(R.dimen.gallery_list_margin_v);
+        MarginItemDecoration decoration = new MarginItemDecoration(interval, paddingH, paddingV, paddingH, paddingV);
+        mRecyclerView.addItemDecoration(decoration);
+        decoration.applyPaddings(mRecyclerView);
         guardManager.attachRecyclerView(mRecyclerView);
         swipeManager.attachRecyclerView(mRecyclerView);
 

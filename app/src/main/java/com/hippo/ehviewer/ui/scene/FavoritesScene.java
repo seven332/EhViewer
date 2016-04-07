@@ -244,7 +244,7 @@ public class FavoritesScene extends BaseScene implements
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
         Resources resources = context.getResources();
-        int paddingTopSB = resources.getDimensionPixelOffset(R.dimen.list_padding_top_search_bar);
+        int paddingTopSB = resources.getDimensionPixelOffset(R.dimen.gallery_padding_top_search_bar);
 
         mHelper = new FavoritesHelper();
         mHelper.setEmptyString(resources.getString(R.string.gallery_list_empty_hit));

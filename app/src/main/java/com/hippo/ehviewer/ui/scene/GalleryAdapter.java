@@ -39,7 +39,6 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.widget.TileThumb;
 import com.hippo.util.ApiHelper;
-import com.hippo.widget.recyclerview.AutoGridLayoutManager;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 
 import java.lang.annotation.Retention;
@@ -70,7 +69,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
         mResources = resources;
         mRecyclerView = recyclerView;
         mLayoutManager = new AutoStaggeredGridLayoutManager(0, StaggeredGridLayoutManager.VERTICAL);
-        mPaddingTopSB = resources.getDimensionPixelOffset(R.dimen.list_padding_top_search_bar);
+        mPaddingTopSB = resources.getDimensionPixelOffset(R.dimen.gallery_padding_top_search_bar);
 
         mRecyclerView.setAdapter(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -100,14 +99,14 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
             case GalleryAdapter.TYPE_LIST: {
                 int columnWidth = mResources.getDimensionPixelOffset(R.dimen.gallery_list_column_width);
                 mLayoutManager.setColumnSize(columnWidth);
-                mLayoutManager.setStrategy(AutoGridLayoutManager.STRATEGY_MIN_SIZE);
+                mLayoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
                 if (null != mGirdDecoration) {
                     recyclerView.removeItemDecoration(mGirdDecoration);
                 }
                 if (null == mListDecoration) {
-                    int interval = mResources.getDimensionPixelOffset(R.dimen.list_content_interval);
-                    int paddingH = mResources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
-                    int paddingV = mResources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
+                    int interval = mResources.getDimensionPixelOffset(R.dimen.gallery_list_interval);
+                    int paddingH = mResources.getDimensionPixelOffset(R.dimen.gallery_list_margin_h);
+                    int paddingV = mResources.getDimensionPixelOffset(R.dimen.gallery_list_margin_v);
                     mListDecoration = new MarginItemDecoration(interval, paddingH, paddingV, paddingH, paddingV);
                 }
                 recyclerView.addItemDecoration(mListDecoration);
@@ -119,7 +118,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
             case GalleryAdapter.TYPE_GRID: {
                 int columnWidth = mResources.getDimensionPixelOffset(Settings.getThumbSizeResId());
                 mLayoutManager.setColumnSize(columnWidth);
-                mLayoutManager.setStrategy(AutoGridLayoutManager.STRATEGY_SUITABLE_SIZE);
+                mLayoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_SUITABLE_SIZE);
                 if (null != mListDecoration) {
                     recyclerView.removeItemDecoration(mListDecoration);
                 }

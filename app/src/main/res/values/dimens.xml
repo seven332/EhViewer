@@ -17,9 +17,7 @@
 <resources>
 
     <dimen name="keyline_margin">16dp</dimen>
-
     <dimen name="single_max_width">260dp</dimen>
-
     <dimen name="drawer_max_width">280dp</dimen>
 
     <dimen name="dialog_padding_top_material">18dp</dimen>
@@ -37,18 +35,19 @@
     <dimen name="rating_size">16dp</dimen>
     <dimen name="rating_interval">1dp</dimen>
 
-    <dimen name="list_thumb_height">120dp</dimen>
-    <dimen name="list_thumb_width">80dp</dimen>
-    <dimen name="list_content_margin_h">4dp</dimen>
-    <dimen name="list_content_margin_v">4dp</dimen>
-    <dimen name="list_content_interval">0dp</dimen>
-    <dimen name="list_search_bar_margin">4dp</dimen>
-    <dimen name="list_padding_top_search_bar">64dp</dimen>
-    <dimen name="list_padding_bottom_fab">80dp</dimen>
-
+    <dimen name="gallery_list_thumb_height">120dp</dimen>
+    <dimen name="gallery_list_thumb_width">80dp</dimen>
+    <dimen name="gallery_list_interval">0dp</dimen>
+    <dimen name="gallery_list_margin_h">4dp</dimen>
+    <dimen name="gallery_list_margin_v">4dp</dimen>
     <dimen name="gallery_grid_interval">8dp</dimen>
     <dimen name="gallery_grid_margin_h">8dp</dimen>
     <dimen name="gallery_grid_margin_v">8dp</dimen>
+
+    <dimen name="gallery_search_bar_margin_h">4dp</dimen>
+    <dimen name="gallery_search_bar_margin_v">8dp</dimen>
+    <dimen name="gallery_padding_top_search_bar">64dp</dimen>
+    <dimen name="gallery_padding_bottom_fab">80dp</dimen>
 
     <dimen name="gallery_list_column_width">320dp</dimen>
     <dimen name="gallery_grid_column_width_large">160dp</dimen>

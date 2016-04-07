@@ -33,9 +33,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -60,6 +60,7 @@ import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
+import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -83,6 +84,7 @@ import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
+import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.LongList;
@@ -131,7 +133,7 @@ public class DownloadsScene extends ToolbarScene
     @Nullable
     private DownloadAdapter mAdapter;
     @Nullable
-    private LinearLayoutManager mLayoutManager;
+    private AutoStaggeredGridLayoutManager mLayoutManager;
 
     private ShowcaseView mShowcaseView;
 
@@ -278,6 +280,7 @@ public class DownloadsScene extends ToolbarScene
 
         Context context = getContext2();
         AssertUtils.assertNotNull(content);
+        Resources resources = context.getResources();
 
         Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_download);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -286,7 +289,9 @@ public class DownloadsScene extends ToolbarScene
         mAdapter = new DownloadAdapter();
         mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
-        mLayoutManager = new LinearLayoutManager(context);
+        mLayoutManager = new AutoStaggeredGridLayoutManager(0, StaggeredGridLayoutManager.VERTICAL);
+        mLayoutManager.setColumnSize(resources.getDimensionPixelOffset(R.dimen.gallery_list_column_width));
+        mLayoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
         mRecyclerView.setDrawSelectorOnTop(true);
@@ -301,9 +306,12 @@ public class DownloadsScene extends ToolbarScene
         if (itemAnimator instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
         }
-        int paddingH = context.getResources().getDimensionPixelOffset(R.dimen.list_content_margin_h);
-        int paddingV = context.getResources().getDimensionPixelOffset(R.dimen.list_content_margin_v);
-        mRecyclerView.setPadding(paddingV, paddingH, paddingV, paddingH);
+        int interval = resources.getDimensionPixelOffset(R.dimen.gallery_list_interval);
+        int paddingH = resources.getDimensionPixelOffset(R.dimen.gallery_list_margin_h);
+        int paddingV = resources.getDimensionPixelOffset(R.dimen.gallery_list_margin_v);
+        MarginItemDecoration decoration = new MarginItemDecoration(interval, paddingH, paddingV, paddingH, paddingV);
+        mRecyclerView.addItemDecoration(decoration);
+        decoration.applyPaddings(mRecyclerView);
         if (mInitPosition >= 0) {
             mRecyclerView.scrollToPosition(mInitPosition);
             mInitPosition = -1;
@@ -351,7 +359,7 @@ public class DownloadsScene extends ToolbarScene
             guideDownloadLabels();
             return;
         }
-        int position = mLayoutManager.findFirstCompletelyVisibleItemPosition();
+        int position = mLayoutManager.findFirstCompletelyVisibleItemPositions(null)[0];
         if (position < 0) {
             guideDownloadLabels();
             return;

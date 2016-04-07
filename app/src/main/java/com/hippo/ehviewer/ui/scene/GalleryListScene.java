@@ -400,8 +400,8 @@ public final class GalleryListScene extends BaseScene
         mFabLayout = (FabLayout) ViewUtils.$$(mainLayout, R.id.fab_layout);
         mSearchFab = ViewUtils.$$(mainLayout, R.id.search_fab);
 
-        int paddingTopSB = resources.getDimensionPixelOffset(R.dimen.list_padding_top_search_bar);
-        int paddingBottomFab = resources.getDimensionPixelOffset(R.dimen.list_padding_bottom_fab);
+        int paddingTopSB = resources.getDimensionPixelOffset(R.dimen.gallery_padding_top_search_bar);
+        int paddingBottomFab = resources.getDimensionPixelOffset(R.dimen.gallery_padding_bottom_fab);
 
         mViewTransition = new ViewTransition(contentLayout, mSearchLayout);
 

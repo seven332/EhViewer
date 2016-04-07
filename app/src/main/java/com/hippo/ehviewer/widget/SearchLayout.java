@@ -122,8 +122,8 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         setAdapter(mAdapter);
         setHasFixedSize(true);
         setClipToPadding(false);
-        int paddingH = resources.getDimensionPixelOffset(R.dimen.list_content_margin_h);
-        int paddingV = resources.getDimensionPixelOffset(R.dimen.list_content_margin_v);
+        int paddingH = resources.getDimensionPixelOffset(R.dimen.gallery_list_margin_h);
+        int paddingV = resources.getDimensionPixelOffset(R.dimen.gallery_list_margin_v);
         setPadding(paddingV, paddingH, paddingV, paddingH);
 
         // Create normal view

@@ -23,8 +23,8 @@
 
     <com.hippo.widget.LoadImageView
         android:id="@+id/thumb"
-        android:layout_width="@dimen/list_thumb_width"
-        android:layout_height="@dimen/list_thumb_height"
+        android:layout_width="@dimen/gallery_list_thumb_width"
+        android:layout_height="@dimen/gallery_list_thumb_height"
         app:retryType="none"/>
 
     <TextView
