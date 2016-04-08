@@ -422,11 +422,11 @@ public class SpiderQueen implements Runnable {
     }
 
     public Object forceRequest(int index) {
-        return request(index, true);
+        return request(index, true, false);
     }
 
     public Object request(int index) {
-        return request(index, false);
+        return request(index, false, true);
     }
 
     private int getPageState(int index) {
@@ -472,7 +472,7 @@ public class SpiderQueen implements Runnable {
      * Float for download percent<br>
      * null for wait
      */
-    private Object request(int index, boolean force) {
+    private Object request(int index, boolean force, boolean addNeighbor) {
         if (mQueenThread == null) {
             return null;
         }
@@ -495,8 +495,8 @@ public class SpiderQueen implements Runnable {
                 }
             }
 
-            // For not force add, add next some pages to request queue
-            if (!force) {
+            // Add next some pages to request queue
+            if (addNeighbor) {
                 mRequestPageQueue2.clear();
                 int[] pageStateArray = mPageStateArray;
                 int size;
@@ -906,61 +906,61 @@ public class SpiderQueen implements Runnable {
         }
     }
 
+    private void updatePageState(int index, @State int state) {
+        updatePageState(index, state, null);
+    }
+
+    private boolean isStateDone(int state) {
+        return state == STATE_FINISHED || state == STATE_FAILED;
+    }
+
+    private void updatePageState(int index, @State int state, String error) {
+        int oldState;
+        synchronized (mPageStateLock) {
+            oldState = mPageStateArray[index];
+            mPageStateArray[index] = state;
+
+            if (!isStateDone(oldState) && isStateDone(state)) {
+                mDownloadedPages.incrementAndGet();
+            } else if (isStateDone(oldState) && !isStateDone(state)) {
+                mDownloadedPages.decrementAndGet();
+            }
+            if (oldState != STATE_FINISHED && state == STATE_FINISHED) {
+                mFinishedPages.incrementAndGet();
+            } else if (oldState == STATE_FINISHED && state != STATE_FINISHED) {
+                mFinishedPages.decrementAndGet();
+            }
+
+            // Clear
+            if (state == STATE_DOWNLOADING) {
+                mPageErrorMap.remove(index);
+            } else if (state == STATE_FINISHED || state == STATE_FAILED) {
+                mPagePercentMap.remove(index);
+            }
+
+            // Get default error
+            if (state == STATE_FAILED) {
+                if (error == null) {
+                    error = GetText.getString(R.string.error_unknown);
+                }
+                mPageErrorMap.put(index, error);
+            }
+        }
+
+        // Notify listeners
+        if (state == STATE_FAILED) {
+            notifyPageFailure(index, error);
+        } else if (state == STATE_FINISHED) {
+            notifyPageSuccess(index);
+        }
+    }
+
     private class SpiderWorker implements Runnable {
 
         private final long mGid;
 
         public SpiderWorker() {
             mGid = mGalleryInfo.gid;
-        }
-
-        private void updatePageState(int index, @State int state) {
-            updatePageState(index, state, null);
-        }
-
-        private boolean isStateDone(int state) {
-            return state == STATE_FINISHED || state == STATE_FAILED;
-        }
-
-        private void updatePageState(int index, @State int state, String error) {
-            int oldState;
-            synchronized (mPageStateLock) {
-                oldState = mPageStateArray[index];
-                mPageStateArray[index] = state;
-
-                if (!isStateDone(oldState) && isStateDone(state)) {
-                    mDownloadedPages.incrementAndGet();
-                } else if (isStateDone(oldState) && !isStateDone(state)) {
-                    mDownloadedPages.decrementAndGet();
-                }
-                if (oldState != STATE_FINISHED && state == STATE_FINISHED) {
-                    mFinishedPages.incrementAndGet();
-                } else if (oldState == STATE_FINISHED && state != STATE_FINISHED) {
-                    mFinishedPages.decrementAndGet();
-                }
-
-                // Clear
-                if (state == STATE_DOWNLOADING) {
-                    mPageErrorMap.remove(index);
-                } else if (state == STATE_FINISHED || state == STATE_FAILED) {
-                    mPagePercentMap.remove(index);
-                }
-
-                // Get default error
-                if (state == STATE_FAILED) {
-                    if (error == null) {
-                        error = GetText.getString(R.string.error_unknown);
-                    }
-                    mPageErrorMap.put(index, error);
-                }
-            }
-
-            // Notify listeners
-            if (state == STATE_FAILED) {
-                notifyPageFailure(index, error);
-            } else if (state == STATE_FINISHED) {
-                notifyPageSuccess(index);
-            }
         }
 
         private GalleryPageParser.Result getImageUrl(long gid, int index, String pToken,
@@ -1292,7 +1292,10 @@ public class SpiderQueen implements Runnable {
                 InputStreamPipe pipe = mSpiderDen.openInputStreamPipe(index);
                 if (pipe == null) {
                     mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
-                    notifyGetImageFailure(index, GetText.getString(R.string.error_not_found));
+                    // Can't find the file, it might be removed from cache,
+                    // Reset it state and request it
+                    updatePageState(index, STATE_NONE, null);
+                    request(index, false, false);
                     continue;
                 }
 
