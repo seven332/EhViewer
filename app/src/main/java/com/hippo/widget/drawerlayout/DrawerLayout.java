@@ -1244,7 +1244,7 @@ public class DrawerLayout extends ViewGroup implements ValueAnimator.AnimatorUpd
                 c.clipRect(0, paddingTop, width, height - paddingBottom);
             }
 
-            // Draw drak background
+            // Draw dark background
             c.drawARGB(MathUtils.lerp(FORM, TO, mPercent), 0, 0, 0);
 
             if (activatedDrawer == mLeftDrawer) {
