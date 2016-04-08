@@ -85,6 +85,7 @@ public class GalleryActivity extends EhActivity
 
     public static final String KEY_ACTION = "action";
     public static final String KEY_FILENAME = "filename";
+    public static final String KEY_URI = "uri";
     public static final String KEY_GALLERY_INFO = "gallery_info";
     public static final String KEY_PAGE = "page";
     public static final String KEY_CURRENT_INDEX = "current_index";
@@ -94,6 +95,7 @@ public class GalleryActivity extends EhActivity
 
     private String mAction;
     private String mFilename;
+    private Uri mUri;
     private GalleryInfo mGalleryInfo;
     private int mPage;
 
@@ -186,6 +188,11 @@ public class GalleryActivity extends EhActivity
             if (mGalleryInfo != null) {
                 mGalleryProvider = new EhGalleryProvider(this, mGalleryInfo);
             }
+        } else if (Intent.ACTION_VIEW.equals(mAction)) {
+            if (mUri != null) {
+                // Only support zip now
+                mGalleryProvider = new ZipGalleryProvider(new File(mUri.getPath()));
+            }
         }
     }
 
@@ -197,6 +204,7 @@ public class GalleryActivity extends EhActivity
 
         mAction = intent.getAction();
         mFilename = intent.getStringExtra(KEY_FILENAME);
+        mUri = intent.getData();
         mGalleryInfo = intent.getParcelableExtra(KEY_GALLERY_INFO);
         mPage = intent.getIntExtra(KEY_PAGE, -1);
         buildProvider();
@@ -205,6 +213,7 @@ public class GalleryActivity extends EhActivity
     private void onRestore(@NonNull Bundle savedInstanceState) {
         mAction = savedInstanceState.getString(KEY_ACTION);
         mFilename = savedInstanceState.getString(KEY_FILENAME);
+        mUri= savedInstanceState.getParcelable(KEY_URI);
         mGalleryInfo = savedInstanceState.getParcelable(KEY_GALLERY_INFO);
         mPage = savedInstanceState.getInt(KEY_PAGE, -1);
         mCurrentIndex = savedInstanceState.getInt(KEY_CURRENT_INDEX);
@@ -216,6 +225,7 @@ public class GalleryActivity extends EhActivity
         super.onSaveInstanceState(outState);
         outState.putString(KEY_ACTION, mAction);
         outState.putString(KEY_FILENAME, mFilename);
+        outState.putParcelable(KEY_URI, mUri);
         if (mGalleryInfo != null) {
             outState.putParcelable(KEY_GALLERY_INFO, mGalleryInfo);
         }

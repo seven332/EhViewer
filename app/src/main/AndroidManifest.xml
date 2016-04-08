@@ -109,7 +109,25 @@
             android:name="com.hippo.ehviewer.ui.GalleryActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.Gallery"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*\\.zip"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:mimeType="*/*"/>
+                <data android:pathPattern=".*\\.zip"/>
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="com.hippo.ehviewer.ui.SettingsActivity"
