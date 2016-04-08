@@ -81,9 +81,9 @@ dependencies {
     compile project(':yorozuya')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:customtabs:23.2.1'
-    compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:customtabs:23.3.0'
+    compile 'com.android.support:design:23.3.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.1'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.7'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
