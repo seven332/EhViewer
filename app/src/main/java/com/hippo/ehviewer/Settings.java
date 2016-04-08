@@ -559,7 +559,18 @@ public class Settings {
         putString(KEY_DOWNLOAD_SAVE_QUERY, uri.getEncodedQuery());
         putString(KEY_DOWNLOAD_SAVE_FRAGMENT, uri.getEncodedFragment());
 
-        CommonOperations.ensureNoMediaFile(location);
+        if (getMediaScan()) {
+            CommonOperations.removeNoMediaFile(location);
+        } else {
+            CommonOperations.ensureNoMediaFile(location);
+        }
+    }
+
+    public static final String KEY_MEDIA_SCAN = "media_scan";
+    private static final boolean DEFAULT_MEDIA_SCAN = false;
+
+    public static boolean getMediaScan() {
+        return getBoolean(KEY_MEDIA_SCAN, DEFAULT_MEDIA_SCAN);
     }
 
     private static final String KEY_RECENT_DOWNLOAD_LABEL = "recent_download_label";

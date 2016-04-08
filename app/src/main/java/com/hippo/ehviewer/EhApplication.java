@@ -43,6 +43,7 @@ import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
 import com.hippo.text.Html;
+import com.hippo.unifile.UniFile;
 import com.hippo.util.BitmapUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
@@ -112,8 +113,18 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
             Analytics.start(this);
         }
 
-        CommonOperations.ensureNoMediaFile(Settings.getDownloadLocation());
+        // Check no media file
+        UniFile downloadLocation = Settings.getDownloadLocation();
+        if (Settings.getMediaScan()) {
+            CommonOperations.removeNoMediaFile(downloadLocation);
+        } else {
+            CommonOperations.ensureNoMediaFile(downloadLocation);
+        }
+
+        // Clear temp dir
         clearTempDir();
+
+        // Check app update
         update();
 
         // Update version code

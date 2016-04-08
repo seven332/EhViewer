@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.DirPickerActivity;
 import com.hippo.unifile.UniFile;
 
@@ -52,11 +53,13 @@ public class DownloadFragment extends PreferenceFragment implements
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.download_settings);
 
+        Preference mediaScan = findPreference(Settings.KEY_MEDIA_SCAN);
         Preference imageSize = findPreference(Settings.KEY_IMAGE_SIZE);
         mDownloadLocation = findPreference(KEY_DOWNLOAD_LOCATION);
 
         onUpdateDownloadLocation();
 
+        mediaScan.setOnPreferenceChangeListener(this);
         imageSize.setOnPreferenceChangeListener(this);
 
         if (mDownloadLocation != null) {
@@ -190,7 +193,17 @@ public class DownloadFragment extends PreferenceFragment implements
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
-        if (Settings.KEY_IMAGE_SIZE.equals(key)) {
+        if (Settings.KEY_MEDIA_SCAN.equals(key)) {
+            if (newValue instanceof Boolean) {
+                UniFile downloadLocation = Settings.getDownloadLocation();
+                if ((Boolean) newValue) {
+                    CommonOperations.removeNoMediaFile(downloadLocation);
+                } else {
+                    CommonOperations.ensureNoMediaFile(downloadLocation);
+                }
+            }
+            return true;
+        } else if (Settings.KEY_IMAGE_SIZE.equals(key)) {
             if (newValue instanceof String) {
                 Settings.putImageSize((String) newValue);
             }

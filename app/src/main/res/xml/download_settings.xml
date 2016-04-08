@@ -23,6 +23,13 @@
         android:key="download_location"
         android:title="@string/settings_download_download_location"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="media_scan"
+        android:title="@string/settings_download_media_scan"
+        app:summaryOn="@string/settings_download_media_scan_summary_on"
+        app:summaryOff="@string/settings_download_media_scan_summary_off"
+        android:defaultValue="false"/>
+
     <com.hippo.preference.ListPreference
         android:key="download_thread"
         android:title="@string/settings_download_multi_thread_download"

@@ -418,8 +418,6 @@
     <string name="settings_download_pick_dir_l">Lollipop 提供了新的写入外置 SD 卡的 API。如果您想把下载路径设置到外置 SD 卡上，点击“文档”按钮</string>
     <string name="settings_download_document">文档</string>
     <string name="settings_download_continue">继续</string>
-    <string name="settings_download_restore_download_items">恢复下载项</string>
-    <string name="settings_download_restore_download_items_summary">恢复下载目录里的所有下载项</string>
     <string name="settings_download_multi_thread_download">下载线程数</string>
     <string name="settings_download_multi_thread_download_summary">最多同时下载 %s 张图片</string>
     <string name="settings_download_preload_image">预载图片</string>
@@ -429,6 +427,11 @@
     <string name="settings_download_image_size_auto">自动</string>
     <string name="settings_download_download_origin_image">下载原图</string>
     <string name="settings_download_download_origin_image_summary">这很危险！勾选此项会导致下载配额迅速流失</string>
+    <string name="settings_download_media_scan">允许媒体扫描</string>
+    <string name="settings_download_media_scan_summary_on">请避免他人翻看你的图库应用</string>
+    <string name="settings_download_media_scan_summary_off">大多数图库应用将不会显示下载目录中的图片</string>
+    <string name="settings_download_restore_download_items">恢复下载项</string>
+    <string name="settings_download_restore_download_items_summary">恢复下载目录里的所有下载项</string>
     <string name="settings_download_restoring">恢复中</string>
     <string name="settings_download_restore_not_found">未找到可恢复下载项</string>
     <string name="settings_download_restore_failed">恢复失败</string>

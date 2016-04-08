@@ -309,4 +309,15 @@ public final class CommonOperations {
             IOUtils.closeQuietly(is);
         }
     }
+
+    public static void removeNoMediaFile(UniFile file) {
+        if (null == file) {
+            return;
+        }
+
+        UniFile noMedia = file.subFile(".nomedia");
+        if (null != noMedia && noMedia.isFile()) {
+            noMedia.delete();
+        }
+    }
 }
