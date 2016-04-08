@@ -30,7 +30,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -76,7 +75,7 @@ import com.hippo.unifile.UniFile;
 import com.hippo.util.BitmapUtils;
 import com.hippo.util.PermissionRequester;
 import com.hippo.widget.LoadImageView;
-import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayout;
+import com.hippo.widget.drawerlayout.DrawerLayout;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
@@ -111,7 +110,7 @@ public final class MainActivity extends StageActivity
      Whole life cycle
      ---------------*/
     @Nullable
-    private SlidingDrawerLayout mDrawerLayout;
+    private DrawerLayout mDrawerLayout;
     @Nullable
     private NavigationView mNavView;
     @Nullable
@@ -359,7 +358,7 @@ public final class MainActivity extends StageActivity
     protected void onCreate2(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
 
-        mDrawerLayout = (SlidingDrawerLayout) ViewUtils.$$(this, R.id.draw_view);
+        mDrawerLayout = (DrawerLayout) ViewUtils.$$(this, R.id.draw_view);
         mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
         mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
         View headerLayout = mNavView.getHeaderView(0);
@@ -458,9 +457,9 @@ public final class MainActivity extends StageActivity
                     baseScene.getLayoutInflater2(), mRightDrawer, savedInstanceState);
             if (drawerView != null) {
                 mRightDrawer.addView(drawerView);
-                mDrawerLayout.setDrawerLockMode(SlidingDrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
             } else {
-                mDrawerLayout.setDrawerLockMode(SlidingDrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
             }
         }
     }

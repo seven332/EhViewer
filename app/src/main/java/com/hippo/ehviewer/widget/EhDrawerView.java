@@ -20,9 +20,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.hippo.widget.DrawerView;
-import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayoutChild;
+import com.hippo.widget.drawerlayout.DrawerLayoutChild;
 
-public class EhDrawerView extends DrawerView implements SlidingDrawerLayoutChild {
+public class EhDrawerView extends DrawerView implements DrawerLayoutChild {
 
     private int mFitPaddingTop;
 

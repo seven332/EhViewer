@@ -20,9 +20,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.hippo.scene.StageLayout;
-import com.hippo.widget.slidingdrawerlayout.SlidingDrawerLayoutChild;
+import com.hippo.widget.drawerlayout.DrawerLayoutChild;
 
-public class EhStageLayout extends StageLayout implements SlidingDrawerLayoutChild {
+public class EhStageLayout extends StageLayout implements DrawerLayoutChild {
 
     private int mFitPaddingTop;
 

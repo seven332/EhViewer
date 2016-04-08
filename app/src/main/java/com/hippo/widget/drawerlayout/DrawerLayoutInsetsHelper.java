@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package com.hippo.widget.slidingdrawerlayout;
+package com.hippo.widget.drawerlayout;
 
-public interface SlidingDrawerLayoutChild {
+import android.view.View;
 
-    void setFitPadding(int top, int bottom);
-
-    int getLayoutPaddingTop();
-
-    int getLayoutPaddingBottom();
+public interface DrawerLayoutInsetsHelper {
+    void setupForWindowInsets(View view);
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.widget.slidingdrawerlayout;
+package com.hippo.widget.drawerlayout;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -52,7 +52,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @SuppressLint("RtlHardcoded")
-public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener,
+public class DrawerLayout extends ViewGroup implements ValueAnimator.AnimatorUpdateListener,
         Animator.AnimatorListener {
 
     @IntDef({STATE_CLOSED, STATE_SLIDING, STATE_OPEN})
@@ -101,11 +101,11 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
     private static final int MIN_DRAWER_MARGIN = 56;
 
-    private static final SlidingDrawerLayoutInsetsHelper INSETS_HELPER;
+    private static final DrawerLayoutInsetsHelper INSETS_HELPER;
 
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            INSETS_HELPER = new SlidingDrawerLayoutInsetsHelperL();
+            INSETS_HELPER = new DrawerLayoutInsetsHelperL();
         } else {
             INSETS_HELPER = null;
         }
@@ -190,12 +190,12 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         void onDrawerStateChanged(View drawerView, int newState);
     }
 
-    public SlidingDrawerLayout(Context context, AttributeSet attrs) {
+    public DrawerLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public SlidingDrawerLayout(Context context, AttributeSet attrs,
+    public DrawerLayout(Context context, AttributeSet attrs,
             int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
@@ -508,8 +508,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             int paddingTop = 0;
             int paddingBottom = mFitPaddingBottom;
-            if (child instanceof SlidingDrawerLayoutChild) {
-                SlidingDrawerLayoutChild dlc = (SlidingDrawerLayoutChild) child;
+            if (child instanceof DrawerLayoutChild) {
+                DrawerLayoutChild dlc = (DrawerLayoutChild) child;
                 paddingTop = dlc.getLayoutPaddingTop();
                 paddingBottom = dlc.getLayoutPaddingBottom() + mFitPaddingBottom;
             }
@@ -557,8 +557,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             int paddingTop = 0;
             int paddingBottom = mFitPaddingBottom;
-            if (child instanceof SlidingDrawerLayoutChild) {
-                SlidingDrawerLayoutChild dlc = (SlidingDrawerLayoutChild) child;
+            if (child instanceof DrawerLayoutChild) {
+                DrawerLayoutChild dlc = (DrawerLayoutChild) child;
                 paddingTop = dlc.getLayoutPaddingTop();
                 paddingBottom = dlc.getLayoutPaddingBottom() + mFitPaddingBottom;
             }
@@ -780,8 +780,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
         int xInt = (int) x;
         int yInt = (int) y;
 
-        if (activitedDrawer instanceof SlidingDrawerLayoutChild) {
-            SlidingDrawerLayoutChild dlc = (SlidingDrawerLayoutChild) activitedDrawer;
+        if (activitedDrawer instanceof DrawerLayoutChild) {
+            DrawerLayoutChild dlc = (DrawerLayoutChild) activitedDrawer;
             int paddingTop = dlc.getLayoutPaddingTop();
             int paddingBottom = dlc.getLayoutPaddingBottom();
             if (yInt < paddingTop || yInt >= getHeight() - paddingBottom) {
@@ -1041,8 +1041,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
         for (int i = 0, n = getChildCount(); i < n; i++) {
             View view = getChildAt(i);
-            if (view instanceof SlidingDrawerLayoutChild) {
-                ((SlidingDrawerLayoutChild) view).setFitPadding(mFitPaddingTop, mFitPaddingBottom);
+            if (view instanceof DrawerLayoutChild) {
+                ((DrawerLayoutChild) view).setFitPadding(mFitPaddingTop, mFitPaddingBottom);
             }
         }
 
@@ -1220,7 +1220,7 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
             View activatedDrawer = null;
             if (mLeftDrawer != null && mLeftDrawer.getRight() > 0) {
                 activatedDrawer = mLeftDrawer;
-            } else if (mRightDrawer != null && mRightDrawer.getLeft() < SlidingDrawerLayout.this.getWidth()) {
+            } else if (mRightDrawer != null && mRightDrawer.getLeft() < DrawerLayout.this.getWidth()) {
                 activatedDrawer = mRightDrawer;
             }
             if (activatedDrawer == null) {
@@ -1229,8 +1229,8 @@ public class SlidingDrawerLayout extends ViewGroup implements ValueAnimator.Anim
 
             int paddingTop = 0;
             int paddingBottom = 0;
-            if (activatedDrawer instanceof SlidingDrawerLayoutChild) {
-                SlidingDrawerLayoutChild dlc = (SlidingDrawerLayoutChild) activatedDrawer;
+            if (activatedDrawer instanceof DrawerLayoutChild) {
+                DrawerLayoutChild dlc = (DrawerLayoutChild) activatedDrawer;
                 paddingTop = dlc.getLayoutPaddingTop();
                 paddingBottom = dlc.getLayoutPaddingBottom();
             }
