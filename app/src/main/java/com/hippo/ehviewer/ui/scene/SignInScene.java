@@ -217,7 +217,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         }
 
         if (mRegister == v) {
-            UrlOpener.openUrl(activity, EhUrl.URL_REGISTER, false, true);
+            UrlOpener.openUrl(activity, EhUrl.URL_REGISTER, false);
         } else if (mSignIn == v) {
             signIn();
         } else if (mSignInViaWebView == v) {

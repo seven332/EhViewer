@@ -16,14 +16,12 @@
 
 package com.hippo.ehviewer;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Browser;
 import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -31,14 +29,13 @@ import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.StageActivity;
-import com.hippo.util.CustomTabsHelper;
 
 public final class UrlOpener {
 
     private UrlOpener() {
     }
 
-    public static void openUrl(@NonNull Context context, String url, boolean ehUrl, boolean customTabs) {
+    public static void openUrl(@NonNull Context context, String url, boolean ehUrl) {
         if (TextUtils.isEmpty(url)) {
             return;
         }
@@ -55,20 +52,6 @@ public final class UrlOpener {
                 intent.putExtra(StageActivity.KEY_SCENE_ARGS, announcer.getArgs());
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
-                return;
-            }
-        }
-
-        // CustomTabs
-        if (customTabs && context instanceof Activity) {
-            Activity activity = (Activity) context;
-            String packageName = CustomTabsHelper.getPackageNameToUseFixed(activity);
-            if (packageName != null) {
-                new CustomTabsIntent.Builder()
-                        .setToolbarColor(activity.getResources().getColor(R.color.colorPrimary))
-                        .setShowTitle(true)
-                        .build()
-                        .launchUrl(activity, uri);
                 return;
             }
         }

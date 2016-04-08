@@ -400,7 +400,7 @@ public final class GalleryCommentsScene extends ToolbarScene
             commentHolder.comment.clearCurrentSpan();
 
             if (span instanceof URLSpan) {
-                UrlOpener.openUrl(activity, ((URLSpan) span).getURL(), true, true);
+                UrlOpener.openUrl(activity, ((URLSpan) span).getURL(), true);
                 return true;
             }
         }

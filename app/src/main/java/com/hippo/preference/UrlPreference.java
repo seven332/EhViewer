@@ -60,6 +60,6 @@ public class UrlPreference extends Preference {
 
     @Override
     protected void onClick() {
-        UrlOpener.openUrl(getContext(), mUrl, true, true);
+        UrlOpener.openUrl(getContext(), mUrl, true);
     }
 }

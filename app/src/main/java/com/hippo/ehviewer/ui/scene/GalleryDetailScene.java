@@ -988,7 +988,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                         String url = getGalleryDetailUrl(false);
                         Activity activity = getActivity2();
                         if (null != url && null != activity) {
-                            UrlOpener.openUrl(activity, url, false, false);
+                            UrlOpener.openUrl(activity, url, false);
                         }
                         break;
                     case R.id.action_refresh:
@@ -1294,7 +1294,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                UrlOpener.openUrl(context, EhUrl.getTagDefinitionUrl(tag2), false, true);
+                                UrlOpener.openUrl(context, EhUrl.getTagDefinitionUrl(tag2), false);
                                 break;
                             case 1:
                                 addTagFilter(tag);

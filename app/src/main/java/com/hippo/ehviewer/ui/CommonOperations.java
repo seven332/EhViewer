@@ -117,7 +117,7 @@ public final class CommonOperations {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            UrlOpener.openUrl(mActivity, url, false, false);
+                            UrlOpener.openUrl(mActivity, url, false);
                         }
                     }).show();
         }
