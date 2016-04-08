@@ -102,6 +102,10 @@ public class SpiderInfo {
             spiderInfo.previewPerPage = Integer.parseInt(IOUtils.readAsciiLine(is));
             // Pages
             spiderInfo.pages = Integer.parseInt(IOUtils.readAsciiLine(is));
+            // Check pages
+            if (spiderInfo.pages <= 0) {
+                return null;
+            }
             // PToken
             spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
             while (true) { // EOFException will raise
