@@ -18,17 +18,20 @@
 <resources>
 
     <dimen name="keyline_margin">24dp</dimen>
-    <dimen name="single_max_width">360dp</dimen>
+    <dimen name="single_max_width">480dp</dimen>
 
+    <!-- 8dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_list_interval">4dp</dimen>
+    <!-- 24dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_list_margin_h">20dp</dimen>
-    <dimen name="gallery_list_margin_v">4dp</dimen>
-    <dimen name="gallery_grid_interval">8dp</dimen>
     <dimen name="gallery_grid_margin_h">24dp</dimen>
-    <dimen name="gallery_grid_margin_v">8dp</dimen>
 
+    <!-- 24dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_search_bar_margin_h">20dp</dimen>
-    <dimen name="gallery_search_bar_margin_v">16dp</dimen>
-    <dimen name="gallery_padding_top_search_bar">72dp</dimen>
+
+    <!-- 8dp - 4dp, 4dp for card padding -->
+    <dimen name="search_layout_interval">4dp</dimen>
+    <!-- 24dp - 4dp, 4dp for card padding -->
+    <dimen name="search_layout_margin_h">20dp</dimen>
 
 </resources>

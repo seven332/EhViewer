@@ -39,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hippo.easyrecyclerview.EasyRecyclerView;
+import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.exception.EhException;
@@ -122,9 +123,13 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         setAdapter(mAdapter);
         setHasFixedSize(true);
         setClipToPadding(false);
-        int paddingH = resources.getDimensionPixelOffset(R.dimen.gallery_list_margin_h);
-        int paddingV = resources.getDimensionPixelOffset(R.dimen.gallery_list_margin_v);
-        setPadding(paddingV, paddingH, paddingV, paddingH);
+        int interval = resources.getDimensionPixelOffset(R.dimen.search_layout_interval);
+        int paddingH = resources.getDimensionPixelOffset(R.dimen.search_layout_margin_h);
+        int paddingV = resources.getDimensionPixelOffset(R.dimen.search_layout_margin_v);
+        MarginItemDecoration decoration = new MarginItemDecoration(
+                interval, paddingH, paddingV, paddingH, paddingV);
+        addItemDecoration(decoration);
+        decoration.applyPaddings(this);
 
         // Create normal view
         View normalView = mInflater.inflate(R.layout.search_normal, null);

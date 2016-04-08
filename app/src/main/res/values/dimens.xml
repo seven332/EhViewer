@@ -37,15 +37,22 @@
 
     <dimen name="gallery_list_thumb_height">120dp</dimen>
     <dimen name="gallery_list_thumb_width">80dp</dimen>
+    <!-- 4dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_list_interval">0dp</dimen>
+    <!-- 8dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_list_margin_h">4dp</dimen>
+    <!-- 8dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_list_margin_v">4dp</dimen>
+
     <dimen name="gallery_grid_interval">8dp</dimen>
     <dimen name="gallery_grid_margin_h">8dp</dimen>
     <dimen name="gallery_grid_margin_v">8dp</dimen>
 
+    <!-- 8dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_search_bar_margin_h">4dp</dimen>
+    <!-- 12dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_search_bar_margin_v">8dp</dimen>
+
     <dimen name="gallery_padding_top_search_bar">64dp</dimen>
     <dimen name="gallery_padding_bottom_fab">80dp</dimen>
 
@@ -53,6 +60,13 @@
     <dimen name="gallery_grid_column_width_large">160dp</dimen>
     <dimen name="gallery_grid_column_width_middle">120dp</dimen>
     <dimen name="gallery_grid_column_width_small">80dp</dimen>
+
+    <!-- 4dp - 4dp, 4dp for card padding -->
+    <dimen name="search_layout_interval">0dp</dimen>
+    <!-- 8dp - 4dp, 4dp for card padding -->
+    <dimen name="search_layout_margin_h">4dp</dimen>
+    <!-- 8dp - 4dp, 4dp for card padding -->
+    <dimen name="search_layout_margin_v">4dp</dimen>
 
     <!-- DrawerArrowDrawable -->
     <dimen name="dad_drawable_size">24dp</dimen>
@@ -75,8 +89,8 @@
 
     <!-- Search item -->
     <dimen name="search_item_interval">8dp</dimen>
-    <dimen name="search_category_padding_h">16dp</dimen>
-    <dimen name="search_category_padding_v">16dp</dimen>
+    <dimen name="search_category_padding_h">@dimen/keyline_margin</dimen>
+    <dimen name="search_category_padding_v">@dimen/keyline_margin</dimen>
     <dimen name="search_category_title_height">48dp</dimen>
 
     <dimen name="image_search_max_size">240dp</dimen>
