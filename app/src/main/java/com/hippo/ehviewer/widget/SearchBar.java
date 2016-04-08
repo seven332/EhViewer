@@ -20,7 +20,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -69,7 +69,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
     private int mState = STATE_NORMAL;
 
-    private final Path mPath = new Path();
+    private final Rect mRect = new Rect();
     private int mWidth;
     private int mHeight;
     private int mBaseHeight;
@@ -425,10 +425,9 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     public void draw(@NonNull Canvas canvas) {
         if (mInAnimation) {
             final int state = canvas.save();
-            float bottom = MathUtils.lerp(mBaseHeight, mHeight, mProgress);
-            mPath.rewind();
-            mPath.addRect(0f, 0f, mWidth, bottom, Path.Direction.CW);
-            canvas.clipPath(mPath);
+            int bottom = MathUtils.lerp(mBaseHeight, mHeight, mProgress);
+            mRect.set(0, 0, mWidth, bottom);
+            canvas.clipRect(mRect);
             super.draw(canvas);
             canvas.restoreToCount(state);
         } else {
