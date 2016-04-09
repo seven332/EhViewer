@@ -49,6 +49,20 @@ public abstract class BaseScene extends SceneFragment {
         }
     }
 
+    public void addAboveSnackView(View view) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).addAboveSnackView(view);
+        }
+    }
+
+    public void removeAboveSnackView(View view) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).removeAboveSnackView(view);
+        }
+    }
+
     public void setDrawerLockMode(int lockMode, int edgeGravity) {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {

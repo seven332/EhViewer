@@ -327,6 +327,7 @@ public class DownloadsScene extends ToolbarScene
         mFabLayout.setHidePrimaryFab(true);
         mFabLayout.setAutoCancel(false);
         mFabLayout.setOnClickFabListener(this);
+        addAboveSnackView(mFabLayout);
 
         updateView();
 
@@ -437,9 +438,12 @@ public class DownloadsScene extends ToolbarScene
             mRecyclerView.stopScroll();
             mRecyclerView = null;
         }
+        if (null != mFabLayout) {
+            removeAboveSnackView(mFabLayout);
+            mFabLayout = null;
+        }
 
         mRecyclerView = null;
-        mFabLayout = null;
         mViewTransition = null;
         mAdapter = null;
         mLayoutManager = null;

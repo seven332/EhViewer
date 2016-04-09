@@ -67,6 +67,7 @@ import com.hippo.ehviewer.ui.scene.SelectSiteScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.ehviewer.ui.scene.WebViewSignInScene;
+import com.hippo.ehviewer.widget.EhDrawerLayout;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -110,7 +111,7 @@ public final class MainActivity extends StageActivity
      Whole life cycle
      ---------------*/
     @Nullable
-    private DrawerLayout mDrawerLayout;
+    private EhDrawerLayout mDrawerLayout;
     @Nullable
     private NavigationView mNavView;
     @Nullable
@@ -358,7 +359,7 @@ public final class MainActivity extends StageActivity
     protected void onCreate2(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
 
-        mDrawerLayout = (DrawerLayout) ViewUtils.$$(this, R.id.draw_view);
+        mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(this, R.id.draw_view);
         mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
         mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
         View headerLayout = mNavView.getHeaderView(0);
@@ -491,6 +492,18 @@ public final class MainActivity extends StageActivity
             displayName = getString(R.string.default_display_name);
         }
         mDisplayName.setText(displayName);
+    }
+
+    public void addAboveSnackView(View view) {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.addAboveSnackView(view);
+        }
+    }
+
+    public void removeAboveSnackView(View view) {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.removeAboveSnackView(view);
+        }
     }
 
     public int getDrawerLockMode(int edgeGravity) {

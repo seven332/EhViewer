@@ -72,6 +72,7 @@ import com.hippo.util.DrawableManager;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUrl;
 import com.hippo.view.ViewTransition;
+import com.hippo.widget.FabLayout;
 import com.hippo.widget.LinkifyTextView;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.AssertUtils;
@@ -106,6 +107,8 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     @Nullable
     private EasyRecyclerView mRecyclerView;
+    @Nullable
+    private FabLayout mFabLayout;
     @Nullable
     private FloatingActionButton mFab;
     @Nullable
@@ -182,6 +185,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         mEditPanel = ViewUtils.$$(view, R.id.edit_panel);
         mSendImage = (ImageView) ViewUtils.$$(mEditPanel, R.id.send);
         mEditText = (EditText) ViewUtils.$$(mEditPanel, R.id.edit_text);
+        mFabLayout = (FabLayout) ViewUtils.$$(view, R.id.fab_layout);
         mFab = (FloatingActionButton) ViewUtils.$$(view, R.id.fab);
 
         Context context = getContext2();
@@ -216,6 +220,9 @@ public final class GalleryCommentsScene extends ToolbarScene
         mSendImage.setOnClickListener(this);
         mFab.setOnClickListener(this);
 
+        addAboveSnackView(mEditPanel);
+        addAboveSnackView(mFabLayout);
+
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
         updateView(false);
@@ -231,9 +238,16 @@ public final class GalleryCommentsScene extends ToolbarScene
             mRecyclerView.stopScroll();
             mRecyclerView = null;
         }
+        if (null != mEditPanel) {
+            removeAboveSnackView(mEditPanel);
+            mEditPanel = null;
+        }
+        if (null != mFabLayout) {
+            removeAboveSnackView(mFabLayout);
+            mFabLayout = null;
+        }
 
         mFab = null;
-        mEditPanel = null;
         mSendImage = null;
         mEditText = null;
         mAdapter = null;

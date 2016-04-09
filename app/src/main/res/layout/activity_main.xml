@@ -20,7 +20,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.hippo.widget.drawerlayout.DrawerLayout
+    <com.hippo.ehviewer.widget.EhDrawerLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/draw_view"
         android:layout_width="match_parent"
@@ -51,5 +51,5 @@
             android:background="@color/background_light"
             android:clickable="true"/>
 
-    </com.hippo.widget.drawerlayout.DrawerLayout>
+    </com.hippo.ehviewer.widget.EhDrawerLayout>
 </com.hippo.widget.SafeCoordinatorLayout>

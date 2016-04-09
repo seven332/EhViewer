@@ -278,6 +278,7 @@ public class FavoritesScene extends BaseScene implements
         mFabLayout.setAutoCancel(false);
         mFabLayout.setHidePrimaryFab(true);
         mFabLayout.setOnClickFabListener(this);
+        addAboveSnackView(mFabLayout);
 
         // Restore search mode
         if (mSearchMode) {
@@ -393,11 +394,14 @@ public class FavoritesScene extends BaseScene implements
             mRecyclerView.stopScroll();
             mRecyclerView = null;
         }
+        if (null != mFabLayout) {
+            removeAboveSnackView(mFabLayout);
+            mFabLayout = null;
+        }
 
         mAdapter = null;
 
         mSearchBar = null;
-        mFabLayout = null;
 
         mSearchBarMover = null;
         mLeftDrawable = null;

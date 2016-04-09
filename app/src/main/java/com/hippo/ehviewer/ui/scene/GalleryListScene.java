@@ -442,6 +442,7 @@ public final class GalleryListScene extends BaseScene
         mFabLayout.setHidePrimaryFab(false);
         mFabLayout.setOnClickFabListener(this);
         mFabLayout.setOnExpandListener(this);
+        addAboveSnackView(mFabLayout);
 
         mActionFabDrawable = new AddDeleteDrawable(context);
         mActionFabDrawable.setColor(resources.getColor(R.color.primary_drawable_dark));
@@ -521,11 +522,14 @@ public final class GalleryListScene extends BaseScene
             mRecyclerView.stopScroll();
             mRecyclerView = null;
         }
+        if (null != mFabLayout) {
+            removeAboveSnackView(mFabLayout);
+            mFabLayout = null;
+        }
 
         mAdapter = null;
         mSearchLayout = null;
         mSearchBar = null;
-        mFabLayout = null;
         mSearchFab = null;
         mViewTransition = null;
         mLeftDrawable = null;
