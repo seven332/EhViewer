@@ -17,10 +17,9 @@
 
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="@drawable/tile_background">
+    android:background="@drawable/card_grey_no_padding_2dp">
 
     <com.hippo.ehviewer.widget.TileThumb
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -28,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:background="@color/grey_300"
+        android:foreground="@drawable/tile_background"
         app:retryType="none"/>
 
     <TextView

@@ -24,7 +24,8 @@
     <dimen name="gallery_list_interval">4dp</dimen>
     <!-- 24dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_list_margin_h">20dp</dimen>
-    <dimen name="gallery_grid_margin_h">24dp</dimen>
+    <!-- 24dp - 4dp, 4dp for card padding -->
+    <dimen name="gallery_grid_margin_h">20dp</dimen>
 
     <!-- 24dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_search_bar_margin_h">20dp</dimen>
