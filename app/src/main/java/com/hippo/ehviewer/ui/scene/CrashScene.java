@@ -27,7 +27,7 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.rippleold.RippleSalon;
-import com.hippo.util.ActivityHelper;
+import com.hippo.util.AppHelper;
 import com.hippo.yorozuya.ViewUtils;
 
 public class CrashScene extends BaseScene implements View.OnClickListener {
@@ -81,7 +81,7 @@ public class CrashScene extends BaseScene implements View.OnClickListener {
         MainActivity activity = getActivity2();
 
         if (mSend == v && null != mCrash && null != activity) {
-            ActivityHelper.sendEmail(activity, EhApplication.getDeveloperEmail(),
+            AppHelper.sendEmail(activity, EhApplication.getDeveloperEmail(),
                     "I found a bug in EhViewer !", mCrash);
         }
         Crash.resetCrashFile();

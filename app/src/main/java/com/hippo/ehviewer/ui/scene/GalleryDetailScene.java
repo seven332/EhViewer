@@ -89,7 +89,7 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
-import com.hippo.util.ActivityHelper;
+import com.hippo.util.AppHelper;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
@@ -1160,7 +1160,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else if (mShare == v) {
             String url = getGalleryDetailUrl(false);
             if (url != null) {
-                ActivityHelper.share(activity, url);
+                AppHelper.share(activity, url);
             }
         } else if (mTorrent == v) {
             if (mGalleryDetail != null) {

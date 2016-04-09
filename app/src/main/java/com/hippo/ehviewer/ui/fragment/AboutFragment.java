@@ -26,7 +26,7 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.ui.CommonOperations;
-import com.hippo.util.ActivityHelper;
+import com.hippo.util.AppHelper;
 
 public class AboutFragment extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener,
@@ -72,7 +72,7 @@ public class AboutFragment extends PreferenceFragment
     public boolean onPreferenceClick(Preference preference) {
         String key = preference.getKey();
         if (KEY_AUTHOR.equals(key)) {
-            ActivityHelper.sendEmail(getActivity(), EhApplication.getDeveloperEmail(),
+            AppHelper.sendEmail(getActivity(), EhApplication.getDeveloperEmail(),
                     "About EhViewer", null);
         } else if (KEY_DONATE.equals(key)) {
             new AlertDialog.Builder(getActivity())

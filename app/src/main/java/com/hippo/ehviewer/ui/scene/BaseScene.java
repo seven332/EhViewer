@@ -33,7 +33,7 @@ import android.view.ViewGroup;
 
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
-import com.hippo.util.ActivityHelper;
+import com.hippo.util.AppHelper;
 
 public abstract class BaseScene extends SceneFragment {
 
@@ -168,7 +168,7 @@ public abstract class BaseScene extends SceneFragment {
         setNavCheckedItem(getNavCheckedItem());
 
         // Hide soft ime
-        ActivityHelper.hideSoftInput(getActivity());
+        AppHelper.hideSoftInput(getActivity());
     }
 
     public void createThemeContext(@StyleRes int style) {
@@ -212,14 +212,14 @@ public abstract class BaseScene extends SceneFragment {
     public void hideSoftInput() {
         FragmentActivity activity = getActivity();
         if (null != activity) {
-            ActivityHelper.hideSoftInput(activity);
+            AppHelper.hideSoftInput(activity);
         }
     }
 
     public void showSoftInput(@Nullable View view) {
         FragmentActivity activity = getActivity();
         if (null != activity && null != view) {
-            ActivityHelper.showSoftInput(activity, view);
+            AppHelper.showSoftInput(activity, view);
         }
     }
 }

@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
 
-public class ActivityHelper {
+public class AppHelper {
 
     public static boolean sendEmail(@NonNull Activity from, @NonNull String address,
             @Nullable String subject, @Nullable String text) {
