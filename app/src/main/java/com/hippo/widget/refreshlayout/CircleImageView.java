@@ -16,6 +16,7 @@
 
 package com.hippo.widget.refreshlayout;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -24,6 +25,8 @@ import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -32,9 +35,8 @@ import android.widget.ImageView;
  * Private class created to work around issues with AnimationListeners being
  * called before the animation is actually complete and support shadows on older
  * platforms.
- *
- * @hide
  */
+@SuppressLint("ViewConstructor")
 class CircleImageView extends ImageView {
 
     private static final int KEY_SHADOW_COLOR = 0x1E000000;
@@ -48,6 +50,7 @@ class CircleImageView extends ImageView {
     private Animation.AnimationListener mListener;
     private int mShadowRadius;
 
+    @SuppressWarnings("deprecation")
     public CircleImageView(Context context, int color, final float radius) {
         super(context);
         final float density = getContext().getResources().getDisplayMetrics().density;
@@ -113,8 +116,8 @@ class CircleImageView extends ImageView {
      *
      * @param colorRes Id of a color resource.
      */
-    public void setBackgroundColorRes(int colorRes) {
-        setBackgroundColor(getContext().getResources().getColor(colorRes));
+    public void setBackgroundColorRes(@ColorRes int colorRes) {
+        setBackgroundColor(ContextCompat.getColor(getContext(), colorRes));
     }
 
     @Override
@@ -125,9 +128,9 @@ class CircleImageView extends ImageView {
     }
 
     private class OvalShadow extends OvalShape {
-        private RadialGradient mRadialGradient;
-        private Paint mShadowPaint;
-        private int mCircleDiameter;
+        private final RadialGradient mRadialGradient;
+        private final Paint mShadowPaint;
+        private final int mCircleDiameter;
 
         public OvalShadow(int shadowRadius, int circleDiameter) {
             super();

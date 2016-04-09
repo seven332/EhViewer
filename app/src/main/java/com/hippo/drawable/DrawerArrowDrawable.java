@@ -38,7 +38,7 @@ public class DrawerArrowDrawable extends Drawable {
 
     private final Paint mPaint = new Paint();
 
-    // The angle in degress that the arrow head is inclined at.
+    // The angle in degrees that the arrow head is inclined at.
     private static final float ARROW_HEAD_ANGLE = (float) Math.toRadians(45);
     private final float mBarThickness;
     // The length of top and bottom bars when they merge into an arrow
@@ -61,7 +61,7 @@ public class DrawerArrowDrawable extends Drawable {
     // The interpolated version of the original progress
     private float mProgress;
     // the amount that overlaps w/ bar size when rotation is max
-    private float mMaxCutForBarSize;
+    private final float mMaxCutForBarSize;
 
     /**
      * @param context used to get the configuration for the drawable from

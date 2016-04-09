@@ -59,6 +59,7 @@ public class BatteryDrawable extends Drawable {
     }
 
     @Override
+    @SuppressWarnings("SuspiciousNameCombination")
     protected void onBoundsChange(Rect bounds) {
         int width = bounds.width();
         int height = bounds.height();
@@ -89,8 +90,9 @@ public class BatteryDrawable extends Drawable {
      */
     @Override
     public void draw(Canvas canvas) {
-        if (mElect == -1)
+        if (mElect == -1) {
             return;
+        }
 
         mElectRect.right = MathUtils.lerp(mStart, mStop, mElect / 100.0f);
 
@@ -152,21 +154,22 @@ public class BatteryDrawable extends Drawable {
     }
 
     private void updatePaint(boolean warn) {
-        if (warn)
+        if (warn) {
             mPaint.setColor(mWarningColor);
-        else
+        } else {
             mPaint.setColor(mColor);
+        }
         invalidateSelf();
     }
 
     @Override
     public void setAlpha(int alpha) {
-        // Empty
+        mPaint.setAlpha(alpha);
     }
 
     @Override
     public void setColorFilter(ColorFilter cf) {
-        // Empty
+        mPaint.setColorFilter(cf);
     }
 
     @Override

@@ -38,7 +38,7 @@ import android.view.animation.Interpolator;
  */
 final class SwipeProgressBar {
 
-    private static final boolean SUPPORT_CLIPRECT_DIFFERENCE =
+    private static final boolean SUPPORT_CLIP_RECT_DIFFERENCE =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
 
     // Default progress animation colors are grays.
@@ -68,9 +68,9 @@ final class SwipeProgressBar {
     private int mColor2;
     private int mColor3;
     private int mColor4;
-    private View mParent;
+    private final View mParent;
 
-    private Rect mBounds = new Rect();
+    private final Rect mBounds = new Rect();
 
     public SwipeProgressBar(View parent) {
         mParent = parent;
@@ -182,7 +182,7 @@ final class SwipeProgressBar {
                 float pct = (finishProgress / 100f);
                 // Radius of the circle is half of the screen.
                 float clearRadius = width / 2 * INTERPOLATOR.getInterpolation(pct);
-                if (SUPPORT_CLIPRECT_DIFFERENCE) {
+                if (SUPPORT_CLIP_RECT_DIFFERENCE) {
                     mClipRect.set(cx - clearRadius, bounds.top, cx + clearRadius, bounds.bottom);
                     canvas.clipRect(mClipRect, Region.Op.DIFFERENCE);
                 } else {
