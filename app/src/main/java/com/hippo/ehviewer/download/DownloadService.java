@@ -345,7 +345,9 @@ public class DownloadService extends Service implements DownloadManager.Download
             return;
         }
 
-        mDownloadingDelay.cancel();
+        if (null != mDownloadingDelay) {
+            mDownloadingDelay.cancel();
+        }
 
         ensureDownloadedBuilder();
 
@@ -443,7 +445,10 @@ public class DownloadService extends Service implements DownloadManager.Download
             return;
         }
 
-        mDownloadingDelay.cancel();
+        if (null != mDownloadingDelay) {
+            mDownloadingDelay.cancel();
+        }
+
         checkStopSelf();
     }
 
