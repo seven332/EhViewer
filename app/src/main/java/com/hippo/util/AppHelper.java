@@ -17,6 +17,7 @@
 package com.hippo.util;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Service;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -83,6 +84,14 @@ public class AppHelper {
         View view = activity.getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public static void hideSoftInput(Dialog dialog) {
+        View view = dialog.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) dialog.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }

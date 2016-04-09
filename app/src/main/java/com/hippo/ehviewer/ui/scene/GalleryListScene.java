@@ -80,6 +80,7 @@ import com.hippo.rippleold.RippleSalon;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.util.ApiHelper;
+import com.hippo.util.AppHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.ContentLayout;
@@ -807,6 +808,7 @@ public final class GalleryListScene extends BaseScene
                 }
                 builder.setError(null);
                 mHelper.goTo(goTo);
+                AppHelper.hideSoftInput(dialog);
                 dialog.dismiss();
             }
         });
