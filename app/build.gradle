@@ -77,13 +77,13 @@ dependencies {
     compile project(':hotspot')
     compile project(':okhttp3')
     compile project(':rippleold')
-    compile project(':unifile')
     compile project(':yorozuya')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.1'
+    compile 'com.github.seven332:unifile:0.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.7'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     compile 'org.jsoup:jsoup:1.8.3'

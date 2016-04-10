@@ -1,1 +1,1 @@
-include ':app', 'beerbelly', 'conaco', ':daogenerator', ':easyrecyclerview', 'hotspot', ':okhttp3', 'rippleold', 'unifile', 'yorozuya'
+include ':app', 'beerbelly', 'conaco', ':daogenerator', ':easyrecyclerview', 'hotspot', ':okhttp3', 'rippleold', 'yorozuya'
