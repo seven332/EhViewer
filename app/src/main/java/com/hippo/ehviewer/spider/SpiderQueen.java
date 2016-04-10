@@ -1177,7 +1177,7 @@ public class SpiderQueen implements Runnable {
                     int i = mSpiderInfo.pTokenMap.indexOfKey(index);
                     String pToken = mSpiderInfo.pTokenMap.valueAt(i);
                     if (SpiderInfo.TOKEN_FAILED.equals(pToken)) {
-                        mSpiderInfo.pTokenMap.setValueAt(i, null);
+                        mSpiderInfo.pTokenMap.remove(i);
                     }
                 }
             }

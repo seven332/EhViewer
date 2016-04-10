@@ -18,6 +18,7 @@ package com.hippo.ehviewer.spider;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -114,7 +115,9 @@ public class SpiderInfo {
                 if (pos > 0 || pos < line.length() - 1) {
                     int index = Integer.parseInt(line.substring(0, pos));
                     String pToken = line.substring(pos + 1);
-                    spiderInfo.pTokenMap.put(index, pToken);
+                    if (!TextUtils.isEmpty(pToken)) {
+                        spiderInfo.pTokenMap.put(index, pToken);
+                    }
                 } else {
                     Log.e(TAG, "Can't parse index and pToken, index = " + pos);
                 }
@@ -151,12 +154,14 @@ public class SpiderInfo {
             writer.write(Integer.toString(pages));
             writer.write("\n");
             for (int i = 0; i < pTokenMap.size(); i++) {
-                if (TOKEN_FAILED.equals(pTokenMap.valueAt(i))) {
+                Integer key = pTokenMap.keyAt(i);
+                String value = pTokenMap.valueAt(i);
+                if (TOKEN_FAILED.equals(value) || TextUtils.isEmpty(value)) {
                     continue;
                 }
-                writer.write(Integer.toString(pTokenMap.keyAt(i)));
+                writer.write(Integer.toString(key));
                 writer.write(" ");
-                writer.write(pTokenMap.valueAt(i));
+                writer.write(value);
                 writer.write("\n");
             }
             writer.flush();
