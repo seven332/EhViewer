@@ -340,11 +340,20 @@ public final class MainActivity extends StageActivity
     @Override
     protected void onUnrecognizedIntent(@Nullable Intent intent) {
         if (!handleIntent(intent)) {
+            boolean handleUrl = false;
             if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
+                handleUrl = true;
                 Toast.makeText(this, R.string.error_cannot_parse_the_url, Toast.LENGTH_SHORT).show();
             }
+
             if (0 == getSceneCount()) {
-                finish();
+                if (handleUrl) {
+                    finish();
+                } else {
+                    Bundle args = new Bundle();
+                    args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+                    startScene(processAnnouncer(new Announcer(GalleryListScene.class).setArgs(args)));
+                }
             }
         }
     }
