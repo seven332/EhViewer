@@ -24,7 +24,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.util.AttributeSet;
 
-import com.hippo.widget.drawerlayout.DrawerLayoutChild;
+import com.hippo.drawerlayout.DrawerLayoutChild;
 
 public class EhNavigationView extends NavigationView implements DrawerLayoutChild {
 

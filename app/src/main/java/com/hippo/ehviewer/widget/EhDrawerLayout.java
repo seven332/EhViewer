@@ -26,8 +26,8 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.R;
-import com.hippo.widget.drawerlayout.DrawerLayout;
 import com.hippo.yorozuya.AnimationUtils;
 
 import java.util.ArrayList;

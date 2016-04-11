@@ -19,8 +19,8 @@ package com.hippo.ehviewer.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import com.hippo.drawerlayout.DrawerLayoutChild;
 import com.hippo.scene.StageLayout;
-import com.hippo.widget.drawerlayout.DrawerLayoutChild;
 
 public class EhStageLayout extends StageLayout implements DrawerLayoutChild {
 

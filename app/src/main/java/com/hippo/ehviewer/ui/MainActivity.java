@@ -40,6 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.R;
@@ -76,7 +77,6 @@ import com.hippo.unifile.UniFile;
 import com.hippo.util.BitmapUtils;
 import com.hippo.util.PermissionRequester;
 import com.hippo.widget.LoadImageView;
-import com.hippo.widget.drawerlayout.DrawerLayout;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
