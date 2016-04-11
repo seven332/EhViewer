@@ -43,6 +43,18 @@
         <item>@string/settings_eh_thumb_size_small</item>
     </string-array>
 
+    <string-array name="thumb_resolution_entries" translatable="false">
+        <item>@string/settings_eh_thumb_resolution_auto</item>
+        <item>250x</item>
+        <item>300x</item>
+    </string-array>
+
+    <string-array name="thumb_resolution_entry_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string-array name="thumb_size_entry_values" translatable="false">
         <item>0</item>
         <item>1</item>

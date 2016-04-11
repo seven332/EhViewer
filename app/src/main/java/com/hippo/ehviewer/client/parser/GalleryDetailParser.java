@@ -130,7 +130,7 @@ public class GalleryDetailParser {
             // Thumb url
             Element gd1 = gm.getElementById("gd1");
             try {
-                gd.thumb = StringUtils.trim(gd1.child(0).attr("src"));
+                gd.thumb = EhUtils.handleThumbUrlResolution(StringUtils.trim(gd1.child(0).attr("src")));
             } catch (Exception e) {
                 gd.thumb = "";
             }

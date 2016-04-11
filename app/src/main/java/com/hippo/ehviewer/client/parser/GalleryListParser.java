@@ -121,13 +121,14 @@ public class GalleryListParser {
             // Thumb url
             Elements es = it2.children();
             if (null != es && es.size() >= 1) {
-                gi.thumb = es.get(0).attr("src");
+                gi.thumb = EhUtils.handleThumbUrlResolution(es.get(0).attr("src"));
             } else {
                 String html = it2.html();
                 int index1 = html.indexOf('~');
                 int index2 = StringUtils.ordinalIndexOf(html, '~', 2);
                 if (index1 < index2) {
-                    gi.thumb = "http://" +StringUtils.replace(html.substring(index1 + 1, index2), "~", "/");
+                    gi.thumb = EhUtils.handleThumbUrlResolution(
+                            "http://" +StringUtils.replace(html.substring(index1 + 1, index2), "~", "/"));
                 } else {
                     Log.w(TAG, "Can't parse gallery info thumb url");
                     gi.thumb = "";

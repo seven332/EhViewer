@@ -41,7 +41,7 @@ public class GalleryApiParser {
             gi.title = ParserUtils.trim(g.getString("title"));
             gi.titleJpn = ParserUtils.trim(g.getString("title_jpn"));
             gi.category = EhUtils.getCategory(g.getString("category"));
-            gi.thumb = g.getString("thumb");
+            gi.thumb = EhUtils.handleThumbUrlResolution(g.getString("thumb"));
             gi.uploader = g.getString("uploader");
             gi.posted = ParserUtils.formatDate(ParserUtils.parseLong(g.getString("posted")) * 1000);
             gi.rating = Float.parseFloat(g.getString("rating"));

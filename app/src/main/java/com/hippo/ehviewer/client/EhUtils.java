@@ -168,4 +168,31 @@ public class EhUtils {
             return title;
         }
     }
+
+    public static String handleThumbUrlResolution(String url) {
+        if (null == url) {
+            return null;
+        }
+
+        String resolution;
+        switch (Settings.getThumbResolution()) {
+            default:
+            case 0: // Auto
+                return url;
+            case 1: // 250
+                resolution = "250";
+                break;
+            case 2: // 300
+                resolution = "300";
+                break;
+        }
+
+        int index1 = url.lastIndexOf('_');
+        int index2 = url.lastIndexOf('.');
+        if (index1 >= 0 && index2 >= 0 && index1 < index2) {
+            return url.substring(0, index1 + 1) + resolution + url.substring(index2);
+        } else {
+            return url;
+        }
+    }
 }

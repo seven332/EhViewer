@@ -365,6 +365,9 @@
     <string name="settings_eh_thumb_size_large">大</string>
     <string name="settings_eh_thumb_size_middle">中</string>
     <string name="settings_eh_thumb_size_small">小</string>
+    <string name="settings_eh_thumb_resolution">縮圖解析度</string>
+    <string name="settings_eh_thumb_resolution_summary">%s，指定解析度可能使獲取縮圖失敗</string>
+    <string name="settings_eh_thumb_resolution_auto">自動</string>
     <string name="settings_eh_default_categories">主頁分類顯示</string>
     <string name="settings_eh_default_categories_summary">預設在主頁所顯示的分類</string>
     <string name="settings_eh_excluded_tag_namespaces">排除標籤組</string>

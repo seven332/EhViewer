@@ -275,6 +275,13 @@ public class Settings {
         }
     }
 
+    public static final String KEY_THUMB_RESOLUTION = "thumb_resolution";
+    private static final int DEFAULT_THUMB_RESOLUTION = 0;
+
+    public static int getThumbResolution() {
+        return getIntFromStr(KEY_THUMB_RESOLUTION, DEFAULT_THUMB_RESOLUTION);
+    }
+
     private static final String KEY_SHOW_JPN_TITLE = "show_jpn_title";
     private static final boolean DEFAULT_SHOW_JPN_TITLE = false;
 

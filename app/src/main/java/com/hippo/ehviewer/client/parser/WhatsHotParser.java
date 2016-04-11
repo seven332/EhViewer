@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.client.parser;
 
+import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.JsoupUtils;
@@ -47,7 +48,7 @@ public class WhatsHotParser {
                 galleryInfo.gid = result.gid;
                 galleryInfo.token = result.token;
                 temp = JsoupUtils.getElementByTag(temp, "img");
-                galleryInfo.thumb = temp.attr("src");
+                galleryInfo.thumb = EhUtils.handleThumbUrlResolution(temp.attr("src"));
                 galleryInfo.title = temp.attr("title");
                 galleryInfo.generateSLang();
                 galleryInfoList.add(galleryInfo);

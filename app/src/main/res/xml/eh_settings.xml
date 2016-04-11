@@ -48,6 +48,14 @@
         app:entryValues="@array/thumb_size_entry_values"
         android:defaultValue="1"/>
 
+    <com.hippo.preference.ListPreference
+        android:key="thumb_resolution"
+        android:title="@string/settings_eh_thumb_resolution"
+        android:summary="@string/settings_eh_thumb_resolution_summary"
+        app:entries="@array/thumb_resolution_entries"
+        app:entryValues="@array/thumb_resolution_entry_values"
+        android:defaultValue="0"/>
+
     <com.hippo.ehviewer.preference.DefaultCategoryPreference
         android:key="default_categories"
         android:title="@string/settings_eh_default_categories"
