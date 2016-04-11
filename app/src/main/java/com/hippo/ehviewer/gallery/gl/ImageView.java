@@ -222,8 +222,9 @@ public class ImageView extends GLView implements ImageTexture.Callback {
                 mTextureHeight = 1;
             }
 
-            // Start alpha animation
-            if (isAttachedToRoot()) {
+            // Start alpha animation, do not show animation for image has no valid rect
+            getValidRect(mValidRect);
+            if (!mValidRect.isEmpty()) {
                 startAnimation(mAlphaAnimation, true);
             }
         } else {
