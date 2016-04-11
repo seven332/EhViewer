@@ -83,7 +83,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.1'
-    compile 'com.github.seven332:unifile:0.1.1'
+    compile 'com.github.seven332:unifile:0.1.2'
     compile 'com.github.seven332:drawerLayout:0.1.0'
     compile 'com.github.seven332:refreshlayout:0.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.7'
