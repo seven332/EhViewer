@@ -309,7 +309,7 @@ public class ImageTexture implements Texture, Animatable {
 
                 mImage.advance();
                 long delay = mImage.getDelay();
-                long time = System.currentTimeMillis();
+                long time = SystemClock.currentThreadTimeMillis();
                 delay -= time - lastTime;
                 lastTime = time;
                 mFrameDirty.lazySet(true);
