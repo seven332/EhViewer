@@ -240,7 +240,8 @@ public class ImageTexture implements Texture, Animatable {
     private class AnimateRunnable implements Runnable {
 
         public void doRun() {
-            long lastTime = SystemClock.currentThreadTimeMillis();
+            long lastTime = SystemClock.elapsedRealtime();
+            long lastDelay = -1L;
 
             synchronized (mImage) {
                 // Check recycled
@@ -309,9 +310,12 @@ public class ImageTexture implements Texture, Animatable {
 
                 mImage.advance();
                 long delay = mImage.getDelay();
-                long time = SystemClock.currentThreadTimeMillis();
-                delay -= time - lastTime;
+                long time = SystemClock.elapsedRealtime();
+                if (-1L != lastDelay) {
+                    delay -= (time - lastTime) - lastDelay;
+                }
                 lastTime = time;
+                lastDelay = delay;
                 mFrameDirty.lazySet(true);
                 invalidateSelf();
 
