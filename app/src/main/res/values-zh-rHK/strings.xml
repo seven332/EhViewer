@@ -422,9 +422,9 @@
     <string name="settings_download_multi_thread_download_summary">最多同時下載 %s 張圖片</string>
     <string name="settings_download_preload_image">預載圖片</string>
     <string name="settings_download_preload_image_summary">向後預載 %s 張圖片</string>
-    <string name="settings_download_image_size">圖片大小</string>
-    <string name="settings_download_image_size_summary">%s，大於 1280x 的分辨率可能不好使</string>
-    <string name="settings_download_image_size_auto">自動</string>
+    <string name="settings_download_image_resolution">圖片分辨率</string>
+    <string name="settings_download_image_resolution_summary">%s，大於 1280x 的分辨率可能不好使</string>
+    <string name="settings_download_image_resolution_auto">自動</string>
     <string name="settings_download_download_origin_image">下載原圖</string>
     <string name="settings_download_download_origin_image_summary">這很危險！勾選此項會導致下載配額迅速流失</string>
     <string name="settings_download_media_scan">允許媒體掃描</string>

@@ -54,13 +54,13 @@ public class DownloadFragment extends PreferenceFragment implements
         addPreferencesFromResource(R.xml.download_settings);
 
         Preference mediaScan = findPreference(Settings.KEY_MEDIA_SCAN);
-        Preference imageSize = findPreference(Settings.KEY_IMAGE_SIZE);
+        Preference imageResolution = findPreference(Settings.KEY_IMAGE_RESOLUTION);
         mDownloadLocation = findPreference(KEY_DOWNLOAD_LOCATION);
 
         onUpdateDownloadLocation();
 
         mediaScan.setOnPreferenceChangeListener(this);
-        imageSize.setOnPreferenceChangeListener(this);
+        imageResolution.setOnPreferenceChangeListener(this);
 
         if (mDownloadLocation != null) {
             mDownloadLocation.setOnPreferenceClickListener(this);
@@ -203,9 +203,9 @@ public class DownloadFragment extends PreferenceFragment implements
                 }
             }
             return true;
-        } else if (Settings.KEY_IMAGE_SIZE.equals(key)) {
+        } else if (Settings.KEY_IMAGE_RESOLUTION.equals(key)) {
             if (newValue instanceof String) {
-                Settings.putImageSize((String) newValue);
+                Settings.putImageResolution((String) newValue);
             }
             return true;
         }
