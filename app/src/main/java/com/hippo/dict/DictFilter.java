@@ -16,6 +16,8 @@
 
 package com.hippo.dict;
 
+import android.content.Context;
+
 import com.hippo.dict.util.DictLog;
 
 import java.util.ArrayList;
@@ -49,13 +51,31 @@ public class DictFilter {
 
     public static class LocaleFilter implements Filter {
 
+        Context context;
+
+        public LocaleFilter(Context context) {
+            this.context = context;
+        }
+
         @Override
         public String[] filter(String[] data) {
             DictLog.t(TAG, "[localefilter] ------------------");
-            Pattern localeRegEx = Pattern.compile(zhRegEx);
+            String localeString = context.getResources().getConfiguration().locale.getCountry();
+            String localeRegEx;
+
+            DictLog.t(TAG,"[localefilter] get locale:" + localeString);
+
+            //TODO add more
+            if(localeString.equals("ZH") || localeString.equals("TW")) {
+                localeRegEx = zhRegEx;
+            } else {
+                localeRegEx = enRegEx;
+            }
+
+            Pattern localePattern = Pattern.compile(localeRegEx);
             List<String> result = new ArrayList<>();
             for (String s : data) {
-                Matcher m = localeRegEx.matcher(s);
+                Matcher m = localePattern.matcher(s);
                 if (m.matches()) {
                     result.add(s);
                     DictLog.t(TAG, "[localefilter] " + s);
@@ -64,7 +84,6 @@ public class DictFilter {
             return result.toArray(new String[result.size()]);
         }
     }
-
 
 
     public interface Filter {

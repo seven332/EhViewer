@@ -30,7 +30,7 @@ public class DictManager {
 
     private static final String TAG = "DictManager";
     private DictDatabase mDictDatabase;
-
+    private Context mContext;
     private static boolean mEnFlag = true;
     private static boolean mKeywordFlag = true;
     private static boolean mPrefixFlag = false;
@@ -40,7 +40,8 @@ public class DictManager {
     private DictQueryAsyncTask mPrefixQueryAsyncTask;
 
     public DictManager(Context context) {
-        mDictDatabase = DictDatabase.getInstance(context);
+        mContext = context;
+        mDictDatabase = DictDatabase.getInstance(mContext);
     }
 
     public void importDict(final Uri dictUri, final DictImportService.ProcessListener listener)
@@ -96,7 +97,7 @@ public class DictManager {
             public String[] getSuggestions(String prefix) {
                 return mDictDatabase.getKeywordSuggestions(prefix);
             }
-        }, new DictFilter.LocaleFilter());
+        }, new DictFilter.LocaleFilter(mContext));
         mKeywordQueryAsyncTask.execute();
     }
 
@@ -120,7 +121,7 @@ public class DictManager {
             public String[] getSuggestions(String prefix) {
                 return mDictDatabase.getPrefixSuggestions(prefix);
             }
-        }, new DictFilter.LocaleFilter());
+        }, new DictFilter.LocaleFilter(mContext));
         mPrefixQueryAsyncTask.execute();
     }
 
