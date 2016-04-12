@@ -23,6 +23,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.hippo.dict.util.DictLog;
 import com.hippo.util.TextUrl;
 
 import java.util.ArrayList;
@@ -46,11 +47,11 @@ public class DictImportService extends Service {
 
     }
 
-    private Binder serviceBinder = new DictImportServiceBinder();
+    private Binder mServiceBinder = new DictImportServiceBinder();
 
     @Override
     public IBinder onBind(Intent intent) {
-        return serviceBinder;
+        return mServiceBinder;
     }
 
     @Override
@@ -87,7 +88,7 @@ public class DictImportService extends Service {
             return;
         }
 
-        Log.d(TAG, "[importDict] start import async task");
+        DictLog.t(TAG, "[importDict] start import async task");
         mImportAsyncTask = new ImportAsyncTask(dictUri).execute();
     }
 
@@ -97,7 +98,7 @@ public class DictImportService extends Service {
             return;
         }
 
-        Log.d(TAG, "[abortImport] improt abort");
+        DictLog.t(TAG, "[abortImport] improt abort");
 
         // fixme
         // this i just set a flag to abort the prase thread,it may cause a exception
@@ -151,13 +152,13 @@ public class DictImportService extends Service {
             mDictProcessListener = new ProcessListener() {
                 @Override
                 public void process(int progress) {
-                    Log.d(TAG, "[process] progress:" + progress);
+                    DictLog.t(TAG, "[process] progress:" + progress);
                     publishProgress(progress);
                 }
 
                 @Override
                 public void processTotal(int total) {
-                    Log.d(TAG, "process total " + total);
+                    DictLog.t(TAG, "process total " + total);
                     mItemNum = total;
                     for (ProcessListener listener : mListeners) {
                         listener.processTotal(total);
@@ -167,7 +168,7 @@ public class DictImportService extends Service {
                 @Override
                 public void processComplete() {
                     // we don't do any thing here,let async task handle this
-                    Log.d(TAG, "processComplete");
+                    DictLog.t(TAG, "[processComplete] do nothing");
                 }
 
             };
@@ -187,7 +188,7 @@ public class DictImportService extends Service {
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
 
-            Log.d(TAG, "[onProgressUpdate] process item " + progress[0]);
+            DictLog.t(TAG, "[onProgressUpdate] process item " + progress[0]);
             for (ProcessListener listener : mListeners) {
                 listener.process(progress[0]);
             }
@@ -211,7 +212,7 @@ public class DictImportService extends Service {
     }
 
     public void godie() {
-        Log.d(TAG, "[godie] task done or abort,go to die");
+        DictLog.t(TAG, "[godie] task done or abort,go to die");
         this.stopSelf();
     }
 }

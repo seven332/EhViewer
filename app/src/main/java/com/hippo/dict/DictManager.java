@@ -21,25 +21,23 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.hippo.dict.util.DictLog;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DictManager {
 
     private static final String TAG = "DictManager";
     private DictDatabase mDictDatabase;
 
-    private static boolean enFlag = true;
-    private static boolean keywordFlag = true;
-    private static boolean prefixFlag = false;
+    private static boolean mEnFlag = true;
+    private static boolean mKeywordFlag = true;
+    private static boolean mPrefixFlag = false;
 
-    private DictQueryAsyncTask enSuggestionsAsyncTask;
-    private DictQueryAsyncTask keywordQueryAsyncTask;
-    private DictQueryAsyncTask prefixQueryAsyncTask;
+    private DictQueryAsyncTask mEnSuggestionsAsyncTask;
+    private DictQueryAsyncTask mKeywordQueryAsyncTask;
+    private DictQueryAsyncTask mPrefixQueryAsyncTask;
 
     public DictManager(Context context) {
         mDictDatabase = DictDatabase.getInstance(context);
@@ -55,7 +53,7 @@ public class DictManager {
     }
 
     public void getEnSuggestions(String prefix, final OnDictQueryResultListener listener) {
-        if (!enFlag) {
+        if (!mEnFlag) {
             Log.w(TAG, "get en suggestions is be disable");
             return;
         }
@@ -65,21 +63,21 @@ public class DictManager {
             return;
         }
 
-        if (enSuggestionsAsyncTask != null) {
-            enSuggestionsAsyncTask.cancel(true);
+        if (mEnSuggestionsAsyncTask != null) {
+            mEnSuggestionsAsyncTask.cancel(true);
         }
 
-        enSuggestionsAsyncTask = new DictQueryAsyncTask(prefix, listener, new OpPolicy() {
+        mEnSuggestionsAsyncTask = new DictQueryAsyncTask(prefix, listener, new OpPolicy() {
             @Override
             public String[] getSuggestions(String prefix) {
                 return mDictDatabase.getEnSuggestions(prefix);
             }
         }, new DictFilter.EnFilter());
-        enSuggestionsAsyncTask.execute();
+        mEnSuggestionsAsyncTask.execute();
     }
 
     public void getKeywordSuggestions(String prefix, final OnDictQueryResultListener listener) {
-        if (!keywordFlag) {
+        if (!mKeywordFlag) {
             Log.w(TAG, "get keyword suggestions is be disable");
             return;
         }
@@ -89,21 +87,21 @@ public class DictManager {
             return;
         }
 
-        if (keywordQueryAsyncTask != null) {
-            keywordQueryAsyncTask.cancel(true);
+        if (mKeywordQueryAsyncTask != null) {
+            mKeywordQueryAsyncTask.cancel(true);
         }
 
-        keywordQueryAsyncTask = new DictQueryAsyncTask(prefix, listener, new OpPolicy() {
+        mKeywordQueryAsyncTask = new DictQueryAsyncTask(prefix, listener, new OpPolicy() {
             @Override
             public String[] getSuggestions(String prefix) {
                 return mDictDatabase.getKeywordSuggestions(prefix);
             }
         }, new DictFilter.LocaleFilter());
-        keywordQueryAsyncTask.execute();
+        mKeywordQueryAsyncTask.execute();
     }
 
     public void getPrefixSuggestions(String prefix, final OnDictQueryResultListener listener) {
-        if (!prefixFlag) {
+        if (!mPrefixFlag) {
             Log.w(TAG, "get prefix suggestions is be disable");
             return;
         }
@@ -113,17 +111,17 @@ public class DictManager {
             return;
         }
 
-        if (prefixQueryAsyncTask != null) {
-            prefixQueryAsyncTask.cancel(true);
+        if (mPrefixQueryAsyncTask != null) {
+            mPrefixQueryAsyncTask.cancel(true);
         }
 
-        prefixQueryAsyncTask = new DictQueryAsyncTask(prefix, listener, new OpPolicy() {
+        mPrefixQueryAsyncTask = new DictQueryAsyncTask(prefix, listener, new OpPolicy() {
             @Override
             public String[] getSuggestions(String prefix) {
                 return mDictDatabase.getPrefixSuggestions(prefix);
             }
         }, new DictFilter.LocaleFilter());
-        prefixQueryAsyncTask.execute();
+        mPrefixQueryAsyncTask.execute();
     }
 
     public void importAbort() {
@@ -158,7 +156,7 @@ public class DictManager {
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Log.d(TAG, "[onCancelled] prefix query task for prefix " + prefix + " abort");
+            DictLog.t(TAG, "[onCancelled] prefix query task for prefix " + prefix + " abort");
         }
     }
 

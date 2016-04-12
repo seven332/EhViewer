@@ -24,8 +24,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.JsonReader;
-import android.util.Log;
 
+import com.hippo.dict.util.DictLog;
 import com.hippo.util.SqlUtils;
 
 import java.io.File;
@@ -150,7 +150,7 @@ public class DictDatabase {
             String field = jsonReader.nextName();
             if (field.equals("dict")) {
                 mDictName = jsonReader.nextString();
-                Log.d(TAG, "[importDict] prase the dict name -- " + mDictName);
+                DictLog.t(TAG, "[importDict] prase the dict name -- " + mDictName);
             } else if (field.equals("data")) {
                 deletDict(mDictName);
                 praseData(jsonReader, listener);
@@ -158,7 +158,7 @@ public class DictDatabase {
             } else if (field.equals("num")) {
                 mItemNum = jsonReader.nextInt();
                 listener.processTotal(mItemNum);
-                Log.d(TAG, "[importDict] prase the item number -- " + mItemNum);
+                DictLog.t(TAG, "[importDict] prase the item number -- " + mItemNum);
             }
         }
         jsonReader.endObject();
@@ -175,12 +175,12 @@ public class DictDatabase {
     }
 
     public void deletDict(String dict) {
-        Log.d(TAG, "[deletDict] dict:" + dict);
+        DictLog.t(TAG, "[deletDict] dict:" + dict);
         mDatabase.delete(TABLE_DICT, COLUMN_DICT + "=?", new String[]{dict});
     }
 
     public void importAbort() {
-        Log.d(TAG, "[importAbort] set mAbortFlag true");
+        DictLog.t(TAG, "[importAbort] set mAbortFlag true");
         mAbortFlag = true;
     }
 
@@ -218,7 +218,7 @@ public class DictDatabase {
         while (jsonReader.hasNext()) {
             synchronized (this) {
                 if (mAbortFlag) {
-                    Log.d(TAG, "[praseData] import abort,delect the dict -- " + mDictName);
+                    DictLog.t(TAG, "[praseData] import abort,delect the dict -- " + mDictName);
                     deletDict(mDictName);
                     return;
                 }
@@ -248,7 +248,7 @@ public class DictDatabase {
         }
         jsonReader.endObject();
 
-        Log.d(TAG, "[praseSingleData] item:" + parent + " " + sb.toString());
+        DictLog.t(TAG, "[praseSingleData] item:" + parent + " " + sb.toString());
         addItem(sb.toString(), parent, mDictName);
     }
 

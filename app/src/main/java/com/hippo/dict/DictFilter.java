@@ -16,7 +16,7 @@
 
 package com.hippo.dict;
 
-import android.util.Log;
+import com.hippo.dict.util.DictLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +33,14 @@ public class DictFilter {
 
         @Override
         public String[] filter(String[] data) {
-            Log.d(TAG, "[enfilter] ------------------");
-            Pattern localeRegEx = Pattern.compile(zhRegEx);
+            DictLog.t(TAG, "[enfilter] ------------------");
+            Pattern localeRegEx = Pattern.compile(enRegEx);
             List<String> result = new ArrayList<>();
             for (String s : data) {
                 Matcher m = localeRegEx.matcher(s);
                 if (m.matches()) {
                     result.add(s);
-                    Log.d(TAG, "[enfilter] " + s);
+                    DictLog.t(TAG, "[enfilter] " + s);
                 }
             }
             return result.toArray(new String[result.size()]);
@@ -51,14 +51,14 @@ public class DictFilter {
 
         @Override
         public String[] filter(String[] data) {
-            Log.d(TAG, "[localefilter] ------------------");
-            Pattern localeRegEx = Pattern.compile(enRegEx);
+            DictLog.t(TAG, "[localefilter] ------------------");
+            Pattern localeRegEx = Pattern.compile(zhRegEx);
             List<String> result = new ArrayList<>();
             for (String s : data) {
                 Matcher m = localeRegEx.matcher(s);
                 if (m.matches()) {
                     result.add(s);
-                    Log.d(TAG, "[localefilter] " + s);
+                    DictLog.t(TAG, "[localefilter] " + s);
                 }
             }
             return result.toArray(new String[result.size()]);
