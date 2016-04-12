@@ -66,7 +66,7 @@ public class DictFilter {
             DictLog.t(TAG,"[localefilter] get locale:" + localeString);
 
             //TODO add more
-            if(localeString.equals("ZH") || localeString.equals("TW")) {
+            if(localeString.equals("CN") || localeString.equals("TW")) {
                 localeRegEx = zhRegEx;
             } else {
                 localeRegEx = enRegEx;
