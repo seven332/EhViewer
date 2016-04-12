@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 public class DictFilter {
     private static final String TAG = "DictFilter";
+
     // pattern for language
     private static final String enRegEx = "^[0-9a-zA-Z_\\s]+$";
     private static final String zhRegEx = "^[0-9a-zA-Z_\\s[\u4e00-\u9fa5]+]+$";
@@ -63,10 +64,10 @@ public class DictFilter {
             String localeString = context.getResources().getConfiguration().locale.getCountry();
             String localeRegEx;
 
-            DictLog.t(TAG,"[localefilter] get locale:" + localeString);
+            DictLog.t(TAG, "[localefilter] get locale:" + localeString);
 
             //TODO add more
-            if(localeString.equals("CN") || localeString.equals("TW")) {
+            if (localeString.equals("CN") || localeString.equals("TW")) {
                 localeRegEx = zhRegEx;
             } else {
                 localeRegEx = enRegEx;
@@ -84,7 +85,6 @@ public class DictFilter {
             return result.toArray(new String[result.size()]);
         }
     }
-
 
     public interface Filter {
         String[] filter(String[] data);

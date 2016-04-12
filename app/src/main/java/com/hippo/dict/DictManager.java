@@ -165,6 +165,8 @@ public class DictManager {
         void getResult(String[] result);
     }
 
+    // the operation of querying of database
+    // used in DictQueryAsyncTask
     private interface OpPolicy {
         String[] getSuggestions(String prefix);
     }
