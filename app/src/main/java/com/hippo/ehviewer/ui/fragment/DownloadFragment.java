@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui.fragment;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -141,18 +140,18 @@ public class DownloadFragment extends PreferenceFragment implements
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_DIR);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void openDirPickerL() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        try {
-            startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_DIR_L);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(getActivity(), R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            try {
+                startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_DIR_L);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(getActivity(), R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     @Override
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_PICK_IMAGE_DIR: {
@@ -169,7 +168,7 @@ public class DownloadFragment extends PreferenceFragment implements
                 break;
             }
             case REQUEST_CODE_PICK_IMAGE_DIR_L: {
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Uri treeUri = data.getData();
                     getActivity().getContentResolver().takePersistableUriPermission(
                             treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

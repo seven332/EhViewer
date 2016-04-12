@@ -16,10 +16,8 @@
 
 package com.hippo.preference;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
@@ -34,7 +32,6 @@ public class MessagePreference extends DialogPreference {
     private CharSequence mDialogMessage;
     private boolean mDialogMessageLinkify;
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public MessagePreference(Context context) {
         super(context);
         init(context, null, 0, 0);
@@ -48,12 +45,6 @@ public class MessagePreference extends DialogPreference {
     public MessagePreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr, 0);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public MessagePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {

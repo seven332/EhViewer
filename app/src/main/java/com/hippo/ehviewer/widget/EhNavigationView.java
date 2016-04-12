@@ -49,7 +49,9 @@ public class EhNavigationView extends NavigationView implements DrawerLayoutChil
     }
 
     private void init() {
-        setWillNotDraw(false);
+        if (DRAW_SCRIM) {
+            setWillNotDraw(false);
+        }
     }
 
     @Override

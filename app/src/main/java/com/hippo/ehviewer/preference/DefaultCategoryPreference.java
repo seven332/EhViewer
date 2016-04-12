@@ -47,11 +47,6 @@ public class DefaultCategoryPreference extends DialogPreference {
         init();
     }
 
-    public DefaultCategoryPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
         setDialogLayoutResource(R.layout.preference_dialog_default_categories);
     }

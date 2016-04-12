@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -1132,7 +1131,6 @@ public class DownloadsScene extends ToolbarScene
             return new DownloadHolder(mInflater.inflate(R.layout.item_download, parent, false));
         }
 
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onBindViewHolder(DownloadHolder holder, int position) {
             if (mList == null) {
@@ -1152,7 +1150,7 @@ public class DownloadsScene extends ToolbarScene
             bindForState(holder, info);
 
             // Update transition name
-            if (ApiHelper.SUPPORT_TRANSITION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 long gid = info.gid;
                 holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
             }

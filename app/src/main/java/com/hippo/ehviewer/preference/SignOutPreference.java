@@ -42,11 +42,6 @@ public class SignOutPreference extends MessagePreference {
         init();
     }
 
-    public SignOutPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
         setDialogMessage(getContext().getString(R.string.settings_eh_sign_out_warning));
     }

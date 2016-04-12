@@ -69,11 +69,6 @@ public class ExcludedTagNamespacesPreference extends DialogPreference {
         init();
     }
 
-    public ExcludedTagNamespacesPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
         setDialogLayoutResource(R.layout.preference_dialog_excluded_tag_namespaces);
     }

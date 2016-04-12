@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.Fragment;
@@ -27,7 +26,6 @@ import android.view.View;
 import com.hippo.ehviewer.R;
 import com.hippo.scene.TransitionHelper;
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class EnterGalleryDetailTransaction implements TransitionHelper {
 
     private final View mThumb;
@@ -43,15 +41,17 @@ class EnterGalleryDetailTransaction implements TransitionHelper {
             return false;
         }
 
-        exit.setSharedElementReturnTransition(
-                TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-        exit.setExitTransition(
-                TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-        enter.setSharedElementEnterTransition(
-                TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-        enter.setEnterTransition(
-                TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-        transaction.addSharedElement(mThumb, mThumb.getTransitionName());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            exit.setSharedElementReturnTransition(
+                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+            exit.setExitTransition(
+                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+            enter.setSharedElementEnterTransition(
+                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+            enter.setEnterTransition(
+                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+            transaction.addSharedElement(mThumb, mThumb.getTransitionName());
+        }
         return true;
     }
 }

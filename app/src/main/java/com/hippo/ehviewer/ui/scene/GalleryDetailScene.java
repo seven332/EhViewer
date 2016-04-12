@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
@@ -89,8 +88,8 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
-import com.hippo.util.AppHelper;
 import com.hippo.util.ApiHelper;
+import com.hippo.util.AppHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.ReadableTime;
@@ -957,12 +956,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         return resources.getString(R.string.rating_text, getRatingText(rating, resources), rating, ratingCount);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setTransitionName() {
         long gid = getGid();
 
         if (gid != -1 && ApiHelper.SUPPORT_TRANSITION && mThumb != null &&
-                mTitle != null && mUploader != null && mCategory != null) {
+                mTitle != null && mUploader != null && mCategory != null &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mThumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
             mTitle.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
             mUploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));
@@ -1455,7 +1454,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         @Override
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         public boolean onTransition(Context context,
                 FragmentTransaction transaction, Fragment exit, Fragment enter) {
             if (!(enter instanceof GalleryListScene) && !(enter instanceof DownloadsScene) &&
@@ -1463,15 +1461,17 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 return false;
             }
 
-            exit.setSharedElementReturnTransition(
-                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-            exit.setExitTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            enter.setSharedElementEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
-            enter.setEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            transaction.addSharedElement(mThumb, mThumb.getTransitionName());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                exit.setSharedElementReturnTransition(
+                        TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+                exit.setExitTransition(
+                        TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+                enter.setSharedElementEnterTransition(
+                        TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
+                enter.setEnterTransition(
+                        TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+                transaction.addSharedElement(mThumb, mThumb.getTransitionName());
+            }
             return true;
         }
     }

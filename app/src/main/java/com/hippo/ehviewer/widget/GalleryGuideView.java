@@ -16,12 +16,11 @@
 
 package com.hippo.ehviewer.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,15 +59,8 @@ public class GalleryGuideView extends ViewGroup implements View.OnClickListener 
         init(context);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public GalleryGuideView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
-    @SuppressWarnings("deprecation")
     private void init(Context context) {
-        mBgColor = context.getResources().getColor(R.color.guide_bg);
+        mBgColor = ContextCompat.getColor(context, R.color.guide_bg);
         mPaint = new Paint();
         mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.STROKE);

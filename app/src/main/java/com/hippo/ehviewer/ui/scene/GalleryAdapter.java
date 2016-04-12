@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.ui.scene;
 
-import android.annotation.TargetApi;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -38,7 +37,6 @@ import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.widget.TileThumb;
-import com.hippo.util.ApiHelper;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 
 import java.lang.annotation.Retention;
@@ -161,7 +159,6 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
     public abstract GalleryInfo getDataAt(int position);
 
     @Override
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void onBindViewHolder(GalleryHolder holder, int position) {
         GalleryInfo gi = getDataAt(position);
         if (null == gi) {
@@ -193,7 +190,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                 int color = EhUtils.getCategoryColor(gi.category);
                 if (!(drawable instanceof TriangleDrawable)) {
                     drawable = new TriangleDrawable(color);
-                    category.setBackground(drawable);
+                    category.setBackgroundDrawable(drawable);
                 } else {
                     ((TriangleDrawable) drawable).setColor(color);
                 }
@@ -203,7 +200,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
         }
 
         // Update transition name
-        if (ApiHelper.SUPPORT_TRANSITION) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             long gid = gi.gid;
             holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
         }

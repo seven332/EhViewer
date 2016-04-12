@@ -42,12 +42,6 @@ public class ClearDownloadPathCachePreference extends MessagePreference {
         init(context);
     }
 
-    public ClearDownloadPathCachePreference(Context context,
-            AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
     public void init(Context context) {
         setDialogMessage(context.getString(R.string.settings_advanced_clear_download_path_cache_message));
     }

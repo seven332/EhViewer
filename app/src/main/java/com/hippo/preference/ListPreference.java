@@ -52,11 +52,6 @@ public class ListPreference extends DialogPreference {
         init(context, attrs, defStyleAttr, 0);
     }
 
-    public ListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         setNegativeButtonText(android.R.string.cancel);
 

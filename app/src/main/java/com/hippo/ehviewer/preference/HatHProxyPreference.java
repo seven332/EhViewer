@@ -66,11 +66,6 @@ public class HatHProxyPreference extends DialogPreference implements View.OnClic
         init();
     }
 
-    public HatHProxyPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
         setDialogLayoutResource(R.layout.preference_dialog_hath_proxy);
         updateSummary(Settings.getHathProxy(), Settings.getHathIp(), Settings.getHathPort());
