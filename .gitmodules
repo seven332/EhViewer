@@ -1,9 +1,6 @@
 [submodule "yorozuya"]
 	path = yorozuya
 	url = https://github.com/seven332/Yorozuya
-[submodule "hotspot"]
-	path = hotspot
-	url = https://github.com/seven332/Hotspot
 [submodule "easyrecyclerview"]
 	path = easyrecyclerview
 	url = https://github.com/seven332/EasyRecyclerView
@@ -13,6 +10,3 @@
 [submodule "conaco"]
 	path = conaco
 	url = https://github.com/seven332/Conaco
-[submodule "rippleold"]
-	path = rippleold
-	url = https://github.com/seven332/RippleOld

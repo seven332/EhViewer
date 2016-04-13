@@ -75,7 +75,7 @@ import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.widget.SimpleRatingView;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.scene.Announcer;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ApiHelper;
@@ -292,7 +292,7 @@ public class DownloadsScene extends ToolbarScene
         mLayoutManager.setColumnSize(resources.getDimensionPixelOffset(R.dimen.gallery_list_column_width));
         mLayoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
@@ -1065,8 +1065,8 @@ public class DownloadsScene extends ToolbarScene
             thumb.setOnClickListener(this);
             start.setOnClickListener(this);
             stop.setOnClickListener(this);
-            RippleSalon.addRipple(start, false);
-            RippleSalon.addRipple(stop, false);
+            Ripple.addRipple(start, false);
+            Ripple.addRipple(stop, false);
         }
 
         @Override

@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.R;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.yorozuya.LayoutUtils;
 
 import java.io.File;
@@ -77,7 +77,7 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
                 LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
         addItemDecoration(decoration);
-        setSelector(RippleSalon.generateRippleDrawable(false));
+        setSelector(Ripple.generateRippleDrawable(context, false));
         setOnItemClickListener(this);
 
         mCurrentFile = Environment.getExternalStorageDirectory();

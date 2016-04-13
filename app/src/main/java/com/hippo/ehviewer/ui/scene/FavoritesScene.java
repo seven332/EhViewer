@@ -72,7 +72,7 @@ import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.refreshlayout.RefreshLayout;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.util.ApiHelper;
@@ -252,7 +252,7 @@ public class FavoritesScene extends BaseScene implements
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
         mAdapter = new FavoritesAdapter(inflater, resources, mRecyclerView, Settings.getListMode());
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
@@ -486,7 +486,7 @@ public class FavoritesScene extends BaseScene implements
                 LayoutUtils.dp2pix(context, 1));
         decoration.setPadding(ResourcesUtils.getAttrDimensionPixelOffset(context, R.attr.dialogPreferredPadding));
         rv.addItemDecoration(decoration);
-        rv.setSelector(RippleSalon.generateRippleDrawable(false));
+        rv.setSelector(Ripple.generateRippleDrawable(context, false));
         rv.setClipToPadding(false);
         builder.setView(rv).show();
     }

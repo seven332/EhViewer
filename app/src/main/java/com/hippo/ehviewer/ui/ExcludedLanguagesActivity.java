@@ -30,7 +30,7 @@ import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhConfig;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.widget.SensitiveCheckBox;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -163,11 +163,11 @@ public class ExcludedLanguagesActivity extends ToolbarActivity
         mDeselectAll.setOnClickListener(this);
         mInvertSelection.setOnClickListener(this);
 
-        RippleSalon.addRipple(mCancel, false);
-        RippleSalon.addRipple(mOk, false);
-        RippleSalon.addRipple(mSelectAll, false);
-        RippleSalon.addRipple(mDeselectAll, false);
-        RippleSalon.addRipple(mInvertSelection, false);
+        Ripple.addRipple(mCancel, false);
+        Ripple.addRipple(mOk, false);
+        Ripple.addRipple(mSelectAll, false);
+        Ripple.addRipple(mDeselectAll, false);
+        Ripple.addRipple(mInvertSelection, false);
     }
 
     private boolean isDecimal(String str) {

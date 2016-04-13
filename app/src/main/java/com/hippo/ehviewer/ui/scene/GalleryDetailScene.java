@@ -82,7 +82,7 @@ import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.reveal.ViewAnimationUtils;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.TransitionHelper;
@@ -431,9 +431,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mActionGroup = (ViewGroup) ViewUtils.$$(mHeader, R.id.action_card);
         mDownload = (TextView) ViewUtils.$$(mActionGroup, R.id.download);
         mRead = ViewUtils.$$(mActionGroup, R.id.read);
-        RippleSalon.addRipple(mOtherActions, false);
-        RippleSalon.addRipple(mDownload, false);
-        RippleSalon.addRipple(mRead, false);
+        Ripple.addRipple(mOtherActions, false);
+        Ripple.addRipple(mDownload, false);
+        Ripple.addRipple(mRead, false);
         mUploader.setOnClickListener(this);
         mCategory.setOnClickListener(this);
         mOtherActions.setOnClickListener(this);
@@ -452,7 +452,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mSize = (TextView) ViewUtils.$$(mInfo, R.id.size);
         mPosted = (TextView) ViewUtils.$$(mInfo, R.id.posted);
         mFavoredTimes = (TextView) ViewUtils.$$(mInfo, R.id.favoredTimes);
-        RippleSalon.addRipple(mInfo, false);
+        Ripple.addRipple(mInfo, false);
         mInfo.setOnClickListener(this);
 
         mActions = ViewUtils.$$(belowHeader, R.id.actions);
@@ -466,12 +466,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mRate = (TextView) ViewUtils.$$(mActions, R.id.rate);
         mSimilar = (TextView) ViewUtils.$$(mActions, R.id.similar);
         mSearchCover = (TextView) ViewUtils.$$(mActions, R.id.search_cover);
-        RippleSalon.addRipple(mHeartGroup, false);
-        RippleSalon.addRipple(mTorrent, false);
-        RippleSalon.addRipple(mShare, false);
-        RippleSalon.addRipple(mRate, false);
-        RippleSalon.addRipple(mSimilar, false);
-        RippleSalon.addRipple(mSearchCover, false);
+        Ripple.addRipple(mHeartGroup, false);
+        Ripple.addRipple(mTorrent, false);
+        Ripple.addRipple(mShare, false);
+        Ripple.addRipple(mRate, false);
+        Ripple.addRipple(mSimilar, false);
+        Ripple.addRipple(mSearchCover, false);
         mHeartGroup.setOnClickListener(this);
         mTorrent.setOnClickListener(this);
         mShare.setOnClickListener(this);
@@ -485,13 +485,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         mComments = (LinearLayout) ViewUtils.$$(belowHeader, R.id.comments);
         mCommentsText = (TextView) ViewUtils.$$(mComments, R.id.comments_text);
-        RippleSalon.addRipple(mComments, false);
+        Ripple.addRipple(mComments, false);
         mComments.setOnClickListener(this);
 
         mPreviews = ViewUtils.$$(belowHeader, R.id.previews);
         mGridLayout = (SimpleGridAutoSpanLayout) ViewUtils.$$(mPreviews, R.id.grid_layout);
         mPreviewText = (TextView) ViewUtils.$$(mPreviews, R.id.preview_text);
-        RippleSalon.addRipple(mPreviews, false);
+        Ripple.addRipple(mPreviews, false);
         mPreviews.setOnClickListener(this);
 
         mProgress = ViewUtils.$$(mainView, R.id.progress);

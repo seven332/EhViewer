@@ -27,7 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.widget.DirExplorer;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -70,7 +70,7 @@ public class DirPickerActivity extends ToolbarActivity
         mDirExplorer.setCurrentFile(file);
         mDirExplorer.setOnChangeDirListener(this);
 
-        RippleSalon.addRipple(mOk, false);
+        Ripple.addRipple(mOk, false);
 
         mOk.setOnClickListener(this);
 

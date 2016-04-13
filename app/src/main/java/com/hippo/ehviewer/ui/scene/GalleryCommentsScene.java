@@ -64,7 +64,7 @@ import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.parser.VoteCommentParser;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.reveal.ViewAnimationUtils;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.scene.SceneFragment;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
@@ -206,7 +206,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                 LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
         mRecyclerView.addItemDecoration(decoration);
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop(),
@@ -339,7 +339,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                 LayoutUtils.dp2pix(context, 1));
         decoration.setPadding(ResourcesUtils.getAttrDimensionPixelOffset(context, R.attr.dialogPreferredPadding));
         rv.addItemDecoration(decoration);
-        rv.setSelector(RippleSalon.generateRippleDrawable(false));
+        rv.setSelector(Ripple.generateRippleDrawable(context, false));
         rv.setClipToPadding(false);
         builder.setView(rv).show();
     }

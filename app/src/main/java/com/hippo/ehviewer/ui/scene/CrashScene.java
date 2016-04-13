@@ -26,7 +26,7 @@ import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.MainActivity;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.util.AppHelper;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -70,8 +70,8 @@ public class CrashScene extends BaseScene implements View.OnClickListener {
         mCancel.setOnClickListener(this);
         mSend.setOnClickListener(this);
 
-        RippleSalon.addRipple(mCancel, true);
-        RippleSalon.addRipple(mSend, true);
+        Ripple.addRipple(mCancel, true);
+        Ripple.addRipple(mSend, true);
 
         return view;
     }

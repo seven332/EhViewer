@@ -34,7 +34,7 @@ import android.view.animation.Interpolator;
 import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
-import com.hippo.hotspot.HotspotTouchHelper;
+import com.hippo.hotspot.Hotspot;
 import com.hippo.hotspot.Hotspotable;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
@@ -81,7 +81,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
 
         setOnClickListener(this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            HotspotTouchHelper.setHotspotTouchHelper(this, new HotspotTouchHelper(this));
+            Hotspot.addHotspotable(this, this);
         }
     }
 
@@ -111,7 +111,7 @@ public class CheckTextView extends TextView implements OnClickListener, Hotspota
         return mRadius;
     }
 
-    private Animator.AnimatorListener mAnimatorListener = new SimpleAnimatorListener() {
+    private final Animator.AnimatorListener mAnimatorListener = new SimpleAnimatorListener() {
         @Override
         public void onAnimationEnd(Animator animation) {
             mAnimator = null;

@@ -36,7 +36,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryDetail;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ViewUtils;
@@ -166,7 +166,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
                 LayoutUtils.dp2pix(context, 1));
         decoration.setPadding(context.getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
         mRecyclerView.addItemDecoration(decoration);
-        mRecyclerView.setSelector(RippleSalon.generateRippleDrawable(false));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOnItemClickListener(this);

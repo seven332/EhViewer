@@ -43,7 +43,7 @@ import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.exception.EhException;
-import com.hippo.rippleold.RippleSalon;
+import com.hippo.ripple.Ripple;
 import com.hippo.widget.RadioGridGroup;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -139,7 +139,7 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         mNormalSearchModeHelp = (ImageView) normalView.findViewById(R.id.normal_search_mode_help);
         mEnableAdvanceSwitch = (SwitchCompat) normalView.findViewById(R.id.search_enable_advance);
         mNormalSearchModeHelp.setOnClickListener(this);
-        RippleSalon.addRipple(mNormalSearchModeHelp, false);
+        Ripple.addRipple(mNormalSearchModeHelp, false);
         mEnableAdvanceSwitch.setOnCheckedChangeListener(SearchLayout.this);
         mEnableAdvanceSwitch.setSwitchPadding(resources.getDimensionPixelSize(R.dimen.switch_padding));
 

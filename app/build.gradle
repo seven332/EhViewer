@@ -74,9 +74,7 @@ dependencies {
     compile project(':beerbelly')
     compile project(':conaco')
     compile project(':easyrecyclerview')
-    compile project(':hotspot')
     compile project(':okhttp3')
-    compile project(':rippleold')
     compile project(':yorozuya')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
@@ -86,6 +84,7 @@ dependencies {
     compile 'com.github.seven332:unifile:0.1.2'
     compile 'com.github.seven332:drawerLayout:0.1.0'
     compile 'com.github.seven332:refreshlayout:0.1.0'
+    compile 'com.github.seven332:ripple:0.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.7'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     compile 'org.jsoup:jsoup:1.8.3'
