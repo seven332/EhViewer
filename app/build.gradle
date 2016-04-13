@@ -50,7 +50,7 @@ android {
         } else {
             ndkBuilder = 'ndk-build'
         }
-        commandLine "$ndkDir\\$ndkBuilder",
+        commandLine "$ndkDir/$ndkBuilder",
                 '-C', file('src/main/jni').absolutePath,
                 '-j', Runtime.runtime.availableProcessors()
     }

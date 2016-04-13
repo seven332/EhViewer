@@ -14,12 +14,23 @@ An E-Hentai Application for Android.
 
 # Build
 
+Windows
+
+    > git clone https://github.com/seven332/EhViewer
+    > cd EhViewer
+    > git submodule update --init
+    > gradlew app:copyNotice
+    > gradlew daogenerator:executeDaoGenerator
+    > gradlew app:assembleDebug
+
+Linux
+
     $ git clone https://github.com/seven332/EhViewer
     $ cd EhViewer
     $ git submodule update --init
-    $ gradlew app:copyNotice
-    $ gradlew daogenerator:executeDaoGenerator
-    $ gradlew app:assembleDebug
+    $ ./gradlew app:copyNotice
+    $ ./gradlew daogenerator:executeDaoGenerator
+    $ ./gradlew app:assembleDebug
 
 生成的 apk 文件在 app\build\outputs\apk 目录下
 
