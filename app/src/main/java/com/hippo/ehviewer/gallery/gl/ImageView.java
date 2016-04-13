@@ -208,6 +208,9 @@ public class ImageView extends GLView implements ImageTexture.Callback {
             mImageTexture.setCallback(null);
         }
 
+        int oldTextureWidth = mTextureWidth;
+        int oldTextureHeight = mTextureHeight;
+
         mImageTexture = imageTexture;
 
         if (imageTexture != null) {
@@ -234,6 +237,10 @@ public class ImageView extends GLView implements ImageTexture.Callback {
 
         mScaleOffsetDirty = true;
         mPositionInRootDirty = true;
+
+        if (oldTextureWidth != mTextureWidth || oldTextureHeight != mTextureHeight) {
+            requestLayout();
+        }
     }
 
     public ImageTexture getImageTexture() {
