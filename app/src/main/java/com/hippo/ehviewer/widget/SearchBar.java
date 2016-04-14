@@ -43,6 +43,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.hippo.dict.DictManager;
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.AnimationUtils;
@@ -52,6 +53,7 @@ import com.hippo.yorozuya.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class SearchBar extends FrameLayout implements View.OnClickListener,
@@ -85,6 +87,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     private ViewTransition mViewTransition;
 
     private SearchDatabase mSearchDatabase;
+    private DictManager mDictManager;
     private List<String> mSuggestionList;
     private ArrayAdapter mSuggestionAdapter;
 
@@ -114,6 +117,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
         setBackgroundResource(R.drawable.card_white_no_padding_2dp);
 
         mSearchDatabase = SearchDatabase.getInstance(getContext());
+        mDictManager = new DictManager(getContext());
 
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.widget_search_bar, this);
@@ -169,7 +173,8 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     }
 
     private void updateSuggestions() {
-        String prefix = mEditText.getText().toString();
+        final String prefix = mEditText.getText().toString();
+
         String[] suggestions = mSearchDatabase.getSuggestions(prefix);
         mSuggestionList.clear();
         Collections.addAll(mSuggestionList, suggestions);
@@ -179,6 +184,23 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
             addListHeader();
         }
         mSuggestionAdapter.notifyDataSetChanged();
+
+        final DictManager.OnDictQueryResultListener listener = new DictManager.OnDictQueryResultListener() {
+            @Override
+            public void getResult(String[] result) {
+                HashSet<String> set = new HashSet<>();
+                set.addAll(mSuggestionList);
+                Collections.addAll(set, result);
+                mSuggestionList.clear();
+                mSuggestionList.addAll(set);
+                mSuggestionList.remove(prefix);
+                Collections.sort(mSuggestionList);
+                mSuggestionAdapter.notifyDataSetChanged();
+            }
+        };
+        mDictManager.getEnSuggestions(prefix, listener);
+        mDictManager.getKeywordSuggestions(prefix, listener);
+        mDictManager.getPrefixSuggestions(prefix, listener);
     }
 
     public void setAllowEmptySearch(boolean allowEmptySearch) {
@@ -479,10 +501,15 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
 
     public interface Helper {
         void onClickTitle();
+
         void onClickLeftIcon();
+
         void onClickRightIcon();
+
         void onSearchEditTextClick();
+
         void onApplySearch(String query);
+
         void onSearchEditTextBackPressed();
     }
 

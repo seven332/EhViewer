@@ -531,6 +531,14 @@
     <!-- License -->
     <string name="license">開源許可</string>
 
+    <!-- Dict -->
+    <string name="dict_import">導入字典</string>
+    <string name="dict_confirm">確認</string>
+    <string name="dict_abort">取消</string>
+    <string name="dict_cancel">取消</string>
+    <string name="dict_hide">隐藏</string>
+    <string name="dict_done">完成</string>
+    
     <!-- Dir Picker-->
     <string name="dir_picker">選擇資料夾</string>
     <string name="directory_not_writable">該資料夾不可寫</string>

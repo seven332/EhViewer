@@ -1,0 +1,218 @@
+/*
+ * Copyright 2015 Hippo Seven
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.hippo.dict;
+
+import android.app.Service;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Binder;
+import android.os.IBinder;
+import android.util.Log;
+
+import com.hippo.dict.util.DictLog;
+import com.hippo.util.TextUrl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DictImportService extends Service {
+    private static final String TAG = "DictImportSerevice";
+
+    private DictManager mDictManager;
+    private List<ProcessListener> mListeners = new ArrayList<>();
+    private ProcessListener mDictProcessListener;
+    private AsyncTask mImportAsyncTask;
+    private DictNotification mDictNotification;
+
+    // current task information
+    private int mItemNum;
+    private Uri mDictUri;
+    private boolean mRunningFlag = false;
+
+    public DictImportService() {
+
+    }
+
+    private Binder mServiceBinder = new DictImportServiceBinder();
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mServiceBinder;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mDictManager = new DictManager(this);
+        mDictNotification = new DictNotification(this);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public interface ProcessListener {
+        void process(int progress);
+
+        void processTotal(int total);
+
+        void processComplete();
+    }
+
+    public class DictImportServiceBinder extends Binder {
+        public DictImportService getService() {
+            return DictImportService.this;
+        }
+    }
+
+    public void importDict(Uri dictUri) {
+        if (dictUri == null) {
+            // TODO error tip
+            Log.e(TAG, "[importDict] dictUri is null");
+            return;
+        }
+
+        DictLog.t(TAG, "[importDict] start import async task");
+        mImportAsyncTask = new ImportAsyncTask(dictUri).execute();
+    }
+
+    public void abortImport() {
+        if (mImportAsyncTask == null) {
+            Log.e(TAG, "[abortImport] mImportAsyncTask is null");
+            return;
+        }
+
+        DictLog.t(TAG, "[abortImport] improt abort");
+
+        // fixme
+        // this i just set a flag to abort the prase thread,it may cause a exception
+        // it there may be a elegant way to shut the worker thread down
+        mDictManager.importAbort();
+
+        // just for service go die
+        mImportAsyncTask.cancel(true);
+    }
+
+    public Uri getUri() {
+        return mDictUri;
+    }
+
+    public int getItemNum() {
+        return mItemNum;
+    }
+
+    public boolean isRunning() {
+        return mRunningFlag;
+    }
+
+    public void setOnProgressListener(ProcessListener onProgressListener) {
+        if (onProgressListener != null) {
+            mListeners.add(onProgressListener);
+            mListeners.remove(mDictNotification.mNotificationListener);
+            mDictNotification.stopNotify();
+        }
+    }
+
+    public void removeOnProgressListener(ProcessListener onProgressListener) {
+        if (onProgressListener != null) {
+            mListeners.remove(onProgressListener);
+        }
+
+        // if there is no listener in listener list,we is in the backgroud mostly
+        // we post the process progress informantion to a notification
+        if (mListeners.size() == 0) {
+            mDictNotification.setMax(mItemNum);
+            mDictNotification.setFileName(TextUrl.getFileName(mDictUri.toString()));
+            mListeners.add(mDictNotification.mNotificationListener);
+
+        }
+    }
+
+    class ImportAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        public ImportAsyncTask(Uri dictUri) {
+            mDictUri = dictUri;
+            mRunningFlag = true;
+            mDictProcessListener = new ProcessListener() {
+                @Override
+                public void process(int progress) {
+                    DictLog.t(TAG, "[process] progress:" + progress);
+                    publishProgress(progress);
+                }
+
+                @Override
+                public void processTotal(int total) {
+                    DictLog.t(TAG, "process total " + total);
+                    mItemNum = total;
+                    for (ProcessListener listener : mListeners) {
+                        listener.processTotal(total);
+                    }
+                }
+
+                @Override
+                public void processComplete() {
+                    // we don't do any thing here,let async task handle this
+                    DictLog.t(TAG, "[processComplete] do nothing");
+                }
+
+            };
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                mDictManager.importDict(mDictUri, mDictProcessListener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            super.onProgressUpdate(progress);
+
+            DictLog.t(TAG, "[onProgressUpdate] process item " + progress[0]);
+            for (ProcessListener listener : mListeners) {
+                listener.process(progress[0]);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            for (ProcessListener listener : mListeners) {
+                listener.processComplete();
+            }
+            mRunningFlag = false;
+            DictImportService.this.godie();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            DictImportService.this.godie();
+        }
+    }
+
+    public void godie() {
+        DictLog.t(TAG, "[godie] task done or abort,go to die");
+        this.stopSelf();
+    }
+}
