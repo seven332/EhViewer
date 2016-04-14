@@ -382,6 +382,8 @@
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
     <string name="settings_eh_filter">过滤</string>
     <string name="settings_eh_filter_summary">过滤标题，上传者，标签和标签组</string>
+    <string name="settings_eh_dict">字典</string>
+    <string name="settings_eh_dict_summary">搜索关键字字典</string>
 
     <string name="settings_read">阅读</string>
     <string name="settings_read_screen_rotation">屏幕方向</string>
@@ -530,6 +532,20 @@
 
     <!-- License -->
     <string name="license">开源许可</string>
+
+    <!-- Dict -->
+    <string name="dict">字典</string>
+    <string name="no_dict">这里是字典</string>
+    <string name="select_dict_file">选择字典文件</string>
+
+    <!-- Import Dict -->
+    <string name="import_dict_service">导入字典服务</string>
+    <string name="dict_import">导入字典</string>
+    <string name="dict_import_successfully">导入字典成功</string>
+    <string name="_import">导入</string>
+    <string name="abort">中止</string>
+    <string name="hide">隐藏</string>
+    <string name="done">完成</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">选择文件夹</string>

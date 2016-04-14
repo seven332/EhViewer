@@ -106,6 +106,32 @@
         </activity-alias>
 
         <activity
+            android:name="com.hippo.ehviewer.ui.DictImportActivity"
+            android:configChanges="screenSize|uiMode"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/dict_import"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.Dialog">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*\\.ehdict"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:mimeType="*/*"/>
+                <data android:pathPattern=".*\\.ehdict"/>
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="com.hippo.ehviewer.ui.GalleryActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.Gallery"
@@ -153,6 +179,12 @@
             android:label="@string/license"/>
 
         <activity
+            android:name="com.hippo.ehviewer.ui.DictActivity"
+            android:configChanges="screenSize|uiMode"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/dict"/>
+
+        <activity
             android:name="com.hippo.ehviewer.ui.FilterActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.NoActionBar"
@@ -169,5 +201,10 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/download_service_label"/>
 
+        <service
+            android:name="com.hippo.dict.DictImportService"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/import_dict_service">
+        </service>
     </application>
 </manifest>

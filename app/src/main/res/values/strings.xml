@@ -424,6 +424,8 @@
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
     <string name="settings_eh_filter">Filter</string>
     <string name="settings_eh_filter_summary">Filter by title, uploader, tag and tag namespace</string>
+    <string name="settings_eh_dict">Dictionary</string>
+    <string name="settings_eh_dict_summary">Search keyword dictionary</string>
 
     <string name="settings_read">Read</string>
     <string name="settings_read_screen_rotation">Screen orientation</string>
@@ -573,6 +575,20 @@
 
     <!-- License -->
     <string name="license">License</string>
+
+    <!-- Dict -->
+    <string name="dict">Dictionary</string>
+    <string name="no_dict">Dictionaries will be shown here</string>
+    <string name="select_dict_file">Select dictionary file</string>
+
+    <!-- Import Dict -->
+    <string name="import_dict_service">Import dictionary service</string>
+    <string name="dict_import">Import dictionary</string>
+    <string name="dict_import_successfully">Import dictionary successfully</string>
+    <string name="_import">Import</string>
+    <string name="abort">Abort</string>
+    <string name="hide">Hide</string>
+    <string name="done">Done</string>
 
     <!-- Dir Picker-->
     <string name="dir_picker">Dir picker</string>
