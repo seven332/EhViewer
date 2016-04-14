@@ -29,6 +29,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
+import com.github.anrwatchdog.ANRError;
+import com.github.anrwatchdog.ANRWatchDog;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
@@ -90,6 +92,15 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         // Prepare to catch crash
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
+
+        // Start anr watch dog
+        new ANRWatchDog().setANRListener(new ANRWatchDog.ANRListener() {
+            @Override
+            public void onAppNotResponding(ANRError error) {
+                // Throw RuntimeException, let crash handler do it
+                throw new RuntimeException(error.getCause());
+            }
+        }).start();
 
         super.onCreate();
 
@@ -344,6 +355,12 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         if (!handleException(ex) && mDefaultHandler != null) {
             mDefaultHandler.uncaughtException(thread, ex);
         }
+
+        Activity activity = getTopActivity();
+        if (activity != null) {
+            activity.finish();
+        }
+
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
     }
