@@ -55,6 +55,7 @@ Here is the libraries
 
 - [AOSP](http://source.android.com/)
 - [android-advancedrecyclerview](https://github.com/h6ah4i/android-advancedrecyclerview)
+- [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/)
 - [apng](http://apng.sourceforge.net/)
 - [giflib](http://giflib.sourceforge.net)
 - [greenDAO](https://github.com/greenrobot/greenDAO)
