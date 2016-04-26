@@ -59,7 +59,7 @@
     <dimen name="gallery_padding_top_search_bar">64dp</dimen>
     <dimen name="gallery_padding_bottom_fab">80dp</dimen>
 
-    <dimen name="gallery_list_column_width">320dp</dimen>
+    <dimen name="gallery_list_column_width">480dp</dimen>
     <dimen name="gallery_grid_column_width_large">160dp</dimen>
     <dimen name="gallery_grid_column_width_middle">120dp</dimen>
     <dimen name="gallery_grid_column_width_small">80dp</dimen>
