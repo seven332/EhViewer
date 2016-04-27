@@ -36,16 +36,6 @@ Linux
 
 The apk is in app\build\outputs\apk
 
-**注意**：如果你遇到了下面这样的错误，需要添加系统变量 NDK_HOME 为 android NDK 路径
-
-**Note**: If you get the error below, set NDK_HOME environment variable
-
-    * What went wrong:
-    A problem occurred evaluating project ':app'.
-    > assert ndkDir != null
-           |      |
-           null   false
-
 
 # Thanks
 
