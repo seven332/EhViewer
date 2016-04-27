@@ -19,7 +19,6 @@ Windows
     > git clone https://github.com/seven332/EhViewer
     > cd EhViewer
     > git submodule update --init
-    > gradlew app:copyNotice
     > gradlew daogenerator:executeDaoGenerator
     > gradlew app:assembleDebug
 
@@ -28,7 +27,6 @@ Linux
     $ git clone https://github.com/seven332/EhViewer
     $ cd EhViewer
     $ git submodule update --init
-    $ ./gradlew app:copyNotice
     $ ./gradlew daogenerator:executeDaoGenerator
     $ ./gradlew app:assembleDebug
 

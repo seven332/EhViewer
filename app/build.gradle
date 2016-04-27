@@ -46,6 +46,14 @@ task copyNotice(type: Copy) {
     into './src/main/assets'
 }
 
+tasks.withType(AbstractCompile) {
+    compileTask -> compileTask.dependsOn copyNotice
+}
+
+clean {
+    delete file('src/main/assets/NOTICE.html').absolutePath
+}
+
 dependencies {
     compile project(':beerbelly')
     compile project(':conaco')
