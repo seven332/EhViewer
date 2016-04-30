@@ -25,8 +25,8 @@ import android.support.annotation.NonNull;
 import com.hippo.gl.annotation.RenderThread;
 import com.hippo.gl.view.GLRoot;
 import com.hippo.image.Image;
-import com.hippo.yorozuya.PVLock;
-import com.hippo.yorozuya.PriorityThreadFactory;
+import com.hippo.yorozuya.thread.PVLock;
+import com.hippo.yorozuya.thread.PriorityThreadFactory;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

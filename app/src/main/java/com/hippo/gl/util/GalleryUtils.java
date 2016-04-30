@@ -18,7 +18,7 @@ package com.hippo.gl.util;
 
 import android.graphics.Color;
 
-import com.hippo.yorozuya.AssertUtils;
+import com.hippo.yorozuya.AssertError;
 
 public class GalleryUtils {
 
@@ -51,6 +51,8 @@ public class GalleryUtils {
     }
 
     public static void assertInRenderThread() {
-        AssertUtils.assertEquals("Should not do this in render thread", sCurrentThread, Thread.currentThread());
+        if (sCurrentThread != Thread.currentThread()) {
+            throw new AssertError("Should not do this in render thread");
+        }
     }
 }

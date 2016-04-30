@@ -16,26 +16,59 @@
 
 package com.hippo.drawable;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.widget.TextView;
+import android.util.Log;
 
 import com.hippo.conaco.Conaco;
+import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.Unikery;
-import com.hippo.conaco.ValueHolder;
+import com.hippo.image.ImageBitmap;
+import com.hippo.image.ImageDrawable;
+import com.hippo.image.RecycledException;
+import com.hippo.widget.ObservedTextView;
 
-public class UnikeryDrawable extends WrapDrawable implements Unikery<Bitmap> {
+public class UnikeryDrawable extends WrapDrawable implements Unikery<ImageBitmap>,
+        ObservedTextView.OnWindowAttachListener {
+
+    private static final String TAG = UnikeryDrawable.class.getSimpleName();
 
     private int mTaskId = Unikery.INVALID_ID;
 
-    private final TextView mTextView;
+    private final ObservedTextView mTextView;
+    private final Conaco<ImageBitmap> mConaco;
+    private String mUrl;
 
-    private ValueHolder<Bitmap> mHolder;
-
-    public UnikeryDrawable(TextView textView) {
+    public UnikeryDrawable(ObservedTextView textView, Conaco<ImageBitmap> conaco) {
         mTextView = textView;
+        mTextView.setOnWindowAttachListener(this);
+        mConaco = conaco;
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        load(mUrl);
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        mConaco.cancel(this);
+        clearDrawable();
+    }
+
+    public void load(String url) {
+        if (url != null) {
+            mUrl = url;
+            mConaco.load(new ConacoTask.Builder<ImageBitmap>().setUnikery(this).setUrl(url).setKey(url));
+        }
+    }
+
+    private void clearDrawable() {
+        Drawable drawable = getDrawable();
+        if (drawable instanceof ImageDrawable) {
+            ((ImageDrawable) drawable).recycle();
+        }
+        setDrawable(null);
     }
 
     @Override
@@ -54,9 +87,7 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery<Bitmap> {
 
         updateBounds();
         if (drawable != null) {
-            // mTextView.requestLayout() not work!
-            CharSequence cs = mTextView.getText();
-            mTextView.setText(cs);
+            invalidateSelf();
         }
     }
 
@@ -71,47 +102,39 @@ public class UnikeryDrawable extends WrapDrawable implements Unikery<Bitmap> {
     }
 
     @Override
-    public void onMiss(Conaco.Source source) {
+    public void invalidateSelf() {
+        CharSequence cs = mTextView.getText();
+        mTextView.setText(cs);
     }
 
     @Override
-    public void onRequest() {
-    }
+    public void onMiss(int source) {}
 
     @Override
-    public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {
-    }
+    public void onRequest() {}
 
-    private void removeDrawableAndHolder() {
-        // Remove drawable
-        setDrawable(null);
+    @Override
+    public void onProgress(long singleReceivedSize, long receivedSize, long totalSize) {}
 
-        // Remove holder
-        if (mHolder != null) {
-            mHolder.release(this);
-            mHolder = null;
+    @Override
+    public void onWait() {}
+
+    @Override
+    public boolean onGetValue(@NonNull ImageBitmap value, int source) {
+        ImageDrawable drawable;
+        try {
+            drawable = new ImageDrawable(value);
+        } catch (RecycledException e) {
+            Log.d(TAG, "The ImageBitmap is recycled", e);
+            return false;
         }
-    }
 
-    @Override
-    public boolean onGetObject(@NonNull ValueHolder<Bitmap> holder, Conaco.Source source) {
-        holder.obtain(this);
-
-        removeDrawableAndHolder();
-
-        mHolder = holder;
-        Drawable drawable = new BitmapDrawable(mTextView.getResources(), holder.getValue());
+        clearDrawable();
 
         setDrawable(drawable);
+        drawable.start();
 
         return true;
-    }
-
-    @Override
-    public void onSetDrawable(Drawable drawable) {
-        removeDrawableAndHolder();
-
-        setDrawable(drawable);
     }
 
     @Override

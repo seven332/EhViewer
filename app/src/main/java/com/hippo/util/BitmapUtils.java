@@ -22,12 +22,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 
+import com.hippo.streampipe.InputStreamPipe;
 import com.hippo.yorozuya.MathUtils;
-import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.IOException;
 
-public class BitmapUtils {
+public final class BitmapUtils {
+    private BitmapUtils() {}
 
     public static Context sContext;
 

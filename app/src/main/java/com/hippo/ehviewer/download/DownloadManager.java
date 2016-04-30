@@ -28,12 +28,12 @@ import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.image.Image;
 import com.hippo.yorozuya.ConcurrentPool;
-import com.hippo.yorozuya.LongList;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.SimpleHandler;
-import com.hippo.yorozuya.sparse.SparseIJArray;
-import com.hippo.yorozuya.sparse.SparseJLArray;
+import com.hippo.yorozuya.collect.LongList;
+import com.hippo.yorozuya.collect.SparseIJArray;
+import com.hippo.yorozuya.collect.SparseJLArray;
 
 import java.util.ArrayList;
 import java.util.Collections;

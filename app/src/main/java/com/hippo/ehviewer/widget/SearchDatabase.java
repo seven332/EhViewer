@@ -22,14 +22,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hippo.util.SqlUtils;
-import com.hippo.yorozuya.Say;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class SearchDatabase {
+public final class SearchDatabase {
 
     private static final String TAG = SearchDatabase.class.getSimpleName();
 
@@ -41,7 +41,7 @@ public class SearchDatabase {
 
     private static final int MAX_HISTORY = 100;
 
-    private SQLiteDatabase mDatabase;
+    private final SQLiteDatabase mDatabase;
 
     private static SearchDatabase sInstance;
 
@@ -127,10 +127,9 @@ public class SearchDatabase {
             }
             mDatabase.delete(TABLE_SUGGESTIONS, selection, null);
         } catch (RuntimeException e) {
-            Say.e(TAG, "truncateHistory", e);
+            Log.e(TAG, "truncateHistory", e);
         }
     }
-
 
     /**
      * Builds the database.  This version has extra support for using the version field

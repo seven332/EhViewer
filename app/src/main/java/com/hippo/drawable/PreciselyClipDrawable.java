@@ -24,6 +24,9 @@ import android.support.v7.graphics.drawable.DrawableWrapper;
 
 import com.hippo.yorozuya.MathUtils;
 
+/**
+ * Show a part of the original drawable
+ */
 public class PreciselyClipDrawable extends DrawableWrapper {
 
     private final boolean mClip;

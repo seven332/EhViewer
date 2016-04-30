@@ -18,17 +18,16 @@ package com.hippo.io;
 
 import android.support.annotation.NonNull;
 
+import com.hippo.streampipe.OutputStreamPipe;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
-import com.hippo.yorozuya.io.OutputStreamPipe;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class UniFileOutputStreamPipe implements OutputStreamPipe {
 
-    private UniFile mUniFile;
-
+    private final UniFile mUniFile;
     private OutputStream mOs;
 
     public UniFileOutputStreamPipe(UniFile uniFile) {

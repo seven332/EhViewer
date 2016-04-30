@@ -18,8 +18,8 @@ package com.hippo.io;
 
 import android.support.annotation.NonNull;
 
+import com.hippo.streampipe.InputStreamPipe;
 import com.hippo.yorozuya.IOUtils;
-import com.hippo.yorozuya.io.InputStreamPipe;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 public class FileInputStreamPipe implements InputStreamPipe {
 
-    private File mFile;
+    private final File mFile;
     private InputStream mIs;
 
     public FileInputStreamPipe(File file) {

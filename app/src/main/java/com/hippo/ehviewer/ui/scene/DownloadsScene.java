@@ -86,10 +86,10 @@ import com.hippo.widget.LoadImageView;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
-import com.hippo.yorozuya.LongList;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
+import com.hippo.yorozuya.collect.LongList;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

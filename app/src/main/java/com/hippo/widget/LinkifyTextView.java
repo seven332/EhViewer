@@ -23,9 +23,8 @@ import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.TextView;
 
-public class LinkifyTextView extends TextView {
+public class LinkifyTextView extends ObservedTextView {
 
     private ClickableSpan mCurrentSpan;
 

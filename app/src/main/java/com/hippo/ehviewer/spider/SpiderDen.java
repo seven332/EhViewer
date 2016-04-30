@@ -30,14 +30,14 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.gallery.GalleryProvider;
 import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.io.UniFileOutputStreamPipe;
+import com.hippo.streampipe.InputStreamPipe;
+import com.hippo.streampipe.OutputStreamPipe;
 import com.hippo.unifile.FilenameFilter;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Utilities;
-import com.hippo.yorozuya.io.InputStreamPipe;
-import com.hippo.yorozuya.io.OutputStreamPipe;
 
 import java.io.File;
 import java.io.IOException;

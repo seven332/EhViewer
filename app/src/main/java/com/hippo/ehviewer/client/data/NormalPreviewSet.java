@@ -19,7 +19,7 @@ package com.hippo.ehviewer.client.data;
 import android.os.Parcel;
 
 import com.hippo.widget.LoadImageView;
-import com.hippo.yorozuya.IntList;
+import com.hippo.yorozuya.collect.IntList;
 
 import java.util.ArrayList;
 

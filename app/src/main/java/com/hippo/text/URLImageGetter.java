@@ -16,28 +16,27 @@
 
 package com.hippo.text;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.widget.TextView;
 
 import com.hippo.conaco.Conaco;
-import com.hippo.conaco.ConacoTask;
 import com.hippo.drawable.UnikeryDrawable;
+import com.hippo.image.ImageBitmap;
+import com.hippo.widget.ObservedTextView;
 
 public class URLImageGetter implements Html.ImageGetter {
 
-    private final TextView mTextView;
-    private final Conaco<Bitmap> mConaco;
+    private final ObservedTextView mTextView;
+    private final Conaco<ImageBitmap> mConaco;
 
-    public URLImageGetter(TextView textView, Conaco<Bitmap> conaco) {
+    public URLImageGetter(ObservedTextView textView, Conaco<ImageBitmap> conaco) {
         mTextView = textView;
         mConaco = conaco;
     }
 
     @Override
     public Drawable getDrawable(String source) {
-        UnikeryDrawable drawable = new UnikeryDrawable(mTextView);
-        mConaco.load(new ConacoTask.Builder<Bitmap>().setUnikery(drawable).setUrl(source).setKey(source));
+        UnikeryDrawable drawable = new UnikeryDrawable(mTextView, mConaco);
+        drawable.load(source);
         return drawable;
     }
 }

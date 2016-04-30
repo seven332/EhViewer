@@ -74,14 +74,15 @@ import com.hippo.util.TextUrl;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LinkifyTextView;
+import com.hippo.widget.ObservedTextView;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.AssertUtils;
-import com.hippo.yorozuya.IntList;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.ViewUtils;
+import com.hippo.yorozuya.collect.IntList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -616,7 +617,7 @@ public final class GalleryCommentsScene extends ToolbarScene
             return new CommentHolder(mInflater.inflate(R.layout.item_gallery_comment, parent, false));
         }
 
-        public CharSequence generateComment(Context context, TextView textView, GalleryComment comment) {
+        public CharSequence generateComment(Context context, ObservedTextView textView, GalleryComment comment) {
             SpannableStringBuilder ssb = Html.fromHtml(comment.comment, new URLImageGetter(textView,
                     EhApplication.getConaco(context)), null);
 

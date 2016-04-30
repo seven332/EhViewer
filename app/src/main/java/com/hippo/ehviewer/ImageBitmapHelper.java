@@ -16,25 +16,31 @@
 
 package com.hippo.ehviewer;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.hippo.conaco.ValueHelper;
-import com.hippo.conaco.ValueHolder;
-import com.hippo.yorozuya.io.InputStreamPipe;
+import com.hippo.image.Image;
+import com.hippo.image.ImageBitmap;
+import com.hippo.streampipe.InputStreamPipe;
 
 import java.io.IOException;
 
-public class BitmapHelper implements ValueHelper<Bitmap> {
+public class ImageBitmapHelper implements ValueHelper<ImageBitmap> {
+
+    private static final int MAX_CACHE_SIZE = 512 * 512;
 
     @Nullable
     @Override
-    public Bitmap decode(@NonNull InputStreamPipe isPipe) {
+    public ImageBitmap decode(@NonNull InputStreamPipe isPipe) {
         try {
             isPipe.obtain();
-            return BitmapFactory.decodeStream(isPipe.open());
+            Image image = Image.decode(isPipe.open(), false);
+            if (image != null) {
+                return new ImageBitmap(image);
+            } else {
+                return null;
+            }
         } catch (OutOfMemoryError e) {
             return null;
         } catch (IOException e) {
@@ -46,15 +52,26 @@ public class BitmapHelper implements ValueHelper<Bitmap> {
     }
 
     @Override
-    public int sizeOf(@NonNull String key, @NonNull Bitmap value) {
-        return value.getByteCount();
+    public int sizeOf(@NonNull String key, @NonNull ImageBitmap value) {
+        return value.getWidth() * value.getHeight() * 4;
     }
 
     @Override
-    public void onRemove(@NonNull String key, @NonNull ValueHolder<Bitmap> oldValue) {}
+    public void onAddToMemoryCache(@NonNull ImageBitmap oldValue) {
+        oldValue.obtain();
+    }
 
     @Override
-    public boolean useMemoryCache(@NonNull String key, ValueHolder<Bitmap> holder) {
-        return true;
+    public void onRemoveFromMemoryCache(@NonNull String key, @NonNull ImageBitmap oldValue) {
+        oldValue.release();
+    }
+
+    @Override
+    public boolean useMemoryCache(@NonNull String key, ImageBitmap value) {
+        if (value != null) {
+            return value.getWidth() * value.getHeight() <= MAX_CACHE_SIZE;
+        } else {
+            return true;
+        }
     }
 }

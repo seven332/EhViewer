@@ -47,7 +47,7 @@ import com.hippo.util.SqlUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ObjectUtils;
-import com.hippo.yorozuya.sparse.SparseJLArray;
+import com.hippo.yorozuya.collect.SparseJLArray;
 
 import java.io.File;
 import java.io.FileInputStream;

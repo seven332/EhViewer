@@ -96,6 +96,7 @@ import com.hippo.util.ReadableTime;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
+import com.hippo.widget.ObservedTextView;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.ProgressiveRatingBar;
 import com.hippo.widget.SimpleGridAutoSpanLayout;
@@ -869,7 +870,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             user.setText(comment.user);
             TextView time = (TextView) v.findViewById(R.id.time);
             time.setText(ReadableTime.getTimeAgo(comment.time));
-            TextView c = (TextView) v.findViewById(R.id.comment);
+            ObservedTextView c = (ObservedTextView) v.findViewById(R.id.comment);
             c.setMaxLines(5);
             c.setText(Html.fromHtml(comment.comment,
                     new URLImageGetter(c, EhApplication.getConaco(context)), null));

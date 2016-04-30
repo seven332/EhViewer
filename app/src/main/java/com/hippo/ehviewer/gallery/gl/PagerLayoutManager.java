@@ -184,8 +184,8 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onAttach(GalleryView.Adapter adapter) {
-        AssertUtils.assertEquals("The PagerLayoutManager is attached", mAdapter, null);
-        AssertUtils.assertNotEquals("The adapter is null", adapter, null);
+        AssertUtils.assertNull("The PagerLayoutManager is attached", mAdapter);
+        AssertUtils.assertNotNull("The adapter is null", adapter);
         mAdapter = adapter;
         // Reset parameters
         resetParameters();
@@ -232,7 +232,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public GalleryView.Adapter onDetach() {
-        AssertUtils.assertNotEquals("The PagerLayoutManager is not attached", mAdapter, null);
+        AssertUtils.assertNotNull("The PagerLayoutManager is not attached", mAdapter);
 
         // Cancel all animations
         cancelAllAnimations();
@@ -293,7 +293,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
     public void onFill() {
         GalleryView.Adapter adapter = mAdapter;
         GalleryView galleryView = mGalleryView;
-        AssertUtils.assertNotEquals("The PagerLayoutManager is not attached", adapter, null);
+        AssertUtils.assertNotNull("The PagerLayoutManager is not attached", adapter);
 
         int width = galleryView.getWidth();
         int height = galleryView.getHeight();
@@ -703,7 +703,7 @@ public class PagerLayoutManager extends GalleryView.LayoutManager {
 
     @Override
     public void onDataChanged() {
-        AssertUtils.assertNotEquals("The PagerLayoutManager is not attached", mAdapter, null);
+        AssertUtils.assertNotNull("The PagerLayoutManager is not attached", mAdapter);
 
         // Cancel all animations
         cancelAllAnimations();

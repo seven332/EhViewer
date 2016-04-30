@@ -22,7 +22,6 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,6 +40,7 @@ import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.ehviewer.ui.CommonOperations;
+import com.hippo.image.ImageBitmap;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
@@ -79,8 +79,8 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
     private OkHttpClient mOkHttpClient;
-    private BitmapHelper mBitmapHelper;
-    private Conaco<Bitmap> mConaco;
+    private ImageBitmapHelper mImageBitmapHelper;
+    private Conaco<ImageBitmap> mConaco;
     private LruCache<Long, GalleryDetail> mGalleryDetailCache;
     private SimpleDiskCache mSpiderInfoCache;
     private DownloadManager mDownloadManager;
@@ -194,7 +194,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
 
     public void clearMemoryCache() {
         if (null != mConaco) {
-            mConaco.clearMemoryCache();
+            mConaco.getBeerBelly().clearMemory();
         }
         if (null != mGalleryDetailCache) {
             mGalleryDetailCache.evictAll();
@@ -275,12 +275,12 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     }
 
     @NonNull
-    public static BitmapHelper getBitmapHelper(@NonNull Context context) {
+    public static ImageBitmapHelper getImageBitmapHelper(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
-        if (application.mBitmapHelper == null) {
-            application.mBitmapHelper = new BitmapHelper();
+        if (application.mImageBitmapHelper == null) {
+            application.mImageBitmapHelper = new ImageBitmapHelper();
         }
-        return application.mBitmapHelper;
+        return application.mImageBitmapHelper;
     }
 
     private static int getMemoryCacheMaxSize(Context context) {
@@ -291,17 +291,17 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     }
 
     @NonNull
-    public static Conaco<Bitmap> getConaco(@NonNull Context context) {
+    public static Conaco<ImageBitmap> getConaco(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mConaco == null) {
-            Conaco.Builder<Bitmap> builder = new Conaco.Builder<>();
+            Conaco.Builder<ImageBitmap> builder = new Conaco.Builder<>();
             builder.hasMemoryCache = true;
             builder.memoryCacheMaxSize = getMemoryCacheMaxSize(context);
             builder.hasDiskCache = true;
             builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
             builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
             builder.okHttpClient = getOkHttpClient(context);
-            builder.objectHelper = getBitmapHelper(context);
+            builder.objectHelper = getImageBitmapHelper(context);
             builder.debug = DEBUG_CONACO;
             application.mConaco = builder.build();
         }

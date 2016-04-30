@@ -28,8 +28,8 @@ import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
-import com.hippo.yorozuya.PriorityThread;
 import com.hippo.yorozuya.StringUtils;
+import com.hippo.yorozuya.thread.PriorityThread;
 
 import java.io.File;
 import java.io.FilenameFilter;

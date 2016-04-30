@@ -55,24 +55,27 @@ clean {
 }
 
 dependencies {
-    compile project(':beerbelly')
-    compile project(':conaco')
-    compile project(':easyrecyclerview')
-    compile project(':okhttp3')
-    compile project(':yorozuya')
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.anrwatchdog:anrwatchdog:1.2.0'
+    compile 'com.github.seven332:beerbelly:0.1.1'
+    compile 'com.github.seven332:conaco:0.1.2-eh'
+    compile 'com.github.seven332:easyrecyclerview:0.1.0'
     compile 'com.github.seven332:drawerLayout:0.1.0'
-    compile 'com.github.seven332:image:0.1.0'
+    compile 'com.github.seven332:image:0.1.2'
+    compile 'com.github.seven332:okhttp:3.2.0-eh'
     compile 'com.github.seven332:refreshlayout:0.1.0'
     compile 'com.github.seven332:ripple:0.1.1'
+    compile 'com.github.seven332:streampipe:0.1.0'
     compile 'com.github.seven332:unifile:0.1.3'
+    compile 'com.github.seven332:yorozuya-collect:0.1.2'
+    compile 'com.github.seven332:yorozuya-thread:0.1.0'
+    compile 'com.github.seven332:yorozuya:0.1.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.7'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     compile 'org.greenrobot:greendao:2.2.0'
     compile 'org.jsoup:jsoup:1.9.1'
+    testCompile 'junit:junit:4.12'
 }

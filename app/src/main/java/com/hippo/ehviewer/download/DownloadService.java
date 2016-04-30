@@ -40,10 +40,10 @@ import com.hippo.ehviewer.ui.scene.DownloadsScene;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
-import com.hippo.yorozuya.LongList;
 import com.hippo.yorozuya.SimpleHandler;
-import com.hippo.yorozuya.sparse.SparseJBArray;
-import com.hippo.yorozuya.sparse.SparseJLArray;
+import com.hippo.yorozuya.collect.LongList;
+import com.hippo.yorozuya.collect.SparseJBArray;
+import com.hippo.yorozuya.collect.SparseJLArray;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

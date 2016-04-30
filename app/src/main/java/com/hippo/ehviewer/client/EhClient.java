@@ -22,8 +22,8 @@ import android.os.AsyncTask;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.CancelledException;
-import com.hippo.yorozuya.PriorityThreadFactory;
 import com.hippo.yorozuya.SimpleHandler;
+import com.hippo.yorozuya.thread.PriorityThreadFactory;
 
 import java.io.File;
 import java.util.List;

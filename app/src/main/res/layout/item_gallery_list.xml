@@ -25,7 +25,7 @@
         android:id="@+id/thumb"
         android:layout_width="@dimen/gallery_list_thumb_width"
         android:layout_height="@dimen/gallery_list_thumb_height"
-        app:retryType="none"/>
+        app:retryType="click"/>
 
     <TextView
         android:id="@+id/title"

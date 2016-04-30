@@ -25,7 +25,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.hippo.ehviewer.R;
-import com.hippo.yorozuya.IntList;
+import com.hippo.yorozuya.collect.IntList;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
