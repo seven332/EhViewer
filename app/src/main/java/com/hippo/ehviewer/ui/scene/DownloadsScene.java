@@ -1219,12 +1219,13 @@ public class DownloadsScene extends ToolbarScene
 
     private class ThumbDataContainer implements DataContainer {
 
-        private UniFile mFile;
+        @NonNull
+        private final UniFile mFile;
 
         /**
          * @param file the thumb file
          */
-        public ThumbDataContainer(@Nullable UniFile file) {
+        public ThumbDataContainer(@NonNull UniFile file) {
             mFile = file;
         }
 
