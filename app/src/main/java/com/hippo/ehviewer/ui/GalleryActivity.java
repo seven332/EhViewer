@@ -62,7 +62,7 @@ import com.hippo.ehviewer.widget.GalleryGuideView;
 import com.hippo.ehviewer.widget.ReversibleSeekBar;
 import com.hippo.gl.glrenderer.ImageTexture;
 import com.hippo.gl.view.GLRootView;
-import com.hippo.image.Image;
+import com.hippo.image.ImageWrapper;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.widget.ColorView;
@@ -549,20 +549,26 @@ public class GalleryActivity extends EhActivity
     }
 
     @Override
-    public void onPageSucceed(int index, Image image) {
+    public void onPageSucceed(int index, ImageWrapper image) {
         GalleryPageView page = findPageByIndex(index);
         if (page != null) {
-            ImageTexture imageTexture = new ImageTexture(image);
-            if (mUploader != null) {
-                mUploader.addTexture(imageTexture);
+            if (image.obtain()) {
+                ImageTexture imageTexture = new ImageTexture(image);
+                if (mUploader != null) {
+                    mUploader.addTexture(imageTexture);
+                }
+                page.showImage();
+                page.setImage(imageTexture);
+                page.setPage(index + 1);
+                page.setProgress(GalleryPageView.PROGRESS_GONE);
+                page.setError(null, null);
+            } else {
+                // The image is recycled, request again.
+                // TODO request loop ?
+                if (mGalleryProvider != null) {
+                    mGalleryProvider.request(index);
+                }
             }
-            page.showImage();
-            page.setImage(imageTexture);
-            page.setPage(index + 1);
-            page.setProgress(GalleryPageView.PROGRESS_GONE);
-            page.setError(null, null);
-        } else {
-            image.recycle();
         }
     }
 

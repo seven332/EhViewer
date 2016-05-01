@@ -84,7 +84,7 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
     }
 
     @Override
-    public void request(int index) {
+    protected void onRequest(int index) {
         synchronized (mRequests) {
             if (!mRequests.contains(index) && index != mDecodingIndex.get()) {
                 mRequests.add(index);
@@ -95,7 +95,12 @@ public class DirGalleryProvider extends GalleryProvider implements Runnable {
     }
 
     @Override
-    public void cancelRequest(int index) {
+    protected void onForceRequest(int index) {
+        onRequest(index);
+    }
+
+    @Override
+    public void onCancelRequest(int index) {
         synchronized (mRequests) {
             mRequests.remove(Integer.valueOf(index));
         }

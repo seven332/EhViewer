@@ -60,7 +60,7 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.anrwatchdog:anrwatchdog:1.2.0'
-    compile 'com.github.seven332:beerbelly:0.1.1'
+    compile 'com.github.seven332:beerbelly:0.1.2'
     compile 'com.github.seven332:conaco:0.1.2-eh'
     compile 'com.github.seven332:easyrecyclerview:0.1.0'
     compile 'com.github.seven332:drawerLayout:0.1.0'

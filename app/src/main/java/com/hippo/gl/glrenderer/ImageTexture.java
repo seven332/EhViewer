@@ -24,7 +24,7 @@ import android.support.annotation.NonNull;
 
 import com.hippo.gl.annotation.RenderThread;
 import com.hippo.gl.view.GLRoot;
-import com.hippo.image.Image;
+import com.hippo.image.ImageWrapper;
 import com.hippo.yorozuya.thread.PVLock;
 import com.hippo.yorozuya.thread.PriorityThreadFactory;
 
@@ -66,10 +66,10 @@ public class ImageTexture implements Texture, Animatable {
     private static Tile sLargeFreeTileHead = null;
     private static final Object sFreeTileLock = new Object();
 
-    private final Image mImage;
+    private final ImageWrapper mImage;
     private int mUploadIndex = 0;
     private final Tile[] mTiles;  // Can be modified in different threads.
-    // Should be protected by "synchronized."
+                                  // Should be protected by "synchronized."
 
     private final int mWidth;
     private final int mHeight;
@@ -79,7 +79,8 @@ public class ImageTexture implements Texture, Animatable {
 
     private final AtomicBoolean mFrameDirty = new AtomicBoolean();
     private boolean mImageBusy = false;
-    private final AtomicBoolean mNeedRecycle = new AtomicBoolean();
+    private final AtomicBoolean mNeedRelease = new AtomicBoolean();
+    private final AtomicBoolean mReleased = new AtomicBoolean();
 
     private final AtomicReference<Thread> mAnimateThread = new AtomicReference<>();
 
@@ -142,7 +143,7 @@ public class ImageTexture implements Texture, Animatable {
         private int mTileType;
         public int offsetX;
         public int offsetY;
-        public Image image;
+        public ImageWrapper image;
         public Tile nextFreeTile;
         public int contentWidth;
         public int contentHeight;
@@ -244,8 +245,8 @@ public class ImageTexture implements Texture, Animatable {
             long lastDelay = -1L;
 
             synchronized (mImage) {
-                // Check recycled
-                if (mImage.isRecycled()) {
+                // Check released
+                if (mReleased.get()) {
                     return;
                 }
                 // Check image busy
@@ -253,8 +254,8 @@ public class ImageTexture implements Texture, Animatable {
                     // Image is busy, means it is recycling
                     return;
                 }
-                if (mNeedRecycle.get()) {
-                    // Need recycle
+                if (mNeedRelease.get()) {
+                    // Need release
                     return;
                 }
                 // Obtain image
@@ -270,7 +271,7 @@ public class ImageTexture implements Texture, Animatable {
                     } catch (InterruptedException e) {
                         interrupted = true;
                     }
-                    if (!interrupted && !mNeedRecycle.get()) {
+                    if (!interrupted && !mNeedRelease.get()) {
                         mImage.complete();
                     }
                     sPVLock.v();
@@ -284,15 +285,15 @@ public class ImageTexture implements Texture, Animatable {
                 mImageBusy = false;
             }
 
-            if (interrupted || mNeedRecycle.get() || frameCount <= 1) {
+            if (interrupted || mNeedRelease.get() || frameCount <= 1) {
                 return;
             }
 
             while (!Thread.currentThread().isInterrupted()) {
                 // Obtain
                 synchronized (mImage) {
-                    // Check recycled
-                    if (mImage.isRecycled()) {
+                    // Check released
+                    if (mReleased.get()) {
                         return;
                     }
                     // Check image busy
@@ -300,8 +301,8 @@ public class ImageTexture implements Texture, Animatable {
                         // Image is busy, means it is recycling
                         return;
                     }
-                    if (mNeedRecycle.get()) {
-                        // Need recycle
+                    if (mNeedRelease.get()) {
+                        // Need release
                         return;
                     }
                     // Obtain image
@@ -338,11 +339,11 @@ public class ImageTexture implements Texture, Animatable {
         public void run() {
             doRun();
 
-            while (mNeedRecycle.get()) {
+            while (mNeedRelease.get()) {
                 // Obtain
                 synchronized (mImage) {
-                    // Check recycled
-                    if (mImage.isRecycled()) {
+                    // Check released
+                    if (mReleased.get()) {
                         break;
                     }
                     // Check image busy
@@ -354,7 +355,8 @@ public class ImageTexture implements Texture, Animatable {
                     mImageBusy = true;
                 }
 
-                mImage.recycle();
+                mImage.release();
+                mReleased.lazySet(true);
 
                 synchronized (mImage) {
                     // Release image
@@ -366,7 +368,7 @@ public class ImageTexture implements Texture, Animatable {
         }
     }
 
-    public ImageTexture(@NonNull Image image) {
+    public ImageTexture(@NonNull ImageWrapper image) {
         mImage = image;
         int width = mWidth = image.getWidth();
         int height = mHeight = image.getHeight();
@@ -457,7 +459,7 @@ public class ImageTexture implements Texture, Animatable {
 
     @Override
     public void start() {
-        if (mImage.isRecycled() || (mImage.isCompleted() && mImage.getFrameCount() <= 1)) {
+        if (mReleased.get() || (mImage.isCompleted() && mImage.getFrameCount() <= 1)) {
             return;
         }
 
@@ -471,7 +473,7 @@ public class ImageTexture implements Texture, Animatable {
 
     @Override
     public void stop() {
-        if (!mImage.isRecycled() && (mImage.isCompleted() && mImage.getFrameCount() > 1)) {
+        if (!mReleased.get() && (mImage.isCompleted() && mImage.getFrameCount() > 1)) {
             Thread thread = mAnimateThread.getAndSet(null);
             if (null != thread) {
                 thread.interrupt();
@@ -481,7 +483,7 @@ public class ImageTexture implements Texture, Animatable {
 
     @Override
     public boolean isRunning() {
-        return false;
+        return mAnimateThread.get() != null;
     }
 
 
@@ -654,24 +656,25 @@ public class ImageTexture implements Texture, Animatable {
             mTile.free();
         }
 
-        boolean recycleNow;
+        boolean releaseNow;
 
         synchronized (mImage) {
             if (!mImageBusy) {
-                recycleNow = true;
+                releaseNow = true;
                 mImageBusy = true;
             } else {
-                recycleNow = false;
+                releaseNow = false;
             }
         }
 
-        if (recycleNow) {
-            mImage.recycle();
+        if (releaseNow) {
+            mImage.release();
+            mReleased.set(true);
             synchronized (mImage) {
                 mImageBusy = false;
             }
         } else {
-            mNeedRecycle.set(true);
+            mNeedRelease.set(true);
         }
 
         Thread thread = mAnimateThread.getAndSet(null);

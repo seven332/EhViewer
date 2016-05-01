@@ -111,7 +111,7 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     }
 
     @Override
-    public void request(int index) {
+    protected void onRequest(int index) {
         if (mSpiderQueen != null) {
             Object object = mSpiderQueen.request(index);
             if (object instanceof Float) {
@@ -125,7 +125,7 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     }
 
     @Override
-    public void forceRequest(int index) {
+    protected void onForceRequest(int index) {
         if (mSpiderQueen != null) {
             Object object = mSpiderQueen.forceRequest(index);
             if (object instanceof Float) {
@@ -139,7 +139,7 @@ public class EhGalleryProvider extends GalleryProvider implements SpiderQueen.On
     }
 
     @Override
-    public void cancelRequest(int index) {
+    protected void onCancelRequest(int index) {
         if (mSpiderQueen != null) {
             mSpiderQueen.cancelRequest(index);
         }

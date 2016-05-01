@@ -21,15 +21,25 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 
+import com.hippo.beerbelly.LruCache;
 import com.hippo.gl.glrenderer.GLCanvas;
 import com.hippo.gl.view.GLRoot;
 import com.hippo.image.Image;
+import com.hippo.image.ImageWrapper;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.ConcurrentPool;
+import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.OSUtils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class GalleryProvider {
 
@@ -48,6 +58,8 @@ public abstract class GalleryProvider {
     private volatile GalleryProviderListener mGalleryProviderListener;
     private volatile GLRoot mGLRoot;
 
+    private final ImageCache mImageCache = new ImageCache();
+
     private boolean mStarted = false;
 
     @UiThread
@@ -63,25 +75,40 @@ public abstract class GalleryProvider {
     @UiThread
     public void stop() {
         OSUtils.checkMainLoop();
+        mImageCache.close();
     }
 
     public void setGLRoot(GLRoot glRoot) {
         mGLRoot = glRoot;
     }
 
-
     /**
      * @return {@link #STATE_WAIT} for wait, 0 for empty
      */
     public abstract int size();
 
-    public abstract void request(int index);
-
-    public void forceRequest(int index) {
-        request(index);
+    public final void request(int index) {
+        ImageWrapper imageWrapper = mImageCache.get(index);
+        if (imageWrapper != null) {
+            notifyPageSucceed(index, imageWrapper);
+        } else {
+            onRequest(index);
+        }
     }
 
-    public abstract void cancelRequest(int index);
+    public final void forceRequest(int index) {
+        onForceRequest(index);
+    }
+
+    protected abstract void onRequest(int index);
+
+    protected abstract void onForceRequest(int index);
+
+    public final void cancelRequest(int index) {
+        onCancelRequest(index);
+    }
+
+    protected abstract void onCancelRequest(int index);
 
     public abstract String getError();
 
@@ -126,6 +153,12 @@ public abstract class GalleryProvider {
     }
 
     public void notifyPageSucceed(int index, Image image) {
+        ImageWrapper imageWrapper = new ImageWrapper(image);
+        mImageCache.add(index, imageWrapper);
+        notifyPageSucceed(index, imageWrapper);
+    }
+
+    public void notifyPageSucceed(int index, ImageWrapper image) {
         notify(NotifyTask.TYPE_SUCCEED, index, 0.0f, image, null);
     }
 
@@ -133,7 +166,7 @@ public abstract class GalleryProvider {
         notify(NotifyTask.TYPE_FAILED, index, 0.0f, null, error);
     }
 
-    private void notify(@NotifyTask.Type int type, int index, float percent, Image image, String error) {
+    private void notify(@NotifyTask.Type int type, int index, float percent, ImageWrapper image, String error) {
         GalleryProviderListener listener = mGalleryProviderListener;
         if (listener == null) {
             return;
@@ -171,7 +204,7 @@ public abstract class GalleryProvider {
         private int mType;
         private int mIndex;
         private float mPercent;
-        private Image mImage;
+        private ImageWrapper mImage;
         private String mError;
 
         public NotifyTask(GalleryProviderListener galleryProviderListener, ConcurrentPool<NotifyTask> pool) {
@@ -179,7 +212,7 @@ public abstract class GalleryProvider {
             mPool = pool;
         }
 
-        public void setData(@Type int type, int index, float percent, Image image, String error) {
+        public void setData(@Type int type, int index, float percent, ImageWrapper image, String error) {
             mType = type;
             mIndex = index;
             mPercent = percent;
@@ -218,6 +251,69 @@ public abstract class GalleryProvider {
             mPool.push(this);
 
             return false;
+        }
+    }
+
+    private static class ImageCache extends LruCache<Integer, ImageWrapper> {
+
+        private static final long MAX_CACHE_SIZE = 128 * 1024 * 1024;
+        private static final long MIN_CACHE_SIZE = 32 * 1024 * 1024;
+
+        private static final String PROCFS_MEMFILE = "/proc/meminfo";
+        private static final Pattern PROCFS_MEMFILE_FORMAT =
+                Pattern.compile("^([a-zA-Z]*):[ \t]*([0-9]*)[ \t]kB");
+        private static final String MEMTOTAL_STRING = "MemTotal";
+        private static long sMemTotal = -2L;
+
+        private static long getTotalMemory() {
+            if (sMemTotal != -2L) {
+                return sMemTotal;
+            }
+
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(PROCFS_MEMFILE), 64);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    Matcher matcher = PROCFS_MEMFILE_FORMAT.matcher(line);
+                    if (matcher.find() && MEMTOTAL_STRING.equals(matcher.group(1))) {
+                        long mem = NumberUtils.parseLongSafely(matcher.group(2), -1L);
+                        if (mem != -1L) {
+                            mem *= 1024;
+                        }
+                        sMemTotal = mem;
+                        return mem;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                IOUtils.closeQuietly(reader);
+            }
+            sMemTotal = -1L;
+            return -1L;
+        }
+
+        public ImageCache() {
+            super((int) MathUtils.clamp(getTotalMemory() / 16, MIN_CACHE_SIZE, MAX_CACHE_SIZE));
+        }
+
+        public void add(Integer key, ImageWrapper value) {
+            if (value.obtain()) {
+                put(key, value);
+            }
+        }
+
+        @Override
+        protected int sizeOf(Integer key, ImageWrapper value) {
+            return value.getWidth() * value.getHeight() * 4;
+        }
+
+        @Override
+        protected void entryRemoved(boolean evicted, Integer key, ImageWrapper oldValue, ImageWrapper newValue) {
+            if (oldValue != null) {
+                oldValue.release();
+            }
         }
     }
 }

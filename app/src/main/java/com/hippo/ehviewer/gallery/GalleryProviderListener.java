@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.gallery;
 
-import com.hippo.image.Image;
+import com.hippo.image.ImageWrapper;
 
 public interface GalleryProviderListener {
 
@@ -26,7 +26,7 @@ public interface GalleryProviderListener {
 
     void onPagePercent(int index, float percent);
 
-    void onPageSucceed(int index, Image image);
+    void onPageSucceed(int index, ImageWrapper image);
 
     void onPageFailed(int index, String error);
 
