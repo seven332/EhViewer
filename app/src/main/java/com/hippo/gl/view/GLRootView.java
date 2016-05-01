@@ -20,7 +20,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Parcelable;
 import android.os.Process;
@@ -53,6 +52,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
+// TODO Call attachToRoot and detachFromRoot in render thread
 // The root component of all <code>GLView</code>s. The rendering is done in GL
 // thread while the event handling is done in the main thread.  To synchronize
 // the two threads, the entry points of this package need to synchronize on the
@@ -315,6 +315,13 @@ public class GLRootView extends GLSurfaceView
         mCanvas.setSize(width, height);
     }
 
+    @Override
+    public void onSurfaceDestroyed() {
+        if (mContentView != null && mContentView.isAttachedToRoot()) {
+            mContentView.detachFromRoot();
+        }
+    }
+
     private void outputFps() {
         long now = System.nanoTime();
         if (mFrameCountingStart == 0) {
@@ -573,28 +580,18 @@ public class GLRootView extends GLSurfaceView
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         unfreeze();
         super.surfaceChanged(holder, format, w, h);
-
-        requestLayoutContentPane();
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         unfreeze();
         super.surfaceCreated(holder);
-
-        if (mContentView != null && !mContentView.isAttachedToRoot()) {
-            mContentView.attachToRoot(this);
-        }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         unfreeze();
         super.surfaceDestroyed(holder);
-
-        if (mContentView != null && mContentView.isAttachedToRoot()) {
-            mContentView.detachFromRoot();
-        }
     }
 
     @Override
