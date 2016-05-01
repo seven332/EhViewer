@@ -56,6 +56,8 @@ import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.hippo.app.CheckBoxDialogBuilder;
+import com.hippo.conaco.DataContainer;
+import com.hippo.conaco.ProgressNotifier;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
@@ -75,8 +77,10 @@ import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.widget.SimpleRatingView;
+import com.hippo.io.UniFileInputStreamPipe;
 import com.hippo.ripple.Ripple;
 import com.hippo.scene.Announcer;
+import com.hippo.streampipe.InputStreamPipe;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
@@ -86,11 +90,15 @@ import com.hippo.widget.LoadImageView;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 import com.hippo.yorozuya.collect.LongList;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -1137,7 +1145,17 @@ public class DownloadsScene extends ToolbarScene
                 return;
             }
             DownloadInfo info = mList.get(position);
-            holder.thumb.load(EhCacheKeyFactory.getThumbKey(info.gid), info.thumb);
+
+            DataContainer container = null;
+            UniFile dir = SpiderDen.getGalleryDownloadDir(info);
+            if (dir != null) {
+                UniFile file = dir.createFile(".thumb");
+                if (file != null) {
+                    container = new ThumbDataContainer(file);
+                }
+            }
+            holder.thumb.load(EhCacheKeyFactory.getThumbKey(info.gid), info.thumb, container, true);
+
             holder.title.setText(EhUtils.getSuitableTitle(info));
             holder.uploader.setText(info.uploader);
             holder.rating.setRating(info.rating);
@@ -1196,6 +1214,46 @@ public class DownloadsScene extends ToolbarScene
             if (view.getCheckedItemCount() == 0) {
                 view.outOfCustomChoiceMode();
             }
+        }
+    }
+
+    private class ThumbDataContainer implements DataContainer {
+
+        private UniFile mFile;
+
+        /**
+         * @param file the thumb file
+         */
+        public ThumbDataContainer(@Nullable UniFile file) {
+            mFile = file;
+        }
+
+        @Override
+        public void onUrlMoved(String requestUrl, String responseUrl) {}
+
+        @Override
+        public boolean save(InputStream is, long length, String mediaType, ProgressNotifier notify) {
+            OutputStream os = null;
+            try {
+                os = mFile.openOutputStream();
+                IOUtils.copy(is, os);
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            } finally {
+                IOUtils.closeQuietly(os);
+            }
+        }
+
+        @Override
+        public InputStreamPipe get() {
+            return new UniFileInputStreamPipe(mFile);
+        }
+
+        @Override
+        public void remove() {
+            mFile.delete();
         }
     }
 }
