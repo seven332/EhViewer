@@ -28,8 +28,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
-import com.github.anrwatchdog.ANRError;
-import com.github.anrwatchdog.ANRWatchDog;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
@@ -92,15 +90,6 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         // Prepare to catch crash
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
-
-        // Start anr watch dog
-        new ANRWatchDog().setANRListener(new ANRWatchDog.ANRListener() {
-            @Override
-            public void onAppNotResponding(ANRError error) {
-                // Throw RuntimeException, let crash handler do it
-                throw new RuntimeException(error.getCause());
-            }
-        }).start();
 
         super.onCreate();
 
@@ -265,9 +254,9 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mOkHttpClient == null) {
             application.mOkHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(15, TimeUnit.SECONDS)
-                    .readTimeout(15, TimeUnit.SECONDS)
-                    .writeTimeout(15, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
                     .cookieJar(getEhCookieStore(application))
                     .build();
         }
