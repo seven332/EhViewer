@@ -100,6 +100,8 @@ public class GalleryActivity extends EhActivity
     private int mPage;
 
     @Nullable
+    private GLRootView mGLRootView;
+    @Nullable
     private GalleryView mGalleryView;
 
     @Nullable
@@ -259,9 +261,9 @@ public class GalleryActivity extends EhActivity
         mGalleryProvider.start();
 
         setContentView(R.layout.activity_gallery);
-        GLRootView glRootView = (GLRootView) ViewUtils.$$(this, R.id.gl_root_view);
-        mGalleryProvider.setGLRoot(glRootView);
-        mUploader = new ImageTexture.Uploader(glRootView);
+        mGLRootView = (GLRootView) ViewUtils.$$(this, R.id.gl_root_view);
+        mGalleryProvider.setGLRoot(mGLRootView);
+        mUploader = new ImageTexture.Uploader(mGLRootView);
 
         int startPage;
         if (savedInstanceState == null) {
@@ -273,7 +275,7 @@ public class GalleryActivity extends EhActivity
         mGalleryView = new GalleryView(this, new GalleryAdapter(), this,
                 Settings.getReadingDirection(), Settings.getPageScaling(),
                 Settings.getStartPosition(), startPage);
-        glRootView.setContentPane(mGalleryView);
+        mGLRootView.setContentPane(mGalleryView);
 
         // System UI helper
         if (Settings.getReadingFullscreen()) {
@@ -343,6 +345,7 @@ public class GalleryActivity extends EhActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mGLRootView = null;
         mGalleryView = null;
         if (mUploader != null) {
             mUploader.clear();
@@ -364,6 +367,24 @@ public class GalleryActivity extends EhActivity
         mSeekBar = null;
 
         SimpleHandler.getInstance().removeCallbacks(mHideSliderRunnable);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mGLRootView != null) {
+            mGLRootView.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mGLRootView != null) {
+            mGLRootView.onResume();
+        }
     }
 
     @Override
