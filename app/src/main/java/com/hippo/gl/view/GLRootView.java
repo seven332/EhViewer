@@ -39,6 +39,9 @@ import com.hippo.gl.glrenderer.UploadedTexture;
 import com.hippo.gl.util.ApiHelper;
 import com.hippo.gl.util.GalleryUtils;
 import com.hippo.gl.util.MotionEventHelper;
+import com.hippo.tuxiang.BestConfigChooser;
+import com.hippo.tuxiang.GLSurfaceView;
+import com.hippo.tuxiang.Renderer;
 import com.hippo.yorozuya.AssertUtils;
 
 import java.util.ArrayDeque;
@@ -46,9 +49,7 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
@@ -62,7 +63,7 @@ import javax.microedition.khronos.opengles.GL11;
 // (2) The public methods of CameraHeadUpDisplay
 // (3) The overridden methods in GLRootView.
 public class GLRootView extends GLSurfaceView
-        implements GLSurfaceView.Renderer, GLRoot {
+        implements Renderer, GLRoot {
     private static final String TAG = "GLRootView";
 
     private static final boolean DEBUG_FPS = false;
@@ -628,113 +629,6 @@ public class GLRootView extends GLSurfaceView
             unfreeze();
         } finally {
             super.finalize();
-        }
-    }
-
-    private static abstract class BaseConfigChooser implements EGLConfigChooser {
-
-        public BaseConfigChooser(int[] configSpec) {
-            mConfigSpec = filterConfigSpec(configSpec);
-        }
-
-        @Override
-        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-            int[] num_config = new int[1];
-            if (!egl.eglChooseConfig(display, mConfigSpec, null, 0,
-                    num_config)) {
-                throw new IllegalArgumentException("eglChooseConfig failed");
-            }
-
-            int numConfigs = num_config[0];
-
-            if (numConfigs <= 0) {
-                throw new IllegalArgumentException(
-                        "No configs match configSpec");
-            }
-
-            EGLConfig[] configs = new EGLConfig[numConfigs];
-            if (!egl.eglChooseConfig(display, mConfigSpec, configs, numConfigs,
-                    num_config)) {
-                throw new IllegalArgumentException("eglChooseConfig#2 failed");
-            }
-            EGLConfig config = chooseConfig(egl, display, configs);
-            if (config == null) {
-                throw new IllegalArgumentException("No config chosen");
-            }
-            return config;
-        }
-
-        abstract EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
-                EGLConfig[] configs);
-
-        protected int[] mConfigSpec;
-
-        private int[] filterConfigSpec(int[] configSpec) {
-            /* We know none of the subclasses define EGL_RENDERABLE_TYPE.
-             * And we know the configSpec is well formed.
-             */
-            int len = configSpec.length;
-            int[] newConfigSpec = new int[len + 2];
-            System.arraycopy(configSpec, 0, newConfigSpec, 0, len-1);
-            newConfigSpec[len-1] = EGL10.EGL_RENDERABLE_TYPE;
-            newConfigSpec[len] = 4; // EGL14.EGL_OPENGL_ES2_BIT;  /* EGL_OPENGL_ES2_BIT */
-            newConfigSpec[len+1] = EGL10.EGL_NONE;
-            return newConfigSpec;
-        }
-    }
-
-    private static class BestConfigChooser extends BaseConfigChooser {
-
-        private final int[] mValue = new int[1];
-
-        public BestConfigChooser() {
-            super(new int[] {
-                    EGL10.EGL_DEPTH_SIZE, 0,
-                    EGL10.EGL_STENCIL_SIZE, 0,
-                    EGL10.EGL_NONE});
-        }
-
-        @Override
-        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display,
-                EGLConfig[] configs) {
-            // Use score to avoid "No config chosen"
-            int configIndex = 0;
-            int maxScore = 0;
-
-            for (int i = 0, n = configs.length; i < n; i++) {
-                EGLConfig config = configs[i];
-                int redSize = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_RED_SIZE, 0);
-                int greenSize = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_GREEN_SIZE, 0);
-                int blueSize = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_BLUE_SIZE, 0);
-                int alphaSize = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_ALPHA_SIZE, 0);
-                int sampleBuffers = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_SAMPLE_BUFFERS, 0);
-                int samples = findConfigAttrib(egl, display, config,
-                        EGL10.EGL_SAMPLES, 0);
-
-                int score = redSize + greenSize + blueSize + alphaSize +
-                        sampleBuffers + samples;
-
-                if (score > maxScore) {
-                    maxScore = score;
-                    configIndex = i;
-                }
-            }
-
-            return configs[configIndex];
-        }
-
-        private int findConfigAttrib(EGL10 egl, EGLDisplay display,
-                EGLConfig config, int attribute, int defaultValue) {
-
-            if (egl.eglGetConfigAttrib(display, config, attribute, mValue)) {
-                return mValue[0];
-            }
-            return defaultValue;
         }
     }
 }
