@@ -41,6 +41,14 @@
         android:defaultValue="0"/>
 
     <com.hippo.preference.ListPreference
+        android:key="detail_size"
+        android:title="@string/settings_eh_detail_size"
+        android:summary="%s"
+        app:entries="@array/detail_size_entries"
+        app:entryValues="@array/detail_size_entry_values"
+        android:defaultValue="0"/>
+
+    <com.hippo.preference.ListPreference
         android:key="thumb_size"
         android:title="@string/settings_eh_thumb_size"
         android:summary="%s"

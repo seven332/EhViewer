@@ -48,6 +48,7 @@ import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -122,7 +123,7 @@ public class HistoryScene extends ToolbarScene
         mRecyclerView.setItemAnimator(animator);
         AutoStaggeredGridLayoutManager layoutManager = new AutoStaggeredGridLayoutManager(
                 0, StaggeredGridLayoutManager.VERTICAL);
-        layoutManager.setColumnSize(resources.getDimensionPixelOffset(R.dimen.gallery_list_column_width));
+        layoutManager.setColumnSize(resources.getDimensionPixelOffset(Settings.getDetailSizeResId()));
         layoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));

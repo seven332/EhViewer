@@ -255,6 +255,24 @@ public class Settings {
         return getIntFromStr(KEY_LIST_MODE, DEFAULT_LIST_MODE);
     }
 
+    public static final String KEY_DETAIL_SIZE = "detail_size";
+    private static final int DEFAULT_DETAIL_SIZE = 0;
+
+    public static int getDetailSize() {
+        return getIntFromStr(KEY_DETAIL_SIZE, DEFAULT_DETAIL_SIZE);
+    }
+
+    @DimenRes
+    public static int getDetailSizeResId() {
+        switch (getDetailSize()) {
+            default:
+            case 0:
+                return R.dimen.gallery_list_column_width_long;
+            case 1:
+                return R.dimen.gallery_list_column_width_short;
+        }
+    }
+
     public static final String KEY_THUMB_SIZE = "thumb_size";
     private static final int DEFAULT_THUMB_SIZE = 1;
 

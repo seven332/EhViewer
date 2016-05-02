@@ -297,7 +297,7 @@ public class DownloadsScene extends ToolbarScene
         mAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(mAdapter);
         mLayoutManager = new AutoStaggeredGridLayoutManager(0, StaggeredGridLayoutManager.VERTICAL);
-        mLayoutManager.setColumnSize(resources.getDimensionPixelOffset(R.dimen.gallery_list_column_width));
+        mLayoutManager.setColumnSize(resources.getDimensionPixelOffset(Settings.getDetailSizeResId()));
         mLayoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));

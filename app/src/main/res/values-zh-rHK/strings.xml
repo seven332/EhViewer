@@ -361,6 +361,9 @@
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">詳情</string>
     <string name="settings_eh_list_mode_thumb">縮略圖</string>
+    <string name="settings_eh_detail_size">詳情大小</string>
+    <string name="settings_eh_detail_size_long">長</string>
+    <string name="settings_eh_detail_size_short">短</string>
     <string name="settings_eh_thumb_size">縮略圖大小</string>
     <string name="settings_eh_thumb_size_large">大</string>
     <string name="settings_eh_thumb_size_middle">中</string>
