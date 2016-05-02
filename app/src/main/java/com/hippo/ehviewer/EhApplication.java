@@ -38,6 +38,7 @@ import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.spider.SpiderDen;
 import com.hippo.ehviewer.ui.CommonOperations;
+import com.hippo.image.Image;
 import com.hippo.image.ImageBitmap;
 import com.hippo.network.StatusCodeException;
 import com.hippo.okhttp.CookieDB;
@@ -68,7 +69,9 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     public static final boolean BETA = false;
 
     private static final boolean DEBUG_CONACO = false;
-    private static final boolean DEBUG_NATIVE_MEMORY = false;
+    private static final boolean DEBUG_PRINT_NATIVE_MEMORY = false;
+    private static final boolean DEBUG_PRINT_IMAGE_COUNT = false;
+    private static final long DEBUG_PRINT_INTERVAL = 3000L;
 
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
@@ -135,8 +138,8 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
             // Ignore
         }
 
-        if (DEBUG_NATIVE_MEMORY) {
-            debugNativeMemory();
+        if (DEBUG_PRINT_NATIVE_MEMORY || DEBUG_PRINT_IMAGE_COUNT) {
+            debugPrint();
         }
     }
 
@@ -199,13 +202,18 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         }
     }
 
-    private void debugNativeMemory() {
+    private void debugPrint() {
         new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG, "Native memory: " + FileUtils.humanReadableByteCount(
-                        Debug.getNativeHeapAllocatedSize(), false));
-                SimpleHandler.getInstance().postDelayed(this, 3000);
+                if (DEBUG_PRINT_NATIVE_MEMORY) {
+                    Log.i(TAG, "Native memory: " + FileUtils.humanReadableByteCount(
+                            Debug.getNativeHeapAllocatedSize(), false));
+                }
+                if (DEBUG_PRINT_IMAGE_COUNT) {
+                    Log.i(TAG, "Image count: " + Image.getImageCount());
+                }
+                SimpleHandler.getInstance().postDelayed(this, DEBUG_PRINT_INTERVAL);
             }
         }.run();
     }
