@@ -368,6 +368,9 @@ public class ImageTexture implements Texture, Animatable {
         }
     }
 
+    /**
+     * Call {@link ImageWrapper#obtain()} first
+     */
     public ImageTexture(@NonNull ImageWrapper image) {
         mImage = image;
         int width = mWidth = image.getWidth();

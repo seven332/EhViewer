@@ -19,8 +19,8 @@ package com.hippo.ehviewer.gallery.gl;
 import android.content.Context;
 
 import com.hippo.gl.glrenderer.BasicTexture;
+import com.hippo.gl.glrenderer.ImageMovableTextTexture;
 import com.hippo.gl.glrenderer.ImageTexture;
-import com.hippo.gl.glrenderer.MovableTextTexture;
 import com.hippo.gl.glrenderer.Texture;
 import com.hippo.gl.view.Gravity;
 import com.hippo.gl.widget.GLFrameLayout;
@@ -49,7 +49,7 @@ public class GalleryPageView extends GLFrameLayout {
 
     private int mIndex = INVALID_INDEX;
 
-    public GalleryPageView(Context context, MovableTextTexture pageTextTexture,
+    public GalleryPageView(Context context, ImageMovableTextTexture pageTextTexture,
             int progressColor, int progressSize) {
         // Add image
         mImage = new ImageView();

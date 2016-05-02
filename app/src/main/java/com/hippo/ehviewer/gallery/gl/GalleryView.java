@@ -28,7 +28,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.gl.annotation.RenderThread;
 import com.hippo.gl.glrenderer.BasicTexture;
 import com.hippo.gl.glrenderer.GLCanvas;
-import com.hippo.gl.glrenderer.MovableTextTexture;
+import com.hippo.gl.glrenderer.ImageMovableTextTexture;
 import com.hippo.gl.glrenderer.StringTexture;
 import com.hippo.gl.glrenderer.Texture;
 import com.hippo.gl.util.GalleryUtils;
@@ -90,7 +90,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private static final int METHOD_ON_ATTACH_TO_ROOT = 20;
 
     private final Context mContext;
-    private MovableTextTexture mPageTextTexture;
+    private ImageMovableTextTexture mPageTextTexture;
     private final GestureRecognizer mGestureRecognizer;
     private Adapter mAdapter;
 
@@ -228,7 +228,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     @SuppressWarnings("deprecation")
     private void onAttachToRootInternal() {
         if (null == mPageTextTexture) {
-            mPageTextTexture = MovableTextTexture.create(Typeface.DEFAULT,
+            mPageTextTexture = ImageMovableTextTexture.create(Typeface.DEFAULT,
                     mContext.getResources().getDimensionPixelSize(R.dimen.gallery_page_text),
                     mContext.getResources().getColor(R.color.secondary_text_dark),
                     new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
