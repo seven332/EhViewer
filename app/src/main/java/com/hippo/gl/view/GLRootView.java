@@ -115,13 +115,15 @@ public class GLRootView extends GLSurfaceView
         this(context, null);
     }
 
+    @SuppressWarnings("deprecation")
     public GLRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mFlags |= FLAG_INITIALIZED;
         setBackgroundDrawable(null);
-        setEGLContextClientVersion(2);
 
-        setEGLConfigChooser(new BestConfigChooser());
+        final int eglContextClientVersion = 2;
+        setEGLContextClientVersion(eglContextClientVersion);
+        setEGLConfigChooser(new BestConfigChooser(eglContextClientVersion));
         setRenderer(this);
         getHolder().setFormat(PixelFormat.RGB_888);
 
