@@ -63,7 +63,7 @@ import javax.microedition.khronos.opengles.GL11;
 // (2) The public methods of CameraHeadUpDisplay
 // (3) The overridden methods in GLRootView.
 public class GLRootView extends GLSurfaceView
-        implements Renderer, GLRoot {
+        implements GLRoot {
     private static final String TAG = "GLRootView";
 
     private static final boolean DEBUG_FPS = false;
@@ -107,9 +107,98 @@ public class GLRootView extends GLSurfaceView
             mRenderLock.newCondition();
     private boolean mFreeze;
 
-    private long mLastDrawFinishTime;
     private boolean mInDownState = false;
-    //private boolean mFirstDraw = true;
+
+    private class GLRootRenderer implements Renderer {
+
+        /**
+         * Called when the context is created, possibly after automatic destruction.
+         */
+        @Override
+        public void onSurfaceCreated(GL10 gl1, EGLConfig config) {
+            GL11 gl = (GL11) gl1;
+            if (mGL != null) {
+                // The GL Object has changed
+                Log.i(TAG, "GLObject has changed from " + mGL + " to " + gl);
+            }
+            mRenderLock.lock();
+            try {
+                mGL = gl;
+                mCanvas = new GLES20Canvas();
+                BasicTexture.invalidateAllTextures();
+            } finally {
+                mRenderLock.unlock();
+            }
+
+            if (DEBUG_FPS) {
+                setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+            } else {
+                setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            }
+        }
+
+        /**
+         * Called when the OpenGL surface is recreated without destroying the
+         * context.
+         */
+        @Override
+        public void onSurfaceChanged(GL10 gl1, int width, int height) {
+            Log.i(TAG, "onSurfaceChanged: " + width + "x" + height + ", gl10: " + gl1.toString());
+            Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
+            GalleryUtils.setRenderThread();
+            GL11 gl = (GL11) gl1;
+            AssertUtils.assertTrue(mGL == gl);
+
+            mCanvas.setSize(width, height);
+        }
+
+        @Override
+        public void onDrawFrame(GL10 gl) {
+            AnimationTime.update();
+
+            long t0 = System.nanoTime();
+
+            mRenderLock.lock();
+
+            while (mFreeze) {
+                mFreezeCondition.awaitUninterruptibly();
+            }
+
+            try {
+                onDrawFrameLocked(gl);
+            } finally {
+                mRenderLock.unlock();
+            }
+
+            long t = System.nanoTime();
+            long duration = (t - t0) / 1000000;
+
+            if (duration > 34) {
+                Log.v(TAG, "--- " + duration + " ---");
+            }
+        }
+
+        @Override
+        public void onSurfaceDestroyed() {
+            if (mContentView != null && mContentView.isAttachedToRoot()) {
+                mContentView.detachFromRoot();
+            }
+        }
+
+        @Override
+        public void onPause() {
+            if (mContentView != null) {
+                mContentView.pause();
+            }
+        }
+
+        @Override
+        public void onResume() {
+            if (mContentView != null) {
+                mContentView.resume();
+            }
+        }
+    }
 
     public GLRootView(Context context) {
         this(context, null);
@@ -124,7 +213,7 @@ public class GLRootView extends GLSurfaceView
         final int eglContextClientVersion = 2;
         setEGLContextClientVersion(eglContextClientVersion);
         setEGLConfigChooser(new BestConfigChooser(eglContextClientVersion));
-        setRenderer(this);
+        setRenderer(new GLRootRenderer());
         getHolder().setFormat(PixelFormat.RGB_888);
 
         // Uncomment this to enable gl error check.
@@ -275,56 +364,6 @@ public class GLRootView extends GLSurfaceView
         if (changed) requestLayoutContentPane();
     }
 
-    /**
-     * Called when the context is created, possibly after automatic destruction.
-     */
-    // This is a GLSurfaceView.Renderer callback
-    @Override
-    public void onSurfaceCreated(GL10 gl1, EGLConfig config) {
-        GL11 gl = (GL11) gl1;
-        if (mGL != null) {
-            // The GL Object has changed
-            Log.i(TAG, "GLObject has changed from " + mGL + " to " + gl);
-        }
-        mRenderLock.lock();
-        try {
-            mGL = gl;
-            mCanvas = new GLES20Canvas();
-            BasicTexture.invalidateAllTextures();
-        } finally {
-            mRenderLock.unlock();
-        }
-
-        if (DEBUG_FPS) {
-            setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        } else {
-            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        }
-    }
-
-    /**
-     * Called when the OpenGL surface is recreated without destroying the
-     * context.
-     */
-    // This is a GLSurfaceView.Renderer callback
-    @Override
-    public void onSurfaceChanged(GL10 gl1, int width, int height) {
-        Log.i(TAG, "onSurfaceChanged: " + width + "x" + height + ", gl10: " + gl1.toString());
-        Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
-        GalleryUtils.setRenderThread();
-        GL11 gl = (GL11) gl1;
-        AssertUtils.assertTrue(mGL == gl);
-
-        mCanvas.setSize(width, height);
-    }
-
-    @Override
-    public void onSurfaceDestroyed() {
-        if (mContentView != null && mContentView.isAttachedToRoot()) {
-            mContentView.detachFromRoot();
-        }
-    }
-
     private void outputFps() {
         long now = System.nanoTime();
         if (mFrameCountingStart == 0) {
@@ -336,47 +375,6 @@ public class GLRootView extends GLSurfaceView
             mFrameCount = 0;
         }
         ++mFrameCount;
-    }
-
-    @Override
-    public void onDrawFrame(GL10 gl) {
-        AnimationTime.update();
-
-        long t0 = System.nanoTime();
-
-        mRenderLock.lock();
-
-        while (mFreeze) {
-            mFreezeCondition.awaitUninterruptibly();
-        }
-
-        try {
-            onDrawFrameLocked(gl);
-        } finally {
-            mRenderLock.unlock();
-        }
-
-        // We put a black cover View in front of the SurfaceView and hide it
-        // after the first draw. This prevents the SurfaceView being transparent
-        // before the first draw.
-        //if (mFirstDraw) {
-        //    mFirstDraw = false;
-        //    post(new Runnable() {
-        //            @Override
-        //            public void run() {
-        //                View root = getRootView();
-        //                View cover = root.findViewById(R.id.gl_root_cover);
-        //                cover.setVisibility(GONE);
-        //            }
-        //        });
-        //}
-
-        long t = System.nanoTime();
-        long duration = (t - t0) / 1000000;
-
-        if (duration > 34) {
-            Log.v(TAG, "--- " + duration + " ---");
-        }
     }
 
     private void onDrawFrameLocked(GL10 gl) {

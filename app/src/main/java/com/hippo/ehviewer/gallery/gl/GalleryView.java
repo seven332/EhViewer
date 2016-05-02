@@ -116,7 +116,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private boolean mScale = false;
     private boolean mScroll = false;
     private boolean mFirstScroll = false;
-    private boolean mTouched = false;
 
     private final Rect mLeftArea = new Rect();
     private final Rect mRightArea = new Rect();
@@ -142,7 +141,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     private final List<Object[]> mArgsListTemp = new ArrayList<>(5);
 
     private final AtomicInteger mCurrentIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
-    private boolean mPause;
 
     @SuppressWarnings("deprecation")
     public GalleryView(@NonNull Context context, @NonNull Adapter adapter,
@@ -547,7 +545,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     private void onDownInternal(float x, float y) {
-        mTouched = true;
         mScale = false;
         mScroll = false;
         mFirstScroll = true;
@@ -557,7 +554,6 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
     }
 
     private void onUpInternal() {
-        mTouched = false;
         if (mLayoutManager != null) {
             mLayoutManager.onUp();
         }
@@ -803,7 +799,7 @@ public class GalleryView extends GLView implements GestureRecognizer.Listener {
 
     @RenderThread
     public GalleryPageView findPageByIndex(int id) {
-        if (!mPause && mLayoutManager != null) {
+        if (mLayoutManager != null) {
             return mLayoutManager.findPageByIndex(id);
         } else {
             return null;

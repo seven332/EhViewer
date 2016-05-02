@@ -212,7 +212,7 @@ public class GLView implements TouchOwner {
     }
 
     // This should only be called on the content pane (the topmost GLView).
-    public void attachToRoot(GLRoot root) {
+    void attachToRoot(GLRoot root) {
         AssertUtils.assertTrue(mParent == null && mRoot == null);
         onAttachToRoot(root);
     }
@@ -221,6 +221,16 @@ public class GLView implements TouchOwner {
     void detachFromRoot() {
         AssertUtils.assertTrue(mParent == null && mRoot != null);
         onDetachFromRoot();
+    }
+
+    // This should only be called on the content pane (the topmost GLView).
+    void pause() {
+        onPause();
+    }
+
+    // This should only be called on the content pane (the topmost GLView).
+    void resume() {
+        onResume();
     }
 
     public boolean isAttachedToRoot() {
@@ -1113,6 +1123,18 @@ public class GLView implements TouchOwner {
             getComponent(i).onDetachFromRoot();
         }
         mRoot = null;
+    }
+
+    public void onPause() {
+        for (int i = 0, n = getComponentCount(); i < n; ++i) {
+            getComponent(i).onPause();
+        }
+    }
+
+    public void onResume() {
+        for (int i = 0, n = getComponentCount(); i < n; ++i) {
+            getComponent(i).onResume();
+        }
     }
 
     public void lockRendering() {
