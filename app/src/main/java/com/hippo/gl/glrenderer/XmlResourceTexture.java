@@ -25,8 +25,8 @@ import android.support.v4.content.ContextCompat;
 
 public class XmlResourceTexture extends UploadedTexture {
 
-    private Context mContext;
-    private int mResId;
+    private final Context mContext;
+    private final int mResId;
     private int mWidth;
     private int mHeight;
 

@@ -7,11 +7,11 @@ import com.hippo.yorozuya.AssertUtils;
 
 public class SpriteTexture extends TiledTexture {
 
-    private int mCount;
-    private int[] mRects;
+    private final int mCount;
+    private final int[] mRects;
 
-    private RectF mTempSource = new RectF();
-    private RectF mTempTarget = new RectF();
+    private final RectF mTempSource = new RectF();
+    private final RectF mTempTarget = new RectF();
 
     public SpriteTexture(Bitmap bitmap, boolean isOpaque, int count, int[] rects) {
         super(bitmap, isOpaque);

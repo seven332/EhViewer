@@ -47,10 +47,10 @@ public class TiledTexture implements Texture {
     private static Tile sFreeTileHead = null;
     private static final Object sFreeTileLock = new Object();
 
-    private static Bitmap sUploadBitmap;
-    private static Canvas sCanvas;
-    private static Paint sBitmapPaint;
-    private static Paint sPaint;
+    private static final Bitmap sUploadBitmap;
+    private static final Canvas sCanvas;
+    private static final Paint sBitmapPaint;
+    private static final Paint sPaint;
 
     private int mUploadIndex = 0;
 

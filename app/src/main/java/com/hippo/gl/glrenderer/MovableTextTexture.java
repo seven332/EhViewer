@@ -13,12 +13,12 @@ import java.util.Arrays;
  * <br>
  * Only support single line now
  */
-public class MovableTextTexture extends SpriteTexture {
+public final class MovableTextTexture extends SpriteTexture {
 
-    private char[] mCharacters;
-    private float[] mWidths;
-    private float mHeight;
-    private float mMaxWidth;
+    private final char[] mCharacters;
+    private final float[] mWidths;
+    private final float mHeight;
+    private final float mMaxWidth;
 
     private MovableTextTexture(Bitmap bitmap, int count, int[] rects, char[] characters,
             float[] widths, float height, float maxWidth) {
@@ -137,7 +137,7 @@ public class MovableTextTexture extends SpriteTexture {
         float[] widths = new float[length];
         paint.getTextWidths(characters, 0, length, widths);
 
-        // Caculate bitmap size
+        // Calculate bitmap size
         float maxWidth = 0.0f;
         for (float f : widths) {
             maxWidth = Math.max(maxWidth, f);
