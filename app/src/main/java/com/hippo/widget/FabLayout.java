@@ -353,7 +353,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
     public void onClick(View v) {
         if (this == v) {
             setExpanded(false);
-        } else if (mOnClickFabListener != null) {
+        } else if (mOnClickFabListener != null && mExpanded) {
             int position = indexOfChild(v);
             if (position == getChildCount() - 1) {
                 mOnClickFabListener.onClickPrimaryFab(this, (FloatingActionButton) v);
