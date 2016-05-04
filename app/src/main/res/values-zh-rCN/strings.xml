@@ -50,6 +50,8 @@
 
     <string name="invalid_download_location">似乎下载路径不可用。请到重新设置下载路径。</string>
 
+    <string name="cellular_network_warning">正在使用移动网络</string>
+
     <string name="error_bad_status_code">错误的状态码：%d</string>
     <string name="error_timeout">超时</string>
     <string name="error_unknown_host">未知主机</string>
@@ -385,6 +387,7 @@
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
     <string name="settings_eh_filter">过滤</string>
     <string name="settings_eh_filter_summary">过滤标题，上传者，标签和标签组</string>
+    <string name="settings_eh_cellular_network_warning">移动网络警告</string>
 
     <string name="settings_read">阅读</string>
     <string name="settings_read_screen_rotation">屏幕方向</string>

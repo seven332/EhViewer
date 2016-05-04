@@ -20,6 +20,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,6 +71,7 @@ import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.ehviewer.ui.scene.WebViewSignInScene;
 import com.hippo.ehviewer.widget.EhDrawerLayout;
 import com.hippo.io.UniFileInputStreamPipe;
+import com.hippo.network.Network;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.scene.StageActivity;
@@ -392,6 +394,9 @@ public final class MainActivity extends StageActivity
             onInit();
             CommonOperations.checkUpdate(this, false);
             checkDownloadLocation();
+            if (Settings.getCellularNetworkWarning()) {
+                checkCellularNetwork();
+            }
         } else {
             onRestore(savedInstanceState);
         }
@@ -408,6 +413,12 @@ public final class MainActivity extends StageActivity
                 .setMessage(R.string.invalid_download_location)
                 .setPositiveButton(R.string.get_it, null)
                 .show();
+    }
+
+    private void checkCellularNetwork() {
+        if (Network.getActiveNetworkType(this) == ConnectivityManager.TYPE_MOBILE) {
+            showTip(R.string.cellular_network_warning, BaseScene.LENGTH_SHORT);
+        }
     }
 
     private void onInit() {

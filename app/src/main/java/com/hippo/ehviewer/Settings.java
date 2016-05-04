@@ -412,6 +412,13 @@ public class Settings {
         putString(KEY_HATH_PASSKEY, value);
     }
 
+    private static final String KEY_CELLULAR_NETWORK_WARNING = "cellular_network_warning";
+    private static final boolean DEFAULT_CELLULAR_NETWORK_WARNING = false;
+
+    public static boolean getCellularNetworkWarning() {
+        return getBoolean(KEY_CELLULAR_NETWORK_WARNING, DEFAULT_CELLULAR_NETWORK_WARNING);
+    }
+
     /********************
      ****** Read
      ********************/

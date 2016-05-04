@@ -385,6 +385,7 @@
     <string name="settings_eh_show_jpn_title_summary_off">顯示預設標題。一般是英文標題</string>
     <string name="settings_eh_filter">過濾</string>
     <string name="settings_eh_filter_summary">過濾標題，上傳者，標籤和標籤組</string>
+    <string name="settings_eh_cellular_network_warning">行動網路警告</string>
 
     <string name="settings_read">閱讀</string>
     <string name="settings_read_screen_rotation">螢幕方向</string>

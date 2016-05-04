@@ -97,4 +97,9 @@
         android:summary="@string/settings_eh_filter_summary"
         app:activity="com.hippo.ehviewer.ui.FilterActivity"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="cellular_network_warning"
+        android:title="@string/settings_eh_cellular_network_warning"
+        android:defaultValue="false"/>
+
 </PreferenceScreen>
