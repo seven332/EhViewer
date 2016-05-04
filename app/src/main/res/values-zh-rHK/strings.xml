@@ -196,7 +196,7 @@
     <string name="no_torrents">沒有種子</string>
     <string name="torrents">種子</string>
     <string name="favorited">已收藏</string>
-    <string name="unfavorited">未收藏</string>
+    <string name="not_favorited">未收藏</string>
     <string name="add_favorites_dialog_title">添加收藏</string>
     <string name="remember_favorite_collection">記住收藏夾</string>
     <string name="add_to_favorite_success">已添加至收藏</string>

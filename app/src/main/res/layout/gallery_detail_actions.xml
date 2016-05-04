@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/unfavorited"
+                    android:text="@string/not_favorited"
                     android:drawablePadding="8dp"
                     android:textColor="@color/primary_text_light"/>
 

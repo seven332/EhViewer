@@ -241,7 +241,7 @@
     <string name="no_torrents">No torrents</string>
     <string name="torrents">Torrents</string>
     <string name="favorited">Favorited</string>
-    <string name="unfavorited">Unfavorited</string>
+    <string name="not_favorited">Not favorited</string>
     <string name="add_favorites_dialog_title">Add to favorites</string>
     <string name="remember_favorite_collection">Remember favorite collection</string>
     <string name="add_to_favorite_success">Added to favorites</string>
