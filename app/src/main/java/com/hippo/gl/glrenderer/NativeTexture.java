@@ -54,6 +54,7 @@ public abstract class NativeTexture extends BasicTexture {
         GLES20.glBindTexture(getTarget(), mId);
         checkError();
         texImage(true);
+        checkError();
 
         setAssociatedCanvas(canvas);
         mState = STATE_LOADED;
@@ -68,6 +69,7 @@ public abstract class NativeTexture extends BasicTexture {
             GLES20.glBindTexture(getTarget(), mId);
             checkError();
             texImage(false);
+            checkError();
             mContentValid = true;
         }
     }

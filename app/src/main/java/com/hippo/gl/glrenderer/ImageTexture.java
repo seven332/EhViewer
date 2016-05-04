@@ -173,7 +173,15 @@ public class ImageTexture implements Texture, Animatable {
         @Override
         protected void texImage(boolean init) {
             if (image != null && !image.isRecycled()) {
-                image.texImage(init, mTileType, offsetX, offsetY);
+                int w, h;
+                if (init) {
+                    w = mTextureWidth;
+                    h = mTextureHeight;
+                } else {
+                    w = mWidth;
+                    h = mHeight;
+                }
+                image.texImage(init, offsetX - borderSize, offsetY - borderSize, w, h);
             }
         }
 
