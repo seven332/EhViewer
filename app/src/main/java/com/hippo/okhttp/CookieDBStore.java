@@ -216,7 +216,6 @@ public class CookieDBStore implements CookieJar {
                 List<CookieWithID> cookies = map.get(key);
                 // cookies can not be null
                 getInternal(url, cookies, result);
-                break;
             }
         }
 
