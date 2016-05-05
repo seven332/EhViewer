@@ -913,12 +913,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private static String getRatingText(float rating, Resources resources) {
-        String undefine = "(´_ゝ`)";
-        if (-1.0f == rating) {
-            return undefine;
-        }
-
-        int resId = 0;
+        int resId;
         switch (Math.round(rating * 2)) {
             case 0:
                 resId = R.string.rating0; break;
@@ -942,13 +937,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 resId = R.string.rating9; break;
             case 10:
                 resId = R.string.rating10; break;
+            default:
+                resId = R.string.rating_none; break;
         }
 
-        if (resId == 0) {
-            return undefine;
-        } else {
-            return resources.getString(resId);
-        }
+        return resources.getString(resId);
     }
 
     private String getAllRatingText(float rating, int ratingCount) {

@@ -263,6 +263,7 @@
     <string name="rating2">PAINFUL</string>
     <string name="rating1">UNBEARABLE</string>
     <string name="rating0">DISASTER</string>
+    <string name="rating_none" translatable="false">(´_ゝ`)</string>
 
     <!-- Gallery Info -->
     <string name="gallery_info">Gallery Info</string>
