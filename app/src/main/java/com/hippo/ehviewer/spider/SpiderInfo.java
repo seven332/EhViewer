@@ -24,6 +24,7 @@ import android.util.SparseArray;
 
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.NumberUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +35,9 @@ public class SpiderInfo {
 
     private static final String TAG = SpiderInfo.class.getSimpleName();
 
+    private static final String VERSION_STR = "VERSION";
+    private static final int VERSION = 2;
+
     static final String TOKEN_FAILED = "failed";
 
     int startPage = 0;
@@ -43,7 +47,6 @@ public class SpiderInfo {
     int previewPages = -1;
     int previewPerPage = -1;
     SparseArray<String> pTokenMap = null;
-
 
     public static SpiderInfo read(@Nullable UniFile file) {
         if (file == null) {
@@ -80,6 +83,17 @@ public class SpiderInfo {
         return startPage >= 0 ? startPage : 0;
     }
 
+    private static int getVersion(String str) {
+        if (null == str) {
+            return -1;
+        }
+        if (str.startsWith(VERSION_STR)) {
+            return NumberUtils.parseIntSafely(str.substring(VERSION_STR.length()), -1);
+        } else {
+            return 1;
+        }
+    }
+
     @SuppressWarnings("InfiniteLoopStatement")
     public static SpiderInfo read(@Nullable InputStream is) {
         if (null == is) {
@@ -89,8 +103,20 @@ public class SpiderInfo {
         SpiderInfo spiderInfo = null;
         try {
             spiderInfo = new SpiderInfo();
+            // Get version
+            String line = IOUtils.readAsciiLine(is);
+            int version = getVersion(line);
+            if (version == VERSION) {
+                // Read next line
+                line = IOUtils.readAsciiLine(is);
+            } else if (version == 1) {
+                // pass
+            } else {
+                // Invalid version
+                return null;
+            }
             // Start page
-            spiderInfo.startPage = getStartPage(IOUtils.readAsciiLine(is));
+            spiderInfo.startPage = getStartPage(line);
             // Gid
             spiderInfo.gid = Long.parseLong(IOUtils.readAsciiLine(is));
             // Token
@@ -100,7 +126,12 @@ public class SpiderInfo {
             // Preview pages
             spiderInfo.previewPages = Integer.parseInt(IOUtils.readAsciiLine(is));
             // Preview pre page
-            spiderInfo.previewPerPage = Integer.parseInt(IOUtils.readAsciiLine(is));
+            line = IOUtils.readAsciiLine(is);
+            if (version == 1) {
+                // Skip it
+            } else {
+                spiderInfo.previewPerPage = Integer.parseInt(line);
+            }
             // Pages
             spiderInfo.pages = Integer.parseInt(IOUtils.readAsciiLine(is));
             // Check pages
@@ -110,7 +141,7 @@ public class SpiderInfo {
             // PToken
             spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
             while (true) { // EOFException will raise
-                String line = IOUtils.readAsciiLine(is);
+                line = IOUtils.readAsciiLine(is);
                 int pos = line.indexOf(" ");
                 if (pos > 0 || pos < line.length() - 1) {
                     int index = Integer.parseInt(line.substring(0, pos));
@@ -127,7 +158,6 @@ public class SpiderInfo {
         }
 
         if (spiderInfo == null || spiderInfo.gid == -1 || spiderInfo.token == null ||
-                spiderInfo.previewPages == -1 || spiderInfo.previewPerPage == -1 ||
                 spiderInfo.pages == -1 || spiderInfo.pTokenMap == null) {
             return null;
         } else {
@@ -139,6 +169,9 @@ public class SpiderInfo {
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(os);
+            writer.write(VERSION_STR);
+            writer.write(Integer.toString(VERSION));
+            writer.write("\n");
             writer.write(String.format("%08x", startPage >= 0 ? startPage : 0)); // Avoid negative
             writer.write("\n");
             writer.write(Long.toString(gid));

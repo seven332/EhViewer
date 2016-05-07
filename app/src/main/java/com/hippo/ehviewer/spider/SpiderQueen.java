@@ -84,11 +84,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class SpiderQueen implements Runnable {
+public final class SpiderQueen implements Runnable {
 
     private static final String TAG = SpiderQueen.class.getSimpleName();
     private static final AtomicInteger sIdGenerator = new AtomicInteger();
     private static final boolean DEBUG_LOG = false;
+    private static final boolean DEBUG_PTOKEN = true;
 
     @IntDef({MODE_READ, MODE_DOWNLOAD})
     @Retention(RetentionPolicy.SOURCE)
@@ -684,9 +685,16 @@ public class SpiderQueen implements Runnable {
         return null;
     }
 
-    private void readPreviews(String body, SpiderInfo spiderInfo) throws ParseException {
+    private void readPreviews(String body, int index, SpiderInfo spiderInfo) throws ParseException {
+        spiderInfo.pages = GalleryDetailParser.parsePages(body);
+        spiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
         PreviewSet previewSet = GalleryDetailParser.parsePreviewSet(body);
-        spiderInfo.previewPerPage = previewSet.size();
+        if ((index >= 0 && index < spiderInfo.pages - 1) || (index == 0 && spiderInfo.pages == 1)) {
+            spiderInfo.previewPerPage = previewSet.size();
+        } else {
+            spiderInfo.previewPerPage = Math.max(spiderInfo.previewPerPage, previewSet.size());
+        }
+
         for (int i = 0, n = previewSet.size(); i < n; i++) {
             GalleryPageUrlParser.Result result = GalleryPageUrlParser.parse(previewSet.getPageUrlAt(i));
             if (result != null) {
@@ -710,8 +718,7 @@ public class SpiderQueen implements Runnable {
 
             spiderInfo.pages = GalleryDetailParser.parsePages(body);
             spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
-            spiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
-            readPreviews(body, spiderInfo);
+            readPreviews(body, 0, spiderInfo);
             return spiderInfo;
         } catch (Exception e) {
             return null;
@@ -720,19 +727,24 @@ public class SpiderQueen implements Runnable {
 
     private String getPTokenFromInternet(int index, EhConfig config) {
         // Check previewIndex
-        int previewIndex = index / mSpiderInfo.previewPerPage;
+        int previewIndex;
+        if (mSpiderInfo.previewPerPage >= 0) {
+            previewIndex = index / mSpiderInfo.previewPerPage;
+        } else {
+            previewIndex = 0;
+        }
 
         try {
             String url = EhUrl.getGalleryDetailUrl(
                     mGalleryInfo.gid, mGalleryInfo.token, previewIndex, false);
-            if (DEBUG_LOG) {
-                Log.d(TAG, url);
+            if (DEBUG_PTOKEN) {
+                Log.d(TAG, "index " + index + ", previewIndex " + previewIndex +
+                        ", previewPerPage " + mSpiderInfo.previewPerPage+ ", url " + url);
             }
             Request request = new EhRequestBuilder(url, config).build();
             Response response = mHttpClient.newCall(request).execute();
             String body = response.body().string();
-            mSpiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
-            readPreviews(body, mSpiderInfo);
+            readPreviews(body, previewIndex, mSpiderInfo);
 
             // Save to local
             writeSpiderInfoToLocal(mSpiderInfo);
