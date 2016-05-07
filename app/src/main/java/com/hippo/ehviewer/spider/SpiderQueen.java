@@ -483,6 +483,8 @@ public final class SpiderQueen implements Runnable {
 
         // Fix state for force
         if (force && (state == STATE_FINISHED || state == STATE_FAILED)) {
+            // Update state to none at once
+            updatePageState(index, STATE_NONE);
             state = STATE_NONE;
         }
 
