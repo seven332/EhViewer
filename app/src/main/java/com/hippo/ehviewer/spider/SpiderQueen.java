@@ -834,8 +834,9 @@ public final class SpiderQueen implements Runnable {
         tryToEnsureWorkers();
 
         // Start spider decoder
-        Thread decoderThread = new PriorityThread(new SpiderDecoder(), "SpiderDecoder-" + sIdGenerator.incrementAndGet(),
-                Process.THREAD_PRIORITY_BACKGROUND);
+        Thread decoderThread = new PriorityThread(new SpiderDecoder(),
+                "SpiderDecoder-" + sIdGenerator.incrementAndGet(),
+                Process.THREAD_PRIORITY_DEFAULT);
         mDecoderThread = decoderThread;
         decoderThread.start();
 
