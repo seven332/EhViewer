@@ -53,7 +53,7 @@ public class ImageBitmapHelper implements ValueHelper<ImageBitmap> {
 
     @Override
     public int sizeOf(@NonNull String key, @NonNull ImageBitmap value) {
-        return value.getWidth() * value.getHeight() * 4;
+        return value.getWidth() * value.getHeight() * 4 /* value.getByteCount() TODO Update Image */;
     }
 
     @Override
@@ -69,7 +69,8 @@ public class ImageBitmapHelper implements ValueHelper<ImageBitmap> {
     @Override
     public boolean useMemoryCache(@NonNull String key, ImageBitmap value) {
         if (value != null) {
-            return value.getWidth() * value.getHeight() <= MAX_CACHE_SIZE;
+            return value.getWidth() * value.getHeight() <= MAX_CACHE_SIZE
+                    /* value.getByteCount() <= MAX_CACHE_BYTE_COUNT TODO Update Image */;
         } else {
             return true;
         }

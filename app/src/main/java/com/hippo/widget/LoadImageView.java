@@ -117,7 +117,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
 
         if (mFailed) {
             onFailure();
-        } else {
+        } else if (mTaskId == Unikery.INVALID_ID) /* if (!mConaco.isLoading(mTaskId)) TODO Update Conaco */ {
             load(mKey, mUrl, mContainer, mUseNetwork);
         }
     }
