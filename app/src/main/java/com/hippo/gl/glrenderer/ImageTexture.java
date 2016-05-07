@@ -249,7 +249,7 @@ public class ImageTexture implements Texture, Animatable {
     private class AnimateRunnable implements Runnable {
 
         public void doRun() {
-            long lastTime = SystemClock.elapsedRealtime();
+            long lastTime = System.nanoTime();
             long lastDelay = -1L;
 
             synchronized (mImage) {
@@ -319,9 +319,9 @@ public class ImageTexture implements Texture, Animatable {
 
                 mImage.advance();
                 long delay = mImage.getDelay();
-                long time = SystemClock.elapsedRealtime();
+                long time = System.nanoTime();
                 if (-1L != lastDelay) {
-                    delay -= (time - lastTime) - lastDelay;
+                    delay -= (time - lastTime) / 1000000 - lastDelay;
                 }
                 lastTime = time;
                 lastDelay = delay;
