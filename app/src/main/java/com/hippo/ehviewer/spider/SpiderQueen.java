@@ -107,6 +107,8 @@ public final class SpiderQueen implements Runnable {
     public static final int STATE_FINISHED = 2;
     public static final int STATE_FAILED = 3;
 
+    public static final int DECODE_THREAD_NUM = 1;
+
     public static final String SPIDER_INFO_FILENAME = ".ehviewer";
 
     private static final String[] URL_509_SUFFIX_ARRAY = {
@@ -135,10 +137,9 @@ public final class SpiderQueen implements Runnable {
     private volatile Thread mQueenThread;
     private final Object mQueenLock = new Object();
 
-    @Nullable
-    private Thread mDecoderThread;
+    private final Thread[] mDecodeThreadArray = new Thread[DECODE_THREAD_NUM];
+    private final int[] mDecodeIndexArray = new int[DECODE_THREAD_NUM];
     private final Stack<Integer> mDecodeRequestStack = new Stack<>();
-    private final AtomicInteger mDecodingIndex = new AtomicInteger(GalleryPageView.INVALID_INDEX);
 
     private final Object mWorkerLock = new Object();
     private ThreadPoolExecutor mWorkerPoolExecutor;
@@ -181,6 +182,10 @@ public final class SpiderQueen implements Runnable {
 
         mWorkerMaxCount = MathUtils.clamp(Settings.getMultiThreadDownload(), 1, 10);
         mPreloadNumber = MathUtils.clamp(Settings.getPreloadImage(), 0, 100);
+
+        for (int i = 0; i < DECODE_THREAD_NUM; i++) {
+            mDecodeIndexArray[i] = GalleryPageView.INVALID_INDEX;
+        }
 
         mWorkerPoolExecutor = new ThreadPoolExecutor(mWorkerMaxCount, mWorkerMaxCount,
                 0, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(),
@@ -538,7 +543,7 @@ public final class SpiderQueen implements Runnable {
                 break;
             case STATE_FINISHED:
                 synchronized (mDecodeRequestStack) {
-                    if (!mDecodeRequestStack.contains(index) && index != mDecodingIndex.get()) {
+                    if (!contain(mDecodeIndexArray, index) && !mDecodeRequestStack.contains(index)) {
                         mDecodeRequestStack.add(index);
                         mDecodeRequestStack.notify();
                     }
@@ -550,6 +555,15 @@ public final class SpiderQueen implements Runnable {
         tryToEnsureWorkers();
 
         return result;
+    }
+
+    public static boolean contain(int[] array, int value) {
+        for (int v: array) {
+            if (v == value) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void ensureWorkers() {
@@ -838,12 +852,13 @@ public final class SpiderQueen implements Runnable {
         // Ensure worker
         tryToEnsureWorkers();
 
-        // Start spider decoder
-        Thread decoderThread = new PriorityThread(new SpiderDecoder(),
-                "SpiderDecoder-" + sIdGenerator.incrementAndGet(),
-                Process.THREAD_PRIORITY_DEFAULT);
-        mDecoderThread = decoderThread;
-        decoderThread.start();
+        // Start decoder
+        for (int i = 0; i < DECODE_THREAD_NUM; i++) {
+            Thread decoderThread = new PriorityThread(new SpiderDecoder(i),
+                    "SpiderDecoder-" + i, Process.THREAD_PRIORITY_DEFAULT);
+            mDecodeThreadArray[i] = decoderThread;
+            decoderThread.start();
+        }
 
         // handle pToken request
         while (!Thread.currentThread().isInterrupted()) {
@@ -907,9 +922,10 @@ public final class SpiderQueen implements Runnable {
         mQueenThread = null;
 
         // Interrupt decoder
-        Thread decoderThread = mDecoderThread;
-        if (decoderThread != null) {
-            decoderThread.interrupt();
+        for (Thread decoderThread : mDecodeThreadArray) {
+            if (decoderThread != null) {
+                decoderThread.interrupt();
+            }
         }
 
         // Interrupt all workers
@@ -1278,6 +1294,18 @@ public final class SpiderQueen implements Runnable {
 
     private class SpiderDecoder implements Runnable {
 
+        private final int mThreadIndex;
+
+        public SpiderDecoder(int index) {
+            mThreadIndex = index;
+        }
+
+        private void resetDecodeIndex() {
+            synchronized (mDecodeRequestStack) {
+                mDecodeIndexArray[mThreadIndex] = GalleryPageView.INVALID_INDEX;
+            }
+        }
+
         @Override
         public void run() {
             if (DEBUG_LOG) {
@@ -1297,19 +1325,19 @@ public final class SpiderQueen implements Runnable {
                         continue;
                     }
                     index = mDecodeRequestStack.pop();
-                    mDecodingIndex.lazySet(index);
+                    mDecodeIndexArray[mThreadIndex] = index;
                 }
 
                 // Check index valid
                 if (index < 0 || index >= mPageStateArray.length) {
-                    mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                    resetDecodeIndex();
                     notifyGetImageFailure(index, GetText.getString(R.string.error_out_of_range));
                     continue;
                 }
 
                 InputStreamPipe pipe = mSpiderDen.openInputStreamPipe(index);
                 if (pipe == null) {
-                    mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                    resetDecodeIndex();
                     // Can't find the file, it might be removed from cache,
                     // Reset it state and request it
                     updatePageState(index, STATE_NONE, null);
@@ -1323,14 +1351,12 @@ public final class SpiderQueen implements Runnable {
                     pipe.obtain();
                     // TODO how to keep stream open
                     image = Image.decode(pipe.open(), false);
-                    if (image != null) {
-                        mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
-                    } else {
-                        mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                    if (image == null) {
                         error = GetText.getString(R.string.error_decoding_failed);
                     }
+                    resetDecodeIndex();
                 } catch (IOException e) {
-                    mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
+                    resetDecodeIndex();
                     error = GetText.getString(R.string.error_reading_failed);
                 } finally {
                     pipe.close();
