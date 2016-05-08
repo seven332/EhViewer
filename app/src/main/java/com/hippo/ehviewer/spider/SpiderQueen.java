@@ -271,6 +271,9 @@ public final class SpiderQueen implements Runnable {
     }
 
     private void notifyGetImageFailure(int index, String error) {
+        if (error == null) {
+            error = GetText.getString(R.string.error_unknown);
+        }
         synchronized (mSpiderListeners) {
             for (OnSpiderListener listener : mSpiderListeners) {
                 listener.onGetImageFailure(index, error);
@@ -1314,23 +1317,30 @@ public final class SpiderQueen implements Runnable {
                     continue;
                 }
 
+                Image image = null;
+                String error = null;
                 try {
                     pipe.obtain();
                     // TODO how to keep stream open
-                    Image image = Image.decode(pipe.open(), false);
+                    image = Image.decode(pipe.open(), false);
                     if (image != null) {
                         mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
-                        notifyGetImageSuccess(index, image);
                     } else {
                         mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
-                        notifyGetImageFailure(index, GetText.getString(R.string.error_decoding_failed));
+                        error = GetText.getString(R.string.error_decoding_failed);
                     }
                 } catch (IOException e) {
                     mDecodingIndex.lazySet(GalleryPageView.INVALID_INDEX);
-                    notifyGetImageFailure(index, GetText.getString(R.string.error_reading_failed));
+                    error = GetText.getString(R.string.error_reading_failed);
                 } finally {
                     pipe.close();
                     pipe.release();
+                    // Notify
+                    if (image != null) {
+                        notifyGetImageSuccess(index, image);
+                    } else {
+                        notifyGetImageFailure(index, error);
+                    }
                 }
             }
 
