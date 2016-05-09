@@ -77,6 +77,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -146,7 +147,7 @@ public final class SpiderQueen implements Runnable {
     private int mWorkerCount;
 
     private final Object mPTokenLock = new Object();
-    private volatile SpiderInfo mSpiderInfo;
+    private final AtomicReference<SpiderInfo> mSpiderInfo = new AtomicReference<>();
     private final Queue<Integer> mRequestPTokenQueue = new ConcurrentLinkedQueue<>();
 
     private final Object mPageStateLock = new Object();
@@ -646,21 +647,23 @@ public final class SpiderQueen implements Runnable {
     }
 
     public int getStartPage() {
-        mSpiderInfo = readSpiderInfoFromLocal();
-        if (mSpiderInfo != null) {
-            return mSpiderInfo.startPage;
+        SpiderInfo spiderInfo = readSpiderInfoFromLocal();
+        if (spiderInfo != null) {
+            mSpiderInfo.lazySet(spiderInfo);
+            return spiderInfo.startPage;
         } else {
             return 0;
         }
     }
 
     public void putStartPage(int page) {
-        if (mSpiderInfo != null) {
-            mSpiderInfo.startPage = page;
+        final SpiderInfo spiderInfo = mSpiderInfo.get();
+        if (spiderInfo != null) {
+            spiderInfo.startPage = page;
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                    writeSpiderInfoToLocal(mSpiderInfo);
+                    writeSpiderInfoToLocal(spiderInfo);
                     return null;
                 }
             }.execute();
@@ -668,15 +671,16 @@ public final class SpiderQueen implements Runnable {
     }
 
     private synchronized SpiderInfo readSpiderInfoFromLocal() {
-        if (null != mSpiderInfo) {
-            return mSpiderInfo;
+        SpiderInfo spiderInfo = mSpiderInfo.get();
+        if (spiderInfo != null) {
+            return spiderInfo;
         }
 
         // Read from download dir
         UniFile downloadDir = mSpiderDen.getDownloadDir();
         if (downloadDir != null) {
             UniFile file = downloadDir.findFile(SPIDER_INFO_FILENAME);
-            SpiderInfo spiderInfo = SpiderInfo.read(file);
+            spiderInfo = SpiderInfo.read(file);
             if (spiderInfo != null && spiderInfo.gid == mGalleryInfo.gid &&
                     spiderInfo.token.equals(mGalleryInfo.token)) {
                 return spiderInfo;
@@ -688,7 +692,7 @@ public final class SpiderQueen implements Runnable {
         if (null != pipe) {
             try {
                 pipe.obtain();
-                SpiderInfo spiderInfo = SpiderInfo.read(pipe.open());
+                spiderInfo = SpiderInfo.read(pipe.open());
                 if (spiderInfo != null && spiderInfo.gid == mGalleryInfo.gid &&
                         spiderInfo.token.equals(mGalleryInfo.token)) {
                     return spiderInfo;
@@ -745,10 +749,15 @@ public final class SpiderQueen implements Runnable {
     }
 
     private String getPTokenFromInternet(int index, EhConfig config) {
+        SpiderInfo spiderInfo = mSpiderInfo.get();
+        if (spiderInfo == null) {
+            return null;
+        }
+
         // Check previewIndex
         int previewIndex;
-        if (mSpiderInfo.previewPerPage >= 0) {
-            previewIndex = index / mSpiderInfo.previewPerPage;
+        if (spiderInfo.previewPerPage >= 0) {
+            previewIndex = index / spiderInfo.previewPerPage;
         } else {
             previewIndex = 0;
         }
@@ -758,19 +767,19 @@ public final class SpiderQueen implements Runnable {
                     mGalleryInfo.gid, mGalleryInfo.token, previewIndex, false);
             if (DEBUG_PTOKEN) {
                 Log.d(TAG, "index " + index + ", previewIndex " + previewIndex +
-                        ", previewPerPage " + mSpiderInfo.previewPerPage+ ", url " + url);
+                        ", previewPerPage " + spiderInfo.previewPerPage+ ", url " + url);
             }
             Request request = new EhRequestBuilder(url, config).build();
             Response response = mHttpClient.newCall(request).execute();
             String body = response.body().string();
-            readPreviews(body, previewIndex, mSpiderInfo);
+            readPreviews(body, previewIndex, spiderInfo);
 
             // Save to local
-            writeSpiderInfoToLocal(mSpiderInfo);
+            writeSpiderInfoToLocal(spiderInfo);
 
             String pToken;
             synchronized (mPTokenLock) {
-                pToken = mSpiderInfo.pTokenMap.get(index);
+                pToken = spiderInfo.pTokenMap.get(index);
             }
             return pToken;
         } catch (Exception e) {
@@ -826,7 +835,7 @@ public final class SpiderQueen implements Runnable {
         if (spiderInfo == null) {
             return;
         }
-        mSpiderInfo = spiderInfo;
+        mSpiderInfo.lazySet(spiderInfo);
 
         // Check interrupted
         if (Thread.currentThread().isInterrupted()) {
@@ -899,7 +908,7 @@ public final class SpiderQueen implements Runnable {
             if (null == pToken) {
                 // If failed, set the pToken "failed"
                 synchronized (mPTokenLock) {
-                    mSpiderInfo.pTokenMap.put(index, SpiderInfo.TOKEN_FAILED);
+                    spiderInfo.pTokenMap.put(index, SpiderInfo.TOKEN_FAILED);
                 }
             }
 
@@ -1159,6 +1168,11 @@ public final class SpiderQueen implements Runnable {
 
         // false for stop
         private boolean runInternal() {
+            SpiderInfo spiderInfo = mSpiderInfo.get();
+            if (spiderInfo == null) {
+                return false;
+            }
+
             int size = mPageStateArray.length;
 
             // Get request index
@@ -1208,10 +1222,10 @@ public final class SpiderQueen implements Runnable {
             // Clear TOKEN_FAILED for force request
             if (force) {
                 synchronized (mPTokenLock) {
-                    int i = mSpiderInfo.pTokenMap.indexOfKey(index);
-                    String pToken = mSpiderInfo.pTokenMap.valueAt(i);
+                    int i = spiderInfo.pTokenMap.indexOfKey(index);
+                    String pToken = spiderInfo.pTokenMap.valueAt(i);
                     if (SpiderInfo.TOKEN_FAILED.equals(pToken)) {
-                        mSpiderInfo.pTokenMap.remove(i);
+                        spiderInfo.pTokenMap.remove(i);
                     }
                 }
             }
@@ -1220,7 +1234,7 @@ public final class SpiderQueen implements Runnable {
             // Get token
             while (!Thread.currentThread().isInterrupted()) {
                 synchronized (mPTokenLock) {
-                    pToken = mSpiderInfo.pTokenMap.get(index);
+                    pToken = spiderInfo.pTokenMap.get(index);
                 }
                 if (pToken == null) {
                     mRequestPTokenQueue.add(index);
