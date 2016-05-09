@@ -26,7 +26,9 @@ import android.support.annotation.NonNull;
 import com.hippo.scene.StageActivity;
 import com.hippo.util.PackageUtils;
 import com.hippo.util.ReadableTime;
+import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.OSUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -107,6 +109,8 @@ public class Crash {
         fw.write("INCREMENTAL=");fw.write(Build.VERSION.INCREMENTAL);fw.write("\r\n");
         fw.write("RELEASE=");fw.write(Build.VERSION.RELEASE);fw.write("\r\n");
         fw.write("SDK=");fw.write(Integer.toString(Build.VERSION.SDK_INT));fw.write("\r\n");
+        fw.write("MEMORY=");fw.write(FileUtils.humanReadableByteCount(OSUtils.getAppAllocatedMemory(), false));
+        fw.write("/");fw.write(FileUtils.humanReadableByteCount(OSUtils.getTotalMemory(), false));fw.write("\r\n");
         fw.write("\r\n");
     }
 
