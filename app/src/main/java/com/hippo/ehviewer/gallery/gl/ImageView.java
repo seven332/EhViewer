@@ -206,6 +206,7 @@ public class ImageView extends GLView implements ImageTexture.Callback {
         // Remove callback
         if (mImageTexture != null) {
             mImageTexture.setCallback(null);
+            mImageTexture.stop();
         }
 
         int oldTextureWidth = mTextureWidth;
@@ -229,6 +230,7 @@ public class ImageView extends GLView implements ImageTexture.Callback {
             getValidRect(mValidRect);
             if (!mValidRect.isEmpty()) {
                 startAnimation(mAlphaAnimation, true);
+                mImageTexture.start();
             }
         } else {
             mTextureWidth = 1;

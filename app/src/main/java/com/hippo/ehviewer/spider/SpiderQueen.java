@@ -1347,32 +1347,66 @@ public final class SpiderQueen implements Runnable {
 
                 Image image = null;
                 String error = null;
+                InputStream is;
+
+                pipe.obtain();
                 try {
-                    pipe.obtain();
-                    // TODO how to keep stream open
-                    image = Image.decode(pipe.open(), false);
+                    is = new AutoCloseInputStream(pipe, pipe.open());
+                } catch (IOException e) {
+                    // Can't open pipe
+                    error = GetText.getString(R.string.error_reading_failed);
+                    is = null;
+                    pipe.close();
+                    pipe.release();
+                }
+
+                if (is != null) {
+                    image = Image.decode(is, true);
                     if (image == null) {
                         error = GetText.getString(R.string.error_decoding_failed);
                     }
-                    resetDecodeIndex();
-                } catch (IOException e) {
-                    resetDecodeIndex();
-                    error = GetText.getString(R.string.error_reading_failed);
-                } finally {
-                    pipe.close();
-                    pipe.release();
-                    // Notify
-                    if (image != null) {
-                        notifyGetImageSuccess(index, image);
-                    } else {
-                        notifyGetImageFailure(index, error);
-                    }
                 }
+
+                // Notify
+                if (image != null) {
+                    notifyGetImageSuccess(index, image);
+                } else {
+                    notifyGetImageFailure(index, error);
+                }
+
+                resetDecodeIndex();
             }
 
             if (DEBUG_LOG) {
                 Log.i(TAG, Thread.currentThread().getName() + ": end");
             }
+        }
+    }
+
+    private class AutoCloseInputStream extends InputStream {
+
+        private final InputStreamPipe mPipe;
+        private final InputStream mIs;
+
+        public AutoCloseInputStream(InputStreamPipe pipe, InputStream is) {
+            mPipe = pipe;
+            mIs = is;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return mIs.read();
+        }
+
+        @Override
+        public int read(@NonNull byte[] buffer, int byteOffset, int byteCount) throws IOException {
+            return mIs.read(buffer, byteOffset, byteCount);
+        }
+
+        @Override
+        public void close() throws IOException {
+            mPipe.close();
+            mPipe.release();
         }
     }
 

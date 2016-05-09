@@ -18,13 +18,14 @@ package com.hippo.gl.glrenderer;
 
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
+import android.os.Process;
 import android.os.SystemClock;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import com.hippo.gl.annotation.RenderThread;
 import com.hippo.gl.view.GLRoot;
-import com.hippo.image.ImageWrapper;
+import com.hippo.yorozuya.thread.InfiniteThreadExecutor;
 import com.hippo.yorozuya.thread.PVLock;
 import com.hippo.yorozuya.thread.PriorityThreadFactory;
 
@@ -33,8 +34,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ImageTexture implements Texture, Animatable {
 
@@ -59,7 +61,7 @@ public class ImageTexture implements Texture, Animatable {
     // In this 16ms, we use about 4~8 ms to upload tiles.
     private static final long UPLOAD_TILE_LIMIT = 4; // ms
 
-    private static final PriorityThreadFactory sThreadFactory;
+    private static final Executor sThreadExecutor;
     private static final PVLock sPVLock;
 
     private static Tile sSmallFreeTileHead = null;
@@ -77,17 +79,19 @@ public class ImageTexture implements Texture, Animatable {
     private final RectF mSrcRect = new RectF();
     private final RectF mDestRect = new RectF();
 
-    private final AtomicBoolean mFrameDirty = new AtomicBoolean();
     private boolean mImageBusy = false;
+    private final AtomicBoolean mRunning = new AtomicBoolean();
+    private final AtomicBoolean mFrameDirty = new AtomicBoolean();
     private final AtomicBoolean mNeedRelease = new AtomicBoolean();
     private final AtomicBoolean mReleased = new AtomicBoolean();
 
-    private final AtomicReference<Thread> mAnimateThread = new AtomicReference<>();
+    private Runnable mAnimateRunnable = null;
 
     private WeakReference<Callback> mCallback;
 
     static {
-        sThreadFactory = new PriorityThreadFactory("ImageTexture$AnimateTask", android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        sThreadExecutor = new InfiniteThreadExecutor(10 * 1000, new LinkedList<>(),
+                new PriorityThreadFactory("ImageTexture$AnimateTask", Process.THREAD_PRIORITY_BACKGROUND));
         sPVLock = new PVLock(3);
     }
 
@@ -253,37 +257,25 @@ public class ImageTexture implements Texture, Animatable {
             long lastDelay = -1L;
 
             synchronized (mImage) {
-                // Check released
-                if (mReleased.get()) {
-                    return;
-                }
-                // Check image busy
-                if (mImageBusy) {
-                    // Image is busy, means it is recycling
-                    return;
-                }
-                if (mNeedRelease.get()) {
-                    // Need release
+                // Check released, image busy, Need release
+                if (mReleased.get() || mImageBusy || mNeedRelease.get()) {
+                    mAnimateRunnable = null;
                     return;
                 }
                 // Obtain image
                 mImageBusy = true;
             }
 
-            boolean interrupted = Thread.currentThread().isInterrupted();
-
             if (!mImage.isCompleted()) {
-                if (!interrupted) {
-                    try {
-                        sPVLock.p();
-                    } catch (InterruptedException e) {
-                        interrupted = true;
-                    }
-                    if (!interrupted && !mNeedRelease.get()) {
-                        mImage.complete();
-                    }
-                    sPVLock.v();
+                try {
+                    sPVLock.p();
+                } catch (InterruptedException e) {
+                    // Ignore
                 }
+                if (!mNeedRelease.get()) {
+                    mImage.complete();
+                }
+                sPVLock.v();
             }
 
             int frameCount = mImage.getFrameCount();
@@ -291,26 +283,19 @@ public class ImageTexture implements Texture, Animatable {
             synchronized (mImage) {
                 // Release image
                 mImageBusy = false;
+                // Check need release, frameCount <= 1
+                if (mNeedRelease.get() || frameCount <= 1) {
+                    mAnimateRunnable = null;
+                    return;
+                }
             }
 
-            if (interrupted || mNeedRelease.get() || frameCount <= 1) {
-                return;
-            }
-
-            while (!Thread.currentThread().isInterrupted()) {
+            for (;;) {
                 // Obtain
                 synchronized (mImage) {
-                    // Check released
-                    if (mReleased.get()) {
-                        return;
-                    }
-                    // Check image busy
-                    if (mImageBusy) {
-                        // Image is busy, means it is recycling
-                        return;
-                    }
-                    if (mNeedRelease.get()) {
-                        // Need release
+                    // Check released, image busy, Need release, not running
+                    if (mReleased.get() || mImageBusy || mNeedRelease.get() || !mRunning.get()) {
+                        mAnimateRunnable = null;
                         return;
                     }
                     // Obtain image
@@ -337,7 +322,7 @@ public class ImageTexture implements Texture, Animatable {
                     try {
                         Thread.sleep(delay);
                     } catch (InterruptedException e) {
-                        break;
+                        // Ignore
                     }
                 }
             }
@@ -371,8 +356,6 @@ public class ImageTexture implements Texture, Animatable {
                     mImageBusy = false;
                 }
             }
-
-            mAnimateThread.lazySet(null);
         }
     }
 
@@ -443,10 +426,10 @@ public class ImageTexture implements Texture, Animatable {
 
         mTiles = list.toArray(new Tile[list.size()]);
 
-        if (!mImage.isCompleted() || mImage.getFrameCount() > 1) {
-            Thread thread = sThreadFactory.newThread(new AnimateRunnable());
-            mAnimateThread.lazySet(thread);
-            thread.start();
+        if (!mImage.isCompleted()) {
+            Runnable runnable = new AnimateRunnable();
+            mAnimateRunnable = runnable;
+            sThreadExecutor.execute(runnable);
         }
     }
 
@@ -470,33 +453,31 @@ public class ImageTexture implements Texture, Animatable {
 
     @Override
     public void start() {
-        if (mReleased.get() || (mImage.isCompleted() && mImage.getFrameCount() <= 1)) {
+        if (mReleased.get() || mNeedRelease.get() || (mImage.isCompleted() && mImage.getFrameCount() <= 1) ||
+                mRunning.get()) {
             return;
         }
 
-        Thread thread = mAnimateThread.get();
-        if (thread == null) {
-            thread = sThreadFactory.newThread(new AnimateRunnable());
-            mAnimateThread.set(thread);
-            thread.start();
-        }
-    }
+        mRunning.lazySet(true);
 
-    @Override
-    public void stop() {
-        if (!mReleased.get() && (mImage.isCompleted() && mImage.getFrameCount() > 1)) {
-            Thread thread = mAnimateThread.getAndSet(null);
-            if (null != thread) {
-                thread.interrupt();
+        synchronized (mImage) {
+            if (mAnimateRunnable == null) {
+                Runnable runnable = new AnimateRunnable();
+                mAnimateRunnable = runnable;
+                sThreadExecutor.execute(runnable);
             }
         }
     }
 
     @Override
-    public boolean isRunning() {
-        return mAnimateThread.get() != null;
+    public void stop() {
+        mRunning.lazySet(false);
     }
 
+    @Override
+    public boolean isRunning() {
+        return mRunning.get();
+    }
 
     private boolean uploadNextTile(GLCanvas canvas) {
         if (mUploadIndex == mTiles.length) return true;
@@ -663,6 +644,8 @@ public class ImageTexture implements Texture, Animatable {
     }
 
     public void recycle() {
+        mRunning.lazySet(false);
+
         for (Tile mTile : mTiles) {
             mTile.free();
         }
@@ -675,6 +658,7 @@ public class ImageTexture implements Texture, Animatable {
                 mImageBusy = true;
             } else {
                 releaseNow = false;
+                mNeedRelease.set(true);
             }
         }
 
@@ -684,13 +668,6 @@ public class ImageTexture implements Texture, Animatable {
             synchronized (mImage) {
                 mImageBusy = false;
             }
-        } else {
-            mNeedRelease.set(true);
-        }
-
-        Thread thread = mAnimateThread.getAndSet(null);
-        if (null != thread) {
-            thread.interrupt();
         }
     }
 

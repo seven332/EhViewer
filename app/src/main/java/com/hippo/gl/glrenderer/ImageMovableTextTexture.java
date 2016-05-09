@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.hippo.image.Image;
-import com.hippo.image.ImageWrapper;
 
 import java.util.Arrays;
 

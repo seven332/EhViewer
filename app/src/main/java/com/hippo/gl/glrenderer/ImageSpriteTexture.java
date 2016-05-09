@@ -19,7 +19,6 @@ package com.hippo.gl.glrenderer;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 
-import com.hippo.image.ImageWrapper;
 import com.hippo.yorozuya.AssertUtils;
 
 public class ImageSpriteTexture extends ImageTexture {

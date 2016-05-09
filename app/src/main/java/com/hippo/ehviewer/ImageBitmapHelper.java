@@ -20,7 +20,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.hippo.conaco.ValueHelper;
-import com.hippo.image.Image;
 import com.hippo.image.ImageBitmap;
 import com.hippo.streampipe.InputStreamPipe;
 
@@ -35,12 +34,7 @@ public class ImageBitmapHelper implements ValueHelper<ImageBitmap> {
     public ImageBitmap decode(@NonNull InputStreamPipe isPipe) {
         try {
             isPipe.obtain();
-            Image image = Image.decode(isPipe.open(), false);
-            if (image != null) {
-                return new ImageBitmap(image);
-            } else {
-                return null;
-            }
+            return ImageBitmap.decode(isPipe.open());
         } catch (OutOfMemoryError e) {
             return null;
         } catch (IOException e) {
