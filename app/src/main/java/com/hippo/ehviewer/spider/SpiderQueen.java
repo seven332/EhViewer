@@ -130,8 +130,6 @@ public final class SpiderQueen implements Runnable {
 
     private int mReadReference = 0;
     private int mDownloadReference = 0;
-    @Mode
-    private int mMode;
 
     // It mQueenThread is null, failed or stopped
     @Nullable
@@ -322,18 +320,19 @@ public final class SpiderQueen implements Runnable {
     }
 
     private void updateMode() {
+        int mode;
         if (mDownloadReference > 0) {
-            mMode = MODE_DOWNLOAD;
+            mode = MODE_DOWNLOAD;
         } else {
-            mMode = MODE_READ;
+            mode = MODE_READ;
         }
 
-        mSpiderDen.setMode(mMode);
+        mSpiderDen.setMode(mode);
 
         // Update download page
         boolean intoDownloadMode = false;
         synchronized (mRequestPageQueue) {
-            if (mMode == MODE_DOWNLOAD) {
+            if (mode == MODE_DOWNLOAD) {
                 if (mDownloadPage < 0) {
                     mDownloadPage = 0;
                     intoDownloadMode = true;
