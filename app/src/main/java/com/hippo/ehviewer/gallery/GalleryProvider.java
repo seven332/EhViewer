@@ -28,18 +28,11 @@ import com.hippo.gl.view.GLRoot;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.ConcurrentPool;
-import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.MathUtils;
-import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.OSUtils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class GalleryProvider {
 
@@ -259,43 +252,8 @@ public abstract class GalleryProvider {
         private static final long MAX_CACHE_SIZE = 128 * 1024 * 1024;
         private static final long MIN_CACHE_SIZE = 32 * 1024 * 1024;
 
-        private static final String PROCFS_MEMFILE = "/proc/meminfo";
-        private static final Pattern PROCFS_MEMFILE_FORMAT =
-                Pattern.compile("^([a-zA-Z]*):[ \t]*([0-9]*)[ \t]kB");
-        private static final String MEMTOTAL_STRING = "MemTotal";
-        private static long sMemTotal = -2L;
-
-        private static long getTotalMemory() {
-            if (sMemTotal != -2L) {
-                return sMemTotal;
-            }
-
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(PROCFS_MEMFILE), 64);
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    Matcher matcher = PROCFS_MEMFILE_FORMAT.matcher(line);
-                    if (matcher.find() && MEMTOTAL_STRING.equals(matcher.group(1))) {
-                        long mem = NumberUtils.parseLongSafely(matcher.group(2), -1L);
-                        if (mem != -1L) {
-                            mem *= 1024;
-                        }
-                        sMemTotal = mem;
-                        return mem;
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                IOUtils.closeQuietly(reader);
-            }
-            sMemTotal = -1L;
-            return -1L;
-        }
-
         public ImageCache() {
-            super((int) MathUtils.clamp(getTotalMemory() / 16, MIN_CACHE_SIZE, MAX_CACHE_SIZE));
+            super((int) MathUtils.clamp(OSUtils.getTotalMemory() / 16, MIN_CACHE_SIZE, MAX_CACHE_SIZE));
         }
 
         public void add(Integer key, ImageWrapper value) {

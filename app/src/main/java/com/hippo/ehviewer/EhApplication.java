@@ -17,7 +17,6 @@
 package com.hippo.ehviewer;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -49,6 +48,7 @@ import com.hippo.util.BitmapUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntIdGenerator;
+import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.io.File;
@@ -280,11 +280,8 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         return application.mImageBitmapHelper;
     }
 
-    private static int getMemoryCacheMaxSize(Context context) {
-        final ActivityManager activityManager = (ActivityManager) context.
-                getSystemService(Context.ACTIVITY_SERVICE);
-        return Math.min(20 * 1024 * 1024,
-                Math.round(0.2f * activityManager.getMemoryClass() * 1024 * 1024));
+    private static int getMemoryCacheMaxSize() {
+        return Math.min(20 * 1024 * 1024, (int) OSUtils.getAppMaxMemory());
     }
 
     @NonNull
@@ -293,7 +290,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         if (application.mConaco == null) {
             Conaco.Builder<ImageBitmap> builder = new Conaco.Builder<>();
             builder.hasMemoryCache = true;
-            builder.memoryCacheMaxSize = getMemoryCacheMaxSize(context);
+            builder.memoryCacheMaxSize = getMemoryCacheMaxSize();
             builder.hasDiskCache = true;
             builder.diskCacheDir = new File(context.getCacheDir(), "thumb");
             builder.diskCacheMaxSize = 80 * 1024 * 1024; // 80MB
