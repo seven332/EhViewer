@@ -52,19 +52,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_go_to_dark_x24"
-            app:backgroundTint="?attr/colorPrimary"
+            app:backgroundTint="?attr/colorAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_refresh_dark_x24"
-            app:backgroundTint="?attr/colorPrimary"
+            app:backgroundTint="?attr/colorAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:backgroundTint="?attr/colorPrimary"
             style="@style/Widget.Design.FloatingActionButton"/>
 
     </com.hippo.widget.FabLayout>
