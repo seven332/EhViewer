@@ -1145,17 +1145,8 @@ public class DownloadsScene extends ToolbarScene
                 return;
             }
             DownloadInfo info = mList.get(position);
-
-            DataContainer container = null;
-            UniFile dir = SpiderDen.getGalleryDownloadDir(info);
-            if (dir != null) {
-                UniFile file = dir.createFile(".thumb");
-                if (file != null) {
-                    container = new ThumbDataContainer(file);
-                }
-            }
-            holder.thumb.load(EhCacheKeyFactory.getThumbKey(info.gid), info.thumb, container, true);
-
+            holder.thumb.load(EhCacheKeyFactory.getThumbKey(info.gid), info.thumb,
+                    new ThumbDataContainer(info), true);
             holder.title.setText(EhUtils.getSuitableTitle(info));
             holder.uploader.setText(info.uploader);
             holder.rating.setRating(info.rating);
@@ -1219,21 +1210,32 @@ public class DownloadsScene extends ToolbarScene
 
     private class ThumbDataContainer implements DataContainer {
 
-        @NonNull
-        private final UniFile mFile;
+        private final DownloadInfo mInfo;
+        private UniFile mFile;
 
-        /**
-         * @param file the thumb file
-         */
-        public ThumbDataContainer(@NonNull UniFile file) {
-            mFile = file;
+        public ThumbDataContainer(@NonNull DownloadInfo info) {
+            mInfo = info;
         }
 
         @Override
         public void onUrlMoved(String requestUrl, String responseUrl) {}
 
+        private void ensureFile() {
+            if (mFile == null) {
+                UniFile dir = SpiderDen.getGalleryDownloadDir(mInfo);
+                if (dir != null && dir.ensureDir()) {
+                    mFile = dir.createFile(".thumb");
+                }
+            }
+        }
+
         @Override
         public boolean save(InputStream is, long length, String mediaType, ProgressNotifier notify) {
+            ensureFile();
+            if (mFile == null) {
+                return false;
+            }
+
             OutputStream os = null;
             try {
                 os = mFile.openOutputStream();
@@ -1249,7 +1251,12 @@ public class DownloadsScene extends ToolbarScene
 
         @Override
         public InputStreamPipe get() {
-            return new UniFileInputStreamPipe(mFile);
+            ensureFile();
+            if (mFile != null) {
+                return new UniFileInputStreamPipe(mFile);
+            } else {
+                return null;
+            }
         }
 
         @Override
