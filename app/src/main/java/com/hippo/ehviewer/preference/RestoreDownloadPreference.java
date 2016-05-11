@@ -31,6 +31,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.download.DownloadManager;
+import com.hippo.ehviewer.spider.SpiderInfo;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
@@ -88,13 +89,12 @@ public class RestoreDownloadPreference extends TaskPreference {
             InputStream is = null;
             try {
                 is = siFile.openInputStream();
-                // Skip start page
-                IOUtils.readAsciiLine(is);
-                long gid = Long.parseLong(IOUtils.readAsciiLine(is));
+                SpiderInfo spiderInfo = SpiderInfo.read(is);
+                long gid = spiderInfo.gid;
                 if (mManager.containDownloadInfo(gid)) {
                     return null;
                 }
-                String token = IOUtils.readAsciiLine(is);
+                String token = spiderInfo.token;
                 RestoreItem restoreItem = new RestoreItem();
                 restoreItem.gid = gid;
                 restoreItem.token = token;

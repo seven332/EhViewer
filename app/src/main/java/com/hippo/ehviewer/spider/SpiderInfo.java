@@ -40,13 +40,13 @@ public class SpiderInfo {
 
     static final String TOKEN_FAILED = "failed";
 
-    int startPage = 0;
-    long gid = -1;
-    String token = null;
-    int pages = -1;
-    int previewPages = -1;
-    int previewPerPage = -1;
-    SparseArray<String> pTokenMap = null;
+    public int startPage = 0;
+    public long gid = -1;
+    public String token = null;
+    public int pages = -1;
+    public int previewPages = -1;
+    public int previewPerPage = -1;
+    public SparseArray<String> pTokenMap = null;
 
     public static SpiderInfo read(@Nullable UniFile file) {
         if (file == null) {
