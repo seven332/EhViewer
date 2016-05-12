@@ -98,7 +98,7 @@ import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.ObservedTextView;
 import com.hippo.widget.ProgressView;
-import com.hippo.widget.ProgressiveRatingBar;
+import com.hippo.ehviewer.widget.GalleryRatingBar;
 import com.hippo.widget.SimpleGridAutoSpanLayout;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.IOUtils;
@@ -1706,17 +1706,17 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    private class RateDialogHelper implements ProgressiveRatingBar.OnUserRateListener,
+    private class RateDialogHelper implements GalleryRatingBar.OnUserRateListener,
             DialogInterface.OnClickListener {
 
         @Nullable
-        private ProgressiveRatingBar mRatingBar;
+        private GalleryRatingBar mRatingBar;
         @Nullable
         private TextView mRatingText;
 
         public void setDialog(Dialog dialog, float rating) {
             mRatingText = (TextView) ViewUtils.$$(dialog, R.id.rating_text);
-            mRatingBar = (ProgressiveRatingBar) ViewUtils.$$(dialog, R.id.rating_view);
+            mRatingBar = (GalleryRatingBar) ViewUtils.$$(dialog, R.id.rating_view);
             mRatingText.setText(getRatingText(rating, getResources2()));
             mRatingBar.setRating(rating);
             mRatingBar.setOnUserRateListener(this);

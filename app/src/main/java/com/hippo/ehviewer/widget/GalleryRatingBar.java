@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2014 Hippo Seven
+ * Copyright 2014-2016 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,39 +14,57 @@
  * limitations under the License.
  */
 
-package com.hippo.widget;
+package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.util.AttributeSet;
+import android.widget.RatingBar;
 
-public class ProgressiveRatingBar extends AppCompatRatingBar {
+public class GalleryRatingBar extends AppCompatRatingBar
+        implements RatingBar.OnRatingBarChangeListener {
 
     private OnUserRateListener mListener;
 
-    public ProgressiveRatingBar(Context context) {
+    public GalleryRatingBar(Context context) {
         super(context);
+        init();
     }
-    public ProgressiveRatingBar(Context context, AttributeSet attrs) {
+
+    public GalleryRatingBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
-    public ProgressiveRatingBar(Context context, AttributeSet attrs,
+
+    public GalleryRatingBar(Context context, AttributeSet attrs,
             int defStyle) {
         super(context, attrs, defStyle);
+        init();
+    }
+
+    private void init() {
+        setOnRatingBarChangeListener(this);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (isPressed() && mListener != null) {
+        if (mListener != null) {
             mListener.onUserRate(getRating());
         }
     }
 
     public void setOnUserRateListener(OnUserRateListener l) {
         mListener = l;
+    }
+
+    @Override
+    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+        if (rating <= 0.0f) {
+            setRating(0.5f);
+        }
     }
 
     public interface OnUserRateListener {
