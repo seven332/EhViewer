@@ -16,10 +16,14 @@
 
 package com.hippo.ehviewer.ui.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
@@ -75,6 +79,10 @@ public class AboutFragment extends PreferenceFragment
             AppHelper.sendEmail(getActivity(), EhApplication.getDeveloperEmail(),
                     "About EhViewer", null);
         } else if (KEY_DONATE.equals(key)) {
+            ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            cmb.setPrimaryClip(ClipData.newPlainText(null, "seven332$163.com".replace('$', '@')));
+            Toast.makeText(getActivity(), R.string.settings_about_donate_toast, Toast.LENGTH_SHORT).show();
+
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.settings_about_donate)
                     .setMessage(getString(R.string.settings_about_donate_message).replace('$', '@'))

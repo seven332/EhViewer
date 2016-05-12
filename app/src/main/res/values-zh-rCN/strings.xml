@@ -486,6 +486,7 @@
     <string name="settings_about_donate">捐赠</string>
     <string name="settings_about_donate_summary">支付宝：seven332$163.com</string>
     <string name="settings_about_donate_message">你的捐赠能帮助我开发更多更好的应用。\n\n支付宝：seven332$163.com</string>
+    <string name="settings_about_donate_toast">邮箱地址已复制到剪切板</string>
     <string name="settings_about_enable_analytics">启用数据统计</string>
     <string name="settings_about_about_analytics">关于数据统计</string>
     <string name="settings_about_check_for_updates">检查更新</string>
