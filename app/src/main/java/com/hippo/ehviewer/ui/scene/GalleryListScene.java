@@ -1192,6 +1192,14 @@ public final class GalleryListScene extends BaseScene
                 }
                 break;
         }
+
+        if (newState == STATE_NORMAL || newState == STATE_SIMPLE_SEARCH) {
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.RIGHT);
+        } else {
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.LEFT);
+            setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
+        }
     }
 
     @Override
