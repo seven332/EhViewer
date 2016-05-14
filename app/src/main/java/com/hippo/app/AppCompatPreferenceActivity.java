@@ -37,7 +37,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class AppCompatPreferenceActivity extends PreferenceActivity implements AppCompatCallback,
+public abstract class AppCompatPreferenceActivity extends PreferenceActivity implements AppCompatCallback,
         TaskStackBuilder.SupportParentable, ActionBarDrawerToggle.DelegateProvider {
 
     private AppCompatDelegate mDelegate;

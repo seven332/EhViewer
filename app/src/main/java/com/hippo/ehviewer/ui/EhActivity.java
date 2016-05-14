@@ -24,7 +24,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 
-public class EhActivity extends AppCompatActivity {
+public abstract class EhActivity extends AppCompatActivity {
 
     private boolean mTrackStarted;
 

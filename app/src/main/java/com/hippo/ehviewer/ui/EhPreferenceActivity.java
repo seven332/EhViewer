@@ -24,7 +24,7 @@ import com.hippo.app.AppCompatPreferenceActivity;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 
-public class EhPreferenceActivity extends AppCompatPreferenceActivity {
+public abstract class EhPreferenceActivity extends AppCompatPreferenceActivity {
 
     private boolean mTrackStarted;
 

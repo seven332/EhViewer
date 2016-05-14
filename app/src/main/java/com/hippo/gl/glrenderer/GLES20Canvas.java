@@ -33,6 +33,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class GLES20Canvas implements GLCanvas {
     // ************** Constants **********************
@@ -885,7 +886,7 @@ public class GLES20Canvas implements GLCanvas {
 
     @Override
     public void dumpStatisticsAndClear() {
-        String line = String.format("MESH:%d, TEX_RECT:%d, FILL_RECT:%d, LINE:%d", mCountDrawMesh,
+        String line = String.format(Locale.US, "MESH:%d, TEX_RECT:%d, FILL_RECT:%d, LINE:%d", mCountDrawMesh,
                 mCountTextureRect, mCountFillRect, mCountDrawLine);
         mCountDrawMesh = 0;
         mCountTextureRect = 0;
