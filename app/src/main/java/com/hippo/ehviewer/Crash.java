@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 
 import com.hippo.scene.StageActivity;
@@ -37,7 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
-public class Crash {
+public final class Crash {
+    private Crash() {}
 
     @NonNull
     private static String avoidNull(String str) {
@@ -109,8 +111,10 @@ public class Crash {
         fw.write("INCREMENTAL=");fw.write(Build.VERSION.INCREMENTAL);fw.write("\r\n");
         fw.write("RELEASE=");fw.write(Build.VERSION.RELEASE);fw.write("\r\n");
         fw.write("SDK=");fw.write(Integer.toString(Build.VERSION.SDK_INT));fw.write("\r\n");
-        fw.write("MEMORY=");fw.write(FileUtils.humanReadableByteCount(OSUtils.getAppAllocatedMemory(), false));
-        fw.write("/");fw.write(FileUtils.humanReadableByteCount(OSUtils.getTotalMemory(), false));fw.write("\r\n");
+        fw.write("MEMORY=");fw.write(FileUtils.humanReadableByteCount(OSUtils.getAppAllocatedMemory(), false));fw.write("\r\n");
+        fw.write("MEMORY_NATIVE=");fw.write(FileUtils.humanReadableByteCount(Debug.getNativeHeapAllocatedSize(), false));fw.write("\r\n");
+        fw.write("MEMORY_MAX=");fw.write(FileUtils.humanReadableByteCount(OSUtils.getAppMaxMemory(), false));fw.write("\r\n");
+        fw.write("MEMORY_TOTAL=");fw.write(FileUtils.humanReadableByteCount(OSUtils.getTotalMemory(), false));fw.write("\r\n");
         fw.write("\r\n");
     }
 
