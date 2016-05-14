@@ -1211,23 +1211,30 @@ public class DownloadsScene extends ToolbarScene
     private class ThumbDataContainer implements DataContainer {
 
         private final DownloadInfo mInfo;
+        @Nullable
         private UniFile mFile;
 
         public ThumbDataContainer(@NonNull DownloadInfo info) {
             mInfo = info;
         }
 
-        @Override
-        public void onUrlMoved(String requestUrl, String responseUrl) {}
-
         private void ensureFile() {
             if (mFile == null) {
                 UniFile dir = SpiderDen.getGalleryDownloadDir(mInfo);
-                if (dir != null && dir.ensureDir()) {
+                if (dir != null && dir.isDirectory()) {
                     mFile = dir.createFile(".thumb");
                 }
             }
         }
+
+        @Override
+        public boolean isEnabled() {
+            ensureFile();
+            return mFile != null;
+        }
+
+        @Override
+        public void onUrlMoved(String requestUrl, String responseUrl) {}
 
         @Override
         public boolean save(InputStream is, long length, String mediaType, ProgressNotifier notify) {
@@ -1261,7 +1268,9 @@ public class DownloadsScene extends ToolbarScene
 
         @Override
         public void remove() {
-            mFile.delete();
+            if (mFile != null) {
+                mFile.delete();
+            }
         }
     }
 }
