@@ -90,7 +90,7 @@ public class ImageTexture implements Texture, Animatable {
     private WeakReference<Callback> mCallback;
 
     static {
-        sThreadExecutor = new InfiniteThreadExecutor(10 * 1000, new LinkedList<>(),
+        sThreadExecutor = new InfiniteThreadExecutor(10 * 1000, new LinkedList<Runnable>(),
                 new PriorityThreadFactory("ImageTexture$AnimateTask", Process.THREAD_PRIORITY_BACKGROUND));
         sPVLock = new PVLock(3);
     }
