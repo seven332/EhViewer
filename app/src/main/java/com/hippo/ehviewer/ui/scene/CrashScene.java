@@ -30,7 +30,7 @@ import com.hippo.ripple.Ripple;
 import com.hippo.util.AppHelper;
 import com.hippo.yorozuya.ViewUtils;
 
-public class CrashScene extends BaseScene implements View.OnClickListener {
+public class CrashScene extends SolidScene implements View.OnClickListener {
 
     /*---------------
      Whole life cycle
@@ -88,7 +88,7 @@ public class CrashScene extends BaseScene implements View.OnClickListener {
 
         // Start new scene and finish it self
         if (null != activity) {
-            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_CRASH, getArguments());
+            startSceneForCheckStep(CHECK_STEP_CRASH, getArguments());
         }
         finish();
     }

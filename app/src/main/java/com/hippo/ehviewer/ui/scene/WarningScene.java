@@ -28,7 +28,7 @@ import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.yorozuya.ViewUtils;
 
-public final class WarningScene extends BaseScene implements View.OnClickListener {
+public final class WarningScene extends SolidScene implements View.OnClickListener {
 
     @Nullable
     private View mReject;
@@ -75,7 +75,7 @@ public final class WarningScene extends BaseScene implements View.OnClickListene
             // Start new scene and finish it self
             MainActivity activity = getActivity2();
             if (null != activity) {
-                activity.startSceneForCheckStep(MainActivity.CHECK_STEP_WARNING, getArguments());
+                startSceneForCheckStep(CHECK_STEP_WARNING, getArguments());
             }
             finish();
         }

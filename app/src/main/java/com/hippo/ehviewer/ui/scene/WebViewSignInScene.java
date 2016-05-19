@@ -42,7 +42,7 @@ import java.util.List;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
-public class WebViewSignInScene extends BaseScene {
+public class WebViewSignInScene extends SolidScene {
 
     /*---------------
      View life cycle

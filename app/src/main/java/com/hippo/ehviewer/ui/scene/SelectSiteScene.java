@@ -30,7 +30,7 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.yorozuya.ViewUtils;
 
-public class SelectSiteScene extends BaseScene implements View.OnClickListener {
+public class SelectSiteScene extends SolidScene implements View.OnClickListener {
 
     private RadioGroup mRadioGroup;
     private View mOk;
@@ -75,13 +75,13 @@ public class SelectSiteScene extends BaseScene implements View.OnClickListener {
                 case R.id.site_e:
                     Settings.putSelectSite(false);
                     Settings.putGallerySite(EhUrl.SITE_G);
-                    activity.startSceneForCheckStep(MainActivity.CHECK_STEP_SELECT_SITE, getArguments());
+                    startSceneForCheckStep(CHECK_STEP_SELECT_SITE, getArguments());
                     finish();
                     break;
                 case R.id.site_ex:
                     Settings.putSelectSite(false);
                     Settings.putGallerySite(EhUrl.SITE_EX);
-                    activity.startSceneForCheckStep(MainActivity.CHECK_STEP_SELECT_SITE, getArguments());
+                    startSceneForCheckStep(CHECK_STEP_SELECT_SITE, getArguments());
                     finish();
                     break;
                 default:

@@ -41,7 +41,7 @@ import com.hippo.yorozuya.ViewUtils;
 
 import okhttp3.Cookie;
 
-public class CookieSignInScene extends BaseScene implements EditText.OnEditorActionListener,
+public class CookieSignInScene extends SolidScene implements EditText.OnEditorActionListener,
         View.OnClickListener {
 
     /*---------------

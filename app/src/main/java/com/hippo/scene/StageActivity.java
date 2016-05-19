@@ -593,7 +593,7 @@ public abstract class StageActivity extends EhActivity {
     }
 
     @Nullable
-    public String getTopSceneClazzName() {
+    public Class<?> getTopSceneClass() {
         int index = mSceneTagList.size() - 1;
         if (index < 0) {
             return null;
@@ -603,6 +603,6 @@ public abstract class StageActivity extends EhActivity {
         if (null == fragment) {
             return null;
         }
-        return fragment.getClass().getName();
+        return fragment.getClass();
     }
 }

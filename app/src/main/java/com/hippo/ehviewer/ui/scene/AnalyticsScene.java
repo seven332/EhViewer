@@ -32,7 +32,7 @@ import com.hippo.text.Html;
 import com.hippo.text.LinkMovementMethod2;
 import com.hippo.yorozuya.ViewUtils;
 
-public class AnalyticsScene extends BaseScene implements View.OnClickListener {
+public class AnalyticsScene extends SolidScene implements View.OnClickListener {
 
     @Nullable
     private View mReject;
@@ -90,7 +90,7 @@ public class AnalyticsScene extends BaseScene implements View.OnClickListener {
         // Start new scene and finish it self
         MainActivity activity = getActivity2();
         if (null != activity) {
-            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_ANALYTICS, getArguments());
+            startSceneForCheckStep(CHECK_STEP_ANALYTICS, getArguments());
         }
         finish();
     }

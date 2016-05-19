@@ -33,7 +33,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +66,7 @@ import com.hippo.ehviewer.ui.scene.QuickSearchScene;
 import com.hippo.ehviewer.ui.scene.SecurityScene;
 import com.hippo.ehviewer.ui.scene.SelectSiteScene;
 import com.hippo.ehviewer.ui.scene.SignInScene;
+import com.hippo.ehviewer.ui.scene.SolidScene;
 import com.hippo.ehviewer.ui.scene.WarningScene;
 import com.hippo.ehviewer.ui.scene.WebViewSignInScene;
 import com.hippo.ehviewer.widget.EhDrawerLayout;
@@ -91,23 +91,11 @@ import java.io.OutputStream;
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
     private static final int REQUEST_CODE_SETTINGS = 0;
 
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
-
-    public static final int CHECK_STEP_SECURITY = 0;
-    public static final int CHECK_STEP_WARNING = 1;
-    public static final int CHECK_STEP_ANALYTICS = 2;
-    public static final int CHECK_STEP_CRASH = 3;
-    public static final int CHECK_STEP_SIGN_IN = 4;
-    public static final int CHECK_STEP_SELECT_SITE = 5;
-
-    public static final String KEY_TARGET_SCENE = "target_scene";
-    public static final String KEY_TARGET_ARGS = "target_args";
 
     /*---------------
      Whole life cycle
@@ -147,61 +135,6 @@ public final class MainActivity extends StageActivity
         registerLaunchMode(ProgressScene.class, SceneFragment.LAUNCH_MODE_STANDARD);
     }
 
-    public void startSceneForCheckStep(int checkStep, Bundle args) {
-        switch (checkStep) {
-            case CHECK_STEP_SECURITY:
-                if (Settings.getShowWarning()) {
-                    startScene(new Announcer(WarningScene.class).setArgs(args));
-                    break;
-                }
-            case CHECK_STEP_WARNING:
-                if (Settings.getAskAnalytics()) {
-                    startScene(new Announcer(AnalyticsScene.class).setArgs(args));
-                    break;
-                }
-            case CHECK_STEP_ANALYTICS:
-                if (Crash.hasCrashFile()) {
-                    startScene(new Announcer(CrashScene.class).setArgs(args));
-                    break;
-                }
-            case CHECK_STEP_CRASH:
-                if (EhUtils.needSignedIn(this)) {
-                    startScene(new Announcer(SignInScene.class).setArgs(args));
-                    break;
-                }
-            case CHECK_STEP_SIGN_IN:
-                if (Settings.getSelectSite()) {
-                    startScene(new Announcer(SelectSiteScene.class).setArgs(args));
-                    break;
-                }
-            case CHECK_STEP_SELECT_SITE:
-                String targetScene = null;
-                Bundle targetArgs = null;
-                if (null != args) {
-                    targetScene = args.getString(KEY_TARGET_SCENE);
-                    targetArgs = args.getBundle(KEY_TARGET_ARGS);
-                }
-
-                Class<?> clazz = null;
-                if (targetScene != null) {
-                    try {
-                        clazz = Class.forName(targetScene);
-                    } catch (ClassNotFoundException e) {
-                        Log.e(TAG, "Can't find class with name: " + targetScene);
-                    }
-                }
-
-                if (clazz != null) {
-                    startScene(new Announcer(clazz).setArgs(targetArgs));
-                } else {
-                    Bundle newArgs = new Bundle();
-                    newArgs.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-                    startScene(new Announcer(GalleryListScene.class).setArgs(newArgs));
-                }
-                break;
-        }
-    }
-
     @Override
     public int getContainerViewId() {
         return R.id.fragment_container;
@@ -234,33 +167,33 @@ public final class MainActivity extends StageActivity
         if (0 == getSceneCount()) {
             if (!TextUtils.isEmpty(Settings.getSecurity())) {
                 Bundle newArgs = new Bundle();
-                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
-                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                newArgs.putString(SecurityScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(SecurityScene.KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(SecurityScene.class).setArgs(newArgs);
             } else if (Settings.getShowWarning()) {
                 Bundle newArgs = new Bundle();
-                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
-                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                newArgs.putString(WarningScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(WarningScene.KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(WarningScene.class).setArgs(newArgs);
             } else if (Settings.getAskAnalytics()) {
                 Bundle newArgs = new Bundle();
-                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
-                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                newArgs.putString(AnalyticsScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(AnalyticsScene.KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(AnalyticsScene.class).setArgs(newArgs);
             } else if (Crash.hasCrashFile()) {
                 Bundle newArgs = new Bundle();
-                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
-                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                newArgs.putString(CrashScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(CrashScene.KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(CrashScene.class).setArgs(newArgs);
             } else if (EhUtils.needSignedIn(this)) {
                 Bundle newArgs = new Bundle();
-                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
-                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                newArgs.putString(SignInScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(SignInScene.KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(SignInScene.class).setArgs(newArgs);
             } else if (Settings.getSelectSite()) {
                 Bundle newArgs = new Bundle();
-                newArgs.putString(KEY_TARGET_SCENE, announcer.getClazz().getName());
-                newArgs.putBundle(KEY_TARGET_ARGS, announcer.getArgs());
+                newArgs.putString(SelectSiteScene.KEY_TARGET_SCENE, announcer.getClazz().getName());
+                newArgs.putBundle(SelectSiteScene.KEY_TARGET_ARGS, announcer.getArgs());
                 return new Announcer(SelectSiteScene.class).setArgs(newArgs);
             }
         }
@@ -341,6 +274,12 @@ public final class MainActivity extends StageActivity
 
     @Override
     protected void onUnrecognizedIntent(@Nullable Intent intent) {
+        Class<?> clazz = getTopSceneClass();
+        if (clazz != null && SolidScene.class.isAssignableFrom(clazz)) {
+            // TODO the intent lost
+            return;
+        }
+
         if (!handleIntent(intent)) {
             boolean handleUrl = false;
             if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {

@@ -69,14 +69,17 @@ public final class Crash {
         }
 
         // Runtime
-        String topActivityClazzName = null;
-        String topSceneClazzName = null;
+        String topActivityClazzName = "null";
+        String topSceneClazzName = "null";
         try {
             Activity topActivity = ((EhApplication) context.getApplicationContext()).getTopActivity();
             if (null != topActivity) {
                 topActivityClazzName = topActivity.getClass().getName();
                 if (topActivity instanceof StageActivity) {
-                    topSceneClazzName = ((StageActivity) topActivity).getTopSceneClazzName();
+                    Class<?> clazz = ((StageActivity) topActivity).getTopSceneClass();
+                    if (clazz != null) {
+                        topSceneClazzName = clazz.getName();
+                    }
                 }
             }
         } catch (Throwable e) {

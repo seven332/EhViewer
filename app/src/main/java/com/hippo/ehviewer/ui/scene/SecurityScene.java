@@ -37,7 +37,7 @@ import com.hippo.yorozuya.ViewUtils;
 
 import java.util.List;
 
-public class SecurityScene extends BaseScene implements
+public class SecurityScene extends SolidScene implements
         LockPatternView.OnPatternListener, ShakeDetector.OnShakeListener {
 
     private static final int MAX_RETRY_TIMES = 5;
@@ -152,7 +152,7 @@ public class SecurityScene extends BaseScene implements
         String targetPatter = Settings.getSecurity();
 
         if (ObjectUtils.equal(enteredPatter, targetPatter)) {
-            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_SECURITY, getArguments());
+            startSceneForCheckStep(CHECK_STEP_SECURITY, getArguments());
             finish();
         } else {
             mPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);
@@ -171,7 +171,7 @@ public class SecurityScene extends BaseScene implements
                 return;
             }
             Settings.putSecurity("");
-            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_SECURITY, getArguments());
+            startSceneForCheckStep(CHECK_STEP_SECURITY, getArguments());
             finish();
         }
     }

@@ -45,7 +45,7 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
 
-public final class SignInScene extends BaseScene implements EditText.OnEditorActionListener,
+public final class SignInScene extends SolidScene implements EditText.OnEditorActionListener,
         View.OnClickListener {
 
     private static final String KEY_REQUEST_ID = "request_id";
@@ -313,7 +313,7 @@ public final class SignInScene extends BaseScene implements EditText.OnEditorAct
         Settings.putNeedSignIn(false);
         MainActivity activity = getActivity2();
         if (null != activity) {
-            activity.startSceneForCheckStep(MainActivity.CHECK_STEP_SIGN_IN, getArguments());
+            startSceneForCheckStep(CHECK_STEP_SIGN_IN, getArguments());
         }
         finish();
     }
