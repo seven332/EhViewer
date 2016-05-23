@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "24.0.0 rc3"
+    buildToolsVersion "24.0.0 rc4"
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
@@ -65,7 +65,7 @@ dependencies {
     compile 'com.github.seven332:drawerlayout:0.1.0'
     compile 'com.github.seven332:easyrecyclerview:0.1.0'
     compile 'com.github.seven332:hotspot:0.1.0'
-    compile 'com.github.seven332:image:0.1.7-jpeg-png-gif'
+    compile 'com.github.seven332:image:0.1.8-jpeg-png-gif'
     compile 'com.github.seven332:okhttp:3.2.0-eh'
     compile 'com.github.seven332:refreshlayout:0.1.0'
     compile 'com.github.seven332:ripple:0.1.1'
