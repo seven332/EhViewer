@@ -291,7 +291,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
             drawable = new PreciselyClipDrawable(drawable, mOffsetX, mOffsetY, mClipWidth, mClipHeight);
         }
 
-        if ((source == Conaco.SOURCE_DISK || source == Conaco.SOURCE_NETWORK)) {
+        if ((source == Conaco.SOURCE_DISK || source == Conaco.SOURCE_NETWORK) && isShown()) {
             Drawable[] layers = new Drawable[2];
             layers[0] = new ColorDrawable(Color.TRANSPARENT);
             layers[1] = drawable;
