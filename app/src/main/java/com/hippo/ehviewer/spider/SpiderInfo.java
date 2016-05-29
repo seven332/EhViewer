@@ -143,7 +143,7 @@ public class SpiderInfo {
             while (true) { // EOFException will raise
                 line = IOUtils.readAsciiLine(is);
                 int pos = line.indexOf(" ");
-                if (pos > 0 || pos < line.length() - 1) {
+                if (pos > 0) {
                     int index = Integer.parseInt(line.substring(0, pos));
                     String pToken = line.substring(pos + 1);
                     if (!TextUtils.isEmpty(pToken)) {
