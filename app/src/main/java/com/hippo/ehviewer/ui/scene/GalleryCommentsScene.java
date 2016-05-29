@@ -454,6 +454,10 @@ public final class GalleryCommentsScene extends ToolbarScene
                 .setDuration(300L).setListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
+                if (null == mFab || null == mEditPanel) {
+                    return;
+                }
+
                 mFab.setVisibility(View.INVISIBLE);
                 mEditPanel.setVisibility(View.VISIBLE);
                 int halfW = mEditPanel.getWidth() / 2;
@@ -497,6 +501,10 @@ public final class GalleryCommentsScene extends ToolbarScene
         animator.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator a) {
+                if (null == mFab || null == mEditPanel) {
+                    return;
+                }
+
                 mEditPanel.setVisibility(View.GONE);
                 mFab.setVisibility(View.VISIBLE);
                 int fabStartX = mEditPanel.getLeft() + (mEditPanel.getWidth() / 2) - (mFab.getWidth() / 2);
