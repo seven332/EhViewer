@@ -94,6 +94,7 @@ public class SpiderInfo {
         }
     }
 
+    @Nullable
     @SuppressWarnings("InfiniteLoopStatement")
     public static SpiderInfo read(@Nullable InputStream is) {
         if (null == is) {

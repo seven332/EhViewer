@@ -90,6 +90,9 @@ public class RestoreDownloadPreference extends TaskPreference {
             try {
                 is = siFile.openInputStream();
                 SpiderInfo spiderInfo = SpiderInfo.read(is);
+                if (spiderInfo == null) {
+                    return null;
+                }
                 long gid = spiderInfo.gid;
                 if (mManager.containDownloadInfo(gid)) {
                     return null;
