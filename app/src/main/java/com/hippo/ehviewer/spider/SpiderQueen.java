@@ -1222,9 +1222,11 @@ public final class SpiderQueen implements Runnable {
             if (force) {
                 synchronized (mPTokenLock) {
                     int i = spiderInfo.pTokenMap.indexOfKey(index);
-                    String pToken = spiderInfo.pTokenMap.valueAt(i);
-                    if (SpiderInfo.TOKEN_FAILED.equals(pToken)) {
-                        spiderInfo.pTokenMap.remove(i);
+                    if (i >= 0) {
+                        String pToken = spiderInfo.pTokenMap.valueAt(i);
+                        if (SpiderInfo.TOKEN_FAILED.equals(pToken)) {
+                            spiderInfo.pTokenMap.remove(i);
+                        }
                     }
                 }
             }
