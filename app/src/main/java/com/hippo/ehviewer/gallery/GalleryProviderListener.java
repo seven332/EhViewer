@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.gallery;
 
-import com.hippo.gl.glrenderer.ImageWrapper;
+import com.hippo.glview.image.ImageWrapper;
 
 public interface GalleryProviderListener {
 

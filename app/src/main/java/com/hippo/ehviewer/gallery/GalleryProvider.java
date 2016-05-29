@@ -22,9 +22,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 
 import com.hippo.beerbelly.LruCache;
-import com.hippo.gl.glrenderer.GLCanvas;
-import com.hippo.gl.glrenderer.ImageWrapper;
-import com.hippo.gl.view.GLRoot;
+import com.hippo.glview.glrenderer.GLCanvas;
+import com.hippo.glview.image.ImageWrapper;
+import com.hippo.glview.view.GLRoot;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.ConcurrentPool;

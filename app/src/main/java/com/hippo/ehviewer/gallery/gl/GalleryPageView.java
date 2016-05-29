@@ -18,16 +18,17 @@ package com.hippo.ehviewer.gallery.gl;
 
 import android.content.Context;
 
-import com.hippo.gl.glrenderer.BasicTexture;
-import com.hippo.gl.glrenderer.ImageMovableTextTexture;
-import com.hippo.gl.glrenderer.ImageTexture;
-import com.hippo.gl.glrenderer.Texture;
-import com.hippo.gl.view.Gravity;
-import com.hippo.gl.widget.GLFrameLayout;
-import com.hippo.gl.widget.GLLinearLayout;
-import com.hippo.gl.widget.GLMovableTextView;
-import com.hippo.gl.widget.GLProgressView;
-import com.hippo.gl.widget.GLTextureView;
+import com.hippo.glview.glrenderer.BasicTexture;
+import com.hippo.glview.glrenderer.Texture;
+import com.hippo.glview.image.GLImageMovableTextView;
+import com.hippo.glview.image.ImageMovableTextTexture;
+import com.hippo.glview.image.ImageTexture;
+import com.hippo.glview.view.Gravity;
+import com.hippo.glview.widget.GLFrameLayout;
+import com.hippo.glview.widget.GLLinearLayout;
+import com.hippo.glview.widget.GLMovableTextView;
+import com.hippo.glview.widget.GLProgressView;
+import com.hippo.glview.widget.GLTextureView;
 import com.hippo.yorozuya.LayoutUtils;
 
 public class GalleryPageView extends GLFrameLayout {
@@ -41,7 +42,7 @@ public class GalleryPageView extends GLFrameLayout {
 
     private final ImageView mImage;
     private final GLLinearLayout mInfo;
-    private final GLMovableTextView mPage;
+    private final GLImageMovableTextView mPage;
     private final GLTextureView mError;
     private final GLProgressView mProgress;
 
@@ -67,7 +68,7 @@ public class GalleryPageView extends GLFrameLayout {
         addComponent(mInfo, glp);
 
         // Add page
-        mPage = new GLMovableTextView();
+        mPage = new GLImageMovableTextView();
         mPage.setTextTexture(pageTextTexture);
         GLLinearLayout.LayoutParams lp = new GLLinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);

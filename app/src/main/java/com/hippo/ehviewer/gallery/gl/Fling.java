@@ -21,7 +21,7 @@ import android.hardware.SensorManager;
 import android.view.ViewConfiguration;
 import android.view.animation.Interpolator;
 
-import com.hippo.gl.anim.Animation;
+import com.hippo.glview.anim.Animation;
 
 public abstract class Fling extends Animation {
 

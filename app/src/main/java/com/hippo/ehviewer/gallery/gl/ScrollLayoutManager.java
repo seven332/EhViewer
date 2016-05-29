@@ -22,11 +22,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.hippo.ehviewer.gallery.GalleryProvider;
-import com.hippo.gl.anim.Animation;
-import com.hippo.gl.view.GLView;
-import com.hippo.gl.widget.GLEdgeView;
-import com.hippo.gl.widget.GLProgressView;
-import com.hippo.gl.widget.GLTextureView;
+import com.hippo.glview.anim.Animation;
+import com.hippo.glview.view.GLView;
+import com.hippo.glview.widget.GLEdgeView;
+import com.hippo.glview.widget.GLProgressView;
+import com.hippo.glview.widget.GLTextureView;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
