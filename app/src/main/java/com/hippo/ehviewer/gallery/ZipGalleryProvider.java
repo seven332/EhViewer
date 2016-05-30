@@ -23,7 +23,7 @@ import android.util.Log;
 
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.gallery.gl.GalleryPageView;
+import com.hippo.glgallery.GalleryPageView;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.StringUtils;
@@ -43,7 +43,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-public class ZipGalleryProvider extends GalleryProvider implements Runnable {
+public class ZipGalleryProvider extends GalleryProvider2 implements Runnable {
 
     private static final String TAG = ZipGalleryProvider.class.getSimpleName();
     private static final AtomicInteger sIdGenerator = new AtomicInteger();

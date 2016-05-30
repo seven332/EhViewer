@@ -45,8 +45,9 @@ import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryPageParser;
 import com.hippo.ehviewer.client.parser.GalleryPageUrlParser;
-import com.hippo.ehviewer.gallery.GalleryProvider;
-import com.hippo.ehviewer.gallery.gl.GalleryPageView;
+import com.hippo.ehviewer.gallery.GalleryProvider2;
+import com.hippo.glgallery.GalleryPageView;
+import com.hippo.glgallery.GalleryProvider;
 import com.hippo.image.Image;
 import com.hippo.streampipe.InputStreamPipe;
 import com.hippo.streampipe.OutputStreamPipe;
@@ -1092,8 +1093,8 @@ public final class SpiderQueen implements Runnable {
                     String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(
                             responseBody.contentType().toString());
                     // Ensure extension
-                    if (!Utilities.contain(GalleryProvider.SUPPORT_IMAGE_EXTENSIONS, extension)) {
-                        extension = GalleryProvider.SUPPORT_IMAGE_EXTENSIONS[0];
+                    if (!Utilities.contain(GalleryProvider2.SUPPORT_IMAGE_EXTENSIONS, extension)) {
+                        extension = GalleryProvider2.SUPPORT_IMAGE_EXTENSIONS[0];
                     }
 
                     // Get out put pipe

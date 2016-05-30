@@ -23,7 +23,7 @@ import android.util.Log;
 
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.gallery.gl.GalleryPageView;
+import com.hippo.glgallery.GalleryPageView;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
@@ -41,7 +41,7 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DirGalleryProvider extends GalleryProvider implements Runnable {
+public class DirGalleryProvider extends GalleryProvider2 implements Runnable {
 
     private static final String TAG = DirGalleryProvider.class.getSimpleName();
     private static final AtomicInteger sIdGenerator = new AtomicInteger();

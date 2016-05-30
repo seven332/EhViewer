@@ -29,9 +29,8 @@ import android.util.Log;
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.FavListUrlBuilder;
-import com.hippo.ehviewer.gallery.gl.GalleryView;
-import com.hippo.ehviewer.gallery.gl.ImageView;
 import com.hippo.ehviewer.ui.CommonOperations;
+import com.hippo.glgallery.GalleryView;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
@@ -434,7 +433,7 @@ public class Settings {
     }
 
     private static final String KEY_READING_DIRECTION = "reading_direction";
-    private static final int DEFAULT_READING_DIRECTION = GalleryView.LAYOUT_MODE_RIGHT_TO_LEFT;
+    private static final int DEFAULT_READING_DIRECTION = GalleryView.LAYOUT_RIGHT_TO_LEFT;
 
     @GalleryView.LayoutMode
     public static int getReadingDirection() {
@@ -446,11 +445,11 @@ public class Settings {
     }
 
     private static final String KEY_PAGE_SCALING = "page_scaling";
-    private static final int DEFAULT_PAGE_SCALING = ImageView.SCALE_FIT;
+    private static final int DEFAULT_PAGE_SCALING = GalleryView.SCALE_FIT;
 
-    @ImageView.Scale
+    @GalleryView.ScaleMode
     public static int getPageScaling() {
-        return ImageView.sanitizeScaleMode(getIntFromStr(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING));
+        return GalleryView.sanitizeScaleMode(getIntFromStr(KEY_PAGE_SCALING, DEFAULT_PAGE_SCALING));
     }
 
     public static void putPageScaling(int value) {
@@ -458,11 +457,11 @@ public class Settings {
     }
 
     private static final String KEY_START_POSITION = "start_position";
-    private static final int DEFAULT_START_POSITION = ImageView.START_POSITION_TOP_RIGHT;
+    private static final int DEFAULT_START_POSITION = GalleryView.START_POSITION_TOP_RIGHT;
 
-    @ImageView.StartPosition
+    @GalleryView.StartPosition
     public static int getStartPosition() {
-        return ImageView.sanitizeStartPosition(getIntFromStr(KEY_START_POSITION, DEFAULT_START_POSITION));
+        return GalleryView.sanitizeStartPosition(getIntFromStr(KEY_START_POSITION, DEFAULT_START_POSITION));
     }
 
     public static void putStartPosition(int value) {

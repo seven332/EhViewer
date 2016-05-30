@@ -134,4 +134,13 @@
     <dimen name="preference_item_padding_side">8dip</dimen>
     <dimen name="preference_item_padding_inner">8dip</dimen>
 
+    <!-- Gallery -->
+    <dimen name="gallery_pager_interval">48dp</dimen>
+    <dimen name="gallery_scroll_interval">28dp</dimen>
+    <dimen name="gallery_page_min_height">256dp</dimen>
+    <dimen name="gallery_page_info_interval">24dp</dimen>
+    <dimen name="gallery_progress_size">56dp</dimen>
+    <dimen name="gallery_page_text_size">56sp</dimen>
+    <dimen name="gallery_error_text_size">24sp</dimen>
+
 </resources>
