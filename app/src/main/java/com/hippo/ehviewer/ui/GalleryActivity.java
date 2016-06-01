@@ -257,6 +257,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             finish();
             return;
         }
+        mGalleryProvider.start();
 
         // Get start page
         int startPage;
@@ -298,7 +299,6 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         mGLRootView.setContentPane(mGalleryView);
         mGalleryProvider.setListener(mProviderListener);
         mGalleryProvider.setGLRoot(mGLRootView);
-        mGalleryProvider.start();
 
         // System UI helper
         if (Settings.getReadingFullscreen()) {
