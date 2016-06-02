@@ -61,7 +61,6 @@ import com.hippo.glgallery.GalleryPageView;
 import com.hippo.glgallery.GalleryProvider;
 import com.hippo.glgallery.GalleryView;
 import com.hippo.glgallery.SimpleAdapter;
-import com.hippo.glgallery.SimpleProviderListener;
 import com.hippo.glview.view.GLRootView;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.SystemUiHelper;
@@ -106,7 +105,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
     @Nullable
     private GalleryProvider2 mGalleryProvider;
     @Nullable
-    private ProviderListener mProviderListener;
+    private GalleryAdapter mGalleryAdapter;
 
     @Nullable
     private SystemUiHelper mSystemUiHelper;
@@ -269,9 +268,10 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
 
         setContentView(R.layout.activity_gallery);
         mGLRootView = (GLRootView) ViewUtils.$$(this, R.id.gl_root_view);
+        mGalleryAdapter = new GalleryAdapter(mGLRootView, mGalleryProvider);
         Resources resources = getResources();
         int primaryColor = ResourcesUtils.getAttrColor(this, R.attr.colorPrimary);
-        mGalleryView = new GalleryView.Builder(this, new SimpleAdapter(mGalleryProvider))
+        mGalleryView = new GalleryView.Builder(this, mGalleryAdapter)
                 .setListener(this)
                 .setLayoutMode(Settings.getReadingDirection())
                 .setScaleMode(Settings.getPageScaling())
@@ -294,10 +294,8 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                 .setEmptyString(resources.getString(R.string.error_empty))
                 .build();
 
-        mProviderListener = new ProviderListener(mGLRootView, mGalleryView, mGalleryProvider);
-
         mGLRootView.setContentPane(mGalleryView);
-        mGalleryProvider.setListener(mProviderListener);
+        mGalleryProvider.setListener(mGalleryAdapter);
         mGalleryProvider.setGLRoot(mGLRootView);
 
         // System UI helper
@@ -370,9 +368,9 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         super.onDestroy();
         mGLRootView = null;
         mGalleryView = null;
-        if (mProviderListener != null) {
-            mProviderListener.clearUploader();
-            mProviderListener = null;
+        if (mGalleryAdapter != null) {
+            mGalleryAdapter.clearUploader();
+            mGalleryAdapter = null;
         }
         if (mGalleryProvider != null) {
             mGalleryProvider.setListener(null);
@@ -977,11 +975,10 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         }
     }
 
-    private class ProviderListener extends SimpleProviderListener {
+    private class GalleryAdapter extends SimpleAdapter {
 
-        public ProviderListener(@NonNull GLRootView glRootView,
-                @NonNull GalleryView galleryView, @NonNull GalleryProvider provider) {
-            super(glRootView, galleryView, provider);
+        public GalleryAdapter(@NonNull GLRootView glRootView, @NonNull GalleryProvider provider) {
+            super(glRootView, provider);
         }
 
         @Override
