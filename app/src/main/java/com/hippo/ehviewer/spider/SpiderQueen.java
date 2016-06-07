@@ -71,7 +71,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -139,7 +138,7 @@ public final class SpiderQueen implements Runnable {
 
     private final Thread[] mDecodeThreadArray = new Thread[DECODE_THREAD_NUM];
     private final int[] mDecodeIndexArray = new int[DECODE_THREAD_NUM];
-    private final Stack<Integer> mDecodeRequestStack = new Stack<>();
+    private final Queue<Integer> mDecodeRequestQueue = new LinkedList<>();
 
     private final Object mWorkerLock = new Object();
     private ThreadPoolExecutor mWorkerPoolExecutor;
@@ -423,7 +422,6 @@ public final class SpiderQueen implements Runnable {
     }
 
     public String getError() {
-        // TODO
         if (mQueenThread == null) {
             return "Error";
         } else {
@@ -543,10 +541,10 @@ public final class SpiderQueen implements Runnable {
                 result = error;
                 break;
             case STATE_FINISHED:
-                synchronized (mDecodeRequestStack) {
-                    if (!contain(mDecodeIndexArray, index) && !mDecodeRequestStack.contains(index)) {
-                        mDecodeRequestStack.add(index);
-                        mDecodeRequestStack.notify();
+                synchronized (mDecodeRequestQueue) {
+                    if (!contain(mDecodeIndexArray, index) && !mDecodeRequestQueue.contains(index)) {
+                        mDecodeRequestQueue.add(index);
+                        mDecodeRequestQueue.notify();
                     }
                 }
                 result = null;
@@ -1317,7 +1315,7 @@ public final class SpiderQueen implements Runnable {
         }
 
         private void resetDecodeIndex() {
-            synchronized (mDecodeRequestStack) {
+            synchronized (mDecodeRequestQueue) {
                 mDecodeIndexArray[mThreadIndex] = GalleryPageView.INVALID_INDEX;
             }
         }
@@ -1330,17 +1328,17 @@ public final class SpiderQueen implements Runnable {
 
             while (!Thread.currentThread().isInterrupted()) {
                 int index;
-                synchronized (mDecodeRequestStack) {
-                    if (mDecodeRequestStack.isEmpty()) {
+                synchronized (mDecodeRequestQueue) {
+                    if (mDecodeRequestQueue.isEmpty()) {
                         try {
-                            mDecodeRequestStack.wait();
+                            mDecodeRequestQueue.wait();
                         } catch (InterruptedException e) {
                             // Interrupted
                             break;
                         }
                         continue;
                     }
-                    index = mDecodeRequestStack.pop();
+                    index = mDecodeRequestQueue.remove();
                     mDecodeIndexArray[mThreadIndex] = index;
                 }
 
