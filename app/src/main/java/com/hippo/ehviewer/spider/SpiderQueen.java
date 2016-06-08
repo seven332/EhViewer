@@ -472,6 +472,9 @@ public final class SpiderQueen implements Runnable {
         synchronized (mRequestPageQueue) {
             mRequestPageQueue.remove(index);
         }
+        synchronized (mDecodeRequestQueue) {
+            mDecodeRequestQueue.remove(index);
+        }
     }
 
     /**
