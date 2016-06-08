@@ -80,9 +80,9 @@ dependencies {
     compile 'com.github.seven332:yorozuya:0.1.2'
     compile 'com.github.seven332:yorozuya-thread:0.1.1'
     compile 'com.github.seven332:yorozuya-collect:0.1.4'
-    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.8.7'
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.9.1'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     compile 'org.greenrobot:greendao:2.2.0'
-    compile 'org.jsoup:jsoup:1.9.1'
+    compile 'org.jsoup:jsoup:1.9.2'
     testCompile 'junit:junit:4.12'
 }

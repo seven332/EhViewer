@@ -249,6 +249,11 @@ public final class QuickSearchScene extends ToolbarScene {
         }
 
         @Override
+        public boolean onCheckCanDrop(int draggingPosition, int dropPosition) {
+            return true;
+        }
+
+        @Override
         public int onGetSwipeReactionType(QuickSearchHolder holder, int position, int x, int y) {
             if (ViewUtils.isViewUnder(holder.getSwipeableContainerView(), x, y, 0)) {
                 return SwipeableItemConstants.REACTION_CAN_SWIPE_LEFT;
