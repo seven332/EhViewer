@@ -330,7 +330,7 @@ public abstract class StageActivity extends EhActivity {
             String tag = mSceneTagList.get(mSceneTagList.size() - 1);
             Fragment fragment = fragmentManager.findFragmentByTag(tag);
             if (fragment != null) {
-                Assert.assertEquals(fragment.getClass(), SceneFragment.class);
+                Assert.assertTrue(SceneFragment.class.isInstance(fragment));
                 currentScene = (SceneFragment) fragment;
             }
         }
