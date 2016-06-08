@@ -88,13 +88,14 @@ import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 import com.hippo.yorozuya.collect.LongList;
+
+import junit.framework.Assert;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -193,7 +194,7 @@ public class DownloadsScene extends ToolbarScene
         super.onCreate(savedInstanceState);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         mDownloadManager = EhApplication.getDownloadManager(context);
         mDownloadManager.addDownloadInfoListener(this);
 
@@ -286,7 +287,7 @@ public class DownloadsScene extends ToolbarScene
         mViewTransition = new ViewTransition(content, tip);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(content);
+        Assert.assertNotNull(content);
         Resources resources = context.getResources();
 
         Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_download);
@@ -508,7 +509,7 @@ public class DownloadsScene extends ToolbarScene
         View view = inflater.inflate(R.layout.drawer_list, container, false);
 
         final Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.download_labels);
@@ -1123,7 +1124,7 @@ public class DownloadsScene extends ToolbarScene
 
         public DownloadAdapter() {
             mInflater = getLayoutInflater2();
-            AssertUtils.assertNotNull(mInflater);
+            Assert.assertNotNull(mInflater);
         }
 
         @Override

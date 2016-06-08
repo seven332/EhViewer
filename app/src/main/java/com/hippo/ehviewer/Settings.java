@@ -32,10 +32,11 @@ import com.hippo.ehviewer.client.data.FavListUrlBuilder;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.glgallery.GalleryView;
 import com.hippo.unifile.UniFile;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.NumberUtils;
+
+import junit.framework.Assert;
 
 import java.io.File;
 
@@ -723,7 +724,7 @@ public class Settings {
     }
 
     public static void putFavCat(String[] value) {
-        AssertUtils.assertEquals(10, value.length);
+        Assert.assertEquals(10, value.length);
         sSettingsPre.edit()
                 .putString(KEY_FAV_CAT_0, value[0])
                 .putString(KEY_FAV_CAT_1, value[1])

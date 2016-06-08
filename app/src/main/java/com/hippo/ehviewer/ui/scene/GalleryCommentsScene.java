@@ -76,13 +76,14 @@ import com.hippo.widget.FabLayout;
 import com.hippo.widget.LinkifyTextView;
 import com.hippo.widget.ObservedTextView;
 import com.hippo.yorozuya.AnimationUtils;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.ViewUtils;
 import com.hippo.yorozuya.collect.IntList;
+
+import junit.framework.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -190,7 +191,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         mFab = (FloatingActionButton) ViewUtils.$$(view, R.id.fab);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         Resources resources = context.getResources();
         int paddingBottomFab = resources.getDimensionPixelOffset(R.dimen.gallery_padding_bottom_fab);
 
@@ -617,7 +618,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         public CommentAdapter() {
             mInflater = getLayoutInflater2();
-            AssertUtils.assertNotNull(mInflater);
+            Assert.assertNotNull(mInflater);
         }
 
         @Override

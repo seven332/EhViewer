@@ -29,8 +29,9 @@ import android.view.animation.Interpolator;
 
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.AnimationUtils;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
+
+import junit.framework.Assert;
 
 public class FabLayout extends ViewGroup implements View.OnClickListener {
 
@@ -108,9 +109,9 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        AssertUtils.assertEquals("Measure mode must be MeasureSpec.EXACTLY",
+        Assert.assertEquals("Measure mode must be MeasureSpec.EXACTLY",
                 MeasureSpec.getMode(widthMeasureSpec), MeasureSpec.EXACTLY);
-        AssertUtils.assertEquals("Measure mode must be MeasureSpec.EXACTLY",
+        Assert.assertEquals("Measure mode must be MeasureSpec.EXACTLY",
                 MeasureSpec.getMode(heightMeasureSpec), MeasureSpec.EXACTLY);
 
         int width = MeasureSpec.getSize(widthMeasureSpec);

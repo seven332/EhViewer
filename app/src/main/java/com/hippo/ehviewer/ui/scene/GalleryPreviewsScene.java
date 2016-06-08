@@ -53,9 +53,10 @@ import com.hippo.widget.ContentLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.Slider;
 import com.hippo.widget.recyclerview.AutoGridLayoutManager;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ViewUtils;
+
+import junit.framework.Assert;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -90,7 +91,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         super.onCreate(savedInstanceState);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         mClient = EhApplication.getEhClient(context);
         if (savedInstanceState == null) {
             onInit();
@@ -137,7 +138,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         mRecyclerView = contentLayout.getRecyclerView();
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         Resources resources = context.getResources();
 
         mAdapter = new GalleryPreviewAdapter();
@@ -261,7 +262,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
 
         public GalleryPreviewAdapter() {
             mInflater = getLayoutInflater2();
-            AssertUtils.assertNotNull(mInflater);
+            Assert.assertNotNull(mInflater);
         }
 
         @Override

@@ -37,9 +37,10 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ripple.Ripple;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ViewUtils;
+
+import junit.framework.Assert;
 
 import java.util.ArrayList;
 
@@ -84,7 +85,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         }
 
         Resources resources = getResources2();
-        AssertUtils.assertNotNull(resources);
+        Assert.assertNotNull(resources);
         mKeys.add(resources.getString(R.string.header_key));
         mValues.add(resources.getString(R.string.header_value));
         mKeys.add(resources.getString(R.string.key_gid));
@@ -155,7 +156,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         View view = inflater.inflate(R.layout.scene_gallery_info, container, false);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
 
         mRecyclerView = (EasyRecyclerView) ViewUtils.$$(view, R.id.recycler_view);
         InfoAdapter adapter = new InfoAdapter();
@@ -230,7 +231,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
 
         public InfoAdapter() {
             mInflater = getLayoutInflater2();
-            AssertUtils.assertNotNull(mInflater);
+            Assert.assertNotNull(mInflater);
         }
 
         @Override

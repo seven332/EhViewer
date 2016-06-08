@@ -81,6 +81,7 @@ import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
+import com.hippo.ehviewer.widget.GalleryRatingBar;
 import com.hippo.reveal.ViewAnimationUtils;
 import com.hippo.ripple.Ripple;
 import com.hippo.scene.Announcer;
@@ -98,12 +99,12 @@ import com.hippo.widget.AutoWrapLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.ObservedTextView;
 import com.hippo.widget.ProgressView;
-import com.hippo.ehviewer.widget.GalleryRatingBar;
 import com.hippo.widget.SimpleGridAutoSpanLayout;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
+
+import junit.framework.Assert;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -400,7 +401,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         long gid = getGid();
         if (gid != -1) {
             Context context = getContext2();
-            AssertUtils.assertNotNull(context);
+            Assert.assertNotNull(context);
             mDownloadState = EhApplication.getDownloadManager(context).getDownloadState(gid);
         } else {
             mDownloadState = DownloadInfo.STATE_INVALID;
@@ -415,7 +416,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mViewTransition = new ViewTransition(mainView, progressView, mTip);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
 
         Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_weird_face);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -531,7 +532,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         super.onDestroyView();
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         EhApplication.getDownloadManager(context).removeDownloadInfoListener(this);
 
         mTip = null;
@@ -587,7 +588,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private boolean prepareData() {
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
 
         if (mGalleryDetail != null) {
             return true;
@@ -770,7 +771,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         Resources resources = getResources2();
-        AssertUtils.assertNotNull(resources);
+        Assert.assertNotNull(resources);
 
         mThumb.load(EhCacheKeyFactory.getThumbKey(gd.gid), gd.thumb);
         mTitle.setText(EhUtils.getSuitableTitle(gd));
@@ -946,7 +947,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     private String getAllRatingText(float rating, int ratingCount) {
         Resources resources = getResources2();
-        AssertUtils.assertNotNull(resources);
+        Assert.assertNotNull(resources);
         return resources.getString(R.string.rating_text, getRatingText(rating, resources), rating, ratingCount);
     }
 
@@ -969,7 +970,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         PopupMenu popup = new PopupMenu(context, mOtherActions, Gravity.TOP);
         mPopupMenu = popup;
         popup.getMenuInflater().inflate(R.menu.scene_gallery_detail, popup.getMenu());

@@ -36,8 +36,9 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
+
+import junit.framework.Assert;
 
 import okhttp3.Cookie;
 
@@ -70,10 +71,10 @@ public class CookieSignInScene extends SolidScene implements EditText.OnEditorAc
         View view = inflater.inflate(R.layout.scene_cookie_sign_in, container, false);
         mIpbMemberIdLayout = (TextInputLayout) ViewUtils.$$(view, R.id.ipb_member_id_layout);
         mIpbMemberId = mIpbMemberIdLayout.getEditText();
-        AssertUtils.assertNotNull(mIpbMemberId);
+        Assert.assertNotNull(mIpbMemberId);
         mIpbPassHashLayout = (TextInputLayout) ViewUtils.$$(view, R.id.ipb_pass_hash_layout);
         mIpbPassHash = mIpbPassHashLayout.getEditText();
-        AssertUtils.assertNotNull(mIpbPassHash);
+        Assert.assertNotNull(mIpbPassHash);
         mOk = ViewUtils.$$(view, R.id.ok);
 
         mIpbPassHash.setOnEditorActionListener(this);
@@ -82,7 +83,7 @@ public class CookieSignInScene extends SolidScene implements EditText.OnEditorAc
 
         // Try to get old version cookie info
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         SharedPreferences sharedPreferences = context.getSharedPreferences("eh_info", 0);
         String ipbMemberId = sharedPreferences.getString("ipb_member_id", null);
         String ipbPassHash = sharedPreferences.getString("ipb_pass_hash", null);

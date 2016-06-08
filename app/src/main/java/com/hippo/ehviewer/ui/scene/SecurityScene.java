@@ -31,9 +31,10 @@ import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.hardware.ShakeDetector;
 import com.hippo.widget.lockpattern.LockPatternUtils;
 import com.hippo.widget.lockpattern.LockPatternView;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ViewUtils;
+
+import junit.framework.Assert;
 
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class SecurityScene extends SolidScene implements
         super.onCreate(savedInstanceState);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (null != mSensorManager) {
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);

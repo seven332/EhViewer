@@ -45,7 +45,8 @@ import com.hippo.ehviewer.client.parser.TorrentParser;
 import com.hippo.ehviewer.client.parser.VoteCommentParser;
 import com.hippo.ehviewer.client.parser.WhatsHotParser;
 import com.hippo.network.StatusCodeException;
-import com.hippo.yorozuya.AssertUtils;
+
+import junit.framework.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -501,7 +502,7 @@ public class EhEngine {
 
     public static Void addFavoritesRange(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             long[] gidArray, String[] tokenArray, int dstCat) throws Exception {
-        AssertUtils.assertEqualsEx(gidArray.length, tokenArray.length);
+        Assert.assertEquals(gidArray.length, tokenArray.length);
         for (int i = 0, n = gidArray.length; i < n; i++) {
             addFavorites(task, okHttpClient, gidArray[i], tokenArray[i], dstCat, null);
         }

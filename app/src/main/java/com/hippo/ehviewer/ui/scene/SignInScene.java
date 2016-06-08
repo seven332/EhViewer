@@ -42,8 +42,9 @@ import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
+
+import junit.framework.Assert;
 
 public final class SignInScene extends SolidScene implements EditText.OnEditorActionListener,
         View.OnClickListener {
@@ -119,10 +120,10 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
         mProgress = ViewUtils.$$(view, R.id.progress);
         mUsernameLayout = (TextInputLayout) ViewUtils.$$(loginForm, R.id.username_layout);
         mUsername = mUsernameLayout.getEditText();
-        AssertUtils.assertNotNull(mUsername);
+        Assert.assertNotNull(mUsername);
         mPasswordLayout = (TextInputLayout) ViewUtils.$$(loginForm, R.id.password_layout);
         mPassword = mPasswordLayout.getEditText();
-        AssertUtils.assertNotNull(mPassword);
+        Assert.assertNotNull(mPassword);
         mRegister = ViewUtils.$$(loginForm, R.id.register);
         mSignIn = ViewUtils.$$(loginForm, R.id.sign_in);
         mSignInViaWebView = (TextView) ViewUtils.$$(loginForm, R.id.sign_in_via_webview);
@@ -142,7 +143,7 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
         mSkipSigningIn.setOnClickListener(this);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
         EhApplication application = (EhApplication) context.getApplicationContext();
         if (application.containGlobalStuff(mRequestId)) {
             mSigningIn = true;

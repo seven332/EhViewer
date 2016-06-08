@@ -49,8 +49,9 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
-import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
+
+import junit.framework.Assert;
 
 import java.util.List;
 
@@ -96,7 +97,7 @@ public final class QuickSearchScene extends ToolbarScene {
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
         Context context = getContext2();
-        AssertUtils.assertNotNull(context);
+        Assert.assertNotNull(context);
 
         Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_search);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -197,7 +198,7 @@ public final class QuickSearchScene extends ToolbarScene {
 
         public QuickSearchAdapter() {
             mInflater = getLayoutInflater2();
-            AssertUtils.assertNotNull(mInflater);
+            Assert.assertNotNull(mInflater);
         }
 
         @Override
