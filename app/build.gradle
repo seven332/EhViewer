@@ -8,8 +8,8 @@ android {
         applicationId "com.hippo.ehviewer"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 64
-        versionName "1.0.11"
+        versionCode 65
+        versionName "1.0.12"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW"
 
