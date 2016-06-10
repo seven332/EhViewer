@@ -54,6 +54,9 @@
         android:summary="@string/settings_about_license_summary"
         app:activity="com.hippo.ehviewer.ui.LicenseActivity"/>
 
+    <com.hippo.ehviewer.preference.VersionPreference
+        android:key="version"/>
+
     <Preference
         android:key="check_for_updates"
         android:title="@string/settings_about_check_for_updates"/>

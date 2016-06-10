@@ -489,6 +489,7 @@
     <string name="settings_about_donate_toast">郵箱地址已複製到剪切板</string>
     <string name="settings_about_enable_analytics">啟用數據統計</string>
     <string name="settings_about_about_analytics">關於數據統計</string>
+    <string name="settings_about_version">版本號</string>
     <string name="settings_about_check_for_updates">檢查更新</string>
     <string name="settings_about_beta_update_channel">更新測試版</string>
     <string name="settings_about_beta_update_channel_summary">測試版可能在你的設備上出現不可預知的錯誤</string>

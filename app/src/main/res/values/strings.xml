@@ -533,6 +533,7 @@
     <string name="settings_about_donate_toast">Email address copied to clipboard</string>
     <string name="settings_about_enable_analytics">Enable analytics</string>
     <string name="settings_about_about_analytics">About analytics</string>
+    <string name="settings_about_version">Build version</string>
     <string name="settings_about_check_for_updates">Check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
     <string name="settings_about_beta_update_channel_summary">Beta release might be broken on your devices</string>
