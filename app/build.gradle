@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "24.0.0 rc4"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 65
         versionName "1.0.12"
         vectorDrawables.useSupportLibrary = true
@@ -58,8 +58,8 @@ clean {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:design:24.0.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.seven332:animator:0.1.0'
     compile 'com.github.seven332:beerbelly:0.1.4'
@@ -70,7 +70,7 @@ dependencies {
     compile 'com.github.seven332:glview:0.1.0'
     compile 'com.github.seven332:glview-image:0.1.0'
     compile 'com.github.seven332:hotspot:0.1.0'
-    compile 'com.github.seven332:image:0.1.9-jpeg-png-gif'
+    compile 'com.github.seven332:image:0.1.12'
     compile 'com.github.seven332:okhttp:3.3.1-eh'
     compile 'com.github.seven332:refreshlayout:0.1.0'
     compile 'com.github.seven332:ripple:0.1.1'
