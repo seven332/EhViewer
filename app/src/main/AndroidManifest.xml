@@ -130,8 +130,18 @@
 
         <service
             android:name="com.hippo.ehviewer.download.DownloadService"
-            android:icon="@mipmap/ic_launcher"
             android:label="@string/download_service_label"/>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.hippo.ehviewer.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"/>
+
+        </provider>
     </application>
 </manifest>

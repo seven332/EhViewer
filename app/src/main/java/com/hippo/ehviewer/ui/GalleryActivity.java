@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -838,14 +839,23 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
             return;
         }
+        String filename = file.getName();
+        if (filename == null) {
+            Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+        }
 
-        // TODO Create ContentProvider for some app are not grand storage write permission
-        Uri uri = file.getUri();
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                MimeTypeMap.getFileExtensionFromUrl(uri.toString()));
+                MimeTypeMap.getFileExtensionFromUrl(filename));
         if (TextUtils.isEmpty(mimeType)) {
             mimeType = "image/jpeg";
         }
+
+        Uri uri = new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_CONTENT)
+                .authority("com.hippo.ehviewer.fileprovider")
+                .appendPath("temp")
+                .appendPath(filename)
+                .build();
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
