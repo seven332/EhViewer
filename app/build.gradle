@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    buildToolsVersion "24.0.1"
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
@@ -58,20 +58,20 @@ clean {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:design:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.seven332:animator:0.1.0'
     compile 'com.github.seven332:beerbelly:0.1.4'
     compile 'com.github.seven332:conaco:0.1.5-eh'
     compile 'com.github.seven332:drawerlayout:0.1.0'
-    compile 'com.github.seven332:easyrecyclerview:0.1.0'
+    compile 'com.github.seven332:easyrecyclerview:0.1.1'
     compile 'com.github.seven332:glgallery:0.1.2'
     compile 'com.github.seven332:glview:0.1.0'
     compile 'com.github.seven332:glview-image:0.1.0'
     compile 'com.github.seven332:hotspot:0.1.0'
     compile 'com.github.seven332:image:0.1.12'
-    compile 'com.github.seven332:okhttp:3.3.1-eh'
+    compile 'com.github.seven332:okhttp:3.4.1-eh'
     compile 'com.github.seven332:refreshlayout:0.1.0'
     compile 'com.github.seven332:ripple:0.1.1'
     compile 'com.github.seven332:streampipe:0.1.0'
@@ -80,7 +80,7 @@ dependencies {
     compile 'com.github.seven332:yorozuya:0.1.2'
     compile 'com.github.seven332:yorozuya-thread:0.1.1'
     compile 'com.github.seven332:yorozuya-collect:0.1.4'
-    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.9.1'
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.9.2'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     compile 'org.greenrobot:greendao:2.2.0'
     compile 'org.jsoup:jsoup:1.9.2'
