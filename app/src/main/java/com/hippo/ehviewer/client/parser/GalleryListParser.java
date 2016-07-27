@@ -143,18 +143,18 @@ public class GalleryListParser {
         // Title (required)
         Element it5 = JsoupUtils.getElementByClass(e, "it5");
         if (null == it5) {
-            Log.e(TAG, "Can't parse gallery info title");
+            Log.e(TAG, "Can't parse gallery info title, step 1");
             return null;
         }
         Elements es = it5.children();
         if (null == es || es.size() <= 0) {
-            Log.e(TAG, "Can't parse gallery info title");
+            Log.e(TAG, "Can't parse gallery info title, step 2");
             return null;
         }
         Element a = es.get(0);
         GalleryDetailUrlParser.Result result = GalleryDetailUrlParser.parse(a.attr("href"));
         if (null == result) {
-            Log.e(TAG, "Can't parse gallery info title");
+            Log.e(TAG, "Can't parse gallery info title, step 3");
             return null;
         }
         gi.gid = result.gid;
