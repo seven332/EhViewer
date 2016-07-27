@@ -1132,6 +1132,16 @@ public final class SpiderQueen implements Runnable {
                     }
                     os.flush();
 
+                    // check download size
+                    if (contentLength >= 0) {
+                        if (receivedSize < contentLength) {
+                            Log.e(TAG, "Can't download all of image data");
+                            continue;
+                        } else if (receivedSize > contentLength) {
+                            Log.w(TAG, "Received data is more than contentLength");
+                        }
+                    }
+
                     // Check interrupted
                     if (Thread.currentThread().isInterrupted()) {
                         interrupt = true;
