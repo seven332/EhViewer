@@ -32,16 +32,16 @@ public class EhUrl {
     public static final String DOMAIN_LOFI = "lofi.e-hentai.org";
 
     public static final String HOST_E = "http://" + DOMAIN_E + "/";
-    public static final String HOST_EX = "http://" + DOMAIN_EX + "/";
+    public static final String HOST_EX = "https://" + DOMAIN_EX + "/";
     public static final String HOST_G = "http://" + DOMAIN_G + "/";
 
-    public static final String API_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
+    public static final String API_SIGN_IN = "https://forums.e-hentai.org/index.php?act=Login&CODE=01";
 
     public static final String API_G = HOST_G + "api.php";
     public static final String API_EX = HOST_EX + "api.php";
 
-    public static final String URL_SIGN_IN = "http://forums.e-hentai.org/index.php?act=Login";
-    public static final String URL_REGISTER = "http://forums.e-hentai.org/index.php?act=Reg&CODE=00";
+    public static final String URL_SIGN_IN = "https://forums.e-hentai.org/index.php?act=Login";
+    public static final String URL_REGISTER = "https://forums.e-hentai.org/index.php?act=Reg&CODE=00";
     public static final String URL_FAVORITES_G = HOST_G + "favorites.php";
     public static final String URL_FAVORITES_EX = HOST_EX + "favorites.php";
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
