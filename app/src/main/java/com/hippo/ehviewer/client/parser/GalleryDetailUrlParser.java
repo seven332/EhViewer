@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  */
 public final class GalleryDetailUrlParser {
 
-    public static final Pattern URL_PATTERN = Pattern.compile("http://(?:" +
+    public static final Pattern URL_PATTERN = Pattern.compile("https?://(?:" +
             EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_G + "|" + EhUrl.DOMAIN_LOFI + ")/g/(\\d+)/(\\w+)");
 
     @Nullable

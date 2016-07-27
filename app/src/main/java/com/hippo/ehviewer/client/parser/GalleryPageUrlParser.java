@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public final class GalleryPageUrlParser {
 
-    public static final Pattern URL_PATTERN = Pattern.compile("http://(?:" +
+    public static final Pattern URL_PATTERN = Pattern.compile("https?://(?:" +
             EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_G + "|" + EhUrl.DOMAIN_LOFI + ")/s/(\\w+)/(\\d+)-(\\d+)");
 
     public static Result parse(String url) {
