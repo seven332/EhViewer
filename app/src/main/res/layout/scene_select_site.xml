@@ -92,7 +92,7 @@
         </ScrollView>
     </com.hippo.widget.MaxSizeContainer>
 
-    <android.support.v7.widget.ButtonBarLayout
+    <LinearLayout
         android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -119,5 +119,5 @@
             android:textStyle="bold"
             android:text="@android:string/ok"/>
 
-    </android.support.v7.widget.ButtonBarLayout>
+    </LinearLayout>
 </LinearLayout>

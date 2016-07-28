@@ -83,7 +83,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
 
-            <android.support.v7.widget.ButtonBarLayout
+            <LinearLayout
                 android:id="@+id/buttonPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
                     android:textStyle="bold"
                     android:text="@string/sign_in"/>
 
-            </android.support.v7.widget.ButtonBarLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/sign_in_via_webview"

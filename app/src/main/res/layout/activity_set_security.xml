@@ -51,7 +51,7 @@
         </com.hippo.widget.MaxSizeContainer>
     </FrameLayout>
 
-    <android.support.v7.widget.ButtonBarLayout
+    <LinearLayout
         android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,5 +79,5 @@
             android:layout_weight="1"
             android:text="@string/set"/>
 
-    </android.support.v7.widget.ButtonBarLayout>
+    </LinearLayout>
 </LinearLayout>

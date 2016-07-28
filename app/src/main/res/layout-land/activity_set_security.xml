@@ -40,7 +40,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <android.support.v7.widget.ButtonBarLayout
+        <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/buttonPanel"
             android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                 android:layout_weight="1"
                 android:text="@string/set"/>
 
-        </android.support.v7.widget.ButtonBarLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <FrameLayout
