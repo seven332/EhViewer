@@ -47,7 +47,6 @@ public class ListParser {
      * @return
      */
     public int parser(String body, int mode) {
-
         Pattern p;
         Matcher m;
 
@@ -132,27 +131,44 @@ public class ListParser {
                 return PARSER_ERROR;
             }
 
+            //Fixed RegExpr , Delete thumb matcher
             p = Pattern.compile("<td class=\"itdc\">(?:<a.+?>)?<img.+?alt=\"(.+?)\".+?/>(?:</a>)?</td>" // category
                     + "<td.+?>(.+?)</td>" // posted
                     + "<td.+?><div.+?><div.+?height:(\\d+)px; width:(\\d+)px\">"
-                    + "(?:<img.+?src=\"(.+?)\".+?alt=\"(.+?)\" style.+?/>"
-                    + "|init~([^<>\"~]+~[^<>\"~]+)~([^<>]+))" // thumb and title
-                    + "</div>"
                     + ".+?"
                     + "<div class=\"it5\"><a href=\"([^<>\"]+)\"[^<>]+>(.+?)</a></div>" // url and title
                     + ".+?"
                     + "<div class=\"ir it4r\" style=\"([^<>\"]+)\">" // rating
                     + ".+?"
-                    + "<td class=\"itu\"><div><a.+?>(.+?)</a>"); // uploader
+                    + "<td class=\"itu\"><div><a.+?>(.+?)</a>"// uploader
+                    );
+
+
+            //搞错弄成大图版了，写了蛮久的就不删了
+            /*p = Pattern.compile("<div class=\"id1\" style=\".+?\">"                     
+                    + "<div class=\"id2\">"
+                    + "<a href=\".+?//.+?/g/(.+?)/(.+?)/\">(.+?)</a>"                 //group1:gid, group2:token, group3:title
+                    + "</div>"
+                    + "<div class=\"id3\" style=\".+?\">"
+                    + "<a href=\".+?\">"
+                    + "<img src=\"(.+?)\" alt=\"(.+?)\" title=\".+?\">"                //group4:thumbLink,group5:alt
+                    + "</a>"
+                    + "</div>"
+                    + "<div class=\"id4\">"
+                    + "<div class=\"id41\" style=\".+?\" title=\"(.+?)\"></div>"       //group6:style?
+                    + ""
+            );
+            */
+
             m = p.matcher(body);
             while (m.find()) {
                 GalleryInfo gi = new GalleryInfo();
-
                 gi.category = EhUtils.getCategory(m.group(1));
                 gi.posted = m.group(2);
                 gi.thumbHeight = Integer.parseInt(m.group(3));
                 gi.thumbWidth = Integer.parseInt(m.group(4));
 
+                /*
                 if (m.group(5) == null) {
                     gi.thumb = Utils.unescapeXml("http://"
                             + m.group(7).replace('~', '/'));
@@ -161,7 +177,9 @@ public class ListParser {
                     gi.thumb = Utils.unescapeXml(m.group(5));
                     gi.title = Utils.unescapeXml(m.group(6));
                 }
+                */
 
+                /*
                 Pattern pattern = Pattern
                         .compile("/(\\d+)/(\\w+)");
                 Matcher matcher = pattern.matcher(m.group(9));
@@ -170,12 +188,23 @@ public class ListParser {
                     gi.token = matcher.group(2);
                 } else
                     continue;
+                */
+				
+                String[] tempStr=m.group(5).split("/");
+                gi.gid = Integer.parseInt(tempStr[4]);
+                gi.token = tempStr[5];
 
-                gi.rating = Float.parseFloat(getRate(m.group(11)));
-                gi.uploader = m.group(12);
+                gi.title = m.group(6);
+                gi.rating = Float.parseFloat(getRate(m.group(7)));
+                gi.uploader = m.group(8);
                 gi.generateSLang();
 
                 giList.add(gi);
+            }
+            //thumbFinding
+            ArrayList<String> thumbList = getThumbList(body);
+            for(int i=0;i<giList.size();++i){
+                giList.get(i).thumb=thumbList.get(i+1);
             }
             return ALL;
         }
@@ -205,6 +234,26 @@ public class ListParser {
             re = Integer.toString(rate);
         return re;
     }
+
+    //thumbFinder
+    private ArrayList<String> getThumbList(String body){
+        ArrayList<String> thumbList = new ArrayList<String>(26);
+        Pattern qq = Pattern.compile("exhentai.org/t(.+?)\" alt=\"(.+?)\"");
+        Matcher nn=qq.matcher(body);
+        Pattern pp = Pattern.compile("inits~exhentai.org~t(.+?)~(.+?)</div>");
+        Matcher mm=pp.matcher(body);
+
+        while(nn.find()){
+            thumbList.add("http://exhentai.org/t"+nn.group(1));
+            System.out.println(nn.group(2));
+        }
+        while(mm.find()){
+            thumbList.add("http://exhentai.org/t"+mm.group(1));
+            System.out.println(mm.group(2));
+        }
+        return thumbList;
+    }
+
 
     private static final String PAU_SPACER = " by ";
 
