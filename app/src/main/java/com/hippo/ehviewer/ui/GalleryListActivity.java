@@ -205,7 +205,7 @@ public class GalleryListActivity extends AbsTranslucentActivity implements View.
     // private int mListModeThumbHeight;
 
     private void toRegister() {
-        Uri uri = Uri.parse("http://forums.e-hentai.org/index.php?act=Reg");
+        Uri uri = Uri.parse("https://forums.e-hentai.org/index.php?act=Reg");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }

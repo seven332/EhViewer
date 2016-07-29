@@ -52,7 +52,7 @@ public class EdDetailParser {
                 isLastPage = true;
 
             // Parser preview
-            p = Pattern.compile("<div class=\"gi\"[^>]*><a href=\"http://lofi.e-hentai.org/s/(\\w+)/\\d+-(\\d+)\"[^>]*>");
+            p = Pattern.compile("<div class=\"gi\"[^>]*><a href=\"https?://lofi.e-hentai.org/s/(\\w+)/\\d+-(\\d+)\"[^>]*>");
             m = p.matcher(body);
             boolean first = true;
             while(m.find()) {
@@ -94,7 +94,7 @@ public class EdDetailParser {
 
             boolean first = true;
             if (body.contains("<div class=\"gdtl\"")) {
-                p = Pattern.compile("<div class=\"gdtl\"[^>]*><a href=\"http://[^/]+/s/(\\w+)/\\d+-(\\d+)\">");
+                p = Pattern.compile("<div class=\"gdtl\"[^>]*><a href=\"https?://[^/]+/s/(\\w+)/\\d+-(\\d+)\">");
                 m = p.matcher(body);
                 while(m.find()) {
                     if (first) {
@@ -106,7 +106,7 @@ public class EdDetailParser {
                 }
 
             } else {
-                p = Pattern.compile("<div class=\"gdtm\"[^>]*><div[^>]*><a href=\"http://[^/]+/s/(\\w+)/\\d+-(\\d+)\">");
+                p = Pattern.compile("<div class=\"gdtm\"[^>]*><div[^>]*><a href=\"https?://[^/]+/s/(\\w+)/\\d+-(\\d+)\">");
                 m = p.matcher(body);
                 while(m.find()) {
                     if (first) {

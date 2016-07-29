@@ -63,15 +63,15 @@ public class EhClient {
     public static final int MODE_LOFI = 0x2;
 
     public static final String API_G = "http://g.e-hentai.org/api.php";
-    public static final String API_EX = "http://exhentai.org/api.php";
+    public static final String API_EX = "https://exhentai.org/api.php";
     public static final long APIUID = 1363542;
     public static final String APIKEY = "f4b5407ab1727b9d08d7";
 
-    public static final String LOGIN_URL = "http://forums.e-hentai.org/index.php?act=Login&CODE=01";
-    private static final String FORUMS_URL = "http://forums.e-hentai.org/index.php";
+    public static final String LOGIN_URL = "https://forums.e-hentai.org/index.php?act=Login&CODE=01";
+    private static final String FORUMS_URL = "https://forums.e-hentai.org/index.php";
 
     public static final String HEADER_G = "http://g.e-hentai.org/";
-    public static final String HEADER_EX = "http://exhentai.org/";
+    public static final String HEADER_EX = "https://exhentai.org/";
     public static final String HEADER_LOFI = "http://lofi.e-hentai.org/";
 
     public static final String API_EHVIEWER = "http://www.ehviewer.com/API";
@@ -376,7 +376,7 @@ public class EhClient {
                 }
                 String avatarUrl = m.group(1);
                 if (!avatarUrl.startsWith("http"))
-                    avatarUrl = "http://forums.e-hentai.org/" + avatarUrl;
+                    avatarUrl = "https://forums.e-hentai.org/" + avatarUrl;
                 // Get avatar
                 Bitmap avatar = hp.getImage(avatarUrl);
                 // Set avatar if not null
@@ -535,7 +535,7 @@ public class EhClient {
     public static String getFileSearchUrl(int apiMode) {
         switch (apiMode) {
         case MODE_EX:
-            return "http://ul.exhentai.org/image_lookup.php";
+            return "https://ul.exhentai.org/image_lookup.php";
         case MODE_G:
         default:
             return "http://ul.e-hentai.org/image_lookup.php";
