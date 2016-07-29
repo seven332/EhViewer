@@ -62,6 +62,7 @@ ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86)
+    LOCAL_ASMFLAGS := -DELF -DPIC
     LOCAL_SRC_FILES += \
     libjpeg-turbo/simd/jsimd_i386.c \
     libjpeg-turbo/simd/jsimdcpu.asm \
@@ -100,6 +101,7 @@ ifeq ($(TARGET_ARCH_ABI),x86)
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86_64)
+    LOCAL_ASMFLAGS := -D__x86_64__ -DELF -DPIC
     LOCAL_SRC_FILES += \
     libjpeg-turbo/simd/jsimd_x86_64.c \
     libjpeg-turbo/simd/jfdctflt-sse-64.asm \
