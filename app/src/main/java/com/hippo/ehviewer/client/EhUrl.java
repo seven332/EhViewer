@@ -40,6 +40,9 @@ public class EhUrl {
     public static final String API_G = HOST_G + "api.php";
     public static final String API_EX = HOST_EX + "api.php";
 
+    public static final String URL_IMAGE_SEARCH_G = "https://upload.e-hentai.org/image_lookup.php";
+    public static final String URL_IMAGE_SEARCH_EX = "https://exhentai.org/upload/image_lookup.php";
+
     public static final String URL_SIGN_IN = "https://forums.e-hentai.org/index.php?act=Login";
     public static final String URL_REGISTER = "https://forums.e-hentai.org/index.php?act=Reg&CODE=00";
     public static final String URL_FAVORITES_G = HOST_G + "favorites.php";
@@ -108,9 +111,9 @@ public class EhUrl {
         switch (Settings.getGallerySite()) {
             default:
             case SITE_G:
-                return "http://ul.e-hentai.org/image_lookup.php";
+                return URL_IMAGE_SEARCH_G;
             case SITE_EX:
-                return "http://ul.exhentai.org/image_lookup.php";
+                return URL_IMAGE_SEARCH_EX;
         }
     }
 }
