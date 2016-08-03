@@ -144,22 +144,6 @@ public class ListParser {
                     );
 
 
-            //搞错弄成大图版了，写了蛮久的就不删了
-            /*p = Pattern.compile("<div class=\"id1\" style=\".+?\">"                     
-                    + "<div class=\"id2\">"
-                    + "<a href=\".+?//.+?/g/(.+?)/(.+?)/\">(.+?)</a>"                 //group1:gid, group2:token, group3:title
-                    + "</div>"
-                    + "<div class=\"id3\" style=\".+?\">"
-                    + "<a href=\".+?\">"
-                    + "<img src=\"(.+?)\" alt=\"(.+?)\" title=\".+?\">"                //group4:thumbLink,group5:alt
-                    + "</a>"
-                    + "</div>"
-                    + "<div class=\"id4\">"
-                    + "<div class=\"id41\" style=\".+?\" title=\"(.+?)\"></div>"       //group6:style?
-                    + ""
-            );
-            */
-
             m = p.matcher(body);
             while (m.find()) {
                 GalleryInfo gi = new GalleryInfo();
@@ -244,11 +228,11 @@ public class ListParser {
         Matcher mm=pp.matcher(body);
 
         while(nn.find()){
-            thumbList.add("http://exhentai.org/t"+nn.group(1));
+            thumbList.add("https://exhentai.org/t"+nn.group(1));
             System.out.println(nn.group(2));
         }
         while(mm.find()){
-            thumbList.add("http://exhentai.org/t"+mm.group(1));
+            thumbList.add("https://exhentai.org/t"+mm.group(1));
             System.out.println(mm.group(2));
         }
         return thumbList;
