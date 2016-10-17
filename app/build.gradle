@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
@@ -15,13 +15,13 @@ android {
 
         jackOptions {
             enabled true
+            additionalParameters("jack.dex.optimize" : "true")
         }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-        incremental true
     }
 
     lintOptions {
@@ -58,8 +58,8 @@ clean {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.seven332:animator:0.1.0'
     compile 'com.github.seven332:beerbelly:0.1.4'
@@ -73,10 +73,10 @@ dependencies {
     compile 'com.github.seven332:image:0.1.12'
     compile 'com.github.seven332:okhttp:3.4.1-eh'
     compile 'com.github.seven332:refreshlayout:0.1.0'
-    compile 'com.github.seven332:ripple:0.1.1'
+    compile 'com.github.seven332:ripple:0.1.2'
     compile 'com.github.seven332:streampipe:0.1.0'
     compile 'com.github.seven332:tuxiang:0.1.2'
-    compile 'com.github.seven332:unifile:0.1.4'
+    compile 'com.github.seven332:unifile:0.2.0'
     compile 'com.github.seven332:yorozuya:0.1.2'
     compile 'com.github.seven332:yorozuya-thread:0.1.1'
     compile 'com.github.seven332:yorozuya-collect:0.1.4'
