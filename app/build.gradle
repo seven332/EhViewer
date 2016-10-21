@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.tasks.DefaultAndroidTask
+
 apply plugin: 'com.android.application'
 
 android {
@@ -48,8 +50,9 @@ task copyNotice(type: Copy) {
     finalizedBy ":daogenerator:executeDaoGenerator"
 }
 
-tasks.withType(AbstractCompile) {
-    compileTask -> compileTask.dependsOn copyNotice
+// TODO What is jack task?
+tasks.withType(DefaultAndroidTask) {
+    task -> task.dependsOn copyNotice
 }
 
 clean {
