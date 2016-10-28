@@ -449,7 +449,7 @@ public class EhDB {
 
     public static synchronized List<GalleryInfo> getAllLocalFavorites() {
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
-        List<LocalFavoriteInfo> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Time).list();
+        List<LocalFavoriteInfo> list = dao.queryBuilder().orderDesc(LocalFavoritesDao.Properties.Time).list();
         List<GalleryInfo> result = new ArrayList<>();
         result.addAll(list);
         return result;
@@ -458,7 +458,7 @@ public class EhDB {
     public static synchronized List<GalleryInfo> searchLocalFavorites(String query) {
         query = SqlUtils.sqlEscapeString("%" + query+ "%");
         LocalFavoritesDao dao = sDaoSession.getLocalFavoritesDao();
-        List<LocalFavoriteInfo> list = dao.queryBuilder().orderAsc(LocalFavoritesDao.Properties.Time)
+        List<LocalFavoriteInfo> list = dao.queryBuilder().orderDesc(LocalFavoritesDao.Properties.Time)
                 .where(LocalFavoritesDao.Properties.Title.like(query)).list();
         List<GalleryInfo> result = new ArrayList<>();
         result.addAll(list);
