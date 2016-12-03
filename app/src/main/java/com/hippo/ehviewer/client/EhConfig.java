@@ -299,6 +299,7 @@ public class EhConfig implements Cloneable {
     public static final int NAMESPACES_MALE = 0x40;
     public static final int NAMESPACES_FEMALE = 0x80;
 
+    public static final String JAPANESE_ORIGINAL = "0";
     public static final String JAPANESE_TRANSLATED = "1024";
     public static final String JAPANESE_REWRITE = "2048";
     public static final String ENGLISH_ORIGINAL = "1";

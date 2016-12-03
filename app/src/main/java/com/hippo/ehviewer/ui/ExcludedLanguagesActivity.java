@@ -61,6 +61,7 @@ public class ExcludedLanguagesActivity extends ToolbarActivity
     };
 
     private static final String[] LANGUAGES = {
+            EhConfig.JAPANESE_ORIGINAL,
             EhConfig.JAPANESE_TRANSLATED,
             EhConfig.JAPANESE_REWRITE,
             EhConfig.ENGLISH_ORIGINAL,
@@ -207,8 +208,8 @@ public class ExcludedLanguagesActivity extends ToolbarActivity
                 String pattern = LANGUAGES[j];
                 if (pattern.equals(language)) {
                     // Get it
-                    int row = (j + 1) / 3;
-                    int column = (j + 1) % 3;
+                    int row = j / 3;
+                    int column = j % 3;
                     mSelections[row][column] = true;
                     break;
                 }
@@ -282,22 +283,19 @@ public class ExcludedLanguagesActivity extends ToolbarActivity
             finish();
         } else if (v == mOk) {
             StringBuilder sb = new StringBuilder();
-            int i = -1;
+            int i = 0;
             boolean first = true;
             for (boolean[] selections : mSelections) {
                 for (boolean b : selections) {
-                    i++;
-                    if (i == 0) {
-                        continue;
-                    }
                     if (b) {
                         if (!first) {
                             sb.append("x");
                         } else {
                             first = false;
                         }
-                        sb.append(LANGUAGES[i - 1]);
+                        sb.append(LANGUAGES[i]);
                     }
+                    i++;
                 }
             }
 
@@ -383,11 +381,6 @@ public class ExcludedLanguagesActivity extends ToolbarActivity
         @Override
         public void onBindViewHolder(LanguageHolder holder, int position) {
             holder.language.setText(LANGUAGE_STR_IDS[position]);
-            if (position == 0) {
-                holder.original.setVisibility(View.INVISIBLE);
-            } else {
-                holder.original.setVisibility(View.VISIBLE);
-            }
             boolean[] selections = mSelections[position];
             holder.original.setChecked(selections[0]);
             holder.translated.setChecked(selections[1]);
