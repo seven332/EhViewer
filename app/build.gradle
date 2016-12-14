@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
@@ -61,8 +61,8 @@ clean {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.seven332:animator:0.1.0'
     compile 'com.github.seven332:beerbelly:0.1.4'
@@ -74,7 +74,7 @@ dependencies {
     compile 'com.github.seven332:glview-image:0.1.0'
     compile 'com.github.seven332:hotspot:0.1.0'
     compile 'com.github.seven332:image:0.1.12'
-    compile 'com.github.seven332:okhttp:3.4.1-eh'
+    compile 'com.github.seven332:okhttp:3.5.0'
     compile 'com.github.seven332:refreshlayout:0.1.0'
     compile 'com.github.seven332:ripple:0.1.2'
     compile 'com.github.seven332:streampipe:0.1.0'

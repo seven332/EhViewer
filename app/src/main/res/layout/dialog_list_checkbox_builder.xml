@@ -32,8 +32,8 @@
         android:scrollbars="vertical"
         android:overScrollMode="ifContentScrolls"
         android:fadingEdge="none"
-        android:paddingTop="@dimen/abc_dialog_list_padding_vertical_material"
-        android:paddingBottom="@dimen/abc_dialog_list_padding_vertical_material"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:clipToPadding="false"
         style="@style/Indicating"/>
 
