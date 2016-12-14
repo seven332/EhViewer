@@ -1007,14 +1007,27 @@ public final class SpiderQueen implements Runnable {
             mGid = mGalleryInfo.gid;
         }
 
-        private GalleryPageParser.Result getImageUrl(long gid, int index, String pToken,
-                String skipHathKey) throws Exception {
-            String url = EhUrl.getPageUrl(gid, index, pToken);
-            if (skipHathKey != null) {
-                url = url + "?nl=" + skipHathKey;
+        private String getPageUrl(long gid, int index, String pToken,
+                String oldPageUrl, String skipHathKey) {
+            String pageUrl;
+            if (oldPageUrl != null) {
+                pageUrl = oldPageUrl;
+            } else {
+                pageUrl = EhUrl.getPageUrl(gid, index, pToken);
             }
+            // Add skipHathKey
+            if (skipHathKey != null) {
+                if (pageUrl.contains("?")) {
+                    pageUrl += "&nl=" + skipHathKey;
+                } else {
+                    pageUrl += "?nl=" + skipHathKey;
+                }
+            }
+            return pageUrl;
+        }
 
-            GalleryPageParser.Result result = EhEngine.getGalleryPage(null, mHttpClient, url);
+        private GalleryPageParser.Result getImageUrl(int index, String pageUrl) throws Exception {
+            GalleryPageParser.Result result = EhEngine.getGalleryPage(null, mHttpClient, pageUrl);
             if (StringUtils.endsWith(result.imageUrl, URL_509_SUFFIX_ARRAY)) {
                 // Get 509
                 // Notify listeners
@@ -1027,21 +1040,25 @@ public final class SpiderQueen implements Runnable {
 
         // false for stop
         private boolean downloadImage(long gid, int index, String pToken, boolean force) {
+            List<String> skipHathKeys = new ArrayList<>(5);
             String skipHathKey = null;
             String imageUrl;
             String error = null;
+            String pageUrl = null;
             boolean interrupt = false;
+            boolean leakSkipHathKey = false;
 
             // Try twice
-            for (int i = 0; i < 2; i++) {
-                if (i > 0 && TextUtils.isEmpty(skipHathKey)) {
-                    // No need to get image url twice without skip hath key
+            for (int i = 0; i < 5; i++) {
+                if (leakSkipHathKey) {
                     break;
                 }
 
+                pageUrl = getPageUrl(gid, index, pToken, pageUrl, skipHathKey);
+
                 GalleryPageParser.Result result = null;
                 try {
-                    result = getImageUrl(gid, index, pToken, skipHathKey);
+                    result = getImageUrl(index, pageUrl);
                 } catch (Image509Exception e) {
                     error = GetText.getString(R.string.error_509);
                 } catch (Exception e) {
@@ -1053,6 +1070,7 @@ public final class SpiderQueen implements Runnable {
                 }
                 // Check interrupted
                 if (Thread.currentThread().isInterrupted()) {
+                    error = "Interrupted";
                     interrupt = true;
                     break;
                 }
@@ -1063,11 +1081,22 @@ public final class SpiderQueen implements Runnable {
                     imageUrl = result.imageUrl;
                 }
                 skipHathKey = result.skipHathKey;
+                if (!TextUtils.isEmpty(skipHathKey)) {
+                    if (skipHathKeys.contains(skipHathKey)) {
+                        // Duplicate skip hath key, don't run next turn
+                        leakSkipHathKey = true;
+                    } else {
+                        skipHathKeys.add(skipHathKey);
+                    }
+                } else {
+                    // No skip hath key, don't run next turn
+                    leakSkipHathKey = true;
+                }
 
                 // If it is force request, skip first image
-                if (force && i == 0) {
-                    continue;
-                }
+                //if (force && i == 0) {
+                //    continue;
+                //}
 
                 if (DEBUG_LOG) {
                     Log.d(TAG, imageUrl);
@@ -1086,6 +1115,7 @@ public final class SpiderQueen implements Runnable {
                     if (response.code() >= 400) {
                         // Maybe 404
                         response.body().close();
+                        error = "Bad code: " + response.code();
                         continue;
                     }
                     ResponseBody responseBody = response.body();
@@ -1136,6 +1166,7 @@ public final class SpiderQueen implements Runnable {
                     if (contentLength >= 0) {
                         if (receivedSize < contentLength) {
                             Log.e(TAG, "Can't download all of image data");
+                            error = "Incomplete";
                             continue;
                         } else if (receivedSize > contentLength) {
                             Log.w(TAG, "Received data is more than contentLength");
@@ -1145,6 +1176,7 @@ public final class SpiderQueen implements Runnable {
                     // Check interrupted
                     if (Thread.currentThread().isInterrupted()) {
                         interrupt = true;
+                        error = "Interrupted";
                         break;
                     }
 
@@ -1275,7 +1307,7 @@ public final class SpiderQueen implements Runnable {
             if (pToken == null) {
                 // Interrupted
                 // Get token failed
-                updatePageState(index, STATE_FAILED, null);
+                updatePageState(index, STATE_FAILED, "Interrupted");
                 return false;
             }
 
