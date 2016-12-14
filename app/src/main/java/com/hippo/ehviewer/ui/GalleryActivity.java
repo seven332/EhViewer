@@ -842,6 +842,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         String filename = file.getName();
         if (filename == null) {
             Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+            return;
         }
 
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
@@ -861,6 +862,9 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.setType(mimeType);
         startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
+
+        // Sync media store
+        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, file.getUri()));
     }
 
     private void saveImage(int page) {
@@ -880,6 +884,9 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         }
 
         Toast.makeText(this, getString(R.string.image_saved, file.getUri()), Toast.LENGTH_SHORT).show();
+
+        // Sync media store
+        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, file.getUri()));
     }
 
     private void showPageDialog(final int page) {
