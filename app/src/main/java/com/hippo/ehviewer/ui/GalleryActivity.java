@@ -829,13 +829,13 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             return;
         }
 
-        File dir = AppConfig.getTempDir();
+        File dir = AppConfig.getExternalImageDir();
         if (null == dir) {
             Toast.makeText(this, R.string.error_cant_create_temp_file, Toast.LENGTH_SHORT).show();
             return;
         }
         UniFile file;
-        if (null == (file = mGalleryProvider.save(page, UniFile.fromFile(dir), Long.toString(System.currentTimeMillis())))) {
+        if (null == (file = mGalleryProvider.save(page, UniFile.fromFile(dir), mGalleryProvider.getImageFilename(page)))) {
             Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -853,7 +853,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         Uri uri = new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority("com.hippo.ehviewer.fileprovider")
-                .appendPath("temp")
+                .appendPath("image")
                 .appendPath(filename)
                 .build();
         Intent intent = new Intent();

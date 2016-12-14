@@ -134,7 +134,7 @@
             android:label="@string/download_service_label"/>
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="com.hippo.content.FileProvider"
             android:authorities="com.hippo.ehviewer.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">
