@@ -300,6 +300,13 @@ public class Settings {
         return getIntFromStr(KEY_THUMB_RESOLUTION, DEFAULT_THUMB_RESOLUTION);
     }
 
+    private static final String KEY_FIX_THUMB_URL = "fix_thumb_url";
+    private static final boolean DEFAULT_FIX_THUMB_URL = false;
+
+    public static boolean getFixThumbUrl() {
+        return getBoolean(KEY_FIX_THUMB_URL, DEFAULT_FIX_THUMB_URL);
+    }
+
     private static final String KEY_SHOW_JPN_TITLE = "show_jpn_title";
     private static final boolean DEFAULT_SHOW_JPN_TITLE = false;
 

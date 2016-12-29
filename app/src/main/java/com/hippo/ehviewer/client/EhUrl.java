@@ -21,6 +21,11 @@ import android.support.annotation.NonNull;
 import com.hippo.ehviewer.Settings;
 import com.hippo.network.UrlBuilder;
 
+import java.util.List;
+import java.util.ListIterator;
+
+import okhttp3.HttpUrl;
+
 public class EhUrl {
 
     public static final int SITE_G = 0;
@@ -48,6 +53,9 @@ public class EhUrl {
     public static final String URL_FAVORITES_G = HOST_G + "favorites.php";
     public static final String URL_FAVORITES_EX = HOST_EX + "favorites.php";
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
+
+    private static final String URL_PREFIX_THUMB_G = "http://ehgt.org/t/";
+    private static final String URL_PREFIX_THUMB_EX = "http://exhentai.org/t/";
 
     public static String getGalleryDetailUrl(long gid, String token) {
         return getGalleryDetailUrl(gid, token, 0, false);
@@ -114,6 +122,46 @@ public class EhUrl {
                 return URL_IMAGE_SEARCH_G;
             case SITE_EX:
                 return URL_IMAGE_SEARCH_EX;
+        }
+    }
+
+    public static String getThumbUrlPrefix() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_G:
+                return URL_PREFIX_THUMB_G;
+            case SITE_EX:
+                return URL_PREFIX_THUMB_EX;
+        }
+    }
+
+    public static String getFixedPreviewThumbUrl(String originUrl) {
+        HttpUrl url = HttpUrl.parse(originUrl);
+        if (url == null) return originUrl;
+        List<String> pathSegments = url.pathSegments();
+        if (pathSegments == null || pathSegments.size() < 3) return originUrl;
+
+        ListIterator<String> iterator = pathSegments.listIterator(pathSegments.size());
+        // The last segments, like
+        // 317a1a254cd9c3269e71b2aa2671fe8d28c91097-260198-640-480-png_250.jpg
+        if (!iterator.hasPrevious()) return originUrl;
+        String lastSegment = iterator.previous();
+        // The second last segments, like
+        // 7a
+        if (!iterator.hasPrevious()) return originUrl;
+        String secondLastSegment = iterator.previous();
+        // The third last segments, like
+        // 31
+        if (!iterator.hasPrevious()) return originUrl;
+        String thirdLastSegment = iterator.previous();
+        // Check path segments
+        if (lastSegment != null && secondLastSegment != null
+                && thirdLastSegment != null
+                && lastSegment.startsWith(thirdLastSegment)
+                && lastSegment.startsWith(secondLastSegment, thirdLastSegment.length())) {
+            return getThumbUrlPrefix() + thirdLastSegment + "/" + secondLastSegment + "/" + lastSegment;
+        } else {
+            return originUrl;
         }
     }
 }

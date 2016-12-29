@@ -20,6 +20,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
@@ -511,6 +513,9 @@ public class GalleryDetailParser {
                 String pageUrl = element.attr("href");
                 element = element.child(0);
                 String imageUrl = element.attr("src");
+                if (Settings.getFixThumbUrl()) {
+                    imageUrl = EhUrl.getFixedPreviewThumbUrl(imageUrl);
+                }
                 int index = Integer.parseInt(element.attr("alt")) - 1;
                 largePreviewSet.addItem(index, imageUrl, pageUrl);
             }
@@ -529,8 +534,13 @@ public class GalleryDetailParser {
         LargePreviewSet largePreviewSet = new LargePreviewSet();
 
         while (m.find()) {
-            largePreviewSet.addItem(ParserUtils.parseInt(m.group(2)) - 1,
-                    ParserUtils.trim(m.group(3)), ParserUtils.trim(m.group(1)));
+            int index = ParserUtils.parseInt(m.group(2)) - 1;
+            String imageUrl = ParserUtils.trim(m.group(3));
+            String pageUrl = ParserUtils.trim(m.group(1));
+            if (Settings.getFixThumbUrl()) {
+                imageUrl = EhUrl.getFixedPreviewThumbUrl(imageUrl);
+            }
+            largePreviewSet.addItem(index, imageUrl, pageUrl);
         }
 
         if (largePreviewSet.size() == 0) {

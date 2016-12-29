@@ -416,6 +416,7 @@
     <string name="settings_eh_thumb_resolution">Thumb resolution</string>
     <string name="settings_eh_thumb_resolution_summary">%s, special resolutions might cause getting thumb failed</string>
     <string name="settings_eh_thumb_resolution_auto">Auto</string>
+    <string name="settings_eh_fix_thumb_url">Fix thumb url</string>
     <string name="settings_eh_default_categories">Categories on Homepage</string>
     <string name="settings_eh_default_categories_summary">The categories shown as default on Homepage</string>
     <string name="settings_eh_excluded_languages">Excluded languages</string>
