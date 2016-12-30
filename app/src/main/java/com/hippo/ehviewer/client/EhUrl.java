@@ -55,7 +55,7 @@ public class EhUrl {
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
 
     private static final String URL_PREFIX_THUMB_G = "http://ehgt.org/t/";
-    private static final String URL_PREFIX_THUMB_EX = "http://exhentai.org/t/";
+    private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
     public static String getGalleryDetailUrl(long gid, String token) {
         return getGalleryDetailUrl(gid, token, 0, false);
