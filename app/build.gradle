@@ -14,16 +14,6 @@ android {
         versionName "1.0.16"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW"
-
-        jackOptions {
-            enabled true
-            additionalParameters("jack.dex.optimize" : "true")
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     lintOptions {
