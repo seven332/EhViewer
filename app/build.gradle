@@ -26,9 +26,34 @@ dependencies {
 
     compile 'com.android.support:appcompat-v7:25.1.0'
 
-    testCompile 'junit:junit:4.12'
+    // Modified okio
+    compile 'com.github.seven332:okio:1.11.0'
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
+    // Http
+    compile('com.squareup.retrofit2:retrofit:2.1.0', {
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     })
+    compile('com.squareup.okhttp3:okhttp:3.5.0', {
+        exclude group: 'com.squareup.okio', module: 'okio'
+    })
+
+    compile 'com.pushtorefresh.storio:sqlite:1.12.1'
+
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+
+    compile 'io.reactivex:rxjava:1.2.5'
+    compile 'io.reactivex:rxandroid:1.2.1'
+
+    // Loading thumbs, only JPEG and PNG
+    compile 'com.facebook.fresco:fresco:1.0.0'
+    compile "com.facebook.fresco:imagepipeline-okhttp3:1.0.0"
+
+    testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.2.2"
+    // Add these dependencies to make robolectric work on Android Studio
+    testCompile 'org.ow2.asm:asm-all:5.2'
+    testCompile 'org.apache.ant:ant:1.10.0'
+    testCompile 'org.codehaus.plexus:plexus-utils:3.0.24'
 }
