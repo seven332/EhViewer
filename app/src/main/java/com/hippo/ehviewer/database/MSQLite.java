@@ -44,7 +44,7 @@ public class MSQLite {
     JAVA_TYPE_TO_SQLITE_TYPE.put(long.class, "INTEGER NOT NULL");
     JAVA_TYPE_TO_SQLITE_TYPE.put(float.class, "REAL NOT NULL");
     JAVA_TYPE_TO_SQLITE_TYPE.put(double.class, "REAL NOT NULL");
-    JAVA_TYPE_TO_SQLITE_TYPE.put(String.class, "TEXT NOT NULL");
+    JAVA_TYPE_TO_SQLITE_TYPE.put(String.class, "TEXT");
   }
 
   @SuppressLint("UseSparseArrays")

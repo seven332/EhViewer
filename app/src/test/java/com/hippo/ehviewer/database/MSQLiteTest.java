@@ -38,7 +38,7 @@ public class MSQLiteTest {
     assertEquals("REAL NOT NULL", MSQLite.javaTypeToSQLiteType(float.class));
     assertEquals("REAL NOT NULL", MSQLite.javaTypeToSQLiteType(double.class));
 
-    assertEquals("TEXT NOT NULL", MSQLite.javaTypeToSQLiteType(String.class));
+    assertEquals("TEXT", MSQLite.javaTypeToSQLiteType(String.class));
 
     try {
       assertEquals("MSQLiteTest NOT NULL", MSQLite.javaTypeToSQLiteType(this.getClass()));
