@@ -37,13 +37,13 @@ public class MSQLite {
   private static Map<Type, String> JAVA_TYPE_TO_SQLITE_TYPE = new HashMap<>();
 
   static {
-    JAVA_TYPE_TO_SQLITE_TYPE.put(boolean.class, "INTEGER NOT NULL");
-    JAVA_TYPE_TO_SQLITE_TYPE.put(byte.class, "INTEGER NOT NULL");
-    JAVA_TYPE_TO_SQLITE_TYPE.put(short.class, "INTEGER NOT NULL");
-    JAVA_TYPE_TO_SQLITE_TYPE.put(int.class, "INTEGER NOT NULL");
-    JAVA_TYPE_TO_SQLITE_TYPE.put(long.class, "INTEGER NOT NULL");
-    JAVA_TYPE_TO_SQLITE_TYPE.put(float.class, "REAL NOT NULL");
-    JAVA_TYPE_TO_SQLITE_TYPE.put(double.class, "REAL NOT NULL");
+    JAVA_TYPE_TO_SQLITE_TYPE.put(boolean.class, "INTEGER NOT NULL DEFAULT 0");
+    JAVA_TYPE_TO_SQLITE_TYPE.put(byte.class, "INTEGER NOT NULL DEFAULT 0");
+    JAVA_TYPE_TO_SQLITE_TYPE.put(short.class, "INTEGER NOT NULL DEFAULT 0");
+    JAVA_TYPE_TO_SQLITE_TYPE.put(int.class, "INTEGER NOT NULL DEFAULT 0");
+    JAVA_TYPE_TO_SQLITE_TYPE.put(long.class, "INTEGER NOT NULL DEFAULT 0");
+    JAVA_TYPE_TO_SQLITE_TYPE.put(float.class, "REAL NOT NULL DEFAULT 0");
+    JAVA_TYPE_TO_SQLITE_TYPE.put(double.class, "REAL NOT NULL DEFAULT 0");
     JAVA_TYPE_TO_SQLITE_TYPE.put(String.class, "TEXT");
   }
 
