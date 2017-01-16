@@ -59,7 +59,7 @@ public class MSQLite {
   MSQLite() {}
 
   /**
-   *
+   * Bump database version.
    */
   public MSQLite version(int version) {
     if (this.version >= version) {
