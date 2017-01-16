@@ -20,6 +20,7 @@ package com.hippo.ehviewer.database;
  * Created by Hippo on 1/15/2017.
  */
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -29,6 +30,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import com.hippo.ehviewer.BuildConfig;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -44,7 +47,15 @@ public class MSQLiteOpenHelperTest {
     private static String DB_NAME = "test.db";
 
     private static String VERSION_1_TABLE_A = "A";
+    private static String VERSION_1_COLUMN_BOOLEAN1 = "boolean1";
+    private static String VERSION_1_COLUMN_BYTE1 = "byte1";
+    private static String VERSION_1_COLUMN_SHORT1 = "short1";
+    private static String VERSION_1_COLUMN_INT1 = "int1";
     private static String VERSION_2_TABLE_B = "B";
+    private static String VERSION_2_COLUMN_LONG1 = "long1";
+    private static String VERSION_2_COLUMN_FLOAT1 = "float1";
+    private static String VERSION_3_COLUMN_DOUBLE1 = "double1";
+    private static String VERSION_3_COLUMN_STRING1 = "string1";
 
     public DbOpenHelper(Context context, int version) {
       super(context, DB_NAME, version);
@@ -53,11 +64,19 @@ public class MSQLiteOpenHelperTest {
     @Override
     public void onInit(MSQLite ms) {
       ms.version(1)
-          .createTable(VERSION_1_TABLE_A);
+          .createTable(VERSION_1_TABLE_A)
+          .insertColumn(VERSION_1_TABLE_A, VERSION_1_COLUMN_BOOLEAN1, boolean.class)
+          .insertColumn(VERSION_1_TABLE_A, VERSION_1_COLUMN_BYTE1, byte.class)
+          .insertColumn(VERSION_1_TABLE_A, VERSION_1_COLUMN_SHORT1, short.class)
+          .insertColumn(VERSION_1_TABLE_A, VERSION_1_COLUMN_INT1, int.class);
       ms.version(2)
-          .createTable(VERSION_2_TABLE_B);
+          .createTable(VERSION_2_TABLE_B)
+          .insertColumn(VERSION_2_TABLE_B, VERSION_2_COLUMN_LONG1, long.class)
+          .insertColumn(VERSION_2_TABLE_B, VERSION_2_COLUMN_FLOAT1, float.class);
       ms.version(3)
-          .dropTable(VERSION_1_TABLE_A);
+          .dropTable(VERSION_1_TABLE_A)
+          .insertColumn(VERSION_2_TABLE_B, VERSION_3_COLUMN_DOUBLE1, double.class)
+          .insertColumn(VERSION_2_TABLE_B, VERSION_3_COLUMN_STRING1, String.class);
     }
   }
 
@@ -71,6 +90,14 @@ public class MSQLiteOpenHelperTest {
     db = helper.getReadableDatabase();
     assertTrue(existsTable(db, DbOpenHelper.VERSION_1_TABLE_A));
     assertFalse(existsTable(db, DbOpenHelper.VERSION_2_TABLE_B));
+    columnsEquals(db, DbOpenHelper.VERSION_1_TABLE_A,
+        new String[] {
+            MSQLite.COLUMN_ID,
+            DbOpenHelper.VERSION_1_COLUMN_BOOLEAN1,
+            DbOpenHelper.VERSION_1_COLUMN_BYTE1,
+            DbOpenHelper.VERSION_1_COLUMN_SHORT1,
+            DbOpenHelper.VERSION_1_COLUMN_INT1,
+        });
     db.close();
     helper.close();
 
@@ -78,6 +105,12 @@ public class MSQLiteOpenHelperTest {
     db = helper.getReadableDatabase();
     assertTrue(existsTable(db, DbOpenHelper.VERSION_1_TABLE_A));
     assertTrue(existsTable(db, DbOpenHelper.VERSION_2_TABLE_B));
+    columnsEquals(db, DbOpenHelper.VERSION_2_TABLE_B,
+        new String[] {
+            MSQLite.COLUMN_ID,
+            DbOpenHelper.VERSION_2_COLUMN_LONG1,
+            DbOpenHelper.VERSION_2_COLUMN_FLOAT1,
+        });
     db.close();
     helper.close();
 
@@ -85,7 +118,14 @@ public class MSQLiteOpenHelperTest {
     db = helper.getReadableDatabase();
     assertFalse(existsTable(db, DbOpenHelper.VERSION_1_TABLE_A));
     assertTrue(existsTable(db, DbOpenHelper.VERSION_2_TABLE_B));
-
+    columnsEquals(db, DbOpenHelper.VERSION_2_TABLE_B,
+        new String[] {
+            MSQLite.COLUMN_ID,
+            DbOpenHelper.VERSION_2_COLUMN_LONG1,
+            DbOpenHelper.VERSION_2_COLUMN_FLOAT1,
+            DbOpenHelper.VERSION_3_COLUMN_DOUBLE1,
+            DbOpenHelper.VERSION_3_COLUMN_STRING1,
+        });
     db.close();
     helper.close();
   }
@@ -132,5 +172,15 @@ public class MSQLiteOpenHelperTest {
     }
     c.close();
     return result;
+  }
+
+  private void columnsEquals(SQLiteDatabase db, String table, String[] columns) {
+    Cursor c = db.query(table, null, null, null, null, null, null);
+    List<String> columnList = Arrays.asList(c.getColumnNames());
+    assertEquals(columnList.size(), columns.length);
+    for (String column: columns) {
+      columnList.contains(column);
+    }
+    c.close();
   }
 }
