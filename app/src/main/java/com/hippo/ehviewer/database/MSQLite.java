@@ -34,6 +34,8 @@ import java.util.Map;
  */
 public class MSQLite {
 
+  public static final String COLUMN_ID = "_id";
+
   private static Map<Type, String> JAVA_TYPE_TO_SQLITE_TYPE = new HashMap<>();
 
   static {
@@ -87,7 +89,7 @@ public class MSQLite {
    */
   public MSQLite createTable(String table) {
     return command(new StatementCommand(
-        "CREATE TABLE " + table + " (_id INTEGER PRIMARY KEY NOT NULL);"));
+        "CREATE TABLE " + table + " (" + COLUMN_ID + " INTEGER PRIMARY KEY NOT NULL);"));
   }
 
   /**
