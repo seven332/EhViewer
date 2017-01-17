@@ -294,4 +294,33 @@ public class CookieRepositoryTest {
     assertEquals(0, map.size());
     repository.close();
   }
+
+  @Test
+  public void testPublicSuffixCookie() {
+    Context app = RuntimeEnvironment.application;
+
+    HttpUrl url1 = HttpUrl.parse("http://www.ehviewer.com/");
+    HttpUrl url2 = HttpUrl.parse("http://com/");
+    Cookie cookie1 = new Cookie.Builder()
+        .name("user")
+        .value("1234567890")
+        .domain("com")
+        .path("/")
+        .build();
+    Cookie cookie2 = new Cookie.Builder()
+        .name("user")
+        .value("1234567890")
+        .hostOnlyDomain("com")
+        .path("/")
+        .build();
+
+    CookieRepository repository = new CookieRepository(app, "cookie.db");
+    repository.saveFromResponse(url1, Collections.singletonList(cookie1));
+    Map<String, CookieSet> map = repository.getCookieSetMap();
+    assertEquals(0, map.size());
+    repository.saveFromResponse(url2, Collections.singletonList(cookie1));
+    assertEquals(1, map.size());
+    equals(map.get("com"), Collections.singletonList(cookie2));
+    repository.close();
+  }
 }

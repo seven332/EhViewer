@@ -125,9 +125,13 @@ public class CookieRepository implements CookieJar {
       }
     }
 
+    // TODO RFC 6265 Section-5.4 step 2, sort the cookie-list
     return accepted;
   }
 
+  /**
+   * Remove all cookies in this {@code CookieRepository}.
+   */
   public synchronized void clear() {
     map.clear();
     db.clear();
@@ -135,8 +139,29 @@ public class CookieRepository implements CookieJar {
 
   @Override
   public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-    // TODO Reject "public suffixes" domain, OkHttp doesn't handle it
     for (Cookie cookie: cookies) {
+      if (PublicSuffix.isPublicSuffix(cookie.domain())) {
+        // RFC 6265 Section-5.3, step 5 and step 6
+        // If the domain of the cookie is a public suffix
+        // and is identical to the canonicalized request-host,
+        // set the cookie's host-only-flag to true,
+        // otherwise ignore the cookie entirely.
+        if (cookie.domain().equals(url.host())) {
+          if (!cookie.hostOnly()) {
+            Cookie.Builder builder = new Cookie.Builder();
+            builder.name(cookie.name());
+            builder.value(cookie.value());
+            builder.hostOnlyDomain(cookie.domain());
+            builder.path(cookie.path());
+            if (cookie.persistent()) builder.expiresAt(cookie.expiresAt());
+            if (cookie.secure()) builder.secure();
+            if (cookie.httpOnly()) builder.httpOnly();
+            cookie = builder.build();
+          }
+        } else {
+          continue;
+        }
+      }
       addCookie(cookie);
     }
   }
