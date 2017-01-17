@@ -226,6 +226,11 @@ class CookieDatabase {
     cookieIdMap.remove(cookie);
   }
 
+  public void clear() {
+    db.delete(OpenHelper.TABLE_COOKIE, null, null);
+    cookieIdMap.clear();
+  }
+
   public void close() {
     db.close();
     helper.close();

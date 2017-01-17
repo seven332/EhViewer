@@ -128,6 +128,11 @@ public class CookieRepository implements CookieJar {
     return accepted;
   }
 
+  public synchronized void clear() {
+    map.clear();
+    db.clear();
+  }
+
   @Override
   public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
     // TODO Reject "public suffixes" domain, OkHttp doesn't handle it

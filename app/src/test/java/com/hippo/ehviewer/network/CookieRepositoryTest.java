@@ -265,4 +265,33 @@ public class CookieRepositoryTest {
     equals(Collections.singletonList(cookieEh3), repository.loadForRequest(urlEh2));
     repository.close();
   }
+
+  @Test
+  public void testClear() {
+    Context app = RuntimeEnvironment.application;
+
+    HttpUrl url = HttpUrl.parse("http://www.ehviewer.com/");
+    Cookie cookie = new Cookie.Builder()
+        .name("user")
+        .value("1234567890")
+        .domain("ehviewer.com")
+        .path("/")
+        .expiresAt(System.currentTimeMillis() + 3000)
+        .build();
+
+    CookieRepository repository = new CookieRepository(app, "cookie.db");
+    repository.saveFromResponse(url, Collections.singletonList(cookie));
+    Map<String, CookieSet> map = repository.getCookieSetMap();
+    assertEquals(1, map.size());
+    equals(map.get("ehviewer.com"), Collections.singletonList(cookie));
+    repository.clear();
+    map = repository.getCookieSetMap();
+    assertEquals(0, map.size());
+    repository.close();
+
+    repository = new CookieRepository(app, "cookie.db");
+    map = repository.getCookieSetMap();
+    assertEquals(0, map.size());
+    repository.close();
+  }
 }
