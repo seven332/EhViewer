@@ -29,14 +29,14 @@ public class MSQLiteTest {
 
   @Test
   public void javaTypeToSQLiteType() {
-    assertEquals("INTEGER NOT NULL", MSQLite.javaTypeToSQLiteType(boolean.class));
-    assertEquals("INTEGER NOT NULL", MSQLite.javaTypeToSQLiteType(byte.class));
-    assertEquals("INTEGER NOT NULL", MSQLite.javaTypeToSQLiteType(short.class));
-    assertEquals("INTEGER NOT NULL", MSQLite.javaTypeToSQLiteType(int.class));
-    assertEquals("INTEGER NOT NULL", MSQLite.javaTypeToSQLiteType(long.class));
+    assertEquals("INTEGER NOT NULL DEFAULT 0", MSQLite.javaTypeToSQLiteType(boolean.class));
+    assertEquals("INTEGER NOT NULL DEFAULT 0", MSQLite.javaTypeToSQLiteType(byte.class));
+    assertEquals("INTEGER NOT NULL DEFAULT 0", MSQLite.javaTypeToSQLiteType(short.class));
+    assertEquals("INTEGER NOT NULL DEFAULT 0", MSQLite.javaTypeToSQLiteType(int.class));
+    assertEquals("INTEGER NOT NULL DEFAULT 0", MSQLite.javaTypeToSQLiteType(long.class));
 
-    assertEquals("REAL NOT NULL", MSQLite.javaTypeToSQLiteType(float.class));
-    assertEquals("REAL NOT NULL", MSQLite.javaTypeToSQLiteType(double.class));
+    assertEquals("REAL NOT NULL DEFAULT 0", MSQLite.javaTypeToSQLiteType(float.class));
+    assertEquals("REAL NOT NULL DEFAULT 0", MSQLite.javaTypeToSQLiteType(double.class));
 
     assertEquals("TEXT", MSQLite.javaTypeToSQLiteType(String.class));
 
