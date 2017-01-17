@@ -323,4 +323,45 @@ public class CookieRepositoryTest {
     equals(map.get("com"), Collections.singletonList(cookie2));
     repository.close();
   }
+
+  @Test
+  public void testSort() {
+    Context app = RuntimeEnvironment.application;
+
+    HttpUrl url = HttpUrl.parse("http://www.ehviewer.com/long/long/long/");
+    Cookie cookie1 = new Cookie.Builder()
+        .name("user")
+        .value("1234567890")
+        .domain("ehviewer.com")
+        .path("/")
+        .build();
+    Cookie cookie2 = new Cookie.Builder()
+        .name("supersuperme")
+        .value("99999")
+        .domain("ehviewer.com")
+        .path("/long/")
+        .build();
+    Cookie cookie3 = new Cookie.Builder()
+        .name("a")
+        .value("b")
+        .domain("ehviewer.com")
+        .path("/long/long/long/")
+        .build();
+    Cookie cookie4 = new Cookie.Builder()
+        .name("speed")
+        .value("100")
+        .domain("ehviewer.com")
+        .path("/long/long/")
+        .build();
+
+    CookieRepository repository = new CookieRepository(app, "cookie.db");
+    repository.saveFromResponse(url, Arrays.asList(cookie1, cookie2, cookie3, cookie4));
+    List<Cookie> list = repository.loadForRequest(url);
+    List<Cookie> expected = Arrays.asList(cookie3, cookie4, cookie2, cookie1);
+    assertEquals(expected.size(), list.size());
+    for (int i = 0; i < list.size(); i++) {
+      assertEquals(expected.get(i), list.get(i));
+    }
+    repository.close();
+  }
 }

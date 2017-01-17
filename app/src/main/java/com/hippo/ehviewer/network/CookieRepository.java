@@ -25,6 +25,8 @@ import static okhttp3.internal.Util.verifyAsIpAddress;
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import okhttp3.Cookie;
@@ -35,6 +37,13 @@ import okhttp3.HttpUrl;
  * A Persistent {@code CookieJar} which store cookies to database.
  */
 public class CookieRepository implements CookieJar {
+
+  private static final Comparator<Cookie> COOKIE_COMPARATOR = new Comparator<Cookie>() {
+    @Override
+    public int compare(Cookie o1, Cookie o2) {
+      return o2.path().length() - o1.path().length();
+    }
+  };
 
   private final CookieDatabase db;
   private final Map<String, CookieSet> map;
@@ -125,7 +134,11 @@ public class CookieRepository implements CookieJar {
       }
     }
 
-    // TODO RFC 6265 Section-5.4 step 2, sort the cookie-list
+    // RFC 6265 Section-5.4 step 2, sort the cookie-list
+    // Cookies with longer paths are listed before cookies with shorter paths.
+    // Ignore creation-time, we don't store them.
+    Collections.sort(accepted, COOKIE_COMPARATOR);
+
     return accepted;
   }
 
