@@ -14,7 +14,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "APPLICATION_NAME", "\"${APPLICATION_NAME}\""
+        }
+
         release {
+            buildConfigField "String", "APPLICATION_NAME", "\"${APPLICATION_NAME}\""
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
