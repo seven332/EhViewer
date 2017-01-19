@@ -34,7 +34,9 @@ import rx.Observable;
 public final class EhClient {
 
   private static final String RECAPTCHA_PUBLIC_KEY = "6LdtfgYAAAAAALjIPPiCgPJJah8MhAUpnHcKF8u_";
+  private static final String RECAPTCHA_REASON = "i";
   private static final String RECAPTCHA_TYPE = "image";
+  private static final String RECAPTCHA_LANG = "en";
 
   private EhEngine engine;
 
@@ -82,7 +84,8 @@ public final class EhClient {
           public Observable<Result<RecaptchaImageResult>> onCall(RecaptchaChallengeResult result) {
             String challenge = result.challenge();
             recaptcha.challenge(challenge);
-            return engine.recaptcha(challenge, RECAPTCHA_PUBLIC_KEY, RECAPTCHA_TYPE);
+            return engine.recaptcha(challenge, RECAPTCHA_PUBLIC_KEY,
+                RECAPTCHA_REASON, RECAPTCHA_TYPE, RECAPTCHA_LANG);
           }
         })
         .map(new EhMapFunc<RecaptchaImageResult, RecaptchaResult>() {

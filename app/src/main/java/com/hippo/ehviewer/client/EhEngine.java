@@ -66,6 +66,8 @@ public interface EhEngine {
   Observable<Result<RecaptchaImageResult>> recaptcha(
       @Query("c") String challenge,
       @Query("k") String publicKey,
-      @Query("type") String type
+      @Query("reason") String reason,
+      @Query("type") String type,
+      @Query("lang") String lang
   );
 }
