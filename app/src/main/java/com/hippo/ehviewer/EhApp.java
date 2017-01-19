@@ -22,6 +22,9 @@ package com.hippo.ehviewer;
 
 import android.app.Application;
 import android.util.Log;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.network.ClimbOverDns;
 import com.hippo.ehviewer.network.CookieRepository;
@@ -59,9 +62,23 @@ public class EhApp extends Application {
             }
           })
           .addInterceptor(new UserAgentInterceptor(getUserAgent()))
-          .cookieJar(new CookieRepository(EhApp.this, DB_COOKIE))
-          .dns(new ClimbOverDns())
+          .cookieJar(getCookieRepository())
+          .dns(getClimbOverDns())
           .build();
+    }
+  };
+
+  private LazySupplier<CookieRepository> cookieRepositorySupplier = new LazySupplier<CookieRepository>() {
+    @Override
+    public CookieRepository onGet() {
+      return new CookieRepository(EhApp.this, DB_COOKIE);
+    }
+  };
+
+  private LazySupplier<ClimbOverDns> climbOverDnsSupplier = new LazySupplier<ClimbOverDns>() {
+    @Override
+    public ClimbOverDns onGet() {
+      return new ClimbOverDns();
     }
   };
 
@@ -75,6 +92,11 @@ public class EhApp extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
+
+    ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
+        .newBuilder(this, getOkHttpClient())
+        .build();
+    Fresco.initialize(this, config);
   }
 
   public String getUserAgent() {
@@ -84,6 +106,14 @@ public class EhApp extends Application {
 
   public OkHttpClient getOkHttpClient() {
     return okHttpClientSupplier.get();
+  }
+
+  public CookieRepository getCookieRepository() {
+    return cookieRepositorySupplier.get();
+  }
+
+  public ClimbOverDns getClimbOverDns() {
+    return climbOverDnsSupplier.get();
   }
 
   public EhClient getEhClient() {

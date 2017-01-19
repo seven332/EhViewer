@@ -20,11 +20,15 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/14/2017.
  */
 
+import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
+import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import retrofit2.adapter.rxjava.Result;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 import rx.Observable;
 
 public interface EhEngine {
@@ -48,8 +52,20 @@ public interface EhEngine {
       @Field("bt") String bt,
       @Field("UserName") String userName,
       @Field("PassWord") String passWord,
-      @Field("recaptcha_challenge_field") String recaptchaKey,
-      @Field("recaptcha_response_field") String recaptchaValue,
+      @Field("recaptcha_challenge_field") String recaptchaChallenge,
+      @Field("recaptcha_response_field") String recaptchaResponse,
       @Field("CookieDate") String cookieDate
+  );
+
+  @GET("https://www.google.com/recaptcha/api/challenge")
+  Observable<Result<RecaptchaChallengeResult>> recaptchaChallenge(
+      @Query("k") String publicKey
+  );
+
+  @GET("https://www.google.com/recaptcha/api/reload")
+  Observable<Result<RecaptchaImageResult>> recaptcha(
+      @Query("c") String challenge,
+      @Query("k") String publicKey,
+      @Query("type") String type
   );
 }
