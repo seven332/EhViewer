@@ -23,6 +23,7 @@ package com.hippo.ehviewer;
 import android.app.Application;
 import android.util.Log;
 import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.network.ClimbOverDns;
 import com.hippo.ehviewer.network.CookieRepository;
 import com.hippo.ehviewer.network.UserAgentInterceptor;
 import com.hippo.ehviewer.util.LazySupplier;
@@ -59,6 +60,7 @@ public class EhApp extends Application {
           })
           .addInterceptor(new UserAgentInterceptor(getUserAgent()))
           .cookieJar(new CookieRepository(EhApp.this, DB_COOKIE))
+          .dns(new ClimbOverDns())
           .build();
     }
   };
