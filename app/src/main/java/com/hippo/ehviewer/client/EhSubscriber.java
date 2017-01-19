@@ -20,15 +20,19 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/18/2017.
  */
 
+import com.hippo.ehviewer.client.exception.ErrorWrapper;
 import com.hippo.ehviewer.client.exception.GeneralException;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.ehviewer.client.exception.RuntimeExceptionWrapper;
 import com.hippo.ehviewer.client.exception.SadPandaException;
 import com.hippo.ehviewer.client.exception.StatusCodeException;
+import com.hippo.ehviewer.client.exception.ThrowableWrapper;
 import java.io.IOException;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
+import rx.exceptions.Exceptions;
 
 /**
  * A base {@link Subscriber} for {@link EhClient}.
@@ -43,24 +47,53 @@ public abstract class EhSubscriber<T extends EhResult> extends Subscriber<Result
 
   @Override
   public void onError(Throwable e) {
+    // Unwraps RuntimeExceptionWrapper and ErrorWrapper,
+    // and throws them. They are thrown by onSuccess().
+    if (e instanceof RuntimeExceptionWrapper) {
+      throw ((RuntimeExceptionWrapper) e).unwrap();
+    }
+    if (e instanceof ErrorWrapper) {
+      throw ((ErrorWrapper) e).unwrap();
+    }
+
+    // Unwrap ThrowableWrapper which wrapped in onNext()
+    if (e instanceof ThrowableWrapper) {
+      e = ((ThrowableWrapper) e).unwrap();
+    }
+
     onFailure(e);
   }
 
   @Override
   public void onNext(Result<T> result) {
+    // Wraps all kinds of throwable in ThrowableWrapper,
+    // let onError() handle it.
     if (result.isError()) {
-      onFailure(result.error());
+      Throwable error = result.error();
+      Exceptions.throwIfFatal(error);
+      throw ThrowableWrapper.wrap(error);
     } else {
       Response<T> response = result.response();
       if (response.isSuccessful()) {
         T body = response.body();
         if (body.isError()) {
-          onFailure(fixError(body.error(), response.raw()));
+          Throwable error = body.error();
+          Exceptions.throwIfFatal(error);
+          throw ThrowableWrapper.wrap(fixError(error, response.raw()));
         } else {
-          onSuccess(body);
+          // Only one of onSuccess() and onFailure() can be called.
+          // We must catch unchecked exceptions thrown by onSuccess()
+          // to avoid onFailure() calling it.
+          try {
+            onSuccess(body);
+          } catch (RuntimeException e) {
+            throw RuntimeExceptionWrapper.wrap(e);
+          } catch (Error e) {
+            throw ErrorWrapper.wrap(e);
+          }
         }
       } else {
-        onFailure(catchError(response.errorBody(), response.raw()));
+        throw ThrowableWrapper.wrap(catchError(response.errorBody(), response.raw()));
       }
     }
   }
