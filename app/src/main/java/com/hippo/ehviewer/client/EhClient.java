@@ -21,7 +21,7 @@ package com.hippo.ehviewer.client;
  */
 
 import android.content.Context;
-import com.hippo.ehviewer.EhApp;
+import com.hippo.ehviewer.App;
 import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.RecaptchaResult;
@@ -102,7 +102,7 @@ public final class EhClient {
    * Create a {@code EhClient} with default {@link EhEngine}.
    */
   public static EhClient create(Context context) {
-    EhApp app = (EhApp) context.getApplicationContext();
+    App app = (App) context.getApplicationContext();
     Retrofit retrofit = new Retrofit.Builder()
         // Base url is useless, but it makes Retrofit happy
         .baseUrl("http://www.ehviewer.com/")

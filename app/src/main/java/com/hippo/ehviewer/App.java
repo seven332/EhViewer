@@ -36,9 +36,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class EhApp extends Application {
+public class App extends Application {
 
-  private static final String LOG_TAG = EhApp.class.getSimpleName();
+  private static final String LOG_TAG = App.class.getSimpleName();
 
   private static final String BASE_USER_AGENT =
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -71,7 +71,7 @@ public class EhApp extends Application {
   private LazySupplier<CookieRepository> cookieRepositorySupplier = new LazySupplier<CookieRepository>() {
     @Override
     public CookieRepository onGet() {
-      return new CookieRepository(EhApp.this, DB_COOKIE);
+      return new CookieRepository(App.this, DB_COOKIE);
     }
   };
 
@@ -85,7 +85,7 @@ public class EhApp extends Application {
   private LazySupplier<EhClient> ehClientLazySupplier = new LazySupplier<EhClient>() {
     @Override
     public EhClient onGet() {
-      return EhClient.create(EhApp.this);
+      return EhClient.create(App.this);
     }
   };
 
