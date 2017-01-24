@@ -219,9 +219,9 @@ public class CookieSignInScene extends SolidScene implements EditText.OnEditorAc
         EhUtils.signOut(context);
 
         EhCookieStore store = EhApplication.getEhCookieStore(context);
-        store.add(newCookie(EhCookieStore.KEY_IPD_MEMBER_ID, id, EhUrl.DOMAIN_E));
+        store.add(newCookie(EhCookieStore.KEY_IPD_MEMBER_ID, id, EhUrl.DOMAIN_G));
         store.add(newCookie(EhCookieStore.KEY_IPD_MEMBER_ID, id, EhUrl.DOMAIN_EX));
-        store.add(newCookie(EhCookieStore.KEY_IPD_PASS_HASH, hash, EhUrl.DOMAIN_E));
+        store.add(newCookie(EhCookieStore.KEY_IPD_PASS_HASH, hash, EhUrl.DOMAIN_G));
         store.add(newCookie(EhCookieStore.KEY_IPD_PASS_HASH, hash, EhUrl.DOMAIN_EX));
     }
 }

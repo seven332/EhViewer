@@ -32,13 +32,11 @@ public class EhUrl {
     public static final int SITE_EX = 1;
 
     public static final String DOMAIN_EX = "exhentai.org";
-    public static final String DOMAIN_E = "e-hentai.org";
-    public static final String DOMAIN_G = "g.e-hentai.org";
+    public static final String DOMAIN_G = "e-hentai.org";
     public static final String DOMAIN_LOFI = "lofi.e-hentai.org";
 
-    public static final String HOST_E = "http://" + DOMAIN_E + "/";
     public static final String HOST_EX = "https://" + DOMAIN_EX + "/";
-    public static final String HOST_G = "http://" + DOMAIN_G + "/";
+    public static final String HOST_G = "https://" + DOMAIN_G + "/";
 
     public static final String API_SIGN_IN = "https://forums.e-hentai.org/index.php?act=Login&CODE=01";
 
@@ -54,7 +52,7 @@ public class EhUrl {
     public static final String URL_FAVORITES_EX = HOST_EX + "favorites.php";
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
 
-    private static final String URL_PREFIX_THUMB_G = "http://ehgt.org/t/";
+    private static final String URL_PREFIX_THUMB_G = "https://ehgt.org/t/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
     public static String getGalleryDetailUrl(long gid, String token) {

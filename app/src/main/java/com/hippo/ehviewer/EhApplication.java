@@ -160,7 +160,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
             Settings.putGuideGallery(true);
         }
         if (version < 56) { // Make cookie long live
-            HttpUrl eUrl = HttpUrl.parse(EhUrl.HOST_E);
+            HttpUrl eUrl = HttpUrl.parse(EhUrl.HOST_G);
             HttpUrl exUrl = HttpUrl.parse(EhUrl.HOST_EX);
             EhCookieStore cookieStore = getEhCookieStore(this);
 
