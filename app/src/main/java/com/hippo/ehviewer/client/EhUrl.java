@@ -128,10 +128,10 @@ public class EhUrl {
     public static String getThumbUrlPrefix() {
         switch (Settings.getGallerySite()) {
             default:
-            case SITE_G:
+            //case SITE_G:
                 return URL_PREFIX_THUMB_G;
-            case SITE_EX:
-                return URL_PREFIX_THUMB_EX;
+            //case SITE_EX:
+            //    return URL_PREFIX_THUMB_EX;
         }
     }
 

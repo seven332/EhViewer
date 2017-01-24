@@ -200,6 +200,10 @@ public class EhEngine {
             }
         }
 
+        for (GalleryInfo info : list) {
+            info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
+        }
+
         return result;
     }
 
@@ -448,6 +452,10 @@ public class EhEngine {
             fillGalleryListByApi(task, okHttpClient, result.galleryInfoList);
         }
 
+        for (GalleryInfo info : result.galleryInfoList) {
+            info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
+        }
+
         return result;
     }
 
@@ -555,6 +563,10 @@ public class EhEngine {
             fillGalleryListByApi(task, okHttpClient, result.galleryInfoList);
         }
 
+        for (GalleryInfo info : result.galleryInfoList) {
+            info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
+        }
+
         return result;
     }
 
@@ -617,6 +629,10 @@ public class EhEngine {
         if (list.size() > 0) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
+        }
+
+        for (GalleryInfo info : list) {
+            info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
         }
 
         return list;
@@ -800,6 +816,10 @@ public class EhEngine {
                     n--;
                 }
             }
+        }
+
+        for (GalleryInfo info : list) {
+            info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
         }
 
         return result;
