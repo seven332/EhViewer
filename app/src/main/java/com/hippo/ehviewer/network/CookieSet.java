@@ -21,6 +21,7 @@ package com.hippo.ehviewer.network;
  */
 
 import android.support.annotation.VisibleForTesting;
+import android.util.Log;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,8 @@ import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
 class CookieSet {
+
+  private static final String LOG_TAG = CookieSet.class.getSimpleName();
 
   private Map<Key, Cookie> map = new HashMap<>();
 
@@ -69,6 +72,15 @@ class CookieSet {
       if (cookie.matches(url)) {
         accepted.add(cookie);
       }
+    }
+  }
+
+  /**
+   * Logcat all cookies
+   */
+  public void logcat() {
+    for (Map.Entry<Key, Cookie> entry : map.entrySet()) {
+      Log.d(LOG_TAG, entry.getValue().toString());
     }
   }
 

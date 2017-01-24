@@ -150,6 +150,15 @@ public class CookieRepository implements CookieJar {
     db.clear();
   }
 
+  /**
+   * Logcat all cookies
+   */
+  public synchronized void logcat() {
+    for (Map.Entry<String, CookieSet> entry: map.entrySet()) {
+      entry.getValue().logcat();
+    }
+  }
+
   @Override
   public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
     for (Cookie cookie: cookies) {
