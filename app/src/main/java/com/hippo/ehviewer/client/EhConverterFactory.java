@@ -23,9 +23,11 @@ package com.hippo.ehviewer.client;
 import com.hippo.ehviewer.client.converter.RecaptchaChallengeConverter;
 import com.hippo.ehviewer.client.converter.RecaptchaImageConverter;
 import com.hippo.ehviewer.client.converter.SignInConverter;
+import com.hippo.ehviewer.client.converter.VoidConverter;
 import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.SignInResult;
+import com.hippo.ehviewer.client.result.VoidResult;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import okhttp3.ResponseBody;
@@ -42,15 +44,11 @@ public final class EhConverterFactory extends Converter.Factory {
   @Override
   public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations,
       Retrofit retrofit) {
-    if (SignInResult.class.equals(type)) {
-      return new SignInConverter();
-    } else if (RecaptchaChallengeResult.class.equals(type)) {
-      return new RecaptchaChallengeConverter();
-    } else if (RecaptchaImageResult.class.equals(type)) {
-      return new RecaptchaImageConverter();
-    } else {
-      throw new IllegalStateException("Unknown type: " + type);
-    }
+    if (SignInResult.class.equals(type)) return new SignInConverter();
+    else if (RecaptchaChallengeResult.class.equals(type)) return new RecaptchaChallengeConverter();
+    else if (RecaptchaImageResult.class.equals(type)) return new RecaptchaImageConverter();
+    else if (VoidResult.class.equals(type)) return new VoidConverter();
+    else throw new IllegalStateException("Unknown type: " + type);
   }
 
   /**

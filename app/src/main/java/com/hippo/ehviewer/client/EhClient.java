@@ -26,6 +26,7 @@ import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.RecaptchaResult;
 import com.hippo.ehviewer.client.result.SignInResult;
+import com.hippo.ehviewer.client.result.VoidResult;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.Result;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -76,6 +77,9 @@ public final class EhClient {
         "1");
   }
 
+  /**
+   * Request a recaptcha for signing in.
+   */
   public Observable<Result<RecaptchaResult>> recaptcha() {
     final RecaptchaResult recaptcha = new RecaptchaResult();
     return engine.recaptchaChallenge(RECAPTCHA_PUBLIC_KEY)
@@ -96,6 +100,15 @@ public final class EhClient {
             return recaptcha;
           }
         });
+  }
+
+  /**
+   * Just get https://exhentai.org/ to get cookies.
+   * <p>
+   * Only call it after signing in.
+   */
+  public Observable<Result<VoidResult>> touchExHentai() {
+    return engine.touchExHentai();
   }
 
   /**

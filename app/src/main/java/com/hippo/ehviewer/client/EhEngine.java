@@ -23,6 +23,7 @@ package com.hippo.ehviewer.client;
 import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.SignInResult;
+import com.hippo.ehviewer.client.result.VoidResult;
 import retrofit2.adapter.rxjava.Result;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -70,4 +71,7 @@ public interface EhEngine {
       @Query("type") String type,
       @Query("lang") String lang
   );
+
+  @GET("https://exhentai.org/")
+  Observable<Result<VoidResult>> touchExHentai();
 }
