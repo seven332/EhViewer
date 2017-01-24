@@ -29,7 +29,7 @@ import java.net.URLDecoder;
 
 public final class GalleryListUrlParser {
 
-    private static final String[] VALID_HOSTS = {EhUrl.DOMAIN_EX, EhUrl.DOMAIN_G, EhUrl.DOMAIN_LOFI};
+    private static final String[] VALID_HOSTS = {EhUrl.DOMAIN_EX, EhUrl.DOMAIN_E, EhUrl.DOMAIN_LOFI};
 
     private static final String PATH_NORMAL = "/";
     private static final String PATH_UPLOADER = "/uploader/";

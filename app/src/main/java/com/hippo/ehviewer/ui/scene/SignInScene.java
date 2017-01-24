@@ -226,8 +226,8 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
         } else if (mSignInViaCookies == v) {
             startScene(new Announcer(CookieSignInScene.class).setRequestCode(this, REQUEST_CODE_COOKIE));
         } else if (mSkipSigningIn == v) {
-            // Set gallery size SITE_G if skip sign in
-            Settings.putGallerySite(EhUrl.SITE_G);
+            // Set gallery size SITE_E if skip sign in
+            Settings.putGallerySite(EhUrl.SITE_E);
             redirectTo();
         }
     }

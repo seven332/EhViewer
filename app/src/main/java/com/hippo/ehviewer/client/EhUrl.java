@@ -28,31 +28,31 @@ import okhttp3.HttpUrl;
 
 public class EhUrl {
 
-    public static final int SITE_G = 0;
+    public static final int SITE_E = 0;
     public static final int SITE_EX = 1;
 
     public static final String DOMAIN_EX = "exhentai.org";
-    public static final String DOMAIN_G = "e-hentai.org";
+    public static final String DOMAIN_E = "e-hentai.org";
     public static final String DOMAIN_LOFI = "lofi.e-hentai.org";
 
     public static final String HOST_EX = "https://" + DOMAIN_EX + "/";
-    public static final String HOST_G = "https://" + DOMAIN_G + "/";
+    public static final String HOST_E = "https://" + DOMAIN_E + "/";
 
     public static final String API_SIGN_IN = "https://forums.e-hentai.org/index.php?act=Login&CODE=01";
 
-    public static final String API_G = HOST_G + "api.php";
+    public static final String API_E = HOST_E + "api.php";
     public static final String API_EX = HOST_EX + "api.php";
 
-    public static final String URL_IMAGE_SEARCH_G = "https://upload.e-hentai.org/image_lookup.php";
+    public static final String URL_IMAGE_SEARCH_E = "https://upload.e-hentai.org/image_lookup.php";
     public static final String URL_IMAGE_SEARCH_EX = "https://exhentai.org/upload/image_lookup.php";
 
     public static final String URL_SIGN_IN = "https://forums.e-hentai.org/index.php?act=Login";
     public static final String URL_REGISTER = "https://forums.e-hentai.org/index.php?act=Reg&CODE=00";
-    public static final String URL_FAVORITES_G = HOST_G + "favorites.php";
+    public static final String URL_FAVORITES_E = HOST_E + "favorites.php";
     public static final String URL_FAVORITES_EX = HOST_EX + "favorites.php";
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
 
-    private static final String URL_PREFIX_THUMB_G = "https://ehgt.org/t/";
+    private static final String URL_PREFIX_THUMB_E = "https://ehgt.org/t/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
     public static String getGalleryDetailUrl(long gid, String token) {
@@ -62,8 +62,8 @@ public class EhUrl {
     public static String getHost() {
         switch (Settings.getGallerySite()) {
             default:
-            case SITE_G:
-                return HOST_G;
+            case SITE_E:
+                return HOST_E;
             case SITE_EX:
                 return HOST_EX;
         }
@@ -72,8 +72,8 @@ public class EhUrl {
     public static String getFavoritesUrl() {
         switch (Settings.getGallerySite()) {
             default:
-            case SITE_G:
-                return URL_FAVORITES_G;
+            case SITE_E:
+                return URL_FAVORITES_E;
             case SITE_EX:
                 return URL_FAVORITES_EX;
         }
@@ -82,8 +82,8 @@ public class EhUrl {
     public static String getApiUrl() {
         switch (Settings.getGallerySite()) {
             default:
-            case SITE_G:
-                return API_G;
+            case SITE_E:
+                return API_E;
             case SITE_EX:
                 return API_EX;
         }
@@ -116,8 +116,8 @@ public class EhUrl {
     public static String getImageSearchUrl() {
         switch (Settings.getGallerySite()) {
             default:
-            case SITE_G:
-                return URL_IMAGE_SEARCH_G;
+            case SITE_E:
+                return URL_IMAGE_SEARCH_E;
             case SITE_EX:
                 return URL_IMAGE_SEARCH_EX;
         }
@@ -126,8 +126,8 @@ public class EhUrl {
     public static String getThumbUrlPrefix() {
         switch (Settings.getGallerySite()) {
             default:
-            //case SITE_G:
-                return URL_PREFIX_THUMB_G;
+            //case SITE_E:
+                return URL_PREFIX_THUMB_E;
             //case SITE_EX:
             //    return URL_PREFIX_THUMB_EX;
         }

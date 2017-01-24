@@ -144,11 +144,11 @@ public class WebViewSignInScene extends SolidScene {
                 if (EhCookieStore.KEY_IPD_MEMBER_ID.equals(cookie.name())) {
                     getId = true;
                     addCookie(context, EhUrl.DOMAIN_EX, cookie);
-                    addCookie(context, EhUrl.DOMAIN_G, cookie);
+                    addCookie(context, EhUrl.DOMAIN_E, cookie);
                 } else if (EhCookieStore.KEY_IPD_PASS_HASH.equals(cookie.name())) {
                     getHash = true;
                     addCookie(context, EhUrl.DOMAIN_EX, cookie);
-                    addCookie(context, EhUrl.DOMAIN_G, cookie);
+                    addCookie(context, EhUrl.DOMAIN_E, cookie);
                 }
             }
 

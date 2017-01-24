@@ -35,7 +35,7 @@ public class EhCookieStore extends CookieDBStore {
             new Cookie.Builder()
                     .name(EhConfig.KEY_CONTENT_WARNING)
                     .value(EhConfig.CONTENT_WARNING_NOT_SHOW)
-                    .domain(EhUrl.DOMAIN_G)
+                    .domain(EhUrl.DOMAIN_E)
                     .path("/")
                     .expiresAt(Long.MAX_VALUE)
                     .build();
@@ -83,8 +83,8 @@ public class EhCookieStore extends CookieDBStore {
         Object tag = request.tag();
         String host = url.host();
 
-        boolean checkTips = domainMatch(host, EhUrl.DOMAIN_G);
-        boolean checkUconfig = (domainMatch(host, EhUrl.DOMAIN_G) || domainMatch(host, EhUrl.DOMAIN_EX)) && tag instanceof EhConfig;
+        boolean checkTips = domainMatch(host, EhUrl.DOMAIN_E);
+        boolean checkUconfig = (domainMatch(host, EhUrl.DOMAIN_E) || domainMatch(host, EhUrl.DOMAIN_EX)) && tag instanceof EhConfig;
 
         if (checkTips || checkUconfig) {
             List<Cookie> result = new ArrayList<>(cookies.size() + 1);
@@ -125,11 +125,11 @@ public class EhCookieStore extends CookieDBStore {
         List<Cookie> result = new ArrayList<>(cookies.size() + 2);
 
         for (Cookie cookie: cookies) {
-            if (EhUrl.DOMAIN_G.equals(cookie.domain())) {
+            if (EhUrl.DOMAIN_E.equals(cookie.domain())) {
                 // Save id and hash for exhentai
                 if (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
                         KEY_IPD_PASS_HASH.equals(cookie.name())) {
-                    result.add(newCookie(cookie, EhUrl.DOMAIN_G, true, true, true));
+                    result.add(newCookie(cookie, EhUrl.DOMAIN_E, true, true, true));
                     result.add(newCookie(cookie, EhUrl.DOMAIN_EX, true, true, true));
                     continue;
                 }

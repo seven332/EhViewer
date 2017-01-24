@@ -601,7 +601,7 @@ public class EhEngine {
 
     public static List<GalleryInfo> getWhatsHot(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient) throws Exception {
-        String url = EhUrl.HOST_G;
+        String url = EhUrl.HOST_E;
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
