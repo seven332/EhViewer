@@ -26,8 +26,8 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.EhCookieJar;
 import com.hippo.ehviewer.network.ClimbOverDns;
-import com.hippo.ehviewer.network.CookieRepository;
 import com.hippo.ehviewer.network.UserAgentInterceptor;
 import com.hippo.ehviewer.util.LazySupplier;
 import java.io.IOException;
@@ -62,16 +62,16 @@ public class App extends Application {
             }
           })
           .addInterceptor(new UserAgentInterceptor(getUserAgent()))
-          .cookieJar(getCookieRepository())
+          .cookieJar(getCookieJar())
           .dns(getClimbOverDns())
           .build();
     }
   };
 
-  private LazySupplier<CookieRepository> cookieRepositorySupplier = new LazySupplier<CookieRepository>() {
+  private LazySupplier<EhCookieJar> cookieJarSupplier = new LazySupplier<EhCookieJar>() {
     @Override
-    public CookieRepository onGet() {
-      return new CookieRepository(App.this, DB_COOKIE);
+    public EhCookieJar onGet() {
+      return new EhCookieJar(App.this, DB_COOKIE);
     }
   };
 
@@ -108,8 +108,8 @@ public class App extends Application {
     return okHttpClientSupplier.get();
   }
 
-  public CookieRepository getCookieRepository() {
-    return cookieRepositorySupplier.get();
+  public EhCookieJar getCookieJar() {
+    return cookieJarSupplier.get();
   }
 
   public ClimbOverDns getClimbOverDns() {
