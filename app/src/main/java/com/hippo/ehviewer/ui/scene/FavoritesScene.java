@@ -389,7 +389,6 @@ public class FavoritesScene extends BaseScene implements
             if (1 == mHelper.getShownViewIndex()) {
                 mHasFirstRefresh = false;
             }
-            mHelper = null;
         }
         if (null != mRecyclerView) {
             mRecyclerView.stopScroll();

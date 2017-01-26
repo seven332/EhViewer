@@ -518,7 +518,6 @@ public final class GalleryListScene extends BaseScene
             if (1 == mHelper.getShownViewIndex()) {
                 mHasFirstRefresh = false;
             }
-            mHelper = null;
         }
         if (null != mRecyclerView) {
             mRecyclerView.stopScroll();
