@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -10,7 +11,13 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -31,24 +38,34 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
+
+    // ReactiveX
+    compile 'io.reactivex:rxjava:1.2.5'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'
 
     // Modified okio
     compile 'com.github.seven332.okio:okio:1.11.0'
 
     // Http
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
-
-    compile 'com.pushtorefresh.storio:sqlite:1.12.1'
-
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 
-    compile 'io.reactivex:rxjava:1.2.5'
-    compile 'io.reactivex:rxandroid:1.2.1'
+    // Looks like fragment, but cleaner
+    compile 'com.github.seven332.conductor:conductor:2.0.7'
 
-    // Loading thumbs, only JPEG and PNG
+    // Backport of Android Transitions API
+    compile "com.andkulikov:transitionseverywhere:1.7.0"
+
+    // Loads thumbs, only JPEG and PNG
     compile 'com.facebook.fresco:fresco:1.0.0'
     compile 'com.facebook.fresco:imagepipeline-okhttp3:1.0.0'
+
+    // Utilities
+    compile 'com.github.seven332.yorozuya:yorozuya:1.0.0'
+    compile 'com.github.seven332.yorozuya:android:1.0.0'
 
     testCompile 'junit:junit:4.12'
     testCompile "org.robolectric:robolectric:3.2.2"
