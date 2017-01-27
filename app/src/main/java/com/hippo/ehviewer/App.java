@@ -20,11 +20,11 @@ package com.hippo.ehviewer;
  * Created by Hippo on 1/14/2017.
  */
 
-import android.app.Application;
 import android.util.Log;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.hippo.ehviewer.app.RecordingApplication;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieJar;
 import com.hippo.ehviewer.network.ClimbOverDns;
@@ -36,7 +36,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class App extends Application {
+public class App extends RecordingApplication {
 
   private static final String LOG_TAG = App.class.getSimpleName();
 
