@@ -27,6 +27,7 @@ public class GalleryDetail extends GalleryInfo {
     public String apiKey;
     public int torrentCount;
     public String torrentUrl;
+    public String archiveUrl;
     public String parent;
     public String visible;
     public String language;
@@ -50,6 +51,7 @@ public class GalleryDetail extends GalleryInfo {
         super.writeToParcel(dest, flags);
         dest.writeInt(this.torrentCount);
         dest.writeString(this.torrentUrl);
+        dest.writeString(this.archiveUrl);
         dest.writeString(this.parent);
         dest.writeString(this.visible);
         dest.writeString(this.language);
@@ -71,6 +73,7 @@ public class GalleryDetail extends GalleryInfo {
         super(in);
         this.torrentCount = in.readInt();
         this.torrentUrl = in.readString();
+        this.archiveUrl = in.readString();
         this.parent = in.readString();
         this.visible = in.readString();
         this.language = in.readString();

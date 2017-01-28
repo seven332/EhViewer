@@ -605,5 +605,10 @@
     <plurals name="year">
         <item quantity="other">年</item>
     </plurals>
+    <string name="archives">归档</string>
+    <string name="no_archives">没有归档</string>
+    <string name="download_archive_started">归档下载开始</string>
+    <string name="download_archive_failure">无法起始归档下载</string>
+    <string name="archive">下载归档</string>
 
 </resources>

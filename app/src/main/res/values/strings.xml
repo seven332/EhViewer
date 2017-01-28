@@ -655,5 +655,10 @@
         <item quantity="one">year</item>
         <item quantity="other">years</item>
     </plurals>
+    <string name="archives">Archives</string>
+    <string name="no_archives">No Archives</string>
+    <string name="download_archive_started">Archive download started</string>
+    <string name="download_archive_failure">Failed to download archive</string>
+    <string name="archive">Archive</string>
 
 </resources>

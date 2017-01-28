@@ -31,6 +31,7 @@ import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.ehviewer.client.parser.ArchiveParser;
 import com.hippo.ehviewer.client.parser.FavoritesParser;
 import com.hippo.ehviewer.client.parser.ForumsParser;
 import com.hippo.ehviewer.client.parser.GalleryApiParser;
@@ -597,6 +598,74 @@ public class EhEngine {
         }
 
         return result;
+    }
+
+    public static Pair<String, Pair<String, String>[]> getArchiveList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
+            String url) throws Exception {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        if (null != task) {
+            task.setCall(call);
+        }
+
+        String body = null;
+        Headers headers = null;
+        Pair<String, Pair<String, String>[]> result;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            result = ArchiveParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+
+        return result;
+    }
+
+    public static Void downloadArchive(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
+                                    long gid, String token, String or, String res) throws Exception {
+        if (or == null || or.length() == 0) {
+            throw new EhException("Invalid form param or: " + or);
+        }
+        if (res == null || res.length() == 0) {
+            throw new EhException("Invalid res: " + res);
+        }
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("hathdl_xres", res);
+        String url = EhUrl.getDownloadArchive(gid, token, or);
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+                .post(builder.build())
+                .build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        if (null != task) {
+            task.setCall(call);
+        }
+
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            throwException(call, code, headers, body, null);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+
+        return null;
     }
 
     public static List<GalleryInfo> getWhatsHot(@Nullable EhClient.Task task,

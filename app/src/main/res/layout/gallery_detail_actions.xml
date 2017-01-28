@@ -75,6 +75,15 @@
                 android:textColor="@color/primary_text_light"/>
 
             <TextView
+                android:id="@+id/archive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/archive"
+                android:gravity="center_horizontal"
+                android:drawablePadding="8dp"
+                android:textColor="@color/primary_text_light"/>
+
+            <TextView
                 android:id="@+id/share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

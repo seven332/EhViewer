@@ -202,6 +202,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     @Nullable
     private TextView mTorrent;
     @Nullable
+    private TextView mArchive;
+    @Nullable
     private TextView mShare;
     @Nullable
     private TextView mRate;
@@ -249,6 +251,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private int mRequestId;
 
     private Pair<String, String>[] mTorrentList;
+
+    private String mArchiveFormParamOr;
+    private Pair<String, String>[] mArchiveList;
 
     @State
     private int mState = STATE_INIT;
@@ -464,18 +469,21 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mHeart = (TextView) ViewUtils.$$(mHeartGroup, R.id.heart);
         mHeartOutline = (TextView) ViewUtils.$$(mHeartGroup, R.id.heart_outline);
         mTorrent = (TextView) ViewUtils.$$(mActions, R.id.torrent);
+        mArchive = (TextView) ViewUtils.$$(mActions, R.id.archive);
         mShare = (TextView) ViewUtils.$$(mActions, R.id.share);
         mRate = (TextView) ViewUtils.$$(mActions, R.id.rate);
         mSimilar = (TextView) ViewUtils.$$(mActions, R.id.similar);
         mSearchCover = (TextView) ViewUtils.$$(mActions, R.id.search_cover);
         Ripple.addRipple(mHeartGroup, false);
         Ripple.addRipple(mTorrent, false);
+        Ripple.addRipple(mArchive, false);
         Ripple.addRipple(mShare, false);
         Ripple.addRipple(mRate, false);
         Ripple.addRipple(mSimilar, false);
         Ripple.addRipple(mSearchCover, false);
         mHeartGroup.setOnClickListener(this);
         mTorrent.setOnClickListener(this);
+        mArchive.setOnClickListener(this);
         mShare.setOnClickListener(this);
         mRate.setOnClickListener(this);
         mSimilar.setOnClickListener(this);
@@ -564,6 +572,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mHeart = null;
         mHeartOutline = null;
         mTorrent = null;
+        mArchive = null;
         mShare = null;
         mRate = null;
         mSimilar = null;
@@ -647,6 +656,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         setActionDrawable(mHeartOutline, heartOutline);
         Drawable torrent = DrawableManager.getDrawable(context, R.drawable.v_utorrent_primary_x48);
         setActionDrawable(mTorrent, torrent);
+        Drawable archive = DrawableManager.getDrawable(context, R.drawable.v_archive_primary_x48);
+        setActionDrawable(mArchive, archive);
         Drawable share = DrawableManager.getDrawable(context, R.drawable.v_share_primary_x48);
         setActionDrawable(mShare, share);
         Drawable rate = DrawableManager.getDrawable(context, R.drawable.v_thumb_up_primary_x48);
@@ -1166,6 +1177,21 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                         .show();
                 helper.setDialog(dialog, mGalleryDetail.torrentUrl);
             }
+        } else if (mArchive == v) {
+            if (mGalleryDetail == null) {
+                return;
+            }
+            if (mGalleryDetail.apiUid < 0) {
+                showTip(R.string.sign_in_first, LENGTH_SHORT);
+                return;
+            }
+            ArchiveListDialogHelper helper = new ArchiveListDialogHelper();
+            Dialog dialog = new AlertDialog.Builder(context)
+                    .setTitle(R.string.archives)
+                    .setView(R.layout.dialog_archive_list)
+                    .setOnDismissListener(helper)
+                    .show();
+            helper.setDialog(dialog, mGalleryDetail.archiveUrl);
         } else if (mRate == v) {
             if (mGalleryDetail == null) {
                 return;
@@ -1544,6 +1570,146 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         public boolean isInstance(SceneFragment scene) {
             return scene instanceof GalleryDetailScene;
         }
+    }
+
+    private class DownloadArchiveListener extends EhCallback<GalleryDetailScene, Void> {
+
+        public DownloadArchiveListener(Context context, int stageId, String sceneTag) {
+            super(context, stageId, sceneTag);
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            showTip(R.string.download_archive_started, LENGTH_SHORT);
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            showTip(R.string.download_archive_failure, LENGTH_SHORT);
+        }
+
+        @Override
+        public void onCancel() {}
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryDetailScene;
+        }
+    }
+
+    private class ArchiveListDialogHelper implements AdapterView.OnItemClickListener,
+            DialogInterface.OnDismissListener, EhClient.Callback<Pair<String, Pair<String, String>[]>> {
+
+        @Nullable
+        private ProgressView mProgressView;
+        @Nullable
+        private TextView mErrorText;
+        @Nullable
+        private ListView mListView;
+        @Nullable
+        private EhRequest mRequest;
+        @Nullable
+        private Dialog mDialog;
+
+        public void setDialog(@Nullable Dialog dialog, String url) {
+            mDialog = dialog;
+            mProgressView = (ProgressView) ViewUtils.$$(dialog, R.id.progress);
+            mErrorText = (TextView) ViewUtils.$$(dialog, R.id.text);
+            mListView = (ListView) ViewUtils.$$(dialog, R.id.list_view);
+            mListView.setOnItemClickListener(this);
+
+            Context context = getContext2();
+            if (context != null) {
+                if (mArchiveList == null) {
+                    mErrorText.setVisibility(View.GONE);
+                    mListView.setVisibility(View.GONE);
+                    mRequest = new EhRequest().setMethod(EhClient.METHOD_ARCHIVE_LIST)
+                            .setArgs(url)
+                            .setCallback(this);
+                    EhApplication.getEhClient(context).execute(mRequest);
+                } else {
+                    bind(mArchiveList);
+                }
+            }
+        }
+
+        private void bind(Pair<String, String>[] data) {
+            if (null == mDialog || null == mProgressView || null == mErrorText || null == mListView) {
+                return;
+            }
+
+            if (0 == data.length) {
+                mProgressView.setVisibility(View.GONE);
+                mErrorText.setVisibility(View.VISIBLE);
+                mListView.setVisibility(View.GONE);
+                mErrorText.setText(R.string.no_archives);
+            } else {
+                String[] nameArray = new String[data.length];
+                for (int i = 0, n = data.length; i < n; i++) {
+                    nameArray[i] = data[i].second;
+                }
+                mProgressView.setVisibility(View.GONE);
+                mErrorText.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
+                mListView.setAdapter(new ArrayAdapter<>(mDialog.getContext(), R.layout.item_select_dialog, nameArray));
+            }
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Context context = getContext2();
+            MainActivity activity = getActivity2();
+            if (null != context && null != activity && null != mArchiveList && position < mArchiveList.length) {
+                String res = mArchiveList[position].first;
+                EhRequest request = new EhRequest();
+                request.setMethod(EhClient.METHOD_DOWNLOAD_ARCHIVE);
+                request.setArgs(mGalleryDetail.gid, mGalleryDetail.token, mArchiveFormParamOr, res);
+                request.setCallback(new DownloadArchiveListener(context, activity.getStageId(), getTag()));
+                EhApplication.getEhClient(context).execute(request);
+            }
+
+            if (mDialog != null) {
+                mDialog.dismiss();
+                mDialog = null;
+            }
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            if (mRequest != null) {
+                mRequest.cancel();
+                mRequest = null;
+            }
+            mDialog = null;
+            mProgressView = null;
+            mErrorText = null;
+            mListView = null;
+        }
+
+        @Override
+        public void onSuccess(Pair<String, Pair<String, String>[]> result) {
+            if (mRequest != null) {
+                mRequest = null;
+                mArchiveFormParamOr = result.first;
+                mArchiveList = result.second;
+                bind(result.second);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            mRequest = null;
+            Context context = getContext2();
+            if (null != context && null != mProgressView && null != mErrorText && null != mListView) {
+                mProgressView.setVisibility(View.GONE);
+                mErrorText.setVisibility(View.VISIBLE);
+                mListView.setVisibility(View.GONE);
+                mErrorText.setText(ExceptionUtils.getReadableString(e));
+            }
+        }
+
+        @Override
+        public void onCancel() { mRequest = null; }
     }
 
     private class TorrentListDialogHelper implements AdapterView.OnItemClickListener,

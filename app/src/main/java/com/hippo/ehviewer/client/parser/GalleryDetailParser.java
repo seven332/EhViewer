@@ -58,6 +58,7 @@ public class GalleryDetailParser {
     private static final Pattern PATTERN_ERROR = Pattern.compile("<div class=\"d\">\n<p>([^<]+)</p>");
     private static final Pattern PATTERN_DETAIL = Pattern.compile("var gid = (\\d+);.+?var token = \"([a-f0-9]+)\";.+?var apiuid = ([\\-\\d]+);.+?var apikey = \"([a-f0-9]+)\";", Pattern.DOTALL);
     private static final Pattern PATTERN_TORRENT = Pattern.compile("<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>");
+    private static final Pattern PATTERN_ARCHIVE = Pattern.compile("<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Archive Download</a>");
     private static final Pattern PATTERN_TAG_GROUP = Pattern.compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
     private static final Pattern PATTERN_TAG = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
     private static final Pattern PATTERN_COMMENT = Pattern.compile("<div class=\"c3\">Posted on ([^<>]+) by: &nbsp; <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c[78]\"");
@@ -124,6 +125,13 @@ public class GalleryDetailParser {
         } else {
             gd.torrentCount = 0;
             gd.torrentUrl = "";
+        }
+
+        matcher = PATTERN_ARCHIVE.matcher(body);
+        if (matcher.find()) {
+            gd.archiveUrl = StringUtils.unescapeXml(StringUtils.trim(matcher.group(1)));
+        } else {
+            gd.archiveUrl = "";
         }
 
         try {

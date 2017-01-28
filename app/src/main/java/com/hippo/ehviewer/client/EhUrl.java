@@ -108,6 +108,10 @@ public class EhUrl {
         return getHost() + "gallerypopups.php?gid=" + gid + "&t=" + token + "&act=addfav";
     }
 
+    public static String getDownloadArchive(long gid, String token, String or) {
+        return getHost() + "archiver.php?gid=" + gid + "&token=" + token + "&or=" + or;
+    }
+
     public static String getTagDefinitionUrl(String tag) {
         return "https://ehwiki.org/wiki/" + tag.replace(' ', '_');
     }
