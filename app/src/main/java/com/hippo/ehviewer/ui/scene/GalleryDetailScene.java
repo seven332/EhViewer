@@ -74,6 +74,7 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.data.PreviewSet;
+import com.hippo.ehviewer.client.exception.NoHAtHClientException;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.dao.Filter;
@@ -1585,7 +1586,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         @Override
         public void onFailure(Exception e) {
-            showTip(R.string.download_archive_failure, LENGTH_SHORT);
+            if (e instanceof NoHAtHClientException) {
+                showTip(R.string.download_archive_failure_no_hath, LENGTH_SHORT);
+            } else {
+                showTip(R.string.download_archive_failure, LENGTH_SHORT);
+            }
         }
 
         @Override

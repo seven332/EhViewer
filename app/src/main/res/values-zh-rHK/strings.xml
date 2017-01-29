@@ -610,5 +610,6 @@
     <string name="download_archive_started">檔案下載開始</string>
     <string name="download_archive_failure">無法開始檔案下載</string>
     <string name="archive">下載檔案</string>
+    <string name="download_archive_failure_no_hath">檔案下載需要 H@H 客戶端</string>
 
 </resources>

@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.ehviewer.client.exception.EhException;
+import com.hippo.ehviewer.client.exception.NoHAtHClientException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.parser.ArchiveParser;
 import com.hippo.ehviewer.client.parser.FavoritesParser;
@@ -57,6 +58,8 @@ import org.jsoup.nodes.Document;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -78,6 +81,8 @@ public class EhEngine {
 
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
+
+    private static final Pattern PATTERN_NEED_HATH_CLIENT = Pattern.compile("(You must have a H@H client assigned to your account to use this feature\\.)");
 
     public static EhFilter sEhFilter;
 
@@ -663,6 +668,11 @@ public class EhEngine {
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;
+        }
+
+        Matcher m = PATTERN_NEED_HATH_CLIENT.matcher(body);
+        if (m.find()) {
+            throw new NoHAtHClientException("No H@H client");
         }
 
         return null;

@@ -610,5 +610,6 @@
     <string name="download_archive_started">归档下载开始</string>
     <string name="download_archive_failure">无法起始归档下载</string>
     <string name="archive">下载归档</string>
+    <string name="download_archive_failure_no_hath">归档下载需要 H@H 客户端</string>
 
 </resources>

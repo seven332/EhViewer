@@ -660,5 +660,6 @@
     <string name="download_archive_started">Archive download started</string>
     <string name="download_archive_failure">Failed to download archive</string>
     <string name="archive">Archive</string>
+    <string name="download_archive_failure_no_hath">Need H@H client for archive download</string>
 
 </resources>
