@@ -88,7 +88,7 @@ public final class EhClient {
           public Observable<Result<RecaptchaImageResult>> onCall(RecaptchaChallengeResult result) {
             String challenge = result.challenge();
             recaptcha.challenge(challenge);
-            return engine.recaptcha(challenge, RECAPTCHA_PUBLIC_KEY,
+            return engine.recaptchaReload(challenge, RECAPTCHA_PUBLIC_KEY,
                 RECAPTCHA_REASON, RECAPTCHA_TYPE, RECAPTCHA_LANG);
           }
         })

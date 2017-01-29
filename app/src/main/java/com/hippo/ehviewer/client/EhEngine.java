@@ -64,7 +64,7 @@ public interface EhEngine {
   );
 
   @GET("https://www.google.com/recaptcha/api/reload")
-  Observable<Result<RecaptchaImageResult>> recaptcha(
+  Observable<Result<RecaptchaImageResult>> recaptchaReload(
       @Query("c") String challenge,
       @Query("k") String publicKey,
       @Query("reason") String reason,
