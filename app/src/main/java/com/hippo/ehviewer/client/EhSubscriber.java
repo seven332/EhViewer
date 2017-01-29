@@ -22,8 +22,6 @@ package com.hippo.ehviewer.client;
 
 import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 /**
  * A base {@link Subscriber} for {@link EhClient}.
@@ -35,22 +33,14 @@ public abstract class EhSubscriber<T extends EhResult> extends Subscriber<Result
 
   @Override
   public void onError(Throwable e) {
-    EhReactiveX.handleError(e, new Action1<Throwable>() {
-      @Override
-      public void call(Throwable throwable) {
-        onFailure(throwable);
-      }
-    });
+    EhReactiveX.handleError(e, this::onFailure);
   }
 
   @Override
   public void onNext(Result<T> result) {
-    EhReactiveX.handleResult(result, new Func1<T, Void>() {
-      @Override
-      public Void call(T t) {
-        onSuccess(t);
-        return null;
-      }
+    EhReactiveX.handleResult(result, t -> {
+      onSuccess(t);
+      return null;
     });
   }
 

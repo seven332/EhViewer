@@ -38,12 +38,8 @@ import okhttp3.HttpUrl;
  */
 public class CookieRepository implements CookieJar {
 
-  private static final Comparator<Cookie> COOKIE_COMPARATOR = new Comparator<Cookie>() {
-    @Override
-    public int compare(Cookie o1, Cookie o2) {
-      return o2.path().length() - o1.path().length();
-    }
-  };
+  private static final Comparator<Cookie> COOKIE_COMPARATOR =
+      (o1, o2) -> o2.path().length() - o1.path().length();
 
   private final CookieDatabase db;
   private final Map<String, CookieSet> map;

@@ -30,11 +30,8 @@ import com.hippo.ehviewer.client.EhCookieJar;
 import com.hippo.ehviewer.network.ClimbOverDns;
 import com.hippo.ehviewer.network.UserAgentInterceptor;
 import com.hippo.ehviewer.util.LazySupplier;
-import java.io.IOException;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 
 public class App extends RecordingApplication {
 
@@ -52,14 +49,11 @@ public class App extends RecordingApplication {
     @Override
     public OkHttpClient onGet() {
       return new OkHttpClient.Builder()
-          .addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-              Request request = chain.request();
-              // TODO Switch it is app settings
-              Log.d(LOG_TAG, request.url().toString());
-              return chain.proceed(request);
-            }
+          .addInterceptor(chain -> {
+            Request request = chain.request();
+            // TODO Switch it is app settings
+            Log.d(LOG_TAG, request.url().toString());
+            return chain.proceed(request);
           })
           .addInterceptor(new UserAgentInterceptor(getUserAgent()))
           .cookieJar(getCookieJar())

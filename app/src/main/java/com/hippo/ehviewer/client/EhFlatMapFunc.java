@@ -29,12 +29,7 @@ public abstract class EhFlatMapFunc<T extends EhResult, R extends EhResult>
 
   @Override
   public Observable<Result<R>> call(Result<T> result) {
-    return EhReactiveX.handleResult(result, new Func1<T, Observable<Result<R>>>() {
-      @Override
-      public Observable<Result<R>> call(T t) {
-        return onCall(t);
-      }
-    });
+    return EhReactiveX.handleResult(result, this::onCall);
   }
 
   public abstract Observable<Result<R>> onCall(T t);

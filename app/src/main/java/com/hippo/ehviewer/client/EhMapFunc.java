@@ -29,12 +29,7 @@ public abstract class EhMapFunc<T extends EhResult, R extends EhResult>
 
   @Override
   public Result<R> call(Result<T> result) {
-    return EhReactiveX.handleResult(result, new Func1<T, Result<R>>() {
-      @Override
-      public Result<R> call(T t) {
-        return Result.response(Response.success(onCall(t)));
-      }
-    });
+    return EhReactiveX.handleResult(result, t -> Result.response(Response.success(onCall(t))));
   }
 
   public abstract R onCall(T t);
