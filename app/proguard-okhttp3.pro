@@ -1,0 +1,1 @@
+-dontwarn okhttp3.**
