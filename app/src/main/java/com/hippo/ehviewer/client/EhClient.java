@@ -22,11 +22,13 @@ package com.hippo.ehviewer.client;
 
 import android.content.Context;
 import com.hippo.ehviewer.App;
+import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.RecaptchaResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import com.hippo.ehviewer.client.result.VoidResult;
+import java.util.Map;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.Result;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -109,6 +111,14 @@ public final class EhClient {
    */
   public Observable<Result<VoidResult>> touchExHentai() {
     return engine.touchExHentai();
+  }
+
+  /**
+   * Get gallery list.
+   */
+  // TODO handles favourites
+  public Observable<Result<GalleryListResult>> getGalleryList(String url, Map<String, String> query) {
+    return engine.getGalleryList(url, query);
   }
 
   /**

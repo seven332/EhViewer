@@ -37,6 +37,11 @@ public class ParseException extends Exception {
     this.body = body;
   }
 
+  public ParseException(String message, String body, Throwable cause) {
+    super(message, cause);
+    this.body = body;
+  }
+
   /**
    * We can't get url in {@link EhConverter}.
    * So set it in {@link com.hippo.ehviewer.client.EhSubscriber}.

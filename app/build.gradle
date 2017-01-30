@@ -53,6 +53,9 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 
+    // Parses html
+    compile 'org.jsoup:jsoup:1.10.2'
+
     // Looks like fragment, but cleaner
     compile 'com.github.seven332.conductor:conductor:2.0.7'
 
@@ -62,6 +65,8 @@ dependencies {
     // Loads thumbs, only JPEG and PNG
     compile 'com.facebook.fresco:fresco:1.0.0'
     compile 'com.facebook.fresco:imagepipeline-okhttp3:1.0.0'
+
+    compile 'com.github.seven332:easyrecyclerview:1.0.0'
 
     // Utilities
     compile 'com.github.seven332.yorozuya:yorozuya:1.0.0'

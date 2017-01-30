@@ -20,10 +20,12 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/15/2017.
  */
 
+import com.hippo.ehviewer.client.converter.GalleryListConverter;
 import com.hippo.ehviewer.client.converter.RecaptchaChallengeConverter;
 import com.hippo.ehviewer.client.converter.RecaptchaImageConverter;
 import com.hippo.ehviewer.client.converter.SignInConverter;
 import com.hippo.ehviewer.client.converter.VoidConverter;
+import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.SignInResult;
@@ -48,6 +50,7 @@ public final class EhConverterFactory extends Converter.Factory {
     else if (RecaptchaChallengeResult.class.equals(type)) return new RecaptchaChallengeConverter();
     else if (RecaptchaImageResult.class.equals(type)) return new RecaptchaImageConverter();
     else if (VoidResult.class.equals(type)) return new VoidConverter();
+    else if (GalleryListResult.class.equals(type)) return new GalleryListConverter();
     else throw new IllegalStateException("Unknown type: " + type);
   }
 

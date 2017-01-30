@@ -20,16 +20,20 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/14/2017.
  */
 
+import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import com.hippo.ehviewer.client.result.VoidResult;
+import java.util.Map;
 import retrofit2.adapter.rxjava.Result;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 import rx.Observable;
 
 public interface EhEngine {
@@ -74,4 +78,10 @@ public interface EhEngine {
 
   @GET("https://exhentai.org/")
   Observable<Result<VoidResult>> touchExHentai();
+
+  @GET
+  Observable<Result<GalleryListResult>> getGalleryList(
+      @Url String url,
+      @QueryMap Map<String, String> query
+  );
 }
