@@ -25,28 +25,14 @@ android {
             buildConfigField "String", "APPLICATION_NAME", "\"${APPLICATION_NAME}\""
 
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro',
-                    'proguard-okio.pro',
-                    'proguard-okhttp3.pro',
-                    'proguard-fresco.pro',
-                    'proguard-rxjava.pro',
-                    'proguard-retrofit2.pro',
-                    'proguard-retrofit2-adapter-rxjava.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         release {
             buildConfigField "String", "APPLICATION_NAME", "\"${APPLICATION_NAME}\""
 
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro',
-                    'proguard-okio.pro',
-                    'proguard-okhttp3.pro',
-                    'proguard-fresco.pro',
-                    'proguard-rxjava.pro',
-                    'proguard-retrofit2.pro',
-                    'proguard-retrofit2-adapter-rxjava.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
