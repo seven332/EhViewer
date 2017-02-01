@@ -78,6 +78,11 @@ dependencies {
     compile 'com.github.seven332.yorozuya:yorozuya:1.0.0'
     compile 'com.github.seven332.yorozuya:android:1.0.0'
 
+    // Memory leak detection
+    debugCompile "com.squareup.leakcanary:leakcanary-android:1.5"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.5"
+    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.5"
+
     testCompile 'junit:junit:4.12'
     testCompile "org.robolectric:robolectric:3.2.2"
     // Add these dependencies to make robolectric work on Android Studio

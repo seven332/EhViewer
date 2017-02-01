@@ -30,6 +30,8 @@ import com.hippo.ehviewer.client.EhCookieJar;
 import com.hippo.ehviewer.network.ClimbOverDns;
 import com.hippo.ehviewer.network.UserAgentInterceptor;
 import com.hippo.ehviewer.util.LazySupplier;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -44,6 +46,8 @@ public class App extends RecordingApplication {
           + "Safari/537.36";
 
   private static final String DB_COOKIE = "okhttp3-cookie.db";
+
+  private RefWatcher refWatcher;
 
   private LazySupplier<OkHttpClient> okHttpClientSupplier = new LazySupplier<OkHttpClient>() {
     @Override
@@ -87,6 +91,8 @@ public class App extends RecordingApplication {
   public void onCreate() {
     super.onCreate();
 
+    refWatcher = LeakCanary.install(this);
+
     ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
         .newBuilder(this, getOkHttpClient())
         .build();
@@ -96,6 +102,10 @@ public class App extends RecordingApplication {
   public String getUserAgent() {
     // Add EhViewer segment to user agent
     return BASE_USER_AGENT + " " + BuildConfig.APPLICATION_NAME + "/" + BuildConfig.VERSION_NAME;
+  }
+
+  public RefWatcher getRefWatcher() {
+    return refWatcher;
   }
 
   public OkHttpClient getOkHttpClient() {
