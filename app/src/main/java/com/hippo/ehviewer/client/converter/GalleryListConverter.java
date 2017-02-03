@@ -29,12 +29,12 @@ import com.hippo.ehviewer.client.EhConverter;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.exception.EmptyException;
 import com.hippo.ehviewer.client.exception.InnerParseException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.yorozuya.StringUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,9 +45,6 @@ import org.jsoup.select.Elements;
 
 /**
  * A {@link retrofit2.Converter} to parse the html of gallery list.
- * <p>
- * Throws {@link com.hippo.ehviewer.client.exception.EmptyException}
- * if the list is empty.
  */
 public class GalleryListConverter extends EhConverter<GalleryListResult> {
 
@@ -58,7 +55,7 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
 
   @NonNull
   @Override
-  public GalleryListResult convert(String body) throws EmptyException, ParseException {
+  public GalleryListResult convert(String body) throws ParseException {
     int pages;
     List<GalleryInfo> list;
 
@@ -72,7 +69,7 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
       }
     } catch (InnerParseException e) {
       if (body.contains(EMPTY_KEYWORD)) {
-        throw new EmptyException("Empty gallery list");
+        return new GalleryListResult(0, Collections.emptyList());
       } else {
         throw new ParseException("Can't parse gallery list", body, e);
       }
