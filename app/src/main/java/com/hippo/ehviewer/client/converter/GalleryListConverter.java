@@ -214,9 +214,7 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
     if (index2 == -1) return null;
     int index3 = str.indexOf('~', index2 + 1);
     if (index3 == -1) return null;
-    StringBuilder sb = new StringBuilder(index3- index1 + 6);
-    sb.append("https://").append(str.substring(index1 + 1, index2)).append(str.substring(index2 + 1, index3));
-    return sb.toString();
+    return "https://" + str.substring(index1 + 1, index2) + "/" + str.substring(index2 + 1, index3);
   }
 
   // ehentai website uses a picture to show rating.
