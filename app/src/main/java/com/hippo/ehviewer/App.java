@@ -25,6 +25,7 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.hippo.ehviewer.app.RecordingApplication;
+import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieJar;
 import com.hippo.ehviewer.network.ClimbOverDns;
@@ -95,6 +96,7 @@ public class App extends RecordingApplication {
 
     ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
         .newBuilder(this, getOkHttpClient())
+        .setCacheKeyFactory(new EhCacheKeyFactory())
         .build();
     Fresco.initialize(this, config);
   }
