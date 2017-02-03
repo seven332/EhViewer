@@ -146,7 +146,7 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
       }
       // Cover
       if (gi.coverUrl != null) {
-        gi.cover = EhUrl.getFingerprint(gi.coverUrl);
+        gi.cover = EhUrl.getImageFingerprint(gi.coverUrl);
       }
     }
     if (gi.coverRatio == Float.NaN) {

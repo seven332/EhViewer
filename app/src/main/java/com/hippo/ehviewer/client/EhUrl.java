@@ -31,7 +31,10 @@ public final class EhUrl {
   private EhUrl() {}
 
   private static final Pattern PATTERN_GID_TOKEN = Pattern.compile("/g/(\\d+)/([0-9a-f]{10})");
-  private static final Pattern PATTERN_FINGERPRINT = Pattern.compile("[0-9a-f]{40}-\\d+-\\d+-\\d+-[0-9a-z]+");
+  // A thumbnail url looks like:
+  // https://exhentai.org/t/e8/50/e850fc3d8fb7bfea934f66206fb8db8a86f57251-28396-1074-1538-jpg_l.jpg
+  private static final Pattern PATTERN_THUMBNAIL =
+      Pattern.compile("/([0-9a-f]{2})/([0-9a-f]{2})/([0-9a-f]{40}-\\d+-\\d+-\\d+-[0-9a-z]+)_([0-9a-zA-Z]+)\\.[0-9a-zA-Z]+");
 
   @IntDef({SITE_E, SITE_EX})
   @Retention(RetentionPolicy.SOURCE)
@@ -46,6 +49,12 @@ public final class EhUrl {
   public static final String URL_E = "https://e-hentai.org/";
   public static final String URL_EX = "https://exhentai.org/";
 
+  /** Width == 200 **/
+  public static final String COVER_TYPE_L = "l";
+  /** Width == 250 **/
+  public static final String COVER_TYPE_250 = "250";
+  /** Width == 300 **/
+  public static final String COVER_TYPE_300 = "300";
 
   /**
    * Return site url which ends with "/"
@@ -57,9 +66,6 @@ public final class EhUrl {
       return URL_E;
     }
   }
-
-
-
 
   /**
    * Parse gallery url to gid and token.
@@ -85,14 +91,49 @@ public final class EhUrl {
   /**
    * Parse image url to fingerprint.
    * {@code null} if can't parse it.
+   * <p>
+   * Example:
+   * <ul>
+   * <li>Url: {@code https://exhentai.org/t/e8/50/e850fc3d8fb7bfea934f66206fb8db8a86f57251-28396-1074-1538-jpg_l.jpg}</li>
+   * <li>Image fingerprint: {@code e850fc3d8fb7bfea934f66206fb8db8a86f57251-28396-1074-1538-jpg}</li>
+   * </ul>
    */
-  public static String getFingerprint(String url) {
+  public static String getImageFingerprint(String url) {
     if (url == null) return null;
-    Matcher m = PATTERN_FINGERPRINT.matcher(url);
+    Matcher m = PATTERN_THUMBNAIL.matcher(url);
     if (m.find()) {
-      return m.group(0);
-    } else {
-      return null;
+      String g1 = m.group(1);
+      String g2 = m.group(2);
+      String g3 = m.group(3);
+      if (g1.equals(g3.substring(0, 2)) && g2.equals(g3.substring(2, 4))) {
+        return g3;
+      }
     }
+    return null;
+  }
+
+  /**
+   * Parse image url to fingerprint.
+   * {@code null} if can't parse it.
+   * <p>
+   * Example:
+   * <ul>
+   * <li>Url: {@code https://exhentai.org/t/e8/50/e850fc3d8fb7bfea934f66206fb8db8a86f57251-28396-1074-1538-jpg_l.jpg}</li>
+   * <li>Image fingerprint: {@code e850fc3d8fb7bfea934f66206fb8db8a86f57251-28396-1074-1538-jpg_l}</li>
+   * </ul>
+   */
+  public static String getThumbnailFingerprint(String url) {
+    if (url == null) return null;
+    Matcher m = PATTERN_THUMBNAIL.matcher(url);
+    if (m.find()) {
+      String g1 = m.group(1);
+      String g2 = m.group(2);
+      String g3 = m.group(3);
+      String g4 = m.group(4);
+      if (g1.equals(g3.substring(0, 2)) && g2.equals(g3.substring(2, 4))) {
+        return g3 + "_" + g4;
+      }
+    }
+    return null;
   }
 }
