@@ -94,11 +94,13 @@ public class App extends RecordingApplication {
 
     refWatcher = LeakCanary.install(this);
 
-    ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
-        .newBuilder(this, getOkHttpClient())
-        .setCacheKeyFactory(new EhCacheKeyFactory())
-        .build();
-    Fresco.initialize(this, config);
+    if (!Fresco.hasBeenInitialized()) {
+      ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
+          .newBuilder(this, getOkHttpClient())
+          .setCacheKeyFactory(new EhCacheKeyFactory())
+          .build();
+      Fresco.initialize(this, config);
+    }
   }
 
   public String getUserAgent() {
