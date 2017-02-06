@@ -73,23 +73,28 @@ public abstract class CrossFadeView<V extends View, D> extends ViewGroup {
   }
 
   /**
-   * Set from-view and to-view.
+   * Set from-view.
    * <p>
    * Must call it before layout.
    */
-  protected void setViews(@NonNull V from, @NonNull V to) {
+  protected void setFromView(@NonNull V from) {
     this.from = from;
-    this.to = to;
     this.fromIndex = indexOfChild(from);
-    this.toIndex = indexOfChild(to);
     if (this.fromIndex == -1) {
       throw new IllegalStateException("From-view is not a child");
     }
+  }
+
+  /**
+   * Set to-view.
+   * <p>
+   * Must call it before layout.
+   */
+  protected void setToView(@NonNull V to) {
+    this.to = to;
+    this.toIndex = indexOfChild(to);
     if (this.toIndex == -1) {
       throw new IllegalStateException("To-view is not a child");
-    }
-    if (this.fromIndex == this.toIndex) {
-      throw new IllegalStateException("From-view is to-view");
     }
   }
 

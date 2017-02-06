@@ -24,38 +24,41 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
-import com.hippo.ehviewer.R;
 
 /**
  * Implements {@link CrossFadeView} with {@link ImageView}.
  */
 public class CrossFadeImageView extends CrossFadeView<ImageView, Drawable> {
 
+  private static final String LOG_TAG = CrossFadeImageView.class.getSimpleName();
+
   public CrossFadeImageView(Context context) {
     super(context);
-    init(context);
   }
 
   public CrossFadeImageView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    init(context);
   }
 
   public CrossFadeImageView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    init(context);
-  }
-
-  protected void init(Context context) {
-    LayoutInflater.from(context).inflate(R.layout.widget_cross_fade_image_view, this);
-    setViews((ImageView) getChildAt(0), (ImageView) getChildAt(1));
   }
 
   @Override
-  protected void onFinishInflate() {
-    super.onFinishInflate();
+  public void addView(View child, int index, LayoutParams params) {
+    super.addView(child, index, params);
+
+    if (child instanceof ImageView) {
+      ImageView imageView = (ImageView) child;
+      if (getFromView() == null) {
+        setFromView(imageView);
+      } else if (getToView() == null) {
+        setToView(imageView);
+      }
+    }
   }
 
   @Override
@@ -67,10 +70,11 @@ public class CrossFadeImageView extends CrossFadeView<ImageView, Drawable> {
   protected Drawable cloneData(ImageView view) {
     Drawable drawable = view.getDrawable();
     if (drawable != null) {
-      // TODO A better way to clone Drawable
       Drawable.ConstantState state = drawable.getConstantState();
       if (state != null) {
         return drawable.getConstantState().newDrawable();
+      } else {
+        Log.e(LOG_TAG, "Can't clone the drawable: " + drawable);
       }
     }
     return null;

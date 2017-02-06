@@ -39,21 +39,18 @@ public class CrossFadeTextView extends CrossFadeView<TextView, CharSequence> {
     super(context, attrs, defStyleAttr);
   }
 
-  private void throwBadChildrenException() {
-    throw new IllegalStateException("Make sure CrossFadeTextView has two TextView children");
-  }
-
   @Override
-  protected void onFinishInflate() {
-    if (getChildCount() != 2) {
-      throwBadChildrenException();
+  public void addView(View child, int index, LayoutParams params) {
+    super.addView(child, index, params);
+
+    if (child instanceof TextView) {
+      TextView textView = (TextView) child;
+      if (getFromView() == null) {
+        setFromView(textView);
+      } else if (getToView() == null) {
+        setToView(textView);
+      }
     }
-    View from = getChildAt(0);
-    View to = getChildAt(1);
-    if (!(from instanceof TextView) || !(to instanceof TextView)) {
-      throwBadChildrenException();
-    }
-    setViews((TextView) getChildAt(0), (TextView) getChildAt(1));
   }
 
   @Override
