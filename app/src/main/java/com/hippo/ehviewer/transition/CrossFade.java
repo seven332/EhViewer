@@ -33,6 +33,9 @@ import com.transitionseverywhere.TransitionValues;
 public class CrossFade extends Transition {
 
   private static final String PROPNAME_DATA = "cross_fade:data";
+  private static final String[] PROPNAMES = {
+      PROPNAME_DATA,
+  };
 
   private void captureValues(TransitionValues transitionValues) {
     if (transitionValues.view instanceof CrossFadeView) {
@@ -49,6 +52,11 @@ public class CrossFade extends Transition {
   @Override
   public void captureEndValues(TransitionValues transitionValues) {
     captureValues(transitionValues);
+  }
+
+  @Override
+  public String[] getTransitionProperties() {
+    return PROPNAMES;
   }
 
   @Override
