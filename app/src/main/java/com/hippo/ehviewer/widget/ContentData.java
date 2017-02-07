@@ -104,9 +104,11 @@ public abstract class ContentData<T> implements ContentView {
   private ContentView view;
   private RecordView record = new RecordView();
 
-  void setContentView(ContentView view) {
+  void setContentView(@Nullable ContentView view) {
     this.view = view;
-    record.restore(view);
+    if (view != null) {
+      record.restore(view);
+    }
   }
 
   /**
