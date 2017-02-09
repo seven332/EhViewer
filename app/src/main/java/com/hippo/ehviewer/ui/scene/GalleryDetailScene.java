@@ -101,6 +101,7 @@ import com.hippo.widget.LoadImageView;
 import com.hippo.widget.ObservedTextView;
 import com.hippo.widget.ProgressView;
 import com.hippo.widget.SimpleGridAutoSpanLayout;
+import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
@@ -1783,7 +1784,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 String name = mTorrentList[position].second;
                 // Use system download service
                 DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
-                r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, name + ".torrent");
+                r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+                        FileUtils.sanitizeFilename(name + ".torrent"));
                 r.allowScanningByMediaScanner();
                 r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
