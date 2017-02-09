@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 public class TorrentParser {
 
-    private static final Pattern PATTERN_TORRENT = Pattern.compile("<td colspan=\"5\"> &nbsp; <a href=\"([^\"]+)\">([^<]+)</a></td>");
+    private static final Pattern PATTERN_TORRENT = Pattern.compile("<td colspan=\"5\"> &nbsp; <a href=\"([^\"]+)\"[^<]+>([^<]+)</a></td>");
 
     @SuppressWarnings("unchecked")
     public static Pair<String, String>[] parse(String body) {
