@@ -523,7 +523,7 @@ public abstract class ContentData<T> {
     record.notifyItemRangeRemoved(positionStart, itemCount);
   }
 
-  public static class RecordView implements ContentView {
+  private static class RecordView implements ContentView {
 
     private boolean showContent;
     private boolean showProgressBar;
