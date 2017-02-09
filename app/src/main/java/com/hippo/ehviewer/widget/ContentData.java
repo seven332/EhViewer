@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @param <T> data type
  */
-public abstract class ContentData<T> implements ContentView {
+public abstract class ContentData<T> {
 
   private static final String LOG_TAG = ContentData.class.getSimpleName();
 
@@ -474,7 +474,6 @@ public abstract class ContentData<T> implements ContentView {
     }
   }
 
-  @Override
   public void showContent() {
     if (view != null) {
       view.showContent();
@@ -482,7 +481,6 @@ public abstract class ContentData<T> implements ContentView {
     record.showContent();
   }
 
-  @Override
   public void showTip(ContentLayout.TipInfo info) {
     if (view != null) {
       view.showTip(info);
@@ -490,7 +488,6 @@ public abstract class ContentData<T> implements ContentView {
     record.showTip(info);
   }
 
-  @Override
   public void showProgressBar() {
     if (view != null) {
       view.showProgressBar();
@@ -498,7 +495,6 @@ public abstract class ContentData<T> implements ContentView {
     record.showProgressBar();
   }
 
-  @Override
   public void stopRefreshing() {
     if (view != null) {
       view.stopRefreshing();
@@ -506,13 +502,6 @@ public abstract class ContentData<T> implements ContentView {
     record.stopRefreshing();
   }
 
-  @Override
-  public void setHeaderRefreshing() {}
-
-  @Override
-  public void setFooterRefreshing() {}
-
-  @Override
   public void scrollToPosition(int position) {
     if (view != null) {
       view.scrollToPosition(position);
@@ -520,7 +509,6 @@ public abstract class ContentData<T> implements ContentView {
     record.scrollToPosition(position);
   }
 
-  @Override
   public void notifyItemRangeInserted(int positionStart, int itemCount) {
     if (view != null) {
       view.notifyItemRangeInserted(positionStart, itemCount);
@@ -528,7 +516,6 @@ public abstract class ContentData<T> implements ContentView {
     record.notifyItemRangeInserted(positionStart, itemCount);
   }
 
-  @Override
   public void notifyItemRangeRemoved(int positionStart, int itemCount) {
     if (view != null) {
       view.notifyItemRangeRemoved(positionStart, itemCount);
