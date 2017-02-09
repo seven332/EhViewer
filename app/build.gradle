@@ -11,8 +11,8 @@ android {
         applicationId "com.hippo.ehviewer"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 72
-        versionName "1.0.19"
+        versionCode 73
+        versionName "1.0.20"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW"
     }
@@ -41,7 +41,6 @@ task copyNotice(type: Copy) {
     finalizedBy ":daogenerator:executeDaoGenerator"
 }
 
-// TODO What is jack task?
 tasks.withType(DefaultAndroidTask) {
     task -> task.dependsOn copyNotice
 }
