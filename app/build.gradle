@@ -1,6 +1,7 @@
 import com.android.build.gradle.internal.tasks.DefaultAndroidTask
 
 apply plugin: 'com.android.application'
+apply plugin: 'android-chinese-string'
 
 android {
     compileSdkVersion 25
