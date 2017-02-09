@@ -1188,7 +1188,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             }
             ArchiveListDialogHelper helper = new ArchiveListDialogHelper();
             Dialog dialog = new AlertDialog.Builder(context)
-                    .setTitle(R.string.archives)
+                    .setTitle(R.string.dialog_archive_title)
                     .setView(R.layout.dialog_archive_list)
                     .setOnDismissListener(helper)
                     .show();
