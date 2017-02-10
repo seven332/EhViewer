@@ -24,7 +24,7 @@ import android.util.Log;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.hippo.ehviewer.app.RecordingApplication;
+import com.hippo.ehviewer.content.RecordingApplication;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieJar;
@@ -36,9 +36,9 @@ import com.squareup.leakcanary.RefWatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class App extends RecordingApplication {
+public class EhvApp extends RecordingApplication {
 
-  private static final String LOG_TAG = App.class.getSimpleName();
+  private static final String LOG_TAG = EhvApp.class.getSimpleName();
 
   private static final String BASE_USER_AGENT =
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -70,7 +70,7 @@ public class App extends RecordingApplication {
   private LazySupplier<EhCookieJar> cookieJarSupplier = new LazySupplier<EhCookieJar>() {
     @Override
     public EhCookieJar onGet() {
-      return new EhCookieJar(App.this, DB_COOKIE);
+      return new EhCookieJar(EhvApp.this, DB_COOKIE);
     }
   };
 
@@ -84,7 +84,7 @@ public class App extends RecordingApplication {
   private LazySupplier<EhClient> ehClientLazySupplier = new LazySupplier<EhClient>() {
     @Override
     public EhClient onGet() {
-      return EhClient.create(App.this);
+      return EhClient.create(EhvApp.this);
     }
   };
 
