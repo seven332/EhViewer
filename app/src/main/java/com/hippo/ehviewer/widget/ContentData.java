@@ -21,10 +21,10 @@ package com.hippo.ehviewer.widget;
  */
 
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+import com.hippo.ehviewer.view.ViewState;
 import com.hippo.yorozuya.MathUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @param <T> data type
  */
-public abstract class ContentData<T> {
+public abstract class ContentData<T> implements ContentContract.Presenter {
 
   private static final String LOG_TAG = ContentData.class.getSimpleName();
 
@@ -101,19 +101,21 @@ public abstract class ContentData<T> {
   List<Integer> dataDivider = new ArrayList<>();
 
   @Nullable
-  private ContentView view;
-  private RecordView record = new RecordView();
+  private ContentContract.View view;
+  private ContentViewState state = new ContentViewState();
 
-  void setContentView(@Nullable ContentView view) {
+  @Override
+  public void setView(@Nullable ContentContract.View view) {
     this.view = view;
     if (view != null) {
-      record.restore(view);
+      state.restore(view);
     }
   }
 
   /**
    * Return the number of data.
    */
+  @Override
   public int size() {
     return data.size();
   }
@@ -136,14 +138,16 @@ public abstract class ContentData<T> {
   }
 
   // Will discard all data
-  void goTo(int page) {
+  @Override
+  public void goTo(int page) {
     requireData(page, TYPE_GOTO);
   }
 
   // It's different from goTo()
   // switchTo() will only scrollToPosition() if
   // the page is in range.
-  void switchTo(int page) {
+  @Override
+  public void switchTo(int page) {
     if (page < endPage && page >= beginPage) {
       int beginIndex = (page == beginPage ? 0 : dataDivider.get(page - beginPage - 1));
       scrollToPosition(beginIndex);
@@ -170,16 +174,18 @@ public abstract class ContentData<T> {
     }
   }
 
-  void onRefreshHeader() {
+  @Override
+  public void onRefreshHeader() {
     if (isMinReached()) {
       requireData(minPage, TYPE_GOTO);
     } else {
       requireData(beginPage - 1, TYPE_PREV_PAGE);
     }
-    record.setHeaderRefreshing();
+    state.setHeaderRefreshing();
   }
 
-  void onRefreshFooter() {
+  @Override
+  public void onRefreshFooter() {
     if (isMaxReached()) {
       if (endPage > beginPage) {
         // onRefreshPage() will check requirePage,
@@ -191,10 +197,11 @@ public abstract class ContentData<T> {
     } else {
       requireData(endPage, TYPE_NEXT_PAGE);
     }
-    record.setFooterRefreshing();
+    state.setFooterRefreshing();
   }
 
-  void onClickTip() {
+  @Override
+  public void onClickTip() {
     showProgressBar();
     if (!isMaxReached()) {
       requireData(endPage, TYPE_NEXT_PAGE_ADJUST_POSITION);
@@ -227,21 +234,6 @@ public abstract class ContentData<T> {
    * If you get data right now, post it.
    */
   public abstract void onRequireData(long id, int page);
-
-  /**
-   * Gets tip to represent the {@code Throwable}.
-   * <p>
-   * {@link #NOT_FOUND_EXCEPTION} for no data.
-   * <p>
-   * {@link #TAP_TO_LOAD_EXCEPTION} for no data but can continue loading.
-   */
-  @NonNull
-  public abstract ContentLayout.TipInfo getTipFromThrowable(Throwable e);
-
-  /**
-   * Show a non-interrupting message. Toast? SnackBar? OK.
-   */
-  public abstract void showMessage(String text);
 
   /**
    * {@code setData(id, d, 0, p)}.
@@ -309,9 +301,9 @@ public abstract class ContentData<T> {
     // Update UI
     if (data.isEmpty()) {
       if (isMinReached() && isMaxReached()) {
-        showTip(getTipFromThrowable(NOT_FOUND_EXCEPTION));
+        showTip(NOT_FOUND_EXCEPTION);
       } else {
-        showTip(getTipFromThrowable(TAP_TO_LOAD_EXCEPTION));
+        showTip(TAP_TO_LOAD_EXCEPTION);
       }
     } else {
       showContent();
@@ -349,9 +341,9 @@ public abstract class ContentData<T> {
     // Update UI
     if (data.isEmpty()) {
       if (isMinReached() && isMaxReached()) {
-        showTip(getTipFromThrowable(NOT_FOUND_EXCEPTION));
+        showTip(NOT_FOUND_EXCEPTION);
       } else {
-        showTip(getTipFromThrowable(TAP_TO_LOAD_EXCEPTION));
+        showTip(TAP_TO_LOAD_EXCEPTION);
       }
     } else {
       showContent();
@@ -386,9 +378,9 @@ public abstract class ContentData<T> {
     // Update UI
     if (data.isEmpty()) {
       if (isMinReached() && isMaxReached()) {
-        showTip(getTipFromThrowable(NOT_FOUND_EXCEPTION));
+        showTip(NOT_FOUND_EXCEPTION);
       } else {
-        showTip(getTipFromThrowable(TAP_TO_LOAD_EXCEPTION));
+        showTip(TAP_TO_LOAD_EXCEPTION);
       }
     } else {
       showContent();
@@ -434,9 +426,9 @@ public abstract class ContentData<T> {
     // Update UI
     if (data.isEmpty()) {
       if (isMinReached() && isMaxReached()) {
-        showTip(getTipFromThrowable(NOT_FOUND_EXCEPTION));
+        showTip(NOT_FOUND_EXCEPTION);
       } else {
-        showTip(getTipFromThrowable(TAP_TO_LOAD_EXCEPTION));
+        showTip(TAP_TO_LOAD_EXCEPTION);
       }
     } else {
       showContent();
@@ -466,76 +458,85 @@ public abstract class ContentData<T> {
       maxPage = 0;
       beginPage = 0;
       endPage = 0;
-      showTip(getTipFromThrowable(e));
+      showTip(e);
     } else {
       // Has some data
       // Only non-interrupting message
-      showMessage(getTipFromThrowable(e).text);
+      showMessage(e);
     }
   }
 
-  public void showContent() {
+  void showContent() {
     if (view != null) {
       view.showContent();
     }
-    record.showContent();
+    state.showContent();
   }
 
-  public void showTip(ContentLayout.TipInfo info) {
+  void showTip(Throwable t) {
     if (view != null) {
-      view.showTip(info);
+      view.showTip(t);
     }
-    record.showTip(info);
+    state.showTip(t);
   }
 
-  public void showProgressBar() {
+  void showProgressBar() {
     if (view != null) {
       view.showProgressBar();
     }
-    record.showProgressBar();
+    state.showProgressBar();
   }
 
-  public void stopRefreshing() {
+  void showMessage(Throwable t) {
+    if (view != null) {
+      view.showMessage(t);
+    }
+    state.showMessage(t);
+  }
+
+  void stopRefreshing() {
     if (view != null) {
       view.stopRefreshing();
     }
-    record.stopRefreshing();
+    state.stopRefreshing();
   }
 
-  public void scrollToPosition(int position) {
+  void scrollToPosition(int position) {
     if (view != null) {
       view.scrollToPosition(position);
     }
-    record.scrollToPosition(position);
+    state.scrollToPosition(position);
   }
 
-  public void notifyItemRangeInserted(int positionStart, int itemCount) {
+  void notifyItemRangeInserted(int positionStart, int itemCount) {
     if (view != null) {
       view.notifyItemRangeInserted(positionStart, itemCount);
     }
-    record.notifyItemRangeInserted(positionStart, itemCount);
+    state.notifyItemRangeInserted(positionStart, itemCount);
   }
 
-  public void notifyItemRangeRemoved(int positionStart, int itemCount) {
+  void notifyItemRangeRemoved(int positionStart, int itemCount) {
     if (view != null) {
       view.notifyItemRangeRemoved(positionStart, itemCount);
     }
-    record.notifyItemRangeRemoved(positionStart, itemCount);
+    state.notifyItemRangeRemoved(positionStart, itemCount);
   }
 
-  private static class RecordView implements ContentView {
+  private static class ContentViewState extends ViewState<ContentContract.View>
+      implements ContentContract.View {
 
     private boolean showContent;
     private boolean showProgressBar;
-    private ContentLayout.TipInfo tip;
+    private Throwable throwable;
     private boolean headerRefreshing;
     private boolean footerRefreshing;
 
-    public void restore(ContentView view) {
+    @Override
+    public void restore(ContentContract.View view) {
       if (showContent) {
         view.showContent();
-      } else if (tip != null) {
-        view.showTip(tip);
+      } else if (throwable != null) {
+        view.showTip(throwable);
       } else if (showProgressBar) {
         view.showProgressBar();
       }
@@ -549,23 +550,26 @@ public abstract class ContentData<T> {
     @Override
     public void showContent() {
       showContent = true;
-      tip = null;
+      throwable = null;
       showProgressBar = false;
     }
 
     @Override
-    public void showTip(ContentLayout.TipInfo info) {
+    public void showTip(Throwable t) {
       showContent = false;
-      tip = info;
+      throwable = t;
       showProgressBar = false;
     }
 
     @Override
     public void showProgressBar() {
       showContent = false;
-      tip = null;
+      throwable = null;
       showProgressBar = true;
     }
+
+    @Override
+    public void showMessage(Throwable t) {}
 
     @Override
     public void stopRefreshing() {

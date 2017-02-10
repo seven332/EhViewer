@@ -39,13 +39,15 @@ import com.jakewharton.rxbinding.view.RxView;
 import com.transitionseverywhere.Fade;
 import com.transitionseverywhere.Transition;
 import com.transitionseverywhere.TransitionManager;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * A view to show data list, progress bar and empty state.
  * All data are stored in {@link ContentData}.
  */
-public class ContentLayout extends FrameLayout implements ContentView {
+public class ContentLayout extends FrameLayout implements ContentContract.View {
 
   private RefreshLayout refreshLayout;
   private EasyRecyclerView recyclerView;
@@ -53,9 +55,11 @@ public class ContentLayout extends FrameLayout implements ContentView {
   private ProgressBar progressBar;
 
   private RecyclerView.Adapter adapter;
+  private List<RecyclerView.ItemDecoration> itemDecorations = new ArrayList<>();
 
   @Nullable
-  private ContentData data;
+  private ContentContract.Presenter presenter;
+  private Extension extension;
 
   public ContentLayout(Context context) {
     super(context);
@@ -100,51 +104,42 @@ public class ContentLayout extends FrameLayout implements ContentView {
     refreshLayout.setOnRefreshListener(new RefreshLayout.OnRefreshListener() {
       @Override
       public void onHeaderRefresh() {
-        if (data != null) {
-          data.onRefreshHeader();
+        if (presenter != null) {
+          presenter.onRefreshHeader();
         }
       }
 
       @Override
       public void onFooterRefresh() {
-        if (data != null) {
-          data.onRefreshFooter();
+        if (presenter != null) {
+          presenter.onRefreshFooter();
         }
       }
     });
     RxView.clicks(tip)
         .throttleFirst(1, TimeUnit.SECONDS)
         .subscribe(a -> {
-          if (data != null) {
-            data.onClickTip();
+          if (presenter != null) {
+            presenter.onClickTip();
           }
         });
   }
 
-  /**
-   * Sets {@code ContentData}.
-   * Always call {@code setContentData(null)} when you
-   * don't need this {@code ContentLayout} anymore
-   * to avoid memory leak.
-   */
-  public void setContentData(ContentData data) {
-    // Remove ContentLayout from old data
-    if (this.data != null) {
-      this.data.setContentView(null);
-    }
-    this.data = data;
-    if (data != null) {
-      data.setContentView(this);
-    }
+  public void setPresenter(@Nullable ContentContract.Presenter presenter) {
+    this.presenter = presenter;
+  }
+
+  public void setExtension(Extension extension) {
+    this.extension = extension;
   }
 
   /**
    * Go to specialized page. It will discard all loaded data.
    */
   public void goTo(int page, boolean animation) {
-    if (data != null) {
+    if (presenter != null) {
       showProgress(animation);
-      data.goTo(page);
+      presenter.goTo(page);
     }
   }
 
@@ -154,9 +149,9 @@ public class ContentLayout extends FrameLayout implements ContentView {
    * the page is in range.
    */
   public void switchTo(int page, boolean animation) {
-    if (data != null) {
+    if (presenter != null) {
       showProgress(animation);
-      data.switchTo(page);
+      presenter.switchTo(page);
     }
   }
 
@@ -173,6 +168,24 @@ public class ContentLayout extends FrameLayout implements ContentView {
    */
   public void setLayoutManager(RecyclerView.LayoutManager layoutManager) {
     recyclerView.setLayoutManager(layoutManager);
+  }
+
+  /**
+   * Add an {@link RecyclerView.ItemDecoration} to the RecyclerView.
+   */
+  public void addItemDecoration(RecyclerView.ItemDecoration decor) {
+    recyclerView.addItemDecoration(decor);
+    itemDecorations.add(decor);
+  }
+
+  /**
+   * Remove all {@link RecyclerView.ItemDecoration} from the RecyclerView.
+   */
+  public void removeAllItemDecorations() {
+    for (RecyclerView.ItemDecoration decor: itemDecorations) {
+      recyclerView.removeItemDecoration(decor);
+    }
+    itemDecorations.clear();
   }
 
   private void prepareTransition() {
@@ -202,7 +215,6 @@ public class ContentLayout extends FrameLayout implements ContentView {
     progressBar.setVisibility(View.GONE);
   }
 
-  @Override
   public void showTip(TipInfo info) {
     // Set icon
     Drawable drawable = null;
@@ -223,6 +235,26 @@ public class ContentLayout extends FrameLayout implements ContentView {
     showTip(true);
   }
 
+  @Override
+  public void showTip(Throwable t) {
+    if (extension != null) {
+      TipInfo info = extension.getTipFromThrowable(t);
+      if (info != null) {
+        showTip(info);
+      }
+    }
+  }
+
+  @Override
+  public void showMessage(Throwable t) {
+    if (extension != null) {
+      TipInfo info = extension.getTipFromThrowable(t);
+      if (info != null && info.text != null) {
+        extension.showMessage(info.text);
+      }
+    }
+  }
+
   void showProgressBar(boolean animation) {
     if (animation) prepareTransition();
     refreshLayout.setVisibility(View.GONE);
@@ -236,7 +268,7 @@ public class ContentLayout extends FrameLayout implements ContentView {
   }
 
   void showProgress(boolean animation) {
-    if (data == null || data.size() == 0) {
+    if (presenter == null || presenter.size() == 0) {
       // Show progress bar
       showProgressBar(animation);
     } else {
@@ -284,5 +316,25 @@ public class ContentLayout extends FrameLayout implements ContentView {
   public static class TipInfo {
     public int icon;
     public String text;
+  }
+
+  /**
+   * {@code ContentLayout} can't do all UI jobs. It needs a {@code Extension} to give a hand.
+   */
+  public interface Extension {
+
+    /**
+     * Gets tip to represent the {@code Throwable}.
+     * <p>
+     * {@link ContentData#NOT_FOUND_EXCEPTION} for no data.
+     * <p>
+     * {@link ContentData#TAP_TO_LOAD_EXCEPTION} for no data but can continue loading.
+     */
+    TipInfo getTipFromThrowable(Throwable e);
+
+    /**
+     * Show a non-interrupting message. Toast? SnackBar? OK.
+     */
+    void showMessage(String message);
   }
 }
