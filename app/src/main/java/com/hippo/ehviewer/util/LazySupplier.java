@@ -20,6 +20,8 @@ package com.hippo.ehviewer.util;
  * Created by Hippo on 1/15/2017.
  */
 
+import android.support.annotation.NonNull;
+
 /**
  * Lazy initialization for non-static value.
  * <p>
@@ -30,7 +32,7 @@ package com.hippo.ehviewer.util;
  * that {@link #get()} called.
  */
 // https://github.com/google/guava/blob/v21.0/guava/src/com/google/common/base/Suppliers.java
-public abstract class LazySupplier<T> {
+public abstract class LazySupplier<T> implements Supplier<T> {
 
   volatile boolean initialized;
   // "value" does not need to be volatile; visibility piggy-backs
@@ -39,6 +41,7 @@ public abstract class LazySupplier<T> {
 
   public abstract T onGet();
 
+  @Override
   public T get() {
     // A 2-field variant of Double Checked Locking.
     if (!initialized) {
@@ -52,5 +55,29 @@ public abstract class LazySupplier<T> {
       }
     }
     return value;
+  }
+
+  /**
+   * Creates a {@code LazySupplier} from a {@code Supplier}.
+   * Returns the supplier itself if it's a {@code LazySupplier}.
+   */
+  public static <T> LazySupplier<T> from(@NonNull Supplier<T> supplier) {
+    return supplier instanceof LazySupplier
+        ? (LazySupplier<T>) supplier
+        : new DelegateLazySupplier<>(supplier);
+  }
+
+  private static class DelegateLazySupplier<T> extends LazySupplier<T> {
+
+    private Supplier<T> supplier;
+
+    public DelegateLazySupplier(Supplier<T> supplier) {
+      this.supplier = supplier;
+    }
+
+    @Override
+    public T onGet() {
+      return supplier.get();
+    }
   }
 }
