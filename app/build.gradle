@@ -23,6 +23,8 @@ android {
 
     buildTypes {
         debug {
+            applicationIdSuffix ".debug"
+
             buildConfigField "String", "APPLICATION_NAME", "\"${APPLICATION_NAME}\""
 
             minifyEnabled false
