@@ -48,6 +48,7 @@ public class EhCookieJar extends CookieRepository {
     List<Cookie> list = new ArrayList<>(cookies.size());
     for (Cookie cookie: cookies) {
       if (ArrayUtils.contains(LONG_LIVE_DOMAINS, cookie.domain())
+          && cookie.persistent()
           && cookie.expiresAt() >= System.currentTimeMillis()) {
         Cookie.Builder builder = new Cookie.Builder();
         builder.name(cookie.name());
