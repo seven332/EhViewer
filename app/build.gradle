@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-chinese-string'
+apply plugin: 'com.hippo.android-preferences'
 
 android {
     compileSdkVersion 25
@@ -40,6 +41,10 @@ android {
     }
 }
 
+androidPreferences {
+    preference from: 'com.hippo.ehviewer.EhvPreferencesImpl', to: 'com.hippo.ehviewer.EhvPreferences'
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -75,6 +80,9 @@ dependencies {
     // Loads thumbs, only JPEG and PNG
     compile 'com.facebook.fresco:fresco:1.0.1'
     compile 'com.facebook.fresco:imagepipeline-okhttp3:1.0.1'
+
+    // Preferences
+    compile 'com.github.seven332.android-preferences:preferences:0.1.0'
 
     compile 'com.github.seven332.easyrecyclerview:easyrecyclerview:1.2.0'
     compile 'com.github.seven332.easyrecyclerview:easyrecyclerview-rxjava:1.2.0'
