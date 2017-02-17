@@ -237,17 +237,17 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
   /**
    * {@code setData(id, d, 0, p)}.
    */
-  public void setData(long id, List<T> d, int p) {
-    setData(id, d, 0, p);
+  public boolean setData(long id, List<T> d, int p) {
+    return setData(id, d, 0, p);
   }
 
   /**
-   * Got data.
+   * Got data. Return {@code true} if it affects this {@code ContentData}.
    */
-  public void setData(long id, List<T> d, int min, int max) {
+  public boolean setData(long id, List<T> d, int min, int max) {
     if (requireId == INVALID_ID || id != requireId) {
       // Invalid id
-      return;
+      return false;
     }
     // Reset require id
     requireId = INVALID_ID;
@@ -273,6 +273,8 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
       default:
         throw new IllegalStateException("Unknown type: " + requireType);
     }
+
+    return true;
   }
 
   private void onGoTo(List<T> d, int min, int max) {
@@ -435,12 +437,12 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
   }
 
   /**
-   * Got exception.
+   * Got exception. Return {@code true} if it affects this {@code ContentData}.
    */
-  public void setError(long id, Throwable e) {
+  public boolean setError(long id, Throwable e) {
     if (requireId == INVALID_ID || id != requireId) {
       // Invalid id
-      return;
+      return false;
     }
     // Reset require id
     requireId = INVALID_ID;
@@ -463,6 +465,8 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
       // Only non-interrupting message
       showMessage(e);
     }
+
+    return true;
   }
 
   void showContent() {
