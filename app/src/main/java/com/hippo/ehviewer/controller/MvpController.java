@@ -93,6 +93,14 @@ public abstract class MvpController<P extends ControllerPresenter, V extends Con
     }
   }
 
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (presenter != null) {
+      presenter.terminate();
+    }
+  }
+
   /**
    * Check type. Just call {@code presenter.setView(view);}.
    */

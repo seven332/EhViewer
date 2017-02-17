@@ -51,4 +51,9 @@ public abstract class ControllerPresenter<V extends ViewInterface>
    * Restore the view to fit current state.
    */
   public abstract void restore(V view);
+
+  /**
+   * Indicates this presenter can stop. No view will be attached to it.
+   */
+  public void terminate() {}
 }
