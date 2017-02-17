@@ -23,7 +23,6 @@ package com.hippo.ehviewer.widget;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -164,6 +163,13 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
   }
 
   /**
+   * Gets Adapter to the RecyclerView.
+   */
+  public RecyclerView.Adapter getAdapter() {
+    return adapter;
+  }
+
+  /**
    * Set LayoutManager to the RecyclerView.
    */
   public void setLayoutManager(RecyclerView.LayoutManager layoutManager) {
@@ -218,8 +224,8 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
   public void showTip(TipInfo info) {
     // Set icon
     Drawable drawable = null;
-    if (info != null && info.icon != 0) {
-      drawable = AppCompatResources.getDrawable(getContext(), info.icon);
+    if (info != null) {
+      drawable = info.icon;
       if (drawable != null) {
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
       }
@@ -302,19 +308,23 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
 
   @Override
   public void notifyItemRangeInserted(int positionStart, int itemCount) {
-    adapter.notifyItemRangeInserted(positionStart, itemCount);
+    if (adapter != null) {
+      adapter.notifyItemRangeInserted(positionStart, itemCount);
+    }
   }
 
   @Override
   public void notifyItemRangeRemoved(int positionStart, int itemCount) {
-    adapter.notifyItemRangeRemoved(positionStart, itemCount);
+    if (adapter != null) {
+      adapter.notifyItemRangeRemoved(positionStart, itemCount);
+    }
   }
 
   /**
    * Stores tip icon and tip text.
    */
   public static class TipInfo {
-    public int icon;
+    public Drawable icon;
     public String text;
   }
 

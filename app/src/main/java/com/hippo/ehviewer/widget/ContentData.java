@@ -24,7 +24,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
-import com.hippo.ehviewer.view.ViewState;
 import com.hippo.yorozuya.MathUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -522,8 +521,7 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
     state.notifyItemRangeRemoved(positionStart, itemCount);
   }
 
-  private static class ContentViewState extends ViewState<ContentContract.View>
-      implements ContentContract.View {
+  private static class ContentViewState implements ContentContract.View {
 
     private boolean showContent;
     private boolean showProgressBar;
@@ -531,7 +529,6 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
     private boolean headerRefreshing;
     private boolean footerRefreshing;
 
-    @Override
     public void restore(ContentContract.View view) {
       if (showContent) {
         view.showContent();
