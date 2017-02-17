@@ -21,7 +21,9 @@ package com.hippo.ehviewer.client;
  */
 
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public final class EhUtils {
   private EhUtils() {}
@@ -29,6 +31,7 @@ public final class EhUtils {
   ///////////////////////////////////////////////////////////////////////////
   // Gallery Category
   ///////////////////////////////////////////////////////////////////////////
+
   public static final int MISC = 0x1;
   public static final int DOUJINSHI = 0x2;
   public static final int MANGA = 0x4;
@@ -146,6 +149,202 @@ public final class EhUtils {
         return COLOR_MISC;
       default:
         return COLOR_UNKNOWN;
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Language
+  ///////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Japanese
+   */
+  public static final int LANG_JA = 0;
+  /**
+   * English
+   */
+  public static final int LANG_EN = 1;
+  /**
+   * Chinese
+   */
+  public static final int LANG_ZH = 2;
+  /**
+   * Dutch
+   */
+  public static final int LANG_NL = 3;
+  /**
+   * French
+   */
+  public static final int LANG_FR = 4;
+  /**
+   * German
+   */
+  public static final int LANG_DE = 5;
+  /**
+   * Hungarian
+   */
+  public static final int LANG_HU = 6;
+  /**
+   * Italian
+   */
+  public static final int LANG_IT = 7;
+  /**
+   * Korean
+   */
+  public static final int LANG_KO = 8;
+  /**
+   * Polish
+   */
+  public static final int LANG_PL = 9;
+  /**
+   * Portuguese
+   */
+  public static final int LANG_PT = 10;
+  /**
+   * Russian
+   */
+  public static final int LANG_RU = 11;
+  /**
+   * Spanish
+   */
+  public static final int LANG_ES = 12;
+  /**
+   * Thai
+   */
+  public static final int LANG_TH = 13;
+  /**
+   * Vietnamese
+   */
+  public static final int LANG_VI = 14;
+  /**
+   * N/A
+   */
+  public static final int LANG_N_A = 15;
+  /**
+   * Other
+   */
+  public static final int LANG_OTHER = 15;
+
+  public static final String LANG_ABBR_JA = "JA";
+  public static final String LANG_ABBR_EN = "EN";
+  public static final String LANG_ABBR_ZH = "ZH";
+  public static final String LANG_ABBR_NL = "NL";
+  public static final String LANG_ABBR_FR = "FR";
+  public static final String LANG_ABBR_DE = "DE";
+  public static final String LANG_ABBR_HU = "HU";
+  public static final String LANG_ABBR_IT = "IT";
+  public static final String LANG_ABBR_KO = "KO";
+  public static final String LANG_ABBR_PL = "PL";
+  public static final String LANG_ABBR_PT = "PT";
+  public static final String LANG_ABBR_RU = "RU";
+  public static final String LANG_ABBR_ES = "ES";
+  public static final String LANG_ABBR_TH = "TH";
+  public static final String LANG_ABBR_VI = "VI";
+
+  private static final Pattern LANG_PATTERN_EN =
+      Pattern.compile("[(\\[]eng(?:lish)?[)\\]]|英訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_ZH =
+      Pattern.compile("[(（\\[]ch(?:inese)?[)）\\]]|[汉漢]化|中[国國][语語]|中文|中国翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_NL =
+      Pattern.compile("[(\\[]dutch[)\\]]|オランダ語訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_FR =
+      Pattern.compile("[(\\[]fr(?:ench)?[)\\]]|フランス翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_DE =
+      Pattern.compile("[(\\[]german[)\\]]|ドイツ翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_HU =
+      Pattern.compile("[(\\[]hun(?:garian)?[)\\]]|ハンガリー翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_IT =
+      Pattern.compile("[(\\[]italiano?[)\\]]|イタリア翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_KO =
+      Pattern.compile("[(\\[]korean?[)\\]]|韓国翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_PL =
+      Pattern.compile("[(\\[]polish[)\\]]|ポーランド翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_PT =
+      Pattern.compile("[(\\[]portuguese|ポルトガル翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_RU =
+      Pattern.compile("[(\\[]rus(?:sian)?[)\\]]|ロシア翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_ES =
+      Pattern.compile("[(\\[]spanish[)\\]]|[(\\[]Español[)\\]]|スペイン翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_TH =
+      Pattern.compile("[(\\[]thai(?: ภาษาไทย)?[)\\]]|แปลไทย|タイ翻訳", Pattern.CASE_INSENSITIVE);
+  private static final Pattern LANG_PATTERN_VI =
+      Pattern.compile("[(\\[]vietnamese(?: Tiếng Việt)?[)\\]]|ベトナム翻訳", Pattern.CASE_INSENSITIVE);
+
+  private static final int[] GUESS_LANGS = {
+      LANG_EN,
+      LANG_ZH,
+      LANG_ES,
+      LANG_KO,
+      LANG_RU,
+      LANG_FR,
+      LANG_PT,
+      LANG_TH,
+      LANG_DE,
+      LANG_IT,
+      LANG_VI,
+      LANG_PL,
+      LANG_HU,
+      LANG_NL,
+  };
+
+  private static final Pattern[] GUESS_LANG_PATTERNS = {
+      LANG_PATTERN_EN,
+      LANG_PATTERN_ZH,
+      LANG_PATTERN_ES,
+      LANG_PATTERN_KO,
+      LANG_PATTERN_RU,
+      LANG_PATTERN_FR,
+      LANG_PATTERN_PT,
+      LANG_PATTERN_TH,
+      LANG_PATTERN_DE,
+      LANG_PATTERN_IT,
+      LANG_PATTERN_VI,
+      LANG_PATTERN_PL,
+      LANG_PATTERN_HU,
+      LANG_PATTERN_NL,
+  };
+
+  private static final String[] LANG_ABBRS = {
+      LANG_ABBR_JA,
+      LANG_ABBR_EN,
+      LANG_ABBR_ZH,
+      LANG_ABBR_NL,
+      LANG_ABBR_FR,
+      LANG_ABBR_DE,
+      LANG_ABBR_HU,
+      LANG_ABBR_IT,
+      LANG_ABBR_KO,
+      LANG_ABBR_PL,
+      LANG_ABBR_PT,
+      LANG_ABBR_RU,
+      LANG_ABBR_ES,
+      LANG_ABBR_TH,
+      LANG_ABBR_VI,
+  };
+
+  /**
+   * Guesses the language of the gallery according to the title.
+   * Returns {@link #LANG_OTHER} if can't guess.
+   */
+  public static int guessLang(String title) {
+    for (int i = 0, n = GUESS_LANGS.length; i < n; ++i) {
+      if (GUESS_LANG_PATTERNS[i].matcher(title).find()) {
+        return GUESS_LANGS[i];
+      }
+    }
+    return LANG_OTHER;
+  }
+
+  /**
+   * Returns abbreviation for the language.
+   * Returns {@code null} if no abbreviation for the language.
+   */
+  @Nullable
+  public static String getLangAbbr(int lang) {
+    if (lang >= 0 && lang < LANG_ABBRS.length) {
+      return LANG_ABBRS[lang];
+    } else {
+      return null;
     }
   }
 }
