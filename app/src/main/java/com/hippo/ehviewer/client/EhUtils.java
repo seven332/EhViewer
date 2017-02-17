@@ -20,6 +20,7 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/29/2017.
  */
 
+import android.graphics.Color;
 import java.util.Locale;
 
 public final class EhUtils {
@@ -77,6 +78,18 @@ public final class EhUtils {
       new String[] { "unknown" },
   };
 
+  public static final int COLOR_DOUJINSHI = 0xfff44336;
+  public static final int COLOR_MANGA = 0xffff9800;
+  public static final int COLOR_ARTIST_CG = 0xfffbc02d;
+  public static final int COLOR_GAME_CG = 0xff4caf50;
+  public static final int COLOR_WESTERN = 0xff8bc34a;
+  public static final int COLOR_NON_H = 0xff2196f3;
+  public static final int COLOR_IMAGE_SET = 0xff3f51b5;
+  public static final int COLOR_COSPLAY = 0xff9c27b0;
+  public static final int COLOR_ASIAN_PORN = 0xff9575cd;
+  public static final int COLOR_MISC = 0xfff06292;
+  public static final int COLOR_UNKNOWN = Color.BLACK;
+
   /**
    * Converts category string to category value.
    */
@@ -104,5 +117,35 @@ public final class EhUtils {
       if (CATEGORY_VALUES[i] == type) break;
     }
     return CATEGORY_STRINGS[i][0];
+  }
+
+  /**
+   * Get the color to represent the category.
+   */
+  public static int getColor(int category) {
+    switch (category) {
+      case DOUJINSHI:
+        return COLOR_DOUJINSHI;
+      case MANGA:
+        return COLOR_MANGA;
+      case ARTIST_CG:
+        return COLOR_ARTIST_CG;
+      case GAME_CG:
+        return COLOR_GAME_CG;
+      case WESTERN:
+        return COLOR_WESTERN;
+      case NON_H:
+        return COLOR_NON_H;
+      case IMAGE_SET:
+        return COLOR_IMAGE_SET;
+      case COSPLAY:
+        return COLOR_COSPLAY;
+      case ASIAN_PORN:
+        return COLOR_ASIAN_PORN;
+      case MISC:
+        return COLOR_MISC;
+      default:
+        return COLOR_UNKNOWN;
+    }
   }
 }
