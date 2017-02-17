@@ -22,7 +22,6 @@ package com.hippo.ehviewer.widget;
 
 import static junit.framework.Assert.assertEquals;
 
-import android.support.annotation.NonNull;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Test;
@@ -155,14 +154,5 @@ public class ContentDataTest {
     public void response(int size, int min, int max) {
       setData(id, Arrays.asList(new Void[size]), min, max);
     }
-
-    @NonNull
-    @Override
-    public ContentLayout.TipInfo getTipFromThrowable(Throwable e) {
-      return new ContentLayout.TipInfo();
-    }
-
-    @Override
-    public void showMessage(String text) {}
   }
 }
