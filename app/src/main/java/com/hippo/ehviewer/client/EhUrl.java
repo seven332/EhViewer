@@ -21,6 +21,7 @@ package com.hippo.ehviewer.client;
  */
 
 import android.support.annotation.IntDef;
+import android.support.annotation.StringDef;
 import android.util.Pair;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -35,6 +36,8 @@ public final class EhUrl {
   // https://exhentai.org/t/e8/50/e850fc3d8fb7bfea934f66206fb8db8a86f57251-28396-1074-1538-jpg_l.jpg
   private static final Pattern PATTERN_THUMBNAIL =
       Pattern.compile("/([0-9a-f]{2})/([0-9a-f]{2})/([0-9a-f]{40}-\\d+-\\d+-\\d+-[0-9a-z]+)_([0-9a-zA-Z]+)\\.[0-9a-zA-Z]+");
+  private static final Pattern PATTERN_IMAGE_FINGERPRINT =
+      Pattern.compile("[0-9a-f]{40}-\\d+-\\d+-\\d+-[0-9a-z]+");
 
   @IntDef({SITE_E, SITE_EX})
   @Retention(RetentionPolicy.SOURCE)
@@ -49,12 +52,28 @@ public final class EhUrl {
   public static final String URL_E = "https://e-hentai.org/";
   public static final String URL_EX = "https://exhentai.org/";
 
-  /** Width == 200 **/
-  public static final String COVER_TYPE_L = "l";
-  /** Width == 250 **/
-  public static final String COVER_TYPE_250 = "250";
-  /** Width == 300 **/
-  public static final String COVER_TYPE_300 = "300";
+  public static final String URL_THUMBNAIL_E = "https://ul.ehgt.org/";
+  public static final String URL_THUMBNAIL_EX = "https://exhentai.org/t/";
+
+  public static final String URL_FORUMS = "https://forums.e-hentai.org/";
+  public static final String URL_SIGN_IN = URL_FORUMS + "index.php?act=Login&CODE=01";
+
+  @StringDef({THUMBNAIL_TYPE_L, THUMBNAIL_TYPE_250, THUMBNAIL_TYPE_300})
+  @Retention(RetentionPolicy.SOURCE)
+  public @interface ThumbnailType {}
+
+  /**
+   * Width == 200
+   **/
+  public static final String THUMBNAIL_TYPE_L = "l";
+  /**
+   * Width == 250, only available for cover
+   */
+  public static final String THUMBNAIL_TYPE_250 = "250";
+  /**
+   * Width == 300, only available for cover
+   */
+  public static final String THUMBNAIL_TYPE_300 = "300";
 
   /**
    * Return site url which ends with "/"
@@ -135,5 +154,24 @@ public final class EhUrl {
       }
     }
     return null;
+  }
+
+  /**
+   * Gets thumbnail url.
+   * The {@code fingerprint} is not checked, but
+   * {@code null} is returned if the {@code fingerprint}
+   * doesn't support the method.
+   */
+  public static String getThumbnailUrl(String fingerprint,
+      @Site int site, @ThumbnailType String type) {
+    if (fingerprint == null || fingerprint.length() < 4) return null;
+    String url;
+    if (site == SITE_EX) {
+      url = URL_THUMBNAIL_EX;
+    } else {
+      url = URL_THUMBNAIL_E;
+    }
+    return url + fingerprint.substring(0, 2) + "/" + fingerprint.substring(2, 4)
+        + "/" + fingerprint + "_" + type + ".jpg";
   }
 }
