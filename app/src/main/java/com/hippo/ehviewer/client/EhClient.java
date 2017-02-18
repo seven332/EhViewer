@@ -25,9 +25,6 @@ import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.ProfileResult;
-import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
-import com.hippo.ehviewer.client.result.RecaptchaImageResult;
-import com.hippo.ehviewer.client.result.RecaptchaResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import com.hippo.ehviewer.client.result.VoidResult;
 import java.util.Map;
@@ -37,11 +34,6 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Observable;
 
 public final class EhClient {
-
-  private static final String RECAPTCHA_PUBLIC_KEY = "6LdtfgYAAAAAALjIPPiCgPJJah8MhAUpnHcKF8u_";
-  private static final String RECAPTCHA_REASON = "i";
-  private static final String RECAPTCHA_TYPE = "image";
-  private static final String RECAPTCHA_LANG = "en";
 
   private EhEngine engine;
 
@@ -90,31 +82,6 @@ public final class EhClient {
           @Override
           public Observable<Result<ProfileResult>> onCall(ForumsResult result) {
             return engine.profile(result.profileUrl());
-          }
-        });
-  }
-
-  /**
-   * Request a recaptcha for signing in.
-   */
-  public Observable<Result<RecaptchaResult>> recaptcha() {
-    final RecaptchaResult recaptcha = new RecaptchaResult();
-    return engine.recaptchaChallenge(RECAPTCHA_PUBLIC_KEY)
-        .flatMap(new EhFlatMapFunc<RecaptchaChallengeResult, RecaptchaImageResult>() {
-          @Override
-          public Observable<Result<RecaptchaImageResult>> onCall(RecaptchaChallengeResult result) {
-            String challenge = result.challenge();
-            recaptcha.challenge(challenge);
-            return engine.recaptchaReload(challenge, RECAPTCHA_PUBLIC_KEY,
-                RECAPTCHA_REASON, RECAPTCHA_TYPE, RECAPTCHA_LANG);
-          }
-        })
-        .map(new EhMapFunc<RecaptchaImageResult, RecaptchaResult>() {
-          @Override
-          public RecaptchaResult onCall(RecaptchaImageResult result) {
-            String image = result.image();
-            recaptcha.image(image);
-            return recaptcha;
           }
         });
   }
