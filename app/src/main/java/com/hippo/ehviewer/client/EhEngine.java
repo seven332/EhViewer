@@ -20,7 +20,9 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/14/2017.
  */
 
+import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
+import com.hippo.ehviewer.client.result.ProfileResult;
 import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.SignInResult;
@@ -30,6 +32,7 @@ import retrofit2.adapter.rxjava.Result;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -39,7 +42,7 @@ import rx.Observable;
 public interface EhEngine {
 
   @FormUrlEncoded
-  @POST("https://forums.e-hentai.org/index.php?act=Login&CODE=01")
+  @POST(EhUrl.URL_SIGN_IN)
   Observable<Result<SignInResult>> signIn(
       @Field("referer") String referer,
       @Field("b") String b,
@@ -50,7 +53,7 @@ public interface EhEngine {
   );
 
   @FormUrlEncoded
-  @POST("https://forums.e-hentai.org/index.php?act=Login&CODE=01")
+  @POST(EhUrl.URL_SIGN_IN)
   Observable<Result<SignInResult>> signIn(
       @Field("referer") String referer,
       @Field("b") String b,
@@ -63,17 +66,27 @@ public interface EhEngine {
   );
 
   @GET("https://www.google.com/recaptcha/api/challenge")
+  @Headers("Referer: " + EhUrl.URL_RECAPTCHA_REFERER)
   Observable<Result<RecaptchaChallengeResult>> recaptchaChallenge(
       @Query("k") String publicKey
   );
 
   @GET("https://www.google.com/recaptcha/api/reload")
+  @Headers("Referer: " + EhUrl.URL_RECAPTCHA_REFERER)
   Observable<Result<RecaptchaImageResult>> recaptchaReload(
       @Query("c") String challenge,
       @Query("k") String publicKey,
       @Query("reason") String reason,
       @Query("type") String type,
       @Query("lang") String lang
+  );
+
+  @GET(EhUrl.URL_FORUMS)
+  Observable<Result<ForumsResult>> forums();
+
+  @GET
+  Observable<Result<ProfileResult>> profile(
+      @Url String url
   );
 
   @GET("https://exhentai.org/")

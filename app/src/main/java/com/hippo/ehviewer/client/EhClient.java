@@ -21,8 +21,10 @@ package com.hippo.ehviewer.client;
  */
 
 import android.content.Context;
-import com.hippo.ehviewer.App;
+import com.hippo.ehviewer.EhvApp;
+import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
+import com.hippo.ehviewer.client.result.ProfileResult;
 import com.hippo.ehviewer.client.result.RecaptchaChallengeResult;
 import com.hippo.ehviewer.client.result.RecaptchaImageResult;
 import com.hippo.ehviewer.client.result.RecaptchaResult;
@@ -80,6 +82,19 @@ public final class EhClient {
   }
 
   /**
+   * Gets user profile, name and avatar.
+   */
+  public Observable<Result<ProfileResult>> profile() {
+    return engine.forums()
+        .flatMap(new EhFlatMapFunc<ForumsResult, ProfileResult>() {
+          @Override
+          public Observable<Result<ProfileResult>> onCall(ForumsResult result) {
+            return engine.profile(result.profileUrl());
+          }
+        });
+  }
+
+  /**
    * Request a recaptcha for signing in.
    */
   public Observable<Result<RecaptchaResult>> recaptcha() {
@@ -125,7 +140,7 @@ public final class EhClient {
    * Create a {@code EhClient} with default {@link EhEngine}.
    */
   public static EhClient create(Context context) {
-    App app = (App) context.getApplicationContext();
+    EhvApp app = (EhvApp) context.getApplicationContext();
     Retrofit retrofit = new Retrofit.Builder()
         // Base url is useless, but it makes Retrofit happy
         .baseUrl("http://www.ehviewer.com/")
