@@ -113,4 +113,15 @@ public final class ConverterUtils {
       return defaultValue;
     }
   }
+
+  /**
+   * Converts relative url to absolute url.
+   */
+  public static String completeUrl(String base, String url) {
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    } else {
+      return StringUtils.join(base, url, '/');
+    }
+  }
 }
