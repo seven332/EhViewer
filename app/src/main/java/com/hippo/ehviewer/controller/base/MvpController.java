@@ -30,7 +30,7 @@ import com.bluelinelabs.conductor.Controller;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.presenter.ControllerPresenter;
-import com.hippo.ehviewer.view.ControllerView;
+import com.hippo.ehviewer.view.base.ControllerView;
 import com.hippo.yorozuya.precondition.Preconditions;
 
 /**
@@ -56,8 +56,7 @@ public abstract class MvpController<P extends ControllerPresenter, V extends Con
    * Creates view.
    */
   @NonNull
-  protected abstract V createView(P presenter, EhvActivity activity,
-      LayoutInflater inflater, ViewGroup container);
+  protected abstract V createView();
 
   @NonNull
   @Override
@@ -70,7 +69,11 @@ public abstract class MvpController<P extends ControllerPresenter, V extends Con
 
     EhvActivity activity = (EhvActivity) getActivity();
     Preconditions.checkNotNull(activity, "getActivity() == null");
-    view = createView(presenter, activity, inflater, container);
+    view = createView();
+    view.setActivity(activity);
+    setPresenterForView(view, presenter);
+    view.createView(inflater, container);
+    view.attach();
 
     setViewForPresenter(presenter, view);
 
@@ -100,6 +103,11 @@ public abstract class MvpController<P extends ControllerPresenter, V extends Con
       presenter.terminate();
     }
   }
+
+  /**
+   * Check type. Just call {@code view.setPresenter(presenter);}.
+   */
+  protected abstract void setPresenterForView(V view, P presenter);
 
   /**
    * Check type. Just call {@code presenter.setView(view);}.
