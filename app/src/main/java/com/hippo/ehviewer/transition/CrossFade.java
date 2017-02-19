@@ -22,7 +22,7 @@ package com.hippo.ehviewer.transition;
 
 import android.animation.Animator;
 import android.view.ViewGroup;
-import com.hippo.ehviewer.widget.CrossFadeView;
+import com.hippo.ehviewer.widget.crossfade.CrossFadeView;
 import com.transitionseverywhere.Transition;
 import com.transitionseverywhere.TransitionValues;
 
