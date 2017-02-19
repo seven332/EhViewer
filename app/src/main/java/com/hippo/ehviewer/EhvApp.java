@@ -24,11 +24,11 @@ import android.util.Log;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.hippo.ehviewer.content.RecordingApplication;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieJar;
-import com.hippo.ehviewer.network.ClimbOverDns;
+import com.hippo.ehviewer.content.RecordingApplication;
+import com.hippo.ehviewer.network.PresetDns;
 import com.hippo.ehviewer.network.UserAgentInterceptor;
 import com.hippo.ehviewer.util.LazySupplier;
 import com.squareup.leakcanary.LeakCanary;
@@ -62,7 +62,7 @@ public class EhvApp extends RecordingApplication {
           })
           .addInterceptor(new UserAgentInterceptor(getUserAgent()))
           .cookieJar(getCookieJar())
-          .dns(getClimbOverDns())
+          .dns(getDns())
           .build();
     }
   };
@@ -74,19 +74,13 @@ public class EhvApp extends RecordingApplication {
     }
   };
 
-  private LazySupplier<ClimbOverDns> climbOverDnsSupplier = new LazySupplier<ClimbOverDns>() {
-    @Override
-    public ClimbOverDns onGet() {
-      return new ClimbOverDns();
-    }
-  };
+  private LazySupplier<PresetDns> dnsSupplier = LazySupplier.from(PresetDns::new);
 
-  private LazySupplier<EhClient> ehClientLazySupplier = new LazySupplier<EhClient>() {
-    @Override
-    public EhClient onGet() {
-      return EhClient.create(EhvApp.this);
-    }
-  };
+  private LazySupplier<EhClient> ehClientLazySupplier =
+      LazySupplier.from(() -> EhClient.create(EhvApp.this));
+
+  private LazySupplier<EhvPreferences> preferencesSupplier =
+      LazySupplier.from(() -> new EhvPreferences(EhvApp.this));
 
   @Override
   public void onCreate() {
@@ -120,11 +114,15 @@ public class EhvApp extends RecordingApplication {
     return cookieJarSupplier.get();
   }
 
-  public ClimbOverDns getClimbOverDns() {
-    return climbOverDnsSupplier.get();
+  public PresetDns getDns() {
+    return dnsSupplier.get();
   }
 
   public EhClient getEhClient() {
     return ehClientLazySupplier.get();
+  }
+
+  public EhvPreferences getPreferences() {
+    return preferencesSupplier.get();
   }
 }
