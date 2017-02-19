@@ -69,8 +69,11 @@ public interface EhEngine {
       @Url String url
   );
 
-  @GET("https://exhentai.org/")
+  @GET(EhUrl.URL_EX)
   Observable<Result<VoidResult>> touchExHentai();
+
+  @GET(EhUrl.URL_FAVOURITES_EX)
+  Observable<Result<VoidResult>> touchExHentaiFavourite();
 
   @GET
   Observable<Result<GalleryListResult>> getGalleryList(

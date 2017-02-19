@@ -87,12 +87,18 @@ public final class EhClient {
   }
 
   /**
-   * Just get https://exhentai.org/ to get cookies.
+   * Just get https://exhentai.org/ and https://exhentai.org/favorites.php to get cookies.
    * <p>
    * Only call it after signing in.
    */
   public Observable<Result<VoidResult>> touchExHentai() {
-    return engine.touchExHentai();
+    return engine.touchExHentai()
+        .flatMap(new EhFlatMapFunc<VoidResult, VoidResult>() {
+          @Override
+          public Observable<Result<VoidResult>> onCall(VoidResult voidResult) {
+            return engine.touchExHentaiFavourite();
+          }
+        });
   }
 
   /**
