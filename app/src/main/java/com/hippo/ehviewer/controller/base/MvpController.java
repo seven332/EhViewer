@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.controller;
+package com.hippo.ehviewer.controller.base;
 
 /*
  * Created by Hippo on 2/8/2017.
