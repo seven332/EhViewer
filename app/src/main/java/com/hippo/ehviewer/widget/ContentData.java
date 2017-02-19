@@ -223,6 +223,13 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
     requirePage = page;
     requireType = type;
     requireId = nextId();
+
+    if (data.isEmpty()) {
+      showProgressBar();
+    } else {
+      showContent();
+    }
+
     onRequireData(requireId, page);
   }
 
