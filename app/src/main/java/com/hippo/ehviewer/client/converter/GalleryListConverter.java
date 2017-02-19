@@ -32,6 +32,7 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.InnerParseException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.result.GalleryListResult;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +52,7 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
   private static final String LOG_TAG = GalleryListConverter.class.getSimpleName();
   private static final String EMPTY_KEYWORD = "No hits found</p>";
   private static final Pattern PATTERN_COVER_SIZE = Pattern.compile("height:(\\d+)px; width:(\\d+)px");
-  private static final Pattern PATTERN_RATING = Pattern.compile("(\\d+)px");
+  private static final Pattern PATTERN_PX = Pattern.compile("(\\d+)px");
 
   @NonNull
   @Override
@@ -183,6 +184,15 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
     gi.token = pair.second;
     gi.title = StringUtils.strip(a.text());
 
+    // Favourite slot
+    Element it3 = e.getElementsByClass("it3").first();
+    if (it3 != null) {
+      Element f = it3.getElementById("favicon_" + gi.gid);
+      if (f != null) {
+        gi.favouriteSlot = parseFavouriteSlot(f.attr("style"));
+      }
+    }
+
     // Rating
     Element it4r = e.getElementsByClass("it4r").first();
     if (it4r != null) {
@@ -231,7 +241,7 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
   // The first one is x offset, 16px for a star.
   // The second one is y offset, row1 is -1px, row2 is -21px
   private static float parseRating(String style) {
-    Matcher m = PATTERN_RATING.matcher(style);
+    Matcher m = PATTERN_PX.matcher(style);
     int num1;
     int num2;
     float rate = 5.0f;
@@ -253,6 +263,39 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
       rate -= 0.5f;
     }
     return rate;
+  }
+
+  // ehentai website uses a picture to show favourite slot.
+  // Looks like:
+  // ------------------
+  // ◇
+  // ◇
+  // ◇
+  // ◇
+  // ◇
+  // ◇
+  // ◇
+  // ◇
+  // ◇
+  // ◇
+  //
+  // ------------------
+  // The style looks like:
+  // background-position:0px -2px
+  // The first one is x offset, always 0
+  // The second one is y offset, starts from -2, step -19
+  private static int parseFavouriteSlot(String style) {
+    Matcher m = PATTERN_PX.matcher(style);
+    if (!m.find() || !m.find()) {
+      return -1;
+    }
+    int num = ConverterUtils.parseInt(m.group(1), -1);
+    if (num == -1) {
+      return -1;
+    }
+    int slot = (num - 2) / 19;
+    slot = MathUtils.clamp(slot, 0, 9);
+    return slot;
   }
 
 
