@@ -26,13 +26,19 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public final class ConverterUtils {
   private ConverterUtils() {}
 
   private static final String IMPURITIES_INT = ",";
 
-  private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+  private static DateFormat DATE_FORMAT;
+
+  static {
+    DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+    DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+  }
 
   /**
    * Remove specified chars in the string.
