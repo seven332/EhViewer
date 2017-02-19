@@ -69,6 +69,9 @@ public interface EhEngine {
       @Url String url
   );
 
+  @GET(EhUrl.URL_FAVOURITES_E)
+  Observable<Result<VoidResult>> touchEHentaiFavourite();
+
   @GET(EhUrl.URL_EX)
   Observable<Result<VoidResult>> touchExHentai();
 
