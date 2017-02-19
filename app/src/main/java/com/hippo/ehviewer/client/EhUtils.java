@@ -20,8 +20,11 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/29/2017.
  */
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
+import com.hippo.ehviewer.R;
+import com.hippo.yorozuya.StringUtils;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -225,22 +228,6 @@ public final class EhUtils {
    */
   public static final int LANG_OTHER = 15;
 
-  public static final String LANG_ABBR_JA = "JA";
-  public static final String LANG_ABBR_EN = "EN";
-  public static final String LANG_ABBR_ZH = "ZH";
-  public static final String LANG_ABBR_NL = "NL";
-  public static final String LANG_ABBR_FR = "FR";
-  public static final String LANG_ABBR_DE = "DE";
-  public static final String LANG_ABBR_HU = "HU";
-  public static final String LANG_ABBR_IT = "IT";
-  public static final String LANG_ABBR_KO = "KO";
-  public static final String LANG_ABBR_PL = "PL";
-  public static final String LANG_ABBR_PT = "PT";
-  public static final String LANG_ABBR_RU = "RU";
-  public static final String LANG_ABBR_ES = "ES";
-  public static final String LANG_ABBR_TH = "TH";
-  public static final String LANG_ABBR_VI = "VI";
-
   private static final Pattern LANG_PATTERN_EN =
       Pattern.compile("[(\\[]eng(?:lish)?[)\\]]|英訳", Pattern.CASE_INSENSITIVE);
   private static final Pattern LANG_PATTERN_ZH =
@@ -304,22 +291,42 @@ public final class EhUtils {
       LANG_PATTERN_NL,
   };
 
-  private static final String[] LANG_ABBRS = {
-      LANG_ABBR_JA,
-      LANG_ABBR_EN,
-      LANG_ABBR_ZH,
-      LANG_ABBR_NL,
-      LANG_ABBR_FR,
-      LANG_ABBR_DE,
-      LANG_ABBR_HU,
-      LANG_ABBR_IT,
-      LANG_ABBR_KO,
-      LANG_ABBR_PL,
-      LANG_ABBR_PT,
-      LANG_ABBR_RU,
-      LANG_ABBR_ES,
-      LANG_ABBR_TH,
-      LANG_ABBR_VI,
+  private static final int[] LANG_ABBR_IDS = {
+      R.string.language_abbr_japanese,
+      R.string.language_abbr_english,
+      R.string.language_abbr_chinese,
+      R.string.language_abbr_dutch,
+      R.string.language_abbr_french,
+      R.string.language_abbr_german,
+      R.string.language_abbr_hungarian,
+      R.string.language_abbr_italian,
+      R.string.language_abbr_korean,
+      R.string.language_abbr_polish,
+      R.string.language_abbr_portuguese,
+      R.string.language_abbr_russian,
+      R.string.language_abbr_spanish,
+      R.string.language_abbr_thai,
+      R.string.language_abbr_vietnamese,
+  };
+
+  private static final int[] LANG_IDS = {
+      R.string.language_japanese,
+      R.string.language_english,
+      R.string.language_chinese,
+      R.string.language_dutch,
+      R.string.language_french,
+      R.string.language_german,
+      R.string.language_hungarian,
+      R.string.language_italian,
+      R.string.language_korean,
+      R.string.language_polish,
+      R.string.language_portuguese,
+      R.string.language_russian,
+      R.string.language_spanish,
+      R.string.language_thai,
+      R.string.language_vietnamese,
+      R.string.language_n_a,
+      R.string.language_other,
   };
 
   /**
@@ -327,6 +334,9 @@ public final class EhUtils {
    * Returns {@link #LANG_OTHER} if can't guess.
    */
   public static int guessLang(String title) {
+    if (StringUtils.isEmpty(title)) {
+      return LANG_OTHER;
+    }
     for (int i = 0, n = GUESS_LANGS.length; i < n; ++i) {
       if (GUESS_LANG_PATTERNS[i].matcher(title).find()) {
         return GUESS_LANGS[i];
@@ -340,9 +350,22 @@ public final class EhUtils {
    * Returns {@code null} if no abbreviation for the language.
    */
   @Nullable
-  public static String getLangAbbr(int lang) {
-    if (lang >= 0 && lang < LANG_ABBRS.length) {
-      return LANG_ABBRS[lang];
+  public static String getLangAbbr(Context context, int lang) {
+    if (lang >= 0 && lang < LANG_ABBR_IDS.length) {
+      return context.getString(LANG_ABBR_IDS[lang]);
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Returns string for the language.
+   * Returns {@code null} if no string for the language.
+   */
+  @Nullable
+  public static String getLang(Context context, int lang) {
+    if (lang >= 0 && lang < LANG_IDS.length) {
+      return context.getString(LANG_IDS[lang]);
     } else {
       return null;
     }
