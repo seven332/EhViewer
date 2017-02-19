@@ -165,18 +165,18 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
     // gid, token, title (required)
     Element it5 = e.getElementsByClass("it5").first();
     if (it5 == null) {
-      Log.e(TAG, "Can't parse gallery, no it5");
+      Log.e(TAG, "Can't parse gallery, no it5. Element: \n" + e.outerHtml());
       return null;
     }
     Elements es = it5.children();
     if (es.size() <= 0) {
-      Log.e(TAG, "Can't parse gallery, it5 no child");
+      Log.e(TAG, "Can't parse gallery, it5 no child. Element: \n" + e.outerHtml());
       return null;
     }
     Element a = es.get(0);
     Pair<Long, String> pair = EhUrl.getGidToken(a.attr("href"));
     if (pair == null) {
-      Log.e(TAG, "Can't parse gallery gid and token");
+      Log.e(TAG, "Can't parse gallery gid and token. Element: \n" + e.outerHtml());
       return null;
     }
     gi.gid = pair.first;
@@ -201,6 +201,9 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
       // It's OK to skip uploader
       Log.w(TAG, "Can't parse gallery uploader");
     }
+
+    // Complete
+    gi.complete();
 
     return gi;
   }
