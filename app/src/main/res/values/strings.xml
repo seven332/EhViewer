@@ -17,6 +17,101 @@
 
 <resources>
 
-    <string name="app_name">EhViewer</string>
+  <string name="app_name">EhViewer</string>
+
+  <string name="ehv_default_name">Little Hippo</string>
+
+  <string name="accept">Accept</string>
+  <string name="reject">Reject</string>
+
+  <string name="warning_title">Warning</string>
+  <string name="warning_message">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them.</string>
+
+  <string name="analytics">Analytics</string>
+  <string name="analytics_message">Would you mind if the developer collected your device information and your usage? It will help the developer a lot.&lt;br&gt;&lt;br&gt;Data analysis service is provided by Google Analytics. Its privacy policy can be found at &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;.&lt;br&gt;&lt;br&gt;If you agree to join data analysis, your device information and your usage will be collected, including but not limited to Android API version, equipment model, language residence, the application version, conversion time, function times. The developer promise that these information will NOT be collected, including phone number, e-mail address, IMEI.&lt;br&gt;&lt;br&gt;Your information will not be collected until you agree to join data analysis.&lt;br&gt;&lt;br&gt;The collected information will be analyzed by Google Analytics. The analysis report can only be viewed by the developer of this application.</string>
+
+  <string name="sign_in">Sign in</string>
+  <string name="sign_up">Sign up</string>
+  <string name="username">Username</string>
+  <string name="password">Password</string>
+  <string name="recaptcha">Recaptcha</string>
+  <string name="recaptcha_message">* Recaptcha is not required, unless requested.</string>
+  <string name="sign_in_webview">Sign in via WebView</string>
+  <string name="sign_in_cookies">Sign in via cookies</string>
+  <string name="sign_in_skip">Skip signing in</string>
+  <string name="recaptcha_click">Click me</string>
+  <string name="recaptcha_loading">Loading</string>
+  <string name="recaptcha_failure">(;´Д`)</string>
+  <string name="error_username_empty">Username is required</string>
+  <string name="error_password_empty">Password is required</string>
+
+  <string name="recaptcha_hint_wait">Loading recaptcha…</string>
+  <string name="recaptcha_hint_success">Please input the captcha code here</string>
+  <string name="recaptcha_hint_failure">Please </string>
+
+  <string name="nav_menu_homepage">Homepage</string>
+  <string name="nav_menu_whats_hot">What\'s Hot</string>
+
+  <string name="action_search">Search</string>
+
+  <string name="explanation_invalid_url">Invalid url</string>
+  <string name="explanation_timeout">Timeout</string>
+  <string name="explanation_unknown_host">Unknown host</string>
+  <string name="explanation_status_code">Bad status code: %d</string>
+  <string name="explanation_redirection">Too many redirections</string>
+  <string name="explanation_socket">Network error</string>
+
+  <string name="explanation_parse">Parse error</string>
+  <string name="explanation_sad_panda">Sad Panda</string>
+
+  <string name="explanation_tap_to_load">Click to continue loading</string>
+  <string name="explanation_not_found">No hits found</string>
+  <string name="explanation_weird_error">Weird Error</string>
+
+  <string name="language_japanese">Japanese</string>
+  <string name="language_english">English</string>
+  <string name="language_chinese">Chinese</string>
+  <string name="language_dutch">Dutch</string>
+  <string name="language_french">French</string>
+  <string name="language_german">German</string>
+  <string name="language_hungarian">Hungarian</string>
+  <string name="language_italian">Italian</string>
+  <string name="language_korean">Korean</string>
+  <string name="language_polish">Polish</string>
+  <string name="language_portuguese">Portuguese</string>
+  <string name="language_russian">Russian</string>
+  <string name="language_spanish">Spanish</string>
+  <string name="language_thai">Thai</string>
+  <string name="language_vietnamese">Vietnamese</string>
+  <string name="language_n_a">N/A</string>
+  <string name="language_other">Other</string>
+
+  <string name="language_abbr_japanese">JA</string>
+  <string name="language_abbr_english">EN</string>
+  <string name="language_abbr_chinese">ZH</string>
+  <string name="language_abbr_dutch">NL</string>
+  <string name="language_abbr_french">FR</string>
+  <string name="language_abbr_german">DE</string>
+  <string name="language_abbr_hungarian">HU</string>
+  <string name="language_abbr_italian">IT</string>
+  <string name="language_abbr_korean">KO</string>
+  <string name="language_abbr_polish">PL</string>
+  <string name="language_abbr_portuguese">PT</string>
+  <string name="language_abbr_russian">RU</string>
+  <string name="language_abbr_spanish">ES</string>
+  <string name="language_abbr_thai">TH</string>
+  <string name="language_abbr_vietnamese">VI</string>
+
+  <string name="from_the_future">From the future</string>
+  <string name="just_now">Just now</string>
+  <plurals name="some_minutes_ago">
+    <item quantity="one">1 minute</item>
+    <item quantity="other">%d minutes</item>
+  </plurals>
+  <plurals name="some_hours_ago">
+    <item quantity="one">1 hour</item>
+    <item quantity="other">%d hours</item>
+  </plurals>
+  <string name="some_days_ago">%d days</string>
 
 </resources>

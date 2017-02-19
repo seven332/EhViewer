@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2017 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+  <string name="app_name">EhViewer</string>
+
+  <string name="ehv_default_name">Little Hippo</string>
+
+  <string name="accept">同意</string>
+  <string name="reject">拒绝</string>
+
+  <string name="warning_title">警告</string>
+  <string name="warning_message">本应用中的内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的任何后果负责。</string>
+
+  <string name="analytics">数据统计</string>
+  <string name="analytics_message">您同意让开发者收集您的设备信息与使用情况吗？这将对开发有很大帮助。&lt;br&gt;&lt;br&gt;数据统计服务由 Google Analytics 提供，其隐私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 查看。&lt;br&gt;&lt;br&gt;若您同意参与数据统计，您的设备信息与应用使用情况将会被记录，其包括但不限于：Android API 版本、设备型号、语言所在地、本应用版本号、会话时长、应用功能使用次数。开发者承诺以下信息并不会被记录：电话号码、电子邮件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意参与数据统计之前，您的信息不会被记录。&lt;br&gt;&lt;br&gt;被记录的数据会由 Google Analytics 进行分析，分析报表仅可被本应用开发者访问。</string>
+
+  <string name="sign_in">登陆</string>
+  <string name="sign_up">注册</string>
+  <string name="username">用户名</string>
+  <string name="password">密码</string>
+  <string name="recaptcha">验证码</string>
+  <string name="recaptcha_message">* 验证码不是必填项，除非登录提示要求。</string>
+  <string name="sign_in_webview">通过网页登陆</string>
+  <string name="sign_in_cookies">通过 Cookie 登陆</string>
+  <string name="sign_in_skip">跳过登陆</string>
+  <string name="recaptcha_click">点我获取验证码</string>
+  <string name="recaptcha_loading">加载中</string>
+  <string name="recaptcha_failure">(;´Д`)</string>
+  <string name="error_username_empty">用户名是必填项</string>
+  <string name="error_password_empty">密码是必填项</string>
+
+  <string name="nav_menu_homepage">首页</string>
+  <string name="nav_menu_whats_hot">热门</string>
+
+  <string name="explanation_invalid_url">无效网址</string>
+  <string name="explanation_timeout">超时</string>
+  <string name="explanation_unknown_host">未知主机</string>
+  <string name="explanation_status_code">错误的状态码：%d</string>
+  <string name="explanation_redirection">太多重定向</string>
+  <string name="explanation_socket">网络错误</string>
+
+  <string name="explanation_parse">解析错误</string>
+  <string name="explanation_sad_panda">Sad Panda</string>
+
+  <string name="explanation_tap_to_load">点击继续加载</string>
+  <string name="explanation_not_found">未找到匹配项</string>
+  <string name="explanation_weird_error">奇怪的错误</string>
+
+  <string name="language_japanese">日文</string>
+  <string name="language_english">英文</string>
+  <string name="language_chinese">中文</string>
+  <string name="language_dutch">荷兰文</string>
+  <string name="language_french">法文</string>
+  <string name="language_german">德文</string>
+  <string name="language_hungarian">匈牙利文</string>
+  <string name="language_italian">意大利文</string>
+  <string name="language_korean">韩文</string>
+  <string name="language_polish">波兰文</string>
+  <string name="language_portuguese">葡萄牙文</string>
+  <string name="language_russian">俄文</string>
+  <string name="language_spanish">西班牙文</string>
+  <string name="language_thai">泰文</string>
+  <string name="language_vietnamese">越南文</string>
+  <string name="language_n_a">N/A</string>
+  <string name="language_other">其他</string>
+
+  <string name="language_abbr_japanese">日</string>
+  <string name="language_abbr_english">英</string>
+  <string name="language_abbr_chinese">中</string>
+  <string name="language_abbr_dutch">荷</string>
+  <string name="language_abbr_french">法</string>
+  <string name="language_abbr_german">德</string>
+  <string name="language_abbr_hungarian">匈</string>
+  <string name="language_abbr_italian">意</string>
+  <string name="language_abbr_korean">韩</string>
+  <string name="language_abbr_polish">波</string>
+  <string name="language_abbr_portuguese">葡</string>
+  <string name="language_abbr_russian">俄</string>
+  <string name="language_abbr_spanish">西</string>
+  <string name="language_abbr_thai">泰</string>
+  <string name="language_abbr_vietnamese">越</string>
+
+  <string name="from_the_future">来自未来</string>
+  <string name="just_now">刚刚</string>
+  <plurals name="some_minutes_ago">
+    <item quantity="other">%d分钟前</item>
+  </plurals>
+  <plurals name="some_hours_ago">
+    <item quantity="other">%d小时前</item>
+  </plurals>
+  <string name="some_days_ago">%d天前</string>
+
+</resources>

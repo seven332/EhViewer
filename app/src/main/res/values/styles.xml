@@ -16,4 +16,40 @@
   -->
 
 <resources>
+
+  <style name="GalleryList"/>
+
+  <style name="GalleryList.Item"/>
+
+  <style name="GalleryList.Item.Detail"/>
+
+  <style name="GalleryList.Item.Detail.Title">
+    <item name="android:textSize">@dimen/text_little_small</item>
+    <item name="android:textColor">?android:attr/textColorPrimary</item>
+    <item name="android:ellipsize">end</item>
+    <item name="android:maxLines">2</item>
+    <item name="android:lineSpacingExtra">0sp</item>
+  </style>
+
+  <style name="GalleryList.Item.Detail.Uploader">
+    <item name="android:textSize">@dimen/text_small</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
+    <item name="android:ellipsize">end</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:maxLines">1</item>
+  </style>
+
+  <style name="GalleryList.Item.Detail.Category">
+    <item name="android:textSize">@dimen/text_small</item>
+    <item name="android:textColor">@android:color/white</item>
+    <item name="android:textAllCaps">true</item>
+    <item name="android:ellipsize">end</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:maxLines">1</item>
+  </style>
+
+  <style name="GalleryList.Item.Detail.Date" parent="GalleryList.Item.Detail.Uploader"/>
+
+  <style name="GalleryList.Item.Detail.Language" parent="GalleryList.Item.Detail.Uploader"/>
+
 </resources>

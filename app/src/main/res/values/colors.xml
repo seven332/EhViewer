@@ -17,12 +17,34 @@
 
 <resources>
 
-    <color name="teal_500">#ff009688</color>
-    <color name="teal_700">#ff00796b</color>
-    <color name="purple_a200">#ffe040fb</color>
+  <color name="colorPrimary">@color/teal_500</color>
+  <color name="colorPrimaryDark">@color/teal_700</color>
+  <color name="colorAccent">@color/purple_a200</color>
 
-    <color name="colorPrimary">@color/teal_500</color>
-    <color name="colorPrimaryDark">@color/teal_700</color>
-    <color name="colorAccent">@color/purple_a200</color>
+  <!-- shadow -->
+  <!-- 22% black -->
+  <color name="strip_shadow">#38000000</color>
+
+  <!-- 54% black -->
+  <color name="primary_drawable_light">#8a000000</color>
+  <!-- 38% black -->
+  <color name="secondary_drawable_light">#61000000</color>
+  <!-- 70% white -->
+  <color name="primary_drawable_dark">#b3ffffff</color>
+  <!-- 49% white -->
+  <color name="secondary_drawable_dark">#7dffffff</color>
+
+  <color name="color_scheme_1">@color/red_500</color>
+  <color name="color_scheme_2">@color/orange_500</color>
+  <color name="color_scheme_3">@color/green_500</color>
+  <color name="color_scheme_4">@color/blue_500</color>
+  <color name="color_scheme_5">@color/indigo_500</color>
+  <color name="color_scheme_6">@color/purple_500</color>
+
+  <color name="place_holder_image_light">@color/grey_200</color>
+  <color name="place_holder_image_dark">@color/grey_700</color>
+
+  <color name="divider_light">#20000000</color>
+  <color name="divider_dark">#20ffffff</color>
 
 </resources>
