@@ -51,12 +51,4 @@ public class EhUtilsTest {
     assertEquals(EhUtils.LANG_ZH, EhUtils.guessLang("T(こみトレ29) [Primal Gym (カワセセイキ)] SAOff AUTUMN (ソードアート·オンライン) [中国翻訳]"));
     assertEquals(EhUtils.LANG_OTHER, EhUtils.guessLang("xixi haha"));
   }
-
-  @Test
-  public void testGetLangAbbr() {
-    assertEquals(EhUtils.LANG_ABBR_DE, EhUtils.getLangAbbr(EhUtils.LANG_DE));
-    assertEquals(EhUtils.LANG_ABBR_ZH, EhUtils.getLangAbbr(EhUtils.LANG_ZH));
-    assertEquals(null, EhUtils.getLangAbbr(EhUtils.LANG_N_A));
-    assertEquals(null, EhUtils.getLangAbbr(-1));
-  }
 }
