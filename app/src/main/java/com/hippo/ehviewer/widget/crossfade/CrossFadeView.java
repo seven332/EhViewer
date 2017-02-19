@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.widget;
+package com.hippo.ehviewer.widget.crossfade;
 
 /*
  * Created by Hippo on 1/26/2017.
