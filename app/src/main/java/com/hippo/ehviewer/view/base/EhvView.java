@@ -14,79 +14,64 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.view;
+package com.hippo.ehviewer.view.base;
 
 /*
- * Created by Hippo on 2/8/2017.
+ * Created by Hippo on 2/19/2017.
  */
 
+import android.app.ActivityManager;
 import android.content.res.Resources;
-import android.support.annotation.CallSuper;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.presenter.PresenterInterface;
 import com.hippo.yorozuya.android.ResourcesUtils;
 
-/**
- * {@link ViewInterface} for {@link com.bluelinelabs.conductor.Controller}.
- */
-public abstract class ControllerView<P extends PresenterInterface> implements ViewInterface {
+public abstract class EhvView<P extends PresenterInterface> extends ControllerView<P>
+    implements ViewInterface {
 
-  private EhvActivity activity;
-  private View view;
-  private P presenter;
-  private boolean restoring;
+  /**
+   * Returns {@code true} if the class extends {@link SheetView}.
+   */
+  public static boolean isSheetView(Class<?> clazz) {
+    return clazz != null && SheetView.class.isAssignableFrom(clazz);
+  }
 
-  public ControllerView(P presenter, EhvActivity activity, LayoutInflater inflater,
-      ViewGroup parent) {
-    this.presenter = presenter;
-    this.activity = activity;
-    this.view = createView(inflater, parent);
+  /**
+   * Returns {@code true} if the class extends {@link MessageSheetView}.
+   */
+  public static boolean isMessageSheetView(Class<?> clazz) {
+    return clazz != null && MessageSheetView.class.isAssignableFrom(clazz);
+  }
+
+  @Override
+  protected void onAttach() {
+    super.onAttach();
 
     int statusBarColor = getStatusBarColor();
-    activity.setStatusBarColor(statusBarColor);
+    getActivity().setStatusBarColor(statusBarColor);
     // Store controller status bar color in content view
     // Make RecolorStatusBarTransitionChangeHandler work
-    this.view.setTag(R.id.controller_status_bar_color, statusBarColor);
+    getView().setTag(R.id.controller_status_bar_color, statusBarColor);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      ActivityManager.TaskDescription taskDescription =
+          new ActivityManager.TaskDescription(null, null, statusBarColor);
+      getActivity().setTaskDescription(taskDescription);
+    }
 
     if (whetherShowLeftDrawer()) {
       getActivity().unlockLeftDrawer();
     } else {
       getActivity().lockLeftDrawer();
     }
-  }
 
-  /**
-   * Creates actual {@code View} for this {@code ControllerView}.
-   */
-  @NonNull
-  protected abstract View createView(LayoutInflater inflater, ViewGroup parent);
-
-  public final void setRestoring(boolean restoring) {
-    this.restoring = restoring;
-  }
-
-  /**
-   * Returns {@code true} if the view is under restoring.
-   */
-  public final boolean isRestoring() {
-    return restoring;
-  }
-
-  /**
-   * Detach this view.
-   */
-  @CallSuper
-  public void detach() {
-    this.presenter = null;
+    getActivity().setLeftDrawerCheckedItem(getLeftDrawerCheckedItem());
   }
 
   /**
@@ -113,19 +98,14 @@ public abstract class ControllerView<P extends PresenterInterface> implements Vi
   }
 
   /**
-   * Gets the {@code Presenter}.
+   * Gets checked item for left drawer.
+   * <p>
+   * Override it to change checked item for left drawer.
+   * <p>
+   * Default: 0
    */
-  @Nullable
-  public P getPresenter() {
-    return presenter;
-  }
-
-  /**
-   * Gets content view for Controller.
-   */
-  @NonNull
-  public View getView() {
-    return view;
+  protected int getLeftDrawerCheckedItem() {
+    return 0;
   }
 
   /**
@@ -133,15 +113,16 @@ public abstract class ControllerView<P extends PresenterInterface> implements Vi
    */
   @NonNull
   public EhvApp getApplication() {
-    return (EhvApp) activity.getApplication();
+    return (EhvApp) getActivity().getApplication();
   }
 
   /**
    * Gets {@code EhvActivity} instance.
    */
+  @Override
   @NonNull
   public EhvActivity getActivity() {
-    return activity;
+    return (EhvActivity) super.getActivity();
   }
 
   /**
@@ -149,7 +130,7 @@ public abstract class ControllerView<P extends PresenterInterface> implements Vi
    */
   @NonNull
   public Resources getResources() {
-    return activity.getResources();
+    return getActivity().getResources();
   }
 
   /**
