@@ -25,6 +25,7 @@ import com.hippo.ehviewer.client.EhConverter;
 import com.hippo.ehviewer.client.exception.GeneralException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.result.SignInResult;
+import com.hippo.yorozuya.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +44,7 @@ public class SignInConverter extends EhConverter<SignInResult> {
   public SignInResult convert(String body) throws Exception {
     Matcher m = PATTERN_NAME.matcher(body);
     if (m.find()) {
-      return new SignInResult(m.group(1));
+      return new SignInResult(StringUtils.strip(m.group(1)));
     } else {
       m = PATTERN_ERROR.matcher(body);
       if (m.find()) {
