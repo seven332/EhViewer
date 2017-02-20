@@ -63,6 +63,10 @@ public abstract class RecolorStatusBarAnimatorChangeHandler extends NullableAnim
   protected final Animator getAnimator2(@NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush, boolean toAddedToContainer) {
     Animator animator = getAnimator3(container, from, to, isPush, toAddedToContainer);
+    if (animator == null) {
+      return null;
+    }
+
     Animator recolorBar = RecolorStatusBar.createRecolorStatusBarAnimator(container, from, to);
 
     if (recolorBar == null) {
@@ -71,10 +75,6 @@ public abstract class RecolorStatusBarAnimatorChangeHandler extends NullableAnim
 
     if (recolorStatusBarAnimationDuration >= 0) {
       recolorBar.setDuration(recolorStatusBarAnimationDuration);
-    }
-
-    if (animator == null) {
-      return recolorBar;
     }
 
     AnimatorSet animatorSet = new AnimatorSet();

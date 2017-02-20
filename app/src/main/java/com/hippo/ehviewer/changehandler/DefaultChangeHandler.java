@@ -23,7 +23,6 @@ package com.hippo.ehviewer.changehandler;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -41,8 +40,7 @@ public class DefaultChangeHandler extends RecolorStatusBarAnimatorChangeHandler 
   protected Animator getAnimator3(@NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush, boolean toAddedToContainer) {
     if (from == null || to == null) {
-      setRecolorStatusBarAnimationDuration(0);
-      return ValueAnimator.ofFloat(0.0f, 1.0f);
+      return null;
     }
 
     setRecolorStatusBarAnimationDuration(ANIMATOR_DELAY + ANIMATOR_DURATION);
