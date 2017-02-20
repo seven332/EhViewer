@@ -124,5 +124,31 @@ public class GalleryInfo {
    */
   public float rating = Float.NaN;
 
-  // TODO Add more fields.
+  /**
+   * Gallery Language.
+   * <p>
+   * {@link EhUtils#LANG_OTHER} if can't get it.
+   */
+  public int language = EhUtils.LANG_OTHER;
+
+  /**
+   * Favourite slot.
+   * <p>
+   * Range: {@code [-1, 9]}
+   * <p>
+   * {@code -1} for un-favourited.
+   */
+  public int favouriteSlot = -1;
+
+  /**
+   * Fill all generative fields.
+   */
+  public void complete() {
+    if (language == EhUtils.LANG_OTHER && title != null) {
+      language = EhUtils.guessLang(title);
+    }
+    if (language == EhUtils.LANG_OTHER && titleJpn != null) {
+      language = EhUtils.guessLang(titleJpn);
+    }
+  }
 }
