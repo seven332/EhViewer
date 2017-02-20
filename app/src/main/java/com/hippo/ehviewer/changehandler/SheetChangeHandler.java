@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.changehandler.base.RecolorStatusBarTransitionChangeHandler;
 import com.hippo.ehviewer.transition.CrossFade;
-import com.hippo.ehviewer.transition.EmptyTransition;
 import com.transitionseverywhere.ChangeBounds;
 import com.transitionseverywhere.Fade;
 import com.transitionseverywhere.Recolor;
@@ -39,12 +38,12 @@ import com.transitionseverywhere.TransitionSet;
  */
 public class SheetChangeHandler extends RecolorStatusBarTransitionChangeHandler {
 
-  @NonNull
+  @Nullable
   @Override
   protected Transition getTransition3(@NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush) {
     if (from == null || to == null) {
-      return new EmptyTransition();
+      return null;
     }
 
     return new TransitionSet()

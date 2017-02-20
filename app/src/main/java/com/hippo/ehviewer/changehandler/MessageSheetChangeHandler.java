@@ -37,11 +37,15 @@ import com.transitionseverywhere.TransitionSet;
  */
 public class MessageSheetChangeHandler extends RecolorStatusBarTransitionChangeHandler {
 
-  @NonNull
+  @Nullable
   @Override
   protected Transition getTransition3(
       @NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush) {
+    if (from == null || to == null) {
+      return null;
+    }
+
     return new TransitionSet()
         .setOrdering(TransitionSet.ORDERING_TOGETHER)
         .addTransition(new Recolor().addTarget(R.id.header))
