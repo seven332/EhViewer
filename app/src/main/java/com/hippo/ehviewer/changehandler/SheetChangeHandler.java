@@ -41,7 +41,7 @@ public class SheetChangeHandler extends RecolorStatusBarTransitionChangeHandler 
 
   @NonNull
   @Override
-  protected Transition getTransition2(@NonNull ViewGroup container, @Nullable View from,
+  protected Transition getTransition3(@NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush) {
     if (from == null || to == null) {
       return new EmptyTransition();

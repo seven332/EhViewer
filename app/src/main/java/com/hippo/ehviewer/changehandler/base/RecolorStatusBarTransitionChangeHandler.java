@@ -37,7 +37,7 @@ import com.transitionseverywhere.TransitionSet;
  * Only works for {@link MvpController}
  * in {@link EhvActivity}.
  */
-public abstract class RecolorStatusBarTransitionChangeHandler extends TransitionChangeHandler {
+public abstract class RecolorStatusBarTransitionChangeHandler extends NullableTransitionChangeHandler {
 
   @Nullable
   private Transition getRecolorBarTransition(@NonNull ViewGroup container,
@@ -50,12 +50,16 @@ public abstract class RecolorStatusBarTransitionChangeHandler extends Transition
     }
   }
 
-  @NonNull
+  @Nullable
   @Override
-  protected final Transition getTransition(
+  protected final Transition getTransition2(
       @NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush) {
-    Transition transition = getTransition2(container, from, to, isPush);
+    Transition transition = getTransition3(container, from, to, isPush);
+    if (transition == null) {
+      return null;
+    }
+
     Transition recolorBar = getRecolorBarTransition(container, from, to);
 
     if (recolorBar == null) {
@@ -77,8 +81,8 @@ public abstract class RecolorStatusBarTransitionChangeHandler extends Transition
         .addTransition(recolorBar);
   }
 
-  @NonNull
-  protected abstract Transition getTransition2(
+  @Nullable
+  protected abstract Transition getTransition3(
       @NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush);
 }

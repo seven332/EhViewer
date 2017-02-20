@@ -39,7 +39,7 @@ public class MessageSheetChangeHandler extends RecolorStatusBarTransitionChangeH
 
   @NonNull
   @Override
-  protected Transition getTransition2(
+  protected Transition getTransition3(
       @NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush) {
     return new TransitionSet()
