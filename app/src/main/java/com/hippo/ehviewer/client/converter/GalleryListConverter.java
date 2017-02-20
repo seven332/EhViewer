@@ -184,12 +184,21 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
     gi.token = pair.second;
     gi.title = StringUtils.strip(a.text());
 
-    // Favourite slot
     Element it3 = e.getElementsByClass("it3").first();
     if (it3 != null) {
-      Element f = it3.getElementById("favicon_" + gi.gid);
-      if (f != null) {
-        gi.favouriteSlot = parseFavouriteSlot(f.attr("style"));
+      String favId = "favicon_" + gi.gid;
+      for (Element child: it3.children()) {
+        // Favourite slot
+        if (favId.equals(child.id())) {
+          gi.favouriteSlot = parseFavouriteSlot(child.attr("style"));
+        }
+
+        Elements children = child.children();
+
+        // invalid
+        if (children.size() >= 1 && "E".equals(children.get(0).attr("alt"))) {
+          gi.invalid = true;
+        }
       }
     }
 

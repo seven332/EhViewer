@@ -141,6 +141,11 @@ public class GalleryInfo {
   public int favouriteSlot = -1;
 
   /**
+   * Expunged, deleted or replaced.
+   */
+  public boolean invalid = false;
+
+  /**
    * Fill all generative fields.
    */
   public void complete() {

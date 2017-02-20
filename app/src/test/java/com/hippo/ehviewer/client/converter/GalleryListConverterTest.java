@@ -81,4 +81,16 @@ public class GalleryListConverterTest {
     GalleryListResult result = converter.convert(bufferedSource.readUtf8());
     assertEquals(6, result.galleryInfoList().get(0).favouriteSlot);
   }
+
+  @Test
+  public void testCovertFavouriteEXHentai() throws IOException, ParseException {
+    GalleryListConverter converter = new GalleryListConverter();
+    Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_list_favourite_exhentai.html"));
+    BufferedSource bufferedSource = Okio.buffer(source);
+    GalleryListResult result = converter.convert(bufferedSource.readUtf8());
+    assertEquals(50, result.galleryInfoList().size());
+    assertEquals(true, result.galleryInfoList().get(6).invalid);
+    assertEquals(false, result.galleryInfoList().get(7).invalid);
+    assertEquals(true, result.galleryInfoList().get(22).invalid);
+  }
 }
