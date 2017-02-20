@@ -36,7 +36,7 @@ import com.hippo.ehviewer.controller.base.MvpController;
  * Only works for {@link MvpController}
  * in {@link EhvActivity}.
  */
-public abstract class RecolorStatusBarAnimatorChangeHandler extends AnimatorChangeHandler {
+public abstract class RecolorStatusBarAnimatorChangeHandler extends NullableAnimatorChangeHandler {
 
   private static final String KEY_DURATION = "RecolorStatusBarAnimatorChangeHandler.recolorStatusBarAnimationDuration";
 
@@ -52,10 +52,6 @@ public abstract class RecolorStatusBarAnimatorChangeHandler extends AnimatorChan
   public void restoreFromBundle(@NonNull Bundle bundle) {
     super.restoreFromBundle(bundle);
     recolorStatusBarAnimationDuration = bundle.getLong(KEY_DURATION);
-  }
-
-  public long getRecolorStatusBarAnimationDuration() {
-    return recolorStatusBarAnimationDuration;
   }
 
   public void setRecolorStatusBarAnimationDuration(long duration) {

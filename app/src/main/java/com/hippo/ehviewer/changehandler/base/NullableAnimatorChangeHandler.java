@@ -22,50 +22,19 @@ package com.hippo.ehviewer.changehandler.base;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import com.bluelinelabs.conductor.changehandler.AnimatorChangeHandler;
 
-public abstract class AnimatorChangeHandler
-    extends com.bluelinelabs.conductor.changehandler.AnimatorChangeHandler {
-
-  private static final String KEY_DURATION = "com.hippo.ehviewer.changehandler.base.AnimatorChangeHandler.duration";
-
-  private long animationDuration = DEFAULT_ANIMATION_DURATION;
-
-  @Override
-  public void saveToBundle(@NonNull Bundle bundle) {
-    super.saveToBundle(bundle);
-    bundle.putLong(KEY_DURATION, animationDuration);
-  }
-
-  @Override
-  public void restoreFromBundle(@NonNull Bundle bundle) {
-    super.restoreFromBundle(bundle);
-    animationDuration = bundle.getLong(KEY_DURATION);
-  }
-
-  @Override
-  public long getAnimationDuration() {
-    return animationDuration;
-  }
-
-  public void setAnimationDuration(long duration) {
-    animationDuration = duration;
-  }
+public abstract class NullableAnimatorChangeHandler extends AnimatorChangeHandler {
 
   @NonNull
   @Override
   protected final Animator getAnimator(@NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush, boolean toAddedToContainer) {
     Animator animator = getAnimator2(container, from, to, isPush, toAddedToContainer);
-
-    // Apply duration if it's valid
-    if (animator != null && animationDuration >= 0) {
-      animator.setDuration(animationDuration);
-    }
 
     // Avoid null
     if (animator == null) {
