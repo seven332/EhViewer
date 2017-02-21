@@ -65,6 +65,10 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
       @Override
       public void onTransitionEnd(Transition transition) {
         changeListener.onChangeCompleted();
+
+        if (isPush && from != null) {
+          resetFromView(from);
+        }
       }
 
       @Override
@@ -92,4 +96,9 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
   public final boolean removesFromViewOnPush() {
     return true;
   }
+
+  /**
+   * Will be called after the transition is complete to reset the View that was removed to its pre-transition state.
+   */
+  protected void resetFromView(@NonNull View from) {}
 }
