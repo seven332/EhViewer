@@ -102,7 +102,8 @@ public class SmallRatingView extends View {
   }
 
   /**
-   * Sets rating to change displayed stars
+   * Sets rating to change displayed stars.
+   * Range: {@code [0.0f, 5.0f]}.
    */
   public void setRating(float rating) {
     if (this.rating != rating) {
