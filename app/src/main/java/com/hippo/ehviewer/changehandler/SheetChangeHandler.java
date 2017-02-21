@@ -22,6 +22,7 @@ package com.hippo.ehviewer.changehandler;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
@@ -39,34 +40,32 @@ import com.transitionseverywhere.TransitionSet;
  */
 public class SheetChangeHandler extends RecolorStatusBarTransitionChangeHandler {
 
+  private static final String LOG_TAG = SheetChangeHandler.class.getSimpleName();
+
   @Nullable
   @Override
   protected Transition getTransition3(@NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush) {
-    if (from == null || to == null) {
+    if (!(from instanceof HeaderLayout) || !(to instanceof HeaderLayout)) {
+      if (from != null && to != null) {
+        Log.e(LOG_TAG, "SheetChangeHandler only works for SheetController, "
+            + "and SheetController's content view must be HeaderLayout.");
+      }
       return null;
     }
 
-    if (from instanceof HeaderLayout) {
-      ((HeaderLayout) from).getShadow().setVisibility(View.INVISIBLE);
-    }
+    HeaderLayout fromView = (HeaderLayout) from;
+    HeaderLayout toView = (HeaderLayout) to;
+
+    fromView.getHeader().setVisibility(View.INVISIBLE);
 
     return new TransitionSet()
         .setOrdering(TransitionSet.ORDERING_TOGETHER)
         .addTransition(new Recolor().addTarget(R.id.header))
         .addTransition(new CrossFade().addTarget(R.id.icon).addTarget(R.id.title))
         .addTransition(new ChangeBounds().addTarget(R.id.title))
-        // Out fade whole the from view, in fade only scroll view of the to view
-        // to make it look like scroll view cross fade.
-        // TODO not work for pop
-        .addTransition(new Fade(Fade.OUT)
-            .addTarget(from.findViewById(R.id.scroll_view))
-            .addTarget(from.findViewById(R.id.positive))
-            .addTarget(from.findViewById(R.id.negative)))
-        .addTransition(new Fade(Fade.IN)
-            .addTarget(to.findViewById(R.id.scroll_view))
-            .addTarget(to.findViewById(R.id.positive))
-            .addTarget(to.findViewById(R.id.negative)));
+        .addTransition(new Fade(Fade.OUT).addTarget(fromView.getContent()))
+        .addTransition(new Fade(Fade.IN).addTarget(toView.getContent()));
   }
 
   @Override
@@ -74,7 +73,7 @@ public class SheetChangeHandler extends RecolorStatusBarTransitionChangeHandler 
     super.resetFromView(from);
 
     if (from instanceof HeaderLayout) {
-      ((HeaderLayout) from).getShadow().setVisibility(View.VISIBLE);
+      ((HeaderLayout) from).getHeader().setVisibility(View.VISIBLE);
     }
   }
 }
