@@ -41,7 +41,7 @@
   <color name="color_scheme_5">@color/indigo_500</color>
   <color name="color_scheme_6">@color/purple_500</color>
 
-  <color name="place_holder_image_light">@color/grey_200</color>
+  <color name="place_holder_image_light">@color/grey_300</color>
   <color name="place_holder_image_dark">@color/grey_700</color>
 
   <color name="divider_light">#20000000</color>
