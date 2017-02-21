@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.changehandler.base.RecolorStatusBarTransitionChangeHandler;
 import com.hippo.ehviewer.transition.CrossFade;
+import com.hippo.ehviewer.widget.HeaderLayout;
 import com.transitionseverywhere.ChangeBounds;
 import com.transitionseverywhere.Fade;
 import com.transitionseverywhere.Recolor;
@@ -46,6 +47,10 @@ public class SheetChangeHandler extends RecolorStatusBarTransitionChangeHandler 
       return null;
     }
 
+    if (from instanceof HeaderLayout) {
+      ((HeaderLayout) from).getShadow().setVisibility(View.INVISIBLE);
+    }
+
     return new TransitionSet()
         .setOrdering(TransitionSet.ORDERING_TOGETHER)
         .addTransition(new Recolor().addTarget(R.id.header))
@@ -54,7 +59,22 @@ public class SheetChangeHandler extends RecolorStatusBarTransitionChangeHandler 
         // Out fade whole the from view, in fade only scroll view of the to view
         // to make it look like scroll view cross fade.
         // TODO not work for pop
-        .addTransition(new Fade(Fade.OUT).addTarget(from))
-        .addTransition(new Fade(Fade.IN).addTarget(to.findViewById(R.id.scroll_view)));
+        .addTransition(new Fade(Fade.OUT)
+            .addTarget(from.findViewById(R.id.scroll_view))
+            .addTarget(from.findViewById(R.id.positive))
+            .addTarget(from.findViewById(R.id.negative)))
+        .addTransition(new Fade(Fade.IN)
+            .addTarget(to.findViewById(R.id.scroll_view))
+            .addTarget(to.findViewById(R.id.positive))
+            .addTarget(to.findViewById(R.id.negative)));
+  }
+
+  @Override
+  protected void resetFromView(@NonNull View from) {
+    super.resetFromView(from);
+
+    if (from instanceof HeaderLayout) {
+      ((HeaderLayout) from).getShadow().setVisibility(View.VISIBLE);
+    }
   }
 }
