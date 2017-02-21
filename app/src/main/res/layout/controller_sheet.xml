@@ -14,11 +14,10 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<com.hippo.ehviewer.widget.HeaderLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:orientation="vertical">
+  android:layout_height="match_parent">
 
   <LinearLayout
     android:id="@+id/header"
@@ -65,51 +64,39 @@
     </com.hippo.ehviewer.widget.crossfade.CrossFadeTextView>
   </LinearLayout>
 
-  <FrameLayout
+  <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <!-- fake header shadow -->
-    <View
+    <com.hippo.ehviewer.widget.IndicatingScrollView
+      android:id="@+id/scroll_view"
       android:layout_width="match_parent"
-      android:layout_height="@dimen/strip_shadow_size"
-      android:background="@drawable/strip_shadow_bottom"/>
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:fillViewport="true"/>
 
+    <!-- bottom button bar -->
     <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="vertical">
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      style="?attr/buttonBarStyle">
 
-      <com.hippo.ehviewer.widget.IndicatingScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true"/>
-
-      <!-- bottom button bar -->
-      <LinearLayout
-        android:layout_width="match_parent"
+      <Button
+        android:id="@+id/negative"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        style="?attr/buttonBarStyle">
+        android:layout_weight="1"
+        style="?attr/buttonBarNegativeButtonStyle"/>
 
-        <Button
-          android:id="@+id/negative"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          style="?attr/buttonBarNegativeButtonStyle"/>
+      <Button
+        android:id="@+id/positive"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        style="?attr/buttonBarPositiveButtonStyle"/>
 
-        <Button
-          android:id="@+id/positive"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          style="?attr/buttonBarPositiveButtonStyle"/>
-
-      </LinearLayout>
     </LinearLayout>
-  </FrameLayout>
-</LinearLayout>
+  </LinearLayout>
+</com.hippo.ehviewer.widget.HeaderLayout>

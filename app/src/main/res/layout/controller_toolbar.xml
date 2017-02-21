@@ -15,12 +15,10 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<com.hippo.ehviewer.widget.HeaderLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/toolbar_controller_root"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:orientation="vertical">
+  android:layout_height="match_parent">
 
   <android.support.v7.widget.Toolbar
     android:id="@+id/toolbar"
@@ -32,13 +30,6 @@
   <FrameLayout
     android:id="@+id/content_container"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1">
+    android:layout_height="wrap_content"/>
 
-    <View
-      android:layout_width="match_parent"
-      android:layout_height="@dimen/strip_shadow_size"
-      android:background="@drawable/strip_shadow_bottom"/>
-
-  </FrameLayout>
-</LinearLayout>
+</com.hippo.ehviewer.widget.HeaderLayout>
