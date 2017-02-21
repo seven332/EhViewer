@@ -28,11 +28,11 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.changehandler.base.RecolorStatusBarAnimatorChangeHandler;
-import com.hippo.ehviewer.widget.headerlayout.HeaderLayoutInterface;
+import com.hippo.ehviewer.widget.HeaderLayout;
 import com.hippo.yorozuya.android.AnimationUtils;
 
 /**
- * ChangeHandler between controllers with {@link HeaderLayoutInterface}.
+ * ChangeHandler between controllers with {@link HeaderLayout}.
  */
 public class HeaderChangeHandler extends RecolorStatusBarAnimatorChangeHandler {
 
@@ -45,18 +45,18 @@ public class HeaderChangeHandler extends RecolorStatusBarAnimatorChangeHandler {
   @Override
   protected Animator getAnimator3(@NonNull ViewGroup container, @Nullable View from,
       @Nullable View to, boolean isPush, boolean toAddedToContainer) {
-    if (!(from instanceof HeaderLayoutInterface) || !(to instanceof HeaderLayoutInterface)) {
+    if (!(from instanceof HeaderLayout) || !(to instanceof HeaderLayout)) {
       return null;
     }
 
     int distanceY = container.getHeight() / 4;
 
-    View fromHeader = ((HeaderLayoutInterface) from).getHeader();
+    View fromHeader = ((HeaderLayout) from).getHeader();
     Animator fromHeaderAnimator = ObjectAnimator.ofFloat(fromHeader, View.TRANSLATION_Y, 0, -fromHeader.getHeight());
     fromHeaderAnimator.setDuration(DURATION_HEADER);
     fromHeaderAnimator.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
 
-    View fromContent = ((HeaderLayoutInterface) from).getContent();
+    View fromContent = ((HeaderLayout) from).getContent();
     Animator fromContentAnimatorY = ObjectAnimator.ofFloat(fromContent, View.TRANSLATION_Y, 0, distanceY);
     Animator fromContentAnimatorAlpha = ObjectAnimator.ofFloat(fromContent, View.ALPHA, 1.0f, 0.0f);
     AnimatorSet fromContentAnimator = new AnimatorSet();
@@ -64,14 +64,14 @@ public class HeaderChangeHandler extends RecolorStatusBarAnimatorChangeHandler {
     fromContentAnimator.setDuration(DURATION_CONTENT);
     fromContentAnimator.setInterpolator(AnimationUtils.SLOW_FAST_INTERPOLATOR);
 
-    View toHeader = ((HeaderLayoutInterface) to).getHeader();
+    View toHeader = ((HeaderLayout) to).getHeader();
     toHeader.setTranslationY(-toHeader.getHeight());
     Animator toHeaderAnimator = ObjectAnimator.ofFloat(toHeader, View.TRANSLATION_Y, -toHeader.getHeight(), 0);
     toHeaderAnimator.setDuration(DURATION_HEADER);
     toHeaderAnimator.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
     toHeaderAnimator.setStartDelay(DELAY_HEADER);
 
-    View toContent = ((HeaderLayoutInterface) to).getContent();
+    View toContent = ((HeaderLayout) to).getContent();
     toContent.setTranslationY(distanceY);
     toContent.setAlpha(0.0f);
     Animator toContentAnimatorY = ObjectAnimator.ofFloat(toContent, View.TRANSLATION_Y, distanceY, 0);
@@ -89,8 +89,8 @@ public class HeaderChangeHandler extends RecolorStatusBarAnimatorChangeHandler {
 
   @Override
   protected void resetFromView(@NonNull View from) {
-    if (from instanceof HeaderLayoutInterface) {
-      HeaderLayoutInterface headerLayout = (HeaderLayoutInterface) from;
+    if (from instanceof HeaderLayout) {
+      HeaderLayout headerLayout = (HeaderLayout) from;
       View header = headerLayout.getHeader();
       header.setTranslationY(0);
       header.setAlpha(1.0f);
