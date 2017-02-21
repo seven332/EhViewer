@@ -21,7 +21,7 @@ package com.hippo.ehviewer.widget;
  */
 
 import com.hippo.ehviewer.presenter.PresenterInterface;
-import com.hippo.ehviewer.view.ViewInterface;
+import com.hippo.ehviewer.view.base.ViewInterface;
 
 public interface ContentContract {
 

@@ -194,6 +194,10 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
     itemDecorations.clear();
   }
 
+  public void setRecyclerViewPadding(int left, int top, int right, int bottom) {
+    recyclerView.setPadding(left, top, right, bottom);
+  }
+
   private void prepareTransition() {
     Transition transition = new Fade(Fade.IN | Fade.OUT)
         .addTarget(refreshLayout)
