@@ -20,6 +20,8 @@ package com.hippo.ehviewer.widget;
  * Created by Hippo on 2/10/2017.
  */
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.hippo.ehviewer.presenter.PresenterInterface;
 import com.hippo.ehviewer.view.base.ViewInterface;
 
@@ -61,5 +63,109 @@ public interface ContentContract {
     void notifyItemRangeInserted(int positionStart, int itemCount);
 
     void notifyItemRangeRemoved(int positionStart, int itemCount);
+  }
+
+  abstract class ViewState implements ContentContract.View {
+
+    public abstract void restore(ContentContract.View view);
+  }
+
+  abstract class AbsPresenter implements ContentContract.Presenter, ContentContract.View {
+
+    @Nullable
+    public abstract ContentContract.View getView();
+
+    @NonNull
+    public abstract ViewState getViewState();
+
+    @Override
+    public void showContent() {
+      View view = getView();
+      if (view != null) {
+        view.showContent();
+      }
+      getViewState().showContent();
+    }
+
+    @Override
+    public void showTip(Throwable t) {
+      View view = getView();
+      if (view != null) {
+        view.showTip(t);
+      }
+      getViewState().showTip(t);
+    }
+
+    @Override
+    public void showProgressBar() {
+      View view = getView();
+      if (view != null) {
+        view.showProgressBar();
+      }
+      getViewState().showProgressBar();
+    }
+
+    @Override
+    public void showMessage(Throwable t) {
+      View view = getView();
+      if (view != null) {
+        view.showMessage(t);
+      }
+      getViewState().showMessage(t);
+    }
+
+    @Override
+    public void stopRefreshing() {
+      View view = getView();
+      if (view != null) {
+        view.stopRefreshing();
+      }
+      getViewState().stopRefreshing();
+    }
+
+    @Override
+    public void setHeaderRefreshing() {
+      View view = getView();
+      if (view != null) {
+        view.setHeaderRefreshing();
+      }
+      getViewState().setHeaderRefreshing();
+    }
+
+    @Override
+    public void setFooterRefreshing() {
+      View view = getView();
+      if (view != null) {
+        view.setFooterRefreshing();
+      }
+      getViewState().setFooterRefreshing();
+    }
+
+    @Override
+    public void scrollToPosition(int position) {
+      View view = getView();
+      if (view != null) {
+        view.scrollToPosition(position);
+      }
+      getViewState().scrollToPosition(position);
+    }
+
+    @Override
+    public void notifyItemRangeInserted(int positionStart, int itemCount) {
+      View view = getView();
+      if (view != null) {
+        view.notifyItemRangeInserted(positionStart, itemCount);
+      }
+      getViewState().notifyItemRangeInserted(positionStart, itemCount);
+    }
+
+    @Override
+    public void notifyItemRangeRemoved(int positionStart, int itemCount) {
+      View view = getView();
+      if (view != null) {
+        view.notifyItemRangeRemoved(positionStart, itemCount);
+      }
+      getViewState().notifyItemRangeRemoved(positionStart, itemCount);
+    }
   }
 }

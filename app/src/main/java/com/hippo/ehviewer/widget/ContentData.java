@@ -21,6 +21,7 @@ package com.hippo.ehviewer.widget;
  */
 
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
@@ -39,7 +40,7 @@ import java.util.List;
  *
  * @param <T> data type
  */
-public abstract class ContentData<T> implements ContentContract.Presenter {
+public abstract class ContentData<T> extends ContentContract.AbsPresenter {
 
   private static final String LOG_TAG = ContentData.class.getSimpleName();
 
@@ -109,6 +110,18 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
     if (view != null) {
       state.restore(view);
     }
+  }
+
+  @Override
+  @Nullable
+  public ContentContract.View getView() {
+    return view;
+  }
+
+  @NonNull
+  @Override
+  public ContentContract.ViewState getViewState() {
+    return state;
   }
 
   /**
@@ -476,63 +489,7 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
     return true;
   }
 
-  void showContent() {
-    if (view != null) {
-      view.showContent();
-    }
-    state.showContent();
-  }
-
-  void showTip(Throwable t) {
-    if (view != null) {
-      view.showTip(t);
-    }
-    state.showTip(t);
-  }
-
-  void showProgressBar() {
-    if (view != null) {
-      view.showProgressBar();
-    }
-    state.showProgressBar();
-  }
-
-  void showMessage(Throwable t) {
-    if (view != null) {
-      view.showMessage(t);
-    }
-    state.showMessage(t);
-  }
-
-  void stopRefreshing() {
-    if (view != null) {
-      view.stopRefreshing();
-    }
-    state.stopRefreshing();
-  }
-
-  void scrollToPosition(int position) {
-    if (view != null) {
-      view.scrollToPosition(position);
-    }
-    state.scrollToPosition(position);
-  }
-
-  void notifyItemRangeInserted(int positionStart, int itemCount) {
-    if (view != null) {
-      view.notifyItemRangeInserted(positionStart, itemCount);
-    }
-    state.notifyItemRangeInserted(positionStart, itemCount);
-  }
-
-  void notifyItemRangeRemoved(int positionStart, int itemCount) {
-    if (view != null) {
-      view.notifyItemRangeRemoved(positionStart, itemCount);
-    }
-    state.notifyItemRangeRemoved(positionStart, itemCount);
-  }
-
-  private static class ContentViewState implements ContentContract.View {
+  private static class ContentViewState extends ContentContract.ViewState {
 
     private boolean showContent;
     private boolean showProgressBar;
@@ -540,6 +497,7 @@ public abstract class ContentData<T> implements ContentContract.Presenter {
     private boolean headerRefreshing;
     private boolean footerRefreshing;
 
+    @Override
     public void restore(ContentContract.View view) {
       if (showContent) {
         view.showContent();
