@@ -25,15 +25,25 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.presenter.PresenterInterface;
 import com.hippo.yorozuya.android.ResourcesUtils;
+import java.util.concurrent.TimeUnit;
+import rx.Scheduler;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.subscriptions.Subscriptions;
 
 public abstract class EhvView<P extends PresenterInterface> extends ControllerView<P>
     implements ViewInterface {
+
+  @Nullable
+  private Scheduler.Worker worker = AndroidSchedulers.mainThread().createWorker();
 
   /**
    * Returns {@code true} if the class extends {@link SheetView}.
@@ -80,6 +90,17 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
     }
 
     getActivity().setLeftDrawerCheckedItem(getLeftDrawerCheckedItem());
+  }
+
+  @Override
+  protected void onDetach() {
+    super.onDetach();
+
+    // Unsubscribe worker
+    if (worker != null) {
+      worker.unsubscribe();
+      worker = null;
+    }
   }
 
   /**
@@ -146,5 +167,37 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
    */
   public String getString(@StringRes int resId) {
     return getResources().getString(resId);
+  }
+
+  /**
+   * Schedules an action for execution at some point in the future
+   * and in UI thread.
+   * <p>
+   * The action will be cancelled after the view detached.
+   * <p>
+   * Returns {@code Subscriptions.unsubscribed()} if the view is already detached.
+   */
+  public Subscription schedule(Action0 action, long delayMillis) {
+    if (worker != null) {
+      return worker.schedule(action, delayMillis, TimeUnit.MILLISECONDS);
+    } else {
+      return Subscriptions.unsubscribed();
+    }
+  }
+
+  /**
+   * Schedules an action to be executed periodically in UI thread.
+   * <p>
+   * The action will be cancelled after the view detached.
+   * <p>
+   * Returns {@code Subscriptions.unsubscribed()} if the view is already detached.
+   */
+  public Subscription schedulePeriodically(final Action0 action, long delayMillis,
+      long periodMillis) {
+    if (worker != null) {
+      return worker.schedulePeriodically(action, delayMillis, periodMillis, TimeUnit.MILLISECONDS);
+    } else {
+      return Subscriptions.unsubscribed();
+    }
   }
 }
