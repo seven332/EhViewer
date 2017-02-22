@@ -49,6 +49,14 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
     return clazz != null && MessageSheetView.class.isAssignableFrom(clazz);
   }
 
+  /**
+   * Returns {@code true} if the view is HeaderView.
+   */
+  public static boolean isHeaderView(Class<?> clazz) {
+    return clazz != null &&
+        (SheetView.class.isAssignableFrom(clazz) || ToolbarView.class.isAssignableFrom(clazz));
+  }
+
   @Override
   protected void onAttach() {
     super.onAttach();
