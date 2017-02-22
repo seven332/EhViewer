@@ -36,6 +36,9 @@ import com.hippo.ehviewer.R;
  * A shadow shows under header the header and floats over the content.
  * {@code HeaderLayout} wraps header and shadow to a LinearLayout.
  * {@link #getHeader()} returns the LinearLayout.
+ * <p>
+ * {@code HeaderLayout} makes {@link com.hippo.ehviewer.changehandler.HeaderChangeHandler}
+ * look good.
  */
 public class HeaderLayout extends ViewGroup {
 
@@ -62,6 +65,7 @@ public class HeaderLayout extends ViewGroup {
 
   private void init(Context context) {
     shadowHeight = context.getResources().getDimensionPixelSize(R.dimen.strip_shadow_size);
+    setChildrenDrawingOrderEnabled(true);
   }
 
   @SuppressWarnings("deprecation")
@@ -90,6 +94,17 @@ public class HeaderLayout extends ViewGroup {
     }
 
     super.addView(child, index, params);
+  }
+
+  @Override
+  protected int getChildDrawingOrder(int childCount, int i) {
+    if (i == 0) {
+      return 1;
+    } else if (i == 1) {
+      return 0;
+    } else {
+      return i;
+    }
   }
 
   /**
