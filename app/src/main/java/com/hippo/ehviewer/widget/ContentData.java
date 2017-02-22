@@ -299,15 +299,9 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
 
   private void onGoTo(List<T> d, int min, int max) {
     // Update data
-    if (!data.isEmpty()) {
-      int size = data.size();
-      data.clear();
-      notifyItemRangeRemoved(0, size);
-    }
-    if (!d.isEmpty()) {
-      data.addAll(d);
-      notifyItemRangeInserted(0, d.size());
-    }
+    data.clear();
+    data.addAll(d);
+    notifyDataSetChanged();
 
     // Update dataDivider
     dataDivider.clear();
@@ -555,6 +549,9 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
 
     @Override
     public void scrollToPosition(int position) {}
+
+    @Override
+    public void notifyDataSetChanged() {}
 
     @Override
     public void notifyItemRangeInserted(int positionStart, int itemCount) {}

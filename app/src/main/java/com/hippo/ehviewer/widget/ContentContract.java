@@ -60,6 +60,8 @@ public interface ContentContract {
 
     void scrollToPosition(int position);
 
+    void notifyDataSetChanged();
+
     void notifyItemRangeInserted(int positionStart, int itemCount);
 
     void notifyItemRangeRemoved(int positionStart, int itemCount);
@@ -148,6 +150,15 @@ public interface ContentContract {
         view.scrollToPosition(position);
       }
       getViewState().scrollToPosition(position);
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+      View view = getView();
+      if (view != null) {
+        view.notifyDataSetChanged();
+      }
+      getViewState().notifyDataSetChanged();
     }
 
     @Override

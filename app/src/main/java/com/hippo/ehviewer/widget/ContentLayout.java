@@ -311,6 +311,13 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
   }
 
   @Override
+  public void notifyDataSetChanged() {
+    if (adapter != null) {
+      adapter.notifyDataSetChanged();
+    }
+  }
+
+  @Override
   public void notifyItemRangeInserted(int positionStart, int itemCount) {
     if (adapter != null) {
       adapter.notifyItemRangeInserted(positionStart, itemCount);
