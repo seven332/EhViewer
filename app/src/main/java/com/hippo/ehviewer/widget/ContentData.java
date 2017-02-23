@@ -285,7 +285,7 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
    *
    * @see #setRemoveDuplicates(boolean)
    */
-  public boolean isDuplicate(@Nullable T t1, @Nullable T t2) {
+  protected boolean isDuplicate(@Nullable T t1, @Nullable T t2) {
     return ObjectUtils.equals(t1, t2);
   }
 
