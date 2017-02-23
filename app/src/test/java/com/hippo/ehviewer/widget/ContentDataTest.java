@@ -155,4 +155,46 @@ public class ContentDataTest {
       setData(id, Arrays.asList(new Void[size]), min, max);
     }
   }
+
+
+  @Test
+  public void testRemoveDuplicates() {
+    IntegerData data = new IntegerData();
+    data.setRemoveDuplicates(true);
+    data.setDuplicatesCheckRange(10);
+
+    data.goTo(0);
+    data.response(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+    data.nextPage();
+    data.response(4, 6, 11, 6, 35);
+    assertEquals(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 35), data.data);
+
+    data.refreshPage(0);
+    data.response(0, 9, 5, 11);
+    assertEquals(Arrays.asList(0, 9, 5, 11, 35), data.data);
+
+
+    data.setDuplicatesCheckRange(3);
+    data.goTo(0);
+    data.response(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+    data.nextPage();
+    data.response(4, 6, 11, 6, 35, 7);
+    assertEquals(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 4, 6, 11, 6, 35), data.data);
+  }
+
+  private static final class IntegerData extends ContentData<Integer> {
+
+    private long id;
+
+    @Override
+    public void onRequireData(long id, int page) {
+      this.id = id;
+    }
+
+    public void response(Integer... data) {
+      setData(id, Arrays.asList(data), 0, 100);
+    }
+  }
 }

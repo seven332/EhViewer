@@ -26,12 +26,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.ObjectUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO Remove duplicate data
+// TODO Store first page
 
 /**
  * Data container for {@link ContentLayout}.
@@ -75,6 +76,10 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
   @Type
   private int requireType;
   private long requireId = INVALID_ID;
+
+  private boolean removeDuplicates = false;
+  // Duplicates checking left and right range
+  private int duplicatesCheckRange = 50;
 
   /** The min page index **/
   @VisibleForTesting
@@ -255,6 +260,36 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
   public abstract void onRequireData(long id, int page);
 
   /**
+   * Whether remove duplicates. If remove, duplicate item
+   * in {@link #setData(long, List, int, int)} will be ignored.
+   * <p>
+   * Duplicates in the same page are not ignored.
+   *
+   * @see #isDuplicate(Object, Object)
+   */
+  public void setRemoveDuplicates(boolean removeDuplicates) {
+    this.removeDuplicates = removeDuplicates;
+  }
+
+  /**
+   * Sets duplicates checking range.
+   *
+   * @see #setRemoveDuplicates(boolean)
+   */
+  public void setDuplicatesCheckRange(int range) {
+    this.duplicatesCheckRange = range;
+  }
+
+  /**
+   * Returns {@code true} if two item is duplicate.
+   *
+   * @see #setRemoveDuplicates(boolean)
+   */
+  public boolean isDuplicate(@Nullable T t1, @Nullable T t2) {
+    return ObjectUtils.equals(t1, t2);
+  }
+
+  /**
    * {@code setData(id, d, 0, p)}.
    */
   public boolean setData(long id, List<T> d, int p) {
@@ -327,10 +362,44 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
     }
   }
 
+  private List<T> removeDuplicates(List<T> d, int index) {
+    // Don't check all data, just check the data around the index to insert
+    return removeDuplicates(d, index - duplicatesCheckRange, index + duplicatesCheckRange);
+  }
+
+  // Start and end will be fixed to fit range [0, data.size())
+  private List<T> removeDuplicates(List<T> d, int start, int end) {
+    // Fix start and end
+    start = Math.max(0, start);
+    end = Math.min(data.size(), end);
+
+    List<T> result = new ArrayList<>(d.size());
+
+    for (T t: d) {
+      boolean duplicate = false;
+      for (int i = start; i < end; ++i) {
+        if (isDuplicate(t, data.get(i))) {
+          duplicate = true;
+          break;
+        }
+      }
+      if (!duplicate) {
+        result.add(t);
+      }
+    }
+
+    return result;
+  }
+
   private void onPrevPage(List<T> d, int min, int max, boolean adjustPosition) {
     if (requirePage != beginPage - 1) {
       throw new IllegalStateException("TYPE_PREV_PAGE or TYPE_PREV_PAGE_ADJUST_POSITION"
           + " always require the page before begin page, beginPage=" + beginPage + ", requirePage=" + requirePage);
+    }
+
+    // Remove duplicates
+    if (removeDuplicates) {
+      d = removeDuplicates(d, 0);
     }
 
     // Update data
@@ -375,6 +444,11 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
           + " always require end page, endPage=" + endPage + ", requirePage=" + requirePage);
     }
 
+    // Remove duplicates
+    if (removeDuplicates) {
+      d = removeDuplicates(d, data.size());
+    }
+
     // Update data
     int oldSize = data.size();
     if (!d.isEmpty()) {
@@ -412,9 +486,16 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
           + "beginPage=" + beginPage + ", endPage=" + endPage + ", requirePage=" + requirePage);
     }
 
-    // Update data
     int oldBeginIndex = (requirePage == beginPage ? 0 : dataDivider.get(requirePage - beginPage - 1));
     int oldEndIndex = dataDivider.get(requirePage - beginPage);
+
+    // Remove duplicates
+    if (removeDuplicates) {
+      d = removeDuplicates(d, oldBeginIndex - duplicatesCheckRange, oldBeginIndex);
+      d = removeDuplicates(d, oldEndIndex, oldEndIndex + duplicatesCheckRange);
+    }
+
+    // Update data
     if (oldBeginIndex != oldEndIndex) {
       data.subList(oldBeginIndex, oldEndIndex).clear();
       notifyItemRangeRemoved(oldBeginIndex, oldEndIndex - oldBeginIndex);
