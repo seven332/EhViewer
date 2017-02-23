@@ -14,7 +14,8 @@ android {
         versionCode 73
         versionName "1.0.20"
         vectorDrawables.useSupportLibrary = true
-        resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW"
+        resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW",
+                "es"
     }
 
     lintOptions {
