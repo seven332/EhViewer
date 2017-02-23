@@ -101,6 +101,9 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
       worker.unsubscribe();
       worker = null;
     }
+
+    // Check memory leak
+    getApplication().getRefWatcher().watch(this);
   }
 
   /**
