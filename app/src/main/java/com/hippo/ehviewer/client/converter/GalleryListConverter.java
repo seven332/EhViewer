@@ -182,7 +182,9 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
     }
     gi.gid = pair.first;
     gi.token = pair.second;
+    // TODO maybe it's titleJpn
     gi.title = StringUtils.strip(a.text());
+    gi.language = EhUtils.guessLang(gi.title);
 
     Element it3 = e.getElementsByClass("it3").first();
     if (it3 != null) {
@@ -220,9 +222,6 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
       // It's OK to skip uploader
       Log.w(TAG, "Can't parse gallery uploader");
     }
-
-    // Complete
-    gi.complete();
 
     return gi;
   }

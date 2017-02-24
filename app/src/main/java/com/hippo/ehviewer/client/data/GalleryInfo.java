@@ -177,16 +177,4 @@ public class GalleryInfo {
    * Default empty map.
    */
   public LinkedHashMap<String, List<String>> tags = new LinkedHashMap<>();
-
-  /**
-   * Fill all generative fields.
-   */
-  public void complete() {
-    if (language == EhUtils.LANG_OTHER && title != null) {
-      language = EhUtils.guessLang(title);
-    }
-    if (language == EhUtils.LANG_OTHER && titleJpn != null) {
-      language = EhUtils.guessLang(titleJpn);
-    }
-  }
 }
