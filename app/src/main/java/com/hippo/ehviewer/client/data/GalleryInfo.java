@@ -21,6 +21,8 @@ package com.hippo.ehviewer.client.data;
  */
 
 import com.hippo.ehviewer.client.EhUtils;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Gallery Information.
@@ -127,9 +129,9 @@ public class GalleryInfo {
   /**
    * Gallery Language.
    * <p>
-   * {@link EhUtils#LANG_OTHER} if can't get it.
+   * {@link EhUtils#LANG_UNKNOWN} if can't get it.
    */
-  public int language = EhUtils.LANG_OTHER;
+  public int language = EhUtils.LANG_UNKNOWN;
 
   /**
    * Favourite slot.
@@ -144,6 +146,37 @@ public class GalleryInfo {
    * Expunged, deleted or replaced.
    */
   public boolean invalid = false;
+
+  /**
+   * The key to download archive.
+   */
+  public String archiverKey;
+
+  /**
+   * Gallery Pages.
+   * <p>
+   * {@code -1} for unknown.
+   */
+  public int pages = -1;
+
+  /**
+   * Gallery size in bytes.
+   * <p>
+   * {@code -1} for unknown.
+   */
+  public long size = -1;
+
+  /**
+   * Torrent count.
+   */
+  public int torrentCount = 0;
+
+  /**
+   * Gallery tags.
+   * <p>
+   * Default empty map.
+   */
+  public LinkedHashMap<String, List<String>> tags = new LinkedHashMap<>();
 
   /**
    * Fill all generative fields.
