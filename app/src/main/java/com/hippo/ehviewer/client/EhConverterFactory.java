@@ -25,11 +25,13 @@ import com.hippo.ehviewer.client.converter.GalleryListConverter;
 import com.hippo.ehviewer.client.converter.ProfileConverter;
 import com.hippo.ehviewer.client.converter.SignInConverter;
 import com.hippo.ehviewer.client.converter.VoidConverter;
+import com.hippo.ehviewer.client.converter.WhatsHotConverter;
 import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.ProfileResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import com.hippo.ehviewer.client.result.VoidResult;
+import com.hippo.ehviewer.client.result.WhatsHotResult;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import okhttp3.ResponseBody;
@@ -51,6 +53,7 @@ public final class EhConverterFactory extends Converter.Factory {
     else if (GalleryListResult.class.equals(type)) return new GalleryListConverter();
     else if (ForumsResult.class.equals(type)) return new ForumsConverter();
     else if (ProfileResult.class.equals(type)) return new ProfileConverter();
+    else if (WhatsHotResult.class.equals(type)) return new WhatsHotConverter();
     else throw new IllegalStateException("Unknown type: " + type);
   }
 

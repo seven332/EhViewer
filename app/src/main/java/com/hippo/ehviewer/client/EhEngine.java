@@ -25,6 +25,7 @@ import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.ProfileResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import com.hippo.ehviewer.client.result.VoidResult;
+import com.hippo.ehviewer.client.result.WhatsHotResult;
 import java.util.Map;
 import retrofit2.adapter.rxjava.Result;
 import retrofit2.http.Field;
@@ -83,4 +84,7 @@ public interface EhEngine {
       @Url String url,
       @QueryMap Map<String, String> query
   );
+
+  @GET(EhUrl.URL_E)
+  Observable<Result<WhatsHotResult>> getWhatsHot();
 }
