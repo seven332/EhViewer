@@ -20,11 +20,12 @@ package com.hippo.ehviewer.util;
  * Created by Hippo on 2/24/2017.
  */
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public final class JSONObjectUtils {
-  private JSONObjectUtils() {}
+public final class JSONUtils {
+  private JSONUtils() {}
 
   /**
    * Returns the value mapped by {@code name} if it exists, coercing it if
@@ -35,6 +36,21 @@ public final class JSONObjectUtils {
   public static String getString(JSONObject jo, String name) throws JSONException {
     String value = jo.getString(name);
     if (jo.isNull(name)) {
+      return null;
+    } else {
+      return value;
+    }
+  }
+
+  /**
+   * Returns the value mapped by {@code name} if it exists, coercing it if
+   * necessary, or throws if no such mapping exists.
+   * <p>
+   * {@code null} doesn't treated as {@code "null"}.
+   */
+  public static String getString(JSONArray ja, int index) throws JSONException {
+    String value = ja.getString(index);
+    if (ja.isNull(index)) {
       return null;
     } else {
       return value;
@@ -61,6 +77,35 @@ public final class JSONObjectUtils {
     if (jo.has(name)) {
       String value = jo.optString(name, fallback);
       if (jo.isNull(name)) {
+        return null;
+      } else {
+        return value;
+      }
+    } else {
+      return fallback;
+    }
+  }
+
+  /**
+   * Returns the value mapped by {@code name} if it exists, coercing it if
+   * necessary, or {@code null} if no such mapping exists.
+   * <p>
+   * {@code null} doesn't treated as {@code "null"}.
+   */
+  public static String optString(JSONArray ja, int index) {
+    return optString(ja, index, null);
+  }
+
+  /**
+   * Returns the value mapped by {@code name} if it exists, coercing it if
+   * necessary, or {@code fallback} if no such mapping exists.
+   * <p>
+   * {@code null} doesn't treated as {@code "null"}.
+   */
+  public static String optString(JSONArray ja, int index, String fallback) {
+    if (index >= 0 && index < ja.length()) {
+      String value = ja.optString(index, fallback);
+      if (ja.isNull(index)) {
         return null;
       } else {
         return value;
