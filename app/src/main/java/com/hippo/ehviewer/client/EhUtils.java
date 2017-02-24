@@ -160,6 +160,10 @@ public final class EhUtils {
   ///////////////////////////////////////////////////////////////////////////
 
   /**
+   * Unknown
+   */
+  public static final int LANG_UNKNOWN = -1;
+  /**
    * Japanese
    */
   public static final int LANG_JA = 0;
@@ -331,18 +335,18 @@ public final class EhUtils {
 
   /**
    * Guesses the language of the gallery according to the title.
-   * Returns {@link #LANG_OTHER} if can't guess.
+   * Returns {@link #LANG_UNKNOWN} if can't guess.
    */
   public static int guessLang(String title) {
     if (StringUtils.isEmpty(title)) {
-      return LANG_OTHER;
+      return LANG_UNKNOWN;
     }
     for (int i = 0, n = GUESS_LANGS.length; i < n; ++i) {
       if (GUESS_LANG_PATTERNS[i].matcher(title).find()) {
         return GUESS_LANGS[i];
       }
     }
-    return LANG_OTHER;
+    return LANG_UNKNOWN;
   }
 
   /**
