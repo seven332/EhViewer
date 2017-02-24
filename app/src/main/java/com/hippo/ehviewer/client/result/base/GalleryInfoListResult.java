@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client.result;
+package com.hippo.ehviewer.client.result.base;
 
 /*
  * Created by Hippo on 2/24/2017.
  */
 
+import com.hippo.ehviewer.client.EhResult;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.result.base.GalleryInfoListResult;
 import java.util.List;
 
 /**
- * A result of whats hot, contains GalleryInfo list.
+ * {@code EhResult} with only a {@code List<GalleryInfo>}.
  */
-public class WhatsHotResult extends GalleryInfoListResult {
+public abstract class GalleryInfoListResult extends EhResult {
 
-  public WhatsHotResult(List<GalleryInfo> gis) {
-    super(gis);
+  private List<GalleryInfo> gis;
+
+  public GalleryInfoListResult(List<GalleryInfo> gis) {
+    super(null);
+    this.gis = gis;
+  }
+
+  public List<GalleryInfo> galleryInfoList() {
+    return gis;
   }
 
 
@@ -38,11 +45,7 @@ public class WhatsHotResult extends GalleryInfoListResult {
   // Pain part
   ////////////////
 
-  private WhatsHotResult(Throwable t) {
+  protected GalleryInfoListResult(Throwable t) {
     super(t);
-  }
-
-  public static WhatsHotResult error(Throwable t) {
-    return new WhatsHotResult(t);
   }
 }
