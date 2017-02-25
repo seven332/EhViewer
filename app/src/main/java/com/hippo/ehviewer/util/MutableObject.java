@@ -23,6 +23,10 @@ package com.hippo.ehviewer.util;
 public final class MutableObject<T> {
   public T value;
 
+  public MutableObject() {
+    this(null);
+  }
+
   public MutableObject(T value) {
     this.value = value;
   }
