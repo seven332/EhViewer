@@ -80,7 +80,7 @@ public class GalleryMetadataConverter extends EhConverter<GalleryMetadataResult>
     info.coverUrl = JSONUtils.optString(jo, "thumb");
     info.cover = EhUrl.getImageFingerprint(info.coverUrl);
     info.uploader = JSONUtils.optString(jo, "uploader");
-    info.date = NumberUtils.parseLong(JSONUtils.optString(jo, "posted"), 0);
+    info.date = NumberUtils.parseLong(JSONUtils.optString(jo, "posted"), 0) * 1000;
     info.pages = NumberUtils.parseInt(JSONUtils.optString(jo, "filecount"), -1);
     info.size = NumberUtils.parseLong(JSONUtils.optString(jo, "filesize"), -1);
     info.invalid = jo.optBoolean("expunged", false);
