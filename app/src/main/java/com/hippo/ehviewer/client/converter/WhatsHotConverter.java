@@ -26,6 +26,7 @@ import android.util.Log;
 import android.util.Pair;
 import com.hippo.ehviewer.client.EhConverter;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.result.WhatsHotResult;
@@ -97,6 +98,7 @@ public class WhatsHotConverter extends EhConverter<WhatsHotResult> {
     galleryInfo.coverUrl = img.attr("src");
     galleryInfo.cover = EhUrl.getImageFingerprint(galleryInfo.coverUrl);
     galleryInfo.title = img.attr("title");
+    galleryInfo.language = EhUtils.guessLang(galleryInfo.title);
 
     return galleryInfo;
   }
