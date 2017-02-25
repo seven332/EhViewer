@@ -20,14 +20,17 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/14/2017.
  */
 
+import com.hippo.ehviewer.client.param.GalleryMetadataParam;
 import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
+import com.hippo.ehviewer.client.result.GalleryMetadataResult;
 import com.hippo.ehviewer.client.result.ProfileResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import com.hippo.ehviewer.client.result.VoidResult;
 import com.hippo.ehviewer.client.result.WhatsHotResult;
 import java.util.Map;
 import retrofit2.adapter.rxjava.Result;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -78,6 +81,12 @@ public interface EhEngine {
 
   @GET(EhUrl.URL_FAVOURITES_EX)
   Observable<Result<VoidResult>> touchExHentaiFavourite();
+
+  @POST
+  Observable<Result<GalleryMetadataResult>> getGalleryMetadata(
+      @Url String url,
+      @Body GalleryMetadataParam param
+  );
 
   @GET
   Observable<Result<GalleryListResult>> getGalleryList(

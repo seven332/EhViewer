@@ -22,18 +22,22 @@ package com.hippo.ehviewer.client;
 
 import com.hippo.ehviewer.client.converter.ForumsConverter;
 import com.hippo.ehviewer.client.converter.GalleryListConverter;
+import com.hippo.ehviewer.client.converter.GalleryMetadataConverter;
 import com.hippo.ehviewer.client.converter.ProfileConverter;
 import com.hippo.ehviewer.client.converter.SignInConverter;
 import com.hippo.ehviewer.client.converter.VoidConverter;
 import com.hippo.ehviewer.client.converter.WhatsHotConverter;
+import com.hippo.ehviewer.client.param.GalleryMetadataParam;
 import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
+import com.hippo.ehviewer.client.result.GalleryMetadataResult;
 import com.hippo.ehviewer.client.result.ProfileResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import com.hippo.ehviewer.client.result.VoidResult;
 import com.hippo.ehviewer.client.result.WhatsHotResult;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
@@ -54,7 +58,15 @@ public final class EhConverterFactory extends Converter.Factory {
     else if (ForumsResult.class.equals(type)) return new ForumsConverter();
     else if (ProfileResult.class.equals(type)) return new ProfileConverter();
     else if (WhatsHotResult.class.equals(type)) return new WhatsHotConverter();
+    else if (GalleryMetadataResult.class.equals(type)) return new GalleryMetadataConverter();
     else throw new IllegalStateException("Unknown type: " + type);
+  }
+
+  @Override
+  public Converter<?, RequestBody> requestBodyConverter(Type type,
+      Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
+    if (GalleryMetadataParam.class.equals(type)) return new GalleryMetadataParam.Converter();
+    else return null;
   }
 
   /**

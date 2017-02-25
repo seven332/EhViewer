@@ -20,7 +20,9 @@ package com.hippo.ehviewer.client.data;
  * Created by Hippo on 1/29/2017.
  */
 
+import android.util.Log;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.yorozuya.ObjectUtils;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -36,6 +38,9 @@ import java.util.List;
  * None of these methods can fill all fields.
  */
 public class GalleryInfo {
+
+  private static final String LOG_TAG = GalleryInfo.class.getSimpleName();
+
   /**
    * Gallery ID.
    * <p>
@@ -168,6 +173,8 @@ public class GalleryInfo {
 
   /**
    * Torrent count.
+   * <p>
+   * {@code 0} for default.
    */
   public int torrentCount = 0;
 
@@ -176,5 +183,85 @@ public class GalleryInfo {
    * <p>
    * Default empty map.
    */
-  public LinkedHashMap<String, List<String>> tags = new LinkedHashMap<>();
+  public final LinkedHashMap<String, List<String>> tags = new LinkedHashMap<>();
+
+  /**
+   * Merges data in {@code info} to this {@code GalleryInfo}.
+   */
+  public void merge(GalleryInfo info) {
+    if (info == null) {
+      return;
+    }
+    if (info.gid != gid || !ObjectUtils.equals(info.token, token)) {
+      Log.w(LOG_TAG, "Can't merge different GalleryInfo");
+    }
+
+    if (info.title != null) {
+      title = info.title;
+    }
+    if (info.titleJpn != null) {
+      titleJpn = info.titleJpn;
+    }
+    if (info.cover != null) {
+      cover = info.cover;
+    }
+    if (info.coverUrl != null) {
+      coverUrl = info.coverUrl;
+    }
+    if (!Float.isNaN(info.coverRatio)) {
+      coverRatio = info.coverRatio;
+    }
+    if (info.category != EhUtils.UNKNOWN) {
+      category = info.category;
+    }
+    if (info.date != 0) {
+      date = info.date;
+    }
+    if (info.uploader != null) {
+      uploader = info.uploader;
+    }
+    if (!Float.isNaN(info.rating)) {
+      rating = info.rating;
+    }
+    if (info.language != EhUtils.LANG_UNKNOWN) {
+      language = info.language;
+    }
+    if (info.favouriteSlot != -1) {
+      favouriteSlot = info.favouriteSlot;
+    }
+    if (info.invalid) {
+      invalid = true;
+    }
+    if (info.archiverKey != null) {
+      archiverKey = info.archiverKey;
+    }
+    if (info.pages != -1) {
+      pages = info.pages;
+    }
+    if (info.size != -1) {
+      size = info.size;
+    }
+    if (info.torrentCount != 0) {
+      torrentCount = info.torrentCount;
+    }
+    if (!info.tags.isEmpty()) {
+      tags.clear();
+      tags.putAll(info.tags);
+    }
+  }
+
+  /**
+   * Merges the first same {@code GalleryInfo} in {@code list}.
+   */
+  public void merge(List<GalleryInfo> list) {
+    if (list == null) {
+      return;
+    }
+    for (GalleryInfo info: list) {
+      if (info != null && info.gid == gid && ObjectUtils.equals(info.token, token)) {
+        merge(info);
+        return;
+      }
+    }
+  }
 }

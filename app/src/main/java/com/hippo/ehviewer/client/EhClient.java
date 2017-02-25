@@ -22,18 +22,31 @@ package com.hippo.ehviewer.client;
 
 import android.content.Context;
 import com.hippo.ehviewer.EhvApp;
+import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.param.GalleryMetadataParam;
 import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
+import com.hippo.ehviewer.client.result.GalleryMetadataResult;
 import com.hippo.ehviewer.client.result.ProfileResult;
 import com.hippo.ehviewer.client.result.SignInResult;
 import com.hippo.ehviewer.client.result.VoidResult;
+import com.hippo.ehviewer.client.result.WhatsHotResult;
+import com.hippo.ehviewer.util.MutableObject;
+import com.hippo.yorozuya.ArrayUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.Result;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Observable;
 
 public final class EhClient {
+
+  private static final int GALLERY_METADATA_MAX_COUNT = 25;
 
   private EhEngine engine;
 
@@ -110,12 +123,142 @@ public final class EhClient {
         });
   }
 
+  private static GalleryMetadataParam genGalleryMetadataParam(long[] gids, String[] tokens, int start,
+      int count) {
+    return new GalleryMetadataParam(Arrays.copyOfRange(gids, start, start + count),
+        Arrays.copyOfRange(tokens, start, start + count));
+  }
+
+  /**
+   * Gets gallery metadata of the input gallery gid and token array through API.
+   * <p>
+   * If one token doesn't match the gid, raise error.
+   * <p>
+   * If contains duplicate gid, only return once.
+   */
+  public Observable<Result<GalleryMetadataResult>> getGalleryMetadata(@EhUrl.Site int site,
+      long[] gids, String[] tokens) {
+    int remain = Math.min(ArrayUtils.getLength(gids), ArrayUtils.getLength(tokens));
+    if (remain <= 0) {
+      return Observable.just(
+          Result.response(Response.success(new GalleryMetadataResult(Collections.emptyList()))));
+    }
+
+    // Remove duplicates
+    List<Long> gidList = new ArrayList<>(gids.length);
+    List<String> tokenList = new ArrayList<>(tokens.length);
+    for (int i = 0, n = gids.length; i < n; ++i) {
+      long g = gids[i];
+      boolean duplicate = false;
+      for (int j = i + 1; j < n; ++j) {
+        if (g == gids[j]) {
+          duplicate = true;
+          break;
+        }
+      }
+      if (!duplicate) {
+        gidList.add(g);
+        tokenList.add(tokens[i]);
+      }
+    }
+    gids = new long[gidList.size()];
+    for (int i = 0, n = gidList.size(); i < n; ++i) {
+      gids[i] = gidList.get(i);
+    }
+    tokens = tokenList.toArray(new String[tokenList.size()]);
+
+    // Update remain
+    remain = Math.min(ArrayUtils.getLength(gids), ArrayUtils.getLength(tokens));
+
+    String url = EhUrl.getApiUrl(site);
+    List<GalleryInfo> list = new ArrayList<>(remain);
+    Observable<Result<GalleryMetadataResult>> observable;
+
+    int read = 0;
+    int single = Math.min(remain, GALLERY_METADATA_MAX_COUNT);
+    observable = engine.getGalleryMetadata(url,
+        genGalleryMetadataParam(gids, tokens, read, single));
+    read += single;
+    remain -= single;
+
+    boolean merge = false;
+    while (true) {
+      single = Math.min(remain, GALLERY_METADATA_MAX_COUNT);
+      if (single == 0) {
+        break;
+      }
+
+      merge = true;
+
+      final GalleryMetadataParam param = genGalleryMetadataParam(gids, tokens, read, single);
+      observable = observable.flatMap(new EhFlatMapFunc<GalleryMetadataResult, GalleryMetadataResult>() {
+        @Override
+        public Observable<Result<GalleryMetadataResult>> onCall(GalleryMetadataResult result) {
+          list.addAll(result.galleryInfoList());
+          return engine.getGalleryMetadata(url, param);
+        }
+      });
+
+      read += single;
+      remain -= single;
+    }
+
+    if (merge) {
+      observable = observable.map(new EhMapFunc<GalleryMetadataResult, GalleryMetadataResult>() {
+        @Override
+        public Result<GalleryMetadataResult> onCall(GalleryMetadataResult result) {
+          list.addAll(result.galleryInfoList());
+          return Result.response(Response.success(new GalleryMetadataResult(list)));
+        }
+      });
+    }
+
+    return observable;
+  }
+
   /**
    * Get gallery list.
    */
   // TODO handles favourites
   public Observable<Result<GalleryListResult>> getGalleryList(String url, Map<String, String> query) {
     return engine.getGalleryList(url, query);
+  }
+
+  /**
+   * Gets what's hot.
+   */
+  public Observable<Result<WhatsHotResult>> getWhatsHot(final int site) {
+    final MutableObject<WhatsHotResult> holder = new MutableObject<>();
+    return engine.getWhatsHot()
+        .flatMap(new EhFlatMapFunc<WhatsHotResult, GalleryMetadataResult>() {
+          @Override
+          public Observable<Result<GalleryMetadataResult>> onCall(WhatsHotResult whatsHotResult) {
+            holder.value = whatsHotResult;
+
+            List<GalleryInfo> list = whatsHotResult.galleryInfoList();
+            int size = list.size();
+            long[] gids = new long[size];
+            String[] tokens = new String[size];
+            int i = 0;
+            for (GalleryInfo info: list) {
+              gids[i] = info.gid;
+              tokens[i] = info.token;
+              ++i;
+            }
+
+            return getGalleryMetadata(site, gids, tokens);
+          }
+        }).map(new EhMapFunc<GalleryMetadataResult, WhatsHotResult>() {
+          @Override
+          public Result<WhatsHotResult> onCall(GalleryMetadataResult result) {
+            WhatsHotResult whatsHotResult = holder.value;
+            List<GalleryInfo> metadata = result.galleryInfoList();
+            for (GalleryInfo info: whatsHotResult.galleryInfoList()) {
+              info.merge(metadata);
+            }
+            return Result.response(Response.success(whatsHotResult));
+          }
+        });
   }
 
   /**

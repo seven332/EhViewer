@@ -58,6 +58,9 @@ public final class EhUrl {
   public static final String URL_THUMBNAIL_E = "https://ul.ehgt.org/";
   public static final String URL_THUMBNAIL_EX = "https://exhentai.org/t/";
 
+  public static final String URL_API_E = URL_E + "api.php";
+  public static final String URL_API_EX = URL_EX + "api.php";
+
   public static final String URL_FORUMS = "https://forums.e-hentai.org/";
   public static final String URL_SIGN_IN = URL_FORUMS + "index.php?act=Login&CODE=01";
 
@@ -176,5 +179,13 @@ public final class EhUrl {
     }
     return url + fingerprint.substring(0, 2) + "/" + fingerprint.substring(2, 4)
         + "/" + fingerprint + "_" + type + ".jpg";
+  }
+
+  public static String getApiUrl(@Site int site) {
+    if (site == SITE_EX) {
+      return URL_API_EX;
+    } else {
+      return URL_API_E;
+    }
   }
 }

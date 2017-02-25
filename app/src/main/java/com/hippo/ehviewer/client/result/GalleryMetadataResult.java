@@ -14,22 +14,32 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client;
+package com.hippo.ehviewer.client.result;
 
 /*
- * Created by Hippo on 1/19/2017.
+ * Created by Hippo on 2/24/2017.
  */
 
-import retrofit2.adapter.rxjava.Result;
-import rx.functions.Func1;
+import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.result.base.GalleryInfoListResult;
+import java.util.List;
 
-public abstract class EhMapFunc<T extends EhResult, R extends EhResult>
-    implements Func1<Result<T>, Result<R>> {
+public class GalleryMetadataResult extends GalleryInfoListResult {
 
-  @Override
-  public Result<R> call(Result<T> result) {
-    return EhReactiveX.handleResult(result, this::onCall);
+  public GalleryMetadataResult(List<GalleryInfo> gis) {
+    super(gis);
   }
 
-  public abstract Result<R> onCall(T t);
+
+  ////////////////
+  // Pain part
+  ////////////////
+
+  private GalleryMetadataResult(Throwable t) {
+    super(t);
+  }
+
+  public static GalleryMetadataResult error(Throwable t) {
+    return new GalleryMetadataResult(t);
+  }
 }
