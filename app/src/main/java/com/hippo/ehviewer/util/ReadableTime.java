@@ -55,7 +55,7 @@ public final class ReadableTime {
     Resources resources = context.getResources();
 
     long now = System.currentTimeMillis();
-    if (time > now + (10 * MINUTE_MILLIS) || time <= 0) {
+    if (time > now + (10 * MINUTE_MILLIS) || time < 0) {
       return context.getString(R.string.from_the_future);
     }
 
