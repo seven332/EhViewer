@@ -67,15 +67,25 @@ public interface ContentContract {
     void notifyItemRangeRemoved(int positionStart, int itemCount);
   }
 
-  abstract class ViewState implements ContentContract.View {
+  abstract class ViewState implements View {
 
-    public abstract void restore(ContentContract.View view);
+    public abstract void restore(View view);
   }
 
-  abstract class AbsPresenter implements ContentContract.Presenter, ContentContract.View {
+  interface DataPresenter<T> extends Presenter {
+
+    T get(int index);
+
+    /**
+     * Returns a solid copy, which has no reaction.
+     */
+    DataPresenter<T> solidify();
+  }
+
+  abstract class AbsPresenter<T> implements DataPresenter<T>, View {
 
     @Nullable
-    public abstract ContentContract.View getView();
+    public abstract View getView();
 
     @NonNull
     public abstract ViewState getViewState();
@@ -178,5 +188,47 @@ public interface ContentContract {
       }
       getViewState().notifyItemRangeRemoved(positionStart, itemCount);
     }
+  }
+
+  class Solid<T> implements DataPresenter<T> {
+
+    private T[] array;
+
+    public Solid(T[] array) {
+      this.array = array;
+    }
+
+    @Override
+    public T get(int index) {
+      return array[index];
+    }
+
+    @Override
+    public DataPresenter<T> solidify() {
+      return this;
+    }
+
+    @Override
+    public int size() {
+      return array.length;
+    }
+
+    @Override
+    public void onRefreshHeader() {}
+
+    @Override
+    public void onRefreshFooter() {}
+
+    @Override
+    public void onClickTip() {}
+
+    @Override
+    public void goTo(int page) {}
+
+    @Override
+    public void switchTo(int page) {}
+
+    @Override
+    public void setView(View view) {}
   }
 }

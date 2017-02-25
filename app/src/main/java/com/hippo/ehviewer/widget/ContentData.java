@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @param <T> data type
  */
-public abstract class ContentData<T> extends ContentContract.AbsPresenter {
+public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
 
   private static final String LOG_TAG = ContentData.class.getSimpleName();
 
@@ -140,6 +140,7 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
   /**
    * Return the datum at specified position.
    */
+  @Override
   public T get(int index) {
     return data.get(index);
   }
@@ -562,6 +563,12 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter {
     }
 
     return true;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public ContentContract.DataPresenter<T> solidify() {
+    return new ContentContract.Solid<>((T[]) data.toArray());
   }
 
   private static class ContentViewState extends ContentContract.ViewState {
