@@ -20,6 +20,7 @@ package com.hippo.ehviewer;
  * Created by Hippo on 1/14/2017.
  */
 
+import android.content.Context;
 import android.util.Log;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
@@ -124,5 +125,12 @@ public class EhvApp extends RecordingApplication {
 
   public EhvPreferences getPreferences() {
     return preferencesSupplier.get();
+  }
+
+  /**
+   * Gets {@code EhvApp} from a {@code Context}.
+   */
+  public static EhvApp get(Context context) {
+    return (EhvApp) context.getApplicationContext();
   }
 }
