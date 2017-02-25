@@ -67,7 +67,7 @@ public class GalleryMetadataConverter extends EhConverter<GalleryMetadataResult>
     if (info.token == null) {
       return null;
     }
-    info.title = JSONUtils.optString(jo, "title");
+    info.title = ConverterUtils.unescapeXml(JSONUtils.optString(jo, "title"));
     if (info.title != null) {
       info.language = EhUtils.guessLang(info.title);
     }
@@ -77,7 +77,7 @@ public class GalleryMetadataConverter extends EhConverter<GalleryMetadataResult>
     }
     info.archiverKey = JSONUtils.optString(jo, "archiver_key");
     info.category = EhUtils.getCategory(JSONUtils.optString(jo, "category"));
-    info.coverUrl = JSONUtils.optString(jo, "thumb");
+    info.coverUrl = ConverterUtils.unescapeXml(JSONUtils.optString(jo, "thumb"));
     info.cover = EhUrl.getImageFingerprint(info.coverUrl);
     info.uploader = JSONUtils.optString(jo, "uploader");
     info.date = NumberUtils.parseLong(JSONUtils.optString(jo, "posted"), 0) * 1000;

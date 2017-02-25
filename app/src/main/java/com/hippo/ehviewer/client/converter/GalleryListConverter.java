@@ -141,9 +141,9 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
       // Cover url
       Elements es = it2.children();
       if (!es.isEmpty()) {
-        gi.coverUrl = StringUtils.strip(es.get(0).attr("src"));
+        gi.coverUrl = ConverterUtils.unescapeXml(es.get(0).attr("src"));
       } else {
-        gi.coverUrl = parseCoverUrl(it2.text());
+        gi.coverUrl = ConverterUtils.unescapeXml(parseCoverUrl(it2.text()));
       }
       // Cover
       if (gi.coverUrl != null) {
@@ -182,8 +182,7 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
     }
     gi.gid = pair.first;
     gi.token = pair.second;
-    // TODO maybe it's titleJpn
-    gi.title = StringUtils.strip(a.text());
+    gi.title = ConverterUtils.unescapeXml(a.text());
     gi.language = EhUtils.guessLang(gi.title);
 
     Element it3 = e.getElementsByClass("it3").first();

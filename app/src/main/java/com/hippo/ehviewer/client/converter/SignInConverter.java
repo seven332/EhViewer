@@ -44,7 +44,7 @@ public class SignInConverter extends EhConverter<SignInResult> {
   public SignInResult convert(String body) throws Exception {
     Matcher m = PATTERN_NAME.matcher(body);
     if (m.find()) {
-      return new SignInResult(StringUtils.strip(m.group(1)));
+      return new SignInResult(ConverterUtils.unescapeXml(m.group(1)));
     } else {
       m = PATTERN_ERROR.matcher(body);
       if (m.find()) {

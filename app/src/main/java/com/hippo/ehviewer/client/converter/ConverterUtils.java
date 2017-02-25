@@ -130,4 +130,32 @@ public final class ConverterUtils {
       return StringUtils.join(base, url, '/');
     }
   }
+
+  private static final String[] ESCAPE_CHARACTER_LIST = {
+      "&amp;",
+      "&lt;",
+      "&gt;",
+      "&quot;",
+      "&#039;",
+      "&times;",
+      "&nbsp;"
+  };
+
+  private static final String[] UNESCAPE_CHARACTER_LIST = {
+      "&",
+      "<",
+      ">",
+      "\"",
+      "'",
+      "×",
+      " "
+  };
+
+  /**
+   * Strip and escape.
+   */
+  public static String unescapeXml(String str) {
+    str = StringUtils.strip(str);
+    return StringUtils.replaceEach(str, ESCAPE_CHARACTER_LIST, UNESCAPE_CHARACTER_LIST);
+  }
 }

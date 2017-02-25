@@ -45,13 +45,14 @@ public class ProfileConverter extends EhConverter<ProfileResult> {
     Document d = Jsoup.parse(body);
     Element profileName = d.getElementById("profilename");
     try {
-      name = StringUtils.strip(profileName.child(0).text());
+      name = ConverterUtils.unescapeXml(profileName.child(0).text());
     } catch (NullPointerException | IndexOutOfBoundsException e) {
       name = null;
     }
     try {
       avatar = profileName.nextElementSibling().nextElementSibling().child(0).attr("src");
       avatar = ConverterUtils.completeUrl(EhUrl.URL_FORUMS, avatar);
+      avatar = ConverterUtils.unescapeXml(avatar);
     } catch (NullPointerException | IndexOutOfBoundsException e) {
       avatar = null;
     }

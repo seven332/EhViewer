@@ -95,9 +95,9 @@ public class WhatsHotConverter extends EhConverter<WhatsHotResult> {
       Log.w(LOG_TAG, "Can't find img element");
       return null;
     }
-    galleryInfo.coverUrl = img.attr("src");
+    galleryInfo.coverUrl = ConverterUtils.unescapeXml(img.attr("src"));
     galleryInfo.cover = EhUrl.getImageFingerprint(galleryInfo.coverUrl);
-    galleryInfo.title = img.attr("title");
+    galleryInfo.title = ConverterUtils.unescapeXml(img.attr("title"));
     galleryInfo.language = EhUtils.guessLang(galleryInfo.title);
 
     return galleryInfo;

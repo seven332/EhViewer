@@ -44,6 +44,7 @@ public class ForumsConverter extends EhConverter<ForumsResult> {
       Element child = userLinks.child(0).child(0).child(0);
       String url = child.attr("href");
       url = ConverterUtils.completeUrl(EhUrl.URL_FORUMS, url);
+      url = ConverterUtils.unescapeXml(url);
       return new ForumsResult(url);
     } catch (NullPointerException | IndexOutOfBoundsException e) {
       throw new ParseException("Can't get profile url", body);
