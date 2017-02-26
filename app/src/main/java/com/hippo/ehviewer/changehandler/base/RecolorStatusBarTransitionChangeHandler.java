@@ -26,6 +26,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.activity.EhvActivity;
+import com.hippo.ehviewer.changehandler.ChangeHandlerAnimators;
 import com.hippo.ehviewer.controller.base.MvpController;
 import com.hippo.ehviewer.transition.RunAnimator;
 import com.transitionseverywhere.Transition;
@@ -42,7 +43,7 @@ public abstract class RecolorStatusBarTransitionChangeHandler extends NullableTr
   @Nullable
   private Transition getRecolorBarTransition(@NonNull ViewGroup container,
       @Nullable View from, @Nullable View to) {
-    Animator animator = RecolorStatusBar.createRecolorStatusBarAnimator(container, from, to);
+    Animator animator = ChangeHandlerAnimators.recolorStatusBar(container, from, to);
     if (animator != null) {
       return new RunAnimator(animator);
     } else {
