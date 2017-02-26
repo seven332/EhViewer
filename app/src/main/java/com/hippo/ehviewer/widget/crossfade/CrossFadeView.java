@@ -34,6 +34,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import com.hippo.yorozuya.ObjectUtils;
 
 /**
  * The view to help {@link com.hippo.ehviewer.transition.CrossFade}.
@@ -181,7 +182,12 @@ public abstract class CrossFadeView<V extends View, D> extends ViewGroup {
     return i;
   }
 
+  @Nullable
   public Animator crossFade(int fromWidth, int fromHeight, D fromData, D toData) {
+    if (ObjectUtils.equals(fromData, toData)) {
+      return null;
+    }
+
     showFrom = true;
     // onLayout will be blocked during transition, so layout here
     from.measure(makeMeasureSpec(fromWidth, EXACTLY), makeMeasureSpec(fromHeight, EXACTLY));
