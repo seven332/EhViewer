@@ -36,12 +36,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.util.FloatProperty;
-import com.hippo.ehviewer.util.IntProperty;
 import com.hippo.ehviewer.widget.ControllerContainer;
 import com.hippo.yorozuya.android.AnimationUtils;
 import com.transitionseverywhere.ArcMotion;
 import com.transitionseverywhere.utils.AnimatorUtils;
+import com.transitionseverywhere.utils.FloatProperty;
+import com.transitionseverywhere.utils.IntProperty;
 import com.transitionseverywhere.utils.PointFProperty;
 import com.transitionseverywhere.utils.ViewUtils;
 
@@ -55,18 +55,21 @@ public final class ChangeHandlerAnimators {
   private static final boolean SUPPORT_COLOR_BAR =
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
-  private static final Property<DrawerLayout, Integer> STATUS_BAR_COLOR =
-      new IntProperty<DrawerLayout>(null) {
-        @Override
-        public void setValue(DrawerLayout object, int value) {
-          object.setStatusBarColor(value);
-        }
+  private static final Property<DrawerLayout, Integer> STATUS_BAR_COLOR;
 
-        @Override
-        public Integer get(DrawerLayout object) {
-          return object.getStatusBarColor();
-        }
-      };
+  static {
+    STATUS_BAR_COLOR = new IntProperty<DrawerLayout>() {
+      @Override
+      public void setValue(DrawerLayout object, int value) {
+        object.setStatusBarColor(value);
+      }
+
+      @Override
+      public Integer get(DrawerLayout object) {
+        return object.getStatusBarColor();
+      }
+    }.optimize();
+  }
 
   /**
    * Creates recolor status bar animator for ControllerChangeHandler.
@@ -152,18 +155,21 @@ public final class ChangeHandlerAnimators {
   // Change DrawerArrowDrawable
   ///////////////////////////////////////////////////////////////////////////
 
-  private static final Property<DrawerArrowDrawable, Float> DRAWER_ARROW_DRAWABLE_PROGRESS =
-      new FloatProperty<DrawerArrowDrawable>(null) {
-        @Override
-        public void setValue(DrawerArrowDrawable object, float value) {
-          object.setProgress(value);
-        }
+  private static final Property<DrawerArrowDrawable, Float> DRAWER_ARROW_DRAWABLE_PROGRESS;
 
-        @Override
-        public Float get(DrawerArrowDrawable object) {
-          return object.getProgress();
-        }
-      };
+  static {
+    DRAWER_ARROW_DRAWABLE_PROGRESS = new FloatProperty<DrawerArrowDrawable>() {
+      @Override
+      public void setValue(DrawerArrowDrawable object, float value) {
+        object.setProgress(value);
+      }
+
+      @Override
+      public Float get(DrawerArrowDrawable object) {
+        return object.getProgress();
+      }
+    };
+  }
 
   @Nullable
   public static Animator changeDrawerArrowDrawable(@Nullable DrawerArrowDrawable from,
