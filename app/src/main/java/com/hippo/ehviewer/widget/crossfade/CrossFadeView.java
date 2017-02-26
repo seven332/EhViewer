@@ -34,7 +34,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import com.hippo.yorozuya.android.AnimationUtils;
 
 /**
  * The view to help {@link com.hippo.ehviewer.transition.CrossFade}.
@@ -197,7 +196,6 @@ public abstract class CrossFadeView<V extends View, D> extends ViewGroup {
     toAnim.addListener(new ToAnimatorListener(to));
     AnimatorSet set = new AnimatorSet();
     set.playTogether(fromAnim, toAnim);
-    set.setInterpolator(AnimationUtils.FAST_SLOW_INTERPOLATOR);
     return set;
   }
 
