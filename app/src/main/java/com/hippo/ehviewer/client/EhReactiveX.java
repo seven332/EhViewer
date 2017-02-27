@@ -26,7 +26,7 @@ import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.exception.RuntimeExceptionWrapper;
 import com.hippo.ehviewer.client.exception.SadPandaException;
 import com.hippo.ehviewer.client.exception.StatusCodeException;
-import com.hippo.ehviewer.client.exception.ThrowableWrapper;
+import com.hippo.ehviewer.reactivex.ThrowableWrapper;
 import java.io.IOException;
 import okhttp3.ResponseBody;
 import retrofit2.Response;

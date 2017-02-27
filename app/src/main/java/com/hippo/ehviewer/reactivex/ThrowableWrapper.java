@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client.exception;
+package com.hippo.ehviewer.reactivex;
 
 /*
  * Created by Hippo on 1/19/2017.
