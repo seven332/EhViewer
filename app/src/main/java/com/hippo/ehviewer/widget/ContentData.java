@@ -318,7 +318,7 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
   }
 
   /**
-   * Returns {@code true} if two item is duplicate.
+   * Returns {@code true} if the two items are duplicate.
    *
    * @see #setRemoveDuplicates(boolean)
    */
