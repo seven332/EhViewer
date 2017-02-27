@@ -32,7 +32,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO Store first page
+// TODO Delete some data if the data list is to long
 
 /**
  * Data container for {@link ContentLayout}.
@@ -51,6 +51,7 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
   private static final Exception TAP_TO_LOAD_EXCEPTION = new TapToLoadException();
 
   @IntDef({
+      TYPE_RESTORE,
       TYPE_GOTO,
       TYPE_PREV_PAGE,
       TYPE_PREV_PAGE_ADJUST_POSITION,
@@ -61,11 +62,12 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
   @Retention(RetentionPolicy.SOURCE)
   @interface Type {}
 
-  static final int TYPE_GOTO = 0;
-  static final int TYPE_PREV_PAGE = 1;
-  static final int TYPE_PREV_PAGE_ADJUST_POSITION = 2;
-  static final int TYPE_NEXT_PAGE = 3;
-  static final int TYPE_NEXT_PAGE_ADJUST_POSITION = 4;
+  static final int TYPE_RESTORE = 0;
+  static final int TYPE_GOTO = 1;
+  static final int TYPE_PREV_PAGE = 2;
+  static final int TYPE_PREV_PAGE_ADJUST_POSITION = 3;
+  static final int TYPE_NEXT_PAGE = 4;
+  static final int TYPE_NEXT_PAGE_ADJUST_POSITION = 5;
   static final int TYPE_REFRESH_PAGE = 6;
 
   private static final long INVALID_ID = -1;
@@ -76,6 +78,8 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
   @Type
   private int requireType;
   private long requireId = INVALID_ID;
+
+  private boolean started;
 
   private boolean removeDuplicates = false;
   // Duplicates checking left and right range
@@ -143,6 +147,20 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
   @Override
   public T get(int index) {
     return data.get(index);
+  }
+
+  /**
+   * Restores the data from backed up before.
+   * {@code goTo(0)} will be called after restoring operation done.
+   * <p>
+   * Call it before any loading operation.
+   */
+  public void restore() {
+    if (started) {
+      Log.e(LOG_TAG, "Only call restore() before any loading operation");
+      return;
+    }
+    requireData(0, TYPE_RESTORE);
   }
 
   // Return true if min page reached.
@@ -239,6 +257,7 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
   }
 
   void requireData(int page, @Type int type) {
+    started = true;
     requirePage = page;
     requireType = type;
     requireId = nextId();
@@ -249,7 +268,11 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
       showContent();
     }
 
-    onRequireData(requireId, page);
+    if (type == TYPE_RESTORE) {
+      onRestoreData(requireId);
+    } else {
+      onRequireData(requireId, page);
+    }
   }
 
   /**
@@ -258,7 +281,20 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
    * or {@link #setError(long, Throwable)}.
    * If you get data right now, post it.
    */
-  public abstract void onRequireData(long id, int page);
+  protected abstract void onRequireData(long id, int page);
+
+  /**
+   * Restores data from backed up before. This method is not blocking.
+   * When you get data, call {@link #setData(long, List, int)}
+   * or {@link #setError(long, Throwable)}.
+   * If you get data right now, post it.
+   */
+  protected abstract void onRestoreData(long id);
+
+  /**
+   * Backs up the data to allow restore later. This method is not blocking.
+   */
+  protected abstract void onBackupData(List<T> data);
 
   /**
    * Whether remove duplicates. If remove, duplicate item
@@ -312,6 +348,9 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
     stopRefreshing();
 
     switch (requireType) {
+      case TYPE_RESTORE:
+        onRestore(d);
+        break;
       case TYPE_GOTO:
         onGoTo(d, min, max);
         break;
@@ -331,6 +370,37 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
     }
 
     return true;
+  }
+
+  private void onRestore(List<T> d) {
+    // Update data
+    data.clear();
+    data.addAll(d);
+    notifyDataSetChanged();
+
+    // Update dataDivider
+    dataDivider.clear();
+    dataDivider.add(d.size());
+
+    // Update pages, beginPage, endPage
+    // Always assume 1 page
+    minPage = 0;
+    maxPage = 1;
+    beginPage = 0;
+    endPage = 1;
+
+    // Update UI
+    if (data.isEmpty()) {
+      showProgressBar();
+    } else {
+      showContent();
+      // Scroll to top
+      scrollToPosition(0);
+    }
+
+    // Continue loading
+    setHeaderRefreshing();
+    goTo(0);
   }
 
   private void onGoTo(List<T> d, int min, int max) {
@@ -360,6 +430,11 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
       showContent();
       // Scroll to top
       scrollToPosition(0);
+    }
+
+    // Backup data
+    if (requirePage == 0 && !d.isEmpty()) {
+      onBackupData(d);
     }
   }
 
@@ -546,6 +621,32 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
     // Reset refresh UI
     stopRefreshing();
 
+    if (requireType == TYPE_RESTORE) {
+      onRestoreError();
+    } else {
+      onError(e);
+    }
+
+    return true;
+  }
+
+  private void onRestoreError() {
+    // No data at all
+    // Reset all
+    data.clear();
+    dataDivider.clear();
+    minPage = 0;
+    maxPage = 0;
+    beginPage = 0;
+    endPage = 0;
+    // Show progress bar
+    showProgressBar();
+    // Continue loading
+    setHeaderRefreshing();
+    goTo(0);
+  }
+
+  private void onError(Throwable e) {
     if (data.isEmpty()) {
       // No data at all
       // Reset all and show tip
@@ -561,8 +662,6 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
       // Only non-interrupting message
       showMessage(e);
     }
-
-    return true;
   }
 
   @SuppressWarnings("unchecked")
