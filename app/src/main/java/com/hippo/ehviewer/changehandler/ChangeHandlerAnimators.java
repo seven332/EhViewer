@@ -37,11 +37,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
+import android.support.v7.widget.ActionMenuView;
 import android.util.Property;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.activity.EhvActivity;
+import com.hippo.ehviewer.drawable.ScaleDrawable;
 import com.hippo.ehviewer.widget.ControllerContainer;
 import com.hippo.ehviewer.widget.Overlay;
 import com.hippo.yorozuya.android.AnimationUtils;
@@ -395,7 +400,7 @@ public final class ChangeHandlerAnimators {
     }
 
     // Create overlay
-    final Overlay overlay = Overlay.getRootOverlay(from);
+    final Overlay overlay = Overlay.getOverlay(from, EhvActivity.OVERLAY_CONTENT_ID);
     if (overlay == null) {
       return null;
     }
@@ -479,5 +484,232 @@ public final class ChangeHandlerAnimators {
     });
 
     return set;
+  }
+
+
+  ///////////////////////////////////////////////////////////////////////////
+  // ChangeActionMenu
+  ///////////////////////////////////////////////////////////////////////////
+
+  private static final FloatProperty<ScaleDrawable> DRAWABLE_SCALE_PROPERTY;
+
+  static {
+    DRAWABLE_SCALE_PROPERTY = new FloatProperty<ScaleDrawable>() {
+      @Override
+      public void setValue(ScaleDrawable object, float value) {
+        object.setScale(value);
+      }
+      @Override
+      public Float get(ScaleDrawable object) {
+        return object.getScale();
+      }
+    };
+  }
+
+  @Nullable
+  private static List<View> getMenuItemViews(@Nullable ActionMenuView menuView) {
+    if (menuView == null || !ViewCompat.isLaidOut(menuView)) {
+      return null;
+    }
+
+    List<View> views = new ArrayList<>();
+    for (int i = 0, n = menuView.getChildCount(); i < n; i++) {
+      View child = menuView.getChildAt(i);
+      if (child.getVisibility() != View.GONE) {
+        views.add(child);
+      }
+    }
+    return views;
+  }
+
+  @Nullable
+  private static Animator createMenuViewAnimator(Overlay overlay,
+      ActionMenuView menu, List<View> views, long duration, boolean isFrom) {
+    if (menu == null || views == null || views.isEmpty()) {
+      return null;
+    }
+
+    int size = views.size();
+    List<Animator> animators = new ArrayList<>(size);
+    List<Bitmap> bitmaps = new ArrayList<>(size);
+    List<Drawable> drawables = new ArrayList<>(size);
+    for (View v: views) {
+      if (!ViewCompat.isLaidOut(v)) {
+        continue;
+      }
+      if (!overlay.getLocationInTarget(v, TEMP_LOCATION)) {
+        continue;
+      }
+
+      // Add bitmap
+      Bitmap bitmap = screenshot(v);
+      if (bitmap == null) {
+        continue;
+      }
+      bitmaps.add(bitmap);
+
+      // Add drawable
+      float startScale = isFrom ? 1.0f : 0.0f;
+      float endScale = isFrom ? 0.0f : 1.0f;
+      ScaleDrawable drawable = new ScaleDrawable(
+          new BitmapDrawable(v.getResources(), bitmap), Gravity.CENTER, startScale);
+      drawable.setBounds(TEMP_LOCATION[0], TEMP_LOCATION[1],
+          TEMP_LOCATION[0] + bitmap.getWidth(), TEMP_LOCATION[1] + bitmap.getHeight());
+      overlay.add(drawable);
+      drawables.add(drawable);
+
+      // Add animator
+      Animator animator = ObjectAnimator.ofFloat(
+          drawable, DRAWABLE_SCALE_PROPERTY, startScale, endScale);
+      animator.setDuration(duration);
+      animators.add(animator);
+    }
+
+    if (!animators.isEmpty()) {
+      AnimatorSet set = new AnimatorSet();
+      set.playSequentially(animators);
+      set.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          for (Drawable drawable: drawables) {
+            overlay.remove(drawable);
+          }
+          for (Bitmap bitmap: bitmaps) {
+            bitmap.recycle();
+          }
+        }
+      });
+      return set;
+    } else {
+      for (Drawable drawable: drawables) {
+        overlay.remove(drawable);
+      }
+      for (Bitmap bitmap: bitmaps) {
+        bitmap.recycle();
+      }
+      return null;
+    }
+  }
+
+  public static Animator createActionMenuAnimator(Overlay overlay,
+      ActionMenuView from, List<View> fromViews,
+      ActionMenuView to, List<View> toViews,
+      int duration, boolean toIsTop) {
+    Animator fromAnimator;
+    Animator toAnimator;
+    if (toIsTop) {
+      fromAnimator = createMenuViewAnimator(overlay, from, fromViews, duration, true);
+      toAnimator = createMenuViewAnimator(overlay, to, toViews, duration, false);
+    } else {
+      toAnimator = createMenuViewAnimator(overlay, to, toViews, duration, false);
+      fromAnimator = createMenuViewAnimator(overlay, from, fromViews, duration, true);
+    }
+
+    if (fromAnimator == null) {
+      return toAnimator;
+    }
+    if (toAnimator == null) {
+      return fromAnimator;
+    }
+
+    // Adjust delay according to from views count and to views count
+    int fromCount = fromViews.size();
+    int toCount = toViews.size();
+    int delay = (1 + fromCount - toCount) * duration;
+    if (delay > 0) {
+      toAnimator.setStartDelay(delay);
+    } else {
+      fromAnimator.setStartDelay(-delay);
+    }
+    AnimatorSet set = new AnimatorSet();
+    set.playTogether(fromAnimator, toAnimator);
+    return set;
+  }
+
+  private static void addOverflow(Overlay overlay, Animator animator, View overflow) {
+    if (!overlay.getLocationInTarget(overflow, TEMP_LOCATION)) {
+      return;
+    }
+    Bitmap bitmap = screenshot(overflow);
+    if (bitmap == null) {
+      return;
+    }
+    Drawable drawable = new BitmapDrawable(overflow.getResources(), bitmap);
+    drawable.setBounds(TEMP_LOCATION[0], TEMP_LOCATION[1],
+        TEMP_LOCATION[0] + bitmap.getWidth(), TEMP_LOCATION[1] + bitmap.getHeight());
+    overlay.add(drawable);
+    animator.addListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        overlay.remove(drawable);
+        bitmap.recycle();
+      }
+    });
+  }
+
+  @Nullable
+  private static Animator changeActionMenuInternal(ActionMenuView from,
+      ActionMenuView to, int duration, boolean toIsTop) {
+    Overlay overlay = Overlay.getOverlay(to, EhvActivity.OVERLAY_CONTENT_ID);
+    if (overlay == null) {
+      return null;
+    }
+
+    // Get all visible views
+    List<View> fromViews = getMenuItemViews(from);
+    List<View> toViews = getMenuItemViews(to);
+
+    // Remove overflow view if both contain it
+    View overflow = null;
+    if (fromViews != null && !fromViews.isEmpty()
+        && fromViews.get(fromViews.size() - 1) instanceof ImageView
+        && toViews != null && !toViews.isEmpty()
+        && toViews.get(toViews.size() - 1) instanceof ImageView) {
+      overflow = toViews.get(toViews.size() - 1);
+      fromViews = fromViews.subList(0, fromViews.size() - 1);
+      toViews = toViews.subList(0, toViews.size() - 1);
+    }
+
+    Animator animator = createActionMenuAnimator(
+        overlay, from, fromViews, to, toViews, duration, toIsTop);
+
+    // Keep overflow
+    if (animator != null && overflow != null) {
+      addOverflow(overlay, animator, overflow);
+    }
+
+    return animator;
+  }
+
+  /**
+   * Change action menu animator.
+   *
+   * @param duration the duration for each menu item animation
+   */
+  public static Animator changeActionMenu(@Nullable ActionMenuView from,
+      @Nullable ActionMenuView to, int duration, boolean toIsTop) {
+    Animator animator = changeActionMenuInternal(from, to, duration, toIsTop);
+    if (animator != null) {
+      // Hide menu
+      if (from != null) {
+        from.setAlpha(0.0f);
+      }
+      if (to != null) {
+        to.setAlpha(0.0f);
+      }
+      animator.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          // Show menu
+          if (from != null) {
+            from.setAlpha(1.0f);
+          }
+          if (to != null) {
+            to.setAlpha(1.0f);
+          }
+        }
+      });
+    }
+    return animator;
   }
 }
