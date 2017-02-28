@@ -22,6 +22,7 @@ package com.hippo.ehviewer.client;
 
 import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
+import rx.functions.Action1;
 
 /**
  * A base {@link Subscriber} for {@link EhClient}.
@@ -53,4 +54,33 @@ public abstract class EhSubscriber<T extends EhResult> extends Subscriber<Result
    * Called if an error occurred.
    */
   public abstract void onFailure(Throwable e);
+
+  /**
+   * Creates a {@code EhSubscriber} from a {@code Action1<T>} and a {@code Action1<Throwable>}.
+   */
+  public static <T extends EhResult> EhSubscriber<T> from(Action1<T> onSuccess,
+      Action1<Throwable> onFailure) {
+    return new DelegateEhSubscriber<>(onSuccess, onFailure);
+  }
+
+  private static class DelegateEhSubscriber<T extends EhResult> extends EhSubscriber<T> {
+
+    private final Action1<T> onSuccess;
+    private final Action1<Throwable> onFailure;
+
+    public DelegateEhSubscriber(Action1<T> onSuccess, Action1<Throwable> onFailure) {
+      this.onSuccess = onSuccess;
+      this.onFailure = onFailure;
+    }
+
+    @Override
+    public void onSuccess(T t) {
+      onSuccess.call(t);
+    }
+
+    @Override
+    public void onFailure(Throwable e) {
+      onFailure.call(e);
+    }
+  }
 }
