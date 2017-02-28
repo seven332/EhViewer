@@ -190,7 +190,9 @@ public final class JsonStore {
     try {
       T t = gson.fromJson(item.value, clazz);
       if (t instanceof Item) {
-        ((Item) t).onFetch(item.version);
+        if (!((Item) t).onFetch(item.version)) {
+          throw new IOException("Invalid item");
+        }
       }
       return t;
     } catch (JsonParseException e) {
@@ -226,10 +228,13 @@ public final class JsonStore {
       if (item.value instanceof JsonArray) {
         for (JsonElement je: (JsonArray) item.value) {
           T t = gson.fromJson(je, clazz);
+          boolean valid = true;
           if (t instanceof Item) {
-            ((Item) t).onFetch(item.version);
+            valid = ((Item) t).onFetch(item.version);
           }
-          list.add(t);
+          if (valid) {
+            list.add(t);
+          }
         }
       }
       return list;
@@ -259,8 +264,11 @@ public final class JsonStore {
   public interface Item {
     /**
      * Converts the item from the {@code version} to the last version.
+     * <p>
+     * Returns {@code false} if the item is invalid, the item will not be returned in
+     * {@link #fetch(Gson, File, Class)} and {@link #fetchList(Gson, File, Class)}.
      */
-    void onFetch(int version);
+    boolean onFetch(int version);
   }
 
   /**
