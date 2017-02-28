@@ -20,12 +20,18 @@ package com.hippo.ehviewer.changehandler;
  * Created by Hippo on 2/26/2017.
  */
 
+import static com.hippo.yorozuya.android.ViewUtils.screenshot;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,6 +43,7 @@ import android.view.ViewGroup;
 import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.widget.ControllerContainer;
+import com.hippo.ehviewer.widget.Overlay;
 import com.hippo.yorozuya.android.AnimationUtils;
 import com.transitionseverywhere.ArcMotion;
 import com.transitionseverywhere.utils.AnimatorUtils;
@@ -44,6 +51,8 @@ import com.transitionseverywhere.utils.FloatProperty;
 import com.transitionseverywhere.utils.IntProperty;
 import com.transitionseverywhere.utils.PointFProperty;
 import com.transitionseverywhere.utils.ViewUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ChangeHandlerAnimators {
   private ChangeHandlerAnimators() {}
@@ -341,5 +350,134 @@ public final class ChangeHandlerAnimators {
       isTopLeftSet = false;
       isBottomRightSet = false;
     }
+  }
+
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Cross fade
+  ///////////////////////////////////////////////////////////////////////////
+
+  private static final int[] TEMP_LOCATION = new int[2];
+
+  private static final IntProperty<Drawable> DRAWABLE_ALPHA_PROPERTY;
+  private static final PointFProperty<Drawable> DRAWABLE_POSITION_PROPERTY;
+
+  static {
+    DRAWABLE_ALPHA_PROPERTY = new IntProperty<Drawable>() {
+      @Override
+      public void setValue(Drawable object, int value) {
+        object.setAlpha(value);
+      }
+    };
+
+    DRAWABLE_POSITION_PROPERTY = new PointFProperty<Drawable>() {
+      private Rect mBounds = new Rect();
+      @Override
+      public void set(Drawable object, PointF value) {
+        object.copyBounds(mBounds);
+        mBounds.offsetTo(Math.round(value.x), Math.round(value.y));
+        object.setBounds(mBounds);
+      }
+      @Override
+      public PointF get(Drawable object) {
+        object.copyBounds(mBounds);
+        return new PointF(mBounds.left, mBounds.top);
+      }
+    };
+  }
+
+  @Nullable
+  public static Animator crossFade(@Nullable View from, @Nullable View to, boolean changePosition,
+      boolean toIsTop) {
+    if (from == null || !ViewCompat.isLaidOut(from)
+        || to == null || !ViewCompat.isLaidOut(to)) {
+      return null;
+    }
+
+    // Create overlay
+    final Overlay overlay = Overlay.getRootOverlay(from);
+    if (overlay == null) {
+      return null;
+    }
+
+    // Get location
+    if (!overlay.getLocationInTarget(from, TEMP_LOCATION)) {
+      return null;
+    }
+    int startX = TEMP_LOCATION[0];
+    int startY = TEMP_LOCATION[1];
+
+    // Create bitmap
+    Bitmap startBitmap = screenshot(from);
+    if (startBitmap == null) {
+      return null;
+    }
+    Bitmap endBitmap = screenshot(to);
+    if (endBitmap == null) {
+      startBitmap.recycle();
+      return null;
+    }
+    final Drawable startDrawable = new BitmapDrawable(from.getContext().getResources(), startBitmap);
+    startDrawable.setBounds(startX, startY,
+        startX + startBitmap.getWidth(), startY + startBitmap.getHeight());
+    final Drawable endDrawable = new BitmapDrawable(to.getContext().getResources(), endBitmap);
+    endDrawable.setBounds(startX, startY,
+        startX + endBitmap.getWidth(), startY + endBitmap.getHeight());
+
+    // Hide from and to view
+    from.setAlpha(0.0f);
+    to.setAlpha(0.0f);
+    // Add drawables to overlay
+    if (toIsTop) {
+      overlay.add(startDrawable);
+      overlay.add(endDrawable);
+    } else {
+      overlay.add(endDrawable);
+      overlay.add(startDrawable);
+    }
+
+    List<Animator> animators = new ArrayList<>(3);
+
+    // Create alpha animator
+    Animator startAlpha = ObjectAnimator.ofInt(startDrawable, DRAWABLE_ALPHA_PROPERTY, 255, 0);
+    Animator endAlpha = ObjectAnimator.ofInt(endDrawable, DRAWABLE_ALPHA_PROPERTY, 0, 255);
+    animators.add(startAlpha);
+    animators.add(endAlpha);
+
+    // Create position animator
+    if (changePosition && overlay.getLocationInTarget(to, TEMP_LOCATION)) {
+      int endX = TEMP_LOCATION[0];
+      int endY = TEMP_LOCATION[1];
+      if (startX != endX || startY != endY) {
+        Animator startPosition = AnimatorUtils.ofPointF(startDrawable, DRAWABLE_POSITION_PROPERTY,
+            ACR_PATH_MOTION, startX, startY, endX, endY);
+        startPosition.setInterpolator(AnimationUtils.SLOW_FAST_SLOW_INTERPOLATOR);
+        Animator endPosition = AnimatorUtils.ofPointF(endDrawable, DRAWABLE_POSITION_PROPERTY,
+            ACR_PATH_MOTION, startX, startY, endX, endY);
+        endPosition.setInterpolator(AnimationUtils.SLOW_FAST_SLOW_INTERPOLATOR);
+        animators.add(startPosition);
+        animators.add(endPosition);
+      }
+    }
+
+    // Combine animator
+    AnimatorSet set = new AnimatorSet();
+    set.playTogether(animators);
+    set.addListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        // Remove drawables from overlay
+        overlay.remove(startDrawable);
+        overlay.remove(endDrawable);
+        // Show from and to view
+        from.setAlpha(1.0f);
+        to.setAlpha(1.0f);
+        // Recycle bitmaps
+        startBitmap.recycle();
+        endBitmap.recycle();
+      }
+    });
+
+    return set;
   }
 }
