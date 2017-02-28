@@ -162,10 +162,21 @@ public class Overlay extends AbsoluteLayout {
    */
   @Nullable
   public static Overlay getRootOverlay(View view) {
+    return getOverlay(view, android.R.id.content);
+  }
+
+  /**
+   * Creates or gets the overlay for the view with the {@code id}
+   * starting from the {@code view}.
+   * <p>
+   * A overlay will be added as a child of the view with the {@code id}.
+   */
+  @Nullable
+  public static Overlay getOverlay(View view, int id) {
     if (view == null) {
       return null;
     }
-    View root = ViewUtils.getAncestor(view, android.R.id.content);
+    View root = ViewUtils.getAncestor(view, id);
     if (root instanceof ViewGroup) {
       return getViewOverlay((ViewGroup) root);
     } else {
