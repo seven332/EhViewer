@@ -20,6 +20,7 @@ package com.hippo.ehviewer.controller.base;
  * Created by Hippo on 2/20/2017.
  */
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,7 +48,7 @@ public abstract class RefWatchingController extends Controller {
   protected void onDestroy() {
     super.onDestroy();
     if (hasExited) {
-      ((EhvApp) getApplicationContext()).getRefWatcher().watch(this);
+      watchSelf();
     }
   }
 
@@ -57,7 +58,14 @@ public abstract class RefWatchingController extends Controller {
     super.onChangeEnded(changeHandler, changeType);
     hasExited = !changeType.isEnter;
     if (isDestroyed()) {
-      ((EhvApp) getApplicationContext()).getRefWatcher().watch(this);
+      watchSelf();
+    }
+  }
+
+  private void watchSelf() {
+    Context context = getApplicationContext();
+    if (context instanceof EhvApp) {
+      ((EhvApp) context).getRefWatcher().watch(this);
     }
   }
 }
