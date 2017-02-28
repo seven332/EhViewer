@@ -34,6 +34,7 @@ import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import javax.net.ssl.SSLException;
 import org.apache.http.conn.ConnectTimeoutException;
 
 /**
@@ -61,7 +62,8 @@ public final class ExceptionExplainer {
     } else if (e instanceof ProtocolException
         && e.getMessage().startsWith("Too many follow-up requests:")) {
       textResId = R.string.explanation_redirection;
-    } else if (e instanceof ProtocolException || e instanceof SocketException) {
+    } else if (e instanceof ProtocolException || e instanceof SocketException
+        || e instanceof SSLException) {
       textResId = R.string.explanation_socket;
 
     // EhClient
