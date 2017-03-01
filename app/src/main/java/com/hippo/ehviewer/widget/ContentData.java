@@ -169,7 +169,8 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
   }
 
   // Return true if max page reached.
-  private boolean isMaxReached() {
+  @Override
+  public boolean isMaxReached() {
     return endPage >= maxPage;
   }
 
@@ -552,6 +553,8 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
       if (adjustPosition) {
         // Scroll to the first position of require page
         scrollToPosition(MathUtils.clamp(oldSize, 0, data.size() - 1));
+      } else {
+        scrollDownALittle();
       }
     }
   }
@@ -746,6 +749,9 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
 
     @Override
     public void scrollToPosition(int position) {}
+
+    @Override
+    public void scrollDownALittle() {}
 
     @Override
     public void notifyDataSetChanged() {}

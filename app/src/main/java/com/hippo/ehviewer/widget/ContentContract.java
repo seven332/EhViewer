@@ -40,6 +40,8 @@ public interface ContentContract {
     void switchTo(int page);
 
     int size();
+
+    boolean isMaxReached();
   }
 
   interface View extends ViewInterface {
@@ -59,6 +61,8 @@ public interface ContentContract {
     void setFooterRefreshing();
 
     void scrollToPosition(int position);
+
+    void scrollDownALittle();
 
     void notifyDataSetChanged();
 
@@ -165,6 +169,15 @@ public interface ContentContract {
     }
 
     @Override
+    public void scrollDownALittle() {
+      View view = getView();
+      if (view != null) {
+        view.scrollDownALittle();
+      }
+      getViewState().scrollDownALittle();
+    }
+
+    @Override
     public void notifyDataSetChanged() {
       View view = getView();
       if (view != null) {
@@ -222,6 +235,11 @@ public interface ContentContract {
     @Override
     public int size() {
       return array.length;
+    }
+
+    @Override
+    public boolean isMaxReached() {
+      return true;
     }
 
     @Override

@@ -34,6 +34,7 @@ import com.hippo.easyrecyclerview.EasyAdapter;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.R;
 import com.hippo.refreshlayout.RefreshLayout;
+import com.hippo.yorozuya.android.LayoutUtils;
 import com.jakewharton.rxbinding.view.RxView;
 import com.transitionseverywhere.Fade;
 import com.transitionseverywhere.Transition;
@@ -55,6 +56,8 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
 
   private RecyclerView.Adapter adapter;
   private List<RecyclerView.ItemDecoration> itemDecorations = new ArrayList<>();
+
+  private int aLittleDistance;
 
   @Nullable
   private ContentContract.Presenter presenter;
@@ -115,6 +118,18 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
         }
       }
     });
+
+    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+      @Override
+      public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        if (!refreshLayout.isRefreshing() && refreshLayout.isAlmostBottom()
+            && presenter != null && !presenter.isMaxReached()) {
+          refreshLayout.setFooterRefreshing(true);
+          presenter.onRefreshFooter();
+        }
+      }
+    });
+
     RxView.clicks(tip)
         .throttleFirst(1, TimeUnit.SECONDS)
         .subscribe(a -> {
@@ -122,6 +137,8 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
             presenter.onClickTip();
           }
         });
+
+    aLittleDistance = LayoutUtils.dp2pix(context, 48);
   }
 
   public void setPresenter(@Nullable ContentContract.Presenter presenter) {
@@ -308,6 +325,14 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
   @Override
   public void scrollToPosition(int position) {
     recyclerView.scrollToPosition(position);
+  }
+
+  @Override
+  public void scrollDownALittle() {
+    // Only scroll down if catch bottom
+    if (refreshLayout.isAlmostBottom()) {
+      recyclerView.smoothScrollBy(0, aLittleDistance);
+    }
   }
 
   @Override
