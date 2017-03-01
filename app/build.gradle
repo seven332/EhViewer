@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'android-chinese-string'
 apply plugin: 'com.hippo.android-preferences'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 25
@@ -56,6 +57,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.5'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'
+    compile 'com.hwangjr.rxbus:rxbus:1.0.5'
 
     // Modified okio
     compile 'com.github.seven332.okio:okio:1.11.0'
@@ -71,8 +73,11 @@ dependencies {
     // HTML to CharSequence
     compile 'com.github.seven332:android-html:0.1.1'
 
+    // Json
+    compile 'com.google.code.gson:gson:2.8.0'
+
     // Looks like fragment, but cleaner
-    compile 'com.github.seven332.conductor:conductor:2.1.0'
+    compile 'com.github.seven332.conductor:conductor:6dd4ce25dd'
 
     // Backport of Android Transitions API
     compile "com.andkulikov:transitionseverywhere:1.7.0"
@@ -81,20 +86,22 @@ dependencies {
     compile 'com.facebook.fresco:fresco:1.0.1'
     compile 'com.facebook.fresco:imagepipeline-okhttp3:1.0.1'
 
-    // Preferences
-    compile 'com.github.seven332.android-preferences:preferences:0.1.0'
+    compile 'org.greenrobot:greendao:3.2.0'
 
-    compile 'com.github.seven332.easyrecyclerview:easyrecyclerview:1.2.0'
-    compile 'com.github.seven332.easyrecyclerview:easyrecyclerview-rxjava:1.2.0'
-    compile 'com.github.seven332.easyrecyclerview:recyclerview-addons:1.2.0'
+    // Preferences
+    compile 'com.github.seven332.android-preferences:preferences:0.1.1'
+
+    compile 'com.github.seven332.easyrecyclerview:easyrecyclerview:1.2.1'
+    compile 'com.github.seven332.easyrecyclerview:easyrecyclerview-rxjava:1.2.1'
+    compile 'com.github.seven332.easyrecyclerview:recyclerview-addons:1.2.1'
     compile 'com.github.seven332:refreshlayout:0.2.1'
     compile 'com.github.seven332:drawerlayout:0.2.1'
     compile 'me.zhanghai.android.materialprogressbar:library:1.3.0'
 
     // Utilities
-    compile 'com.github.seven332.yorozuya:yorozuya:1.1.1'
-    compile 'com.github.seven332.yorozuya:yorozuya-android:1.1.1'
-    compile 'com.github.seven332.yorozuya:yorozuya-preconditions:1.1.1'
+    compile 'com.github.seven332.yorozuya:yorozuya:1.1.2'
+    compile 'com.github.seven332.yorozuya:yorozuya-android:1.1.2'
+    compile 'com.github.seven332.yorozuya:yorozuya-preconditions:1.1.2'
 
     // Memory leak detection
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
