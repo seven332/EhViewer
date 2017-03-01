@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2017 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content">
+
+  <LinearLayout
+    android:id="@+id/sign_in_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/key_margin"
+    android:orientation="vertical">
+
+    <com.hippo.ehviewer.widget.AutoHideTextView
+      android:id="@+id/error"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:paddingBottom="@dimen/key_margin"
+      android:textSize="@dimen/text_little_small"
+      android:textColor="?attr/textColorError"/>
+
+    <com.hippo.ehviewer.widget.CuteTextInputLayout
+      android:id="@+id/username_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <android.support.design.widget.TextInputEditText
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/username"
+        android:imeOptions="actionNext"
+        android:inputType="text"
+        android:maxLines="1"/>
+
+    </com.hippo.ehviewer.widget.CuteTextInputLayout>
+
+    <com.hippo.ehviewer.widget.CuteTextInputLayout
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:id="@+id/password_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:passwordToggleEnabled="true">
+
+      <android.support.design.widget.TextInputEditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:imeOptions="actionNext"
+        android:inputType="textPassword"
+        android:maxLines="1"/>
+
+    </com.hippo.ehviewer.widget.CuteTextInputLayout>
+
+    <com.hippo.ehviewer.widget.RecaptchaView
+      android:id="@+id/recaptcha_view"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"/>
+
+    <com.hippo.ehviewer.widget.CuteTextInputLayout
+      android:id="@+id/recaptcha_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp">
+
+      <android.support.design.widget.TextInputEditText
+        android:id="@+id/recaptcha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/recaptcha"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLines="1"/>
+
+    </com.hippo.ehviewer.widget.CuteTextInputLayout>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/recaptcha_message"/>
+
+    <TextView
+      android:id="@+id/sign_in_webview"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:paddingTop="@dimen/key_margin"
+      android:text="@string/sign_in_webview"
+      android:textColor="?attr/colorPrimary"/>
+
+    <TextView
+      android:id="@+id/sign_in_cookies"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:paddingTop="@dimen/key_margin"
+      android:text="@string/sign_in_cookies"
+      android:textColor="?attr/colorPrimary"/>
+
+    <TextView
+      android:id="@+id/sign_in_skip"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:paddingTop="@dimen/key_margin"
+      android:text="@string/sign_in_skip"
+      android:textColor="?attr/colorPrimary"/>
+
+  </LinearLayout>
+
+  <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/progress_bar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:indeterminate="true"
+    app:mpb_progressStyle="circular"
+    style="@style/Widget.MaterialProgressBar.ProgressBar"/>
+
+</FrameLayout>
