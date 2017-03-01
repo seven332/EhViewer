@@ -25,18 +25,14 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import com.bluelinelabs.conductor.ChangeHandlerFrameLayout;
 import com.hippo.drawerlayout.DrawerLayout;
-import com.hippo.drawerlayout.DrawerLayoutChild;
 
 /**
  * {@code ControllerContainer} is a container for controllers.
  */
-public class ControllerContainer extends ChangeHandlerFrameLayout implements DrawerLayoutChild {
+public class ControllerContainer extends ChangeHandlerFrameLayout {
 
   @Nullable
   private DrawerLayout drawerLayout;
-
-  private int layoutPaddingTop;
-  private int layoutPaddingBottom;
 
   public ControllerContainer(Context context) {
     super(context);
@@ -63,21 +59,5 @@ public class ControllerContainer extends ChangeHandlerFrameLayout implements Dra
    */
   public void setDrawLayout(DrawerLayout drawLayout) {
     this.drawerLayout = drawLayout;
-  }
-
-  @Override
-  public void setFitPadding(int top, int bottom) {
-    layoutPaddingTop = top;
-    layoutPaddingBottom = bottom;
-  }
-
-  @Override
-  public int getLayoutPaddingTop() {
-    return layoutPaddingTop;
-  }
-
-  @Override
-  public int getLayoutPaddingBottom() {
-    return layoutPaddingBottom;
   }
 }

@@ -31,6 +31,10 @@ import android.widget.TextView;
  */
 public class CrossFadeTextView extends CrossFadeView<TextView, CharSequence> {
 
+  public CrossFadeTextView(Context context) {
+    super(context);
+  }
+
   public CrossFadeTextView(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
