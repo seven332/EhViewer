@@ -65,6 +65,30 @@ public abstract class ControllerActivity extends AppCompatActivity {
   }
 
   /**
+   * Gets the top {@code Controller}.
+   */
+  @Nullable
+  public Controller getTopController() {
+    if (router != null) {
+      return router.getCurrentController();
+    } else {
+      Log.e(LOG_TAG, "router == null, can't get top controller");
+      return null;
+    }
+  }
+
+  /**
+   * Pops the top {@code Controller} in this {@code ControllerActivity}.
+   */
+  public void popTopController() {
+    if (router != null) {
+      router.popCurrentController();
+    } else {
+      Log.e(LOG_TAG, "router == null, can't pop top controller");
+    }
+  }
+
+  /**
    * Push a {@code Controller} to this {@code ControllerActivity}.
    */
   public void pushController(@NonNull RouterTransaction transaction) {
