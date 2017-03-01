@@ -53,6 +53,8 @@
   <string name="nav_menu_whats_hot">What\'s Hot</string>
 
   <string name="action_search">Search</string>
+  <string name="action_detail">Show detail</string>
+  <string name="action_brief">Show brief</string>
 
   <string name="explanation_invalid_url">Invalid url</string>
   <string name="explanation_timeout">Timeout</string>

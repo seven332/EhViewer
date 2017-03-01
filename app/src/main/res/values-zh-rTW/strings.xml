@@ -48,6 +48,10 @@
   <string name="nav_menu_homepage">首頁</string>
   <string name="nav_menu_whats_hot">熱門</string>
 
+  <string name="action_search">搜尋</string>
+  <string name="action_detail">顯示詳情</string>
+  <string name="action_brief">顯示封面</string>
+
   <string name="explanation_invalid_url">無效網址</string>
   <string name="explanation_timeout">超時</string>
   <string name="explanation_unknown_host">未知主機</string>

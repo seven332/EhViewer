@@ -20,6 +20,8 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+
+    <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
   </style>
 
   <style name="AppTheme" parent="BaseTheme">
@@ -39,7 +41,5 @@
   </style>
 
   <style name="AppTheme.Main" parent="AppTheme.NoActionBar"/>
-
-  <style name="AppTheme.Recaptcha" parent="AppTheme.NoActionBar"/>
 
 </resources>

@@ -48,6 +48,10 @@
   <string name="nav_menu_homepage">首页</string>
   <string name="nav_menu_whats_hot">热门</string>
 
+  <string name="action_search">搜索</string>
+  <string name="action_detail">显示详情</string>
+  <string name="action_brief">显示封面</string>
+
   <string name="explanation_invalid_url">无效网址</string>
   <string name="explanation_timeout">超时</string>
   <string name="explanation_unknown_host">未知主机</string>
