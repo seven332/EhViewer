@@ -28,7 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.activity.EhvActivity;
-import com.hippo.ehviewer.presenter.ControllerPresenter;
+import com.hippo.ehviewer.presenter.base.ControllerPresenter;
 import com.hippo.ehviewer.view.base.ControllerView;
 import com.hippo.yorozuya.precondition.Preconditions;
 

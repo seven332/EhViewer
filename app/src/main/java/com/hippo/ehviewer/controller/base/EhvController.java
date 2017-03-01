@@ -22,7 +22,8 @@ package com.hippo.ehviewer.controller.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import com.hippo.ehviewer.presenter.ControllerPresenter;
+import com.bluelinelabs.conductor.Controller;
+import com.hippo.ehviewer.presenter.base.ControllerPresenter;
 import com.hippo.ehviewer.view.base.EhvView;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,7 @@ import java.util.Map;
 public abstract class EhvController<P extends ControllerPresenter, V extends EhvView>
     extends MvpController<P, V> {
 
-  private static Map<Class<? extends EhvController>, Class<? extends EhvView>> CONTROLLER_VIEW_MAP =
+  private static Map<Class<? extends Controller>, Class<? extends EhvView>> CONTROLLER_VIEW_MAP =
       new HashMap<>();
 
   /**
@@ -50,7 +51,7 @@ public abstract class EhvController<P extends ControllerPresenter, V extends Ehv
    * Gets view class for the controller class.
    */
   @Nullable
-  public static Class<? extends EhvView> getViewClass(Class<? extends EhvController> c) {
+  public static Class<? extends EhvView> getViewClass(Class<? extends Controller> c) {
     return CONTROLLER_VIEW_MAP.get(c);
   }
 
