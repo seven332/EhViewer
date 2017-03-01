@@ -117,7 +117,7 @@ final class EhReactiveX {
       // If a body don't contains '<' and not too long, it should be a plain txt,
       // and it might be a notice.
       // TODO What if it's a JSON?
-      if (!body.contains("<") && body.length() <= PLAIN_NOTICE_MAX_LENGTH) {
+      if (!body.contains("<") && body.length() <= PLAIN_NOTICE_MAX_LENGTH && body.length() >= 0) {
         t = new GeneralException(body, pe);
       }
     }
@@ -139,7 +139,7 @@ final class EhReactiveX {
       // If a body don't contains '<' and not too long, it should be a plain txt,
       // and it might be a notice.
       // TODO What if it's a JSON?
-      if (!body.contains("<") && body.length() <= PLAIN_NOTICE_MAX_LENGTH) {
+      if (!body.contains("<") && body.length() <= PLAIN_NOTICE_MAX_LENGTH && body.length() >= 0) {
         return new GeneralException(body);
       }
 
