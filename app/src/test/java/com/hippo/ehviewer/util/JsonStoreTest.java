@@ -197,7 +197,9 @@ public class JsonStoreTest {
     public String token;
 
     @Override
-    public void onFetch(int version) {}
+    public boolean onFetch(int version) {
+      return true;
+    }
 
     @Override
     public int hashCode() {
@@ -232,13 +234,14 @@ public class JsonStoreTest {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onFetch(int version) {
+    public boolean onFetch(int version) {
       switch (version) {
         case 1:
           tokens = new String[1];
           tokens[0] = token;
           token = null;
       }
+      return true;
     }
 
     @Override

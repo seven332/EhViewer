@@ -24,6 +24,7 @@ import static junit.framework.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 
 public class ContentDataTest {
@@ -151,6 +152,12 @@ public class ContentDataTest {
       this.id = id;
     }
 
+    @Override
+    protected void onRestoreData(long id) {}
+
+    @Override
+    protected void onBackupData(List<Void> data) {}
+
     public void response(int size, int min, int max) {
       setData(id, Arrays.asList(new Void[size]), min, max);
     }
@@ -192,6 +199,12 @@ public class ContentDataTest {
     public void onRequireData(long id, int page) {
       this.id = id;
     }
+
+    @Override
+    protected void onRestoreData(long id) {}
+
+    @Override
+    protected void onBackupData(List<Integer> data) {}
 
     public void response(Integer... data) {
       setData(id, Arrays.asList(data), 0, 100);
