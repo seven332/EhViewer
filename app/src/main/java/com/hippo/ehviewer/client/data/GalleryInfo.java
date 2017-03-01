@@ -22,6 +22,7 @@ package com.hippo.ehviewer.client.data;
 
 import android.util.Log;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.util.JsonStore;
 import com.hippo.yorozuya.ObjectUtils;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +38,11 @@ import java.util.List;
  * </ul>
  * None of these methods can fill all fields.
  */
-public class GalleryInfo {
+@JsonStore.Info(
+    version = 1,
+    name = "com.hippo.ehviewer:GalleryInfo"
+)
+public class GalleryInfo implements JsonStore.Item {
 
   private static final String LOG_TAG = GalleryInfo.class.getSimpleName();
 
@@ -263,5 +268,10 @@ public class GalleryInfo {
         return;
       }
     }
+  }
+
+  @Override
+  public boolean onFetch(int version) {
+    return true;
   }
 }
