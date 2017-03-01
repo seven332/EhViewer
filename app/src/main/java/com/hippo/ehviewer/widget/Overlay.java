@@ -35,9 +35,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * {@code Overlay} for root view.
- * Call {@link #getRootOverlay(Activity)} or {@link #getRootOverlay(View)}
- * to get it.
+ * {@code Overlay} for a view.
+ * Call {@link #getRootOverlay(Activity)}, {@link #getRootOverlay(View)}
+ * or {@link #getOverlay(View, int)} to get it.
  */
 @SuppressLint("ViewConstructor")
 @SuppressWarnings("deprecation")
@@ -78,6 +78,8 @@ public class Overlay extends AbsoluteLayout {
 
   /**
    * Add a view to the overlay.
+   * <p>
+   * Must call {@link #remove(View)} to remove it if you don't need it anymore.
    */
   public void add(View view) {
     if (view != null) {
@@ -96,6 +98,8 @@ public class Overlay extends AbsoluteLayout {
 
   /**
    * Add a drawable to the overlay.
+   * <p>
+   * Must call {@link #remove(Drawable)} to remove it if you don't need it anymore.
    */
   public void add(Drawable drawable) {
     if (drawable != null) {
@@ -164,6 +168,8 @@ public class Overlay extends AbsoluteLayout {
   public static Overlay getRootOverlay(View view) {
     return getOverlay(view, android.R.id.content);
   }
+
+  // TODO need a custom overlay inserting mechanism
 
   /**
    * Creates or gets the overlay for the view with the {@code id}
