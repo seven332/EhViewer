@@ -24,7 +24,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.method.LinkMovementMethod;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.contract.AnalyticsContract;
-import com.hippo.ehviewer.controller.AnalyticsController;
 import com.hippo.ehviewer.view.base.MessageSheetView;
 import com.hippo.html.Html;
 
@@ -44,7 +43,7 @@ public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter>
         presenter.rejectAnalytics();
         presenter.neverAskAnalytics();
       }
-      getActivity().nextController(AnalyticsController.class);
+      getActivity().nextController();
     });
     setPositiveButton(R.string.accept, a -> {
       AnalyticsContract.Presenter presenter = getPresenter();
@@ -52,7 +51,7 @@ public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter>
         presenter.acceptAnalytics();
         presenter.neverAskAnalytics();
       }
-      getActivity().nextController(AnalyticsController.class);
+      getActivity().nextController();
     });
   }
 

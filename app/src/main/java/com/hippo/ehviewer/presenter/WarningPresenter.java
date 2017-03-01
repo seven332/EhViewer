@@ -23,6 +23,7 @@ package com.hippo.ehviewer.presenter;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.contract.WarningContract;
+import com.hippo.ehviewer.presenter.base.ControllerPresenter;
 
 public class WarningPresenter extends ControllerPresenter<WarningContract.View>
     implements WarningContract.Presenter {

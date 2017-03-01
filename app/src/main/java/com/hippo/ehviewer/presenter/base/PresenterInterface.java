@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.presenter;
+package com.hippo.ehviewer.presenter.base;
 
 /*
  * Created by Hippo on 2/8/2017.
  */
 
-import com.hippo.ehviewer.view.ViewInterface;
+import com.hippo.ehviewer.view.base.ViewInterface;
 
 /**
  * P of MVP.

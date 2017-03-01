@@ -26,7 +26,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.presenter.base.PresenterInterface;
 
 /**
  * {@link ViewInterface} for {@link com.bluelinelabs.conductor.Controller}.

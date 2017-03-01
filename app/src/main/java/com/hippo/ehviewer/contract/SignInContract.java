@@ -21,8 +21,8 @@ package com.hippo.ehviewer.contract;
  */
 
 import android.support.annotation.Nullable;
-import com.hippo.ehviewer.presenter.ControllerPresenter;
-import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.presenter.base.ControllerPresenter;
+import com.hippo.ehviewer.presenter.base.PresenterInterface;
 import com.hippo.ehviewer.util.LazySupplier;
 import com.hippo.ehviewer.view.base.ViewInterface;
 

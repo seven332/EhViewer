@@ -23,6 +23,7 @@ package com.hippo.ehviewer.presenter;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.contract.AnalyticsContract;
+import com.hippo.ehviewer.presenter.base.ControllerPresenter;
 
 public class AnalyticsPresenter extends ControllerPresenter<AnalyticsContract.View>
     implements AnalyticsContract.Presenter {

@@ -20,20 +20,35 @@ package com.hippo.ehviewer.view.base;
  * Created by Hippo on 2/8/2017.
  */
 
-import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
+import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.presenter.base.PresenterInterface;
+import com.hippo.ehviewer.widget.ToolbarLayout;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * {@code ToolbarView} shows a Toolbar at top.
  */
 public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<P> {
+
+  private static final String LOG_TAG = ToolbarView.class.getSimpleName();
+
+  @IntDef({NAVIGATION_TYPE_MENU, NAVIGATION_TYPE_RETURN})
+  @Retention(RetentionPolicy.SOURCE)
+  public @interface NavigationType {}
+
+  public static final int NAVIGATION_TYPE_MENU = 0;
+  public static final int NAVIGATION_TYPE_RETURN = 1;
 
   private Toolbar toolbar;
 
@@ -45,8 +60,28 @@ public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<
     toolbar = (Toolbar) view.findViewById(R.id.toolbar);
     ViewGroup container = (ViewGroup) view.findViewById(R.id.content_container);
 
+    DrawerArrowDrawable drawable = new DrawerArrowDrawable(getActivity());
+    drawable.setDirection(DrawerArrowDrawable.ARROW_DIRECTION_LEFT);
+    toolbar.setNavigationIcon(drawable);
+    switch (getNavigationType()) {
+      case NAVIGATION_TYPE_MENU:
+        drawable.setProgress(0.0f);
+        toolbar.setNavigationOnClickListener(v -> getActivity().openLeftDrawer());
+        break;
+      case NAVIGATION_TYPE_RETURN:
+        drawable.setProgress(1.0f);
+        toolbar.setNavigationOnClickListener(v -> getActivity().popTopController());
+        break;
+    }
+
     View contentView = createContentView(inflater, container);
     container.addView(contentView);
+
+    if (view instanceof ToolbarLayout) {
+      ((ToolbarLayout) view).setDrawerArrowDrawable(drawable);
+    } else {
+      Log.e(LOG_TAG, "Content view of ToolbarView should extend ToolbarLayout");
+    }
 
     return view;
   }
@@ -55,6 +90,17 @@ public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<
    * Creates content view for this {@code ToolbarView}.
    */
   protected abstract View createContentView(LayoutInflater inflater, ViewGroup parent);
+
+  /**
+   * {@link #NAVIGATION_TYPE_RETURN}: arrow, back.
+   * {@link #NAVIGATION_TYPE_MENU}: menu, open menu.
+   * <p>
+   * Default: {@link #NAVIGATION_TYPE_RETURN}.
+   */
+  @NavigationType
+  protected int getNavigationType() {
+    return NAVIGATION_TYPE_RETURN;
+  }
 
   /**
    * Return the Toolbar.
@@ -78,24 +124,17 @@ public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<
   }
 
   /**
-   * Sets navigation icon for the {@code Toolbar}.
-   */
-  public void setNavigationIcon(@DrawableRes int resId) {
-    toolbar.setNavigationIcon(resId);
-  }
-
-  /**
-   * Sets navigation on click listener for the {@code Toolbar}.
-   */
-  public void setNavigationOnClickListener(View.OnClickListener l) {
-    toolbar.setNavigationOnClickListener(l);
-  }
-
-  /**
    * Sets menu for the {@code Toolbar}.
    */
   public void setMenu(@MenuRes int resId, Toolbar.OnMenuItemClickListener listener) {
     toolbar.inflateMenu(resId);
     toolbar.setOnMenuItemClickListener(listener);
+  }
+
+  /**
+   * Gets menu of the {@code Toolbar}.
+   */
+  public Menu getMenu() {
+    return toolbar.getMenu();
   }
 }

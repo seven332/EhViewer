@@ -23,7 +23,6 @@ package com.hippo.ehviewer.view;
 import android.support.v4.content.ContextCompat;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.contract.WarningContract;
-import com.hippo.ehviewer.controller.WarningController;
 import com.hippo.ehviewer.view.base.MessageSheetView;
 
 public class WarningView extends MessageSheetView<WarningContract.Presenter>
@@ -41,7 +40,7 @@ public class WarningView extends MessageSheetView<WarningContract.Presenter>
       if (presenter != null) {
         presenter.neverShowWarning();
       }
-      getActivity().nextController(WarningController.class);
+      getActivity().nextController();
     });
   }
 

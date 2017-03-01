@@ -30,7 +30,7 @@ import android.support.annotation.StringRes;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.activity.EhvActivity;
-import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.presenter.base.PresenterInterface;
 import com.hippo.yorozuya.android.ResourcesUtils;
 import java.util.concurrent.TimeUnit;
 import rx.Scheduler;
@@ -57,6 +57,13 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
    */
   public static boolean isMessageSheetView(Class<?> clazz) {
     return clazz != null && MessageSheetView.class.isAssignableFrom(clazz);
+  }
+
+  /**
+   * Returns {@code true} if the class extends {@link ToolbarView}.
+   */
+  public static boolean isToolbarView(Class<?> clazz) {
+    return clazz != null && ToolbarView.class.isAssignableFrom(clazz);
   }
 
   /**
@@ -103,7 +110,7 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
     }
 
     // Check memory leak
-    getApplication().getRefWatcher().watch(this);
+    //getApplication().getRefWatcher().watch(this);
   }
 
   /**

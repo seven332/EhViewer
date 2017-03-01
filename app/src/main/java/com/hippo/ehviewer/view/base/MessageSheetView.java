@@ -27,7 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.presenter.base.PresenterInterface;
 import com.hippo.ehviewer.util.TextUtils2;
 import com.hippo.ehviewer.widget.crossfade.CrossFadeTextView;
 

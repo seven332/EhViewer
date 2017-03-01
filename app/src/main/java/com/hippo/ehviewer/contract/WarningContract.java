@@ -20,7 +20,7 @@ package com.hippo.ehviewer.contract;
  * Created by Hippo on 2/10/2017.
  */
 
-import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.presenter.base.PresenterInterface;
 import com.hippo.ehviewer.view.base.ViewInterface;
 
 public interface WarningContract {

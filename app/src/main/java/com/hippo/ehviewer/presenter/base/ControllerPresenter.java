@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.presenter;
+package com.hippo.ehviewer.presenter.base;
 
 /*
  * Created by Hippo on 2/10/2017.
@@ -22,7 +22,7 @@ package com.hippo.ehviewer.presenter;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
-import com.hippo.ehviewer.view.ViewInterface;
+import com.hippo.ehviewer.view.base.ViewInterface;
 
 /**
  * Base {@code Presenter} for {@link com.bluelinelabs.conductor.Controller}.

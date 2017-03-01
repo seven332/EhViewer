@@ -30,7 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.presenter.base.PresenterInterface;
 import com.hippo.ehviewer.widget.crossfade.CrossFadeImageView;
 import com.hippo.ehviewer.widget.crossfade.CrossFadeTextView;
 import com.hippo.ehviewer.widget.IndicatingScrollView;
