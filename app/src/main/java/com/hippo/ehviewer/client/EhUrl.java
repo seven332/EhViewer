@@ -84,7 +84,7 @@ public final class EhUrl {
   /**
    * Return site url which ends with "/"
    */
-  public static String getSiteUrl(@Site int site) {
+  public static String getSiteUrl(int site) {
     if (site == SITE_EX) {
       return URL_EX;
     } else {

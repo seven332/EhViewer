@@ -46,6 +46,7 @@ public final class ExceptionExplainer {
   /**
    * Explains the exception with a String.
    */
+  @SuppressWarnings("deprecation")
   public static String explain(Context context, Throwable e) {
     int textResId = 0;
     String text = null;

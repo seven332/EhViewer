@@ -25,6 +25,8 @@ import android.util.Log;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieJar;
@@ -83,6 +85,9 @@ public class EhvApp extends RecordingApplication {
   private LazySupplier<EhvPreferences> preferencesSupplier =
       LazySupplier.from(() -> new EhvPreferences(EhvApp.this));
 
+  private LazySupplier<Gson> gsonSupplier =
+      LazySupplier.from(() -> new GsonBuilder().serializeSpecialFloatingPointValues().create());
+
   @Override
   public void onCreate() {
     super.onCreate();
@@ -125,6 +130,10 @@ public class EhvApp extends RecordingApplication {
 
   public EhvPreferences getPreferences() {
     return preferencesSupplier.get();
+  }
+
+  public Gson getGson() {
+    return gsonSupplier.get();
   }
 
   /**

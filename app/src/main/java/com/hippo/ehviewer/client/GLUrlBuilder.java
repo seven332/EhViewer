@@ -33,6 +33,15 @@ public class GLUrlBuilder {
   private String keyword;
 
   /**
+   * Set this GLUrlBuilder the same as that GLUrlBuilder.
+   */
+  public void set(GLUrlBuilder builder) {
+    this.page = builder.page;
+    this.category = builder.category;
+    this.keyword = builder.keyword;
+  }
+
+  /**
    * Set page of the gallery list.
    * <p>
    * 0-base.
@@ -46,6 +55,13 @@ public class GLUrlBuilder {
    */
   public void setCategory(int category) {
     this.category = category;
+  }
+
+  /**
+   * Returns the category.
+   */
+  public int getCategory() {
+    return category;
   }
 
   /**
@@ -86,7 +102,7 @@ public class GLUrlBuilder {
       filter = true;
     }
 
-    // page
+    // Page
     if (page != 0) {
       map.put("page", Integer.toString(page));
     }
