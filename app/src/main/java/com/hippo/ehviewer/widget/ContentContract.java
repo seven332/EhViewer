@@ -22,7 +22,7 @@ package com.hippo.ehviewer.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.presenter.base.PresenterInterface;
 import com.hippo.ehviewer.view.base.ViewInterface;
 
 public interface ContentContract {
@@ -65,6 +65,8 @@ public interface ContentContract {
     void notifyItemRangeInserted(int positionStart, int itemCount);
 
     void notifyItemRangeRemoved(int positionStart, int itemCount);
+
+    void notifyItemRangeChanged(int positionStart, int itemCount);
   }
 
   abstract class ViewState implements View {
@@ -187,6 +189,15 @@ public interface ContentContract {
         view.notifyItemRangeRemoved(positionStart, itemCount);
       }
       getViewState().notifyItemRangeRemoved(positionStart, itemCount);
+    }
+
+    @Override
+    public void notifyItemRangeChanged(int positionStart, int itemCount) {
+      View view = getView();
+      if (view != null) {
+        view.notifyItemRangeChanged(positionStart, itemCount);
+      }
+      getViewState().notifyItemRangeChanged(positionStart, itemCount);
     }
   }
 

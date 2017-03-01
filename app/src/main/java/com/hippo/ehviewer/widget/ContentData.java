@@ -562,26 +562,36 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
           + "beginPage=" + beginPage + ", endPage=" + endPage + ", requirePage=" + requirePage);
     }
 
-    int oldBeginIndex = (requirePage == beginPage ? 0 : dataDivider.get(requirePage - beginPage - 1));
+    int beginIndex = (requirePage == beginPage ? 0 : dataDivider.get(requirePage - beginPage - 1));
     int oldEndIndex = dataDivider.get(requirePage - beginPage);
 
     // Remove duplicates
     if (removeDuplicates) {
-      d = removeDuplicates(d, oldBeginIndex - duplicatesCheckRange, oldBeginIndex);
+      d = removeDuplicates(d, beginIndex - duplicatesCheckRange, beginIndex);
       d = removeDuplicates(d, oldEndIndex, oldEndIndex + duplicatesCheckRange);
     }
 
+    int newEndIndex = beginIndex + d.size();
+
     // Update data
-    if (oldBeginIndex != oldEndIndex) {
-      data.subList(oldBeginIndex, oldEndIndex).clear();
-      notifyItemRangeRemoved(oldBeginIndex, oldEndIndex - oldBeginIndex);
+    int oldCount = oldEndIndex - beginIndex;
+    int newCount = d.size();
+    int overlapCount = Math.min(oldCount, newCount);
+    // Change overlapping data
+    if (overlapCount != 0) {
+      data.subList(beginIndex, beginIndex + overlapCount).clear();
+      data.addAll(beginIndex, d.subList(0, overlapCount));
+      notifyItemRangeChanged(beginIndex, overlapCount);
     }
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    int newBeginIndex = oldBeginIndex;
-    int newEndIndex = newBeginIndex + d.size();
-    if (newBeginIndex != newEndIndex) {
-      data.addAll(newBeginIndex, d);
-      notifyItemRangeInserted(newBeginIndex, newEndIndex - newBeginIndex);
+    // Remove remaining data
+    if (oldCount > overlapCount) {
+      data.subList(beginIndex + overlapCount, beginIndex + oldCount).clear();
+      notifyItemRangeRemoved(beginIndex + overlapCount, oldCount - overlapCount);
+    }
+    // Add remaining data
+    if (newCount > overlapCount) {
+      data.addAll(beginIndex + overlapCount, d.subList(overlapCount, newCount));
+      notifyItemRangeInserted(beginIndex + overlapCount, newCount - overlapCount);
     }
 
     // Update dataDivider
@@ -745,6 +755,9 @@ public abstract class ContentData<T> extends ContentContract.AbsPresenter<T> {
 
     @Override
     public void notifyItemRangeRemoved(int positionStart, int itemCount) {}
+
+    @Override
+    public void notifyItemRangeChanged(int positionStart, int itemCount) {}
   }
 
   /**

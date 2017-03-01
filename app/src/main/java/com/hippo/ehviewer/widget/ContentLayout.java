@@ -331,6 +331,13 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
     }
   }
 
+  @Override
+  public void notifyItemRangeChanged(int positionStart, int itemCount) {
+    if (adapter != null) {
+      adapter.notifyItemRangeChanged(positionStart, itemCount);
+    }
+  }
+
   /**
    * Stores tip icon and tip text.
    */
