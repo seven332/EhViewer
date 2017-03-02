@@ -42,6 +42,7 @@ import com.hippo.ehviewer.changehandler.MessageSheetChangeHandler;
 import com.hippo.ehviewer.changehandler.SheetChangeHandler;
 import com.hippo.ehviewer.changehandler.ToolbarChangeHandler;
 import com.hippo.ehviewer.controller.AnalyticsController;
+import com.hippo.ehviewer.controller.FavouriteController;
 import com.hippo.ehviewer.controller.GalleryListController;
 import com.hippo.ehviewer.controller.SignInController;
 import com.hippo.ehviewer.controller.WarningController;
@@ -105,12 +106,19 @@ public class EhvActivity extends ControllerActivity {
         case R.id.nav_homepage:
           // TODO
           return true;
-        case R.id.nav_whats_hot:
+        case R.id.nav_whats_hot:{
           // Push whats hot controller
           RouterTransaction transaction = RouterTransaction.with(new WhatsHotController());
           addChangeHandler(transaction);
           pushController(transaction);
           return true;
+        }
+        case R.id.nav_favourites: {
+          // Push favourites controller
+          RouterTransaction transaction = RouterTransaction.with(new FavouriteController());
+          addChangeHandler(transaction);
+          pushController(transaction);
+        }
         case R.id.nav_invalid:
           // Do nothing
           return true;

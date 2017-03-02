@@ -47,6 +47,7 @@
 
   <string name="nav_menu_homepage">首页</string>
   <string name="nav_menu_whats_hot">热门</string>
+  <string name="nav_menu_favourites">收藏</string>
 
   <string name="action_search">搜索</string>
   <string name="action_detail">显示详情</string>

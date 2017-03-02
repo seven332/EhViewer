@@ -51,6 +51,7 @@
 
   <string name="nav_menu_homepage">Homepage</string>
   <string name="nav_menu_whats_hot">What\'s Hot</string>
+  <string name="nav_menu_favourites">Favourites</string>
 
   <string name="action_search">Search</string>
   <string name="action_detail">Show detail</string>

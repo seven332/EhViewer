@@ -29,6 +29,11 @@
       android:title="@string/nav_menu_whats_hot"
       android:icon="@drawable/v_fire_black_x24"/>
 
+    <item
+      android:id="@+id/nav_favourites"
+      android:title="@string/nav_menu_favourites"
+      android:icon="@drawable/v_heart_black_x24"/>
+
     <!-- Select this item to cancel selecting -->
     <item
       android:id="@+id/nav_invalid"
