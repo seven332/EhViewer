@@ -31,6 +31,7 @@ import android.support.v7.content.res.AppCompatResources;
 import android.util.AttributeSet;
 import android.view.View;
 import com.hippo.ehviewer.R;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.StringUtils;
 
 /**
@@ -38,7 +39,7 @@ import com.hippo.yorozuya.StringUtils;
  */
 public class NumberRatingView extends View {
 
-  private float rating;
+  private float rating = -1.0f;
   private String ratingStr;
   private Paint paint;
   private Rect bounds;
@@ -107,8 +108,12 @@ public class NumberRatingView extends View {
   /**
    * Sets rating to change displayed stars.
    * Range: {@code [0.0f, 5.0f]}.
+   * <p>
+   * If the {@code rating} isn't in range, clamp it to the range.
    */
   public void setRating(float rating) {
+    // Clamp rating to range
+    rating = MathUtils.clamp(rating, 0.0f, 5.0f);
     if (this.rating != rating) {
       this.rating = rating;
       String ratingStr = getRatingStr(rating);
