@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.component.base.GalleryInfoAdapter;
-import com.hippo.ehviewer.contract.base.GalleryInfoListContract;
+import com.hippo.ehviewer.contract.base.GalleryInfoContract;
 import com.hippo.ehviewer.util.ExceptionExplainer;
 import com.hippo.ehviewer.widget.AutoGridLayoutManager;
 import com.hippo.ehviewer.widget.ContentLayout;
@@ -35,7 +35,7 @@ import com.hippo.ehviewer.widget.DividerItemDecoration;
 import com.hippo.yorozuya.android.LayoutUtils;
 import com.hippo.yorozuya.android.ResourcesUtils;
 
-public abstract class GalleryInfoListView<P extends GalleryInfoListContract.Presenter>
+public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
     extends ToolbarView<P> {
 
   private ContentLayout layout;

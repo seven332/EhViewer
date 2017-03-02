@@ -29,9 +29,9 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.GLUrlBuilder;
 import com.hippo.ehviewer.contract.GalleryListContract;
-import com.hippo.ehviewer.view.base.GalleryInfoListView;
+import com.hippo.ehviewer.view.base.GalleryInfoView;
 
-public class GalleryListView extends GalleryInfoListView<GalleryListContract.Presenter>
+public class GalleryListView extends GalleryInfoView<GalleryListContract.Presenter>
     implements GalleryListContract.View {
 
   private EhvPreferences preferences;

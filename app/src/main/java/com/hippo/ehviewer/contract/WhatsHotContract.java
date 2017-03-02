@@ -20,11 +20,11 @@ package com.hippo.ehviewer.contract;
  * Created by Hippo on 2/23/2017.
  */
 
-import com.hippo.ehviewer.contract.base.GalleryInfoListContract;
+import com.hippo.ehviewer.contract.base.GalleryInfoContract;
 
 public interface WhatsHotContract {
 
-  interface Presenter extends GalleryInfoListContract.Presenter<View> {}
+  interface Presenter extends GalleryInfoContract.Presenter<View> {}
 
-  interface View extends GalleryInfoListContract.View {}
+  interface View extends GalleryInfoContract.View {}
 }

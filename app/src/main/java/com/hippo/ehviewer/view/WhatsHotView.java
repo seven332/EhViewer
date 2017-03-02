@@ -28,9 +28,9 @@ import android.view.ViewGroup;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.contract.WhatsHotContract;
-import com.hippo.ehviewer.view.base.GalleryInfoListView;
+import com.hippo.ehviewer.view.base.GalleryInfoView;
 
-public class WhatsHotView extends GalleryInfoListView<WhatsHotContract.Presenter>
+public class WhatsHotView extends GalleryInfoView<WhatsHotContract.Presenter>
     implements WhatsHotContract.View {
 
   private EhvPreferences preferences;

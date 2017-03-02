@@ -27,7 +27,7 @@ import com.hippo.ehviewer.presenter.base.PresenterInterface;
 import com.hippo.ehviewer.view.base.ViewInterface;
 import com.hippo.ehviewer.widget.ContentLayout;
 
-public interface GalleryInfoListContract {
+public interface GalleryInfoContract {
 
   interface Presenter<V extends View> extends PresenterInterface<V> {
 
