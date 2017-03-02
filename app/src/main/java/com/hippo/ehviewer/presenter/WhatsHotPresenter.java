@@ -22,42 +22,30 @@ package com.hippo.ehviewer.presenter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhSubscriber;
-import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.component.GalleryInfoData;
 import com.hippo.ehviewer.component.WhatsHotAdapter;
 import com.hippo.ehviewer.component.base.GalleryInfoAdapter;
 import com.hippo.ehviewer.contract.WhatsHotContract;
 import com.hippo.ehviewer.presenter.base.ControllerPresenter;
-import com.hippo.ehviewer.reactivex.Catcher;
-import com.hippo.ehviewer.reactivex.Thrower1;
-import com.hippo.ehviewer.util.JsonStore;
-import com.hippo.ehviewer.widget.ContentData;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.yorozuya.FileUtils;
 import java.io.File;
-import java.util.List;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Actions;
 import rx.schedulers.Schedulers;
 
 public class WhatsHotPresenter extends ControllerPresenter<WhatsHotContract.View>
     implements WhatsHotContract.Presenter {
 
   private GalleryData data;
-  private Gson gson;
 
   public WhatsHotPresenter(EhvApp app) {
     data = new GalleryData(app);
-    gson = app.getGson();
-
-    data.setRemoveDuplicates(true);
     data.restore();
   }
 
@@ -84,18 +72,21 @@ public class WhatsHotPresenter extends ControllerPresenter<WhatsHotContract.View
   @Override
   public void restore(WhatsHotContract.View view) {}
 
-  private class GalleryData extends ContentData<GalleryInfo> {
+  private static class GalleryData extends GalleryInfoData {
 
     private static final String BACKUP_FILENAME = "whats_hot_data_backup";
 
     private EhClient client;
+    private Gson gson;
     private EhvPreferences preferences;
     private File backupFile;
 
     public GalleryData(EhvApp app) {
       client = app.getEhClient();
+      gson = app.getGson();
       preferences = app.getPreferences();
 
+      // Get backup file
       File dir = app.getCacheDir();
       FileUtils.ensureDir(dir);
       backupFile = new File(dir, BACKUP_FILENAME);
@@ -113,37 +104,13 @@ public class WhatsHotPresenter extends ControllerPresenter<WhatsHotContract.View
     }
 
     @Override
-    protected void onRestoreData(long id) {
-      Observable.just(backupFile)
-          .map(Thrower1.from(file -> JsonStore.fetchList(gson, file, GalleryInfo.class)))
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(list -> {
-            setData(id, list, 1);
-          }, Catcher.from(e -> setError(id, e)));
+    protected File getBackupFile() {
+      return backupFile;
     }
 
     @Override
-    protected void onBackupData(List<GalleryInfo> data) {
-      Observable.just(data)
-          .map(Thrower1.from(d -> {
-            JsonStore.push(gson, backupFile, d, GalleryInfo.class);
-            return true;
-          }))
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(Actions.empty(), Actions.empty());
-    }
-
-    @Override
-    protected boolean isDuplicate(@Nullable GalleryInfo t1, @Nullable GalleryInfo t2) {
-      if (t1 == null && t2 == null) {
-        return true;
-      }
-      if (t1 != null && t2 != null) {
-        return t1.gid == t2.gid;
-      }
-      return false;
+    protected Gson getGson() {
+      return gson;
     }
   }
 }

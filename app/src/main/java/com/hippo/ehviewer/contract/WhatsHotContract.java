@@ -24,7 +24,7 @@ import com.hippo.ehviewer.contract.base.GalleryInfoListContract;
 
 public interface WhatsHotContract {
 
-  interface Presenter  extends GalleryInfoListContract.Presenter<View> {}
+  interface Presenter extends GalleryInfoListContract.Presenter<View> {}
 
   interface View extends GalleryInfoListContract.View {}
 }
