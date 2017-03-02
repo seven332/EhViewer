@@ -130,8 +130,7 @@ public class DetailParser {
         // Get detail
         if ((mode & DETAIL) != 0) {
             p = Pattern
-                    .compile("<div id=\"gd1\"><img src=\"([^\"]+)\"[^<>]+></div>" //  thumb
-                            + "</div>"
+                    .compile("<div id=\"gd1\">.+?background:transparent url\\(([^\"]+)\\).+?" //  thumb
                             + "<div id=\"gd2\">"
                             + "<h1 id=\"gn\">([^<>]+)</h1>" // title
                             + "<h1 id=\"gj\">([^<>]*)</h1>" // title_jpn might be empty string
