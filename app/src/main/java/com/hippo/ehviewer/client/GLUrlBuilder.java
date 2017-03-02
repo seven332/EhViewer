@@ -111,7 +111,7 @@ public class GLUrlBuilder {
 
     // Add filter foot
     if (filter) {
-      map.put("f_apply", "Apply+Filter");
+      map.put("f_apply", "Apply Filter");
     }
 
     return map;
