@@ -374,4 +374,14 @@ public final class EhUtils {
       return null;
     }
   }
+
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Favourite
+  ///////////////////////////////////////////////////////////////////////////
+
+  public static final int FAV_CAT_ALL = -1;
+  public static final int FAV_CAT_LOCAL = -2;
+  public static final int FAV_CAT_UNKNOWN = -3;
+  public static final int FAV_CAT_MAX = 9;
 }

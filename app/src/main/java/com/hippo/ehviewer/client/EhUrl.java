@@ -181,6 +181,14 @@ public final class EhUrl {
         + "/" + fingerprint + "_" + type + ".jpg";
   }
 
+  public static String getFavouritesUrl(int site) {
+    if (site == SITE_EX) {
+      return URL_FAVOURITES_EX;
+    } else {
+      return URL_FAVOURITES_E;
+    }
+  }
+
   public static String getApiUrl(@Site int site) {
     if (site == SITE_EX) {
       return URL_API_EX;

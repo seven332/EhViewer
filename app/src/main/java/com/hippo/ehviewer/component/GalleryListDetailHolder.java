@@ -77,7 +77,7 @@ public class GalleryListDetailHolder extends GalleryInfoHolder {
     category.setBackgroundColor(EhUtils.getColor(galleryInfo.category));
     date.setText(ReadableTime.getTimeAgo(context, galleryInfo.date));
     language.setText(EhUtils.getLangAbbr(context, galleryInfo.language));
-    favourite.setVisibility(galleryInfo.favouriteSlot != -1 ? View.VISIBLE : View.GONE);
+    favourite.setVisibility(galleryInfo.favouriteSlot != EhUtils.FAV_CAT_UNKNOWN ? View.VISIBLE : View.GONE);
     download.setVisibility(View.GONE);
     invalid.setVisibility(galleryInfo.invalid ? View.VISIBLE : View.GONE);
     note.setText(galleryInfo.note);

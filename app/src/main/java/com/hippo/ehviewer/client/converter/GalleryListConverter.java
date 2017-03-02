@@ -203,6 +203,9 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
       }
     }
 
+    // TODO Check local favourites
+    // TODO Check downloaded
+
     // Favorite note
     Element favnote = e.getElementById("favnote_" + gi.gid);
     if (favnote != null) {

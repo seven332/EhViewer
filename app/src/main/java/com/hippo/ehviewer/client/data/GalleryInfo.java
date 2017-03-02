@@ -147,11 +147,11 @@ public class GalleryInfo implements JsonStore.Item {
   /**
    * Favourite slot.
    * <p>
-   * Range: {@code [-1, 9]}
+   * Range: {@code [-3, 9]}
    * <p>
-   * {@code -1} for un-favourited.
+   * {@code -3} for un-favourited.
    */
-  public int favouriteSlot = -1;
+  public int favouriteSlot = EhUtils.FAV_CAT_UNKNOWN;
 
   /**
    * Expunged, deleted or replaced.
@@ -237,7 +237,7 @@ public class GalleryInfo implements JsonStore.Item {
     if (info.language != EhUtils.LANG_UNKNOWN) {
       language = info.language;
     }
-    if (info.favouriteSlot != -1) {
+    if (info.favouriteSlot != EhUtils.FAV_CAT_UNKNOWN) {
       favouriteSlot = info.favouriteSlot;
     }
     if (info.invalid) {
