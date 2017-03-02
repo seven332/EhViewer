@@ -24,6 +24,7 @@ import android.util.Log;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.util.JsonStore;
 import com.hippo.yorozuya.ObjectUtils;
+import com.hippo.yorozuya.StringUtils;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -191,6 +192,11 @@ public class GalleryInfo implements JsonStore.Item {
   public final LinkedHashMap<String, List<String>> tags = new LinkedHashMap<>();
 
   /**
+   * Favouring note.
+   */
+  public String note;
+
+  /**
    * Merges data in {@code info} to this {@code GalleryInfo}.
    */
   public void merge(GalleryInfo info) {
@@ -252,6 +258,9 @@ public class GalleryInfo implements JsonStore.Item {
     if (!info.tags.isEmpty()) {
       tags.clear();
       tags.putAll(info.tags);
+    }
+    if (!StringUtils.isEmpty(info.note)) {
+      note = info.note;
     }
   }
 

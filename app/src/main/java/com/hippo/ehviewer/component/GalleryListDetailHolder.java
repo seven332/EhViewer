@@ -48,6 +48,7 @@ public class GalleryListDetailHolder extends GalleryInfoHolder {
   private View favourite;
   private View download;
   private View invalid;
+  private TextView note;
 
   protected GalleryListDetailHolder(View view) {
     super(view);
@@ -61,6 +62,7 @@ public class GalleryListDetailHolder extends GalleryInfoHolder {
     favourite = view.findViewById(R.id.favourite);
     download = view.findViewById(R.id.download);
     invalid = view.findViewById(R.id.invalid);
+    note = (TextView) view.findViewById(R.id.note);
   }
 
   @Override
@@ -78,6 +80,7 @@ public class GalleryListDetailHolder extends GalleryInfoHolder {
     favourite.setVisibility(galleryInfo.favouriteSlot != -1 ? View.VISIBLE : View.GONE);
     download.setVisibility(View.GONE);
     invalid.setVisibility(galleryInfo.invalid ? View.VISIBLE : View.GONE);
+    note.setText(galleryInfo.note);
   }
 
   public static GalleryListDetailHolder create(LayoutInflater inflater, ViewGroup container) {

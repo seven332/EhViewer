@@ -203,6 +203,16 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
       }
     }
 
+    // Favorite note
+    Element favnote = e.getElementById("favnote_" + gi.gid);
+    if (favnote != null) {
+      String note = favnote.text();
+      if (note.startsWith("Note: ")) {
+        note = note.substring("Note: ".length());
+      }
+      gi.note = note;
+    }
+
     // Rating
     Element it4r = e.getElementsByClass("it4r").first();
     if (it4r != null) {

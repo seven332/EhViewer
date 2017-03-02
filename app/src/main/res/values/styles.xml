@@ -57,4 +57,10 @@
 
   <style name="GalleryList.Item.Detail.Language" parent="GalleryList.Item.Detail.Uploader"/>
 
+  <style name="GalleryList.Item.Detail.Note">
+    <item name="android:textSize">@dimen/text_small</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
+    <item name="android:lineSpacingExtra">0sp</item>
+  </style>
+
 </resources>
