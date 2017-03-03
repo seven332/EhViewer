@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.result.GalleryMetadataResult;
 import com.hippo.ehviewer.util.JSONUtils;
 import com.hippo.yorozuya.NumberUtils;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +107,8 @@ public class GalleryMetadataConverter extends EhConverter<GalleryMetadataResult>
           name = tag.substring(index + 1);
         }
 
-        Map<String, List<String>> map = info.tags;
+        Map<String, List<String>> map = new HashMap<>();
+        info.tags = map;
         List<String> list = map.get(group);
         if (list == null) {
           list = new LinkedList<>();

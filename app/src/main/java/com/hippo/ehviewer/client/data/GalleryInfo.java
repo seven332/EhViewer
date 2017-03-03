@@ -20,13 +20,15 @@ package com.hippo.ehviewer.client.data;
  * Created by Hippo on 1/29/2017.
  */
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.util.JsonStore;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.StringUtils;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Gallery Information.
@@ -189,7 +191,8 @@ public class GalleryInfo implements JsonStore.Item {
    * <p>
    * Default empty map.
    */
-  public final LinkedHashMap<String, List<String>> tags = new LinkedHashMap<>();
+  @Nullable
+  public Map<String, List<String>> tags;
 
   /**
    * Favouring note.
@@ -255,7 +258,10 @@ public class GalleryInfo implements JsonStore.Item {
     if (info.torrentCount != 0) {
       torrentCount = info.torrentCount;
     }
-    if (!info.tags.isEmpty()) {
+    if (info.tags != null && !info.tags.isEmpty()) {
+      if (tags == null) {
+        tags = new HashMap<>(info.tags.size());
+      }
       tags.clear();
       tags.putAll(info.tags);
     }
