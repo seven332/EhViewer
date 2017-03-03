@@ -93,6 +93,14 @@ public class MSQLite {
   }
 
   /**
+   * Creates a table with custom primary key.
+   */
+  public MSQLite createTable(String table, String column, Type type) {
+    return command(new StatementCommand(
+        "CREATE TABLE " + table + " (" + column + " " + javaTypeToSQLiteType(type) + " PRIMARY KEY);"));
+  }
+
+  /**
    * Drops a table.
    */
   public MSQLite dropTable(String table) {

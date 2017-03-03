@@ -57,6 +57,13 @@ public class MSQLiteOpenHelperTest {
     private static String VERSION_3_COLUMN_DOUBLE1 = "double1";
     private static String VERSION_3_COLUMN_STRING1 = "string1";
 
+    private static String TABLE_PRIMARY_KEY_INT = "primary_key_int";
+    private static String PRIMARY_KEY_INT_COLUMN = "int1";
+    private static String TABLE_PRIMARY_KEY_FLOAT = "primary_key_float";
+    private static String PRIMARY_KEY_FLOAT_COLUMN = "float1";
+    private static String TABLE_PRIMARY_KEY_STRING = "primary_key_string";
+    private static String PRIMARY_KEY_STRING_COLUMN = "string1";
+
     public DbOpenHelper(Context context, int version) {
       super(context, DB_NAME, version);
     }
@@ -77,7 +84,34 @@ public class MSQLiteOpenHelperTest {
           .dropTable(VERSION_1_TABLE_A)
           .insertColumn(VERSION_2_TABLE_B, VERSION_3_COLUMN_DOUBLE1, double.class)
           .insertColumn(VERSION_2_TABLE_B, VERSION_3_COLUMN_STRING1, String.class);
+      ms.version(4)
+          .createTable(TABLE_PRIMARY_KEY_INT, PRIMARY_KEY_INT_COLUMN, int.class)
+          .createTable(TABLE_PRIMARY_KEY_FLOAT, PRIMARY_KEY_FLOAT_COLUMN, float.class)
+          .createTable(TABLE_PRIMARY_KEY_STRING, PRIMARY_KEY_STRING_COLUMN, float.class);
     }
+  }
+
+  @Test
+  public void testCustomPrimaryKey() {
+    Context app = RuntimeEnvironment.application;
+    DbOpenHelper helper;
+    SQLiteDatabase db;
+
+    helper = new DbOpenHelper(app, 4);
+    db = helper.getReadableDatabase();
+
+    columnsEquals(db, DbOpenHelper.TABLE_PRIMARY_KEY_INT,
+        new String[] {
+            DbOpenHelper.PRIMARY_KEY_INT_COLUMN,
+        });
+    columnsEquals(db, DbOpenHelper.TABLE_PRIMARY_KEY_FLOAT,
+        new String[] {
+            DbOpenHelper.PRIMARY_KEY_FLOAT_COLUMN,
+        });
+    columnsEquals(db, DbOpenHelper.TABLE_PRIMARY_KEY_STRING,
+        new String[] {
+            DbOpenHelper.PRIMARY_KEY_STRING_COLUMN,
+        });
   }
 
   @Test
