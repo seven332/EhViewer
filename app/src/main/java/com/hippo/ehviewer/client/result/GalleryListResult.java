@@ -20,27 +20,21 @@ package com.hippo.ehviewer.client.result;
  * Created by Hippo on 1/29/2017.
  */
 
-import com.hippo.ehviewer.client.EhResult;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.result.base.GalleryInfoListResult;
 import java.util.List;
 
-public class GalleryListResult extends EhResult {
+public class GalleryListResult extends GalleryInfoListResult {
 
   private int pages;
-  private List<GalleryInfo> gis;
 
   public GalleryListResult(int pages, List<GalleryInfo> gis) {
-    super(null);
+    super(gis);
     this.pages = pages;
-    this.gis = gis;
   }
 
   public int pages() {
     return pages;
-  }
-
-  public List<GalleryInfo> galleryInfoList() {
-    return gis;
   }
 
 
@@ -48,7 +42,7 @@ public class GalleryListResult extends EhResult {
   // Pain part
   ////////////////
 
-  private GalleryListResult(Throwable t) {
+  protected GalleryListResult(Throwable t) {
     super(t);
   }
 
