@@ -59,9 +59,10 @@ public abstract class GalleryInfoData extends ContentData<GalleryInfo> {
         .map(Thrower1.from(file -> JsonStore.fetchList(getGson(), file, GalleryInfo.class)))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(list -> {
-          setData(id, list, 1);
-        }, Catcher.from(e -> setError(id, e)));
+        .subscribe(
+            list -> setData(id, list, 1),
+            Catcher.from(e -> setError(id, e))
+        );
   }
 
   @Override

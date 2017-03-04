@@ -24,8 +24,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.component.base.BindingViewHolder;
 import com.hippo.ehviewer.component.base.GalleryInfoAdapter;
-import com.hippo.ehviewer.component.base.GalleryInfoHolder;
 import com.hippo.ehviewer.widget.ContentData;
 
 /**
@@ -39,12 +39,14 @@ public class GalleryListAdapter extends GalleryInfoAdapter {
   }
 
   @Override
-  protected GalleryInfoHolder createDetailHolder(LayoutInflater inflater, ViewGroup parent) {
+  protected BindingViewHolder<GalleryInfo> createDetailHolder(
+      LayoutInflater inflater, ViewGroup parent) {
     return GalleryListDetailHolder.create(inflater, parent);
   }
 
   @Override
-  protected GalleryInfoHolder createBriefHolder(LayoutInflater inflater, ViewGroup parent) {
+  protected BindingViewHolder<GalleryInfo> createBriefHolder(
+      LayoutInflater inflater, ViewGroup parent) {
     return GalleryListBriefHolder.create(inflater, parent);
   }
 }
