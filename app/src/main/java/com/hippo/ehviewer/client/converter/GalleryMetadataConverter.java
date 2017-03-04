@@ -85,7 +85,7 @@ public class GalleryMetadataConverter extends EhConverter<GalleryMetadataResult>
     info.pages = NumberUtils.parseInt(JSONUtils.optString(jo, "filecount"), -1);
     info.size = NumberUtils.parseLong(JSONUtils.optString(jo, "filesize"), -1);
     info.invalid = jo.optBoolean("expunged", false);
-    info.rating = NumberUtils.parseFloat(JSONUtils.optString(jo, "rating"), Float.NaN);
+    info.rating = NumberUtils.parseFloat(JSONUtils.optString(jo, "rating"), 0.0f);
     info.torrentCount = NumberUtils.parseInt(JSONUtils.optString(jo, "torrentcount"), 0);
     JSONArray tags = jo.optJSONArray("tags");
     if (tags != null) {

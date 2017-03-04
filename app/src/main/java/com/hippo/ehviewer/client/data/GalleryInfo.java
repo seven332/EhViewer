@@ -111,9 +111,9 @@ public class GalleryInfo implements JsonStore.Item {
   /**
    * Cover width / Cover height.
    * <p>
-   * {@link Float#NaN} if can't it.
+   * {@code -1.0f} if can't it.
    */
-  public float coverRatio = Float.NaN;
+  public float coverRatio = -1.0f;
   /**
    * Gallery category.
    * <p>
@@ -137,9 +137,9 @@ public class GalleryInfo implements JsonStore.Item {
    * <p>
    * Range: {@code [0.5, 5]}
    * <p>
-   * {@link Float#NaN} if can't it, or if no rating temporarily.
+   * {@code 0.0f} if can't it, or if no rating temporarily.
    */
-  public float rating = Float.NaN;
+  public float rating = 0.0f;
 
   /**
    * Gallery Language.
@@ -224,7 +224,7 @@ public class GalleryInfo implements JsonStore.Item {
     if (info.coverUrl != null) {
       coverUrl = info.coverUrl;
     }
-    if (!Float.isNaN(info.coverRatio)) {
+    if (info.coverRatio != -1.0f) {
       coverRatio = info.coverRatio;
     }
     if (info.category != EhUtils.UNKNOWN) {
@@ -236,7 +236,7 @@ public class GalleryInfo implements JsonStore.Item {
     if (info.uploader != null) {
       uploader = info.uploader;
     }
-    if (!Float.isNaN(info.rating)) {
+    if (info.rating != 0.0f) {
       rating = info.rating;
     }
     if (info.language != EhUtils.LANG_UNKNOWN) {

@@ -150,7 +150,7 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
         gi.cover = EhUrl.getImageFingerprint(gi.coverUrl);
       }
     }
-    if (gi.coverRatio == Float.NaN) {
+    if (gi.coverRatio == -1.0f) {
       // It's OK to skip cover ratio
       Log.w(TAG, "Can't parse gallery cover ratio");
     }
@@ -221,10 +221,6 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
     if (it4r != null) {
       gi.rating = parseRating(it4r.attr("style"));
     }
-    if (Float.isNaN(gi.rating)) {
-      // It's OK to skip rating
-      Log.w(TAG, "Can't parse gallery rating");
-    }
 
     // Uploader
     Element itu = e.getElementsByClass("itu").first();
@@ -268,15 +264,15 @@ public class GalleryListConverter extends EhConverter<GalleryListResult> {
     if (m.find()) {
       num1 = ConverterUtils.parseInt(m.group(1), -1);
     } else {
-      return Float.NaN;
+      return 0.0f;
     }
     if (m.find()) {
       num2 = ConverterUtils.parseInt(m.group(1),  -1);
     } else {
-      return Float.NaN;
+      return 0.0f;
     }
     if (num1 == -1 || num2 == -1) {
-      return Float.NaN;
+      return 0.0f;
     }
     rate = rate - (num1 / 16);
     if (num2 == 21) {
