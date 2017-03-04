@@ -52,6 +52,8 @@ public class GalleryInfo implements JsonStore.Item {
   /**
    * Gallery ID.
    * <p>
+   * {@code 0} for invalid.
+   * <p>
    * {@code int} should be enough for a long long time.
    * But I like {@code long}.
    */
@@ -59,7 +61,7 @@ public class GalleryInfo implements JsonStore.Item {
   /**
    * Gallery token. Most gallery operations need it.
    * <p>
-   * NonNull, must be valid.
+   * {@code null} for invalid
    * <p>
    * Regex:<pre>{@code
    * [0-9a-f]{10}
