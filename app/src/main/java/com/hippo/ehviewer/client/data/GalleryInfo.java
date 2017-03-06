@@ -49,6 +49,11 @@ public class GalleryInfo implements JsonStore.Item {
   private static final String LOG_TAG = GalleryInfo.class.getSimpleName();
 
   /**
+   * An invalid {@code GalleryInfo}.
+   */
+  public static final GalleryInfo INVALID = new GalleryInfo();
+
+  /**
    * Gallery ID.
    * <p>
    * {@code 0} for invalid.
