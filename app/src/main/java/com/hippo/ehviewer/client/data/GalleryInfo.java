@@ -209,6 +209,7 @@ public class GalleryInfo implements JsonStore.Item {
     }
     if (info.gid != gid || !ObjectUtils.equals(info.token, token)) {
       Log.w(LOG_TAG, "Can't merge different GalleryInfo");
+      return;
     }
 
     if (info.title != null) {
