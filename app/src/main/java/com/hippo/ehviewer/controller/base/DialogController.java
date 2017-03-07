@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,14 @@ public abstract class DialogController extends RefWatchingController
 
   private Dialog dialog;
   private boolean dismissByMe;
+
+  protected DialogController() {
+    super();
+  }
+
+  protected DialogController(@Nullable Bundle args) {
+    super(args);
+  }
 
   /**
    * Shows this DialogController to the router.
@@ -83,11 +92,16 @@ public abstract class DialogController extends RefWatchingController
       } else {
         dismissByMe = false;
       }
-      dialog = null;
     });
 
     // onCreateView() needs a view, just give it a dump view
     return new DumpView(inflater.getContext());
+  }
+
+  @Override
+  protected void onDestroyView(@NonNull View view) {
+    super.onDestroyView(view);
+    dialog = null;
   }
 
   @Override
