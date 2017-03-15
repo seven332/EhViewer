@@ -334,6 +334,7 @@
     <string name="set_pattern_protection">Establecer Proteccion po Patrón</string>
     <string name="set_pattern_protection_tip">Dibujar un patrón para establecer la proteccion por patrón. \nDejar en blanco para quitar la proteccion por patrón.</string>
     <string name="set">Establecer</string>
+    <string name="enable_fingerprint">Permitir desbloquear con huella dactilar</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">Pagina %d</string>
