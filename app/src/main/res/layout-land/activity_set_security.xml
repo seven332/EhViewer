@@ -40,6 +40,15 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
+        <CheckBox
+            android:id="@+id/fingerprint_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone"
+            android:text="@string/enable_fingerprint" />
+
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/buttonPanel"

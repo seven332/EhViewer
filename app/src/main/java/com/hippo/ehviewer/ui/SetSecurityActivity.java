@@ -16,11 +16,13 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
@@ -36,6 +38,8 @@ public class SetSecurityActivity extends ToolbarActivity implements View.OnClick
     private View mCancel;
     @Nullable
     private View mSet;
+    @Nullable
+    private CheckBox mFingerprint;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,11 +50,22 @@ public class SetSecurityActivity extends ToolbarActivity implements View.OnClick
         mPatternView = (LockPatternView) ViewUtils.$$(this, R.id.pattern_view);
         mCancel = ViewUtils.$$(this, R.id.cancel);
         mSet = ViewUtils.$$(this, R.id.set);
+        mFingerprint = (CheckBox) ViewUtils.$$(this, R.id.fingerprint_checkbox);
 
         String pattern = Settings.getSecurity();
         if (!TextUtils.isEmpty(pattern)) {
             mPatternView.setPattern(LockPatternView.DisplayMode.Correct,
                     LockPatternUtils.stringToPattern(pattern));
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            FingerprintManager fingerprintManager = getSystemService(FingerprintManager.class);
+            // The line below prevents the false positive inspection from Android Studio
+            // noinspection ResourceType
+            if (fingerprintManager.hasEnrolledFingerprints()) {
+                mFingerprint.setVisibility(View.VISIBLE);
+                mFingerprint.setChecked(Settings.getEnableFingerprint());
+            }
         }
 
         mCancel.setOnClickListener(this);
@@ -79,7 +94,7 @@ public class SetSecurityActivity extends ToolbarActivity implements View.OnClick
         if (v == mCancel) {
             finish();
         } else if (v == mSet) {
-            if (null != mPatternView) {
+            if (null != mPatternView && null != mFingerprint) {
                 String security;
                 if (mPatternView.getCellSize() <= 1) {
                     security = "";
@@ -87,6 +102,8 @@ public class SetSecurityActivity extends ToolbarActivity implements View.OnClick
                     security = mPatternView.getPatternString();
                 }
                 Settings.putSecurity(security);
+                Settings.putEnableFingerprint(mFingerprint.getVisibility() == View.VISIBLE &&
+                        mFingerprint.isChecked() && !security.isEmpty());
             }
             finish();
         }
