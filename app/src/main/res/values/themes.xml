@@ -16,11 +16,12 @@
 
 <resources>
 
-  <style name="BaseTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+  <style name="BaseTheme" parent="Theme.AppCompat.DayNight">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
 
+    <item name="toolbarStyle">@style/Toolbar</item>
     <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
   </style>
 

@@ -17,6 +17,10 @@
 
 <resources>
 
+  <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
+    <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+  </style>
+
   <style name="DrawerArrowToggle" parent="Widget.AppCompat.DrawerArrowToggle">
     <item name="color">@android:color/white</item>
   </style>
