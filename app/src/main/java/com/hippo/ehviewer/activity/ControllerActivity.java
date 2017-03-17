@@ -31,6 +31,8 @@ import com.bluelinelabs.conductor.Conductor;
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.Router;
 import com.bluelinelabs.conductor.RouterTransaction;
+import com.hippo.ehviewer.changehandler.DialogChangeHandler;
+import com.hippo.ehviewer.controller.base.DialogController;
 
 public abstract class ControllerActivity extends AppCompatActivity {
 
@@ -107,6 +109,21 @@ public abstract class ControllerActivity extends AppCompatActivity {
       router.replaceTopController(transaction);
     } else {
       Log.e(LOG_TAG, "router == null, can't replace top controller");
+    }
+  }
+
+  /**
+   * Show dialog.
+   */
+  public void showDialog(@NonNull DialogController dialog) {
+    if (router != null) {
+      router.pushController(
+          RouterTransaction.with(dialog)
+              .pushChangeHandler(new DialogChangeHandler())
+              .popChangeHandler(new DialogChangeHandler())
+      );
+    } else {
+      Log.e(LOG_TAG, "router == null, can't show dialog");
     }
   }
 
