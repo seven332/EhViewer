@@ -911,6 +911,16 @@ public class Settings {
         putString(KEY_SECURITY, value);
     }
 
+    public static final String KEY_ENABLE_FINGERPRINT = "enable_fingerprint";
+
+    public static boolean getEnableFingerprint() {
+        return getBoolean(KEY_ENABLE_FINGERPRINT, false);
+    }
+
+    public static void putEnableFingerprint(boolean value) {
+        putBoolean(KEY_ENABLE_FINGERPRINT, value);
+    }
+
     public static final String KEY_READ_CACHE_SIZE = "read_cache_size";
     public static final int DEFAULT_READ_CACHE_SIZE = 160;
 

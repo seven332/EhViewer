@@ -341,6 +341,7 @@
     <string name="set_pattern_protection">設定圖案保護</string>
     <string name="set_pattern_protection_tip">繪製圖案來設定圖案保護\n留空來取消圖案保護</string>
     <string name="set">設定</string>
+    <string name="enable_fingerprint">允許使用指紋解鎖</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
