@@ -48,6 +48,8 @@ import com.hippo.ehviewer.controller.SignInController;
 import com.hippo.ehviewer.controller.WarningController;
 import com.hippo.ehviewer.controller.WhatsHotController;
 import com.hippo.ehviewer.controller.base.EhvController;
+import com.hippo.ehviewer.util.OpenSupplier;
+import com.hippo.ehviewer.util.Supplier;
 import com.hippo.ehviewer.view.base.EhvView;
 import com.hippo.ehviewer.widget.ControllerContainer;
 
@@ -69,12 +71,28 @@ public class EhvActivity extends ControllerActivity {
 
   private int checkedItemId = 0;
 
+  private boolean destroyed;
+
+  @Nullable private OpenSupplier<EhvActivity> selfSupplier;
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     if (savedInstanceState == null) {
       //getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
     }
     super.onCreate(savedInstanceState);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    destroyed = true;
+
+    // Clear self supplier
+    if (selfSupplier != null) {
+      selfSupplier.set(null);
+    }
   }
 
   @Override
@@ -118,6 +136,7 @@ public class EhvActivity extends ControllerActivity {
           RouterTransaction transaction = RouterTransaction.with(new FavouriteController());
           addChangeHandler(transaction);
           pushController(transaction);
+          return true;
         }
         case R.id.nav_invalid:
           // Do nothing
@@ -335,5 +354,22 @@ public class EhvActivity extends ControllerActivity {
     if (coordinatorLayout != null) {
       Snackbar.make(coordinatorLayout, resId, Snackbar.LENGTH_SHORT).show();
     }
+  }
+
+  /**
+   * Returns a {@link Supplier} to get itself.
+   * <p>
+   * The {@link Supplier} returns after the {@link EhvActivity} destroyed.
+   * <p>
+   * Use it to avoid memory leak.
+   */
+  public Supplier<EhvActivity> getSelfSupplier() {
+    if (selfSupplier == null) {
+      selfSupplier = new OpenSupplier<>();
+      if (!destroyed) {
+        selfSupplier.set(this);
+      }
+    }
+    return selfSupplier;
   }
 }
