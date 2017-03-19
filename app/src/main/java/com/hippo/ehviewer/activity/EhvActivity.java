@@ -28,8 +28,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.Gravity;
 import android.view.ViewGroup;
+import android.widget.Button;
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.hippo.drawerlayout.DrawerLayout;
@@ -42,7 +44,7 @@ import com.hippo.ehviewer.changehandler.MessageSheetChangeHandler;
 import com.hippo.ehviewer.changehandler.SheetChangeHandler;
 import com.hippo.ehviewer.changehandler.ToolbarChangeHandler;
 import com.hippo.ehviewer.controller.AnalyticsController;
-import com.hippo.ehviewer.controller.FavouriteController;
+import com.hippo.ehviewer.controller.FavouritesController;
 import com.hippo.ehviewer.controller.GalleryListController;
 import com.hippo.ehviewer.controller.SignInController;
 import com.hippo.ehviewer.controller.WarningController;
@@ -50,8 +52,10 @@ import com.hippo.ehviewer.controller.WhatsHotController;
 import com.hippo.ehviewer.controller.base.EhvController;
 import com.hippo.ehviewer.util.OpenSupplier;
 import com.hippo.ehviewer.util.Supplier;
+import com.hippo.ehviewer.util.ThemeUtils;
 import com.hippo.ehviewer.view.base.EhvView;
 import com.hippo.ehviewer.widget.ControllerContainer;
+import com.hippo.ehviewer.widget.EhvLeftDrawer;
 
 /**
  * Show warning and statistics.
@@ -67,7 +71,7 @@ public class EhvActivity extends ControllerActivity {
 
   @Nullable private CoordinatorLayout coordinatorLayout;
   @Nullable private DrawerLayout drawerLayout;
-  @Nullable private NavigationView leftDrawer;
+  @Nullable private NavigationView navigationView;
 
   private int checkedItemId = 0;
 
@@ -110,8 +114,9 @@ public class EhvActivity extends ControllerActivity {
     setContentView(R.layout.activity_ehv);
     coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
     drawerLayout = (DrawerLayout) findViewById(R.id.draw_layout);
-    leftDrawer = (NavigationView) findViewById(R.id.left_drawer);
-    leftDrawer.setNavigationItemSelectedListener(item -> {
+    EhvLeftDrawer leftDrawer = (EhvLeftDrawer) findViewById(R.id.left_drawer);
+    navigationView = leftDrawer.getNavigationView();
+    navigationView.setNavigationItemSelectedListener(item -> {
       int id = item.getItemId();
       if (id == checkedItemId) {
         // Check again
@@ -133,7 +138,7 @@ public class EhvActivity extends ControllerActivity {
         }
         case R.id.nav_favourites: {
           // Push favourites controller
-          RouterTransaction transaction = RouterTransaction.with(new FavouriteController());
+          RouterTransaction transaction = RouterTransaction.with(new FavouritesController());
           addChangeHandler(transaction);
           pushController(transaction);
           return true;
@@ -144,6 +149,19 @@ public class EhvActivity extends ControllerActivity {
         default:
           return false;
       }
+    });
+    Button button = leftDrawer.getBottomButton();
+    button.setText(ThemeUtils.isNightTheme(button.getContext())
+        ? R.string.let_there_be_light
+        : R.string.let_there_be_dark);
+    button.setOnClickListener(v -> {
+      boolean nightTheme = ThemeUtils.isNightTheme(button.getContext());
+      AppCompatDelegate.setDefaultNightMode(nightTheme
+          ? AppCompatDelegate.MODE_NIGHT_NO
+          : AppCompatDelegate.MODE_NIGHT_YES);
+      getDelegate().setLocalNightMode(nightTheme
+          ? AppCompatDelegate.MODE_NIGHT_NO
+          : AppCompatDelegate.MODE_NIGHT_YES);
     });
   }
 
@@ -333,8 +351,8 @@ public class EhvActivity extends ControllerActivity {
    * {@code 0} to clear checked state.
    */
   public void setLeftDrawerCheckedItem(int id) {
-    if (leftDrawer != null) {
-      leftDrawer.setCheckedItem(id == 0 ? R.id.nav_invalid : id);
+    if (navigationView != null) {
+      navigationView.setCheckedItem(id == 0 ? R.id.nav_invalid : id);
     }
   }
 

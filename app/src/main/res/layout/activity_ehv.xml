@@ -40,14 +40,11 @@
     </com.hippo.ehviewer.widget.EhvDrawerContent>
 
     <com.hippo.ehviewer.widget.EhvLeftDrawer
-      xmlns:app="http://schemas.android.com/apk/res-auto"
       android:id="@+id/left_drawer"
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
       android:layout_gravity="left"
-      android:maxWidth="@dimen/drawer_max_width"
-      app:headerLayout="@layout/header_left_drawer"
-      app:menu="@menu/nav_menu"/>
+      android:background="?android:attr/windowBackground"/>
 
   </com.hippo.drawerlayout.DrawerLayout>
 </com.hippo.ehviewer.widget.SafeCoordinatorLayout>
