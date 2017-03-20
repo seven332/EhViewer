@@ -21,6 +21,9 @@ package com.hippo.ehviewer;
  */
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
@@ -71,12 +74,8 @@ public class EhvApp extends RecordingApplication {
     }
   };
 
-  private LazySupplier<EhCookieJar> cookieJarSupplier = new LazySupplier<EhCookieJar>() {
-    @Override
-    public EhCookieJar onGet() {
-      return new EhCookieJar(EhvApp.this, DB_COOKIE);
-    }
-  };
+  private LazySupplier<EhCookieJar> cookieJarSupplier =
+      LazySupplier.from(() -> new EhCookieJar(EhvApp.this, DB_COOKIE));
 
   private LazySupplier<PresetDns> dnsSupplier = LazySupplier.from(PresetDns::new);
 
@@ -142,6 +141,31 @@ public class EhvApp extends RecordingApplication {
 
   public EhvDB getDb() {
     return dbSupplier.get();
+  }
+
+  /**
+   * Set night mode for each activity.
+   */
+  public void setNightMode(int mode) {
+    // Set default night mode
+    AppCompatDelegate.setDefaultNightMode(mode);
+    // Apply night mode to each activity
+    foreach(activity -> {
+      if (activity instanceof AppCompatActivity) {
+        ((AppCompatActivity) activity).getDelegate().setLocalNightMode(mode);
+      }
+    });
+    // TODO Start a activity with current screenshot and fade, to cover screen flash
+  }
+
+  /**
+   * Returns {@code true} if the {@code context} is in night theme.
+   * <p>
+   * Only work for {@link android.support.v7.app.AppCompatDelegate}.
+   */
+  public static boolean isNightTheme(Context context) {
+    Configuration conf = context.getResources().getConfiguration();
+    return (conf.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
   }
 
   /**

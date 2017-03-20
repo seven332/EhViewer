@@ -22,6 +22,7 @@ package com.hippo.ehviewer.activity;
 
 import static com.bluelinelabs.conductor.RouterTransaction.with;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -52,7 +53,6 @@ import com.hippo.ehviewer.controller.WhatsHotController;
 import com.hippo.ehviewer.controller.base.EhvController;
 import com.hippo.ehviewer.util.OpenSupplier;
 import com.hippo.ehviewer.util.Supplier;
-import com.hippo.ehviewer.util.ThemeUtils;
 import com.hippo.ehviewer.view.base.EhvView;
 import com.hippo.ehviewer.widget.ControllerContainer;
 import com.hippo.ehviewer.widget.EhvLeftDrawer;
@@ -151,15 +151,12 @@ public class EhvActivity extends ControllerActivity {
       }
     });
     Button button = leftDrawer.getBottomButton();
-    button.setText(ThemeUtils.isNightTheme(button.getContext())
+    button.setText(EhvApp.isNightTheme(button.getContext())
         ? R.string.let_there_be_light
         : R.string.let_there_be_dark);
     button.setOnClickListener(v -> {
-      boolean nightTheme = ThemeUtils.isNightTheme(button.getContext());
-      AppCompatDelegate.setDefaultNightMode(nightTheme
-          ? AppCompatDelegate.MODE_NIGHT_NO
-          : AppCompatDelegate.MODE_NIGHT_YES);
-      getDelegate().setLocalNightMode(nightTheme
+      Context context = v.getContext();
+      EhvApp.get(context).setNightMode(EhvApp.isNightTheme(context)
           ? AppCompatDelegate.MODE_NIGHT_NO
           : AppCompatDelegate.MODE_NIGHT_YES);
     });
@@ -195,7 +192,7 @@ public class EhvActivity extends ControllerActivity {
     Controller top = getTopController();
     Class<? extends Controller> topClass = top != null ? top.getClass() : null;
     int type = getControllerType(topClass);
-    EhvPreferences preferences = getApp().getPreferences();
+    EhvPreferences preferences = getEhvApp().getPreferences();
 
     switch (type) {
       case TYPE_NONE:
@@ -284,7 +281,7 @@ public class EhvActivity extends ControllerActivity {
         .popChangeHandler(new DefaultChangeHandler());
   }
 
-  public EhvApp getApp() {
+  public EhvApp getEhvApp() {
     return (EhvApp) getApplicationContext();
   }
 
