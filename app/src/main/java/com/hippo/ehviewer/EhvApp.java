@@ -50,6 +50,7 @@ public class EhvApp extends RecordingApplication {
           + "Safari/537.36";
 
   private static final String DB_COOKIE = "okhttp3-cookie.db";
+  private static final String DB_EHVIEWER = "eh2.db";
 
   private RefWatcher refWatcher;
 
@@ -87,6 +88,9 @@ public class EhvApp extends RecordingApplication {
 
   private LazySupplier<Gson> gsonSupplier =
       LazySupplier.from(() -> new GsonBuilder().serializeSpecialFloatingPointValues().create());
+
+  private LazySupplier<EhvDB> dbSupplier =
+      LazySupplier.from(() -> new EhvDB(this, DB_EHVIEWER));
 
   @Override
   public void onCreate() {
@@ -134,6 +138,10 @@ public class EhvApp extends RecordingApplication {
 
   public Gson getGson() {
     return gsonSupplier.get();
+  }
+
+  public EhvDB getDb() {
+    return dbSupplier.get();
   }
 
   /**
