@@ -21,6 +21,7 @@ package com.hippo.ehviewer.client;
  */
 
 import com.hippo.ehviewer.client.param.GalleryMetadataParam;
+import com.hippo.ehviewer.client.result.FavouritesResult;
 import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.GalleryMetadataResult;
@@ -96,4 +97,10 @@ public interface EhEngine {
 
   @GET(EhUrl.URL_E)
   Observable<Result<WhatsHotResult>> getWhatsHot();
+
+  @GET
+  Observable<Result<FavouritesResult>> getFavourites(
+      @Url String url,
+      @QueryMap Map<String, String> query
+  );
 }

@@ -24,6 +24,7 @@ import android.content.Context;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.param.GalleryMetadataParam;
+import com.hippo.ehviewer.client.result.FavouritesResult;
 import com.hippo.ehviewer.client.result.ForumsResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.GalleryMetadataResult;
@@ -259,6 +260,13 @@ public final class EhClient {
             return Result.response(Response.success(whatsHotResult));
           }
         });
+  }
+
+  /**
+   * Gets favourites.
+   */
+  public Observable<Result<FavouritesResult>> getFavourites(String url, Map<String, String> query) {
+    return engine.getFavourites(url, query);
   }
 
   /**

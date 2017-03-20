@@ -55,7 +55,7 @@ public final class EhUrl {
   public static final String URL_FAVOURITES_E = URL_E + "favorites.php";
   public static final String URL_FAVOURITES_EX = URL_EX + "favorites.php";
 
-  public static final String URL_THUMBNAIL_E = "https://ul.ehgt.org/";
+  public static final String URL_THUMBNAIL_E = "https://ehgt.org/";
   public static final String URL_THUMBNAIL_EX = "https://exhentai.org/t/";
 
   public static final String URL_API_E = URL_E + "api.php";
