@@ -20,6 +20,8 @@ package com.hippo.ehviewer.client.data;
  * Created by Hippo on 1/29/2017.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import com.hippo.ehviewer.client.EhUtils;
@@ -44,7 +46,7 @@ import java.util.Map;
     version = 1,
     name = "com.hippo.ehviewer:GalleryInfo"
 )
-public class GalleryInfo implements JsonStore.Item {
+public class GalleryInfo implements JsonStore.Item, Parcelable {
 
   private static final String LOG_TAG = GalleryInfo.class.getSimpleName();
 
@@ -288,4 +290,86 @@ public class GalleryInfo implements JsonStore.Item {
   public boolean onFetch(int version) {
     return true;
   }
+
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags) {
+    dest.writeLong(this.gid);
+    dest.writeString(this.token);
+    dest.writeString(this.title);
+    dest.writeString(this.titleJpn);
+    dest.writeString(this.cover);
+    dest.writeString(this.coverUrl);
+    dest.writeFloat(this.coverRatio);
+    dest.writeInt(this.category);
+    dest.writeLong(this.date);
+    dest.writeString(this.uploader);
+    dest.writeFloat(this.rating);
+    dest.writeInt(this.language);
+    dest.writeInt(this.favouriteSlot);
+    dest.writeByte(this.invalid ? (byte) 1 : (byte) 0);
+    dest.writeString(this.archiverKey);
+    dest.writeInt(this.pages);
+    dest.writeLong(this.size);
+    dest.writeInt(this.torrentCount);
+    if (this.tags != null) {
+      dest.writeInt(this.tags.size());
+      for (Map.Entry<String, List<String>> entry : this.tags.entrySet()) {
+        dest.writeString(entry.getKey());
+        dest.writeStringList(entry.getValue());
+      }
+    } else {
+      dest.writeInt(-1);
+    }
+  }
+
+  public GalleryInfo() {
+  }
+
+  protected GalleryInfo(Parcel in) {
+    this.gid = in.readLong();
+    this.token = in.readString();
+    this.title = in.readString();
+    this.titleJpn = in.readString();
+    this.cover = in.readString();
+    this.coverUrl = in.readString();
+    this.coverRatio = in.readFloat();
+    this.category = in.readInt();
+    this.date = in.readLong();
+    this.uploader = in.readString();
+    this.rating = in.readFloat();
+    this.language = in.readInt();
+    this.favouriteSlot = in.readInt();
+    this.invalid = in.readByte() != 0;
+    this.archiverKey = in.readString();
+    this.pages = in.readInt();
+    this.size = in.readLong();
+    this.torrentCount = in.readInt();
+    int tagsSize = in.readInt();
+    if (tagsSize >= 0) {
+      this.tags = new HashMap<>(tagsSize);
+      for (int i = 0; i < tagsSize; i++) {
+        String key = in.readString();
+        List<String> value = in.createStringArrayList();
+        this.tags.put(key, value);
+      }
+    }
+  }
+
+  public static final Parcelable.Creator<GalleryInfo> CREATOR =
+      new Parcelable.Creator<GalleryInfo>() {
+        @Override
+        public GalleryInfo createFromParcel(Parcel source) {
+          return new GalleryInfo(source);
+        }
+
+        @Override
+        public GalleryInfo[] newArray(int size) {
+          return new GalleryInfo[size];
+        }
+      };
 }
