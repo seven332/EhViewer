@@ -41,6 +41,6 @@
     <item name="android:windowContentOverlay">@null</item>
   </style>
 
-  <style name="AppTheme.Main" parent="AppTheme.NoActionBar"/>
+  <style name="AppTheme.Ehv" parent="AppTheme.NoActionBar"/>
 
 </resources>
