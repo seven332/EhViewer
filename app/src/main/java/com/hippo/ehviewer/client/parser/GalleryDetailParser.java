@@ -164,7 +164,9 @@ public class GalleryDetailParser {
             // Category
             Element gdc = gm.getElementById("gdc");
             try {
-                gd.category = EhUtils.getCategory(gdc.child(0).child(0).attr("alt"));
+                String href = gdc.child(0).attr("href");
+                String category = href.substring(href.lastIndexOf('/') + 1);
+                gd.category = EhUtils.getCategory(category);
             } catch (Exception e) {
                 gd.category = EhUtils.UNKNOWN;
             }
