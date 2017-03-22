@@ -114,4 +114,7 @@
     <color name="lock_pattern_view_success_color">@color/colorPrimary</color>
     <color name="lock_pattern_view_error_color">@color/red_500</color>
 
+    <!-- Fingerprint -->
+    <color name="fingerprint_error_text">@color/red_500</color>
+
 </resources>
