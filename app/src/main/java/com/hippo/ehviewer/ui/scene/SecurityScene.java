@@ -111,7 +111,8 @@ public class SecurityScene extends SolidScene implements
             mSensorManager.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
         }
 
-        if (isFingerprintAuthAvailable()) {
+        // Redundant SDK version checking prevents false positive inspection
+        if (isFingerprintAuthAvailable() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mFingerprintCancellationSignal = new CancellationSignal();
             // The line below prevents the false positive inspection from Android Studio
             // noinspection ResourceType
@@ -151,7 +152,9 @@ public class SecurityScene extends SolidScene implements
         if (null != mShakeDetector) {
             mSensorManager.unregisterListener(mShakeDetector);
         }
-        if (isFingerprintAuthAvailable() && mFingerprintCancellationSignal != null) {
+        // Redundant SDK version checking prevents false positive inspection
+        if (isFingerprintAuthAvailable() && mFingerprintCancellationSignal != null
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mFingerprintCancellationSignal.cancel();
             mFingerprintCancellationSignal = null;
         }
@@ -234,11 +237,16 @@ public class SecurityScene extends SolidScene implements
     private boolean isFingerprintAuthAvailable() {
         // The line below prevents the false positive inspection from Android Studio
         // noinspection ResourceType
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && Settings.getEnableFingerprint()
-                && mFingerprintManager != null
-                && mFingerprintManager.isHardwareDetected()
-                && mFingerprintManager.hasEnrolledFingerprints();
+        try {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && Settings.getEnableFingerprint()
+                    && mFingerprintManager != null
+                    && mFingerprintManager.isHardwareDetected()
+                    && mFingerprintManager.hasEnrolledFingerprints();
+        } catch (SecurityException e) {
+            // Some Samsung devices throw this on hasEnrolledFingerprints().
+            return false;
+        }
     }
 
     private Runnable mResetFingerprintRunnable = new Runnable() {
