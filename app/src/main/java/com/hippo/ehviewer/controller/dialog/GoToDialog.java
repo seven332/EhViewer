@@ -31,7 +31,7 @@ import android.util.Log;
 import android.view.View;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bluelinelabs.conductor.Controller;
-import com.hippo.ehviewer.controller.base.EhvDialogController;
+import com.hippo.ehviewer.controller.EhvDialogController;
 import junit.framework.Assert;
 
 public class GoToDialog extends EhvDialogController {

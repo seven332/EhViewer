@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.component;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 2/3/2017.
  */
 
-import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import android.view.View;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 
 /**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
+ * Makes BindingViewHolder<GalleryInfo> short.
  */
-public class DialogChangeHandler extends SimpleSwapChangeHandler {
+public abstract class GalleryInfoHolder extends BindingViewHolder<GalleryInfo> {
 
-  public DialogChangeHandler() {
-    super(false);
+  public GalleryInfoHolder(View itemView) {
+    super(itemView);
   }
 }

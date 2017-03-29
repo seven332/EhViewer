@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.scene.favourites;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 3/2/2017.
  */
 
-import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import android.content.Context;
+import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.scene.gallerylist.GalleryListAdapter;
+import com.hippo.ehviewer.scene.gallerylist.GalleryListView;
+import com.hippo.ehviewer.widget.ContentData;
 
 /**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
+ * {@link android.support.v7.widget.RecyclerView.Adapter} for
+ * {@link GalleryListView}.
  */
-public class DialogChangeHandler extends SimpleSwapChangeHandler {
+public class FavouritesAdapter extends GalleryListAdapter {
 
-  public DialogChangeHandler() {
-    super(false);
+  public FavouritesAdapter(Context context,
+      ContentData<GalleryInfo> data) {
+    super(context, data);
   }
 }

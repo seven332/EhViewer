@@ -47,6 +47,7 @@ import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.drawable.ScaleDrawable;
+import com.hippo.ehviewer.view.EhvView;
 import com.hippo.ehviewer.widget.ControllerContainer;
 import com.hippo.ehviewer.widget.Overlay;
 import com.hippo.yorozuya.android.AnimationUtils;
@@ -90,7 +91,7 @@ public final class ChangeHandlerAnimators {
    * <p>
    * Return {@code null} if not supported.
    * <p>
-   * Only works for {@link com.hippo.ehviewer.view.base.EhvView}
+   * Only works for {@link EhvView}
    * in {@link com.hippo.ehviewer.activity.EhvActivity}.
    */
   @Nullable

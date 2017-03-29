@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.scene.warning;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 2/10/2017.
  */
 
-import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import com.hippo.ehviewer.EhvApp;
+import com.hippo.ehviewer.EhvPreferences;
+import com.hippo.ehviewer.presenter.ControllerPresenter;
 
-/**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
- */
-public class DialogChangeHandler extends SimpleSwapChangeHandler {
+public class WarningPresenter extends ControllerPresenter<WarningContract.View>
+    implements WarningContract.Presenter {
 
-  public DialogChangeHandler() {
-    super(false);
+  private EhvPreferences preferences;
+
+  public WarningPresenter(EhvApp app) {
+    preferences = app.getPreferences();
   }
+
+  @Override
+  public void neverShowWarning() {
+    preferences.putShowWarning(false);
+  }
+
+  @Override
+  public void restore(WarningContract.View view) {}
 }

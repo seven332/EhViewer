@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.presenter;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 2/8/2017.
  */
 
-import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import com.hippo.ehviewer.view.ViewInterface;
 
 /**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
+ * P of MVP.
+ * <p>
+ * {@code Presenter} fetches and store data for {@code View}.
+ * {@code Presenter} could have longer life than {@code View}.
  */
-public class DialogChangeHandler extends SimpleSwapChangeHandler {
+public interface PresenterInterface<V extends ViewInterface> {
 
-  public DialogChangeHandler() {
-    super(false);
-  }
+  /**
+   * Binds a view to this presenter.
+   * Passes {@code null} to unbind.
+   */
+  void setView(V view);
 }

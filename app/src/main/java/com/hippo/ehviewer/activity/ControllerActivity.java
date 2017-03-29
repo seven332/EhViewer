@@ -32,7 +32,7 @@ import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.Router;
 import com.bluelinelabs.conductor.RouterTransaction;
 import com.hippo.ehviewer.changehandler.DialogChangeHandler;
-import com.hippo.ehviewer.controller.base.DialogController;
+import com.hippo.ehviewer.controller.DialogController;
 
 public abstract class ControllerActivity extends AppCompatActivity {
 

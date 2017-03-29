@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.component;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 2/3/2017.
  */
 
-import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
+ * Let ViewHolders bind themselves.
  */
-public class DialogChangeHandler extends SimpleSwapChangeHandler {
+public abstract class BindingViewHolder<T> extends RecyclerView.ViewHolder {
 
-  public DialogChangeHandler() {
-    super(false);
+  public BindingViewHolder(View itemView) {
+    super(itemView);
   }
+
+  /**
+   * Binds the ViewHolder with the {@code t}.
+   */
+  public abstract void bind(T t);
 }

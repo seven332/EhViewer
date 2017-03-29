@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.scene.whatshot;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 2/24/2017.
  */
 
-import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import android.content.Context;
+import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.scene.gallerylist.GalleryListAdapter;
+import com.hippo.ehviewer.widget.ContentData;
 
 /**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
+ * {@link android.support.v7.widget.RecyclerView.Adapter} for
+ * {@link WhatsHotView}.
  */
-public class DialogChangeHandler extends SimpleSwapChangeHandler {
+public class WhatsHotAdapter extends GalleryListAdapter {
 
-  public DialogChangeHandler() {
-    super(false);
+  public WhatsHotAdapter(Context context,
+      ContentData<GalleryInfo> data) {
+    super(context, data);
   }
 }

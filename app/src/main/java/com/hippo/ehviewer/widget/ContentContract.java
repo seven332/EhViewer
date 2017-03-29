@@ -22,8 +22,8 @@ package com.hippo.ehviewer.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.hippo.ehviewer.presenter.base.PresenterInterface;
-import com.hippo.ehviewer.view.base.ViewInterface;
+import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.view.ViewInterface;
 
 public interface ContentContract {
 

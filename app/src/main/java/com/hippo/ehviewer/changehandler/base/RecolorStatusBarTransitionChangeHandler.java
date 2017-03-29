@@ -27,7 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.changehandler.ChangeHandlerAnimators;
-import com.hippo.ehviewer.controller.base.MvpController;
+import com.hippo.ehviewer.controller.MvpController;
 import com.hippo.ehviewer.transition.RunAnimator;
 import com.transitionseverywhere.Transition;
 import com.transitionseverywhere.TransitionSet;

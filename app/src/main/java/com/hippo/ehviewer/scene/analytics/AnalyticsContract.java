@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.scene.analytics;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 2/10/2017.
  */
 
-import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.view.ViewInterface;
 
-/**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
- */
-public class DialogChangeHandler extends SimpleSwapChangeHandler {
+public interface AnalyticsContract {
 
-  public DialogChangeHandler() {
-    super(false);
+  interface Presenter extends PresenterInterface<View> {
+
+    void acceptAnalytics();
+
+    void rejectAnalytics();
+
+    void neverAskAnalytics();
   }
+
+  interface View extends ViewInterface {}
 }
