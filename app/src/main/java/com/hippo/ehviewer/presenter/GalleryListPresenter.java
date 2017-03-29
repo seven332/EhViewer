@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhSubscriber;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.GLUrlBuilder;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.component.GalleryInfoData;
 import com.hippo.ehviewer.component.GalleryListAdapter;
 import com.hippo.ehviewer.component.base.GalleryInfoAdapter;
@@ -72,6 +73,11 @@ public class GalleryListPresenter extends GalleryListContract.AbsPresenter {
   @Override
   public void applyGLUrlBuilder(GLUrlBuilder builder) {
     data.applyGLUrlBuilder(builder);
+  }
+
+  @Override
+  public GalleryInfo getGalleryInfo(int index) {
+    return data.get(index);
   }
 
   @Override

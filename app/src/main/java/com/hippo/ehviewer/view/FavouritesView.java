@@ -26,11 +26,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.contract.FavouriteContract;
+import com.hippo.ehviewer.contract.FavouritesContract;
 import com.hippo.ehviewer.view.base.GalleryInfoView;
 
-public class FavouriteView extends GalleryInfoView<FavouriteContract.Presenter>
-    implements FavouriteContract.View {
+public class FavouritesView extends GalleryInfoView<FavouritesContract.Presenter>
+    implements FavouritesContract.View {
 
   private EhvPreferences preferences;
 
@@ -38,11 +38,14 @@ public class FavouriteView extends GalleryInfoView<FavouriteContract.Presenter>
   protected View createContentView(LayoutInflater inflater, ViewGroup parent) {
     View view = super.createContentView(inflater, parent);
 
-    preferences = getApplication().getPreferences();
+    preferences = getEhvApp().getPreferences();
 
     setMenu(R.menu.view_favourites, item -> {
       switch (item.getItemId()) {
         case R.id.action_search:
+          // TODO
+          return true;
+        case R.id.action_go_to:
           // TODO
           return true;
         case R.id.action_detail:

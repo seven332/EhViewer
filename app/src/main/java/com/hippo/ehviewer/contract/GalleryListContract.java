@@ -21,6 +21,7 @@ package com.hippo.ehviewer.contract;
  */
 
 import com.hippo.ehviewer.client.GLUrlBuilder;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.contract.base.GalleryInfoContract;
 import com.hippo.ehviewer.presenter.base.ControllerPresenter;
 
@@ -29,6 +30,8 @@ public interface GalleryListContract {
   interface Presenter extends GalleryInfoContract.Presenter<View> {
 
     void applyGLUrlBuilder(GLUrlBuilder builder);
+
+    GalleryInfo getGalleryInfo(int index);
   }
 
   interface View extends GalleryInfoContract.View {

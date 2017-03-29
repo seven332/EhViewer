@@ -22,7 +22,7 @@ package com.hippo.ehviewer.contract;
 
 import com.hippo.ehviewer.contract.base.GalleryInfoContract;
 
-public interface FavouriteContract {
+public interface FavouritesContract {
 
   interface Presenter extends GalleryInfoContract.Presenter<View> {}
 

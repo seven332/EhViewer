@@ -21,12 +21,18 @@ package com.hippo.ehviewer.controller.base;
  */
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.bluelinelabs.conductor.Controller;
+import com.hippo.ehviewer.EhvApp;
+import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.presenter.base.ControllerPresenter;
+import com.hippo.ehviewer.util.OpenSupplier;
+import com.hippo.ehviewer.util.Supplier;
 import com.hippo.ehviewer.view.base.EhvView;
 import java.util.HashMap;
 import java.util.Map;
+import junit.framework.Assert;
 
 /**
  * Base {@link com.bluelinelabs.conductor.Controller}
@@ -55,7 +61,48 @@ public abstract class EhvController<P extends ControllerPresenter, V extends Ehv
     return CONTROLLER_VIEW_MAP.get(c);
   }
 
+  private OpenSupplier<EhvController> selfSupplier;
+
   public EhvController(Bundle args) {
     super(args);
+  }
+
+  @Override
+  protected void onCreateView(@NonNull V view) {
+    super.onCreateView(view);
+    EhvApp app = (EhvApp) getApplicationContext();
+    EhvActivity activity = (EhvActivity) getActivity();
+    Assert.assertNotNull(app);
+    Assert.assertNotNull(activity);
+    view.setEhvApp(app);
+    view.setEhvActivity(activity);
+    view.setEhvController(this);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    // Clear self supplier
+    if (selfSupplier != null) {
+      selfSupplier.set(null);
+    }
+  }
+
+  /**
+   * Returns a {@link Supplier} to get itself.
+   * <p>
+   * The {@link Supplier} returns {@code null} after itself destroyed.
+   * <p>
+   * Use it to avoid memory leak.
+   */
+  public Supplier<EhvController> getSelfSupplier() {
+    if (selfSupplier == null) {
+      selfSupplier = new OpenSupplier<>();
+      if (!isDestroyed()) {
+        selfSupplier.set(this);
+      }
+    }
+    return selfSupplier;
   }
 }

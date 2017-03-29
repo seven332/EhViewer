@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import rx.functions.Action1;
 
 /**
  * Records all activities.
@@ -91,6 +92,24 @@ public class RecordingApplication extends Application {
     // Finish all activities
     for (int i = listCopy.size() - 1; i >= 0; --i) {
       listCopy.get(i).finish();
+    }
+  }
+
+  /**
+   * Calls {@code action} on each {@link Activity}.
+   */
+  public void foreach(Action1<Activity> action) {
+    // Copy list
+    ArrayList<Activity> listCopy = new ArrayList<>(list.size());
+    for (WeakReference<Activity> reference: list) {
+      Activity activity = reference.get();
+      if (activity == null) continue;
+      listCopy.add(activity);
+    }
+
+    // Recreate all activities
+    for (int i = listCopy.size() - 1; i >= 0; --i) {
+      action.call(listCopy.get(i));
     }
   }
 }

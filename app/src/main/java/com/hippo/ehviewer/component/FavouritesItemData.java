@@ -17,21 +17,32 @@
 package com.hippo.ehviewer.component;
 
 /*
- * Created by Hippo on 3/2/2017.
+ * Created by Hippo on 3/4/2017.
  */
 
-import android.content.Context;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.widget.ContentData;
+import java.util.List;
 
-/**
- * {@link android.support.v7.widget.RecyclerView.Adapter} for
- * {@link com.hippo.ehviewer.view.GalleryListView}.
- */
-public class FavouriteAdapter extends GalleryListAdapter {
+// TODO
+public class FavouritesItemData extends ContentData<GalleryInfo> {
 
-  public FavouriteAdapter(Context context,
-      ContentData<GalleryInfo> data) {
-    super(context, data);
+  public FavouritesItemData() {
+    setRemoveDuplicates(true);
+  }
+
+  @Override
+  protected void onRequireData(long id, int page) {
+
+  }
+
+  @Override
+  protected void onRestoreData(long id) {
+
+  }
+
+  @Override
+  protected void onBackupData(List<GalleryInfo> data) {
+
   }
 }

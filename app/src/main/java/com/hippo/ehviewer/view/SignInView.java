@@ -73,7 +73,7 @@ public class SignInView extends SheetView<SignInContract.Presenter>
     TextView signInSkip = (TextView) view.findViewById(R.id.sign_in_skip);
     progressBar = view.findViewById(R.id.progress_bar);
 
-    setHeader(new ColorDrawable(ResourcesUtils.getAttrColor(getActivity(), R.attr.colorPrimary)));
+    setHeader(new ColorDrawable(ResourcesUtils.getAttrColor(getEhvActivity(), R.attr.colorPrimary)));
     setTitle(R.string.sign_in);
     setIcon(R.drawable.v_login_white_x48);
 
@@ -114,7 +114,7 @@ public class SignInView extends SheetView<SignInContract.Presenter>
       if (presenter != null) {
         presenter.neverAskSignIn();
       }
-      getActivity().nextController();
+      getEhvActivity().nextController();
     });
 
     return view;
@@ -195,7 +195,7 @@ public class SignInView extends SheetView<SignInContract.Presenter>
     if (presenter != null) {
       presenter.neverAskSignIn();
     }
-    getActivity().nextController();
+    getEhvActivity().nextController();
   }
 
   @Override
@@ -211,7 +211,7 @@ public class SignInView extends SheetView<SignInContract.Presenter>
       usernameLayout.setError(null);
       passwordLayout.setError(getString(R.string.error_password_empty));
     } else {
-      error.setText(ExceptionExplainer.explain(getActivity(), e));
+      error.setText(ExceptionExplainer.explain(getEhvActivity(), e));
       usernameLayout.setError(null);
       passwordLayout.setError(null);
     }

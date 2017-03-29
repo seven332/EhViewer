@@ -20,6 +20,8 @@ package com.hippo.ehviewer.view;
  * Created by Hippo on 2/10/2017.
  */
 
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -28,11 +30,15 @@ import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.GLUrlBuilder;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.contract.GalleryListContract;
+import com.hippo.ehviewer.controller.dialog.GalleryListDialog;
+import com.hippo.ehviewer.controller.dialog.GoToDialog;
 import com.hippo.ehviewer.view.base.GalleryInfoView;
+import com.hippo.ehviewer.widget.ContentLayout;
 
 public class GalleryListView extends GalleryInfoView<GalleryListContract.Presenter>
-    implements GalleryListContract.View {
+    implements GalleryListContract.View, GoToDialog.Listener {
 
   private EhvPreferences preferences;
 
@@ -40,11 +46,28 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
   protected View createContentView(LayoutInflater inflater, ViewGroup parent) {
     View view = super.createContentView(inflater, parent);
 
-    preferences = getApplication().getPreferences();
+    preferences = getEhvApp().getPreferences();
+
+    ContentLayout layout = (ContentLayout) view;
+    layout.setOnItemLongClickListener((recyclerView, holder) -> {
+      int index = holder.getAdapterPosition();
+      if (index == RecyclerView.NO_POSITION) {
+        return false;
+      }
+      GalleryInfo info = getGalleryInfo(index);
+      if (info == null) {
+        return false;
+      }
+      getEhvActivity().showDialog(GalleryListDialog.create(info));
+      return true;
+    });
 
     setMenu(R.menu.view_gallery_list, item -> {
       switch (item.getItemId()) {
         case R.id.action_search:
+          // TODO
+          return true;
+        case R.id.action_go_to:
           // TODO
           return true;
         case R.id.action_detail:
@@ -92,6 +115,16 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
     return NAVIGATION_TYPE_MENU;
   }
 
+  @Nullable
+  private GalleryInfo getGalleryInfo(int index) {
+    GalleryListContract.Presenter presenter = getPresenter();
+    if (presenter != null) {
+      return presenter.getGalleryInfo(index);
+    } else {
+      return null;
+    }
+  }
+
   private String getTitleForGLUrlBuilder(GLUrlBuilder builder) {
     String title = null;
     int titleResId = 0;
@@ -109,9 +142,14 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
 
   @Override
   public void onUpdateGLUrlBuilder(GLUrlBuilder builder) {
-    getActivity().setLeftDrawerCheckedItem(
-        builder.getCategory() == EhUtils.NONE ? R.id.nav_homepage : 0
-    );
+    getEhvActivity().setLeftDrawerCheckedItem(builder.getCategory() == EhUtils.NONE
+        ? R.id.nav_homepage
+        : 0);
     setTitle(getTitleForGLUrlBuilder(builder));
+  }
+
+  @Override
+  public void onGoTo(int page) {
+    // TODO
   }
 }

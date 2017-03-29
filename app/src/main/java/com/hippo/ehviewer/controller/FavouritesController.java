@@ -25,39 +25,43 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.controller.base.EhvController;
-import com.hippo.ehviewer.presenter.FavouritePresenter;
-import com.hippo.ehviewer.view.FavouriteView;
+import com.hippo.ehviewer.presenter.FavouritesPresenter;
+import com.hippo.ehviewer.view.FavouritesView;
 
-public class FavouriteController extends EhvController<FavouritePresenter, FavouriteView> {
+public class FavouritesController extends EhvController<FavouritesPresenter, FavouritesView> {
 
-  public FavouriteController() {
+  static {
+    register(FavouritesController.class, FavouritesView.class);
+  }
+
+  public FavouritesController() {
     super(null);
   }
 
   @NonNull
   @Override
-  protected FavouritePresenter createPresenter(EhvApp app, @Nullable Bundle args) {
-    return new FavouritePresenter(app);
+  protected FavouritesPresenter createPresenter(EhvApp app, @Nullable Bundle args) {
+    return new FavouritesPresenter(app);
   }
 
   @NonNull
   @Override
-  protected FavouriteView createView() {
-    return new FavouriteView();
+  protected FavouritesView createView() {
+    return new FavouritesView();
   }
 
   @Override
-  protected void setPresenterForView(FavouriteView view, FavouritePresenter presenter) {
+  protected void setPresenterForView(FavouritesView view, FavouritesPresenter presenter) {
     view.setPresenter(presenter);
   }
 
   @Override
-  protected void setViewForPresenter(FavouritePresenter presenter, FavouriteView view) {
+  protected void setViewForPresenter(FavouritesPresenter presenter, FavouritesView view) {
     presenter.setView(view);
   }
 
   @Override
-  protected void restoreForPresenter(FavouritePresenter presenter, FavouriteView view) {
+  protected void restoreForPresenter(FavouritesPresenter presenter, FavouritesView view) {
     presenter.restore(view);
   }
 }

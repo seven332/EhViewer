@@ -30,6 +30,7 @@ import android.support.annotation.StringRes;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.activity.EhvActivity;
+import com.hippo.ehviewer.controller.base.EhvController;
 import com.hippo.ehviewer.presenter.base.PresenterInterface;
 import com.hippo.yorozuya.android.ResourcesUtils;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,10 @@ import rx.subscriptions.Subscriptions;
 
 public abstract class EhvView<P extends PresenterInterface> extends ControllerView<P>
     implements ViewInterface {
+
+  private EhvApp app;
+  private EhvActivity activity;
+  private EhvController controller;
 
   @Nullable
   private Scheduler.Worker worker = AndroidSchedulers.mainThread().createWorker();
@@ -78,8 +83,10 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
   protected void onAttach() {
     super.onAttach();
 
+    EhvActivity activity = getEhvActivity();
+
     int statusBarColor = getStatusBarColor();
-    getActivity().setStatusBarColor(statusBarColor);
+    activity.setStatusBarColor(statusBarColor);
     // Store controller status bar color in content view
     // Make RecolorStatusBarTransitionChangeHandler work
     getView().setTag(R.id.controller_status_bar_color, statusBarColor);
@@ -87,16 +94,16 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       ActivityManager.TaskDescription taskDescription =
           new ActivityManager.TaskDescription(null, null, statusBarColor);
-      getActivity().setTaskDescription(taskDescription);
+      activity.setTaskDescription(taskDescription);
     }
 
     if (whetherShowLeftDrawer()) {
-      getActivity().unlockLeftDrawer();
+      activity.unlockLeftDrawer();
     } else {
-      getActivity().lockLeftDrawer();
+      activity.lockLeftDrawer();
     }
 
-    getActivity().setLeftDrawerCheckedItem(getLeftDrawerCheckedItem());
+    activity.setLeftDrawerCheckedItem(getLeftDrawerCheckedItem());
   }
 
   @Override
@@ -122,7 +129,7 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
    */
   @ColorInt
   protected int getStatusBarColor() {
-    return ResourcesUtils.getAttrColor(getActivity(), R.attr.colorPrimaryDark);
+    return ResourcesUtils.getAttrColor(getEhvActivity(), R.attr.colorPrimaryDark);
   }
 
   /**
@@ -147,21 +154,32 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
     return 0;
   }
 
+  public void setEhvApp(EhvApp app) {
+    this.app = app;
+  }
+
+  public void setEhvActivity(EhvActivity activity) {
+    this.activity = activity;
+  }
+
+  public void setEhvController(EhvController controller) {
+    this.controller = controller;
+  }
+
   /**
    * Gets {@code EhvApp} instance.
    */
   @NonNull
-  public EhvApp getApplication() {
-    return (EhvApp) getActivity().getApplication();
+  public EhvApp getEhvApp() {
+    return app;
   }
 
   /**
    * Gets {@code EhvActivity} instance.
    */
-  @Override
   @NonNull
-  public EhvActivity getActivity() {
-    return (EhvActivity) super.getActivity();
+  public EhvActivity getEhvActivity() {
+    return activity;
   }
 
   /**
@@ -169,7 +187,7 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
    */
   @NonNull
   public Resources getResources() {
-    return getActivity().getResources();
+    return getEhvActivity().getResources();
   }
 
   /**
@@ -177,6 +195,11 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
    */
   public String getString(@StringRes int resId) {
     return getResources().getString(resId);
+  }
+
+  @Nullable
+  public EhvController getEhvController() {
+    return controller;
   }
 
   /**

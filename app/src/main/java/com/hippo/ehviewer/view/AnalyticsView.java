@@ -43,7 +43,7 @@ public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter>
         presenter.rejectAnalytics();
         presenter.neverAskAnalytics();
       }
-      getActivity().nextController();
+      getEhvActivity().nextController();
     });
     setPositiveButton(R.string.accept, a -> {
       AnalyticsContract.Presenter presenter = getPresenter();
@@ -51,13 +51,13 @@ public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter>
         presenter.acceptAnalytics();
         presenter.neverAskAnalytics();
       }
-      getActivity().nextController();
+      getEhvActivity().nextController();
     });
   }
 
   @Override
   protected int getStatusBarColor() {
-    return ContextCompat.getColor(getActivity(), R.color.indigo_700);
+    return ContextCompat.getColor(getEhvActivity(), R.color.indigo_700);
   }
 
   @Override

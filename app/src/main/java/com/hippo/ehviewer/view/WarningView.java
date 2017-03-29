@@ -34,19 +34,19 @@ public class WarningView extends MessageSheetView<WarningContract.Presenter>
     setTitle(R.string.warning_title);
     setIcon(R.drawable.v_alert_white_x48);
     setMessage(R.string.warning_message);
-    setNegativeButton(R.string.reject, v -> getApplication().finish());
+    setNegativeButton(R.string.reject, v -> getEhvApp().finish());
     setPositiveButton(R.string.accept, v -> {
       WarningContract.Presenter presenter = getPresenter();
       if (presenter != null) {
         presenter.neverShowWarning();
       }
-      getActivity().nextController();
+      getEhvActivity().nextController();
     });
   }
 
   @Override
   protected int getStatusBarColor() {
-    return ContextCompat.getColor(getActivity(), R.color.red_700);
+    return ContextCompat.getColor(getEhvActivity(), R.color.red_700);
   }
 
   @Override

@@ -27,27 +27,24 @@ import com.google.gson.Gson;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.client.EhClient;
-import com.hippo.ehviewer.client.EhSubscriber;
-import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.FLUrlBuilder;
-import com.hippo.ehviewer.component.FavouriteAdapter;
-import com.hippo.ehviewer.component.GalleryInfoData;
+import com.hippo.ehviewer.client.data.FavouritesItem;
 import com.hippo.ehviewer.component.base.GalleryInfoAdapter;
-import com.hippo.ehviewer.contract.FavouriteContract;
+import com.hippo.ehviewer.contract.FavouritesContract;
 import com.hippo.ehviewer.presenter.base.ControllerPresenter;
+import com.hippo.ehviewer.widget.ContentData;
 import com.hippo.ehviewer.widget.ContentLayout;
-import com.hippo.yorozuya.FileUtils;
-import java.io.File;
-import java.util.Map;
+import java.util.List;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class FavouritePresenter extends ControllerPresenter<FavouriteContract.View>
-    implements FavouriteContract.Presenter {
+public class FavouritesPresenter extends ControllerPresenter<FavouritesContract.View>
+    implements FavouritesContract.Presenter {
 
   private GalleryData data;
 
-  public FavouritePresenter(EhvApp app) {
+  public FavouritesPresenter(EhvApp app) {
     data = new GalleryData(app);
     data.restore();
   }
@@ -57,9 +54,10 @@ public class FavouritePresenter extends ControllerPresenter<FavouriteContract.Vi
   public GalleryInfoAdapter attachContentLayout(Context context, ContentLayout layout) {
     layout.setPresenter(data);
     data.setView(layout);
-    GalleryInfoAdapter adapter = new FavouriteAdapter(context, data);
-    layout.setAdapter(adapter);
-    return adapter;
+    //GalleryInfoAdapter adapter = new FavouritesAdapter(context, data);
+    //layout.setAdapter(adapter);
+    //return adapter;
+    return null;
   }
 
   @Override
@@ -73,16 +71,13 @@ public class FavouritePresenter extends ControllerPresenter<FavouriteContract.Vi
   }
 
   @Override
-  public void restore(FavouriteContract.View view) {}
+  public void restore(FavouritesContract.View view) {}
 
-  private class GalleryData extends GalleryInfoData {
-
-    private static final String BACKUP_FILENAME = "favourites_data_backup";
+  private class GalleryData extends ContentData<FavouritesItem> {
 
     private EhClient client;
     private Gson gson;
     private EhvPreferences preferences;
-    private File backupFile;
 
     private FLUrlBuilder builder = new FLUrlBuilder();
 
@@ -90,35 +85,24 @@ public class FavouritePresenter extends ControllerPresenter<FavouriteContract.Vi
       client = app.getEhClient();
       gson = app.getGson();
       preferences = app.getPreferences();
-
-      // Get backup file
-      File dir = app.getCacheDir();
-      FileUtils.ensureDir(dir);
-      backupFile = new File(dir, BACKUP_FILENAME);
     }
 
     @Override
     protected void onRequireData(long id, int page) {
-      builder.setPage(page);
-      String url = EhUrl.getFavouritesUrl(preferences.getGallerySite());
-      Map<String, String> map = builder.build();
-      client.getGalleryList(url, map)
+
+
+
+    }
+
+    @Override
+    protected void onRestoreData(long id) {
+      Observable.just(null)
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(EhSubscriber.from(
-              result -> setData(id, result.galleryInfoList(), result.pages()),
-              e -> setError(id, e)
-          ));
+          .subscribe(o -> setError(id, new Exception()));
     }
 
     @Override
-    protected File getBackupFile() {
-      return backupFile;
-    }
-
-    @Override
-    protected Gson getGson() {
-      return gson;
-    }
+    protected void onBackupData(List<FavouritesItem> data) {}
   }
 }

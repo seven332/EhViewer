@@ -20,6 +20,7 @@ package com.hippo.ehviewer.view.base;
  * Created by Hippo on 2/24/2017.
  */
 
+import android.content.Context;
 import android.support.annotation.CallSuper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.ehviewer.widget.DividerItemDecoration;
 import com.hippo.yorozuya.android.LayoutUtils;
 import com.hippo.yorozuya.android.ResourcesUtils;
+import junit.framework.Assert;
 
 public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
     extends ToolbarView<P> {
@@ -49,11 +51,13 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
     View view = inflater.inflate(R.layout.controller_gallery_info_list, parent, false);
     layout = (ContentLayout) view;
 
-    preferences = getApplication().getPreferences();
+    preferences = getEhvApp().getPreferences();
 
-    adapter = getPresenter().attachContentLayout(getActivity(), layout);
+    GalleryInfoContract.Presenter presenter = getPresenter();
+    Assert.assertNotNull(presenter);
+    adapter = presenter.attachContentLayout(getEhvActivity(), layout);
     layout.setExtension(new ContentLayoutExtension());
-    layoutManager = new AutoGridLayoutManager(getActivity(), -1);
+    layoutManager = new AutoGridLayoutManager(getEhvActivity(), -1);
     layout.setLayoutManager(layoutManager);
     if (preferences.getListMode() == EhvPreferences.LIST_MODE_DETAIL) {
       applyDetailInternal();
@@ -75,12 +79,12 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
   private void applyDetailInternal() {
     adapter.showDetail();
 
-    int columnSize = LayoutUtils.dp2pix(getActivity(), preferences.getListDetailSize());
+    int columnSize = LayoutUtils.dp2pix(getEhvActivity(), preferences.getListDetailSize());
     layoutManager.setColumnSize(columnSize);
 
     layout.removeAllItemDecorations();
     DividerItemDecoration decoration = new DividerItemDecoration(
-        ResourcesUtils.getAttrColor(getActivity(), R.attr.dividerColor),
+        ResourcesUtils.getAttrColor(getEhvActivity(), R.attr.dividerColor),
         getResources().getDimensionPixelSize(R.dimen.divider_thickness)
     );
     layout.addItemDecoration(decoration);
@@ -98,18 +102,20 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
   private void applyBriefInternal() {
     adapter.showBrief();
 
-    int columnSize = LayoutUtils.dp2pix(getActivity(), preferences.getListBriefSize());
+    int columnSize = LayoutUtils.dp2pix(getEhvActivity(), preferences.getListBriefSize());
     layoutManager.setColumnSize(columnSize);
 
     layout.removeAllItemDecorations();
-    int padding = LayoutUtils.dp2pix(getActivity(), 1);
+    int padding = LayoutUtils.dp2pix(getEhvActivity(), 1);
     layout.setRecyclerViewPadding(padding, padding, padding, padding);
   }
 
   @Override
   public void onDetach() {
     super.onDetach();
-    getPresenter().detachContentLayout(layout);
+    GalleryInfoContract.Presenter presenter = getPresenter();
+    Assert.assertNotNull(presenter);
+    presenter.detachContentLayout(layout);
   }
 
   private class ContentLayoutExtension implements ContentLayout.Extension {
@@ -119,15 +125,16 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
       // TODO
       e.printStackTrace();
 
+      Context context = getEhvActivity();
       ContentLayout.TipInfo info = new ContentLayout.TipInfo();
-      info.icon = ExceptionExplainer.explainVividly(getActivity(), e);
-      info.text = ExceptionExplainer.explain(getActivity(), e);
+      info.icon = ExceptionExplainer.explainVividly(context, e);
+      info.text = ExceptionExplainer.explain(context, e);
       return info;
     }
 
     @Override
     public void showMessage(String message) {
-      getActivity().showMessage(message);
+      getEhvActivity().showMessage(message);
     }
   }
 }

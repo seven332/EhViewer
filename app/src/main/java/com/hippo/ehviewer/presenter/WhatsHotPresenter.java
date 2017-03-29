@@ -28,6 +28,7 @@ import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhSubscriber;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.component.GalleryInfoData;
 import com.hippo.ehviewer.component.WhatsHotAdapter;
 import com.hippo.ehviewer.component.base.GalleryInfoAdapter;
@@ -67,6 +68,10 @@ public class WhatsHotPresenter extends ControllerPresenter<WhatsHotContract.View
     if (adapter instanceof GalleryInfoAdapter) {
       ((GalleryInfoAdapter) adapter).solidify();
     }
+  }
+
+  public GalleryInfo getGalleryInfo(int index) {
+    return data.get(index);
   }
 
   @Override

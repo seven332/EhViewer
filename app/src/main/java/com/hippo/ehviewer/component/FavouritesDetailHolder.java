@@ -17,30 +17,29 @@
 package com.hippo.ehviewer.component;
 
 /*
- * Created by Hippo on 2/3/2017.
+ * Created by Hippo on 3/4/2017.
  */
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.hippo.ehviewer.client.data.FavouritesItem;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.component.base.GalleryInfoDetailHolder;
 
-/**
- * Detail {@code ViewHolder} for {@link GalleryListAdapter}.
- */
-public class GalleryListDetailHolder extends GalleryInfoDetailHolder<GalleryInfo> {
+public class FavouritesDetailHolder extends GalleryInfoDetailHolder<FavouritesItem> {
 
-  private GalleryListDetailHolder(View view) {
+  private FavouritesDetailHolder(View view) {
     super(view);
   }
 
   @Override
-  public void bind(GalleryInfo info) {
-    bindGalleryInfo(info);
+  public void bind(FavouritesItem item) {
+    bindGalleryInfo(item.info != null ? item.info : GalleryInfo.INVALID);
+    bindNote(item.note);
   }
 
-  public static GalleryListDetailHolder create(LayoutInflater inflater, ViewGroup container) {
-    return new GalleryListDetailHolder(createView(inflater, container));
+  public static FavouritesDetailHolder create(LayoutInflater inflater, ViewGroup container) {
+    return new FavouritesDetailHolder(createView(inflater, container));
   }
 }

@@ -60,17 +60,17 @@ public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<
     toolbar = (Toolbar) view.findViewById(R.id.toolbar);
     ViewGroup container = (ViewGroup) view.findViewById(R.id.content_container);
 
-    DrawerArrowDrawable drawable = new DrawerArrowDrawable(getActivity());
+    DrawerArrowDrawable drawable = new DrawerArrowDrawable(getEhvActivity());
     drawable.setDirection(DrawerArrowDrawable.ARROW_DIRECTION_LEFT);
     toolbar.setNavigationIcon(drawable);
     switch (getNavigationType()) {
       case NAVIGATION_TYPE_MENU:
         drawable.setProgress(0.0f);
-        toolbar.setNavigationOnClickListener(v -> getActivity().openLeftDrawer());
+        toolbar.setNavigationOnClickListener(v -> getEhvActivity().openLeftDrawer());
         break;
       case NAVIGATION_TYPE_RETURN:
         drawable.setProgress(1.0f);
-        toolbar.setNavigationOnClickListener(v -> getActivity().popTopController());
+        toolbar.setNavigationOnClickListener(v -> getEhvActivity().popTopController());
         break;
     }
 

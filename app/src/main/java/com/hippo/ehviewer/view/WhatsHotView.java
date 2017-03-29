@@ -40,7 +40,7 @@ public class WhatsHotView extends GalleryInfoView<WhatsHotContract.Presenter>
   protected View onCreateView(LayoutInflater inflater, ViewGroup parent) {
     View view = super.onCreateView(inflater, parent);
 
-    preferences = getApplication().getPreferences();
+    preferences = getEhvApp().getPreferences();
 
     setTitle(R.string.nav_menu_whats_hot);
     setMenu(R.menu.view_whats_hot, item -> {

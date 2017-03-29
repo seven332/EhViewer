@@ -60,7 +60,7 @@ public abstract class MessageSheetView<P extends PresenterInterface> extends She
    * Sets message.
    */
   protected void setMessage(@StringRes int messageId) {
-    setMessage(getResources().getString(messageId));
+    setMessage(getString(messageId));
   }
 
   /**

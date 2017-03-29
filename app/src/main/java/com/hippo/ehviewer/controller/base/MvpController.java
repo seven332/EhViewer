@@ -30,7 +30,7 @@ import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.presenter.base.ControllerPresenter;
 import com.hippo.ehviewer.view.base.ControllerView;
-import com.hippo.yorozuya.precondition.Preconditions;
+import junit.framework.Assert;
 
 /**
  * Base {@code Controller} for this project, {@link EhvActivity}.
@@ -62,14 +62,12 @@ public abstract class MvpController<P extends ControllerPresenter, V extends Con
   protected final View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
     if (presenter == null) {
       EhvApp app = (EhvApp) getApplicationContext();
-      Preconditions.checkNotNull(app, "getApplicationContext() == null");
+      Assert.assertNotNull(app);
       presenter = createPresenter(app, getArgs());
     }
 
-    EhvActivity activity = (EhvActivity) getActivity();
-    Preconditions.checkNotNull(activity, "getActivity() == null");
     view = createView();
-    view.setActivity(activity);
+    onCreateView(view);
     setPresenterForView(view, presenter);
     view.createView(inflater, container);
     view.attach();
@@ -88,6 +86,7 @@ public abstract class MvpController<P extends ControllerPresenter, V extends Con
     super.onDestroyView(v);
     if (view != null) {
       view.detach();
+      onDestroyView(view);
       view = null;
     }
     if (presenter != null) {
@@ -102,6 +101,16 @@ public abstract class MvpController<P extends ControllerPresenter, V extends Con
       presenter.terminate();
     }
   }
+
+  /**
+   * Called in creating view.
+   */
+  protected void onCreateView(@NonNull V view) {}
+
+  /**
+   * Called in destroying view.
+   */
+  protected void onDestroyView(@NonNull V view) {}
 
   /**
    * Check type. Just call {@code view.setPresenter(presenter);}.
