@@ -21,7 +21,7 @@
 
     <!-- Category -->
 
-    <string name="homepage">Pagina de Inicio</string>
+    <string name="homepage">Inicio</string>
     <string name="whats_hot">Destacado</string>
     <string name="favourite">Favoritos</string>
     <string name="history">Historial</string>
@@ -50,7 +50,7 @@
     <string name="i_dont_think_so">No creo eso</string>
     <string name="found_cookies">Cookies encontradas!</string>
 
-    <string name="invalid_download_location">Parece que la ubicacion de descarga no esta disponible. Configure esta opccion en Configuraciones.</string>
+    <string name="invalid_download_location">Parece que la ubicacion de descarga no esta disponible. Modifique esta opccion en Configuraciones.</string>
 
     <string name="cellular_network_warning">Conectado a redes moviles</string>
 
@@ -168,7 +168,7 @@
 
     <!-- Gallery detail -->
     <string name="error_cannot_find_gallery">No se encuenta la galeria</string>
-    <string name="download">Descargas</string>
+    <string name="download">Descargar</string>
     <string name="read">Leer</string>
     <string name="more_information">Mas Informacion</string>
     <plurals name="page_count">
@@ -197,7 +197,7 @@
     <string name="no_torrents">Sin torrents</string>
     <string name="torrents">Torrents</string>
     <string name="favorited">Favorito</string>
-    <string name="not_favorited">Sin favoritos</string>
+    <string name="not_favorited">Favorito?</string>
     <string name="add_favorites_dialog_title">Añadir a Faviritos</string>
     <string name="remember_favorite_collection">Recordar Favoritos</string>
     <string name="remove_from_favorite_success">Eliminado de favoritos</string>
@@ -207,8 +207,8 @@
     <string name="filter_added">Filtro añadido</string>
 
     <!-- Rating -->
-    <string name="rating10">PIEZA MAESTRA</string>
-    <string name="rating9">INGREIBLE</string>
+    <string name="rating10">OBRA MAESTRA</string>
+    <string name="rating9">INCREIBLE</string>
     <string name="rating8">GRANDIOSO</string>
     <string name="rating7">BUENO</string>
     <string name="rating6">OKAY</string>
@@ -265,7 +265,7 @@
     <string name="go_to">Ir a</string>
 
     <!-- Download -->
-    <string name="scene_download_title">Descargar - %s</string>
+    <string name="scene_download_title">Descargas - %s</string>
     <string name="no_download_info">Las descargas de arhivos se mostraran acá</string>
     <string name="download_state_wait">Esperando</string>
     <string name="download_state_downloading">Descargando</string>
@@ -282,7 +282,7 @@
     <string name="stat_download_done_line_failed">Fallido: %s</string>
     <string name="download_remove_dialog_title">Borrar elemneto descargado</string>
     <string name="download_remove_dialog_message">Borrar %s de la lista de descarga ?</string>
-    <string name="download_remove_dialog_message_2">Borrar %d elemntos de la lista de descarga?</string>
+    <string name="download_remove_dialog_message_2">Borrar %d elemento(s) de la lista de descarga?</string>
     <string name="download_remove_dialog_check_text">Eliminar imagenes</string>
     <string name="stat_download_action_stop_all">Detener todo</string>
     <string name="drawer_download_label_title">Etiquetas</string>
