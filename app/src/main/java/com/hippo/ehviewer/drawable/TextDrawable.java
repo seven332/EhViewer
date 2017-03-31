@@ -132,6 +132,12 @@ public class TextDrawable extends Drawable {
     return state.text;
   }
 
+  @NonNull
+  @Override
+  public ConstantState getConstantState() {
+    return state;
+  }
+
   @Override
   public int getOpacity() {
     return getAlpha() != 0 ? PixelFormat.TRANSLUCENT : PixelFormat.TRANSPARENT;

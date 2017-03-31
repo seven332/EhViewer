@@ -65,6 +65,7 @@ public class CoverView extends GenericDraweeView {
     failure.setTextColor(
         ResourcesUtils.getAttrColor(context, R.attr.imageFailureTextColor));
     getHierarchy().setFailureImage(failure);
+    getHierarchy().setRetryImage(failure.getConstantState().newDrawable());
   }
 
   public void load(GalleryInfo info) {
@@ -106,6 +107,7 @@ public class CoverView extends GenericDraweeView {
       DraweeController controller = Fresco.newDraweeControllerBuilder()
           .setFirstAvailableImageRequests(requests)
           .setOldController(getController())
+          .setTapToRetryEnabled(true)
           .build();
       setController(controller);
       return;
@@ -114,6 +116,7 @@ public class CoverView extends GenericDraweeView {
       DraweeController controller = Fresco.newDraweeControllerBuilder()
           .setImageRequest(ImageRequest.fromUri(info.coverUrl))
           .setOldController(getController())
+          .setTapToRetryEnabled(true)
           .build();
       setController(controller);
       return;
