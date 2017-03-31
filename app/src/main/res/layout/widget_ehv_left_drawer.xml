@@ -32,6 +32,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal"
+    android:textColor="?attr/colorPrimary"
     style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
 
 </merge>
