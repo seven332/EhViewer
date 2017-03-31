@@ -28,8 +28,11 @@ import com.facebook.drawee.view.GenericDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.EhvPreferences;
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.drawable.TextDrawable;
+import com.hippo.yorozuya.android.ResourcesUtils;
 
 /**
  * Cover.
@@ -55,6 +58,13 @@ public class CoverView extends GenericDraweeView {
 
   private void init(Context context) {
     preferences = EhvApp.get(context).getPreferences();
+
+    TextDrawable failure = new TextDrawable("(;´Д`)", 0.8f);
+    failure.setBackgroundColor(
+        ResourcesUtils.getAttrColor(context, R.attr.imageFailureBackgroundColor));
+    failure.setTextColor(
+        ResourcesUtils.getAttrColor(context, R.attr.imageFailureTextColor));
+    getHierarchy().setFailureImage(failure);
   }
 
   public void load(GalleryInfo info) {

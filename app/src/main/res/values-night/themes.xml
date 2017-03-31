@@ -24,6 +24,8 @@
     <item name="dividerColor">@color/divider_dark</item>
     <item name="imagePlaceHolder">@color/place_holder_image_dark</item>
     <item name="imagePlaceHolderColor">@color/place_holder_image_dark</item>
+    <item name="imageFailureBackgroundColor">?attr/imagePlaceHolderColor</item>
+    <item name="imageFailureTextColor">@color/failure_image_text_dark</item>
   </style>
 
 </resources>

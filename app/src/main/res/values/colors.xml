@@ -43,6 +43,8 @@
 
   <color name="place_holder_image_light">@color/grey_300</color>
   <color name="place_holder_image_dark">@color/grey_700</color>
+  <color name="failure_image_text_light">@color/grey_700</color>
+  <color name="failure_image_text_dark">@color/grey_300</color>
 
   <color name="divider_light">#20000000</color>
   <color name="divider_dark">#20ffffff</color>
