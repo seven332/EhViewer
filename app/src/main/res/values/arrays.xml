@@ -15,29 +15,10 @@
   ~ limitations under the License.
   -->
 
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto">
+<resources>
 
-  <item
-    android:id="@+id/action_search"
-    android:title="@string/action_search"
-    android:icon="@drawable/v_magnify_white_x24"
-    app:showAsAction="ifRoom"/>
+  <array name="gallery_list_entries">
+    <item>@string/add_to_favourites</item>
+  </array>
 
-  <item
-    android:id="@+id/action_go_to"
-    android:title="@string/action_go_to"
-    app:showAsAction="never"/>
-
-  <item
-    android:id="@+id/action_detail"
-    android:title="@string/action_detail"
-    app:showAsAction="never"/>
-
-  <item
-    android:id="@+id/action_brief"
-    android:title="@string/action_brief"
-    app:showAsAction="never"/>
-
-</menu>
+</resources>

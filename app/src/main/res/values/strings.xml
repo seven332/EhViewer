@@ -53,9 +53,17 @@
   <string name="nav_menu_whats_hot">What\'s Hot</string>
   <string name="nav_menu_favourites">Favourites</string>
 
+  <string name="let_there_be_light">Let there be light</string>
+  <string name="let_there_be_dark">Let there be dark</string>
+
   <string name="action_search">Search</string>
+  <string name="action_go_to">Go to</string>
   <string name="action_detail">Show detail</string>
   <string name="action_brief">Show brief</string>
+
+  <string name="add_to_favourites">Add to favourites</string>
+  <string name="add_to_favourites_success">Has been added to favorites</string>
+  <string name="add_to_favourites_failure">Failed to add the gallery to favorites</string>
 
   <string name="explanation_invalid_url">Invalid url</string>
   <string name="explanation_timeout">Timeout</string>
