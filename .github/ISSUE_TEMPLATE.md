@@ -13,3 +13,14 @@ Issue 的内容仅可为
 一个 Issue 只包含一个 Bug 反馈或者功能申请。若有多个需求，请提交多个 Issue。
 
 尽量不提交重复的 Issue，可先进行搜索。对于重复的 Issue，开发者可能会直接关闭并添加 Duplicate 标签。
+
+
+Thank you for taking the time to submit an issue. Before you proceed, please consider the following.
+
+An issue can only be about:
+* Bug Report
+* Feature Request
+
+If you need application instructions, please post your question in [G+ community](https://plus.google.com/u/1/communities/103823982034655188459). If you have other questions, please get the developer's email address in the application, and send him/her an email.
+
+One issue one bug report or feature request.
