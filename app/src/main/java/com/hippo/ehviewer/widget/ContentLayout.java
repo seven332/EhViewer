@@ -193,6 +193,14 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
     recyclerView.setLayoutManager(layoutManager);
   }
 
+  public void setOnItemClickListener(EasyRecyclerView.OnItemClickListener listener) {
+    recyclerView.setOnItemClickListener(listener);
+  }
+
+  public void setOnItemLongClickListener(EasyRecyclerView.OnItemLongClickListener listener) {
+    recyclerView.setOnItemLongClickListener(listener);
+  }
+
   /**
    * Add an {@link RecyclerView.ItemDecoration} to the RecyclerView.
    */
@@ -383,6 +391,7 @@ public class ContentLayout extends FrameLayout implements ContentContract.View {
      * <p>
      * {@link ContentData#TAP_TO_LOAD_EXCEPTION} for no data but can continue loading.
      */
+    @Nullable
     TipInfo getTipFromThrowable(Throwable e);
 
     /**
