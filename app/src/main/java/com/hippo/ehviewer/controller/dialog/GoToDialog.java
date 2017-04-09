@@ -20,19 +20,18 @@ package com.hippo.ehviewer.controller.dialog;
  * Created by Hippo on 3/24/2017.
  */
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import com.afollestad.materialdialogs.MaterialDialog;
+import android.view.ViewGroup;
 import com.bluelinelabs.conductor.Controller;
+import com.hippo.android.dialog.base.DialogView;
 import com.hippo.ehviewer.controller.EhvDialogController;
-import junit.framework.Assert;
 
 public class GoToDialog extends EhvDialogController {
 
@@ -54,6 +53,13 @@ public class GoToDialog extends EhvDialogController {
     current = bundle.getInt(KEY_CURRENT);
   }
 
+  @NonNull
+  @Override
+  protected DialogView onCreateDialogView(@NonNull LayoutInflater layoutInflater,
+      @NonNull ViewGroup viewGroup) {
+    return null;
+  }
+
   /**
    * Creates a {@code GoToDialog}.
    *
@@ -73,13 +79,6 @@ public class GoToDialog extends EhvDialogController {
     return dialog;
   }
 
-  @NonNull
-  @Override
-  public Dialog onCreateDialog() {
-    Activity context = getActivity();
-    Assert.assertNotNull(context);
-    return new MaterialDialog.Builder(context).customView(new GoToView(context), false).build();
-  }
 
   private static class GoToView extends View {
 

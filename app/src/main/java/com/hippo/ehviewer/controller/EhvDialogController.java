@@ -21,16 +21,18 @@ package com.hippo.ehviewer.controller;
  */
 
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
+import com.hippo.android.dialog.conductor.AnDialogController;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.util.OpenSupplier;
 import com.hippo.ehviewer.util.Supplier;
 
 /**
- * {@link DialogController} for {@link com.hippo.ehviewer.activity.EhvActivity}.
+ * {@link AnDialogController} for {@link com.hippo.ehviewer.activity.EhvActivity}.
  */
-public abstract class EhvDialogController extends DialogController {
+public abstract class EhvDialogController extends AnDialogController {
 
   private OpenSupplier<EhvDialogController> selfSupplier;
 
@@ -38,7 +40,8 @@ public abstract class EhvDialogController extends DialogController {
     super();
   }
 
-  protected EhvDialogController(@Nullable Bundle args) {
+  @Keep
+  protected EhvDialogController(Bundle args) {
     super(args);
   }
 

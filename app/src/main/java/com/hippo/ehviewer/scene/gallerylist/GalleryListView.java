@@ -56,7 +56,7 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
       if (info == null) {
         return false;
       }
-      getEhvActivity().showDialog(GalleryListDialog.create(info));
+      getEhvActivity().showDialog(new GalleryListDialog(info));
       return true;
     });
 

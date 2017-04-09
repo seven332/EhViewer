@@ -79,7 +79,10 @@ dependencies {
     compile 'com.pushtorefresh.storio:sqlite:1.12.3'
 
     // Looks like fragment, but cleaner
-    compile 'com.github.seven332.conductor:conductor:2.1.1'
+    compile 'com.github.seven332.conductor:conductor:2.1.2'
+    compile 'com.github.seven332:conductor-dialog:0.1.3'
+    compile 'com.github.seven332.android-dialog:base:0.1.0'
+    compile 'com.github.seven332.android-dialog:conductor:0.1.0'
 
     // Material dialog
     compile 'com.afollestad.material-dialogs:core:0.9.3.0'

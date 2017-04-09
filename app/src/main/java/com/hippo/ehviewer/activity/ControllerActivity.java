@@ -31,8 +31,8 @@ import com.bluelinelabs.conductor.Conductor;
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.Router;
 import com.bluelinelabs.conductor.RouterTransaction;
-import com.hippo.ehviewer.changehandler.DialogChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import com.hippo.android.dialog.conductor.AnDialogController;
+import com.hippo.conductor.dialog.SimpleDialogChangeHandler;
 
 public abstract class ControllerActivity extends AppCompatActivity {
 
@@ -115,12 +115,12 @@ public abstract class ControllerActivity extends AppCompatActivity {
   /**
    * Show dialog.
    */
-  public void showDialog(@NonNull DialogController dialog) {
+  public void showDialog(@NonNull AnDialogController dialog) {
     if (router != null) {
       router.pushController(
           RouterTransaction.with(dialog)
-              .pushChangeHandler(new DialogChangeHandler())
-              .popChangeHandler(new DialogChangeHandler())
+              .pushChangeHandler(new SimpleDialogChangeHandler())
+              .popChangeHandler(new SimpleDialogChangeHandler())
       );
     } else {
       Log.e(LOG_TAG, "router == null, can't show dialog");

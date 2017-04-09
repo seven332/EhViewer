@@ -16,11 +16,16 @@
 
 package com.hippo.ehviewer.scene.gallerylist;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import com.afollestad.materialdialogs.MaterialDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import com.hippo.android.dialog.base.DialogView;
+import com.hippo.android.dialog.base.DialogViewBuilder;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.EhvDB;
 import com.hippo.ehviewer.R;
@@ -29,7 +34,7 @@ import com.hippo.ehviewer.client.data.FavouritesItem;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.controller.EhvDialogController;
 import com.hippo.ehviewer.util.Supplier;
-import junit.framework.Assert;
+import com.hippo.ehviewer.widget.CoverView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -43,33 +48,36 @@ public class GalleryListDialog extends EhvDialogController {
 
   private GalleryInfo info;
 
-  /**
-   * Only for restore. Call {@link #create(GalleryInfo)} please.
-   */
-  @Deprecated
-  public GalleryListDialog(@NonNull Bundle bundle) {
+  public GalleryListDialog(@NonNull GalleryInfo info) {
+    super();
+
+    Bundle args = getArgs();
+    args.putParcelable(KEY_GALLERY_INFO, info);
+
+    this.info = info;
+  }
+
+  @Keep
+  public GalleryListDialog(Bundle bundle) {
     super(bundle);
     info = bundle.getParcelable(KEY_GALLERY_INFO);
   }
 
-  /**
-   * Creates a {@code GalleryListDialog}.
-   */
-  @SuppressWarnings("deprecation")
-  public static GalleryListDialog create(@NonNull GalleryInfo info) {
-    Bundle bundle = new Bundle();
-    bundle.putParcelable(KEY_GALLERY_INFO, info);
-    return new GalleryListDialog(bundle);
-  }
-
+  @SuppressLint("InflateParams")
   @NonNull
   @Override
-  public Dialog onCreateDialog() {
-    Context context = getActivity();
-    Assert.assertNotNull(context);
-    return new MaterialDialog.Builder(context)
-        .items(R.array.gallery_list_entries)
-        .itemsCallback((dialog, view, i, charSequence) -> {
+  protected DialogView onCreateDialogView(
+      @NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    View header = inflater.inflate(R.layout.dialog_gallery_list_header, null);
+    CoverView cover = (CoverView) header.findViewById(R.id.cover);
+    TextView title = (TextView) header.findViewById(R.id.title);
+    cover.load(info);
+    // TODO JPN title
+    title.setText(info.title);
+
+    return new DialogViewBuilder()
+        .customHeader(header)
+        .items(R.array.gallery_list_entries, (dialog, which) -> {
           // Prepare context data
           EhvApp app = getEhvApp();
           EhvActivity activity = getEhvActivity();
@@ -78,13 +86,17 @@ public class GalleryListDialog extends EhvDialogController {
           }
           Supplier<EhvActivity> supplier = activity.getSelfSupplier();
 
-          switch (i) {
+          // Handle option
+          switch (which) {
             case 0:
               addToFavourites(app, supplier, info);
               break;
           }
+
+          // Close dialog
+          dialog.dismiss();
         })
-        .build();
+        .build(inflater, container);
   }
 
   private static void addToFavourites(
