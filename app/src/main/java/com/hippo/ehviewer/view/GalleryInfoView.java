@@ -47,7 +47,7 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
 
   @CallSuper
   @Override
-  protected View createContentView(LayoutInflater inflater, ViewGroup parent) {
+  protected View onCreateToolbarContent(LayoutInflater inflater, ViewGroup parent) {
     View view = inflater.inflate(R.layout.controller_gallery_info_list, parent, false);
     layout = (ContentLayout) view;
 

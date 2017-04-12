@@ -55,7 +55,7 @@ public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter>
   }
 
   @Override
-  protected int getStatusBarColor() {
+  public int getStatusBarColor() {
     return ContextCompat.getColor(getEhvActivity(), R.color.indigo_700);
   }
 

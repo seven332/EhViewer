@@ -38,7 +38,7 @@ import com.hippo.ehviewer.widget.IndicatingScrollView;
 /**
  * {@code SheetView} shows a header, a message and two buttons.
  */
-public abstract class SheetView<P extends PresenterInterface> extends EhvView<P> {
+public abstract class SheetView<P extends PresenterInterface> extends StatusBarView<P> {
 
   private View header;
   private CrossFadeTextView title;
@@ -50,7 +50,7 @@ public abstract class SheetView<P extends PresenterInterface> extends EhvView<P>
 
   @NonNull
   @Override
-  protected final View onCreateView(LayoutInflater inflater, ViewGroup parent) {
+  protected final View onCreateStatusBarContent(LayoutInflater inflater, ViewGroup parent) {
     View view = inflater.inflate(R.layout.controller_sheet, parent, false);
 
     header = view.findViewById(R.id.header);

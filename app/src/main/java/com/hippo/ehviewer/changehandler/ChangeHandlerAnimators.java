@@ -48,7 +48,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.drawable.ScaleDrawable;
 import com.hippo.ehviewer.view.EhvView;
-import com.hippo.ehviewer.widget.ControllerContainer;
+import com.hippo.ehviewer.widget.EhvDrawerContent;
 import com.hippo.ehviewer.widget.Overlay;
 import com.hippo.yorozuya.android.AnimationUtils;
 import com.transitionseverywhere.ArcMotion;
@@ -98,12 +98,12 @@ public final class ChangeHandlerAnimators {
   public static Animator recolorStatusBar(
       @NonNull ViewGroup container, @Nullable View from, @Nullable View to) {
     if (!SUPPORT_COLOR_BAR
-        || !(container instanceof ControllerContainer)
+        || !(container instanceof EhvDrawerContent)
         || from == null || to == null) {
       return null;
     }
-    ControllerContainer controllerContainer = (ControllerContainer) container;
-    DrawerLayout drawerLayout = controllerContainer.getDrawLayout();
+    EhvDrawerContent drawerContent = (EhvDrawerContent) container;
+    DrawerLayout drawerLayout = drawerContent.getDrawerLayout();
     if (drawerLayout == null) {
       return null;
     }

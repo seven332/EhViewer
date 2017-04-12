@@ -30,14 +30,7 @@
     <com.hippo.ehviewer.widget.EhvDrawerContent
       android:id="@+id/drawer_content"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
-
-      <com.hippo.ehviewer.widget.ControllerContainer
-        android:id="@+id/controller_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    </com.hippo.ehviewer.widget.EhvDrawerContent>
+      android:layout_height="match_parent"/>
 
     <com.hippo.ehviewer.widget.EhvLeftDrawer
       android:id="@+id/left_drawer"

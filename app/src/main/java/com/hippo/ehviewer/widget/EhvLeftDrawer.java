@@ -41,8 +41,8 @@ public class EhvLeftDrawer extends LinearLayout implements DrawerLayoutChild {
   private static final int SCRIM_COLOR = 0x44000000;
   private static final boolean DRAW_SCRIM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
 
-  private int layoutPaddingTop;
-  private int layoutPaddingBottom;
+  private int windowPaddingTop;
+  private int windowPaddingBottom;
   private Paint paint;
 
   private NavigationView navigationView;
@@ -92,29 +92,29 @@ public class EhvLeftDrawer extends LinearLayout implements DrawerLayoutChild {
   public void draw(@NonNull Canvas canvas) {
     super.draw(canvas);
 
-    if (DRAW_SCRIM && layoutPaddingTop > 0) {
+    if (DRAW_SCRIM && windowPaddingTop > 0) {
       if (paint == null) {
         paint = new Paint();
         paint.setColor(SCRIM_COLOR);
       }
-      canvas.drawRect(0, 0, getWidth(), layoutPaddingTop, paint);
+      canvas.drawRect(0, 0, getWidth(), windowPaddingTop, paint);
     }
   }
 
   @Override
-  public void setFitPadding(int top, int bottom) {
-    layoutPaddingTop = top;
-    layoutPaddingBottom = bottom;
+  public void onGetWindowPadding(int top, int bottom) {
+    windowPaddingTop = top;
+    windowPaddingBottom = bottom;
   }
 
   @Override
-  public int getLayoutPaddingTop() {
+  public int getAdditionalTopMargin() {
     return 0;
   }
 
   @Override
-  public int getLayoutPaddingBottom() {
-    return layoutPaddingBottom;
+  public int getAdditionalBottomMargin() {
+    return windowPaddingBottom;
   }
 
   /**

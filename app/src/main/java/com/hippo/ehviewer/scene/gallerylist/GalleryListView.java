@@ -41,8 +41,8 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
   private EhvPreferences preferences;
 
   @Override
-  protected View createContentView(LayoutInflater inflater, ViewGroup parent) {
-    View view = super.createContentView(inflater, parent);
+  protected View onCreateToolbarContent(LayoutInflater inflater, ViewGroup parent) {
+    View view = super.onCreateToolbarContent(inflater, parent);
 
     preferences = getEhvApp().getPreferences();
 

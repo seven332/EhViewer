@@ -15,21 +15,22 @@
   ~ limitations under the License.
   -->
 
-<com.hippo.ehviewer.widget.ToolbarLayout
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  android:orientation="vertical">
 
-  <android.support.v7.widget.Toolbar
-    android:id="@+id/toolbar"
-    android:layout_height="?attr/actionBarSize"
+  <!-- Sets height programmatically -->
+  <View
+    android:id="@+id/status_bar"
     android:layout_width="match_parent"
-    android:background="?attr/colorPrimary"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    android:layout_height="0dp"/>
 
   <FrameLayout
-    android:id="@+id/toolbar_content_container"
+    android:id="@+id/status_bar_content_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:layout_height="0dp"
+    android:layout_weight="1"/>
 
-</com.hippo.ehviewer.widget.ToolbarLayout>
+</LinearLayout>

@@ -39,7 +39,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * {@code ToolbarView} shows a Toolbar at top.
  */
-public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<P> {
+public abstract class ToolbarView<P extends PresenterInterface> extends StatusBarView<P> {
 
   private static final String LOG_TAG = ToolbarView.class.getSimpleName();
 
@@ -54,11 +54,10 @@ public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<
 
   @NonNull
   @Override
-  protected View onCreateView(LayoutInflater inflater, ViewGroup parent) {
+  protected View onCreateStatusBarContent(LayoutInflater inflater, ViewGroup parent) {
     View view = inflater.inflate(R.layout.controller_toolbar, parent, false);
 
     toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-    ViewGroup container = (ViewGroup) view.findViewById(R.id.content_container);
 
     DrawerArrowDrawable drawable = new DrawerArrowDrawable(getEhvActivity());
     drawable.setDirection(DrawerArrowDrawable.ARROW_DIRECTION_LEFT);
@@ -74,8 +73,9 @@ public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<
         break;
     }
 
-    View contentView = createContentView(inflater, container);
-    container.addView(contentView);
+    ViewGroup container = (ViewGroup) view.findViewById(R.id.toolbar_content_container);
+    View content = onCreateToolbarContent(inflater, container);
+    container.addView(content);
 
     if (view instanceof ToolbarLayout) {
       ((ToolbarLayout) view).setDrawerArrowDrawable(drawable);
@@ -89,7 +89,7 @@ public abstract class ToolbarView<P extends PresenterInterface> extends EhvView<
   /**
    * Creates content view for this {@code ToolbarView}.
    */
-  protected abstract View createContentView(LayoutInflater inflater, ViewGroup parent);
+  protected abstract View onCreateToolbarContent(LayoutInflater inflater, ViewGroup parent);
 
   /**
    * {@link #NAVIGATION_TYPE_RETURN}: arrow, back.

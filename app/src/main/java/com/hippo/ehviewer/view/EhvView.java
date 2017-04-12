@@ -20,19 +20,14 @@ package com.hippo.ehviewer.view;
  * Created by Hippo on 2/19/2017.
  */
 
-import android.app.ActivityManager;
 import android.content.res.Resources;
-import android.os.Build;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import com.hippo.ehviewer.EhvApp;
-import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.controller.EhvController;
 import com.hippo.ehviewer.presenter.PresenterInterface;
-import com.hippo.yorozuya.android.ResourcesUtils;
 import java.util.concurrent.TimeUnit;
 import rx.Scheduler;
 import rx.Subscription;
@@ -85,17 +80,17 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
 
     EhvActivity activity = getEhvActivity();
 
-    int statusBarColor = getStatusBarColor();
-    activity.setStatusBarColor(statusBarColor);
+    //int statusBarColor = getStatusBarColor();
+    //activity.setStatusBarColor(statusBarColor);
     // Store controller status bar color in content view
     // Make RecolorStatusBarTransitionChangeHandler work
-    getView().setTag(R.id.controller_status_bar_color, statusBarColor);
+    // getView().setTag(R.id.controller_status_bar_color, statusBarColor);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      ActivityManager.TaskDescription taskDescription =
-          new ActivityManager.TaskDescription(null, null, statusBarColor);
-      activity.setTaskDescription(taskDescription);
-    }
+    //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    //  ActivityManager.TaskDescription taskDescription =
+    //      new ActivityManager.TaskDescription(null, null, statusBarColor);
+    //  activity.setTaskDescription(taskDescription);
+    //}
 
     if (whetherShowLeftDrawer()) {
       activity.unlockLeftDrawer();
@@ -118,18 +113,6 @@ public abstract class EhvView<P extends PresenterInterface> extends ControllerVi
 
     // Check memory leak
     //getApplication().getRefWatcher().watch(this);
-  }
-
-  /**
-   * Gets status bar color.
-   * <p>
-   * Override it to change status bar color.
-   * <p>
-   * Default: colorPrimaryDark
-   */
-  @ColorInt
-  protected int getStatusBarColor() {
-    return ResourcesUtils.getAttrColor(getEhvActivity(), R.attr.colorPrimaryDark);
   }
 
   /**

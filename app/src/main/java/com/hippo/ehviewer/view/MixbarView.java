@@ -32,17 +32,17 @@ import com.hippo.ehviewer.widget.Mixbar;
 /**
  * {@code MixbarView} shows a Mixbar at top.
  */
-public abstract class MixbarView<P extends PresenterInterface> extends EhvView<P> {
+public abstract class MixbarView<P extends PresenterInterface> extends StatusBarView<P> {
 
   private Mixbar mixbar;
 
   @NonNull
   @Override
-  protected final View onCreateView(LayoutInflater inflater, ViewGroup parent) {
+  protected final View onCreateStatusBarContent(LayoutInflater inflater, ViewGroup parent) {
     View view = inflater.inflate(R.layout.controller_mixbar, parent, false);
 
     mixbar = (Mixbar) view.findViewById(R.id.mixbar);
-    ViewGroup container = (ViewGroup) view.findViewById(R.id.content_container);
+    ViewGroup container = (ViewGroup) view.findViewById(R.id.mixbar_content_container);
 
     View contentView = createContentView(inflater, container);
     container.addView(contentView);

@@ -23,6 +23,7 @@ package com.hippo.ehviewer.activity;
 import static com.bluelinelabs.conductor.RouterTransaction.with;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -54,7 +55,6 @@ import com.hippo.ehviewer.controller.EhvController;
 import com.hippo.ehviewer.util.OpenSupplier;
 import com.hippo.ehviewer.util.Supplier;
 import com.hippo.ehviewer.view.EhvView;
-import com.hippo.ehviewer.widget.ControllerContainer;
 import com.hippo.ehviewer.widget.EhvLeftDrawer;
 
 /**
@@ -114,7 +114,12 @@ public class EhvActivity extends ControllerActivity {
     setContentView(R.layout.activity_ehv);
     coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
     drawerLayout = (DrawerLayout) findViewById(R.id.draw_layout);
+
+    // Don't let DrawerLayout draw status bar background
+    drawerLayout.setStatusBarColor(Color.TRANSPARENT);
+
     EhvLeftDrawer leftDrawer = (EhvLeftDrawer) findViewById(R.id.left_drawer);
+    // Navigation onItemClickListener
     navigationView = leftDrawer.getNavigationView();
     navigationView.setNavigationItemSelectedListener(item -> {
       int id = item.getItemId();
@@ -150,6 +155,7 @@ public class EhvActivity extends ControllerActivity {
           return false;
       }
     });
+    // Night mode button
     Button button = leftDrawer.getBottomButton();
     button.setText(EhvApp.isNightTheme(button.getContext())
         ? R.string.let_there_be_light
@@ -165,9 +171,7 @@ public class EhvActivity extends ControllerActivity {
   @NonNull
   @Override
   protected ViewGroup getControllerContainer() {
-    ControllerContainer container = (ControllerContainer) findViewById(R.id.controller_container);
-    container.setDrawLayout(drawerLayout);
-    return container;
+    return (ViewGroup) findViewById(R.id.drawer_content);
   }
 
   @NonNull
@@ -283,28 +287,6 @@ public class EhvActivity extends ControllerActivity {
 
   public EhvApp getEhvApp() {
     return (EhvApp) getApplicationContext();
-  }
-
-  /**
-   * Gets DrawerLayout status bar color.
-   * Returns {@code 0} if can't get it.
-   */
-  public int getStatusBarColor() {
-    if (drawerLayout != null) {
-      return drawerLayout.getStatusBarColor();
-    } else {
-      return 0;
-    }
-  }
-
-  /**
-   * Sets DrawerLayout status bar color.
-   * Ignores it if can't sets it.
-   */
-  public void setStatusBarColor(int color) {
-    if (drawerLayout != null) {
-      drawerLayout.setStatusBarColor(color);
-    }
   }
 
   /**

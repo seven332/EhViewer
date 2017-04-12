@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.changehandler.base;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 4/9/2017.
  */
 
-import com.hippo.conductor.dialog.SimpleDialogChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+final class ChangeHandlerUtils {
+  private ChangeHandlerUtils() {}
 
-/**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
- */
-public class DialogChangeHandler extends SimpleDialogChangeHandler {
+  public interface StatusBarColor {
+    int getStatusBarColor();
+  }
+
+  public static class DialogStatusBarColor {
+
+  }
+
+
+
 
 }

@@ -22,16 +22,21 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
+import android.view.ViewParent;
+import com.bluelinelabs.conductor.ChangeHandlerFrameLayout;
+import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.drawerlayout.DrawerLayoutChild;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Content for {@link com.hippo.drawerlayout.DrawerLayout}.
  */
-public class EhvDrawerContent extends FrameLayout implements DrawerLayoutChild {
+public class EhvDrawerContent extends ChangeHandlerFrameLayout implements DrawerLayoutChild {
 
-  private int layoutPaddingTop;
-  private int layoutPaddingBottom;
+  private List<OnGetWindowPaddingTopListener> listeners = new ArrayList<>();
+  private int windowPaddingTop;
+  private int windowPaddingBottom;
 
   public EhvDrawerContent(Context context) {
     super(context);
@@ -45,19 +50,64 @@ public class EhvDrawerContent extends FrameLayout implements DrawerLayoutChild {
     super(context, attrs, defStyleAttr);
   }
 
-  @Override
-  public void setFitPadding(int top, int bottom) {
-    layoutPaddingTop = top;
-    layoutPaddingBottom = bottom;
+  /**
+   * Gets it's parent, {@link DrawerLayout}.
+   */
+  public DrawerLayout getDrawerLayout() {
+    ViewParent parent = getParent();
+    if (parent instanceof DrawerLayout) {
+      return (DrawerLayout) parent;
+    } else {
+      return null;
+    }
   }
 
   @Override
-  public int getLayoutPaddingTop() {
-    return layoutPaddingTop;
+  public void onGetWindowPadding(int top, int bottom) {
+    windowPaddingTop = top;
+    windowPaddingBottom = bottom;
+
+    // Callback
+    List<OnGetWindowPaddingTopListener> copy = new ArrayList<>(listeners);
+    for (OnGetWindowPaddingTopListener l : copy) {
+      l.onGetWindowPaddingTop(top);
+    }
   }
 
   @Override
-  public int getLayoutPaddingBottom() {
-    return layoutPaddingBottom;
+  public int getAdditionalTopMargin() {
+    return 0;
+  }
+
+  @Override
+  public int getAdditionalBottomMargin() {
+    return windowPaddingBottom;
+  }
+
+  /**
+   * Register a {@link OnGetWindowPaddingTopListener}.
+   * The {@link OnGetWindowPaddingTopListener#onGetWindowPaddingTop(int)} will be called at once.
+   */
+  public void addOnGetWindowPaddingTopListener(OnGetWindowPaddingTopListener listener) {
+    if (listener != null) {
+      listener.onGetWindowPaddingTop(windowPaddingTop);
+      listeners.add(listener);
+    }
+  }
+
+  /**
+   * Remove a {@link OnGetWindowPaddingTopListener}.
+   */
+  public void removeOnGetWindowPaddingTopListener(OnGetWindowPaddingTopListener listener) {
+    if (listener != null) {
+      listeners.remove(listener);
+    }
+  }
+
+  /**
+   * The callback to get window padding top.
+   */
+  public interface OnGetWindowPaddingTopListener {
+    void onGetWindowPaddingTop(int top);
   }
 }

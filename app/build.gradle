@@ -101,7 +101,7 @@ dependencies {
     compile 'com.github.seven332.easyrecyclerview:easyrecyclerview-rxjava:1.2.1'
     compile 'com.github.seven332.easyrecyclerview:recyclerview-addons:1.2.1'
     compile 'com.github.seven332:refreshlayout:0.2.1'
-    compile 'com.github.seven332:drawerlayout:0.2.1'
+    compile 'com.github.seven332:drawerlayout:0.2.2'
     compile 'me.zhanghai.android.materialprogressbar:library:1.3.0'
 
     // Utilities
