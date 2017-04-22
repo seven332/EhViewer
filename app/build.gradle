@@ -52,13 +52,13 @@ clean {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
+    compile "com.android.support:appcompat-v7:$supportLibrary"
+    compile "com.android.support:design:$supportLibrary"
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.seven332:animator:0.1.0'
     compile 'com.github.seven332:beerbelly:0.1.4'
     compile 'com.github.seven332:conaco:0.1.5-eh'
-    compile 'com.github.seven332:drawerlayout:0.1.0'
+    compile 'com.github.seven332:drawerlayout:0.2.1'
     compile 'com.github.seven332:easyrecyclerview:0.1.1'
     compile 'com.github.seven332:glgallery:0.1.2'
     compile 'com.github.seven332:glview:0.1.0'
