@@ -48,7 +48,7 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
   @CallSuper
   @Override
   protected View onCreateToolbarContent(LayoutInflater inflater, ViewGroup parent) {
-    View view = inflater.inflate(R.layout.controller_gallery_info_list, parent, false);
+    View view = inflater.inflate(R.layout.view_gallery_info_list, parent, false);
     layout = (ContentLayout) view;
 
     preferences = getEhvApp().getPreferences();

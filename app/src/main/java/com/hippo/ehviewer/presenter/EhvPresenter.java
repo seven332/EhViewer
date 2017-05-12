@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.view;
+package com.hippo.ehviewer.presenter;
 
 /*
- * Created by Hippo on 2/19/2017.
+ * Created by Hippo on 5/12/2017.
  */
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import com.hippo.ehviewer.EhvApp;
-import com.hippo.ehviewer.activity.EhvActivity;
-import com.hippo.ehviewer.presenter.PresenterInterface;
 import com.hippo.ehviewer.scene.EhvScene;
+import com.hippo.ehviewer.view.ViewInterface;
 import java.util.concurrent.TimeUnit;
 import rx.Scheduler;
 import rx.Subscription;
@@ -35,10 +32,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.subscriptions.Subscriptions;
 
-public abstract class EhvView<P extends PresenterInterface> extends SceneView<P> {
+public abstract class EhvPresenter<V extends ViewInterface> extends ScenePresenter<V> {
 
   private EhvApp app;
-  private EhvActivity activity;
   private EhvScene scene;
 
   @Nullable
@@ -48,26 +44,24 @@ public abstract class EhvView<P extends PresenterInterface> extends SceneView<P>
     this.app = app;
   }
 
-  public void setEhvActivity(EhvActivity activity) {
-    this.activity = activity;
-  }
-
   public void setEhvScene(EhvScene scene) {
     this.scene = scene;
   }
 
-  @Override
-  protected void onResume() {
-    super.onResume();
+  /**
+   * Returns the host {@link EhvApp}.
+   */
+  @NonNull
+  protected final EhvApp getEhvApp() {
+    return app;
+  }
 
-    // Update Activity UI when the view is active for user
-    EhvActivity activity = this.activity;
-    if (whetherShowLeftDrawer()) {
-      activity.unlockLeftDrawer();
-    } else {
-      activity.lockLeftDrawer();
-    }
-    activity.setLeftDrawerCheckedItem(getLeftDrawerCheckedItem());
+  /**
+   * Returns the host {@link EhvScene}.
+   */
+  @NonNull
+  protected final EhvScene getEhvScene() {
+    return scene;
   }
 
   @Override
@@ -85,73 +79,12 @@ public abstract class EhvView<P extends PresenterInterface> extends SceneView<P>
   }
 
   /**
-   * Whether show left drawer.
-   * <p>
-   * Override it to change left drawer lock state.
-   * <p>
-   * Default: true
-   */
-  protected boolean whetherShowLeftDrawer() {
-    return true;
-  }
-
-  /**
-   * Gets checked item for left drawer.
-   * <p>
-   * Override it to change checked item for left drawer.
-   * <p>
-   * Default: 0
-   */
-  protected int getLeftDrawerCheckedItem() {
-    return 0;
-  }
-
-  /**
-   * Returns the host {@link EhvApp}.
-   */
-  @NonNull
-  protected final EhvApp getEhvApp() {
-    return app;
-  }
-
-  /**
-   * Returns the host {@link EhvActivity}.
-   */
-  @NonNull
-  protected final EhvActivity getEhvActivity() {
-    return activity;
-  }
-
-  /**
-   * Returns the host {@link EhvScene}.
-   */
-  @NonNull
-  protected final EhvScene getEhvScene() {
-    return scene;
-  }
-
-  /**
-   * Gets {@code Resources} of {@code EhvActivity}.
-   */
-  @NonNull
-  public Resources getResources() {
-    return getEhvActivity().getResources();
-  }
-
-  /**
-   * Gets a string from {@code Resources} of {@code EhvActivity}.
-   */
-  public String getString(@StringRes int resId) {
-    return getResources().getString(resId);
-  }
-
-  /**
    * Schedules an action for execution at some point in the future
    * and in UI thread.
    * <p>
    * The action will be cancelled after the view detached.
    * <p>
-   * Returns {@code Subscriptions.unsubscribed()} if the view is already detached.
+   * Returns {@code Subscriptions.unsubscribed()} if the presenter is already detached.
    */
   public Subscription schedule(Action0 action, long delayMillis) {
     if (worker != null) {
@@ -166,7 +99,7 @@ public abstract class EhvView<P extends PresenterInterface> extends SceneView<P>
    * <p>
    * The action will be cancelled after the view detached.
    * <p>
-   * Returns {@code Subscriptions.unsubscribed()} if the view is already detached.
+   * Returns {@code Subscriptions.unsubscribed()} if the presenter is already detached.
    */
   public Subscription schedulePeriodically(final Action0 action, long delayMillis,
       long periodMillis) {

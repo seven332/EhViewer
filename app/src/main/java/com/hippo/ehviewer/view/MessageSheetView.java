@@ -29,17 +29,16 @@ import android.widget.TextView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.presenter.PresenterInterface;
 import com.hippo.ehviewer.util.TextUtils2;
-import com.hippo.ehviewer.widget.crossfade.CrossFadeTextView;
 
 public abstract class MessageSheetView<P extends PresenterInterface> extends SheetView<P> {
 
-  private CrossFadeTextView message;
+  private TextView message;
 
   @NonNull
   @Override
-  protected View createContentView(LayoutInflater inflater, ViewGroup parent) {
-    View view = inflater.inflate(R.layout.controller_message_sheet, parent, false);
-    message = (CrossFadeTextView) view.findViewById(R.id.message);
+  protected View onCreateSheetContent(LayoutInflater inflater, ViewGroup parent) {
+    View view = inflater.inflate(R.layout.view_message_sheet, parent, false);
+    message = (TextView) view.findViewById(R.id.message);
     bindView();
     return view;
   }
@@ -53,7 +52,7 @@ public abstract class MessageSheetView<P extends PresenterInterface> extends She
    * Returns message TextView.
    */
   protected TextView getMessageView() {
-    return message.getToView();
+    return message;
   }
 
   /**
@@ -68,7 +67,7 @@ public abstract class MessageSheetView<P extends PresenterInterface> extends She
    */
   protected void setMessage(CharSequence messageText) {
     if (getResources().getBoolean(R.bool.paragraph_leading_margin)) {
-      int margin = (int) (message.getToView().getTextSize() * 2);
+      int margin = (int) (message.getTextSize() * 2);
       messageText = TextUtils2.addLeadingMarginSpan(messageText, margin);
     }
     message.setText(messageText);

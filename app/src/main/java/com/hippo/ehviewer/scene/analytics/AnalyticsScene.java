@@ -17,35 +17,23 @@
 package com.hippo.ehviewer.scene.analytics;
 
 /*
- * Created by Hippo on 2/10/2017.
+ * Created by Hippo on 5/12/2017.
  */
 
-import com.hippo.ehviewer.EhvPreferences;
-import com.hippo.ehviewer.presenter.EhvPresenter;
+import android.support.annotation.NonNull;
+import com.hippo.ehviewer.scene.EhvScene;
 
-public class AnalyticsPresenter extends EhvPresenter<AnalyticsContract.View>
-    implements AnalyticsContract.Presenter {
+public class AnalyticsScene extends EhvScene<AnalyticsPresenter, AnalyticsView> {
 
-  private EhvPreferences preferences;
-
+  @NonNull
   @Override
-  protected void onCreate() {
-    super.onCreate();
-    preferences = getEhvApp().getPreferences();
+  protected AnalyticsPresenter createPresenter() {
+    return new AnalyticsPresenter();
   }
 
+  @NonNull
   @Override
-  public void acceptAnalytics() {
-    preferences.putEnableAnalytics(true);
-  }
-
-  @Override
-  public void rejectAnalytics() {
-    preferences.putEnableAnalytics(false);
-  }
-
-  @Override
-  public void neverAskAnalytics() {
-    preferences.putAskAnalytics(false);
+  protected AnalyticsView createView() {
+    return new AnalyticsView();
   }
 }

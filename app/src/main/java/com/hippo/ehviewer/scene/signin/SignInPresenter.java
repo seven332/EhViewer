@@ -22,6 +22,7 @@ package com.hippo.ehviewer.scene.signin;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -72,11 +73,14 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
   private RecaptchaTask recaptchaTask;
   private SignInTask signInTask;
 
-  public SignInPresenter(EhvApp app) {
-    this.app = app;
-    this.httpClient = app.getOkHttpClient();
-    this.client = app.getEhClient();
-    this.preferences = app.getPreferences();
+  @Override
+  protected void onCreate() {
+    super.onCreate();
+
+    app = getEhvApp();
+    httpClient = app.getOkHttpClient();
+    client = app.getEhClient();
+    preferences = app.getPreferences();
 
     recaptchaTask = new RecaptchaTask();
     signInTask = new SignInTask();
@@ -98,7 +102,9 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
   }
 
   @Override
-  public void restore(SignInContract.View view) {
+  public void onRestore(@NonNull SignInContract.View view) {
+    super.onRestore(view);
+
     switch (recaptchaTask.getState()) {
       case ComplexTask.STATE_NONE:
         view.onRecaptchaNone();

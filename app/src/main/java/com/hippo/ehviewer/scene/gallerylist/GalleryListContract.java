@@ -23,7 +23,7 @@ package com.hippo.ehviewer.scene.gallerylist;
 import com.hippo.ehviewer.client.GLUrlBuilder;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.contract.GalleryInfoContract;
-import com.hippo.ehviewer.presenter.ControllerPresenter;
+import com.hippo.ehviewer.presenter.EhvPresenter;
 
 public interface GalleryListContract {
 
@@ -39,7 +39,7 @@ public interface GalleryListContract {
     void onUpdateGLUrlBuilder(GLUrlBuilder builder);
   }
 
-  abstract class AbsPresenter extends ControllerPresenter<View> implements Presenter, View {
+  abstract class AbsPresenter extends EhvPresenter<View> implements Presenter, View {
 
     @Override
     public void onUpdateGLUrlBuilder(GLUrlBuilder builder) {

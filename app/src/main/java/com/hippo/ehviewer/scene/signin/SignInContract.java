@@ -21,7 +21,7 @@ package com.hippo.ehviewer.scene.signin;
  */
 
 import android.support.annotation.Nullable;
-import com.hippo.ehviewer.presenter.ControllerPresenter;
+import com.hippo.ehviewer.presenter.EhvPresenter;
 import com.hippo.ehviewer.presenter.PresenterInterface;
 import com.hippo.ehviewer.util.LazySupplier;
 import com.hippo.ehviewer.view.ViewInterface;
@@ -63,7 +63,7 @@ public interface SignInContract {
     void onSignInFailure(Throwable e);
   }
 
-  abstract class AbsPresenter extends ControllerPresenter<View> implements Presenter, View {
+  abstract class AbsPresenter extends EhvPresenter<View> implements Presenter, View {
 
     @Override
     public void onRecaptchaNone() {

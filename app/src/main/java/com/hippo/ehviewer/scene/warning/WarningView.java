@@ -39,7 +39,7 @@ public class WarningView extends MessageSheetView<WarningContract.Presenter>
       if (presenter != null) {
         presenter.neverShowWarning();
       }
-      getEhvActivity().nextController();
+      getEhvActivity().nextScene();
     });
   }
 

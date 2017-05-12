@@ -29,10 +29,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.presenter.PresenterInterface;
-import com.hippo.ehviewer.widget.crossfade.CrossFadeImageView;
-import com.hippo.ehviewer.widget.crossfade.CrossFadeTextView;
 import com.hippo.ehviewer.widget.IndicatingScrollView;
 
 /**
@@ -41,8 +41,8 @@ import com.hippo.ehviewer.widget.IndicatingScrollView;
 public abstract class SheetView<P extends PresenterInterface> extends StatusBarView<P> {
 
   private View header;
-  private CrossFadeTextView title;
-  private CrossFadeImageView icon;
+  private TextView title;
+  private ImageView icon;
   private Button positive;
   private Button negative;
   private IndicatingScrollView scroll;
@@ -51,16 +51,16 @@ public abstract class SheetView<P extends PresenterInterface> extends StatusBarV
   @NonNull
   @Override
   protected final View onCreateStatusBarContent(LayoutInflater inflater, ViewGroup parent) {
-    View view = inflater.inflate(R.layout.controller_sheet, parent, false);
+    View view = inflater.inflate(R.layout.view_sheet, parent, false);
 
     header = view.findViewById(R.id.header);
-    title = (CrossFadeTextView) header.findViewById(R.id.title);
-    icon = (CrossFadeImageView) header.findViewById(R.id.icon);
+    title = (TextView) header.findViewById(R.id.title);
+    icon = (ImageView) header.findViewById(R.id.icon);
     positive = (Button) view.findViewById(R.id.positive);
     negative = (Button) view.findViewById(R.id.negative);
     scroll = (IndicatingScrollView) view.findViewById(R.id.scroll_view);
 
-    contentView = createContentView(inflater, scroll);
+    contentView = onCreateSheetContent(inflater, scroll);
     scroll.addView(contentView);
 
     return view;
@@ -70,7 +70,7 @@ public abstract class SheetView<P extends PresenterInterface> extends StatusBarV
    * Creates content view for this {@code SheetView}.
    */
   @NonNull
-  protected abstract View createContentView(LayoutInflater inflater, ViewGroup parent);
+  protected abstract View onCreateSheetContent(LayoutInflater inflater, ViewGroup parent);
 
   /**
    * Sets header background.
@@ -118,7 +118,7 @@ public abstract class SheetView<P extends PresenterInterface> extends StatusBarV
   }
 
   /**
-   * Returns the content view created by {@link #createView(LayoutInflater, ViewGroup)}.
+   * Returns the content view created by {@link #onCreateSheetContent(LayoutInflater, ViewGroup)}.
    */
   protected View getContentView() {
     return contentView;

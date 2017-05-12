@@ -42,7 +42,7 @@ public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter>
         presenter.rejectAnalytics();
         presenter.neverAskAnalytics();
       }
-      getEhvActivity().nextController();
+      getEhvActivity().nextScene();
     });
     setPositiveButton(R.string.accept, a -> {
       AnalyticsContract.Presenter presenter = getPresenter();
@@ -50,7 +50,7 @@ public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter>
         presenter.acceptAnalytics();
         presenter.neverAskAnalytics();
       }
-      getEhvActivity().nextController();
+      getEhvActivity().nextScene();
     });
   }
 

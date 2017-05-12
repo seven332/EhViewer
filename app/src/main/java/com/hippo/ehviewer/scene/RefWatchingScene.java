@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.scene.warning;
+package com.hippo.ehviewer.scene;
 
 /*
- * Created by Hippo on 2/10/2017.
+ * Created by Hippo on 5/11/2017.
  */
 
-import com.hippo.ehviewer.EhvPreferences;
-import com.hippo.ehviewer.presenter.EhvPresenter;
+import android.support.annotation.NonNull;
+import android.view.View;
+import com.hippo.ehviewer.EhvApp;
+import com.hippo.stage.Scene;
 
-public class WarningPresenter extends EhvPresenter<WarningContract.View>
-    implements WarningContract.Presenter {
-
-  private EhvPreferences preferences;
+public abstract class RefWatchingScene extends Scene {
 
   @Override
-  protected void onCreate() {
-    super.onCreate();
-    preferences = getEhvApp().getPreferences();
+  protected void onDestroyView(@NonNull View view) {
+    super.onDestroyView(view);
+    //noinspection ConstantConditions
+    ((EhvApp) getApplication()).getRefWatcher().watch(view);
   }
 
   @Override
-  public void neverShowWarning() {
-    preferences.putShowWarning(false);
+  protected void onDestroy() {
+    super.onDestroy();
+    //noinspection ConstantConditions
+    ((EhvApp) getApplication()).getRefWatcher().watch(this);
   }
 }

@@ -36,8 +36,8 @@ public class WhatsHotView extends GalleryInfoView<WhatsHotContract.Presenter>
 
   @NonNull
   @Override
-  protected View onCreateView(LayoutInflater inflater, ViewGroup parent) {
-    View view = super.onCreateView(inflater, parent);
+  protected View onCreateToolbarContent(LayoutInflater inflater, ViewGroup parent) {
+    View view = super.onCreateToolbarContent(inflater, parent);
 
     preferences = getEhvApp().getPreferences();
 

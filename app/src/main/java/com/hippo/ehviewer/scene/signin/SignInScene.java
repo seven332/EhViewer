@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler.base;
+package com.hippo.ehviewer.scene.signin;
 
 /*
- * Created by Hippo on 4/9/2017.
+ * Created by Hippo on 5/12/2017.
  */
 
-final class ChangeHandlerUtils {
-  private ChangeHandlerUtils() {}
+import android.support.annotation.NonNull;
+import com.hippo.ehviewer.scene.EhvScene;
 
-  public interface StatusBarColor {
-    int getStatusBarColor();
+public class SignInScene extends EhvScene<SignInPresenter, SignInView> {
+
+  @NonNull
+  @Override
+  protected SignInPresenter createPresenter() {
+    return new SignInPresenter();
   }
 
-  public static class DialogStatusBarColor {
-
+  @NonNull
+  @Override
+  protected SignInView createView() {
+    return new SignInView();
   }
-
-
-
-
 }

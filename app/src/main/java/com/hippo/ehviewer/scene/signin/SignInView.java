@@ -56,8 +56,8 @@ public class SignInView extends SheetView<SignInContract.Presenter>
 
   @NonNull
   @Override
-  protected View createContentView(LayoutInflater inflater, ViewGroup parent) {
-    View view = inflater.inflate(R.layout.controller_sign_in, parent, false);
+  protected View onCreateSheetContent(LayoutInflater inflater, ViewGroup parent) {
+    View view = inflater.inflate(R.layout.view_sign_in, parent, false);
 
     signInPanel = view.findViewById(R.id.sign_in_panel);
     error = (TextView) view.findViewById(R.id.error);
@@ -113,7 +113,7 @@ public class SignInView extends SheetView<SignInContract.Presenter>
       if (presenter != null) {
         presenter.neverAskSignIn();
       }
-      getEhvActivity().nextController();
+      getEhvActivity().nextScene();
     });
 
     return view;
@@ -194,7 +194,7 @@ public class SignInView extends SheetView<SignInContract.Presenter>
     if (presenter != null) {
       presenter.neverAskSignIn();
     }
-    getEhvActivity().nextController();
+    getEhvActivity().nextScene();
   }
 
   @Override

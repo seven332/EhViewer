@@ -31,12 +31,11 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.GLUrlBuilder;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.controller.dialog.GoToDialog;
 import com.hippo.ehviewer.view.GalleryInfoView;
 import com.hippo.ehviewer.widget.ContentLayout;
 
 public class GalleryListView extends GalleryInfoView<GalleryListContract.Presenter>
-    implements GalleryListContract.View, GoToDialog.Listener {
+    implements GalleryListContract.View {
 
   private EhvPreferences preferences;
 
@@ -56,7 +55,7 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
       if (info == null) {
         return false;
       }
-      getEhvActivity().showDialog(new GalleryListDialog(info));
+      // TODO getEhvActivity().showDialog(new GalleryListDialog(info));
       return true;
     });
 
@@ -144,10 +143,5 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
         ? R.id.nav_homepage
         : 0);
     setTitle(getTitleForGLUrlBuilder(builder));
-  }
-
-  @Override
-  public void onGoTo(int page) {
-    // TODO
   }
 }

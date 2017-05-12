@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.changehandler;
+package com.hippo.ehviewer.scene.whatshot;
 
 /*
- * Created by Hippo on 2/20/2017.
+ * Created by Hippo on 5/12/2017.
  */
 
-import com.hippo.conductor.dialog.SimpleDialogChangeHandler;
-import com.hippo.ehviewer.controller.DialogController;
+import android.support.annotation.NonNull;
+import com.hippo.ehviewer.scene.EhvScene;
 
-/**
- * {@code DialogChangeHandler} is for {@link DialogController}.
- * It keeps from view on push and show no animations or transitions.
- */
-public class DialogChangeHandler extends SimpleDialogChangeHandler {
+public class WhatsHotScene extends EhvScene<WhatsHotPresenter, WhatsHotView> {
 
+  @NonNull
+  @Override
+  protected WhatsHotPresenter createPresenter() {
+    return new WhatsHotPresenter();
+  }
+
+  @NonNull
+  @Override
+  protected WhatsHotView createView() {
+    return new WhatsHotView();
+  }
 }

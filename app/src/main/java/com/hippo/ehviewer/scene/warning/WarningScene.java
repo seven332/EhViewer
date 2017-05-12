@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.view;
+package com.hippo.ehviewer.scene.warning;
 
 /*
- * Created by Hippo on 4/9/2017.
+ * Created by Hippo on 5/12/2017.
  */
 
-public interface StatusBarViewImpl {
+import android.support.annotation.NonNull;
+import com.hippo.ehviewer.scene.EhvScene;
 
-  /**
-   * Sets the status bar color.
-   */
-  void setStatusBarColor(int color);
+public class WarningScene extends EhvScene<WarningPresenter, WarningView> {
 
-  /**
-   * Gets the status bar color.
-   */
-  int getStatusBarColor();
+  @NonNull
+  @Override
+  protected WarningPresenter createPresenter() {
+    return new WarningPresenter();
+  }
+
+  @NonNull
+  @Override
+  protected WarningView createView() {
+    return new WarningView();
+  }
 }

@@ -30,7 +30,7 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.FLUrlBuilder;
 import com.hippo.ehviewer.client.data.FavouritesItem;
 import com.hippo.ehviewer.component.GalleryInfoAdapter;
-import com.hippo.ehviewer.presenter.ControllerPresenter;
+import com.hippo.ehviewer.presenter.EhvPresenter;
 import com.hippo.ehviewer.widget.ContentData;
 import com.hippo.ehviewer.widget.ContentLayout;
 import java.util.List;
@@ -38,13 +38,15 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class FavouritesPresenter extends ControllerPresenter<FavouritesContract.View>
+public class FavouritesPresenter extends EhvPresenter<FavouritesContract.View>
     implements FavouritesContract.Presenter {
 
   private GalleryData data;
 
-  public FavouritesPresenter(EhvApp app) {
-    data = new GalleryData(app);
+  @Override
+  protected void onCreate() {
+    super.onCreate();
+    data = new GalleryData(getEhvApp());
     data.restore();
   }
 
@@ -68,9 +70,6 @@ public class FavouritesPresenter extends ControllerPresenter<FavouritesContract.
       ((GalleryInfoAdapter) adapter).solidify();
     }
   }
-
-  @Override
-  public void restore(FavouritesContract.View view) {}
 
   private class GalleryData extends ContentData<FavouritesItem> {
 

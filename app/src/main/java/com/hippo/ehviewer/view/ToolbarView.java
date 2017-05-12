@@ -25,14 +25,12 @@ import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.presenter.PresenterInterface;
-import com.hippo.ehviewer.widget.ToolbarLayout;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -40,8 +38,6 @@ import java.lang.annotation.RetentionPolicy;
  * {@code ToolbarView} shows a Toolbar at top.
  */
 public abstract class ToolbarView<P extends PresenterInterface> extends StatusBarView<P> {
-
-  private static final String LOG_TAG = ToolbarView.class.getSimpleName();
 
   @IntDef({NAVIGATION_TYPE_MENU, NAVIGATION_TYPE_RETURN})
   @Retention(RetentionPolicy.SOURCE)
@@ -55,7 +51,7 @@ public abstract class ToolbarView<P extends PresenterInterface> extends StatusBa
   @NonNull
   @Override
   protected View onCreateStatusBarContent(LayoutInflater inflater, ViewGroup parent) {
-    View view = inflater.inflate(R.layout.controller_toolbar, parent, false);
+    View view = inflater.inflate(R.layout.view_toolbar, parent, false);
 
     toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
@@ -69,19 +65,13 @@ public abstract class ToolbarView<P extends PresenterInterface> extends StatusBa
         break;
       case NAVIGATION_TYPE_RETURN:
         drawable.setProgress(1.0f);
-        toolbar.setNavigationOnClickListener(v -> getEhvActivity().popTopController());
+        toolbar.setNavigationOnClickListener(v -> getEhvScene().pop());
         break;
     }
 
     ViewGroup container = (ViewGroup) view.findViewById(R.id.toolbar_content_container);
     View content = onCreateToolbarContent(inflater, container);
     container.addView(content);
-
-    if (view instanceof ToolbarLayout) {
-      ((ToolbarLayout) view).setDrawerArrowDrawable(drawable);
-    } else {
-      Log.e(LOG_TAG, "Content view of ToolbarView should extend ToolbarLayout");
-    }
 
     return view;
   }
@@ -94,6 +84,8 @@ public abstract class ToolbarView<P extends PresenterInterface> extends StatusBa
   /**
    * {@link #NAVIGATION_TYPE_RETURN}: arrow, back.
    * {@link #NAVIGATION_TYPE_MENU}: menu, open menu.
+   * <p>
+   * Override it to change navigation type.
    * <p>
    * Default: {@link #NAVIGATION_TYPE_RETURN}.
    */

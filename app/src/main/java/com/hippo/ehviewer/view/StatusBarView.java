@@ -20,7 +20,8 @@ package com.hippo.ehviewer.view;
  * Created by Hippo on 4/12/2017.
  */
 
-import android.support.annotation.CallSuper;
+import android.app.ActivityManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,16 +35,15 @@ import com.hippo.yorozuya.android.ResourcesUtils;
  * A view with a status bar on the top.
  */
 public abstract class StatusBarView<P extends PresenterInterface> extends EhvView<P>
-    implements StatusBarViewImpl, EhvDrawerContent.OnGetWindowPaddingTopListener {
+    implements EhvDrawerContent.OnGetWindowPaddingTopListener {
 
   private View statusBar;
   private EhvDrawerContent drawerContent;
 
-  @CallSuper
   @NonNull
   @Override
-  protected View onCreateView(LayoutInflater inflater, ViewGroup parent) {
-    View view = inflater.inflate(R.layout.controller_status_bar, parent, false);
+  protected final View onCreate(LayoutInflater inflater, ViewGroup parent) {
+    View view = inflater.inflate(R.layout.view_status_bar, parent, false);
 
     statusBar = view.findViewById(R.id.status_bar);
     drawerContent = (EhvDrawerContent) parent;
@@ -51,6 +51,12 @@ public abstract class StatusBarView<P extends PresenterInterface> extends EhvVie
     drawerContent.addOnGetWindowPaddingTopListener(this);
     // Sets status bar color
     statusBar.setBackgroundColor(getStatusBarColor());
+    // Update task description color
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      ActivityManager.TaskDescription taskDescription =
+          new ActivityManager.TaskDescription(null, null, getStatusBarColor());
+      getEhvActivity().setTaskDescription(taskDescription);
+    }
 
     // Sets content
     ViewGroup container = (ViewGroup) view.findViewById(R.id.status_bar_content_container);
@@ -60,19 +66,6 @@ public abstract class StatusBarView<P extends PresenterInterface> extends EhvVie
     return view;
   }
 
-  @Override
-  public void onGetWindowPaddingTop(int top) {
-    ViewGroup.LayoutParams lp = statusBar.getLayoutParams();
-    lp.height = top;
-    statusBar.setLayoutParams(lp);
-  }
-
-  @Override
-  protected void onDetach() {
-    super.onDetach();
-    drawerContent.removeOnGetWindowPaddingTopListener(this);
-  }
-
   /**
    * Creates the content for {@link StatusBarView}.
    */
@@ -80,7 +73,22 @@ public abstract class StatusBarView<P extends PresenterInterface> extends EhvVie
   protected abstract View onCreateStatusBarContent(LayoutInflater inflater, ViewGroup parent);
 
   @Override
-  public void setStatusBarColor(int color) {
+  protected void onDestroy() {
+    super.onDestroy();
+    drawerContent.removeOnGetWindowPaddingTopListener(this);
+  }
+
+  @Override
+  public final void onGetWindowPaddingTop(int top) {
+    ViewGroup.LayoutParams lp = statusBar.getLayoutParams();
+    lp.height = top;
+    statusBar.setLayoutParams(lp);
+  }
+
+  /**
+   * Changes status bar color.
+   */
+  public final void setStatusBarColor(int color) {
     if (statusBar != null) {
       statusBar.setBackgroundColor(color);
     }
@@ -88,8 +96,11 @@ public abstract class StatusBarView<P extends PresenterInterface> extends EhvVie
 
   /**
    * Returns the default status bar color for this view.
+   * <p>
+   * Override it to change default status bar color.
+   * <p>
+   * Default: color of {@link R.attr#colorPrimaryDark}
    */
-  @Override
   public int getStatusBarColor() {
     return ResourcesUtils.getAttrColor(getEhvActivity(), R.attr.colorPrimaryDark);
   }

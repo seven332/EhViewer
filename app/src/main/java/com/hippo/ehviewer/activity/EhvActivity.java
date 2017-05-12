@@ -20,8 +20,6 @@ package com.hippo.ehviewer.activity;
  * Created by Hippo on 1/14/2017.
  */
 
-import static com.bluelinelabs.conductor.RouterTransaction.with;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -32,35 +30,27 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
-import com.bluelinelabs.conductor.Controller;
-import com.bluelinelabs.conductor.RouterTransaction;
 import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.changehandler.DefaultChangeHandler;
-import com.hippo.ehviewer.changehandler.HeaderChangeHandler;
-import com.hippo.ehviewer.changehandler.MessageSheetChangeHandler;
-import com.hippo.ehviewer.changehandler.SheetChangeHandler;
-import com.hippo.ehviewer.changehandler.ToolbarChangeHandler;
-import com.hippo.ehviewer.scene.analytics.AnalyticsController;
-import com.hippo.ehviewer.scene.favourites.FavouritesController;
-import com.hippo.ehviewer.scene.gallerylist.GalleryListController;
-import com.hippo.ehviewer.scene.signin.SignInController;
-import com.hippo.ehviewer.scene.warning.WarningController;
-import com.hippo.ehviewer.scene.whatshot.WhatsHotController;
-import com.hippo.ehviewer.controller.EhvController;
+import com.hippo.ehviewer.scene.analytics.AnalyticsScene;
+import com.hippo.ehviewer.scene.gallerylist.GalleryListScene;
+import com.hippo.ehviewer.scene.signin.SignInScene;
+import com.hippo.ehviewer.scene.warning.WarningScene;
 import com.hippo.ehviewer.util.OpenSupplier;
 import com.hippo.ehviewer.util.Supplier;
-import com.hippo.ehviewer.view.EhvView;
 import com.hippo.ehviewer.widget.EhvLeftDrawer;
+import com.hippo.stage.Scene;
 
 /**
  * Show warning and statistics.
  */
-public class EhvActivity extends ControllerActivity {
+public class EhvActivity extends StageActivity implements
+    NavigationView.OnNavigationItemSelectedListener {
 
   private static final int TYPE_NONE = 0;
   private static final int TYPE_WARNING = 1;
@@ -121,40 +111,7 @@ public class EhvActivity extends ControllerActivity {
     EhvLeftDrawer leftDrawer = (EhvLeftDrawer) findViewById(R.id.left_drawer);
     // Navigation onItemClickListener
     navigationView = leftDrawer.getNavigationView();
-    navigationView.setNavigationItemSelectedListener(item -> {
-      int id = item.getItemId();
-      if (id == checkedItemId) {
-        // Check again
-        return true;
-      }
-
-      closeLeftDrawer();
-
-      switch (id) {
-        case R.id.nav_homepage:
-          // TODO
-          return true;
-        case R.id.nav_whats_hot:{
-          // Push whats hot controller
-          RouterTransaction transaction = RouterTransaction.with(new WhatsHotController());
-          addChangeHandler(transaction);
-          pushController(transaction);
-          return true;
-        }
-        case R.id.nav_favourites: {
-          // Push favourites controller
-          RouterTransaction transaction = RouterTransaction.with(new FavouritesController());
-          addChangeHandler(transaction);
-          pushController(transaction);
-          return true;
-        }
-        case R.id.nav_invalid:
-          // Do nothing
-          return true;
-        default:
-          return false;
-      }
-    });
+    navigationView.setNavigationItemSelectedListener(this);
     // Night mode button
     Button button = leftDrawer.getBottomButton();
     button.setText(EhvApp.isNightTheme(button.getContext())
@@ -168,125 +125,90 @@ public class EhvActivity extends ControllerActivity {
     });
   }
 
+  @Override
+  public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    int id = item.getItemId();
+    if (id == checkedItemId) {
+      // Check again
+      return true;
+    }
+
+    closeLeftDrawer();
+
+    switch (id) {
+      case R.id.nav_homepage:
+        // TODO
+        return true;
+      case R.id.nav_whats_hot:{
+        // Push whats hot controller
+        // TODO
+        return true;
+      }
+      case R.id.nav_favourites: {
+        // Push favourites controller
+        // TODO
+        return true;
+      }
+      case R.id.nav_invalid:
+        // Do nothing
+        return true;
+      default:
+        return false;
+    }
+  }
+
   @NonNull
   @Override
-  protected ViewGroup getControllerContainer() {
+  protected ViewGroup onGetStageLayout() {
     return (ViewGroup) findViewById(R.id.drawer_content);
   }
 
   @NonNull
   @Override
-  protected Controller getRootController() {
-    return getNextController();
+  protected Scene onCreateRootScene() {
+    return createScene(null);
   }
 
-  /**
-   * Steps to next {@code Controller}.
-   * <p>
-   * It is used for setup steps.
-   */
-  public void nextController() {
-    EhvController to = getNextController();
-    RouterTransaction transaction = with(to);
-    addChangeHandler(transaction);
-    replaceTopController(transaction);
+  public void nextScene() {
+    Class<?> topSceneClass = null;
+    Scene topScene = getTopScene();
+    if (topScene != null) {
+      topSceneClass = getTopScene().getClass();
+    }
+    replaceTopScene(createScene(topSceneClass));
   }
 
-  private EhvController getNextController() {
-    Controller top = getTopController();
-    Class<? extends Controller> topClass = top != null ? top.getClass() : null;
-    int type = getControllerType(topClass);
-    EhvPreferences preferences = getEhvApp().getPreferences();
+  @NonNull
+  private Scene createScene(@Nullable Class<?> currentSceneClass) {
+    int type;
+    if (currentSceneClass == WarningScene.class) {
+      type = TYPE_WARNING;
+    } else if (currentSceneClass == AnalyticsScene.class) {
+      type = TYPE_ANALYTICS;
+    } else if (currentSceneClass == SignInScene.class) {
+      type = TYPE_SIGN_IN;
+    } else {
+      type = TYPE_NONE;
+    }
 
+    EhvPreferences preferences = ((EhvApp) getApplication()).getPreferences();
     switch (type) {
+      default:
       case TYPE_NONE:
         if (preferences.getShowWarning()) {
-          return new WarningController();
+          return new WarningScene();
         }
       case TYPE_WARNING:
         if (preferences.getAskAnalytics()) {
-          return new AnalyticsController();
+          return new AnalyticsScene();
         }
       case TYPE_ANALYTICS:
         if (preferences.getNeedSignIn()) {
-          return new SignInController();
+          return new SignInScene();
         }
       case TYPE_SIGN_IN:
-        return new GalleryListController();
-      default:
-        throw new IllegalStateException("Unknown type: " + type);
+        return new GalleryListScene();
     }
-  }
-
-  private static int getControllerType(Class<? extends Controller> clazz) {
-    if (clazz == null) {
-      return TYPE_NONE;
-    } else if (clazz == WarningController.class) {
-      return TYPE_WARNING;
-    } else if (clazz == AnalyticsController.class) {
-      return TYPE_ANALYTICS;
-    } else if (clazz == SignInController.class) {
-      return TYPE_SIGN_IN;
-    } else {
-      throw new IllegalStateException("Unsupported class: " + clazz);
-    }
-  }
-
-  /**
-   * Adds changeHandler to {@code transaction} according to top controller
-   * and the controller to push.
-   */
-  public void addChangeHandler(RouterTransaction transaction) {
-    Controller from = getTopController();
-    Controller to = transaction.controller();
-    Class<? extends EhvView> fromView = from != null
-        ? EhvController.getViewClass(from.getClass())
-        : null;
-    Class<? extends EhvView> toView = EhvController.getViewClass(to.getClass());
-    addChangeHandler(transaction, fromView, toView);
-  }
-
-  /**
-   * Add {@link com.bluelinelabs.conductor.ControllerChangeHandler} to
-   * a {@code RouterTransaction} according to from controller and to controller.
-   */
-  private static void addChangeHandler(RouterTransaction transaction,
-      Class<? extends EhvView> from, Class<? extends EhvView> to) {
-    if (from == null || to == null) {
-      // Root?
-      return;
-    }
-
-    if (EhvView.isMessageSheetView(from) && EhvView.isMessageSheetView(to)) {
-      transaction.pushChangeHandler(new MessageSheetChangeHandler())
-          .popChangeHandler(new MessageSheetChangeHandler());
-      return;
-    }
-
-    if (EhvView.isSheetView(from) && EhvView.isSheetView(to)) {
-      transaction.pushChangeHandler(new SheetChangeHandler())
-          .popChangeHandler(new SheetChangeHandler());
-      return;
-    }
-
-    if (EhvView.isToolbarView(from) && EhvView.isToolbarView(to)) {
-      transaction.pushChangeHandler(new ToolbarChangeHandler())
-          .popChangeHandler(new ToolbarChangeHandler());
-      return;
-    }
-
-    if (EhvView.isHeaderView(from) && EhvView.isHeaderView(to)) {
-      transaction.pushChangeHandler(new HeaderChangeHandler())
-          .popChangeHandler(new HeaderChangeHandler());
-      return;
-    }
-
-    transaction.pushChangeHandler(new DefaultChangeHandler())
-        .popChangeHandler(new DefaultChangeHandler());
-  }
-
-  public EhvApp getEhvApp() {
-    return (EhvApp) getApplicationContext();
   }
 
   /**

@@ -15,24 +15,30 @@
   ~ limitations under the License.
   -->
 
-<com.hippo.ehviewer.widget.crossfade.CrossFadeTextView
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/message"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content">
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
 
-  <TextView
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_height="?attr/actionBarSize"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/key_margin"
-    android:textSize="@dimen/text_little_small"
-    style="@style/TextAppearance.AppCompat.Body1"/>
+    android:background="?attr/colorPrimary"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-  <TextView
+  <FrameLayout
+    android:id="@+id/toolbar_content_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/key_margin"
-    android:textSize="@dimen/text_little_small"
-    style="@style/TextAppearance.AppCompat.Body1"/>
+    android:layout_height="0dp"
+    android:layout_weight="1">
 
-</com.hippo.ehviewer.widget.crossfade.CrossFadeTextView>
+    <!-- fake header shadow -->
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/strip_shadow_size"
+      android:background="@drawable/strip_shadow_bottom"/>
+
+  </FrameLayout>
+</LinearLayout>

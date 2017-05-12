@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.scene.warning;
+package com.hippo.ehviewer.scene.gallerylist;
 
 /*
- * Created by Hippo on 2/10/2017.
+ * Created by Hippo on 5/12/2017.
  */
 
-import com.hippo.ehviewer.EhvPreferences;
-import com.hippo.ehviewer.presenter.EhvPresenter;
+import android.support.annotation.NonNull;
+import com.hippo.ehviewer.scene.EhvScene;
 
-public class WarningPresenter extends EhvPresenter<WarningContract.View>
-    implements WarningContract.Presenter {
+public class GalleryListScene extends EhvScene<GalleryListPresenter, GalleryListView> {
 
-  private EhvPreferences preferences;
-
-  @Override
-  protected void onCreate() {
-    super.onCreate();
-    preferences = getEhvApp().getPreferences();
+  public GalleryListScene() {
+    new Exception().printStackTrace();
   }
 
+  @NonNull
   @Override
-  public void neverShowWarning() {
-    preferences.putShowWarning(false);
+  protected GalleryListPresenter createPresenter() {
+    return new GalleryListPresenter();
+  }
+
+  @NonNull
+  @Override
+  protected GalleryListView createView() {
+    return new GalleryListView();
   }
 }

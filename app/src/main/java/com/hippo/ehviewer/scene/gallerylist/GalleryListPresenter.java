@@ -31,8 +31,8 @@ import com.hippo.ehviewer.client.EhSubscriber;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.GLUrlBuilder;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.component.GalleryInfoData;
 import com.hippo.ehviewer.component.GalleryInfoAdapter;
+import com.hippo.ehviewer.component.GalleryInfoData;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.yorozuya.FileUtils;
 import java.io.File;
@@ -43,8 +43,10 @@ public class GalleryListPresenter extends GalleryListContract.AbsPresenter {
 
   private GalleryData data;
 
-  public GalleryListPresenter(EhvApp app) {
-    data = new GalleryData(app);
+  @Override
+  protected void onCreate() {
+    super.onCreate();
+    data = new GalleryData(getEhvApp());
     data.restore();
   }
 
@@ -79,7 +81,8 @@ public class GalleryListPresenter extends GalleryListContract.AbsPresenter {
   }
 
   @Override
-  public void restore(GalleryListContract.View view) {
+  public void onRestore(@NonNull GalleryListContract.View view) {
+    super.onRestore(view);
     onUpdateGLUrlBuilder(data.builder);
   }
 

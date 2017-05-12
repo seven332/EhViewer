@@ -29,22 +29,24 @@ import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhSubscriber;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.component.GalleryInfoData;
 import com.hippo.ehviewer.component.GalleryInfoAdapter;
-import com.hippo.ehviewer.presenter.ControllerPresenter;
+import com.hippo.ehviewer.component.GalleryInfoData;
+import com.hippo.ehviewer.presenter.EhvPresenter;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.yorozuya.FileUtils;
 import java.io.File;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class WhatsHotPresenter extends ControllerPresenter<WhatsHotContract.View>
+public class WhatsHotPresenter extends EhvPresenter<WhatsHotContract.View>
     implements WhatsHotContract.Presenter {
 
   private GalleryData data;
 
-  public WhatsHotPresenter(EhvApp app) {
-    data = new GalleryData(app);
+  @Override
+  protected void onCreate() {
+    super.onCreate();
+    data = new GalleryData(getEhvApp());
     data.restore();
   }
 
@@ -71,9 +73,6 @@ public class WhatsHotPresenter extends ControllerPresenter<WhatsHotContract.View
   public GalleryInfo getGalleryInfo(int index) {
     return data.get(index);
   }
-
-  @Override
-  public void restore(WhatsHotContract.View view) {}
 
   private static class GalleryData extends GalleryInfoData {
 

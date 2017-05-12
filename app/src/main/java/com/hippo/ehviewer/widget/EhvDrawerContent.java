@@ -23,16 +23,16 @@ package com.hippo.ehviewer.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewParent;
-import com.bluelinelabs.conductor.ChangeHandlerFrameLayout;
 import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.drawerlayout.DrawerLayoutChild;
+import com.hippo.stage.StageLayout;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Content for {@link com.hippo.drawerlayout.DrawerLayout}.
  */
-public class EhvDrawerContent extends ChangeHandlerFrameLayout implements DrawerLayoutChild {
+public class EhvDrawerContent extends StageLayout implements DrawerLayoutChild {
 
   private List<OnGetWindowPaddingTopListener> listeners = new ArrayList<>();
   private int windowPaddingTop;
