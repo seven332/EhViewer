@@ -14,26 +14,33 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.scene.gallerylist;
+package com.hippo.ehviewer.presenter;
 
 /*
  * Created by Hippo on 5/12/2017.
  */
 
-import android.support.annotation.NonNull;
-import com.hippo.ehviewer.scene.EhvScene;
+import com.hippo.ehviewer.view.ViewInterface;
+import rx.subscriptions.CompositeSubscription;
 
-public class GalleryListScene extends EhvScene<GalleryListPresenter, GalleryListView> {
+/**
+ * {@code RxPresenter} holds a {@link CompositeSubscription} which is
+ * unsubscribed in {@link #onDestroy()}.
+ */
+public class RxPresenter<V extends ViewInterface> extends EhvPresenter<V> {
 
-  @NonNull
+  private CompositeSubscription subscriptionSet = new CompositeSubscription();
+
   @Override
-  protected GalleryListPresenter createPresenter() {
-    return new GalleryListPresenter();
+  protected void onDestroy() {
+    super.onDestroy();
+    subscriptionSet.unsubscribe();
   }
 
-  @NonNull
-  @Override
-  protected GalleryListView createView() {
-    return new GalleryListView();
+  /**
+   * Returns the {@link CompositeSubscription}.
+   */
+  protected CompositeSubscription getSubscriptionSet() {
+    return subscriptionSet;
   }
 }

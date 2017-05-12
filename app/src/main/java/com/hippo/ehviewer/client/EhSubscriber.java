@@ -23,11 +23,15 @@ package com.hippo.ehviewer.client;
 import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * A base {@link Subscriber} for {@link EhClient}.
  */
 public abstract class EhSubscriber<T extends EhResult> extends Subscriber<Result<T>> {
+
+  // Use from() instead
+  private EhSubscriber() {}
 
   @Override
   public void onCompleted() {}
@@ -61,6 +65,33 @@ public abstract class EhSubscriber<T extends EhResult> extends Subscriber<Result
   public static <T extends EhResult> EhSubscriber<T> from(Action1<T> onSuccess,
       Action1<Throwable> onFailure) {
     return new DelegateEhSubscriber<>(onSuccess, onFailure);
+  }
+
+  /**
+   * Creates a {@code EhSubscriber} from a {@code Action1<T>} and a {@code Action1<Throwable>},
+   * adds the subscriber to a {@link CompositeSubscription}.
+   */
+  public static <T extends EhResult> EhSubscriber<T> from(CompositeSubscription subscription,
+      Action1<T> onSuccess, Action1<Throwable> onFailure) {
+    return new AutoEhSubscriber<>(subscription, onSuccess, onFailure);
+  }
+
+  // TODO The document doesn't say that the Subscriber passed is the Subscription returned, this class may not work
+  private static class AutoEhSubscriber<T extends EhResult> extends DelegateEhSubscriber<T> {
+
+    private CompositeSubscription subscription;
+
+    public AutoEhSubscriber(CompositeSubscription subscription, Action1<T> onSuccess,
+        Action1<Throwable> onFailure) {
+      super(onSuccess, onFailure);
+      this.subscription = subscription;
+      this.subscription.add(this);
+    }
+
+    @Override
+    public void onCompleted() {
+      subscription.remove(this);
+    }
   }
 
   private static class DelegateEhSubscriber<T extends EhResult> extends EhSubscriber<T> {

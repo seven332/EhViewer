@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 import android.os.Build;
 import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.EhvApp;
-import com.hippo.ehviewer.client.result.GalleryMetadataResult;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,44 +62,23 @@ public class EhClientTest {
   @Test
   public void testGetGalleryMetadata() {
     client.getGalleryMetadata(EhUrl.SITE_E, GID_ARRAY, TOKEN_ARRAY)
-        .subscribe(new EhSubscriber<GalleryMetadataResult>() {
-          @Override
-          public void onSuccess(GalleryMetadataResult result) {
-            assertEquals(GID_ARRAY.length, result.galleryInfoList().size());
-          }
-          @Override
-          public void onFailure(Throwable e) {
-            fail();
-          }
-        });
+        .subscribe(EhSubscriber.from(
+            result -> assertEquals(GID_ARRAY.length, result.galleryInfoList().size()),
+            e -> fail()));
 
     long[] gids = Arrays.copyOfRange(GID_ARRAY, 0, 29);
     String[] tokens = Arrays.copyOfRange(TOKEN_ARRAY, 0, 29);
     client.getGalleryMetadata(EhUrl.SITE_E, gids, tokens)
-        .subscribe(new EhSubscriber<GalleryMetadataResult>() {
-          @Override
-          public void onSuccess(GalleryMetadataResult result) {
-            assertEquals(gids.length, result.galleryInfoList().size());
-          }
-          @Override
-          public void onFailure(Throwable e) {
-            fail();
-          }
-        });
+        .subscribe(EhSubscriber.from(
+            result -> assertEquals(gids.length, result.galleryInfoList().size()),
+            e -> fail()));
 
     long[] gids2 = Arrays.copyOfRange(GID_ARRAY, 0, 6);
     String[] tokens2 = Arrays.copyOfRange(TOKEN_ARRAY, 0, 6);
     client.getGalleryMetadata(EhUrl.SITE_E, gids2, tokens2)
-        .subscribe(new EhSubscriber<GalleryMetadataResult>() {
-          @Override
-          public void onSuccess(GalleryMetadataResult result) {
-            assertEquals(gids2.length, result.galleryInfoList().size());
-          }
-          @Override
-          public void onFailure(Throwable e) {
-            fail();
-          }
-        });
+        .subscribe(EhSubscriber.from(
+            result -> assertEquals(gids2.length, result.galleryInfoList().size()),
+            e -> fail()));
   }
 
   @Test
@@ -114,30 +92,16 @@ public class EhClientTest {
       System.arraycopy(tokens, 0, duplicateTokens, i, gids.length);
     }
     client.getGalleryMetadata(EhUrl.SITE_E, duplicateGids, duplicateTokens)
-        .subscribe(new EhSubscriber<GalleryMetadataResult>() {
-          @Override
-          public void onSuccess(GalleryMetadataResult result) {
-            assertEquals(gids.length, result.galleryInfoList().size());
-          }
-          @Override
-          public void onFailure(Throwable e) {
-            fail();
-          }
-        });
+        .subscribe(EhSubscriber.from(
+            result -> assertEquals(gids.length, result.galleryInfoList().size()),
+            e -> fail()));
   }
 
   @Test
   public void testGetGalleryMetadataNull() {
     client.getGalleryMetadata(EhUrl.SITE_E, null, null)
-        .subscribe(new EhSubscriber<GalleryMetadataResult>() {
-          @Override
-          public void onSuccess(GalleryMetadataResult result) {
-            assertEquals(0, result.galleryInfoList().size());
-          }
-          @Override
-          public void onFailure(Throwable e) {
-            fail();
-          }
-        });
+        .subscribe(EhSubscriber.from(
+            result -> assertEquals(0, result.galleryInfoList().size()),
+            e -> fail()));
   }
 }

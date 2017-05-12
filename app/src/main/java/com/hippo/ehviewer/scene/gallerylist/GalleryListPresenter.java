@@ -127,7 +127,7 @@ public class GalleryListPresenter extends GalleryListContract.AbsPresenter {
       client.getGalleryList(baseUri, b.build())
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(EhSubscriber.from(result -> {
+          .subscribe(EhSubscriber.from(getSubscriptionSet(), result -> {
             boolean affected = setData(id, result.galleryInfoList(), result.pages());
             if (affected && p) {
               builder.set(pendingBuilder);

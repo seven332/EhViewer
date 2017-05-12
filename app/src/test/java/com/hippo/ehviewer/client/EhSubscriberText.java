@@ -42,18 +42,10 @@ public class EhSubscriberText {
             throw new RuntimeException("HAHA");
           }
         })
-        .subscribe(new EhSubscriber<SignInResult>() {
-          @Override
-          public void onSuccess(SignInResult result) {
-            fail();
-          }
-
-          @Override
-          public void onFailure(Throwable e) {
-            assertEquals(RuntimeException.class, e.getClass());
-            assertEquals("HAHA", e.getMessage());
-          }
-        });
+        .subscribe(EhSubscriber.from(result -> fail(), e -> {
+          assertEquals(RuntimeException.class, e.getClass());
+          assertEquals("HAHA", e.getMessage());
+        }));
   }
 
   @Test
@@ -65,37 +57,22 @@ public class EhSubscriberText {
             return Result.error(new RuntimeException("HAHA"));
           }
         })
-        .subscribe(new EhSubscriber<SignInResult>() {
-          @Override
-          public void onSuccess(SignInResult result) {
-            fail();
-          }
-
-          @Override
-          public void onFailure(Throwable e) {
-            assertEquals(RuntimeException.class, e.getClass());
-            assertEquals("HAHA", e.getMessage());
-          }
-        });
+        .subscribe(EhSubscriber.from(result -> fail(), e -> {
+          assertEquals(RuntimeException.class, e.getClass());
+          assertEquals("HAHA", e.getMessage());
+        }));
   }
 
   @Test
   public void testThrowInOnSuccess() {
     try {
       Observable.just(Result.response(Response.success(new SignInResult("HAHA"))))
-          .subscribe(new EhSubscriber<SignInResult>() {
-            @Override
-            public void onSuccess(SignInResult result) {
-              assertEquals("HAHA", result.profileName());
-              throw new RuntimeException("HAHA");
-            }
-
-            @Override
-            public void onFailure(Throwable e) {
-              fail();
-            }
-          });
+          .subscribe(EhSubscriber.from(result -> {
+            assertEquals("HAHA", result.profileName());
+            throw new RuntimeException("HAHA");
+          }, e -> fail()));
     } catch (OnErrorFailedException e) {
+      // Ignore
     }
   }
 
@@ -108,23 +85,10 @@ public class EhSubscriberText {
             throw new RuntimeException("HAHA");
           }
         })
-        .map(new Func1<String, Result<SignInResult>>() {
-          @Override
-          public Result<SignInResult> call(String s) {
-            return Result.response(Response.success(new SignInResult("HAHA")));
-          }
-        })
-        .subscribe(new EhSubscriber<SignInResult>() {
-          @Override
-          public void onSuccess(SignInResult result) {
-            fail();
-          }
-
-          @Override
-          public void onFailure(Throwable e) {
-            assertEquals(RuntimeException.class, e.getClass());
-            assertEquals("HAHA", e.getMessage());
-          }
-        });
+        .map(s -> Result.response(Response.success(new SignInResult("HAHA"))))
+        .subscribe(EhSubscriber.from(result -> fail(), e -> {
+          assertEquals(RuntimeException.class, e.getClass());
+          assertEquals("HAHA", e.getMessage());
+        }));
   }
 }

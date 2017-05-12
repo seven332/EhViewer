@@ -313,27 +313,23 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
           })
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(new EhSubscriber<ProfileResult>() {
-            @Override
-            public void onSuccess(ProfileResult result) {
-              // Compare name from sign in and name from profile
-              if (!profileName.value.equals(result.name())) {
-                Log.e(LOG_TAG, "Got different names, "
-                    + "sign in: " + profileName.value
-                    + ", profile: " + result.name());
-              }
-              success(Pair.create(result.name(), result.avatar()));
-            }
-            @Override
-            public void onFailure(Throwable e) {
-              if (profileName.value != null) {
-                Log.e(LOG_TAG, "Can't get profile");
-                success(Pair.create(profileName.value, null));
-              } else {
-                failure(e);
-              }
-            }
-          });
+          .subscribe(EhSubscriber.from(getSubscriptionSet(),
+              result -> {
+                // Compare name from sign in and name from profile
+                if (!profileName.value.equals(result.name())) {
+                  Log.w(LOG_TAG, "Got different names, "
+                      + "sign in: " + profileName.value
+                      + ", profile: " + result.name());
+                }
+                success(Pair.create(result.name(), result.avatar()));
+              }, e -> {
+                if (profileName.value != null) {
+                  Log.e(LOG_TAG, "Can't get profile");
+                  success(Pair.create(profileName.value, null));
+                } else {
+                  failure(e);
+                }
+              }));
     }
 
     @Override
@@ -345,9 +341,6 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
       preferences.putDisplayName(name);
       preferences.putAvatar(avatar);
       // Post info to bus
-
-      Log.d("TAG", "TAG_SIGN_IN");
-
       RxBus.get().post(EhvBusTags.TAG_SIGN_IN, pair);
 
       onSignInSuccess(name, avatar);

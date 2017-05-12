@@ -31,14 +31,14 @@ import com.hippo.ehviewer.client.EhSubscriber;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.component.GalleryInfoAdapter;
 import com.hippo.ehviewer.component.GalleryInfoData;
-import com.hippo.ehviewer.presenter.EhvPresenter;
+import com.hippo.ehviewer.presenter.RxPresenter;
 import com.hippo.ehviewer.widget.ContentLayout;
 import com.hippo.yorozuya.FileUtils;
 import java.io.File;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class WhatsHotPresenter extends EhvPresenter<WhatsHotContract.View>
+public class WhatsHotPresenter extends RxPresenter<WhatsHotContract.View>
     implements WhatsHotContract.Presenter {
 
   private GalleryData data;
@@ -74,7 +74,7 @@ public class WhatsHotPresenter extends EhvPresenter<WhatsHotContract.View>
     return data.get(index);
   }
 
-  private static class GalleryData extends GalleryInfoData {
+  private class GalleryData extends GalleryInfoData {
 
     private static final String BACKUP_FILENAME = "whats_hot_data_backup";
 
@@ -99,7 +99,7 @@ public class WhatsHotPresenter extends EhvPresenter<WhatsHotContract.View>
       client.getWhatsHot(preferences.getGallerySite())
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(EhSubscriber.from(
+          .subscribe(EhSubscriber.from(getSubscriptionSet(),
               result -> setData(id, result.galleryInfoList(), 1),
               e -> setError(id, e)
           ));
