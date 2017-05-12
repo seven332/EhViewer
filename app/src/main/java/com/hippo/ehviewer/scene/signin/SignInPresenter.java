@@ -45,7 +45,6 @@ import com.hippo.ehviewer.util.Triple;
 import com.hwangjr.rxbus.RxBus;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.concurrent.TimeUnit;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -53,7 +52,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.Result;
 import rx.Observable;
-import rx.Scheduler;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -146,7 +144,6 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
 
     private WebView webView;
     private RecaptchaClient recaptchaClient;
-    private Scheduler.Worker mainThreadWorked;
     private volatile Subscription failureSubscription;
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
@@ -170,8 +167,6 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
         webView.setWebViewClient(recaptchaClient);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(this, "Android");
-
-        mainThreadWorked = AndroidSchedulers.mainThread().createWorker();
       }
 
       webView.loadData(HTML_BODY, DEFAULT_MIME_TYPE, DEFAULT_ENCODING);
@@ -190,7 +185,7 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
     @JavascriptInterface
     @Keep
     public void onGetChallenge(final String challenge) {
-      mainThreadWorked.schedule(() -> {
+      schedule(() -> {
         // Cancel the failure action
         if (failureSubscription != null) {
           failureSubscription.unsubscribe();
@@ -219,14 +214,13 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
           return super.shouldInterceptRequest(view, url);
         }
 
-        // Check image url
         if (url.startsWith("https://www.google.com/recaptcha/api/image")) {
-          mainThreadWorked.schedule(() -> recaptchaImage = url);
+          // Get the recaptcha image url
+          schedule(() -> recaptchaImage = url);
         }
 
         try {
-          // What about recaptcha server needs POST method?
-          // Only API 21 and above can get original method.
+          // TODO What if recaptcha server needs POST method? Only API 21 and above can get original method.
           Request request = new Request.Builder().get().url(url).build();
           Response response = httpClient.newCall(request).execute();
           ResponseBody body = response.body();
@@ -260,14 +254,14 @@ public class SignInPresenter extends SignInContract.AbsPresenter {
       public void onPageFinished(WebView view, String url) {
         // There is no guarantee that onGetChallenge() must be called,
         // schedule an action to call failure().
-        failureSubscription = mainThreadWorked.schedule(() -> {
+        failureSubscription = schedule(() -> {
           failureSubscription = null;
           if (getState() == ComplexTask.STATE_RUNNING) {
             recaptchaChallenge = null;
             recaptchaImage = null;
             failure(SignInContract.RECAPTCHA_FAILURE.get());
           }
-        }, 500, TimeUnit.MILLISECONDS);
+        }, 500);
         webView.loadUrl("javascript:Android.onGetChallenge('undefined'!=typeof RecaptchaState&&RecaptchaState.hasOwnProperty('challenge')?RecaptchaState.challenge:null)");
       }
     }

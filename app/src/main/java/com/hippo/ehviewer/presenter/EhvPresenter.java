@@ -79,6 +79,21 @@ public abstract class EhvPresenter<V extends ViewInterface> extends ScenePresent
   }
 
   /**
+   * Schedules an Action for execution in UI thread.
+   * <p>
+   * The action will be cancelled after the view detached.
+   * <p>
+   * Returns {@code Subscriptions.unsubscribed()} if the presenter is already detached.
+   */
+  public Subscription schedule(Action0 action) {
+    if (worker != null) {
+      return worker.schedule(action);
+    } else {
+      return Subscriptions.unsubscribed();
+    }
+  }
+
+  /**
    * Schedules an action for execution at some point in the future
    * and in UI thread.
    * <p>
