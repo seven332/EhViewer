@@ -20,6 +20,7 @@ package com.hippo.ehviewer.scene;
  * Created by Hippo on 5/11/2017.
  */
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -132,5 +133,17 @@ public abstract class MvpScene<P extends ScenePresenter, V extends SceneView>
     super.onDestroy();
     presenter.destroy();
     presenter = null;
+  }
+
+  @Override
+  protected void onSaveViewState(@NonNull View view, @NonNull Bundle outState) {
+    super.onSaveViewState(view, outState);
+    this.view.saveState(outState);
+  }
+
+  @Override
+  protected void onRestoreViewState(@NonNull View view, @NonNull Bundle savedViewState) {
+    super.onRestoreViewState(view, savedViewState);
+    this.view.restoreState(savedViewState);
   }
 }

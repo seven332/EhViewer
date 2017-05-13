@@ -23,6 +23,7 @@ package com.hippo.ehviewer.view;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -144,6 +145,20 @@ public abstract class SceneView<P extends PresenterInterface> implements ViewInt
   }
 
   /**
+   * Saves state for this view.
+   */
+  public final void saveState(@NonNull Bundle outState) {
+    onSaveState(outState);
+  }
+
+  /**
+   * Restores state for this view.
+   */
+  public final void restoreState(@NonNull Bundle savedViewState) {
+    onRestoreState(savedViewState);
+  }
+
+  /**
    * Creates this actual {@code View}.
    */
   @NonNull
@@ -190,4 +205,16 @@ public abstract class SceneView<P extends PresenterInterface> implements ViewInt
    */
   @CallSuper
   protected void onDestroy() {}
+
+  /**
+   * Called when saving state of the view.
+   */
+  @CallSuper
+  protected void onSaveState(@NonNull Bundle outState) {}
+
+  /**
+   * Called when restoring state of the view.
+   */
+  @CallSuper
+  protected void onRestoreState(@NonNull Bundle savedViewState) {}
 }
