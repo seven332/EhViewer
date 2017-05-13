@@ -21,7 +21,9 @@ package com.hippo.ehviewer.scene;
  */
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,12 +78,19 @@ public abstract class MvpScene<P extends ScenePresenter, V extends SceneView>
   /**
    * Called after the presenter created.
    */
+  @CallSuper
   protected void onCreateScenePresenter(@NonNull P presenter) {}
 
   /**
    * Called after the SceneView created.
    */
+  @CallSuper
   protected void onCreateSceneView(@NonNull V view) {}
+
+  @Nullable
+  protected P getPresenter() {
+    return presenter;
+  }
 
   @Override
   protected void onAttachView(@NonNull View view) {

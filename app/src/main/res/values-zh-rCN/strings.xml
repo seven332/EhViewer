@@ -114,4 +114,9 @@
   </plurals>
   <string name="some_days_ago">%d天前</string>
 
+  <string name="gallery_search_normal_search">普通搜索</string>
+  <string name="gallery_search_all_language">所有语言</string>
+  <string name="gallery_search_enable_advance_search">启用高级搜索</string>
+  <string name="gallery_search_advance_search">高级搜索</string>
+
 </resources>

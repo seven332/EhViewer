@@ -21,4 +21,22 @@
     <item>@string/add_to_favourites</item>
   </array>
 
+  <array name="gallery_search_language_entries">
+    <item>@string/gallery_search_all_language</item>
+    <item>@string/language_english</item>
+    <item>@string/language_chinese</item>
+    <item>@string/language_dutch</item>
+    <item>@string/language_french</item>
+    <item>@string/language_german</item>
+    <item>@string/language_hungarian</item>
+    <item>@string/language_italian</item>
+    <item>@string/language_korean</item>
+    <item>@string/language_polish</item>
+    <item>@string/language_portuguese</item>
+    <item>@string/language_russian</item>
+    <item>@string/language_spanish</item>
+    <item>@string/language_thai</item>
+    <item>@string/language_vietnamese</item>
+  </array>
+
 </resources>

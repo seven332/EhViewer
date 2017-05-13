@@ -90,7 +90,7 @@ public abstract class StageActivity extends AppCompatActivity {
    * Pushes a scene to the stage.
    * It's a no-op if the activity is destroyed.
    */
-  protected void pushScene(@NonNull Scene scene) {
+  public void pushScene(@NonNull Scene scene) {
     if (stage != null) {
       stage.pushScene(scene);
     }

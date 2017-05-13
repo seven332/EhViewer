@@ -333,6 +333,24 @@ public final class EhUtils {
       R.string.language_other,
   };
 
+  private static final String[] LANG_TEXTS = {
+      "japanese",
+      "english",
+      "chinese",
+      "dutch",
+      "french",
+      "german",
+      "hungarian",
+      "italian",
+      "korean",
+      "polish",
+      "portuguese",
+      "russian",
+      "spanish",
+      "thai",
+      "vietnamese",
+  };
+
   /**
    * Guesses the language of the gallery according to the title.
    * Returns {@link #LANG_UNKNOWN} if can't guess.
@@ -370,6 +388,19 @@ public final class EhUtils {
   public static String getLang(Context context, int lang) {
     if (lang >= 0 && lang < LANG_IDS.length) {
       return context.getString(LANG_IDS[lang]);
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Returns text for the language. The text can be used for tag.
+   * Returns {@code null} if no string for the language.
+   */
+  @Nullable
+  public static String getLangText(int lang) {
+    if (lang >= 0 && lang < LANG_TEXTS.length) {
+      return LANG_TEXTS[lang];
     } else {
       return null;
     }

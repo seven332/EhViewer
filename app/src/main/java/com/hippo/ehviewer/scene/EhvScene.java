@@ -33,6 +33,7 @@ public abstract class EhvScene<P extends EhvPresenter, V extends EhvView> extend
     super.onCreateScenePresenter(presenter);
     presenter.setEhvApp((EhvApp) getApplication());
     presenter.setEhvScene(this);
+    presenter.setArgs(getArgs());
   }
 
   @Override
@@ -41,5 +42,6 @@ public abstract class EhvScene<P extends EhvPresenter, V extends EhvView> extend
     view.setEhvApp((EhvApp) getApplication());
     view.setEhvActivity((EhvActivity) getActivity());
     view.setEhvScene(this);
+    view.setArgs(getArgs());
   }
 }

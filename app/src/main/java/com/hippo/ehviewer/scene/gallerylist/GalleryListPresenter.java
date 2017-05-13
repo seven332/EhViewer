@@ -73,6 +73,7 @@ public class GalleryListPresenter extends GalleryListContract.AbsPresenter {
   @Override
   public void applyGLUrlBuilder(GLUrlBuilder builder) {
     data.applyGLUrlBuilder(builder);
+    onUpdateGLUrlBuilder(builder);
   }
 
   @Override
@@ -94,16 +95,13 @@ public class GalleryListPresenter extends GalleryListContract.AbsPresenter {
     private Gson gson;
     private EhvPreferences preferences;
     private GLUrlBuilder builder;
-    private GLUrlBuilder pendingBuilder;
     private File backupFile;
-    private boolean pending;
 
     public GalleryData(EhvApp app) {
       client = app.getEhClient();
       gson = app.getGson();
       preferences = app.getPreferences();
       builder = new GLUrlBuilder();
-      pendingBuilder = new GLUrlBuilder();
 
       // Get backup file
       File dir = app.getCacheDir();
@@ -112,28 +110,21 @@ public class GalleryListPresenter extends GalleryListContract.AbsPresenter {
     }
 
     public void applyGLUrlBuilder(GLUrlBuilder builder) {
-      pending = true;
-      pendingBuilder.set(builder);
+      this.builder.set(builder);
+      setHeaderRefreshing();
       goTo(0);
     }
 
     @Override
     public void onRequireData(long id, int page) {
-      GLUrlBuilder b = pending ? pendingBuilder : builder;
-      final boolean p = pending;
-      pending = false;
-      b.setPage(page);
+      builder.setPage(page);
       String baseUri = EhUrl.getSiteUrl(preferences.getGallerySite());
-      client.getGalleryList(baseUri, b.build())
+      client.getGalleryList(baseUri, builder.build())
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(EhSubscriber.from(getSubscriptionSet(), result -> {
-            boolean affected = setData(id, result.galleryInfoList(), result.pages());
-            if (affected && p) {
-              builder.set(pendingBuilder);
-              onUpdateGLUrlBuilder(builder);
-            }
-          }, e -> setError(id, e)));
+          .subscribe(EhSubscriber.from(getSubscriptionSet(),
+              result -> setData(id, result.galleryInfoList(), result.pages()),
+              e -> setError(id, e)));
     }
 
     @Override

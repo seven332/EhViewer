@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.scene.gallerylist;
+package com.hippo.ehviewer.scene.gallerysearch;
 
 /*
  * Created by Hippo on 5/12/2017.
@@ -22,26 +22,15 @@ package com.hippo.ehviewer.scene.gallerylist;
 
 import android.support.annotation.NonNull;
 import com.hippo.ehviewer.client.GLUrlBuilder;
-import com.hippo.ehviewer.scene.EhvScene;
+import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.view.ViewInterface;
 
-public class GalleryListScene extends EhvScene<GalleryListPresenter, GalleryListView> {
+public interface GallerySearchContract {
 
-  @NonNull
-  @Override
-  protected GalleryListPresenter createPresenter() {
-    return new GalleryListPresenter();
+  interface Presenter extends PresenterInterface<View> {
+
+    void commitGLUrlBuilder(@NonNull GLUrlBuilder builder);
   }
 
-  @NonNull
-  @Override
-  protected GalleryListView createView() {
-    return new GalleryListView();
-  }
-
-  public void applyGLUrlBuilder(@NonNull GLUrlBuilder builder) {
-    GalleryListPresenter presenter = getPresenter();
-    if (presenter != null) {
-      presenter.applyGLUrlBuilder(builder);
-    }
-  }
+  interface View extends ViewInterface {}
 }

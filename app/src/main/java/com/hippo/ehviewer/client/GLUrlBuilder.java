@@ -20,7 +20,12 @@ package com.hippo.ehviewer.client;
  * Created by Hippo on 1/29/2017.
  */
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,16 +34,44 @@ import java.util.Map;
 public class GLUrlBuilder {
 
   private int page;
-  private int category;
+  private int category = EhUtils.NONE;
+  private int language = EhUtils.LANG_UNKNOWN;
   private String keyword;
+  @Nullable
+  private List<String> namespaces;
+  @Nullable
+  private List<String> tags;
 
   /**
    * Set this GLUrlBuilder the same as that GLUrlBuilder.
    */
   public void set(GLUrlBuilder builder) {
-    this.page = builder.page;
-    this.category = builder.category;
-    this.keyword = builder.keyword;
+    if (this != builder) {
+      this.page = builder.page;
+      this.category = builder.category;
+      this.language = builder.language;
+      this.keyword = builder.keyword;
+
+      if (this.namespaces != null) {
+        this.namespaces.clear();
+      }
+      if (builder.namespaces != null) {
+        if (this.namespaces == null) {
+          this.namespaces = new ArrayList<>();
+        }
+        this.namespaces.addAll(builder.namespaces);
+      }
+
+      if (this.tags != null) {
+        this.tags.clear();
+      }
+      if (builder.tags != null) {
+        if (this.tags == null) {
+          this.tags = new ArrayList<>();
+        }
+        this.tags.addAll(builder.tags);
+      }
+    }
   }
 
   /**
@@ -74,6 +107,59 @@ public class GLUrlBuilder {
   }
 
   /**
+   * Sets language for the gallery list.
+   */
+  public void setLanguage(int language) {
+    this.language = language;
+  }
+
+  /**
+   * Add a tag.
+   *
+   * @param tag no quotation marks, no dollar sign
+   */
+  public void addTag(@NonNull String namespace, @NonNull String tag) {
+    if (namespaces == null) {
+      namespaces = new ArrayList<>();
+    }
+    if (tags == null) {
+      tags = new ArrayList<>();
+    }
+    namespaces.add(namespace);
+    tags.add(tag);
+  }
+
+  private void appendTag(StringBuilder sb, String namespace, String tag) {
+    if (sb.length() != 0) {
+      sb.append(' ');
+    }
+    sb.append(namespace).append(":\"").append(tag).append("$\"");
+  }
+
+  // Combine keyword, language and tags
+  @Nullable
+  private String resolveKeyword() {
+    StringBuilder sb = new StringBuilder();
+
+    if (!TextUtils.isEmpty(keyword)) {
+      sb.append(keyword);
+    }
+
+    String language = EhUtils.getLangText(this.language);
+    if (language != null) {
+      appendTag(sb, "language", language);
+    }
+
+    if (namespaces != null && tags != null) {
+      for (int i = 0, n = Math.min(namespaces.size(), tags.size()); i < n; ++i) {
+        appendTag(sb, namespaces.get(i), tags.get(i));
+      }
+    }
+
+    return sb.length() != 0 ? sb.toString() : null;
+  }
+
+  /**
    * Build query map
    */
   public Map<String, String> build() {
@@ -97,6 +183,7 @@ public class GLUrlBuilder {
     }
 
     // Keyword
+    String keyword = resolveKeyword();
     if (keyword != null) {
       map.put("f_search", keyword);
       filter = true;
