@@ -38,7 +38,7 @@
     android:layout_gravity="bottom"
     android:gravity="center"
     android:orientation="horizontal"
-    android:divider="@drawable/d_x8"
+    android:divider="@drawable/divider_x8"
     android:showDividers="middle">
 
     <com.hippo.ehviewer.widget.NumberRatingView
