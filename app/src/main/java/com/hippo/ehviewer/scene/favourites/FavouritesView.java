@@ -28,7 +28,7 @@ import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.view.GalleryInfoView;
 
-public class FavouritesView extends GalleryInfoView<FavouritesContract.Presenter>
+public class FavouritesView extends GalleryInfoView<FavouritesContract.Presenter, FavouritesScene>
     implements FavouritesContract.View {
 
   private EhvPreferences preferences;

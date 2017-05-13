@@ -63,7 +63,7 @@ public interface SignInContract {
     void onSignInFailure(Throwable e);
   }
 
-  abstract class AbsPresenter extends EhvPresenter<View> implements Presenter, View {
+  abstract class AbsPresenter extends EhvPresenter<View, SignInScene> implements Presenter, View {
 
     @Override
     public void onRecaptchaNone() {

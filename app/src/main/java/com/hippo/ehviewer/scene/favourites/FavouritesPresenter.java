@@ -38,7 +38,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class FavouritesPresenter extends EhvPresenter<FavouritesContract.View>
+public class FavouritesPresenter extends EhvPresenter<FavouritesContract.View, FavouritesScene>
     implements FavouritesContract.Presenter {
 
   private GalleryData data;

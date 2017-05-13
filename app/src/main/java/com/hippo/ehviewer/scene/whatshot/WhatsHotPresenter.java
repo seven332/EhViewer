@@ -38,7 +38,7 @@ import java.io.File;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class WhatsHotPresenter extends EhvPresenter<WhatsHotContract.View>
+public class WhatsHotPresenter extends EhvPresenter<WhatsHotContract.View, WhatsHotScene>
     implements WhatsHotContract.Presenter {
 
   private GalleryData data;

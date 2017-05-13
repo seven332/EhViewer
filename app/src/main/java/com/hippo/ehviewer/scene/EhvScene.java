@@ -28,20 +28,20 @@ import com.hippo.ehviewer.view.EhvView;
 
 public abstract class EhvScene<P extends EhvPresenter, V extends EhvView> extends MvpScene<P, V> {
 
+  @SuppressWarnings("unchecked")
   @Override
   protected void onCreateScenePresenter(@NonNull P presenter) {
     super.onCreateScenePresenter(presenter);
     presenter.setEhvApp((EhvApp) getApplication());
     presenter.setEhvScene(this);
-    presenter.setArgs(getArgs());
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   protected void onCreateSceneView(@NonNull V view) {
     super.onCreateSceneView(view);
     view.setEhvApp((EhvApp) getApplication());
     view.setEhvActivity((EhvActivity) getActivity());
     view.setEhvScene(this);
-    view.setArgs(getArgs());
   }
 }

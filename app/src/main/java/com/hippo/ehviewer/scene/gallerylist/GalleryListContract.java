@@ -39,7 +39,7 @@ public interface GalleryListContract {
     void onUpdateGLUrlBuilder(GLUrlBuilder builder);
   }
 
-  abstract class AbsPresenter extends EhvPresenter<View> implements Presenter, View {
+  abstract class AbsPresenter extends EhvPresenter<View, GalleryListScene> implements Presenter, View {
 
     @Override
     public void onUpdateGLUrlBuilder(GLUrlBuilder builder) {

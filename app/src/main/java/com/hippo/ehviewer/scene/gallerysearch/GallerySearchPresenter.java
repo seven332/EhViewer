@@ -26,7 +26,8 @@ import com.hippo.ehviewer.presenter.EhvPresenter;
 import com.hippo.ehviewer.scene.gallerylist.GalleryListScene;
 import com.hippo.stage.Stage;
 
-public class GallerySearchPresenter extends EhvPresenter<GallerySearchContract.View>
+public class GallerySearchPresenter
+    extends EhvPresenter<GallerySearchContract.View, GallerySearchScene>
     implements GallerySearchContract.Presenter {
 
   private int galleryListSceneId;

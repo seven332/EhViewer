@@ -28,14 +28,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.scene.EhvScene;
 import com.hippo.ehviewer.widget.EhvDrawerContent;
 import com.hippo.yorozuya.android.ResourcesUtils;
 
 /**
  * A view with a status bar on the top.
  */
-public abstract class StatusBarView<P extends PresenterInterface> extends EhvView<P>
-    implements EhvDrawerContent.OnGetWindowPaddingTopListener {
+public abstract class StatusBarView<P extends PresenterInterface, S extends EhvScene>
+    extends EhvView<P, S> implements EhvDrawerContent.OnGetWindowPaddingTopListener {
 
   private View statusBar;
   private EhvDrawerContent drawerContent;

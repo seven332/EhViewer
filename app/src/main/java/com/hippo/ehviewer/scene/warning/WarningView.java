@@ -24,7 +24,7 @@ import android.support.v4.content.ContextCompat;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.view.MessageSheetView;
 
-public class WarningView extends MessageSheetView<WarningContract.Presenter>
+public class WarningView extends MessageSheetView<WarningContract.Presenter, WarningScene>
     implements WarningContract.View {
 
   @Override

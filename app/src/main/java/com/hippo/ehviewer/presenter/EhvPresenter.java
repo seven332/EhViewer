@@ -20,29 +20,23 @@ package com.hippo.ehviewer.presenter;
  * Created by Hippo on 5/12/2017.
  */
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.scene.EhvScene;
 import com.hippo.ehviewer.view.ViewInterface;
 
-public abstract class EhvPresenter<V extends ViewInterface> extends RxPresenter<V> {
+public abstract class EhvPresenter<V extends ViewInterface, S extends EhvScene>
+    extends RxPresenter<V> {
 
   private EhvApp app;
-  private EhvScene scene;
-  private Bundle args;
+  private S scene;
 
   public void setEhvApp(EhvApp app) {
     this.app = app;
   }
 
-  public void setEhvScene(EhvScene scene) {
+  public void setEhvScene(S scene) {
     this.scene = scene;
-  }
-
-  public void setArgs(Bundle args) {
-    this.args = args;
   }
 
   /**
@@ -57,16 +51,8 @@ public abstract class EhvPresenter<V extends ViewInterface> extends RxPresenter<
    * Returns the host {@link EhvScene}.
    */
   @NonNull
-  protected final EhvScene getEhvScene() {
+  protected final S getEhvScene() {
     return scene;
-  }
-
-  /**
-   * Returns the args for host scene.
-   */
-  @Nullable
-  public Bundle getArgs() {
-    return args;
   }
 
   @Override

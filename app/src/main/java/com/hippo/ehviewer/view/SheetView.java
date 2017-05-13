@@ -33,12 +33,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.scene.EhvScene;
 import com.hippo.ehviewer.widget.IndicatingScrollView;
 
 /**
  * {@code SheetView} shows a header, a message and two buttons.
  */
-public abstract class SheetView<P extends PresenterInterface> extends StatusBarView<P> {
+public abstract class SheetView<P extends PresenterInterface, S extends EhvScene>
+    extends StatusBarView<P, S> {
 
   private View header;
   private TextView title;

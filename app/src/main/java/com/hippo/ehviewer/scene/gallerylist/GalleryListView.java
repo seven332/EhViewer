@@ -35,7 +35,7 @@ import com.hippo.ehviewer.scene.gallerysearch.GallerySearchScene;
 import com.hippo.ehviewer.view.GalleryInfoView;
 import com.hippo.ehviewer.widget.ContentLayout;
 
-public class GalleryListView extends GalleryInfoView<GalleryListContract.Presenter>
+public class GalleryListView extends GalleryInfoView<GalleryListContract.Presenter, GalleryListScene>
     implements GalleryListContract.View {
 
   private EhvPreferences preferences;
@@ -63,7 +63,7 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
     setMenu(R.menu.view_gallery_list, item -> {
       switch (item.getItemId()) {
         case R.id.action_search:
-          getEhvActivity().pushScene(GallerySearchScene.create((GalleryListScene) getEhvScene()));
+          getEhvActivity().pushScene(GallerySearchScene.create(getEhvScene()));
           return true;
         case R.id.action_go_to:
           // TODO

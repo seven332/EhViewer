@@ -23,7 +23,7 @@ package com.hippo.ehviewer.scene.warning;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.presenter.EhvPresenter;
 
-public class WarningPresenter extends EhvPresenter<WarningContract.View>
+public class WarningPresenter extends EhvPresenter<WarningContract.View, WarningScene>
     implements WarningContract.Presenter {
 
   private EhvPreferences preferences;

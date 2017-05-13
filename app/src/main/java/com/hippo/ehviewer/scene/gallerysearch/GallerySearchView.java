@@ -37,7 +37,8 @@ import com.hippo.ehviewer.client.GLUrlBuilder;
 import com.hippo.ehviewer.view.StatusBarView;
 import com.hippo.ehviewer.widget.CategoryTable;
 
-public class GallerySearchView extends StatusBarView<GallerySearchContract.Presenter>
+public class GallerySearchView
+    extends StatusBarView<GallerySearchContract.Presenter, GallerySearchScene>
     implements GallerySearchContract.View {
 
   private static final int MODE_NORMAL = 0;

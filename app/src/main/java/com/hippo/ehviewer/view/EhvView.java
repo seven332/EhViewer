@@ -21,21 +21,18 @@ package com.hippo.ehviewer.view;
  */
 
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.presenter.PresenterInterface;
 import com.hippo.ehviewer.scene.EhvScene;
 
-public abstract class EhvView<P extends PresenterInterface> extends RxView<P> {
+public abstract class EhvView<P extends PresenterInterface, S extends EhvScene> extends RxView<P> {
 
   private EhvApp app;
   private EhvActivity activity;
-  private EhvScene scene;
-  private Bundle args;
+  private S scene;
 
   public void setEhvApp(EhvApp app) {
     this.app = app;
@@ -45,12 +42,8 @@ public abstract class EhvView<P extends PresenterInterface> extends RxView<P> {
     this.activity = activity;
   }
 
-  public void setEhvScene(EhvScene scene) {
+  public void setEhvScene(S scene) {
     this.scene = scene;
-  }
-
-  public void setArgs(Bundle args) {
-    this.args = args;
   }
 
   @Override
@@ -117,16 +110,8 @@ public abstract class EhvView<P extends PresenterInterface> extends RxView<P> {
    * Returns the host {@link EhvScene}.
    */
   @NonNull
-  protected final EhvScene getEhvScene() {
+  protected final S getEhvScene() {
     return scene;
-  }
-
-  /**
-   * Returns the args for host scene.
-   */
-  @Nullable
-  public Bundle getArgs() {
-    return args;
   }
 
   /**

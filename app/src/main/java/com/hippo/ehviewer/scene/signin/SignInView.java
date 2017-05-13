@@ -41,7 +41,7 @@ import com.transitionseverywhere.Transition;
 import com.transitionseverywhere.TransitionManager;
 import com.transitionseverywhere.TransitionSet;
 
-public class SignInView extends SheetView<SignInContract.Presenter>
+public class SignInView extends SheetView<SignInContract.Presenter, SignInScene>
     implements SignInContract.View {
 
   private View signInPanel;

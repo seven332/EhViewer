@@ -26,7 +26,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.view.MessageSheetView;
 import com.hippo.html.Html;
 
-public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter>
+public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter, AnalyticsScene>
     implements AnalyticsContract.View {
 
   @Override

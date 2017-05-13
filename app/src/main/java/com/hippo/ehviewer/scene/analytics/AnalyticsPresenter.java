@@ -23,7 +23,7 @@ package com.hippo.ehviewer.scene.analytics;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.presenter.EhvPresenter;
 
-public class AnalyticsPresenter extends EhvPresenter<AnalyticsContract.View>
+public class AnalyticsPresenter extends EhvPresenter<AnalyticsContract.View, AnalyticsScene>
     implements AnalyticsContract.Presenter {
 
   private EhvPreferences preferences;

@@ -29,6 +29,7 @@ import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.component.GalleryInfoAdapter;
 import com.hippo.ehviewer.contract.GalleryInfoContract;
+import com.hippo.ehviewer.scene.EhvScene;
 import com.hippo.ehviewer.util.ExceptionExplainer;
 import com.hippo.ehviewer.widget.AutoGridLayoutManager;
 import com.hippo.ehviewer.widget.ContentLayout;
@@ -37,8 +38,8 @@ import com.hippo.yorozuya.android.LayoutUtils;
 import com.hippo.yorozuya.android.ResourcesUtils;
 import junit.framework.Assert;
 
-public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter>
-    extends ToolbarView<P> {
+public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter, S extends EhvScene>
+    extends ToolbarView<P, S> {
 
   private ContentLayout layout;
   private GalleryInfoAdapter adapter;

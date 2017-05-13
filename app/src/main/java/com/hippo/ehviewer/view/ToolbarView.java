@@ -31,13 +31,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.scene.EhvScene;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
  * {@code ToolbarView} shows a Toolbar at top.
  */
-public abstract class ToolbarView<P extends PresenterInterface> extends StatusBarView<P> {
+public abstract class ToolbarView<P extends PresenterInterface, S extends EhvScene>
+    extends StatusBarView<P, S> {
 
   @IntDef({NAVIGATION_TYPE_MENU, NAVIGATION_TYPE_RETURN})
   @Retention(RetentionPolicy.SOURCE)

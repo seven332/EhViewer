@@ -29,7 +29,7 @@ import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.view.GalleryInfoView;
 
-public class WhatsHotView extends GalleryInfoView<WhatsHotContract.Presenter>
+public class WhatsHotView extends GalleryInfoView<WhatsHotContract.Presenter, WhatsHotScene>
     implements WhatsHotContract.View {
 
   private EhvPreferences preferences;

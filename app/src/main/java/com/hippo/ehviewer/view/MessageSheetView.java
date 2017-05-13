@@ -28,9 +28,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.presenter.PresenterInterface;
+import com.hippo.ehviewer.scene.EhvScene;
 import com.hippo.ehviewer.util.TextUtils2;
 
-public abstract class MessageSheetView<P extends PresenterInterface> extends SheetView<P> {
+public abstract class MessageSheetView<P extends PresenterInterface, S extends EhvScene>
+    extends SheetView<P, S> {
 
   private TextView message;
 
