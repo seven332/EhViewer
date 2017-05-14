@@ -49,16 +49,16 @@ import com.hippo.yorozuya.android.LayoutUtils;
 public class CategoryTable extends AutoGridLayout {
 
   private static final int[] CATEGORY_ARRAY = {
-      EhUtils.DOUJINSHI,
-      EhUtils.MANGA,
-      EhUtils.ARTIST_CG,
-      EhUtils.GAME_CG,
-      EhUtils.WESTERN,
-      EhUtils.NON_H,
-      EhUtils.IMAGE_SET,
-      EhUtils.COSPLAY,
-      EhUtils.ASIAN_PORN,
-      EhUtils.MISC,
+      EhUtils.CATEGORY_DOUJINSHI,
+      EhUtils.CATEGORY_MANGA,
+      EhUtils.CATEGORY_ARTIST_CG,
+      EhUtils.CATEGORY_GAME_CG,
+      EhUtils.CATEGORY_WESTERN,
+      EhUtils.CATEGORY_NON_H,
+      EhUtils.CATEGORY_IMAGE_SET,
+      EhUtils.CATEGORY_COSPLAY,
+      EhUtils.CATEGORY_ASIAN_PORN,
+      EhUtils.CATEGORY_MISC,
   };
 
   public CategoryTable(Context context) {
@@ -88,7 +88,7 @@ public class CategoryTable extends AutoGridLayout {
   private void addCategoryView(LayoutInflater inflater, int category) {
     inflater.inflate(R.layout.category_table_item, this);
     CategoryView view = (CategoryView) getChildAt(getChildCount() - 1);
-    view.setText(EhUtils.getCategory(category).toUpperCase());
+    view.setText(EhUtils.getCategoryNotNull(category).toUpperCase());
     view.setBackgroundColor(EhUtils.getColor(category));
   }
 

@@ -92,7 +92,7 @@ public class GalleryInfoContainerMappingTest {
     info.cover = "cover";
     info.coverUrl = "cover_url";
     info.coverRatio = 1.0f;
-    info.category = EhUtils.ARTIST_CG;
+    info.category = EhUtils.CATEGORY_ARTIST_CG;
     info.date = System.currentTimeMillis();
     info.uploader = "uploader";
     info.rating = 3.2f;

@@ -28,13 +28,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO Create a Tag class
+
 /**
  * Gallery list url builder.
  */
 public class GLUrlBuilder {
 
   private int page;
-  private int category = EhUtils.NONE;
+  private int category = EhUtils.CATEGORY_NONE;
   private int language = EhUtils.LANG_UNKNOWN;
   private String keyword;
   @Nullable
@@ -85,6 +87,8 @@ public class GLUrlBuilder {
 
   /**
    * Set category of the gallery list.
+   *
+   * @see #getCategory()
    */
   public void setCategory(int category) {
     this.category = category;
@@ -92,6 +96,8 @@ public class GLUrlBuilder {
 
   /**
    * Returns the category.
+   *
+   * @see #setCategory(int)
    */
   public int getCategory() {
     return category;
@@ -101,16 +107,38 @@ public class GLUrlBuilder {
    * Set keyword of the gallery list.
    * <p>
    * {@code null} for no keyword.
+   *
+   * @see #getKeyword()
    */
   public void setKeyword(String keyword) {
     this.keyword = keyword;
   }
 
   /**
+   * Returns the keyword.
+   *
+   * @see #setKeyword(String)
+   */
+  public String getKeyword() {
+    return this.keyword;
+  }
+
+  /**
    * Sets language for the gallery list.
+   *
+   * @see #getLanguage()
    */
   public void setLanguage(int language) {
     this.language = language;
+  }
+
+  /**
+   * Returns the language.
+   *
+   * @see #setLanguage(int)
+   */
+  public int getLanguage() {
+    return language;
   }
 
   /**
@@ -127,6 +155,30 @@ public class GLUrlBuilder {
     }
     namespaces.add(namespace);
     tags.add(tag);
+  }
+
+  /**
+   * Returns {@code true} if it contains a least one tag.
+   */
+  public int getTagCount() {
+    if (namespaces == null || tags == null) {
+      return 0;
+    } else {
+      return Math.min(namespaces.size(), tags.size());
+    }
+  }
+
+  /**
+   * Returns the first tag.
+   * Returns {@code null} if no tags.
+   */
+  @Nullable
+  public String getFirstTag() {
+    if (namespaces != null && tags != null && Math.min(namespaces.size(), tags.size()) > 0) {
+      return namespaces.get(0) + ":" + tags.get(0);
+    } else {
+      return null;
+    }
   }
 
   private void appendTag(StringBuilder sb, String namespace, String tag) {
@@ -168,17 +220,17 @@ public class GLUrlBuilder {
     boolean filter = false;
 
     // Category
-    if (category != EhUtils.NONE) {
-      if ((category & EhUtils.DOUJINSHI) != 0) map.put("f_doujinshi", "on");
-      if ((category & EhUtils.MANGA) != 0) map.put("f_manga", "on");
-      if ((category & EhUtils.ARTIST_CG) != 0) map.put("f_artistcg", "on");
-      if ((category & EhUtils.GAME_CG) != 0) map.put("f_gamecg", "on");
-      if ((category & EhUtils.WESTERN) != 0) map.put("f_western", "on");
-      if ((category & EhUtils.NON_H) != 0) map.put("f_non-h", "on");
-      if ((category & EhUtils.IMAGE_SET) != 0) map.put("f_imageset", "on");
-      if ((category & EhUtils.COSPLAY) != 0) map.put("f_cosplay", "on");
-      if ((category & EhUtils.ASIAN_PORN) != 0) map.put("f_asianporn", "on");
-      if ((category & EhUtils.MISC) != 0) map.put("f_misc", "on");
+    if (category != EhUtils.CATEGORY_NONE) {
+      if ((category & EhUtils.CATEGORY_DOUJINSHI) != 0) map.put("f_doujinshi", "on");
+      if ((category & EhUtils.CATEGORY_MANGA) != 0) map.put("f_manga", "on");
+      if ((category & EhUtils.CATEGORY_ARTIST_CG) != 0) map.put("f_artistcg", "on");
+      if ((category & EhUtils.CATEGORY_GAME_CG) != 0) map.put("f_gamecg", "on");
+      if ((category & EhUtils.CATEGORY_WESTERN) != 0) map.put("f_western", "on");
+      if ((category & EhUtils.CATEGORY_NON_H) != 0) map.put("f_non-h", "on");
+      if ((category & EhUtils.CATEGORY_IMAGE_SET) != 0) map.put("f_imageset", "on");
+      if ((category & EhUtils.CATEGORY_COSPLAY) != 0) map.put("f_cosplay", "on");
+      if ((category & EhUtils.CATEGORY_ASIAN_PORN) != 0) map.put("f_asianporn", "on");
+      if ((category & EhUtils.CATEGORY_MISC) != 0) map.put("f_misc", "on");
       filter = true;
     }
 

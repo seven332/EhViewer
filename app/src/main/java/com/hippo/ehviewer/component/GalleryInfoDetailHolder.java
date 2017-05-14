@@ -74,7 +74,7 @@ public abstract class GalleryInfoDetailHolder<T> extends BindingViewHolder<T> {
     title.setText(info.title);
     uploader.setText(info.uploader);
     rating.setRating(info.rating);
-    category.setText(EhUtils.getCategory(info.category));
+    category.setText(EhUtils.getCategoryNotNull(info.category));
     category.setBackgroundColor(EhUtils.getColor(info.category));
     date.setText(ReadableTime.getTimeAgo(context, info.date));
     language.setText(EhUtils.getLangAbbr(context, info.language));

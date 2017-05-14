@@ -123,9 +123,9 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
   /**
    * Gallery category.
    * <p>
-   * {@link com.hippo.ehviewer.client.EhUtils#UNKNOWN} if can't get it.
+   * {@link com.hippo.ehviewer.client.EhUtils#CATEGORY_UNKNOWN} if can't get it.
    */
-  public int category = EhUtils.UNKNOWN;
+  public int category = EhUtils.CATEGORY_UNKNOWN;
   /**
    * Posted time stamp.
    * <p>
@@ -229,7 +229,7 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     if (info.coverRatio != -1.0f) {
       coverRatio = info.coverRatio;
     }
-    if (info.category != EhUtils.UNKNOWN) {
+    if (info.category != EhUtils.CATEGORY_UNKNOWN) {
       category = info.category;
     }
     if (info.date != 0) {

@@ -142,7 +142,7 @@ public final class GalleryInfoContainerMapping {
     info.cover = DBUtils.getString(cursor, COLUMN_COVER, null);
     info.coverUrl = DBUtils.getString(cursor, COLUMN_COVER_URL, null);
     info.coverRatio = DBUtils.getFloat(cursor, COLUMN_COVER_RATIO, -1.0f);
-    info.category = DBUtils.getInt(cursor, COLUMN_CATEGORY, EhUtils.UNKNOWN);
+    info.category = DBUtils.getInt(cursor, COLUMN_CATEGORY, EhUtils.CATEGORY_UNKNOWN);
     info.date = DBUtils.getLong(cursor, COLUMN_DATE, 0);
     info.uploader = DBUtils.getString(cursor, COLUMN_UPLOADER, null);
     info.rating = DBUtils.getFloat(cursor, COLUMN_RATING, 0.0f);

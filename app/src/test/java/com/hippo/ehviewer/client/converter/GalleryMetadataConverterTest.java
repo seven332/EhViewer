@@ -78,7 +78,7 @@ public class GalleryMetadataConverterTest {
     assertEquals("403565--d887c6dfe8aae79ed0071551aa1bafeb4a5ee361", info.archiverKey);
     assertEquals("(Kouroumu 8) [Handful☆Happiness! (Fuyuki Nanahara)] TOUHOU GUNMANIA A2 (Touhou Project)", info.title);
     assertEquals("(紅楼夢8) [Handful☆Happiness! (七原冬雪)] TOUHOU GUNMANIA A2 (東方Project)", info.titleJpn);
-    assertEquals(EhUtils.NON_H, info.category);
+    assertEquals(EhUtils.CATEGORY_NON_H, info.category);
     assertEquals("https://ehgt.org/14/63/1463dfbc16847c9ebef92c46a90e21ca881b2a12-1729712-4271-6032-jpg_l.jpg", info.coverUrl);
     assertEquals("1463dfbc16847c9ebef92c46a90e21ca881b2a12-1729712-4271-6032-jpg", info.cover);
     assertEquals("avexotsukaai", info.uploader);

@@ -22,7 +22,9 @@ package com.hippo.ehviewer.client;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.StringUtils;
 import java.util.Locale;
@@ -35,39 +37,38 @@ public final class EhUtils {
   // Gallery Category
   ///////////////////////////////////////////////////////////////////////////
 
-  public static final int MISC = 0x1;
-  public static final int DOUJINSHI = 0x2;
-  public static final int MANGA = 0x4;
-  public static final int ARTIST_CG = 0x8;
-  public static final int GAME_CG = 0x10;
-  public static final int IMAGE_SET = 0x20;
-  public static final int COSPLAY = 0x40;
-  public static final int ASIAN_PORN = 0x80;
-  public static final int NON_H = 0x100;
-  public static final int WESTERN = 0x200;
+  public static final int CATEGORY_MISC = 0x1;
+  public static final int CATEGORY_DOUJINSHI = 0x2;
+  public static final int CATEGORY_MANGA = 0x4;
+  public static final int CATEGORY_ARTIST_CG = 0x8;
+  public static final int CATEGORY_GAME_CG = 0x10;
+  public static final int CATEGORY_IMAGE_SET = 0x20;
+  public static final int CATEGORY_COSPLAY = 0x40;
+  public static final int CATEGORY_ASIAN_PORN = 0x80;
+  public static final int CATEGORY_NON_H = 0x100;
+  public static final int CATEGORY_WESTERN = 0x200;
   /**
    * No category specify. Represents homepage.
    */
-  public static final int NONE = 0;
+  public static final int CATEGORY_NONE = 0;
   /**
    * Unknown category.
    * <p>
    * Used when can't parse the category string.
    */
-  public static final int UNKNOWN = -1;
+  public static final int CATEGORY_UNKNOWN = -1;
 
   private static final int[] CATEGORY_VALUES = {
-      MISC,
-      DOUJINSHI,
-      MANGA,
-      ARTIST_CG,
-      GAME_CG,
-      IMAGE_SET,
-      COSPLAY,
-      ASIAN_PORN,
-      NON_H,
-      WESTERN,
-      UNKNOWN,
+      CATEGORY_MISC,
+      CATEGORY_DOUJINSHI,
+      CATEGORY_MANGA,
+      CATEGORY_ARTIST_CG,
+      CATEGORY_GAME_CG,
+      CATEGORY_IMAGE_SET,
+      CATEGORY_COSPLAY,
+      CATEGORY_ASIAN_PORN,
+      CATEGORY_NON_H,
+      CATEGORY_WESTERN,
   };
 
   private static final String[][] CATEGORY_STRINGS = {
@@ -81,7 +82,6 @@ public final class EhUtils {
       new String[] { "asian porn", "asianporn", "asian porn" },
       new String[] { "non-h" },
       new String[] { "western" },
-      new String[] { "unknown" },
   };
 
   public static final int COLOR_DOUJINSHI = 0xfff44336;
@@ -98,31 +98,51 @@ public final class EhUtils {
 
   /**
    * Converts category string to category value.
+   * Returns {@link #CATEGORY_UNKNOWN} if can't recognize the category.
    */
   public static int getCategory(String type) {
-    if (type == null) {
-      return CATEGORY_VALUES[CATEGORY_VALUES.length - 1];
+    if (TextUtils.isEmpty(type)) {
+      return CATEGORY_UNKNOWN;
     }
-    int i, n;
+
     type = type.toLowerCase(Locale.ENGLISH);
-    out:
-    for (i = 0, n = CATEGORY_STRINGS.length - 1; i < n; ++i) {
+    for (int i = 0, n = CATEGORY_STRINGS.length - 1; i < n; ++i) {
       for (String str : CATEGORY_STRINGS[i]) {
-        if (type.equals(str)) break out;
+        if (type.equals(str)) {
+          return CATEGORY_VALUES[i];
+        }
       }
     }
-    return CATEGORY_VALUES[i];
+
+    return CATEGORY_UNKNOWN;
   }
 
   /**
    * Converts category value to category string.
+   * Returns {@code null} if can't recognize the category.
    */
+  @Nullable
   public static String getCategory(int type) {
-    int i, n;
-    for (i = 0, n = CATEGORY_VALUES.length - 1; i < n; ++i) {
-      if (CATEGORY_VALUES[i] == type) break;
+    for (int i = 0, n = CATEGORY_VALUES.length - 1; i < n; ++i) {
+      if (CATEGORY_VALUES[i] == type) {
+        return CATEGORY_STRINGS[i][0];
+      }
     }
-    return CATEGORY_STRINGS[i][0];
+    return null;
+  }
+
+  /**
+   * Converts category value to category string.
+   * Returns {@code "unknown"} if can't recognize the category.
+   */
+  @NonNull
+  public static String getCategoryNotNull(int type) {
+    String category = getCategory(type);
+    if (category != null) {
+      return category;
+    } else {
+      return "unknown";
+    }
   }
 
   /**
@@ -130,25 +150,25 @@ public final class EhUtils {
    */
   public static int getColor(int category) {
     switch (category) {
-      case DOUJINSHI:
+      case CATEGORY_DOUJINSHI:
         return COLOR_DOUJINSHI;
-      case MANGA:
+      case CATEGORY_MANGA:
         return COLOR_MANGA;
-      case ARTIST_CG:
+      case CATEGORY_ARTIST_CG:
         return COLOR_ARTIST_CG;
-      case GAME_CG:
+      case CATEGORY_GAME_CG:
         return COLOR_GAME_CG;
-      case WESTERN:
+      case CATEGORY_WESTERN:
         return COLOR_WESTERN;
-      case NON_H:
+      case CATEGORY_NON_H:
         return COLOR_NON_H;
-      case IMAGE_SET:
+      case CATEGORY_IMAGE_SET:
         return COLOR_IMAGE_SET;
-      case COSPLAY:
+      case CATEGORY_COSPLAY:
         return COLOR_COSPLAY;
-      case ASIAN_PORN:
+      case CATEGORY_ASIAN_PORN:
         return COLOR_ASIAN_PORN;
-      case MISC:
+      case CATEGORY_MISC:
         return COLOR_MISC;
       default:
         return COLOR_UNKNOWN;
