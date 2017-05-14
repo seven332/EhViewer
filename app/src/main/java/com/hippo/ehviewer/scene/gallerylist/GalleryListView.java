@@ -22,6 +22,7 @@ package com.hippo.ehviewer.scene.gallerylist;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.scene.gallerysearch.GallerySearchScene;
 import com.hippo.ehviewer.view.GalleryInfoView;
 import com.hippo.ehviewer.widget.ContentLayout;
+import java.util.Locale;
 
 public class GalleryListView extends GalleryInfoView<GalleryListContract.Presenter, GalleryListScene>
     implements GalleryListContract.View {
@@ -123,24 +125,47 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
     }
   }
 
+  private int processTitleFlags(int flags, String text) {
+    flags <<= 1;
+    if (!TextUtils.isEmpty(text)) {
+      ++flags;
+    }
+    return flags;
+  }
+
   private String getTitleForGLUrlBuilder(GLUrlBuilder builder) {
-    String title = null;
-    int titleResId = 0;
+    String keyword = builder.getKeyword();
+    String category = EhUtils.getCategory(builder.getCategory());
+    String language = EhUtils.getLang(getEhvActivity(), builder.getLanguage());
+    String tag = builder.getTagCount() == 1 ? builder.getFirstTag() : null;
 
-    if (builder.getCategory() == EhUtils.NONE) {
-      titleResId = R.string.nav_menu_homepage;
+    int flags = 0;
+    flags = processTitleFlags(flags, keyword);
+    flags = processTitleFlags(flags, category);
+    flags = processTitleFlags(flags, language);
+    flags = processTitleFlags(flags, tag);
+
+    switch (flags) {
+      case 0b1000:
+        return keyword;
+      case 0b0100:
+        //noinspection ConstantConditions
+        return category.toUpperCase(Locale.ENGLISH);
+      case 0b0010:
+        return language;
+      case 0b0001:
+        return tag;
+      case 0b0000:
+        if (builder.getCategory() == EhUtils.CATEGORY_NONE && builder.getTagCount() == 0) {
+          return getString(R.string.gallery_list_title_homepage);
+        }
     }
-
-    if (titleResId != 0) {
-      title = getString(titleResId);
-    }
-
-    return title;
+    return getString(R.string.gallery_list_title_search);
   }
 
   @Override
   public void onUpdateGLUrlBuilder(GLUrlBuilder builder) {
-    getEhvActivity().setLeftDrawerCheckedItem(builder.getCategory() == EhUtils.NONE
+    getEhvActivity().setLeftDrawerCheckedItem(builder.getCategory() == EhUtils.CATEGORY_NONE
         ? R.id.nav_homepage
         : 0);
     setTitle(getTitleForGLUrlBuilder(builder));
