@@ -17,8 +17,9 @@
 
 <resources>
 
-  <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
-    <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
+  <style name="AppTheme.Dark.Ehv" parent="AppTheme.Dark.NoActionBar">
+    <item name="android:windowTranslucentStatus">true</item>
+    <item name="android:windowTranslucentNavigation">false</item>
   </style>
 
 </resources>

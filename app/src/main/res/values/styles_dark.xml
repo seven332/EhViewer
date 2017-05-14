@@ -17,21 +17,8 @@
 
 <resources>
 
-  <declare-styleable name="Theme">
+  <style name="Toolbar.Dark" parent="Widget.AppCompat.Toolbar">
+    <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
+  </style>
 
-    <attr name="textColorPrimaryDark" format="color"/>
-    <attr name="textColorSecondaryDark" format="color"/>
-
-    <attr name="drawableColorPrimary" format="color"/>
-    <attr name="drawableColorSecondary" format="color"/>
-
-    <attr name="dividerColor" format="color"/>
-
-    <!-- Fresco DraweeView PlaceHolder -->
-    <attr name="imagePlaceHolder" format="reference"/>
-    <attr name="imagePlaceHolderColor" format="color"/>
-    <attr name="imageFailureBackgroundColor" format="color"/>
-    <attr name="imageFailureTextColor" format="color"/>
-
-  </declare-styleable>
 </resources>

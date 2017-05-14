@@ -16,25 +16,28 @@
 
 <resources>
 
-  <style name="BaseTheme" parent="Theme.AppCompat.DayNight">
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
 
-    <item name="toolbarStyle">@style/Toolbar</item>
-    <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
-  </style>
+    <item name="textColorError">@color/text_input_error_color_light</item>
 
-  <style name="AppTheme" parent="BaseTheme">
-    <item name="textColorError">@color/design_textinput_error_color_light</item>
+    <item name="textColorPrimaryDark">?android:attr/textColorPrimaryInverse</item>
+    <item name="textColorSecondaryDark">?android:attr/textColorSecondaryInverse</item>
 
     <item name="drawableColorPrimary">@color/primary_drawable_light</item>
     <item name="drawableColorSecondary">@color/secondary_drawable_light</item>
+
     <item name="dividerColor">@color/divider_light</item>
+
     <item name="imagePlaceHolder">@color/place_holder_image_light</item>
     <item name="imagePlaceHolderColor">@color/place_holder_image_light</item>
     <item name="imageFailureBackgroundColor">?attr/imagePlaceHolderColor</item>
     <item name="imageFailureTextColor">@color/failure_image_text_light</item>
+
+    <item name="toolbarStyle">@style/Toolbar</item>
+    <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
   </style>
 
   <style name="AppTheme.NoActionBar">

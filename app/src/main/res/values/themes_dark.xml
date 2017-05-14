@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2016 Hippo Seven
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2017 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,16 +17,36 @@
 
 <resources>
 
-  <style name="AppTheme" parent="BaseTheme">
-    <item name="textColorError">@color/design_textinput_error_color_dark</item>
+  <style name="AppTheme.Dark" parent="Theme.AppCompat">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+
+    <item name="textColorError">@color/text_input_error_color_dark</item>
+
+    <item name="textColorPrimaryDark">?android:attr/textColorPrimary</item>
+    <item name="textColorSecondaryDark">?android:attr/textColorSecondary</item>
 
     <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
     <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
+
     <item name="dividerColor">@color/divider_dark</item>
+
     <item name="imagePlaceHolder">@color/place_holder_image_dark</item>
     <item name="imagePlaceHolderColor">@color/place_holder_image_dark</item>
     <item name="imageFailureBackgroundColor">?attr/imagePlaceHolderColor</item>
     <item name="imageFailureTextColor">@color/failure_image_text_dark</item>
+
+    <item name="toolbarStyle">@style/Toolbar.Dark</item>
+    <item name="drawerArrowStyle">@style/DrawerArrowToggle</item>
   </style>
+
+  <style name="AppTheme.Dark.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv" parent="AppTheme.Dark.NoActionBar"/>
 
 </resources>

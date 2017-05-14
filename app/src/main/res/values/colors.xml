@@ -49,4 +49,7 @@
   <color name="divider_light">#20000000</color>
   <color name="divider_dark">#20ffffff</color>
 
+  <color name="text_input_error_color_light">#ffd50000</color>
+  <color name="text_input_error_color_dark">#ffff6e6e</color>
+
 </resources>
