@@ -106,7 +106,7 @@ public final class EhUtils {
     }
 
     type = type.toLowerCase(Locale.ENGLISH);
-    for (int i = 0, n = CATEGORY_STRINGS.length - 1; i < n; ++i) {
+    for (int i = 0, n = CATEGORY_STRINGS.length; i < n; ++i) {
       for (String str : CATEGORY_STRINGS[i]) {
         if (type.equals(str)) {
           return CATEGORY_VALUES[i];
@@ -123,7 +123,7 @@ public final class EhUtils {
    */
   @Nullable
   public static String getCategory(int type) {
-    for (int i = 0, n = CATEGORY_VALUES.length - 1; i < n; ++i) {
+    for (int i = 0, n = CATEGORY_VALUES.length; i < n; ++i) {
       if (CATEGORY_VALUES[i] == type) {
         return CATEGORY_STRINGS[i][0];
       }
