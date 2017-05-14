@@ -141,10 +141,6 @@ public class GallerySearchView
 
     private SearchBarHolder(View view, SparseArray<Parcelable> savedStates) {
       super(view, savedStates);
-      // Here is a trick to block FloatingSearchView
-      view.findViewById(R.id.search_bar_text).setFocusable(false);
-      view.findViewById(R.id.search_suggestions_section).setVisibility(View.GONE);
-
       floatingSearchView = (FloatingSearchView) view.findViewById(R.id.floating_search_view);
       floatingSearchView.setOnHomeActionClickListener(() -> getEhvScene().pop());
     }

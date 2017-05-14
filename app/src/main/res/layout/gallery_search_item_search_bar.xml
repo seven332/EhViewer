@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<com.arlib.floatingsearchview.FloatingSearchView
+<com.hippo.ehviewer.widget.BoringFloatingSearchView
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:id="@+id/floating_search_view"
