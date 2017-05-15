@@ -26,10 +26,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryInfoContainer;
+import com.hippo.ehviewer.client.data.TagSet;
 import com.hippo.ehviewer.database.MSQLite;
 import com.hippo.ehviewer.util.DBUtils;
 import com.pushtorefresh.storio.internal.InternalQueries;
@@ -41,8 +41,6 @@ import com.pushtorefresh.storio.sqlite.queries.InsertQuery;
 import com.pushtorefresh.storio.sqlite.queries.Query;
 import com.pushtorefresh.storio.sqlite.queries.RawQuery;
 import com.pushtorefresh.storio.sqlite.queries.UpdateQuery;
-import java.util.List;
-import java.util.Map;
 
 /**
  * {@code GalleryInfoContainerMapping} can map {@link GalleryInfoContainer}.
@@ -127,7 +125,7 @@ public final class GalleryInfoContainerMapping {
     contentValues.put(COLUMN_PAGES, info.pages);
     contentValues.put(COLUMN_SIZE, info.size);
     contentValues.put(COLUMN_TORRENT_COUNT, info.torrentCount);
-    contentValues.put(COLUMN_TAGS, gson.toJson(info.tags));
+    contentValues.put(COLUMN_TAGS, gson.toJson(info.tagSet));
     contentValues.put(COLUMN_REFERENCE, reference);
     return contentValues;
   }
@@ -155,7 +153,7 @@ public final class GalleryInfoContainerMapping {
     // Tags
     String tags = DBUtils.getString(cursor, COLUMN_TAGS, null);
     if (tags != null) {
-      info.tags = gson.fromJson(tags, new TypeToken<Map<String, List<String>>>(){}.getType());
+      info.tagSet.set(gson.fromJson(tags, TagSet.class));
     }
     return info;
   }

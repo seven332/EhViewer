@@ -22,14 +22,11 @@ package com.hippo.ehviewer.client.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.util.JsonStore;
 import com.hippo.yorozuya.ObjectUtils;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Gallery Information.
@@ -196,11 +193,8 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
 
   /**
    * Gallery tags.
-   * <p>
-   * Default empty map.
    */
-  @Nullable
-  public Map<String, List<String>> tags;
+  public final TagSet tagSet;
 
   /**
    * Merges data in {@code info} to this {@code GalleryInfo}.
@@ -262,12 +256,8 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     if (info.torrentCount != 0) {
       torrentCount = info.torrentCount;
     }
-    if (info.tags != null && !info.tags.isEmpty()) {
-      if (tags == null) {
-        tags = new HashMap<>(info.tags.size());
-      }
-      tags.clear();
-      tags.putAll(info.tags);
+    if (info.tagSet != null && info.tagSet.size() != 0) {
+      tagSet.set(info.tagSet);
     }
   }
 
@@ -316,18 +306,11 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     dest.writeInt(this.pages);
     dest.writeLong(this.size);
     dest.writeInt(this.torrentCount);
-    if (this.tags != null) {
-      dest.writeInt(this.tags.size());
-      for (Map.Entry<String, List<String>> entry : this.tags.entrySet()) {
-        dest.writeString(entry.getKey());
-        dest.writeStringList(entry.getValue());
-      }
-    } else {
-      dest.writeInt(-1);
-    }
+    dest.writeParcelable(this.tagSet, flags);
   }
 
   public GalleryInfo() {
+    tagSet = new TagSet();
   }
 
   protected GalleryInfo(Parcel in) {
@@ -349,15 +332,7 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     this.pages = in.readInt();
     this.size = in.readLong();
     this.torrentCount = in.readInt();
-    int tagsSize = in.readInt();
-    if (tagsSize >= 0) {
-      this.tags = new HashMap<>(tagsSize);
-      for (int i = 0; i < tagsSize; i++) {
-        String key = in.readString();
-        List<String> value = in.createStringArrayList();
-        this.tags.put(key, value);
-      }
-    }
+    this.tagSet = in.readParcelable(getClass().getClassLoader());
   }
 
   public static final Parcelable.Creator<GalleryInfo> CREATOR =

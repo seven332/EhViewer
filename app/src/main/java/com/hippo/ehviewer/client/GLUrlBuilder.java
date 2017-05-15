@@ -23,12 +23,11 @@ package com.hippo.ehviewer.client;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import java.util.ArrayList;
+import com.hippo.ehviewer.client.data.TagSet;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
-
-// TODO Create a Tag class
+import java.util.Set;
 
 /**
  * Gallery list url builder.
@@ -39,10 +38,7 @@ public class GLUrlBuilder {
   private int category = EhUtils.CATEGORY_NONE;
   private int language = EhUtils.LANG_UNKNOWN;
   private String keyword;
-  @Nullable
-  private List<String> namespaces;
-  @Nullable
-  private List<String> tags;
+  private final TagSet tagSet = new TagSet();
 
   /**
    * Set this GLUrlBuilder the same as that GLUrlBuilder.
@@ -53,26 +49,7 @@ public class GLUrlBuilder {
       this.category = builder.category;
       this.language = builder.language;
       this.keyword = builder.keyword;
-
-      if (this.namespaces != null) {
-        this.namespaces.clear();
-      }
-      if (builder.namespaces != null) {
-        if (this.namespaces == null) {
-          this.namespaces = new ArrayList<>();
-        }
-        this.namespaces.addAll(builder.namespaces);
-      }
-
-      if (this.tags != null) {
-        this.tags.clear();
-      }
-      if (builder.tags != null) {
-        if (this.tags == null) {
-          this.tags = new ArrayList<>();
-        }
-        this.tags.addAll(builder.tags);
-      }
+      this.tagSet.set(builder.tagSet);
     }
   }
 
@@ -147,25 +124,14 @@ public class GLUrlBuilder {
    * @param tag no quotation marks, no dollar sign
    */
   public void addTag(@NonNull String namespace, @NonNull String tag) {
-    if (namespaces == null) {
-      namespaces = new ArrayList<>();
-    }
-    if (tags == null) {
-      tags = new ArrayList<>();
-    }
-    namespaces.add(namespace);
-    tags.add(tag);
+    tagSet.add(namespace, tag);
   }
 
   /**
    * Returns {@code true} if it contains a least one tag.
    */
   public int getTagCount() {
-    if (namespaces == null || tags == null) {
-      return 0;
-    } else {
-      return Math.min(namespaces.size(), tags.size());
-    }
+    return tagSet.size();
   }
 
   /**
@@ -174,8 +140,10 @@ public class GLUrlBuilder {
    */
   @Nullable
   public String getFirstTag() {
-    if (namespaces != null && tags != null && Math.min(namespaces.size(), tags.size()) > 0) {
-      return namespaces.get(0) + ":" + tags.get(0);
+    Iterator<Map.Entry<String, Set<String>>> iterator = tagSet.iterator();
+    if (iterator.hasNext()) {
+      Map.Entry<String, Set<String>> entry = iterator.next();
+      return entry.getValue() + ":" + entry.getValue().iterator().next();
     } else {
       return null;
     }
@@ -202,9 +170,10 @@ public class GLUrlBuilder {
       appendTag(sb, "language", language);
     }
 
-    if (namespaces != null && tags != null) {
-      for (int i = 0, n = Math.min(namespaces.size(), tags.size()); i < n; ++i) {
-        appendTag(sb, namespaces.get(i), tags.get(i));
+    for (Map.Entry<String, Set<String>> entry : tagSet) {
+      String namespace = entry.getKey();
+      for (String tag : entry.getValue()) {
+        appendTag(sb, namespace, tag);
       }
     }
 

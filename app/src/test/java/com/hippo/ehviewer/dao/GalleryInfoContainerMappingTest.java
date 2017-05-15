@@ -47,8 +47,6 @@ import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
 import com.pushtorefresh.storio.sqlite.queries.Query;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -103,9 +101,11 @@ public class GalleryInfoContainerMappingTest {
     info.pages = 12;
     info.size = 121212;
     info.torrentCount = 3;
-    info.tags = new HashMap<>();
-    info.tags.put("group1", Arrays.asList("name1", "name2"));
-    info.tags.put("group2", Arrays.asList("name1", "name2", "name3"));
+    info.tagSet.add("group1", "name1");
+    info.tagSet.add("group1", "name2");
+    info.tagSet.add("group2", "name1");
+    info.tagSet.add("group2", "name2");
+    info.tagSet.add("group2", "name3");
 
     TestItem item = new TestItem();
     item.info = info;
@@ -147,7 +147,7 @@ public class GalleryInfoContainerMappingTest {
     assertEquals(info.pages, ti.info.pages);
     assertEquals(info.size, ti.info.size);
     assertEquals(info.torrentCount, ti.info.torrentCount);
-    assertEquals(info.tags, ti.info.tags);
+    assertEquals(info.tagSet, ti.info.tagSet);
     assertEquals(item.note, ti.note);
   }
 
