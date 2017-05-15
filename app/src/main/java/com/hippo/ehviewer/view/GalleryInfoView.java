@@ -56,9 +56,9 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter, S
 
     GalleryInfoContract.Presenter presenter = getPresenter();
     Assert.assertNotNull(presenter);
-    adapter = presenter.attachContentLayout(getEhvActivity(), layout);
+    adapter = presenter.attachContentLayout(getContext(), layout);
     layout.setExtension(new ContentLayoutExtension());
-    layoutManager = new AutoGridLayoutManager(getEhvActivity(), -1);
+    layoutManager = new AutoGridLayoutManager(getContext(), -1);
     layout.setLayoutManager(layoutManager);
     if (preferences.getListMode() == EhvPreferences.LIST_MODE_DETAIL) {
       applyDetailInternal();
@@ -80,12 +80,12 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter, S
   private void applyDetailInternal() {
     adapter.showDetail();
 
-    int columnSize = LayoutUtils.dp2pix(getEhvActivity(), preferences.getListDetailSize());
+    int columnSize = LayoutUtils.dp2pix(getContext(), preferences.getListDetailSize());
     layoutManager.setColumnSize(columnSize);
 
     layout.removeAllItemDecorations();
     DividerItemDecoration decoration = new DividerItemDecoration(
-        ResourcesUtils.getAttrColor(getEhvActivity(), R.attr.dividerColor),
+        ResourcesUtils.getAttrColor(getContext(), R.attr.dividerColor),
         getResources().getDimensionPixelSize(R.dimen.divider_thickness)
     );
     layout.addItemDecoration(decoration);
@@ -103,11 +103,11 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter, S
   private void applyBriefInternal() {
     adapter.showBrief();
 
-    int columnSize = LayoutUtils.dp2pix(getEhvActivity(), preferences.getListBriefSize());
+    int columnSize = LayoutUtils.dp2pix(getContext(), preferences.getListBriefSize());
     layoutManager.setColumnSize(columnSize);
 
     layout.removeAllItemDecorations();
-    int padding = LayoutUtils.dp2pix(getEhvActivity(), 1);
+    int padding = LayoutUtils.dp2pix(getContext(), 1);
     layout.setRecyclerViewPadding(padding, padding, padding, padding);
   }
 
@@ -126,10 +126,9 @@ public abstract class GalleryInfoView<P extends GalleryInfoContract.Presenter, S
       // TODO
       e.printStackTrace();
 
-      Context context = getEhvActivity();
       ContentLayout.TipInfo info = new ContentLayout.TipInfo();
-      info.icon = ExceptionExplainer.explainVividly(context, e);
-      info.text = ExceptionExplainer.explain(context, e);
+      info.icon = ExceptionExplainer.explainVividly(getContext(), e);
+      info.text = ExceptionExplainer.explain(getContext(), e);
       return info;
     }
 

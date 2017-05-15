@@ -45,6 +45,6 @@ public class WarningView extends MessageSheetView<WarningContract.Presenter, War
 
   @Override
   public int getStatusBarColor() {
-    return ContextCompat.getColor(getEhvActivity(), R.color.red_700);
+    return ContextCompat.getColor(getContext(), R.color.red_700);
   }
 }

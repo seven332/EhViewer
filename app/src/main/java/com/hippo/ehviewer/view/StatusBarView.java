@@ -43,7 +43,7 @@ public abstract class StatusBarView<P extends PresenterInterface, S extends EhvS
 
   @NonNull
   @Override
-  protected final View onCreate(LayoutInflater inflater, ViewGroup parent) {
+  protected final View onCreate2(LayoutInflater inflater, ViewGroup parent) {
     View view = inflater.inflate(R.layout.view_status_bar, parent, false);
 
     statusBar = view.findViewById(R.id.status_bar);
@@ -103,6 +103,6 @@ public abstract class StatusBarView<P extends PresenterInterface, S extends EhvS
    * Default: color of {@link R.attr#colorPrimaryDark}
    */
   public int getStatusBarColor() {
-    return ResourcesUtils.getAttrColor(getEhvActivity(), R.attr.colorPrimaryDark);
+    return ResourcesUtils.getAttrColor(getContext(), R.attr.colorPrimaryDark);
   }
 }

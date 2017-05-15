@@ -32,7 +32,7 @@ import rx.functions.Action0;
  * <p>
  * It supports scheduling actions to UI thread.
  */
-public abstract class RxView<P extends PresenterInterface> extends SceneView<P> {
+public abstract class RxView<P extends PresenterInterface> extends ThemedView<P> {
 
   private Scheduler.Worker worker = AndroidSchedulers.mainThread().createWorker();
 

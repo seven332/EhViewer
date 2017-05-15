@@ -57,7 +57,7 @@ public abstract class ToolbarView<P extends PresenterInterface, S extends EhvSce
 
     toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
-    DrawerArrowDrawable drawable = new DrawerArrowDrawable(getEhvActivity());
+    DrawerArrowDrawable drawable = new DrawerArrowDrawable(getContext());
     drawable.setDirection(DrawerArrowDrawable.ARROW_DIRECTION_LEFT);
     toolbar.setNavigationIcon(drawable);
     switch (getNavigationType()) {

@@ -20,9 +20,7 @@ package com.hippo.ehviewer.view;
  * Created by Hippo on 2/19/2017.
  */
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import com.hippo.ehviewer.EhvApp;
 import com.hippo.ehviewer.activity.EhvActivity;
 import com.hippo.ehviewer.presenter.PresenterInterface;
@@ -112,20 +110,5 @@ public abstract class EhvView<P extends PresenterInterface, S extends EhvScene> 
   @NonNull
   protected final S getEhvScene() {
     return scene;
-  }
-
-  /**
-   * Gets {@code Resources} of {@code EhvActivity}.
-   */
-  @NonNull
-  public Resources getResources() {
-    return getEhvActivity().getResources();
-  }
-
-  /**
-   * Gets a string from {@code Resources} of {@code EhvActivity}.
-   */
-  public String getString(@StringRes int resId) {
-    return getResources().getString(resId);
   }
 }
