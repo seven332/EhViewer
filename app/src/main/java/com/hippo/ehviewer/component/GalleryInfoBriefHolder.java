@@ -57,7 +57,7 @@ public abstract class GalleryInfoBriefHolder<T> extends BindingViewHolder<T> {
   protected void bindGalleryInfo(GalleryInfo info) {
     Context context = cover.getContext();
     cover.load(info);
-    category.setBackgroundColor(setAlpha(EhUtils.getColor(info.category), CATEGORY_ALPHA));
+    category.setBackgroundColor(setAlpha(EhUtils.getCategoryColor(info.category), CATEGORY_ALPHA));
     rating.setRating(info.rating);
     language.setText(EhUtils.getLangAbbr(context, info.language));
   }

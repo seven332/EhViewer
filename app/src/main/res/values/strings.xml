@@ -96,6 +96,7 @@
   <string name="language_vietnamese">Vietnamese</string>
   <string name="language_n_a">N/A</string>
   <string name="language_other">Other</string>
+  <string name="language_unknown">Unknown</string>
 
   <string name="language_abbr_japanese">JA</string>
   <string name="language_abbr_english">EN</string>
@@ -132,5 +133,8 @@
   <string name="gallery_search_all_language">All languages</string>
   <string name="gallery_search_enable_advance_search">Enable Advance Search</string>
   <string name="gallery_search_advance_search">Advance Search</string>
+
+  <string name="gallery_detail_download">Download</string>
+  <string name="gallery_detail_read">Read</string>
 
 </resources>

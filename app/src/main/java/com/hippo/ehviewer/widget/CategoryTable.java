@@ -89,7 +89,7 @@ public class CategoryTable extends AutoGridLayout {
     inflater.inflate(R.layout.category_table_item, this);
     CategoryView view = (CategoryView) getChildAt(getChildCount() - 1);
     view.setText(EhUtils.getCategoryNotNull(category).toUpperCase());
-    view.setBackgroundColor(EhUtils.getColor(category));
+    view.setBackgroundColor(EhUtils.getCategoryColor(category));
   }
 
   /**

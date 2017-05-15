@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2017 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- TODO Add colorAccent -->
+
+<resources>
+
+  <style name="AppTheme.Ehv.Doujinshi">
+    <item name="colorPrimary">@color/red_500</item>
+    <item name="colorPrimaryDark">@color/red_700</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.Doujinshi">
+    <item name="colorPrimary">@color/red_500</item>
+    <item name="colorPrimaryDark">@color/red_700</item>
+  </style>
+
+  <style name="AppTheme.Ehv.Manga">
+    <item name="colorPrimary">@color/orange_500</item>
+    <item name="colorPrimaryDark">@color/orange_700</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.Manga">
+    <item name="colorPrimary">@color/orange_500</item>
+    <item name="colorPrimaryDark">@color/orange_700</item>
+  </style>
+
+  <style name="AppTheme.Ehv.ArtistCG">
+    <item name="colorPrimary">@color/amber_500</item>
+    <item name="colorPrimaryDark">@color/amber_700</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.ArtistCG">
+    <item name="colorPrimary">@color/amber_500</item>
+    <item name="colorPrimaryDark">@color/amber_700</item>
+  </style>
+
+  <style name="AppTheme.Ehv.GameCG">
+    <item name="colorPrimary">@color/green_500</item>
+    <item name="colorPrimaryDark">@color/green_700</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.GameCG">
+    <item name="colorPrimary">@color/green_500</item>
+    <item name="colorPrimaryDark">@color/green_700</item>
+  </style>
+
+  <style name="AppTheme.Ehv.Western">
+    <item name="colorPrimary">@color/light_green_500</item>
+    <item name="colorPrimaryDark">@color/light_green_700</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.Western">
+    <item name="colorPrimary">@color/light_green_500</item>
+    <item name="colorPrimaryDark">@color/light_green_700</item>
+  </style>
+
+  <style name="AppTheme.Ehv.NonH">
+    <item name="colorPrimary">@color/blue_500</item>
+    <item name="colorPrimaryDark">@color/blue_700</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.NonH">
+    <item name="colorPrimary">@color/blue_500</item>
+    <item name="colorPrimaryDark">@color/blue_700</item>
+  </style>
+
+  <style name="AppTheme.Ehv.ImageSet">
+    <item name="colorPrimary">@color/indigo_500</item>
+    <item name="colorPrimaryDark">@color/indigo_700</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.ImageSet">
+    <item name="colorPrimary">@color/indigo_500</item>
+    <item name="colorPrimaryDark">@color/indigo_700</item>
+  </style>
+
+  <style name="AppTheme.Ehv.Cosplay">
+    <item name="colorPrimary">@color/purple_500</item>
+    <item name="colorPrimaryDark">@color/purple_700</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.Cosplay">
+    <item name="colorPrimary">@color/purple_500</item>
+    <item name="colorPrimaryDark">@color/purple_700</item>
+  </style>
+
+  <style name="AppTheme.Ehv.AsianPorn">
+    <item name="colorPrimary">@color/deep_purple_300</item>
+    <item name="colorPrimaryDark">@color/deep_purple_500</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.AsianPorn">
+    <item name="colorPrimary">@color/deep_purple_300</item>
+    <item name="colorPrimaryDark">@color/deep_purple_500</item>
+  </style>
+
+  <style name="AppTheme.Ehv.Misc">
+    <item name="colorPrimary">@color/pink_300</item>
+    <item name="colorPrimaryDark">@color/pink_500</item>
+  </style>
+
+  <style name="AppTheme.Dark.Ehv.Misc">
+    <item name="colorPrimary">@color/pink_300</item>
+    <item name="colorPrimaryDark">@color/pink_500</item>
+  </style>
+
+</resources>

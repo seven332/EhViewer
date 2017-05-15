@@ -84,16 +84,16 @@ public final class EhUtils {
       new String[] { "western" },
   };
 
-  public static final int COLOR_DOUJINSHI = 0xfff44336;
-  public static final int COLOR_MANGA = 0xffff9800;
-  public static final int COLOR_ARTIST_CG = 0xfffbc02d;
-  public static final int COLOR_GAME_CG = 0xff4caf50;
-  public static final int COLOR_WESTERN = 0xff8bc34a;
-  public static final int COLOR_NON_H = 0xff2196f3;
-  public static final int COLOR_IMAGE_SET = 0xff3f51b5;
-  public static final int COLOR_COSPLAY = 0xff9c27b0;
-  public static final int COLOR_ASIAN_PORN = 0xff9575cd;
-  public static final int COLOR_MISC = 0xfff06292;
+  public static final int COLOR_DOUJINSHI = 0xfff44336; // red_500
+  public static final int COLOR_MANGA = 0xffff9800; // orange_500
+  public static final int COLOR_ARTIST_CG = 0xffffc107; // amber_500
+  public static final int COLOR_GAME_CG = 0xff4caf50; // green_500
+  public static final int COLOR_WESTERN = 0xff8bc34a; // light_green_500
+  public static final int COLOR_NON_H = 0xff2196f3; // blue_500
+  public static final int COLOR_IMAGE_SET = 0xff3f51b5; // indigo_500
+  public static final int COLOR_COSPLAY = 0xff9c27b0; // purple_500
+  public static final int COLOR_ASIAN_PORN = 0xff9575cd; // deep_purple_300
+  public static final int COLOR_MISC = 0xfff06292; // pink_300
   public static final int COLOR_UNKNOWN = Color.BLACK;
 
   /**
@@ -147,8 +147,9 @@ public final class EhUtils {
 
   /**
    * Get the color to represent the category.
+   * Returns black if can't recognize the category.
    */
-  public static int getColor(int category) {
+  public static int getCategoryColor(int category) {
     switch (category) {
       case CATEGORY_DOUJINSHI:
         return COLOR_DOUJINSHI;
@@ -172,6 +173,37 @@ public final class EhUtils {
         return COLOR_MISC;
       default:
         return COLOR_UNKNOWN;
+    }
+  }
+
+  /**
+   * Gets the theme to represent the category.
+   * Returns {@code 0} if can't recognize the category.
+   */
+  public static int getCategoryTheme(int category, boolean dark) {
+    switch (category) {
+      case CATEGORY_DOUJINSHI:
+        return dark ? R.style.AppTheme_Dark_Ehv_Doujinshi : R.style.AppTheme_Ehv_Doujinshi;
+      case CATEGORY_MANGA:
+        return dark ? R.style.AppTheme_Dark_Ehv_Manga : R.style.AppTheme_Ehv_Manga;
+      case CATEGORY_ARTIST_CG:
+        return dark ? R.style.AppTheme_Dark_Ehv_ArtistCG : R.style.AppTheme_Ehv_ArtistCG;
+      case CATEGORY_GAME_CG:
+        return dark ? R.style.AppTheme_Dark_Ehv_GameCG : R.style.AppTheme_Ehv_GameCG;
+      case CATEGORY_WESTERN:
+        return dark ? R.style.AppTheme_Dark_Ehv_Western : R.style.AppTheme_Ehv_Western;
+      case CATEGORY_NON_H:
+        return dark ? R.style.AppTheme_Dark_Ehv_NonH : R.style.AppTheme_Ehv_NonH;
+      case CATEGORY_IMAGE_SET:
+        return dark ? R.style.AppTheme_Dark_Ehv_ImageSet : R.style.AppTheme_Ehv_ImageSet;
+      case CATEGORY_COSPLAY:
+        return dark ? R.style.AppTheme_Dark_Ehv_Cosplay : R.style.AppTheme_Ehv_Cosplay;
+      case CATEGORY_ASIAN_PORN:
+        return dark ? R.style.AppTheme_Dark_Ehv_AsianPorn : R.style.AppTheme_Ehv_AsianPorn;
+      case CATEGORY_MISC:
+        return dark ? R.style.AppTheme_Dark_Ehv_Misc : R.style.AppTheme_Ehv_Misc;
+      default:
+        return 0;
     }
   }
 
@@ -250,7 +282,7 @@ public final class EhUtils {
   /**
    * Other
    */
-  public static final int LANG_OTHER = 15;
+  public static final int LANG_OTHER = 16;
 
   private static final Pattern LANG_PATTERN_EN =
       Pattern.compile("[(\\[]eng(?:lish)?[)\\]]|英訳", Pattern.CASE_INSENSITIVE);
@@ -410,6 +442,20 @@ public final class EhUtils {
       return context.getString(LANG_IDS[lang]);
     } else {
       return null;
+    }
+  }
+
+  /**
+   * Returns string for the language.
+   * Returns a string to represent unknown if can't recognize the category.
+   */
+  @Nullable
+  public static String getLangNotNull(Context context, int lang) {
+    String language = getLang(context, lang);
+    if (language != null) {
+      return language;
+    } else {
+      return context.getString(R.string.language_unknown);
     }
   }
 
