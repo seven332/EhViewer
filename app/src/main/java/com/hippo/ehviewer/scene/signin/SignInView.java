@@ -120,11 +120,6 @@ public class SignInView extends SheetView<SignInContract.Presenter, SignInScene>
   }
 
   @Override
-  protected boolean whetherShowLeftDrawer() {
-    return false;
-  }
-
-  @Override
   public void onRecaptchaNone() {
     recaptchaView.none();
   }

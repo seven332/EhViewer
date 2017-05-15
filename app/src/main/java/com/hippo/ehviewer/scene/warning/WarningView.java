@@ -47,9 +47,4 @@ public class WarningView extends MessageSheetView<WarningContract.Presenter, War
   public int getStatusBarColor() {
     return ContextCompat.getColor(getEhvActivity(), R.color.red_700);
   }
-
-  @Override
-  protected boolean whetherShowLeftDrawer() {
-    return false;
-  }
 }

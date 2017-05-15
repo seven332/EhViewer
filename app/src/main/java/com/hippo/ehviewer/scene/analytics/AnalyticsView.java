@@ -58,9 +58,4 @@ public class AnalyticsView extends MessageSheetView<AnalyticsContract.Presenter,
   public int getStatusBarColor() {
     return ContextCompat.getColor(getEhvActivity(), R.color.indigo_700);
   }
-
-  @Override
-  protected boolean whetherShowLeftDrawer() {
-    return false;
-  }
 }

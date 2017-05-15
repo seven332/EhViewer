@@ -73,10 +73,10 @@ public abstract class EhvView<P extends PresenterInterface, S extends EhvScene> 
    * <p>
    * Override it to change left drawer lock state.
    * <p>
-   * Default: true
+   * Default: false
    */
   protected boolean whetherShowLeftDrawer() {
-    return true;
+    return false;
   }
 
   /**

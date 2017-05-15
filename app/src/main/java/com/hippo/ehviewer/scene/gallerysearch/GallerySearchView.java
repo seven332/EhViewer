@@ -94,11 +94,6 @@ public class GallerySearchView
   }
 
   @Override
-  protected boolean whetherShowLeftDrawer() {
-    return false;
-  }
-
-  @Override
   protected void onSaveState(@NonNull Bundle outState) {
     super.onSaveState(outState);
     if (searchBarHolder != null) {
