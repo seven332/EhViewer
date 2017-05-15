@@ -31,6 +31,8 @@
 
     <item name="dividerColor">@color/divider_light</item>
 
+    <item name="cardBackground">@drawable/card_background_light</item>
+
     <item name="imagePlaceHolder">@color/place_holder_image_light</item>
     <item name="imagePlaceHolderColor">@color/place_holder_image_light</item>
     <item name="imageFailureBackgroundColor">?attr/imagePlaceHolderColor</item>
