@@ -28,6 +28,8 @@ import com.hippo.ehviewer.util.JsonStore;
 import com.hippo.yorozuya.ObjectUtils;
 import java.util.List;
 
+// TODO change default value to 0 and null
+
 /**
  * Gallery Information.
  * <p>
@@ -197,6 +199,42 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
   public final TagSet tagSet;
 
   /**
+   * The gid of the parent gallery.
+   * <p>
+   * {@code 0} if no parent.
+   * <p>
+   * The parent is a gallery which is replaced by this gallery.
+   */
+  public long parentGid;
+
+  /**
+   * The token of the parent gallery.
+   * <p>
+   * {@code null} if no parent.
+   * <p>
+   * The parent is a gallery which is replaced by this gallery.
+   */
+  public String parentToken;
+
+  /**
+   * The gid of the child gallery.
+   * <p>
+   * {@code 0} if no child.
+   * <p>
+   * The child is a gallery which replaces this gallery.
+   */
+  public long childGid;
+
+  /**
+   * The token of the child gallery.
+   * <p>
+   * {@code null} if no child.
+   * <p>
+   * The child is a gallery which replaces this gallery.
+   */
+  public String childToken;
+
+  /**
    * Merges data in {@code info} to this {@code GalleryInfo}.
    */
   public void merge(GalleryInfo info) {
@@ -259,6 +297,14 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     if (info.tagSet != null && info.tagSet.size() != 0) {
       tagSet.set(info.tagSet);
     }
+    if (info.parentGid != 0 && info.parentToken != null) {
+      parentGid = info.parentGid;
+      parentToken = info.parentToken;
+    }
+    if (info.childGid != 0 && info.childToken != null) {
+      childGid = info.childGid;
+      childToken = info.childToken;
+    }
   }
 
   /**
@@ -307,6 +353,10 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     dest.writeLong(this.size);
     dest.writeInt(this.torrentCount);
     dest.writeParcelable(this.tagSet, flags);
+    dest.writeLong(this.parentGid);
+    dest.writeString(this.parentToken);
+    dest.writeLong(this.childGid);
+    dest.writeString(this.childToken);
   }
 
   public GalleryInfo() {
@@ -333,6 +383,10 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     this.size = in.readLong();
     this.torrentCount = in.readInt();
     this.tagSet = in.readParcelable(getClass().getClassLoader());
+    this.parentGid = in.readLong();
+    this.parentToken = in.readString();
+    this.childGid = in.readLong();
+    this.childToken = in.readString();
   }
 
   public static final Parcelable.Creator<GalleryInfo> CREATOR =
