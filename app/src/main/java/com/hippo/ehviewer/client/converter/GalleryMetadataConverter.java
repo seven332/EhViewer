@@ -22,93 +22,15 @@ package com.hippo.ehviewer.client.converter;
 
 import android.support.annotation.NonNull;
 import com.hippo.ehviewer.client.EhConverter;
-import com.hippo.ehviewer.client.EhUrl;
-import com.hippo.ehviewer.client.EhUtils;
-import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.ehviewer.client.parser.GalleryMetadataParser;
 import com.hippo.ehviewer.client.result.GalleryMetadataResult;
-import com.hippo.ehviewer.util.JSONUtils;
-import com.hippo.yorozuya.NumberUtils;
-import java.util.ArrayList;
-import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class GalleryMetadataConverter extends EhConverter<GalleryMetadataResult> {
-
-  private static final String DEFAULT_GROUP = "misc";
 
   @NonNull
   @Override
   public GalleryMetadataResult convert(String body) throws Exception {
-    List<GalleryInfo> galleryInfoList = new ArrayList<>();
-    try {
-      JSONObject jo = new JSONObject(body);
-      JSONArray ja = jo.getJSONArray("gmetadata");
-      for (int i = 0, n = ja.length(); i < n; ++i) {
-        galleryInfoList.add(parseGalleryInfo(ja.getJSONObject(i)));
-      }
-      return new GalleryMetadataResult(galleryInfoList);
-    } catch (JSONException e) {
-      throw new ParseException("Can't parse gallery metadata json", body);
-    }
-  }
-
-  private static GalleryInfo parseGalleryInfo(JSONObject jo) {
-    GalleryInfo info = new GalleryInfo();
-    info.gid = jo.optLong("gid");
-    if (info.gid == 0) {
-      return null;
-    }
-    info.token = JSONUtils.optString(jo, "token");
-    if (info.token == null) {
-      return null;
-    }
-    info.title = ConverterUtils.unescapeXml(JSONUtils.optString(jo, "title"));
-    if (info.title != null) {
-      info.language = EhUtils.guessLang(info.title);
-    }
-    info.titleJpn = JSONUtils.optString(jo, "title_jpn");
-    if (info.language == EhUtils.LANG_UNKNOWN && info.titleJpn != null) {
-      info.language = EhUtils.guessLang(info.titleJpn);
-    }
-    info.archiverKey = JSONUtils.optString(jo, "archiver_key");
-    info.category = EhUtils.getCategory(JSONUtils.optString(jo, "category"));
-    info.coverUrl = ConverterUtils.unescapeXml(JSONUtils.optString(jo, "thumb"));
-    info.cover = EhUrl.getImageFingerprint(info.coverUrl);
-    info.uploader = JSONUtils.optString(jo, "uploader");
-    info.date = NumberUtils.parseLong(JSONUtils.optString(jo, "posted"), 0) * 1000;
-    info.pages = NumberUtils.parseInt(JSONUtils.optString(jo, "filecount"), -1);
-    info.size = NumberUtils.parseLong(JSONUtils.optString(jo, "filesize"), -1);
-    info.invalid = jo.optBoolean("expunged", false);
-    info.rating = NumberUtils.parseFloat(JSONUtils.optString(jo, "rating"), 0.0f);
-    info.torrentCount = NumberUtils.parseInt(JSONUtils.optString(jo, "torrentcount"), 0);
-    JSONArray tags = jo.optJSONArray("tags");
-    if (tags != null) {
-      for (int i = 0, n = tags.length(); i < n; ++i) {
-        String tag = JSONUtils.optString(tags, i);
-        if (tag == null) {
-          continue;
-        }
-
-        String group;
-        String name;
-        int index = tag.indexOf(":");
-        if (index == -1) {
-          // Default group
-          group = DEFAULT_GROUP;
-          name = tag;
-        } else {
-          group = tag.substring(0, index);
-          name = tag.substring(index + 1);
-        }
-
-        info.tagSet.add(group, name);
-      }
-    }
-
-    return info;
+    return new GalleryMetadataResult(GalleryMetadataParser.parseGalleryMetadata(body));
   }
 
 

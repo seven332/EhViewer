@@ -21,14 +21,11 @@ package com.hippo.ehviewer.client.converter;
  */
 
 import android.support.annotation.NonNull;
+import android.util.Pair;
 import com.hippo.ehviewer.client.EhConverter;
-import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.client.result.ProfileResult;
-import com.hippo.yorozuya.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 /**
  * A {@link retrofit2.Converter} to parse the html of profile
@@ -39,31 +36,8 @@ public class ProfileConverter extends EhConverter<ProfileResult> {
   @NonNull
   @Override
   public ProfileResult convert(String body) throws ParseException {
-    String name;
-    String avatar;
-
-    Document d = Jsoup.parse(body);
-    Element profileName = d.getElementById("profilename");
-    try {
-      name = ConverterUtils.unescapeXml(profileName.child(0).text());
-    } catch (NullPointerException | IndexOutOfBoundsException e) {
-      name = null;
-    }
-    try {
-      avatar = profileName.nextElementSibling().nextElementSibling().child(0).attr("src");
-      avatar = ConverterUtils.completeUrl(EhUrl.URL_FORUMS, avatar);
-      avatar = ConverterUtils.unescapeXml(avatar);
-    } catch (NullPointerException | IndexOutOfBoundsException e) {
-      avatar = null;
-    }
-
-    if (name == null) {
-      // avatar could be null
-      // name should not be null
-      throw new ParseException("Can't parse profile", body);
-    }
-
-    return new ProfileResult(name, avatar);
+    Pair<String, String> pair = ProfileParser.parseProfile(body);
+    return new ProfileResult(pair.first, pair.second);
   }
 
 

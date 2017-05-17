@@ -20,9 +20,9 @@ package com.hippo.ehviewer.client.result;
  * Created by Hippo on 3/4/2017.
  */
 
-import android.util.Pair;
 import com.hippo.ehviewer.client.EhResult;
 import com.hippo.ehviewer.client.data.FavouritesItem;
+import com.hippo.ehviewer.client.data.FavouritesState;
 import java.util.List;
 
 /**
@@ -32,9 +32,9 @@ public class FavouritesResult extends EhResult {
 
   private int pages;
   private List<FavouritesItem> fis;
-  private List<Pair<String, Integer>> state;
+  private FavouritesState state;
 
-  public FavouritesResult(int pages, List<FavouritesItem> fis, List<Pair<String, Integer>> state) {
+  public FavouritesResult(int pages, List<FavouritesItem> fis, FavouritesState state) {
     super(null);
     this.pages = pages;
     this.fis = fis;
@@ -60,7 +60,7 @@ public class FavouritesResult extends EhResult {
    * <p>
    * Favourites slot name, favourites count
    */
-  public List<Pair<String, Integer>> state() {
+  public FavouritesState state() {
     return state;
   }
 

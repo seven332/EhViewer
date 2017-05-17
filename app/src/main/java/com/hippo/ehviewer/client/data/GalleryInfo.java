@@ -28,8 +28,6 @@ import com.hippo.ehviewer.util.JsonStore;
 import com.hippo.yorozuya.ObjectUtils;
 import java.util.List;
 
-// TODO change default value to 0 and null
-
 /**
  * Gallery Information.
  * <p>
@@ -63,6 +61,7 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
    * But I like {@code long}.
    */
   public long gid;
+
   /**
    * Gallery token. Most gallery operations need it.
    * <p>
@@ -76,6 +75,7 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
    * }</pre>
    */
   public String token;
+
   /**
    * Gallery title.
    * <p>
@@ -83,6 +83,7 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
    * <p>
    * One of {@code title} and {@code titleJpn} must be non-null.
    */
+
   public String title;
   /**
    * Gallery title.
@@ -92,6 +93,7 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
    * One of {@code title} and {@code titleJpn} must be non-null.
    */
   public String titleJpn;
+
   /**
    * The fingerprint of the first image.
    * <p>
@@ -107,36 +109,42 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
    * {@code null} if can't get it.
    */
   public String cover;
+
   /**
    * The url of the cover.
    * <p>
    * {@code null} if can't get it.
    */
   public String coverUrl;
+
   /**
    * Cover width / Cover height.
    * <p>
-   * {@code -1.0f} if can't it.
+   * {@code 0.0f} if can't it.
    */
-  public float coverRatio = -1.0f;
+  public float coverRatio = 0.0f;
+
   /**
    * Gallery category.
    * <p>
    * {@link com.hippo.ehviewer.client.EhUtils#CATEGORY_UNKNOWN} if can't get it.
    */
   public int category = EhUtils.CATEGORY_UNKNOWN;
+
   /**
    * Posted time stamp.
    * <p>
    * {@code 0} if can't get it.
    */
   public long date;
+
   /**
    * Who uploads the gallery.
    * <p>
    * {@code null} if can't get it.
    */
   public String uploader;
+
   /**
    * Gallery Rating.
    * <p>
@@ -147,11 +155,25 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
   public float rating = 0.0f;
 
   /**
+   * How many users rated the gallery.
+   * <p>
+   * {@code 0} if can't get it.
+   */
+  public int rated;
+
+  /**
    * Gallery Language.
    * <p>
    * {@link EhUtils#LANG_UNKNOWN} if can't get it.
    */
   public int language = EhUtils.LANG_UNKNOWN;
+
+  /**
+   * How many users favourited the gallery.
+   * <p>
+   * {@code 0} if can't get it.
+   */
+  public int favourited;
 
   /**
    * Favourite slot.
@@ -175,16 +197,16 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
   /**
    * Gallery Pages.
    * <p>
-   * {@code -1} for unknown.
+   * {@code 0} for unknown.
    */
-  public int pages = -1;
+  public int pages = 0;
 
   /**
    * Gallery size in bytes.
    * <p>
-   * {@code -1} for unknown.
+   * {@code 0} for unknown.
    */
-  public long size = -1;
+  public long size = 0;
 
   /**
    * Torrent count.
@@ -236,6 +258,8 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
 
   /**
    * Merges data in {@code info} to this {@code GalleryInfo}.
+   * The principle is if the field in the new {@code GalleryInfo} is valid, use it, otherwise
+   * keep the old one.
    */
   public void merge(GalleryInfo info) {
     if (info == null) {
@@ -258,7 +282,7 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     if (info.coverUrl != null) {
       coverUrl = info.coverUrl;
     }
-    if (info.coverRatio != -1.0f) {
+    if (info.coverRatio != 0.0f) {
       coverRatio = info.coverRatio;
     }
     if (info.category != EhUtils.CATEGORY_UNKNOWN) {
@@ -273,8 +297,14 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     if (info.rating != 0.0f) {
       rating = info.rating;
     }
+    if (info.rated != 0) {
+      rating = info.rated;
+    }
     if (info.language != EhUtils.LANG_UNKNOWN) {
       language = info.language;
+    }
+    if (info.favourited != 0) {
+      favourited = info.favourited;
     }
     if (info.favouriteSlot != EhUtils.FAV_CAT_UNKNOWN) {
       favouriteSlot = info.favouriteSlot;
@@ -285,10 +315,10 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     if (info.archiverKey != null) {
       archiverKey = info.archiverKey;
     }
-    if (info.pages != -1) {
+    if (info.pages != 0) {
       pages = info.pages;
     }
-    if (info.size != -1) {
+    if (info.size != 0) {
       size = info.size;
     }
     if (info.torrentCount != 0) {
@@ -345,7 +375,9 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     dest.writeLong(this.date);
     dest.writeString(this.uploader);
     dest.writeFloat(this.rating);
+    dest.writeInt(this.rated);
     dest.writeInt(this.language);
+    dest.writeInt(this.favourited);
     dest.writeInt(this.favouriteSlot);
     dest.writeByte(this.invalid ? (byte) 1 : (byte) 0);
     dest.writeString(this.archiverKey);
@@ -375,7 +407,9 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     this.date = in.readLong();
     this.uploader = in.readString();
     this.rating = in.readFloat();
+    this.rated = in.readInt();
     this.language = in.readInt();
+    this.favourited = in.readInt();
     this.favouriteSlot = in.readInt();
     this.invalid = in.readByte() != 0;
     this.archiverKey = in.readString();

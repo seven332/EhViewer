@@ -24,7 +24,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.StringUtils;
 import java.util.Locale;
@@ -101,7 +100,7 @@ public final class EhUtils {
    * Returns {@link #CATEGORY_UNKNOWN} if can't recognize the category.
    */
   public static int getCategory(String type) {
-    if (TextUtils.isEmpty(type)) {
+    if (StringUtils.isEmpty(type)) {
       return CATEGORY_UNKNOWN;
     }
 
@@ -430,6 +429,22 @@ public final class EhUtils {
     } else {
       return null;
     }
+  }
+
+  /**
+   * Returns the language.
+   * Returns {@link #LANG_UNKNOWN} if can't recognize the language.
+   */
+  public static int getLang(String language) {
+    if (language != null) {
+      language = language.toLowerCase();
+      for (int i = 0, n = LANG_TEXTS.length; i < n; ++i) {
+        if (language.equals(LANG_TEXTS[i])) {
+          return i;
+        }
+      }
+    }
+    return LANG_UNKNOWN;
   }
 
   /**

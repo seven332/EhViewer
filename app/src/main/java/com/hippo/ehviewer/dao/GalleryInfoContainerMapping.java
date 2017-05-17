@@ -139,7 +139,7 @@ public final class GalleryInfoContainerMapping {
     info.titleJpn = DBUtils.getString(cursor, COLUMN_TITLE_JPN, null);
     info.cover = DBUtils.getString(cursor, COLUMN_COVER, null);
     info.coverUrl = DBUtils.getString(cursor, COLUMN_COVER_URL, null);
-    info.coverRatio = DBUtils.getFloat(cursor, COLUMN_COVER_RATIO, -1.0f);
+    info.coverRatio = DBUtils.getFloat(cursor, COLUMN_COVER_RATIO, 0.0f);
     info.category = DBUtils.getInt(cursor, COLUMN_CATEGORY, EhUtils.CATEGORY_UNKNOWN);
     info.date = DBUtils.getLong(cursor, COLUMN_DATE, 0);
     info.uploader = DBUtils.getString(cursor, COLUMN_UPLOADER, null);
@@ -147,8 +147,8 @@ public final class GalleryInfoContainerMapping {
     info.language = DBUtils.getInt(cursor, COLUMN_LANGUAGE, EhUtils.LANG_UNKNOWN);
     info.favouriteSlot = DBUtils.getInt(cursor, COLUMN_FAVOURITE_SLOT, EhUtils.FAV_CAT_UNKNOWN);
     info.invalid = DBUtils.getBoolean(cursor, COLUMN_INVALID, false);
-    info.pages = DBUtils.getInt(cursor, COLUMN_PAGES, -1);
-    info.size = DBUtils.getLong(cursor, COLUMN_SIZE, -1);
+    info.pages = DBUtils.getInt(cursor, COLUMN_PAGES, 0);
+    info.size = DBUtils.getLong(cursor, COLUMN_SIZE, 0);
     info.torrentCount = DBUtils.getInt(cursor, COLUMN_TORRENT_COUNT, 0);
     // Tags
     String tags = DBUtils.getString(cursor, COLUMN_TAGS, null);

@@ -24,35 +24,18 @@ import android.support.annotation.NonNull;
 import com.hippo.ehviewer.client.EhConverter;
 import com.hippo.ehviewer.client.exception.GeneralException;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.ehviewer.client.result.SignInResult;
-import com.hippo.yorozuya.StringUtils;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A {@link retrofit2.Converter} to parse the html of signing in.
  */
 public class SignInConverter extends EhConverter<SignInResult> {
 
-  private static final Pattern PATTERN_NAME = Pattern.compile("<p>You are now logged in as: (.+?)<");
-  private static final Pattern PATTERN_ERROR = Pattern.compile(
-      "(?:<h4>The error returned was:</h4>\\s*<p>(.+?)</p>)"
-          + "|(?:<span class=\"postcolor\">(.+?)</span>)");
-
   @NonNull
   @Override
-  public SignInResult convert(String body) throws Exception {
-    Matcher m = PATTERN_NAME.matcher(body);
-    if (m.find()) {
-      return new SignInResult(ConverterUtils.unescapeXml(m.group(1)));
-    } else {
-      m = PATTERN_ERROR.matcher(body);
-      if (m.find()) {
-        throw new GeneralException(m.group(1) == null ? m.group(2) : m.group(1));
-      } else {
-        throw new ParseException("Can't parse the html of signing in", body);
-      }
-    }
+  public SignInResult convert(String body) throws ParseException, GeneralException {
+    return new SignInResult(SignInParser.parseSignIn(body));
   }
 
 

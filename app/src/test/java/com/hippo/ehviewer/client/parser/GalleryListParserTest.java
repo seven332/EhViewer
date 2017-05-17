@@ -14,83 +14,81 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client.converter;
+package com.hippo.ehviewer.client.parser;
 
 /*
- * Created by Hippo on 2/4/2017.
+ * Created by Hippo on 5/17/2017.
  */
 
 import static org.junit.Assert.assertEquals;
 
-import android.os.Build;
-import com.hippo.ehviewer.BuildConfig;
+import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
-import com.hippo.ehviewer.client.result.GalleryListResult;
 import java.io.IOException;
+import java.util.List;
 import okio.BufferedSource;
 import okio.Okio;
 import okio.Source;
-import org.junit.Before;
+import org.jsoup.Jsoup;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLog;
 
-@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.N_MR1)
 @RunWith(RobolectricTestRunner.class)
-public class GalleryListConverterTest {
-
-  @Before
-  public void setUp() throws Exception {
-    ShadowLog.stream = System.out;
-  }
+@Config(manifest = Config.NONE)
+public class GalleryListParserTest {
 
   @Test
   public void testCovertEHentai() throws IOException, ParseException {
-    GalleryListConverter converter = new GalleryListConverter();
     Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_list_e-hentai.html"));
     BufferedSource bufferedSource = Okio.buffer(source);
-    GalleryListResult result = converter.convert(bufferedSource.readUtf8());
-    assertEquals(25, result.galleryInfoList().size());
+    String body = bufferedSource.readUtf8();
+
+    List<GalleryInfo> list = GalleryListParser.parseGalleryList(body, Jsoup.parse(body));
+    assertEquals(25, list.size());
   }
 
   @Test
   public void testCovertEXHentai() throws IOException, ParseException {
-    GalleryListConverter converter = new GalleryListConverter();
     Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_list_exhentai.html"));
     BufferedSource bufferedSource = Okio.buffer(source);
-    GalleryListResult result = converter.convert(bufferedSource.readUtf8());
-    assertEquals(25, result.galleryInfoList().size());
+    String body = bufferedSource.readUtf8();
+
+    List<GalleryInfo> list = GalleryListParser.parseGalleryList(body, Jsoup.parse(body));
+    assertEquals(25, list.size());
   }
 
   @Test
   public void testCovertEHentai2() throws IOException, ParseException {
-    GalleryListConverter converter = new GalleryListConverter();
     Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_list_e-hentai_2.html"));
     BufferedSource bufferedSource = Okio.buffer(source);
-    GalleryListResult result = converter.convert(bufferedSource.readUtf8());
-    assertEquals(25, result.galleryInfoList().size());
+    String body = bufferedSource.readUtf8();
+
+    List<GalleryInfo> list = GalleryListParser.parseGalleryList(body, Jsoup.parse(body));
+    assertEquals(25, list.size());
   }
 
   @Test
   public void testCovertFavouriteEHentai() throws IOException, ParseException {
-    GalleryListConverter converter = new GalleryListConverter();
     Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_list_favourite_e-hentai.html"));
     BufferedSource bufferedSource = Okio.buffer(source);
-    GalleryListResult result = converter.convert(bufferedSource.readUtf8());
-    assertEquals(6, result.galleryInfoList().get(0).favouriteSlot);
+    String body = bufferedSource.readUtf8();
+
+    List<GalleryInfo> list = GalleryListParser.parseGalleryList(body, Jsoup.parse(body));
+    assertEquals(6, list.get(0).favouriteSlot);
   }
 
   @Test
   public void testCovertFavouriteEXHentai() throws IOException, ParseException {
-    GalleryListConverter converter = new GalleryListConverter();
     Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_list_favourite_exhentai.html"));
     BufferedSource bufferedSource = Okio.buffer(source);
-    GalleryListResult result = converter.convert(bufferedSource.readUtf8());
-    assertEquals(50, result.galleryInfoList().size());
-    assertEquals(true, result.galleryInfoList().get(6).invalid);
-    assertEquals(false, result.galleryInfoList().get(7).invalid);
-    assertEquals(true, result.galleryInfoList().get(22).invalid);
+    String body = bufferedSource.readUtf8();
+
+    List<GalleryInfo> list = GalleryListParser.parseGalleryList(body, Jsoup.parse(body));
+    assertEquals(50, list.size());
+    assertEquals(true, list.get(6).invalid);
+    assertEquals(false, list.get(7).invalid);
+    assertEquals(true, list.get(22).invalid);
   }
 }

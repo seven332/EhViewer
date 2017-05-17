@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-package com.hippo.ehviewer.client.converter;
+package com.hippo.ehviewer.client.parser;
 
 /*
- * Created by Hippo on 2/25/2017.
+ * Created by Hippo on 5/17/2017.
  */
 
 import static org.junit.Assert.assertEquals;
 
-import android.os.Build;
-import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-import com.hippo.ehviewer.client.result.GalleryMetadataResult;
+import com.hippo.ehviewer.client.data.TagSet;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.N_MR1)
 @RunWith(RobolectricTestRunner.class)
-public class GalleryMetadataConverterTest {
+@Config(manifest = Config.NONE)
+public class GalleryMetadataParserTest {
 
   private static final String BODY = "{\n"
       + " \"gmetadata\": [\n"
@@ -66,9 +64,8 @@ public class GalleryMetadataConverterTest {
       + "}";
 
   @Test
-  public void testConvert() throws Exception {
-    GalleryMetadataResult result = new GalleryMetadataConverter().convert(BODY);
-    List<GalleryInfo> list = result.galleryInfoList();
+  public void test() throws Exception {
+    List<GalleryInfo> list = GalleryMetadataParser.parseGalleryMetadata(BODY);
     assertEquals(1, list.size());
     GalleryInfo info = list.get(0);
     assertEquals(618395, info.gid);
@@ -80,17 +77,19 @@ public class GalleryMetadataConverterTest {
     assertEquals("https://ehgt.org/14/63/1463dfbc16847c9ebef92c46a90e21ca881b2a12-1729712-4271-6032-jpg_l.jpg", info.coverUrl);
     assertEquals("1463dfbc16847c9ebef92c46a90e21ca881b2a12-1729712-4271-6032-jpg", info.cover);
     assertEquals("avexotsukaai", info.uploader);
-    assertEquals(1376143500, info.date);
+    assertEquals(1376143500000L, info.date);
     assertEquals(20, info.pages);
     assertEquals(51210504, info.size);
     assertEquals(false, info.invalid);
     assertEquals(4.43f, info.rating, 0.0f);
     assertEquals(0, info.torrentCount);
-    assertEquals(4, info.tagSet.size());
-    // TODO
-//    assertEquals(Collections.singletonList("touhou project"), info.tags.get("parody"));
-//    assertEquals(Collections.singletonList("handful happiness"), info.tags.get("group"));
-//    assertEquals(Collections.singletonList("nanahara fuyuki"), info.tags.get("artist"));
-//    assertEquals(Arrays.asList("full color", "artbook"), info.tags.get("misc"));
+    assertEquals(5, info.tagSet.size());
+    TagSet tagSet = new TagSet();
+    tagSet.add("parody", "touhou project");
+    tagSet.add("group", "handful happiness");
+    tagSet.add("artist", "nanahara fuyuki");
+    tagSet.add("misc", "artbook");
+    tagSet.add("misc", "full color");
+    assertEquals(tagSet, info.tagSet);
   }
 }

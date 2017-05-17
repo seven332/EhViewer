@@ -17,40 +17,33 @@
 package com.hippo.ehviewer.client.data;
 
 /*
- * Created by Hippo on 3/4/2017.
+ * Created by Hippo on 5/17/2017.
  */
+
+import android.support.annotation.NonNull;
+import android.util.Pair;
+import java.util.List;
 
 /**
- * The item of favourites.
+ * {@code FavouritesState} stores favourites name and count.
  */
-public class FavouritesItem implements GalleryInfoContainer {
+public final class FavouritesState {
 
-  /**
-   * The {@link GalleryInfo} of this {@code FavouritesItem}.
-   * <p>
-   * If it's {@code null}, this {@code FavouritesItem} is invalid.
-   */
-  public GalleryInfo info;
+  private final List<Pair<String, Integer>> state;
 
-  /**
-   * The note that user input.
-   */
-  public String note;
-
-  /**
-   * Favourited date.
-   * <p>
-   * 0 if can't get it.
-   */
-  public long date;
-
-  @Override
-  public GalleryInfo getGalleryInfo() {
-    return info;
+  public FavouritesState(@NonNull List<Pair<String, Integer>> state) {
+    this.state = state;
   }
 
-  @Override
-  public void setGalleryInfo(GalleryInfo info) {
-    this.info = info;
+  public int getFavouritesSlotCount() {
+    return state.size();
+  }
+
+  public String getFavouritesName(int index) {
+    return state.get(index).first;
+  }
+
+  public int getFavouritesCount(int index) {
+    return state.get(index).second;
   }
 }

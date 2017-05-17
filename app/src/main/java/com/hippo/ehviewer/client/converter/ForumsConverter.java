@@ -22,12 +22,9 @@ package com.hippo.ehviewer.client.converter;
 
 import android.support.annotation.NonNull;
 import com.hippo.ehviewer.client.EhConverter;
-import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.ehviewer.client.parser.ForumsParser;
 import com.hippo.ehviewer.client.result.ForumsResult;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 /**
  * A {@link retrofit2.Converter} to parse the html of forums
@@ -38,17 +35,7 @@ public class ForumsConverter extends EhConverter<ForumsResult> {
   @NonNull
   @Override
   public ForumsResult convert(String body) throws ParseException {
-    Document d = Jsoup.parse(body, EhUrl.URL_FORUMS);
-    Element userLinks = d.getElementById("userlinks");
-    try {
-      Element child = userLinks.child(0).child(0).child(0);
-      String url = child.attr("href");
-      url = ConverterUtils.completeUrl(EhUrl.URL_FORUMS, url);
-      url = ConverterUtils.unescapeXml(url);
-      return new ForumsResult(url);
-    } catch (NullPointerException | IndexOutOfBoundsException e) {
-      throw new ParseException("Can't get profile url", body);
-    }
+    return new ForumsResult(ForumsParser.parseForums(body));
   }
 
 
