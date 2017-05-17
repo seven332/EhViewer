@@ -33,6 +33,10 @@ import com.hippo.ehviewer.client.result.ProfileResult;
  */
 public class ProfileConverter extends EhConverter<ProfileResult> {
 
+  public static final ProfileConverter INSTANCE = new ProfileConverter();
+
+  private ProfileConverter() {}
+
   @NonNull
   @Override
   public ProfileResult convert(String body) throws ParseException {

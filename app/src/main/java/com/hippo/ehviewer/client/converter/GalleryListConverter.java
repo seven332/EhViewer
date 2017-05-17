@@ -36,6 +36,10 @@ import org.jsoup.nodes.Document;
  */
 public class GalleryListConverter extends EhConverter<GalleryListResult> {
 
+  public static final GalleryListConverter INSTANCE = new GalleryListConverter();
+
+  private GalleryListConverter() {}
+
   @NonNull
   @Override
   public GalleryListResult convert(String body) throws ParseException {

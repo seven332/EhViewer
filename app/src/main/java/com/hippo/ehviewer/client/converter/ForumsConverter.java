@@ -32,6 +32,10 @@ import com.hippo.ehviewer.client.result.ForumsResult;
  */
 public class ForumsConverter extends EhConverter<ForumsResult> {
 
+  public static final ForumsConverter INSTANCE = new ForumsConverter();
+
+  private ForumsConverter() {}
+
   @NonNull
   @Override
   public ForumsResult convert(String body) throws ParseException {

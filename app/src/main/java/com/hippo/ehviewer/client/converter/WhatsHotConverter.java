@@ -31,6 +31,10 @@ import com.hippo.ehviewer.client.result.WhatsHotResult;
  */
 public class WhatsHotConverter extends EhConverter<WhatsHotResult> {
 
+  public static final WhatsHotConverter INSTANCE = new WhatsHotConverter();
+
+  private WhatsHotConverter() {}
+
   @NonNull
   @Override
   public WhatsHotResult convert(String body) throws ParseException {

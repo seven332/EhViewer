@@ -54,14 +54,14 @@ public final class EhConverterFactory extends Converter.Factory {
   @Override
   public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations,
       Retrofit retrofit) {
-    if (SignInResult.class.equals(type)) return new SignInConverter();
-    else if (VoidResult.class.equals(type)) return new VoidConverter();
-    else if (GalleryListResult.class.equals(type)) return new GalleryListConverter();
-    else if (ForumsResult.class.equals(type)) return new ForumsConverter();
-    else if (ProfileResult.class.equals(type)) return new ProfileConverter();
-    else if (WhatsHotResult.class.equals(type)) return new WhatsHotConverter();
-    else if (GalleryMetadataResult.class.equals(type)) return new GalleryMetadataConverter();
-    else if (FavouritesResult.class.equals(type)) return new FavouritesConverter();
+    if (SignInResult.class.equals(type)) return SignInConverter.INSTANCE;
+    else if (VoidResult.class.equals(type)) return VoidConverter.INSTANCE;
+    else if (GalleryListResult.class.equals(type)) return GalleryListConverter.INSTANCE;
+    else if (ForumsResult.class.equals(type)) return ForumsConverter.INSTANCE;
+    else if (ProfileResult.class.equals(type)) return ProfileConverter.INSTANCE;
+    else if (WhatsHotResult.class.equals(type)) return WhatsHotConverter.INSTANCE;
+    else if (GalleryMetadataResult.class.equals(type)) return GalleryMetadataConverter.INSTANCE;
+    else if (FavouritesResult.class.equals(type)) return FavouritesConverter.INSTANCE;
     else throw new IllegalStateException("Unknown type: " + type);
   }
 

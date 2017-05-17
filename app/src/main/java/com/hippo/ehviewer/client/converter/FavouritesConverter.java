@@ -37,6 +37,10 @@ import org.jsoup.nodes.Document;
  */
 public class FavouritesConverter extends EhConverter<FavouritesResult> {
 
+  public static final FavouritesConverter INSTANCE = new FavouritesConverter();
+
+  private FavouritesConverter() {}
+
   @NonNull
   @Override
   public FavouritesResult convert(String body) throws ParseException {

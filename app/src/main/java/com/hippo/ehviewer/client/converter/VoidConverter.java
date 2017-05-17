@@ -29,6 +29,10 @@ import com.hippo.ehviewer.client.result.VoidResult;
  */
 public class VoidConverter extends EhConverter<VoidResult> {
 
+  public static final VoidConverter INSTANCE = new VoidConverter();
+
+  private VoidConverter() {}
+
   @NonNull
   @Override
   public VoidResult convert(String body) throws Exception {

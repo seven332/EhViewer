@@ -27,6 +27,10 @@ import com.hippo.ehviewer.client.result.GalleryMetadataResult;
 
 public class GalleryMetadataConverter extends EhConverter<GalleryMetadataResult> {
 
+  public static final GalleryMetadataConverter INSTANCE = new GalleryMetadataConverter();
+
+  private GalleryMetadataConverter() {}
+
   @NonNull
   @Override
   public GalleryMetadataResult convert(String body) throws Exception {

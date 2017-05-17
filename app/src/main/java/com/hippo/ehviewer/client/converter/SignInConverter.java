@@ -32,6 +32,10 @@ import com.hippo.ehviewer.client.result.SignInResult;
  */
 public class SignInConverter extends EhConverter<SignInResult> {
 
+  public static final SignInConverter INSTANCE = new SignInConverter();
+
+  private SignInConverter() {}
+
   @NonNull
   @Override
   public SignInResult convert(String body) throws ParseException, GeneralException {
