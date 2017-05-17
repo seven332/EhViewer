@@ -24,9 +24,11 @@ import static org.junit.Assert.assertEquals;
 
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.data.PreviewPage;
 import com.hippo.ehviewer.client.data.TagSet;
 import com.hippo.ehviewer.client.exception.ParseException;
 import java.io.IOException;
+import java.util.List;
 import okio.BufferedSource;
 import okio.Okio;
 import okio.Source;
@@ -42,7 +44,7 @@ public class GalleryDetailParserTest {
 
   @Test
   public void testEHentai() throws IOException, ParseException {
-    Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_detail_exhentai.html"));
+    Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_detail_large_exhentai.html"));
     BufferedSource bufferedSource = Okio.buffer(source);
     String body = bufferedSource.readUtf8();
 
@@ -77,5 +79,55 @@ public class GalleryDetailParserTest {
     assertEquals(null, info.parentToken);
     assertEquals(0, info.childGid);
     assertEquals(null, info.childToken);
+  }
+
+  @Test
+  public void testLargePreviews() throws IOException, ParseException {
+    Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_detail_large_exhentai.html"));
+    BufferedSource bufferedSource = Okio.buffer(source);
+    String body = bufferedSource.readUtf8();
+
+    List<PreviewPage> previews = GalleryDetailParser.parsePreviews(body, Jsoup.parse(body));
+
+    assertEquals(20, previews.size());
+    assertEquals(new PreviewPage(
+        0,
+        "https://exhentai.org/s/14c0b978b6/1063607-1",
+        "https://exhentai.org/t/14/c0/14c0b978b63e9cc77eefa9edcf043202dd5f8b54-1277374-1062-1500-jpg_l.jpg"
+    ), previews.get(0));
+    assertEquals(new PreviewPage(
+        1,
+        "https://exhentai.org/s/a423924783/1063607-2",
+        "https://exhentai.org/t/a4/23/a4239247834b2597895ac855694910e7b3e2ef0d-116109-1062-1500-jpg_l.jpg"
+    ), previews.get(1));
+  }
+
+  @Test
+  public void testNormalPreviews() throws IOException, ParseException {
+    Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_detail_normal_exhentai.html"));
+    BufferedSource bufferedSource = Okio.buffer(source);
+    String body = bufferedSource.readUtf8();
+
+    List<PreviewPage> previews = GalleryDetailParser.parsePreviews(body, Jsoup.parse(body));
+
+    assertEquals(40, previews.size());
+    assertEquals(new PreviewPage(
+        0,
+        "https://exhentai.org/s/14c0b978b6/1063607-1",
+        "https://exhentai.org/m/001063/1063607-00.jpg",
+        0,
+        0,
+        100,
+        142
+    ), previews.get(0));
+    assertEquals(new PreviewPage(
+        1,
+        "https://exhentai.org/s/a423924783/1063607-2",
+        "https://exhentai.org/m/001063/1063607-00.jpg",
+        100,
+        0,
+        100,
+        142
+    ), previews.get(1));
   }
 }

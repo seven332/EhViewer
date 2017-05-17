@@ -185,4 +185,11 @@ public final class ParserUtils {
     str = StringUtils.replaceEach(str, ESCAPE_CHARACTER_LIST, UNESCAPE_CHARACTER_LIST);
     return strip(str);
   }
+
+  /**
+   * Returns {@code true} if the string is a url.
+   */
+  public static boolean isUrl(String str) {
+    return str != null && (str.startsWith("http://") || str.startsWith("https://"));
+  }
 }

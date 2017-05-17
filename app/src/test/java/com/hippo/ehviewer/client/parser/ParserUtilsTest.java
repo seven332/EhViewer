@@ -74,4 +74,16 @@ public class ParserUtilsTest {
     assertEquals("ab c &", ParserUtils.unescape("    ab c &amp;  "));
     assertEquals("ab c", ParserUtils.unescape("    ab c &nbsp;  "));
   }
+
+  @Test
+  public void testIsUrl() {
+    assertEquals(false, ParserUtils.isUrl(null));
+    assertEquals(false, ParserUtils.isUrl(""));
+    assertEquals(false, ParserUtils.isUrl("sdsd"));
+    assertEquals(true, ParserUtils.isUrl("https://"));
+    assertEquals(true, ParserUtils.isUrl("https://ss"));
+    assertEquals(true, ParserUtils.isUrl("http://"));
+    assertEquals(true, ParserUtils.isUrl("http://ss"));
+    assertEquals(false, ParserUtils.isUrl("http:"));
+  }
 }
