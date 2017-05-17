@@ -25,6 +25,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.util.JsonStore;
+import com.hippo.yorozuya.HashCodeUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import java.util.List;
 
@@ -83,8 +84,8 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
    * <p>
    * One of {@code title} and {@code titleJpn} must be non-null.
    */
-
   public String title;
+
   /**
    * Gallery title.
    * <p>
@@ -324,7 +325,7 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
     if (info.torrentCount != 0) {
       torrentCount = info.torrentCount;
     }
-    if (info.tagSet != null && info.tagSet.size() != 0) {
+    if (info.tagSet.size() != 0) {
       tagSet.set(info.tagSet);
     }
     if (info.parentGid != 0 && info.parentToken != null) {
@@ -355,6 +356,71 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
   @Override
   public boolean onFetch(int version) {
     return true;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof GalleryInfo) {
+      GalleryInfo info = (GalleryInfo) obj;
+      return info.gid == gid &&
+          ObjectUtils.equals(info.token, token) &&
+          ObjectUtils.equals(info.title, title) &&
+          ObjectUtils.equals(info.titleJpn, titleJpn) &&
+          ObjectUtils.equals(info.cover, cover) &&
+          ObjectUtils.equals(info.coverUrl, coverUrl) &&
+          info.coverRatio == coverRatio &&
+          info.category == category &&
+          info.date == date &&
+          ObjectUtils.equals(info.uploader, uploader) &&
+          info.rating == rating &&
+          info.rated == rated &&
+          info.language == language &&
+          info.favourited == favourited &&
+          info.favouriteSlot == favouriteSlot &&
+          info.invalid == invalid &&
+          ObjectUtils.equals(info.archiverKey, archiverKey) &&
+          info.pages == pages &&
+          info.size == size &&
+          info.torrentCount == torrentCount &&
+          info.tagSet.equals(tagSet) &&
+          info.parentGid == parentGid &&
+          ObjectUtils.equals(info.parentToken, parentToken) &&
+          info.childGid == childGid &&
+          ObjectUtils.equals(info.childToken, childToken);
+    } else {
+      return false;
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeUtils.hashCode(
+        gid,
+        token,
+        title,
+        titleJpn,
+        cover,
+        coverUrl,
+        coverRatio,
+        category,
+        date,
+        uploader,
+        rating,
+        rated,
+        language,
+        favourited,
+        favouriteSlot,
+        invalid,
+        archiverKey,
+        pages,
+        size,
+        torrentCount,
+        tagSet,
+        parentGid,
+        parentToken,
+        childGid,
+        childToken
+    );
   }
 
   @Override
