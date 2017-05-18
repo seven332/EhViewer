@@ -51,6 +51,11 @@ public class ParserUtilsTest {
   }
 
   @Test
+  public void testParseCommentDate() {
+    assertEquals(1449587220000L, ParserUtils.parseCommentDate("  08 December 2015, 15:07 UTC &nbsp; ", 0));
+  }
+
+  @Test
   public void testCompleteUrl() {
     assertEquals("https://xixihaha/xi/ha", ParserUtils.completeUrl("https://xixihaha/", "/xi/ha"));
     assertEquals("https://xixihaha/xi/ha", ParserUtils.completeUrl("https://xixihaha/", "xi/ha"));

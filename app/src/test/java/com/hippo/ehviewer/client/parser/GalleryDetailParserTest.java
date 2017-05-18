@@ -23,6 +23,7 @@ package com.hippo.ehviewer.client.parser;
 import static org.junit.Assert.assertEquals;
 
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.client.data.CommentEntry;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewPage;
 import com.hippo.ehviewer.client.data.TagSet;
@@ -129,5 +130,34 @@ public class GalleryDetailParserTest {
         100,
         142
     ), previews.get(1));
+  }
+
+  @Test
+  public void testComments() throws IOException, ParseException {
+    Source source = Okio.source(getClass().getClassLoader().getResourceAsStream("gallery_detail_normal_exhentai.html"));
+    BufferedSource bufferedSource = Okio.buffer(source);
+    String body = bufferedSource.readUtf8();
+
+    List<CommentEntry> list = GalleryDetailParser.parseComments(body, Jsoup.parse(body));
+
+    assertEquals(6, list.size());
+
+    assertEquals(0, list.get(0).id);
+    assertEquals(1494901680000L, list.get(0).date);
+    assertEquals("Kyou_kun", list.get(0).user);
+    assertEquals("http://www.dlsite.com/maniax/work/=/product_id/RJ200358.html", list.get(0).comment);
+    assertEquals(0, list.get(0).score);
+    assertEquals(false, list.get(0).votedUp);
+    assertEquals(false, list.get(0).votedDown);
+    assertEquals("", list.get(0).voteState);
+
+    assertEquals(1747102, list.get(1).id);
+    assertEquals(1494910380000L, list.get(1).date);
+    assertEquals("Shikiller", list.get(1).user);
+    assertEquals("This is really good.", list.get(1).comment);
+    assertEquals(12, list.get(1).score);
+    assertEquals(false, list.get(1).votedUp);
+    assertEquals(false, list.get(1).votedDown);
+    assertEquals("Base +12", list.get(1).voteState);
   }
 }

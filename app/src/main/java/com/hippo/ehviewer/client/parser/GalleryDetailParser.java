@@ -21,9 +21,12 @@ package com.hippo.ehviewer.client.parser;
  */
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.client.data.CommentEntry;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewPage;
 import com.hippo.ehviewer.client.data.TagSet;
@@ -51,6 +54,9 @@ public final class GalleryDetailParser {
   private static final Pattern PATTERN_ARCHIVE = Pattern.compile("<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Archive Download</a>");
   private static final Pattern PATTERN_TORRENT = Pattern.compile("<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>");
   private static final Pattern PATTERN_NORMAL_PREVIEW = Pattern.compile("width:(\\d+).+?height:(\\d+).+?url\\((.+?)\\).+?-(\\d+)px");
+
+  private static final String COMMENT_DATE_PREFIX = "Posted on ";
+  private static final String COMMENT_DATE_SUFFIX = " by:";
 
   /**
    * Parses gallery detail page to a {@link GalleryInfo} object.
@@ -468,5 +474,98 @@ public final class GalleryDetailParser {
     } else {
       throw new ParseException("Can't parse normal previews", body);
     }
+  }
+
+  /**
+   * Parses gallery detail page to a list of comment.
+   *
+   * @throws ParseException if can't parse it
+   */
+  @NonNull
+  public static List<CommentEntry> parseComments(@NonNull String body,
+      @NonNull Document document) throws ParseException {
+    Element cdiv = document.getElementById("cdiv");
+    if (cdiv != null) {
+      List<CommentEntry> list = new ArrayList<>();
+
+      for (Element c1 : cdiv.children()) {
+        if (!"c1".equals(c1.className())) continue;
+        CommentEntry entry = parseCommentEntry(c1);
+        if (entry != null) {
+          list.add(entry);
+        }
+      }
+
+      if (!list.isEmpty()) {
+        return list;
+      }
+    }
+
+    throw new ParseException("Can't get comments", body);
+  }
+
+  @Nullable
+  private static CommentEntry parseCommentEntry(Element c1) {
+    // Id, required
+    Element a = c1.previousElementSibling();
+    if (a == null) return null;
+    String text = ParserUtils.unescape(a.attr("name"));
+    if (StringUtils.isEmpty(text)) return null;
+    int id = ParserUtils.parseInt(text.substring(1), -1);
+    if (id == -1) return null;
+
+    // Comment, required
+    Element c6 = c1.getElementsByClass("c6").first();
+    if (c6 == null) return null;
+    String comment = c6.html();
+    if (StringUtils.isEmpty(comment)) return null;
+
+    CommentEntry entry = new CommentEntry();
+    entry.id = id;
+    entry.comment = comment;
+
+    // Date
+    Element c3 = c1.getElementsByClass("c3").first();
+    if (c3 != null) {
+      text = ParserUtils.unescape(c3.ownText());
+      if (text.length() > COMMENT_DATE_PREFIX.length() + COMMENT_DATE_SUFFIX.length()) {
+        text = text.substring(COMMENT_DATE_PREFIX.length(),
+            text.length() - COMMENT_DATE_SUFFIX.length());
+        entry.date = ParserUtils.parseCommentDate(text, 0);
+      }
+
+      // User
+      a = c3.children().first();
+      if (a != null) {
+        entry.user = ParserUtils.unescape(a.text());
+      }
+    }
+
+    // Score
+    Element c5 = c1.getElementsByClass("c5").first();
+    if (c5 != null) {
+      Element span = c5.children().first();
+      if (span != null) {
+        entry.score = ParserUtils.parseInt(span.text(), 0);
+      }
+    }
+
+    // Vote up and vote down
+    Element c4 = c1.getElementsByClass("c4").first();
+    if (c4 != null) {
+      Elements es = c4.children();
+      if (es.size() == 2) {
+        entry.votedUp = !TextUtils.isEmpty(StringUtils.trim(es.get(0).attr("style")));
+        entry.votedDown = !TextUtils.isEmpty(StringUtils.trim(es.get(1).attr("style")));
+      }
+    }
+
+    // Vote state
+    Element c7 = c1.getElementsByClass("c7").first();
+    if (c7 != null) {
+      entry.voteState = ParserUtils.unescape(c7.text());
+    }
+
+    return entry;
   }
 }

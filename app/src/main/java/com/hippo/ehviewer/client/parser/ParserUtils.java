@@ -34,11 +34,13 @@ public final class ParserUtils {
 
   private static final String IMPURITIES_INT = ",";
 
-  private static DateFormat DATE_FORMAT;
+  private final static DateFormat DATE_FORMAT;
+  private final static DateFormat DATE_FORMAT_COMMENT;
 
   static {
     DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
     DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    DATE_FORMAT_COMMENT = new SimpleDateFormat("dd MMMMM yyyy, HH:mm z", Locale.ENGLISH);
   }
 
   /**
@@ -103,12 +105,26 @@ public final class ParserUtils {
   /**
    * Parses string to time stamp.
    * Example: {@code "2017-01-30 05:19"}.
-   Return {@code defaultValue} if can't parse the string.
+   * Return {@code defaultValue} if can't parse the string.
    */
   public static long parseDate(@NonNull String str, long defaultValue) {
     str = unescape(str);
     try {
       return DATE_FORMAT.parse(str).getTime();
+    } catch (ParseException e) {
+      return defaultValue;
+    }
+  }
+
+  /**
+   * Parses string to time stamp.
+   * Example: {@code "16 May 2017, 02:28 UTC"}.
+   * Return {@code defaultValue} if can't parse the string.
+   */
+  public static long parseCommentDate(@NonNull String str, long defaultValue) {
+    str = unescape(str);
+    try {
+      return DATE_FORMAT_COMMENT.parse(str).getTime();
     } catch (ParseException e) {
       return defaultValue;
     }
