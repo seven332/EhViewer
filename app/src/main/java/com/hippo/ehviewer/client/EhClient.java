@@ -26,6 +26,7 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.param.GalleryMetadataParam;
 import com.hippo.ehviewer.client.result.FavouritesResult;
 import com.hippo.ehviewer.client.result.ForumsResult;
+import com.hippo.ehviewer.client.result.GalleryDetailResult;
 import com.hippo.ehviewer.client.result.GalleryListResult;
 import com.hippo.ehviewer.client.result.GalleryMetadataResult;
 import com.hippo.ehviewer.client.result.ProfileResult;
@@ -44,6 +45,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.Result;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Observable;
+
+// TODO Let EhClient generate url
 
 public final class EhClient {
 
@@ -272,6 +275,13 @@ public final class EhClient {
    */
   public Observable<Result<FavouritesResult>> getFavourites(String url, Map<String, String> query) {
     return engine.getFavourites(url, query);
+  }
+
+  /**
+   * Gets gallery detail.
+   */
+  public Observable<Result<GalleryDetailResult>> getGalleryDetail(String url) {
+    return engine.getGalleryDetail(url);
   }
 
   /**
