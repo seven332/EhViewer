@@ -34,19 +34,17 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import com.google.android.flexbox.FlexboxLayout;
 import com.hippo.android.animator.Animators;
 import com.hippo.android.animator.util.FloatProperty;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.yorozuya.MathUtils;
-import com.hippo.yorozuya.android.LayoutUtils;
-
-// TODO GridLayout can't layout child evenly, write a SimpleGridLayout
 
 /**
  * {@code CategoryTable} shows all categories as a table.
  */
-public class CategoryTable extends AutoGridLayout {
+public class CategoryTable extends FlexboxLayout {
 
   private static final int[] CATEGORY_ARRAY = {
       EhUtils.CATEGORY_DOUJINSHI,
@@ -77,12 +75,12 @@ public class CategoryTable extends AutoGridLayout {
   }
 
   private void init(Context context) {
+    setFlexWrap(FLEX_WRAP_WRAP);
+
     LayoutInflater inflater = LayoutInflater.from(context);
     for (int category : CATEGORY_ARRAY) {
       addCategoryView(inflater, category);
     }
-
-    setColumnSize(LayoutUtils.dp2pix(context, 160));
   }
 
   private void addCategoryView(LayoutInflater inflater, int category) {

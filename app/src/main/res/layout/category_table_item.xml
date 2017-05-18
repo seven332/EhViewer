@@ -19,12 +19,11 @@
   class="com.hippo.ehviewer.widget.CategoryTable$CategoryView"
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:layout_width="wrap_content"
+  android:layout_width="120dp"
   android:layout_height="wrap_content"
-  app:layout_columnWeight="1"
-  app:layout_gravity="fill_horizontal"
   android:minHeight="40dp"
   android:gravity="center"
   android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
   android:textStyle="bold"
-  android:textColor="@android:color/white"/>
+  android:textColor="@android:color/white"
+  app:layout_flexGrow="1"/>
