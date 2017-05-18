@@ -171,6 +171,9 @@ public final class EhClient {
     // Update remain
     remain = Math.min(ArrayUtils.getLength(gids), ArrayUtils.getLength(tokens));
 
+    // Ehentai only support 25 items per api.
+    // Api might be called more than once.
+    // The results should be merged.
     String url = EhUrl.getApiUrl(site);
     List<GalleryInfo> list = new ArrayList<>(remain);
     Observable<Result<GalleryMetadataResult>> observable;
@@ -191,6 +194,7 @@ public final class EhClient {
 
       merge = true;
 
+      // Merge previous result to a list, call api again
       final GalleryMetadataParam param = genGalleryMetadataParam(gids, tokens, read, single);
       observable = observable.flatMap(new EhFlatMapFunc<GalleryMetadataResult, GalleryMetadataResult>() {
         @Override
@@ -205,6 +209,7 @@ public final class EhClient {
     }
 
     if (merge) {
+      // Merge previous result, return the final result
       observable = observable.map(new EhMapFunc<GalleryMetadataResult, GalleryMetadataResult>() {
         @Override
         public Result<GalleryMetadataResult> onCall(GalleryMetadataResult result) {
