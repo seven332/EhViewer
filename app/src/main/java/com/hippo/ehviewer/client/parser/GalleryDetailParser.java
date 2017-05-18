@@ -86,7 +86,7 @@ public final class GalleryDetailParser {
 
     // Title
     parseTitle(document, info);
-    if (StringUtils.isEmpty(info.title) || StringUtils.isEmpty(info.titleJpn)) {
+    if (StringUtils.isEmpty(info.title) && StringUtils.isEmpty(info.titleJpn)) {
       throw new ParseException("Can't get title", body);
     }
 
