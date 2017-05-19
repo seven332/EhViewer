@@ -70,13 +70,19 @@ public final class GalleryInfoContainerMapping {
   private static final String COLUMN_DATE = "date";
   private static final String COLUMN_UPLOADER = "uploader";
   private static final String COLUMN_RATING = "rating";
+  private static final String COLUMN_RATED = "rated";
   private static final String COLUMN_LANGUAGE = "language";
+  private static final String COLUMN_FAVOURITED = "favourited";
   private static final String COLUMN_FAVOURITE_SLOT = "favourite_slot";
   private static final String COLUMN_INVALID = "invalid";
   private static final String COLUMN_PAGES = "pages";
   private static final String COLUMN_SIZE = "size";
   private static final String COLUMN_TORRENT_COUNT = "torrent_count";
   private static final String COLUMN_TAGS = "tags";
+  private static final String COLUMN_PARENT_GID = "parent_gid";
+  private static final String COLUMN_PARENT_TOKEN = "parent_token";
+  private static final String COLUMN_CHILD_GID = "child_gid";
+  private static final String COLUMN_CHILD_TOKEN = "child_token";
   @VisibleForTesting
   static final String COLUMN_REFERENCE = "reference";
 
@@ -95,14 +101,20 @@ public final class GalleryInfoContainerMapping {
         .insertColumn(TABLE_NAME, COLUMN_DATE, long.class)
         .insertColumn(TABLE_NAME, COLUMN_UPLOADER, String.class)
         .insertColumn(TABLE_NAME, COLUMN_RATING, float.class)
+        .insertColumn(TABLE_NAME, COLUMN_RATED, int.class)
         .insertColumn(TABLE_NAME, COLUMN_LANGUAGE, int.class)
+        .insertColumn(TABLE_NAME, COLUMN_FAVOURITED, int.class)
         .insertColumn(TABLE_NAME, COLUMN_FAVOURITE_SLOT, int.class)
         .insertColumn(TABLE_NAME, COLUMN_INVALID, boolean.class)
         .insertColumn(TABLE_NAME, COLUMN_PAGES, int.class)
         .insertColumn(TABLE_NAME, COLUMN_SIZE, long.class)
         .insertColumn(TABLE_NAME, COLUMN_TORRENT_COUNT, int.class)
         .insertColumn(TABLE_NAME, COLUMN_TAGS, String.class)
-        .insertColumn(TABLE_NAME, COLUMN_REFERENCE, int.class);
+        .insertColumn(TABLE_NAME, COLUMN_REFERENCE, int.class)
+        .insertColumn(TABLE_NAME, COLUMN_PARENT_GID, int.class)
+        .insertColumn(TABLE_NAME, COLUMN_PARENT_TOKEN, String.class)
+        .insertColumn(TABLE_NAME, COLUMN_CHILD_GID, int.class)
+        .insertColumn(TABLE_NAME, COLUMN_CHILD_TOKEN, String.class);
   }
 
   private static ContentValues mapGalleryInfoToContentValues(@NonNull Gson gson,
@@ -119,13 +131,19 @@ public final class GalleryInfoContainerMapping {
     contentValues.put(COLUMN_DATE, info.date);
     contentValues.put(COLUMN_UPLOADER, info.uploader);
     contentValues.put(COLUMN_RATING, info.rating);
+    contentValues.put(COLUMN_RATED, info.rated);
     contentValues.put(COLUMN_LANGUAGE, info.language);
+    contentValues.put(COLUMN_FAVOURITED, info.favourited);
     contentValues.put(COLUMN_FAVOURITE_SLOT, info.favouriteSlot);
     contentValues.put(COLUMN_INVALID, info.invalid);
     contentValues.put(COLUMN_PAGES, info.pages);
     contentValues.put(COLUMN_SIZE, info.size);
     contentValues.put(COLUMN_TORRENT_COUNT, info.torrentCount);
     contentValues.put(COLUMN_TAGS, gson.toJson(info.tagSet));
+    contentValues.put(COLUMN_PARENT_GID, info.parentGid);
+    contentValues.put(COLUMN_PARENT_TOKEN, info.parentToken);
+    contentValues.put(COLUMN_CHILD_GID, info.childGid);
+    contentValues.put(COLUMN_CHILD_TOKEN, info.childToken);
     contentValues.put(COLUMN_REFERENCE, reference);
     return contentValues;
   }
@@ -144,7 +162,9 @@ public final class GalleryInfoContainerMapping {
     info.date = DBUtils.getLong(cursor, COLUMN_DATE, 0);
     info.uploader = DBUtils.getString(cursor, COLUMN_UPLOADER, null);
     info.rating = DBUtils.getFloat(cursor, COLUMN_RATING, 0.0f);
+    info.rated = DBUtils.getInt(cursor, COLUMN_RATED, 0);
     info.language = DBUtils.getInt(cursor, COLUMN_LANGUAGE, EhUtils.LANG_UNKNOWN);
+    info.favourited = DBUtils.getInt(cursor, COLUMN_FAVOURITED, 0);
     info.favouriteSlot = DBUtils.getInt(cursor, COLUMN_FAVOURITE_SLOT, EhUtils.FAV_CAT_UNKNOWN);
     info.invalid = DBUtils.getBoolean(cursor, COLUMN_INVALID, false);
     info.pages = DBUtils.getInt(cursor, COLUMN_PAGES, 0);
@@ -155,6 +175,10 @@ public final class GalleryInfoContainerMapping {
     if (tags != null) {
       info.tagSet.set(gson.fromJson(tags, TagSet.class));
     }
+    info.parentGid = DBUtils.getInt(cursor, COLUMN_PARENT_GID, 0);
+    info.parentToken = DBUtils.getString(cursor, COLUMN_PARENT_TOKEN, null);
+    info.childGid = DBUtils.getInt(cursor, COLUMN_CHILD_GID, 0);
+    info.childToken = DBUtils.getString(cursor, COLUMN_CHILD_TOKEN, null);
     return info;
   }
 
