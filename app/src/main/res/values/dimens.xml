@@ -28,7 +28,7 @@
   <dimen name="text_small">14sp</dimen>
   <dimen name="text_super_small">12sp</dimen>
 
-  <dimen name="strip_shadow_size">8dp</dimen>
+  <dimen name="strip_shadow_size">4dp</dimen>
 
   <dimen name="divider_thickness">1dp</dimen>
 

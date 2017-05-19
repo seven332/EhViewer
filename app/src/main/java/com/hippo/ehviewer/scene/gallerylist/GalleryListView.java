@@ -27,18 +27,21 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.EhvPreferences;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.GLUrlBuilder;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.scene.gallerydetail.GalleryDetailScene;
 import com.hippo.ehviewer.scene.gallerysearch.GallerySearchScene;
 import com.hippo.ehviewer.view.GalleryInfoView;
 import com.hippo.ehviewer.widget.ContentLayout;
+import com.hippo.stage.Stage;
 import java.util.Locale;
 
 public class GalleryListView extends GalleryInfoView<GalleryListContract.Presenter, GalleryListScene>
-    implements GalleryListContract.View {
+    implements GalleryListContract.View, EasyRecyclerView.OnItemClickListener {
 
   private EhvPreferences preferences;
 
@@ -49,18 +52,7 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
     preferences = getEhvApp().getPreferences();
 
     ContentLayout layout = (ContentLayout) view;
-    layout.setOnItemLongClickListener((recyclerView, holder) -> {
-      int index = holder.getAdapterPosition();
-      if (index == RecyclerView.NO_POSITION) {
-        return false;
-      }
-      GalleryInfo info = getGalleryInfo(index);
-      if (info == null) {
-        return false;
-      }
-      // TODO getEhvActivity().showDialog(new GalleryListDialog(info));
-      return true;
-    });
+    layout.setOnItemClickListener(this);
 
     setMenu(R.menu.view_gallery_list, item -> {
       switch (item.getItemId()) {
@@ -85,6 +77,17 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
     updateMenu();
 
     return view;
+  }
+
+  @Override
+  public void onItemClick(EasyRecyclerView parent, RecyclerView.ViewHolder holder) {
+    int index = holder.getAdapterPosition();
+    if (index == RecyclerView.NO_POSITION) return;
+    GalleryInfo info = getGalleryInfo(index);
+    if (info == null) return;
+    Stage stage = getEhvScene().getStage();
+    if (stage == null) return;
+    stage.pushScene(GalleryDetailScene.create(info));
   }
 
   // If we update menu immediately, the text in pop dialog is changed immediately
@@ -136,7 +139,7 @@ public class GalleryListView extends GalleryInfoView<GalleryListContract.Present
   private String getTitleForGLUrlBuilder(GLUrlBuilder builder) {
     String keyword = builder.getKeyword();
     String category = EhUtils.getCategory(builder.getCategory());
-    String language = EhUtils.getLang(getEhvActivity(), builder.getLanguage());
+    String language = EhUtils.getLang(getContext(), builder.getLanguage());
     String tag = builder.getTagCount() == 1 ? builder.getFirstTag() : null;
 
     int flags = 0;

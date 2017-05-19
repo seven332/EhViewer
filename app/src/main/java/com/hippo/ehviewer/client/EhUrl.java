@@ -22,7 +22,7 @@ package com.hippo.ehviewer.client;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.StringDef;
-import android.util.Pair;
+import com.hippo.yorozuya.StringUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.regex.Matcher;
@@ -89,27 +89,6 @@ public final class EhUrl {
       return URL_EX;
     } else {
       return URL_E;
-    }
-  }
-
-  /**
-   * Parse gallery url to gid and token.
-   * {@code null} if can't parse it.
-   */
-  public static Pair<Long, String> getGidToken(String url) {
-    if (url == null) return null;
-    Matcher m = PATTERN_GID_TOKEN.matcher(url);
-    if (m.find()) {
-      long gid;
-      try {
-        gid = Long.parseLong(m.group(1));
-      } catch (NumberFormatException e) {
-        return null;
-      }
-      String token = m.group(2);
-      return new Pair<>(gid, token);
-    } else {
-      return null;
     }
   }
 
@@ -195,5 +174,13 @@ public final class EhUrl {
     } else {
       return URL_API_E;
     }
+  }
+
+  /**
+   * Returns the gallery detail url.
+   * Like: {@code https://exhentai.org/g/1064283/49faede5c5/}
+   */
+  public static String getGalleryDetailUrl(@Site int site, long gid, String token) {
+    return StringUtils.join(getSiteUrl(site), "/g/" + gid + "/" + token + "/", '/');
   }
 }

@@ -262,13 +262,13 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
    * The principle is if the field in the new {@code GalleryInfo} is valid, use it, otherwise
    * keep the old one.
    */
-  public void merge(GalleryInfo info) {
+  public boolean merge(GalleryInfo info) {
     if (info == null) {
-      return;
+      return false;
     }
     if (info.gid != gid || !ObjectUtils.equals(info.token, token)) {
       Log.w(LOG_TAG, "Can't merge different GalleryInfo");
-      return;
+      return false;
     }
 
     if (info.title != null) {
@@ -336,6 +336,8 @@ public class GalleryInfo implements JsonStore.Item, Parcelable {
       childGid = info.childGid;
       childToken = info.childToken;
     }
+
+    return true;
   }
 
   /**

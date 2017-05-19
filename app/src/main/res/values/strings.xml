@@ -136,5 +136,9 @@
 
   <string name="gallery_detail_download">Download</string>
   <string name="gallery_detail_read">Read</string>
+  <string name="gallery_detail_pages">%d pages</string>
+  <string name="gallery_detail_size">%sB</string>
+  <string name="gallery_detail_read_more">Read More</string>
+  <string name="gallery_detail_no_tags">No Tags</string>
 
 </resources>

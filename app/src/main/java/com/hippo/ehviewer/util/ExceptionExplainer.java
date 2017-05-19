@@ -23,6 +23,7 @@ package com.hippo.ehviewer.util;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.content.res.AppCompatResources;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.exception.GeneralException;
@@ -97,6 +98,7 @@ public final class ExceptionExplainer {
   /**
    * Explains the exception with a Drawable.
    */
+  @Nullable
   public static Drawable explainVividly(@NonNull Context context, Throwable e) {
     int drawableResId = 0;
     Drawable drawable = null;

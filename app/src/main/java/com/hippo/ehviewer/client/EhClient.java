@@ -280,8 +280,8 @@ public final class EhClient {
   /**
    * Gets gallery detail.
    */
-  public Observable<Result<GalleryDetailResult>> getGalleryDetail(String url) {
-    return engine.getGalleryDetail(url);
+  public Observable<Result<GalleryDetailResult>> getGalleryDetail(int site, long gid, String token) {
+    return engine.getGalleryDetail(EhUrl.getGalleryDetailUrl(site, gid, token));
   }
 
   /**

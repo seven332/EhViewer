@@ -90,6 +90,13 @@ public final class TagSet implements Iterable<Map.Entry<String, Set<String>>>, P
     return sum;
   }
 
+  /**
+   * Returns {@code true} if no tags.
+   */
+  public boolean isEmpty() {
+    return groups.isEmpty();
+  }
+
   @Override
   public Iterator<Map.Entry<String, Set<String>>> iterator() {
     return groups.entrySet().iterator();
