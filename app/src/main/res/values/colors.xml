@@ -17,10 +17,6 @@
 
 <resources>
 
-  <color name="colorPrimary">@color/teal_500</color>
-  <color name="colorPrimaryDark">@color/teal_700</color>
-  <color name="colorAccent">@color/purple_a200</color>
-
   <!-- shadow -->
   <!-- 22% black -->
   <color name="strip_shadow">#38000000</color>
