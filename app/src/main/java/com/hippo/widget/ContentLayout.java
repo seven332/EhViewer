@@ -35,6 +35,7 @@ import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
 import com.hippo.easyrecyclerview.LayoutManagerUtils;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.util.DrawableManager;
@@ -856,14 +857,24 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
+        private int mSavedDataId = IntIdGenerator.INVALID_ID;
+
         private Parcelable saveInstanceState(Parcelable superState) {
             Bundle bundle = new Bundle();
             bundle.putParcelable(KEY_SUPER, superState);
             int shownView = mViewTransition.getShownViewIndex();
             bundle.putInt(KEY_SHOWN_VIEW, shownView);
             bundle.putString(KEY_TIP, mTipView.getText().toString());
-            // TODO What if data is large
-            bundle.putParcelableArrayList(KEY_DATA, mData);
+
+            // TODO It's a bad design
+            EhApplication app = (EhApplication) getContext().getApplicationContext();
+            if (mSavedDataId != IntIdGenerator.INVALID_ID) {
+                app.removeGlobalStuff(mSavedDataId);
+                mSavedDataId = IntIdGenerator.INVALID_ID;
+            }
+            mSavedDataId = app.putGlobalStuff(mData);
+            bundle.putInt(KEY_DATA, mSavedDataId);
+
             bundle.putInt(KEY_NEXT_ID, mIdGenerator.nextId());
             bundle.putParcelable(KEY_PAGE_DIVIDER, mPageDivider);
             bundle.putInt(KEY_START_PAGE, mStartPage);
@@ -877,7 +888,17 @@ public class ContentLayout extends FrameLayout {
                 Bundle bundle = (Bundle) state;
                 mViewTransition.showView(bundle.getInt(KEY_SHOWN_VIEW), false);
                 mTipView.setText(bundle.getString(KEY_TIP));
-                mData = bundle.getParcelableArrayList(KEY_DATA);
+
+                mSavedDataId = bundle.getInt(KEY_DATA);
+                EhApplication app = (EhApplication) getContext().getApplicationContext();
+                if (mSavedDataId != IntIdGenerator.INVALID_ID) {
+                    ArrayList<E> data = (ArrayList<E>) app.removeGlobalStuff(mSavedDataId);
+                    mSavedDataId = IntIdGenerator.INVALID_ID;
+                    if (data != null) {
+                        mData = data;
+                    }
+                }
+
                 mIdGenerator.setNextId(bundle.getInt(KEY_NEXT_ID));
                 mPageDivider = bundle.getParcelable(KEY_PAGE_DIVIDER);
                 mStartPage = bundle.getInt(KEY_START_PAGE);
