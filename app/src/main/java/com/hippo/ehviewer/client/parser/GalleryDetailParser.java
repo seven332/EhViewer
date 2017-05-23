@@ -59,6 +59,7 @@ public class GalleryDetailParser {
     private static final Pattern PATTERN_DETAIL = Pattern.compile("var gid = (\\d+);.+?var token = \"([a-f0-9]+)\";.+?var apiuid = ([\\-\\d]+);.+?var apikey = \"([a-f0-9]+)\";", Pattern.DOTALL);
     private static final Pattern PATTERN_TORRENT = Pattern.compile("<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Torrent Download \\( (\\d+) \\)</a>");
     private static final Pattern PATTERN_ARCHIVE = Pattern.compile("<a[^<>]*onclick=\"return popUp\\('([^']+)'[^)]+\\)\">Archive Download</a>");
+    private static final Pattern PATTERN_COVER = Pattern.compile("width:(\\d+)px; height:(\\d+)px.+?url\\((.+?)\\)");
     private static final Pattern PATTERN_TAG_GROUP = Pattern.compile("<tr><td[^<>]+>([\\w\\s]+):</td><td>(?:<div[^<>]+><a[^<>]+>[\\w\\s]+</a></div>)+</td></tr>");
     private static final Pattern PATTERN_TAG = Pattern.compile("<div[^<>]+><a[^<>]+>([\\w\\s]+)</a></div>");
     private static final Pattern PATTERN_COMMENT = Pattern.compile("<div class=\"c3\">Posted on ([^<>]+) by: &nbsp; <a[^<>]+>([^<>]+)</a>.+?<div class=\"c6\"[^>]*>(.+?)</div><div class=\"c[78]\"");
@@ -140,7 +141,7 @@ public class GalleryDetailParser {
             // Thumb url
             Element gd1 = gm.getElementById("gd1");
             try {
-                gd.thumb = EhUtils.handleThumbUrlResolution(StringUtils.trim(gd1.child(0).attr("src")));
+                gd.thumb = parseCoverStyle(StringUtils.trim(gd1.child(0).attr("style")));
             } catch (Exception e) {
                 gd.thumb = "";
             }
@@ -228,6 +229,16 @@ public class GalleryDetailParser {
             gd.isFavorited = null != gdf && !StringUtils.trim(gdf.text()).equals("Add to Favorites");
         } catch (Exception e) {
             throw new ParseException("Can't parse gallery detail", body);
+        }
+    }
+
+    // width:250px; height:356px; background:transparent url(https://exhentai.org/t/fe/1f/fe1fcfa9bf8fba2f03982eda0aa347cc9d6a6372-145921-1050-1492-jpg_250.jpg) 0 0 no-repeat
+    private static String parseCoverStyle(String str) {
+        Matcher matcher = PATTERN_COVER.matcher(str);
+        if (matcher.find()) {
+            return EhUtils.handleThumbUrlResolution(matcher.group(3));
+        } else {
+            return "";
         }
     }
 
