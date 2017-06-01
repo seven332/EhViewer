@@ -54,8 +54,8 @@ import com.hippo.yorozuya.SimpleHandler;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cookie;
@@ -76,7 +76,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     private Thread.UncaughtExceptionHandler mDefaultHandler;
 
     private final IntIdGenerator mIdGenerator = new IntIdGenerator();
-    private final WeakHashMap<Integer, Object> mGlobalStuffMap = new WeakHashMap<>();
+    private final HashMap<Integer, Object> mGlobalStuffMap = new HashMap<>();
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
     private OkHttpClient mOkHttpClient;
