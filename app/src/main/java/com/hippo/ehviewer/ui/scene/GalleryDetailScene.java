@@ -103,6 +103,7 @@ import com.hippo.widget.ProgressView;
 import com.hippo.widget.SimpleGridAutoSpanLayout;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
+import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -250,7 +251,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @Nullable
     private GalleryDetail mGalleryDetail;
-    private int mRequestId;
+    private int mRequestId = IntIdGenerator.INVALID_ID;
 
     private Pair<String, String>[] mTorrentList;
 

@@ -42,6 +42,7 @@ import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
+import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.ViewUtils;
 
 import junit.framework.Assert;
@@ -79,7 +80,7 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
     private TextView mSkipSigningIn;
 
     private boolean mSigningIn;
-    private int mRequestId;
+    private int mRequestId = IntIdGenerator.INVALID_ID;
 
     @Override
     public boolean needShowLeftDrawer() {
