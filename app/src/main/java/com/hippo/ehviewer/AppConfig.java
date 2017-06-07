@@ -33,8 +33,7 @@ import java.io.OutputStream;
 public class AppConfig {
 
     private static final String APP_DIRNAME = "EhViewer";
-
-    private static final String DOWNLOAD = "download";
+    //    private static final String DOWNLOAD = "download";
     private static final String TEMP = "temp";
     private static final String IMAGE = "image";
     private static final String CRASH = "crash";
@@ -51,7 +50,8 @@ public class AppConfig {
     @Nullable
     public static File getExternalAppDir() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            File dir = new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
+//            File dir = new File(Environment.getExternalStorageDirectory(), APP_DIRNAME);
+            File dir = sContext.getExternalFilesDir("");
             return FileUtils.ensureDirectory(dir) ? dir : null;
         }
         return null;
@@ -82,12 +82,18 @@ public class AppConfig {
 
     @Nullable
     public static File getDefaultDownloadDir() {
-        return getDirInExternalAppDir(DOWNLOAD);
+//        return getDirInExternalAppDir(DOWNLOAD);
+        if (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) != null){
+            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),APP_DIRNAME);
+            return FileUtils.ensureDirectory(dir) ? dir : null;
+        }
+        return null;
     }
 
     @Nullable
     public static File getExternalTempDir() {
-        return getDirInExternalAppDir(TEMP);
+//        return getDirInExternalAppDir(TEMP);
+        return  sContext.getExternalCacheDir();
     }
 
     @Nullable
