@@ -92,11 +92,31 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="ipb_pass_hash"
-                        android:imeOptions="actionDone"
+                        android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
                         android:singleLine="true"
                         tools:ignore="HardcodedText"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/igneous_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:minWidth="@dimen/single_max_width">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/igneous"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="igneous"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        tools:ignore="HardcodedText" />
 
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>

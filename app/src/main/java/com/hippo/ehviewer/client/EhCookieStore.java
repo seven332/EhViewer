@@ -30,6 +30,7 @@ public class EhCookieStore extends CookieDBStore {
 
     public static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
     public static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
+    public static final String KEY_IGNEOUS = "igneous";
 
     public static final Cookie sTipsCookie =
             new Cookie.Builder()
@@ -128,7 +129,8 @@ public class EhCookieStore extends CookieDBStore {
             if (EhUrl.DOMAIN_E.equals(cookie.domain())) {
                 // Save id and hash for exhentai
                 if (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
-                        KEY_IPD_PASS_HASH.equals(cookie.name())) {
+                        KEY_IPD_PASS_HASH.equals(cookie.name()) ||
+                        KEY_IGNEOUS.equals(cookie.name())) {
                     result.add(newCookie(cookie, EhUrl.DOMAIN_E, true, true, true));
                     result.add(newCookie(cookie, EhUrl.DOMAIN_EX, true, true, true));
                     continue;
