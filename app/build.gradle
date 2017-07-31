@@ -1,0 +1,104 @@
+/*
+ * Copyright 2017 Hippo Seven
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "$build_tools_version"
+
+    defaultConfig {
+        applicationId "com.hippo.ehviewer"
+        minSdkVersion 14
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    // Support libraries
+    compile "com.android.support:appcompat-v7:$support_library_version"
+    compile "com.android.support:recyclerview-v7:$support_library_version"
+    compile "com.android.support:design:$support_library_version"
+
+    // RxJava
+    compile "io.reactivex.rxjava2:rxjava:2.1.2"
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
+
+    // OkHttp
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+
+    // Jsoup
+    compile 'org.jsoup:jsoup:1.10.3'
+
+    // Stage
+    compile "com.github.seven332.stage:stage:$stage_library_version"
+    compile "com.github.seven332.stage:stage-dialog:$stage_library_version"
+    compile 'com.github.seven332.android-dialog:base:0.1.0'
+
+    // ViewState
+    compile "com.github.seven332.viewstate:viewstate:$view_state_library_version"
+    kapt "com.github.seven332.viewstate:viewstate-compiler:$view_state_library_version"
+
+    // Fresco
+    compile "com.github.seven332.fresco:fresco:$fresco_library_version"
+    compile "com.github.seven332.fresco:fresco-large:$fresco_library_version"
+    compile "com.github.seven332.fresco:imagepipeline-okhttp3:$fresco_library_version"
+    compile "com.github.seven332.fresco:animated-gif:$fresco_library_version"
+
+    // Widgets
+    compile "com.github.seven332:drawerlayout:$drawer_layout_library_version"
+    compile "com.github.seven332:refreshlayout:$refresh_layout_library_version"
+    compile 'com.github.seven332:swipeback:0.1.3'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+
+    // LeakCanary
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+
+    testCompile 'junit:junit:4.12'
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile 'org.robolectric:robolectric:3.4'
+
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+}

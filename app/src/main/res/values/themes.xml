@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2017 Hippo Seven
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <item name="colorPrimary">@color/teal_500</item>
+    <item name="colorPrimaryDark">@color/teal_700</item>
+    <item name="colorAccent">@color/purple_a200</item>
+
+    <item name="colorControlHighlight">@color/ripple_light</item>
+
+    <item name="drawableColorPrimary">@color/primary_drawable_light</item>
+    <item name="drawableColorSecondary">@color/secondary_drawable_light</item>
+
+    <item name="backgroundColorStatusBar">@color/background_status_bar_light</item>
+    <item name="backgroundColorAppBar">@color/background_app_bar_light</item>
+    <item name="backgroundColorWindow">@color/background_window_light</item>
+    <item name="backgroundColorContent">@color/background_content_light</item>
+
+    <item name="dividerColor">@color/divider_light</item>
+
+    <item name="clickableBackground">@drawable/clickable_background_light</item>
+    <item name="clickableForeground">?attr/clickableBackground</item>
+
+    <item name="android:listDivider">@drawable/list_divider_light</item>
+  </style>
+
+  <style name="AppTheme.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+  </style>
+
+  <style name="AppTheme.Ehv" parent="AppTheme.NoActionBar"/>
+
+</resources>
