@@ -38,4 +38,28 @@
     <attr name="progress" format="integer"/>
   </declare-styleable>
 
+  <declare-styleable name="NoiView">
+    <attr name="placeholderDrawable" format="reference|color"/>
+    <attr name="failureDrawable" format="reference|color"/>
+    <attr name="placeholderScaleType" format="enum">
+      <enum name="none" value="0"/>
+      <enum name="fitCenter" value="1"/>
+      <enum name="centerCrop" value="2"/>
+    </attr>
+    <attr name="actualScaleType" format="enum">
+      <enum name="none" value="0"/>
+      <enum name="fitCenter" value="1"/>
+      <enum name="centerCrop" value="2"/>
+    </attr>
+    <attr name="failureScaleType" format="enum">
+      <enum name="none" value="0"/>
+      <enum name="fitCenter" value="1"/>
+      <enum name="centerCrop" value="2"/>
+    </attr>
+    <attr name="aspectRatio" format="float"/>
+    <attr name="enableProgress" format="boolean"/>
+    <attr name="drawable" format="reference|color"/>
+    <attr name="uri" format="string"/>
+  </declare-styleable>
+
 </resources>

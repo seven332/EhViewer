@@ -34,7 +34,7 @@ import kotlin.test.assertEquals
 class GalleryListParserTest {
 
   @Test
-  fun testCovertEHentai() {
+  fun testParseExHentai() {
     val source = Okio.source(javaClass.classLoader.getResourceAsStream("gallery_list_exhentai.html"))
     val bufferedSource = Okio.buffer(source)
     val body = bufferedSource.readUtf8()

@@ -19,6 +19,7 @@
 package com.hippo.ehviewer.client.parser
 
 import com.hippo.ehviewer.util.replaceEach
+import com.hippo.ehviewer.util.strip
 import org.jsoup.nodes.Element
 import java.text.DateFormat
 import java.text.ParseException
@@ -34,15 +35,19 @@ private val DATE_FORMAT: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Local
 
 fun String.integer(): Int? = dropWhile { it == ',' || Character.isSpaceChar(it) || Character.isWhitespace(it) }.toIntOrNull()
 
+fun String.float(): Float? = dropWhile { it == ',' || Character.isSpaceChar(it) || Character.isWhitespace(it) }.toFloat()
+
 fun String.unescape(): String = replaceEach(
     arrayOf("&amp;", "&lt;", "&gt;", "&quot;", "&#039;", "&times;", "&nbsp;"),
-    arrayOf("&", "<", ">", "\"", "'", "×", "\u00a0"))
+    arrayOf("&", "<", ">", "\"", "'", "×", "\u00a0")).strip()
 
 fun String.date(): Long = try { DATE_FORMAT.parse(this).time } catch (e: ParseException) { 0 }
 
 inline fun Element.elementById(id: String): Element? = getElementById(id)
 
 inline fun Element.elementByClass(className: String): Element? = getElementsByClass(className).first()
+
+inline fun Element.elementByTag(tagName: String): Element? = getElementsByTag(tagName).first()
 
 inline fun Element.firstChild(): Element? = children().first()
 
@@ -53,6 +58,8 @@ inline fun Element.lastChild(): Element? = children().last()
 inline fun Element.lastChild(index: Int): Element? = children().let { if (it.size > index) it[it.size - index - 1] else null }
 
 inline fun Element.integer(): Int? = text().integer()
+
+inline fun Element.float(): Float? = text().float()
 
 inline fun Element.unescape(): String = text().unescape()
 

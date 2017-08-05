@@ -17,13 +17,14 @@
 package com.hippo.ehviewer
 
 import android.app.Application
-import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory
 import com.hippo.ehviewer.client.AutoSwitchClient
 import com.hippo.ehviewer.client.AutoSwitchUrl
-import com.hippo.fresco.large.FrescoLarge
+import com.hippo.ehviewer.noi.Noi
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
+import okhttp3.Cache
 import okhttp3.OkHttpClient
+import java.io.File
 import kotlin.properties.Delegates
 
 /*
@@ -31,14 +32,22 @@ import kotlin.properties.Delegates
  */
 
 var REF_WATCHER: RefWatcher by Delegates.notNull<RefWatcher>()
+  private set
 
 var EHV_APP: EhvApp by Delegates.notNull<EhvApp>()
+  private set
 
 val EHV_PREFERENCES: EhvPreferences by lazy { EhvPreferences(EHV_APP) }
 
-val OK_HTTP_CLIENT: OkHttpClient by lazy { OkHttpClient.Builder().build() }
+val OK_HTTP_CLIENT: OkHttpClient by lazy {
+  OkHttpClient.Builder()
+      .cache(Cache(File(EHV_APP.cacheDir, "okhttp").apply { mkdirs() }, 50 * 1024 * 1024))
+      .build()
+}
 
-val EH_CLIENT: AutoSwitchClient by lazy { AutoSwitchClient(OK_HTTP_CLIENT, EHV_PREFERENCES.ehMode.observable) }
+val NOI: Noi by lazy { Noi(EHV_APP, client = OK_HTTP_CLIENT) }
+
+val EH_CLIENT: AutoSwitchClient by lazy { AutoSwitchClient(NOI, EHV_PREFERENCES.ehMode.observable) }
 
 val EH_URL: AutoSwitchUrl by lazy { AutoSwitchUrl(EHV_PREFERENCES.ehMode.observable) }
 
@@ -48,8 +57,5 @@ class EhvApp : Application() {
     EHV_APP = this
     super.onCreate()
     REF_WATCHER = LeakCanary.install(this)
-
-    val imagePipelineConfigBuilder = OkHttpImagePipelineConfigFactory.newBuilder(this, OK_HTTP_CLIENT)
-    FrescoLarge.initialize(this, null, null, imagePipelineConfigBuilder)
   }
 }

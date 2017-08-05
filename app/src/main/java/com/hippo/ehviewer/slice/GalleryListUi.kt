@@ -24,8 +24,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.hippo.ehviewer.EHV_PREFERENCES
 import com.hippo.ehviewer.R
-import com.hippo.ehviewer.adapter.AlertAdapter
-import com.hippo.ehviewer.adapter.AlertHolder
 import com.hippo.ehviewer.client.categoryColor
 import com.hippo.ehviewer.client.categoryStringNonNull
 import com.hippo.ehviewer.client.data.GalleryInfo
@@ -39,6 +37,7 @@ import com.hippo.ehviewer.util.prettyTime
 import com.hippo.ehviewer.util.string
 import com.hippo.ehviewer.widget.NumberRatingView
 import com.hippo.ehviewer.widget.SmallRatingView
+import com.hippo.ehviewer.widget.content.ContentDataAdapter
 import com.hippo.ehviewer.widget.content.ContentLayout
 import com.hippo.ehviewer.widget.ehv.EhvCover
 import com.hippo.ehviewer.widget.recyclerview.AutoGridLayoutManager
@@ -77,7 +76,7 @@ class GalleryListPaper(
   private val detailAdapter by lazy { GalleryDetailAdapter() }
   private val briefAdapter by lazy { GalleryBriefAdapter() }
   private var hasInitAdapter = false
-  private lateinit var adapter: AlertAdapter<GalleryInfo, *>
+  private lateinit var adapter: ContentDataAdapter<GalleryInfo, *>
 
   private val detailDecoration by lazy { DividerItemDecoration(context, DividerItemDecoration.VERTICAL) }
   private val briefDecoration by lazy { MarginItemDecoration(1.dp2pix(context)) }
@@ -107,7 +106,7 @@ class GalleryListPaper(
   }
 
   private fun setRecyclerViewStyle(
-      newAdapter: AlertAdapter<GalleryInfo, *>,
+      newAdapter: ContentDataAdapter<GalleryInfo, *>,
       newDecoration: RecyclerView.ItemDecoration,
       columnSize: Int,
       padding: Int
@@ -152,7 +151,7 @@ class GalleryListPaper(
     logic.showMessage(message)
   }
 
-  private inner class GalleryDetailHolder(itemView: View) : AlertHolder(itemView) {
+  private inner class GalleryDetailHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     val cover = itemView.find<EhvCover>(R.id.cover)
     val title = itemView.find<TextView>(R.id.title)
@@ -167,19 +166,9 @@ class GalleryListPaper(
     init {
       itemView.setOnClickListener { item?.let { logic.onClickGalleryInfo(it) } }
     }
-
-    override fun onResume() {
-      super.onResume()
-      cover.start()
-    }
-
-    override fun onPause() {
-      super.onPause()
-      cover.stop()
-    }
   }
 
-  private inner class GalleryDetailAdapter : AlertAdapter<GalleryInfo, GalleryDetailHolder>(lifecycle) {
+  private inner class GalleryDetailAdapter : ContentDataAdapter<GalleryInfo, GalleryDetailHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): GalleryDetailHolder =
         GalleryDetailHolder(inflater.inflate(R.layout.gallery_list_item_detail, parent, false))
@@ -187,7 +176,7 @@ class GalleryListPaper(
     override fun onBindViewHolder(holder: GalleryDetailHolder, position: Int) {
       val info = get(position)
 
-      holder.cover.load(info)
+      holder.cover.info = info
       holder.title.text = info.title
       holder.uploader.text = info.uploader
       holder.rating.rating = info.rating
@@ -195,12 +184,10 @@ class GalleryListPaper(
       holder.category.setBackgroundColor(info.category.categoryColor())
       holder.date.text = info.date.prettyTime(context)
       holder.language.text = info.language.langAbbr().let { if (it != 0) context.string(it) else null }
-
-      super.onBindViewHolder(holder, position)
     }
   }
 
-  private inner class GalleryBriefHolder(itemView: View) : AlertHolder(itemView) {
+  private inner class GalleryBriefHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     val cover = itemView.find<EhvCover>(R.id.cover)
     val category = itemView.find<View>(R.id.category)
@@ -212,19 +199,9 @@ class GalleryListPaper(
     init {
       itemView.setOnClickListener { item?.let { logic.onClickGalleryInfo(it) } }
     }
-
-    override fun onResume() {
-      super.onResume()
-      cover.start()
-    }
-
-    override fun onPause() {
-      super.onPause()
-      cover.stop()
-    }
   }
 
-  private inner class GalleryBriefAdapter : AlertAdapter<GalleryInfo, GalleryBriefHolder>(lifecycle) {
+  private inner class GalleryBriefAdapter : ContentDataAdapter<GalleryInfo, GalleryBriefHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): GalleryBriefHolder =
         GalleryBriefHolder(inflater.inflate(R.layout.gallery_list_item_brief, parent, false))
@@ -232,12 +209,10 @@ class GalleryListPaper(
     override fun onBindViewHolder(holder: GalleryBriefHolder, position: Int) {
       val info = get(position)
 
-      holder.cover.load(info)
+      holder.cover.info = info
       holder.category.setBackgroundColor(info.category.categoryColor() and 0xffffff or 0xa2000000.toInt())
       holder.rating.rating = info.rating
       holder.language.text = info.language.langAbbr().let { if (it != 0) context.string(it) else null }
-
-      super.onBindViewHolder(holder, position)
     }
   }
 }

@@ -27,7 +27,7 @@ import java.util.regex.Pattern
 private val PATTERN_THUMBNAIL = Pattern.compile("/([0-9a-f]{2})/([0-9a-f]{2})/([0-9a-f]{40}-\\d+-\\d+-\\d+-[0-9a-z]+)_([0-9a-zA-Z]+)\\.[0-9a-zA-Z]+")
 
 /**
- * Parses a cover url.
+ * Parses a cover url to fingerprint.
  *
  * Url:
  * ```

@@ -27,8 +27,9 @@
     android:id="@+id/cover"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:placeholderImage="?attr/backgroundColorStatusBar"
-    app:viewAspectRatio="0.67"/>
+    app:placeholderDrawable="?attr/backgroundColorStatusBar"
+    app:actualScaleType="centerCrop"
+    app:aspectRatio="0.67"/>
 
   <LinearLayout
     android:id="@+id/category"

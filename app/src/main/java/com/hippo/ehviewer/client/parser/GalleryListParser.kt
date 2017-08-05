@@ -96,7 +96,7 @@ private fun <T> parseItem(element: Element, creator: (GalleryInfo, Element) -> T
     if (cover != null) {
       info.coverUrl = cover.attr("src").unescape()
     } else {
-      info.coverUrl = it2.text().parseCoverUrlText()
+      info.coverUrl = it2.text().parseCoverText()
     }
 
     if (info.coverUrl != null) {
@@ -126,7 +126,7 @@ private fun <T> parseItem(element: Element, creator: (GalleryInfo, Element) -> T
 
 // Parses url from a string like:
 // inits~exhentai.org~t/53/a8/53a82a8deec79d3824ab413b4cf784d6df8589b2-1264635-1050-1540-png_l.jpg~(C91) [ガンバリマシン (Shino)] Pさん、今日も頑張ってくれませんか？ (アイドルマスター シンデレラガールズ)
-private fun String.parseCoverUrlText(): String? {
+private fun String.parseCoverText(): String? {
   val index1 = indexOf('~')
   if (index1 == -1) return null
   val index2 = indexOf('~', index1 + 1)

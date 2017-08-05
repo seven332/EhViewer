@@ -76,6 +76,7 @@ abstract class EhvPen<P : Any> : MvpPen<P>() {
       mutable.value?.let { disposableSet.delete(it) }
     }, {
       onError(it)
+      mutable.value?.let { disposableSet.delete(it) }
     })
     mutable.value = disposable
     disposableSet.add(disposable)

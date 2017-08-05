@@ -35,7 +35,7 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
@@ -65,6 +65,9 @@ dependencies {
     // OkHttp
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
 
+    // Modified okio
+    compile 'com.github.seven332.okio:okio:1.13.0'
+
     // Jsoup
     compile 'org.jsoup:jsoup:1.10.3'
 
@@ -76,12 +79,6 @@ dependencies {
     // ViewState
     compile "com.github.seven332.viewstate:viewstate:$view_state_library_version"
     kapt "com.github.seven332.viewstate:viewstate-compiler:$view_state_library_version"
-
-    // Fresco
-    compile "com.github.seven332.fresco:fresco:$fresco_library_version"
-    compile "com.github.seven332.fresco:fresco-large:$fresco_library_version"
-    compile "com.github.seven332.fresco:imagepipeline-okhttp3:$fresco_library_version"
-    compile "com.github.seven332.fresco:animated-gif:$fresco_library_version"
 
     // Widgets
     compile "com.github.seven332:drawerlayout:$drawer_layout_library_version"
@@ -101,4 +98,9 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+}
+
+configurations.all {
+    // Use modified okio instead
+    exclude group: 'com.squareup.okio', module: 'okio'
 }

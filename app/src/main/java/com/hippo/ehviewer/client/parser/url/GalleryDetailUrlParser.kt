@@ -25,11 +25,14 @@ import java.util.regex.Pattern
 private val URL_PATTERN = Pattern.compile("/g/(\\d+)/([0-9a-f]{10})")
 
 /**
- * Parses a gallery detail url. The url looks like:
+ * Parses a gallery detail url to gid and token.
+ *
+ * The url looks like:
  * ```
  * https://exhentai.org/g/1060346/03702a68a5/
  * ```
- * Returns a pair of gid and token, `null` if invalid.
+ *
+ * Returns `null` if invalid.
  */
 fun String.parseGalleryDetailUrl(): Pair<Long, String>? {
   val matcher = URL_PATTERN.matcher(this)

@@ -34,7 +34,6 @@ interface ToolbarLogic : MvpLogic<ToolbarUi> {
   fun onDoubleClick()
 }
 
-
 open class ToolbarPen(
     val state: ToolbarUiState = ToolbarUiState()
 ) : EhvPen<ToolbarUi>(), ToolbarLogic, ToolbarUi by state {

@@ -327,6 +327,16 @@ fun Int.langText(): String? {
   }
 }
 
+/**
+ * Returns value for the language.
+ * Returns [LANG_UNKNOWN] if invalid.
+ */
+fun String.lang(): Int {
+  val lowerCase = this.toLowerCase()
+  val index = LANG_TEXTS.indexOfFirst { it == lowerCase }
+  return if (index >= 0) index else LANG_UNKNOWN
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // Favourites
 ///////////////////////////////////////////////////////////////////////////

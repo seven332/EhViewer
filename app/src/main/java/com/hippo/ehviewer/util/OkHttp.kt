@@ -18,12 +18,6 @@ package com.hippo.ehviewer.util
 
 import com.hippo.ehviewer.network.SimpleResponseBody
 import io.reactivex.Single
-import io.reactivex.disposables.Disposables
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.Response
 import okio.Buffer
 import okio.Okio
@@ -36,72 +30,73 @@ import java.io.IOException
  * Created by Hippo on 2017/7/23.
  */
 
-fun Request.call(client: OkHttpClient): Call = client.newCall(this)
+/** Injects checker to check whether response body is fully read. **/
+fun Single<Response>.check(result: MutableBoolean): Single<Response> = map { response ->
+  val body = response.body()!!
+  val contentLength = body.contentLength()
 
-/**
- * Enqueue the call as a [Single].
- * <p>
- * The Single is scheduled by the [Dispatcher], don't call [Single.subscribeOn].
- * <p>
- * The Single should only be subscribed once.
- */
-fun Call.asSingle(): Single<Response> =
-    Single.create<Response> { emitter ->
-      emitter.setDisposable(Disposables.fromAction { cancel() })
-      enqueue(object : Callback {
-        override fun onResponse(call: Call?, response: Response) {
-          emitter.onSuccess(response)
+  if (contentLength != -1L) {
+    result.value = false
+    val source = body.source()
+    val checkSource = object : Source {
+      private var read: Long = 0L
+
+      override fun read(sink: Buffer, byteCount: Long): Long = source.read(sink, byteCount).also { single ->
+        if (single != -1L) {
+          read += single
         }
-        override fun onFailure(call: Call?, e: IOException) {
-          emitter.onError(e)
-        }
-      })
+        result.value = read == contentLength
+      }
+
+      override fun close() = source.close().also { result.value = read == contentLength }
+
+      override fun timeout(): Timeout = source.timeout()
     }
+    response.newBuilder()
+        .body(SimpleResponseBody(response.headers(), Okio.buffer(checkSource)))
+        .build()
+  } else {
+    // No content length, can't check it, always set true
+    result.value = true
+    response
+  }
+}
 
 interface RequestProgress {
 
   fun onUpdateProgress(single: Long, read: Long, total: Long)
 }
 
-/**
- * Injects a progress indicator to the response body.
- */
-fun Single<Response>.progress(progress: RequestProgress): Single<Response> =
-    map { response ->
-      val body = response.body()!!
-      val contentLength = body.contentLength()
+/** Injects a progress indicator to the response body. **/
+fun Single<Response>.progress(progress: (single: Long, read: Long, total: Long) -> Unit): Single<Response> = map { response ->
+  val body = response.body()!!
+  val contentLength = body.contentLength()
 
-      if (contentLength > 0) {
-        val source = body.source()
-        val progressSource = object : Source {
-          private var read: Long = 0L
+  if (contentLength > 0) {
+    val source = body.source()
+    val progressSource = object : Source {
+      private var read: Long = 0L
 
-          override fun read(sink: Buffer, byteCount: Long): Long {
-            val single = source.read(sink, byteCount)
-            if (single != -1L) {
-              read += single
-              progress.onUpdateProgress(single, read, contentLength)
-            }
-            return single
-          }
-
-          override fun timeout(): Timeout {
-            return source.timeout()
-          }
-
-          override fun close() {
-            source.close()
-          }
+      override fun read(sink: Buffer, byteCount: Long): Long = source.read(sink, byteCount).also { single ->
+        if (single != -1L) {
+          read += single
+          progress(single, read, contentLength)
         }
-
-        response.newBuilder()
-            .body(SimpleResponseBody(response.headers(), Okio.buffer(progressSource)))
-            .build()
-      } else {
-        // No valid content length, just return original response
-        response
       }
+
+      override fun close() = source.close()
+
+      override fun timeout(): Timeout = source.timeout()
     }
+
+    response.newBuilder()
+        .body(SimpleResponseBody(response.headers(), Okio.buffer(progressSource)))
+        .build()
+  } else {
+    // No valid content length, just return original response
+    response
+  }
+}
 
 interface ResponseCache {
 
@@ -115,53 +110,49 @@ interface ResponseCache {
  *
  * @param cache the cache to save response body
  */
-fun Single<Response>.cache(cache: ResponseCache): Single<Response> =
-    map { response ->
-      val source = response.body()!!.source()
-      val cacheBody = Okio.buffer(cache.body())
+fun Single<Response>.cache(cache: ResponseCache): Single<Response> = map { response ->
+  val source = response.body()!!.source()
+  val cacheBody = Okio.buffer(cache.body())
 
-      val cacheWritingSource = object : Source {
-        private var cacheClosed: Boolean = false
+  val cacheSource = object : Source {
+    private var cacheClosed: Boolean = false
 
-        override fun read(sink: Buffer, byteCount: Long): Long {
-          val bytesRead: Long
-          try {
-            bytesRead = source.read(sink, byteCount)
-          } catch (e: IOException) {
-            if (!cacheClosed) {
-              cacheClosed = true
-              cache.abort() // Failed to write a complete cache response.
-            }
-            throw e
-          }
-
-          if (bytesRead == -1L) {
-            if (!cacheClosed) {
-              cacheClosed = true
-              cacheBody.close() // The cache response is complete!
-            }
-            return -1L
-          }
-
-          sink.copyTo(cacheBody.buffer(), sink.size() - bytesRead, bytesRead)
-          cacheBody.emitCompleteSegments()
-          return bytesRead
+    override fun read(sink: Buffer, byteCount: Long): Long {
+      val bytesRead: Long
+      try {
+        bytesRead = source.read(sink, byteCount)
+      } catch (e: IOException) {
+        if (!cacheClosed) {
+          cacheClosed = true
+          cache.abort() // Failed to write a complete cache response.
         }
-
-        override fun timeout(): Timeout {
-          return source.timeout()
-        }
-
-        override fun close() {
-          if (!cacheClosed) {
-            cacheClosed = true
-            cache.abort()
-          }
-          source.close()
-        }
+        throw e
       }
 
-      response.newBuilder()
-          .body(SimpleResponseBody(response.headers(), Okio.buffer(cacheWritingSource)))
-          .build()
+      if (bytesRead == -1L) {
+        if (!cacheClosed) {
+          cacheClosed = true
+          cacheBody.close() // The cache response is complete!
+        }
+        return -1L
+      }
+
+      sink.copyTo(cacheBody.buffer(), sink.size() - bytesRead, bytesRead)
+      cacheBody.emitCompleteSegments()
+      return bytesRead
     }
+
+    override fun close() = source.close().also {
+      if (!cacheClosed) {
+        cacheClosed = true
+        cache.abort()
+      }
+    }
+
+    override fun timeout(): Timeout = source.timeout()
+  }
+
+  response.newBuilder()
+      .body(SimpleResponseBody(response.headers(), Okio.buffer(cacheSource)))
+      .build()
+}

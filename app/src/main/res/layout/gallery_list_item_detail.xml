@@ -27,8 +27,8 @@
     android:id="@+id/cover"
     android:layout_width="80dp"
     android:layout_height="120dp"
-    app:placeholderImage="?attr/backgroundColorStatusBar"
-    app:actualImageScaleType="fitCenter"/>
+    app:placeholderDrawable="?attr/backgroundColorStatusBar"
+    app:actualScaleType="fitCenter"/>
 
   <TextView
     android:id="@+id/title"

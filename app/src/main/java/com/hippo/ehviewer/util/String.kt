@@ -142,3 +142,30 @@ private fun String.replaceEach(searchList: Array<String>, replacementList: Array
   return replaceEach(searchList, replacementList, repeat, timeToLive - 1)
 }
 
+fun String.strip(): String {
+  if (isEmpty()) return this
+
+  val strLen = length
+
+  var start = 0
+  while (start != strLen) {
+    val ch = this[start]
+    if (Character.isSpaceChar(ch) || Character.isWhitespace(ch)) {
+      start++
+    } else {
+      break
+    }
+  }
+
+  var end = strLen
+  while (end != start) {
+    val ch = this[end - 1]
+    if (Character.isSpaceChar(ch) || Character.isWhitespace(ch)) {
+      end--
+    } else {
+      break
+    }
+  }
+
+  return substring(start, end)
+}
