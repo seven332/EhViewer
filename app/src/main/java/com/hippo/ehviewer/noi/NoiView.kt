@@ -94,6 +94,8 @@ open class NoiView : View {
 
   var enableProgress: Boolean = false
 
+  var enableFade: Boolean = true
+
   var uri: String? = null
     set(value) {
       if (field != value) {
@@ -143,6 +145,7 @@ open class NoiView : View {
     failureScaleType = typedArray.getInteger(R.styleable.NoiView_failureScaleType, 0).scaleType
     aspectRatio = typedArray.getFloat(R.styleable.NoiView_aspectRatio, 0.0f)
     enableProgress = typedArray.getBoolean(R.styleable.NoiView_enableProgress, false)
+    enableFade = typedArray.getBoolean(R.styleable.NoiView_enableFade, false)
     drawable = typedArray.getDrawable(context, R.styleable.NoiView_drawable)
     uri = typedArray.getString(R.styleable.NoiView_uri)
     typedArray.recycle()
@@ -176,7 +179,7 @@ open class NoiView : View {
     cancel()
 
     noiDrawable.actualDrawable = drawable
-    noiDrawable.showActual()
+    noiDrawable.showActual(false)
   }
 
   private fun load(uri: String) {
@@ -185,10 +188,10 @@ open class NoiView : View {
     val bitmap = NOI.bitmapCache[uri]
     if (bitmap != null) {
       noiDrawable.actualDrawable = BitmapDrawable(resources, bitmap)
-      noiDrawable.showActual()
+      noiDrawable.showActual(false)
     } else {
       startPlaceholder()
-      noiDrawable.showPlaceholder()
+      noiDrawable.showPlaceholder(false)
       download(uri)
     }
   }
@@ -223,10 +226,10 @@ open class NoiView : View {
         .register({ bitmap ->
           stopPlaceholder()
           noiDrawable.actualDrawable = BitmapDrawable(resources, bitmap)
-          noiDrawable.showActual()
+          noiDrawable.showActual(enableFade)
         }, {
           stopPlaceholder()
-          noiDrawable.showFailure()
+          noiDrawable.showFailure(enableFade)
         })
   }
 

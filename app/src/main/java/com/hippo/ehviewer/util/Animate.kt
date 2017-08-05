@@ -59,7 +59,12 @@ abstract class Animate {
   /**
    * Cancels the animation. If the animation isn't started, ignore it.
    */
-  fun cancel() { startTime = NO_ANIMATION }
+  fun cancel() {
+    if (startTime != NO_ANIMATION) {
+      startTime = NO_ANIMATION
+      onEnd()
+    }
+  }
 
   /**
    * Drives the animation. If the animation isn't started, ignore it.
@@ -85,14 +90,16 @@ abstract class Animate {
     onCalculate(interpolator?.getInterpolation(factor) ?: factor)
 
     if (end) {
+      onEnd()
       startTime = NO_ANIMATION
     }
 
     return startTime != NO_ANIMATION
   }
 
-  /**
-   * Called when calculated.
-   */
+  /** Called when calculated. **/
   protected abstract fun onCalculate(progress: Float)
+
+  /** Called when end **/
+  open fun onEnd() {}
 }

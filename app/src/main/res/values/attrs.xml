@@ -58,6 +58,7 @@
     </attr>
     <attr name="aspectRatio" format="float"/>
     <attr name="enableProgress" format="boolean"/>
+    <attr name="enableFade" format="boolean"/>
     <attr name="drawable" format="reference|color"/>
     <attr name="uri" format="string"/>
   </declare-styleable>

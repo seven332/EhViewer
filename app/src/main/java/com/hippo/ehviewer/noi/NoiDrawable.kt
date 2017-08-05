@@ -22,6 +22,11 @@ import android.graphics.Matrix
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.SystemClock
+import com.hippo.ehviewer.util.Animate
+import com.hippo.ehviewer.util.DURATION_IN
+import com.hippo.ehviewer.util.DURATION_OUT
+import com.hippo.ehviewer.util.clamp
 
 /*
  * Created by Hippo on 2017/8/4.
@@ -35,15 +40,15 @@ class NoiDrawable : Drawable(), Drawable.Callback {
 
   var placeholderDrawable: Drawable?
     get() = placeholder.drawable
-    set(value) = setDrawable(placeholder, value)
+    set(value) = setDrawable(placeholder, value?.mutate())
 
   var actualDrawable: Drawable?
     get() = actual.drawable
-    set(value) = setDrawable(actual, value)
+    set(value) = setDrawable(actual, value?.mutate())
 
   var failureDrawable: Drawable?
     get() = failure.drawable
-    set(value) = setDrawable(failure, value)
+    set(value) = setDrawable(failure, value?.mutate())
 
   var placeholderScaleType: ScaleType
     get() = placeholder.scaleType
@@ -93,25 +98,22 @@ class NoiDrawable : Drawable(), Drawable.Callback {
     }
   }
 
-  fun showPlaceholder() {
-    placeholder.visible = true
-    actual.visible = false
-    failure.visible = false
-    invalidateSelf()
+  fun showPlaceholder(animation: Boolean) {
+    placeholder.show(animation)
+    actual.hide(animation)
+    failure.hide(animation)
   }
 
-  fun showActual() {
-    placeholder.visible = false
-    actual.visible = true
-    failure.visible = false
-    invalidateSelf()
+  fun showActual(animation: Boolean) {
+    placeholder.hide(animation)
+    actual.show(animation)
+    failure.hide(animation)
   }
 
-  fun showFailure() {
-    placeholder.visible = false
-    actual.visible = false
-    failure.visible = true
-    invalidateSelf()
+  fun showFailure(animation: Boolean) {
+    placeholder.hide(animation)
+    actual.hide(animation)
+    failure.show(animation)
   }
 
   override fun onBoundsChange(bounds: Rect) {
@@ -123,9 +125,10 @@ class NoiDrawable : Drawable(), Drawable.Callback {
 
   override fun draw(canvas: Canvas) {
     if (bounds.isEmpty) return
-    placeholder.draw(canvas)
-    actual.draw(canvas)
-    failure.draw(canvas)
+    val now = SystemClock.elapsedRealtime()
+    placeholder.draw(canvas, now)
+    actual.draw(canvas, now)
+    failure.draw(canvas, now)
   }
 
   override fun setAlpha(alpha: Int) {}
@@ -156,6 +159,50 @@ class NoiDrawable : Drawable(), Drawable.Callback {
     var visible: Boolean = false
     var scaleType: ScaleType = ScaleType.NONE
     var matrix: Matrix = Matrix()
+    var showing: Boolean = false
+    val animate: Animate = object : Animate() {
+      override fun onCalculate(progress: Float) {
+        drawable?.alpha = ((if (showing) progress else (1.0f - progress)) * 255).toInt().clamp(0, 255)
+      }
+      override fun onEnd() {
+        drawable?.alpha = 255
+        visible = showing
+      }
+    }
+
+    fun show(animation: Boolean) {
+      if (!showing) {
+        animate.cancel()
+        showing = true
+        visible = true
+        if (animation) {
+          animate.duration = DURATION_IN
+          animate.start()
+        }
+        drawable?.invalidateSelf()
+      } else if (!animation) {
+        animate.cancel()
+        drawable?.invalidateSelf()
+      }
+    }
+
+    fun hide(animation: Boolean) {
+      if (showing) {
+        animate.cancel()
+        showing = false
+        if (animation) {
+          visible = true
+          animate.duration = DURATION_OUT
+          animate.start()
+        } else {
+          visible = false
+        }
+        drawable?.invalidateSelf()
+      } else if (!animation) {
+        animate.cancel()
+        drawable?.invalidateSelf()
+      }
+    }
 
     fun refreshMatrix(bounds: Rect) {
       val drawable = this.drawable
@@ -164,9 +211,15 @@ class NoiDrawable : Drawable(), Drawable.Callback {
       }
     }
 
-    fun draw(canvas: Canvas) {
+    fun draw(canvas: Canvas, now: Long) {
       val drawable = this.drawable
       if (!visible || drawable == null) return
+
+      if (animate.calculate(now)) {
+        drawable.invalidateSelf()
+      }
+
+      if (!visible) return
 
       val translate = scaleType != ScaleType.NONE
       var saved: Int = 0
