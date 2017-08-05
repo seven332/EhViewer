@@ -145,7 +145,7 @@ open class NoiView : View {
     failureScaleType = typedArray.getInteger(R.styleable.NoiView_failureScaleType, 0).scaleType
     aspectRatio = typedArray.getFloat(R.styleable.NoiView_aspectRatio, 0.0f)
     enableProgress = typedArray.getBoolean(R.styleable.NoiView_enableProgress, false)
-    enableFade = typedArray.getBoolean(R.styleable.NoiView_enableFade, false)
+    enableFade = typedArray.getBoolean(R.styleable.NoiView_enableFade, true)
     drawable = typedArray.getDrawable(context, R.styleable.NoiView_drawable)
     uri = typedArray.getString(R.styleable.NoiView_uri)
     typedArray.recycle()
