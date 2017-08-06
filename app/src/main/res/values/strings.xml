@@ -30,6 +30,14 @@
   <string name="error_tap_to_load">Tap to load</string>
   <string name="error_no_forum">No Forum</string>
   <string name="error_empty_body">Empty Body</string>
+  <string name="error_invalid_url">Invalid url</string>
+  <string name="error_timeout">Timeout</string>
+  <string name="error_unknown_host">Unknown host</string>
+  <string name="error_response_code">Bad response code: %d</string>
+  <string name="error_redirection">Too many redirections</string>
+  <string name="error_socket">Network error</string>
+  <string name="error_parse">Parse error</string>
+  <string name="error_sad_panda">Sad panda</string>
 
   <string name="language_japanese">Japanese</string>
   <string name="language_english">English</string>
