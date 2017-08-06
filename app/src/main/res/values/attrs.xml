@@ -43,18 +43,45 @@
     <attr name="failureDrawable" format="reference|color"/>
     <attr name="placeholderScaleType" format="enum">
       <enum name="none" value="0"/>
-      <enum name="fitCenter" value="1"/>
+      <enum name="centerInside" value="1"/>
       <enum name="centerCrop" value="2"/>
     </attr>
     <attr name="actualScaleType" format="enum">
       <enum name="none" value="0"/>
-      <enum name="fitCenter" value="1"/>
+      <enum name="centerInside" value="1"/>
       <enum name="centerCrop" value="2"/>
     </attr>
     <attr name="failureScaleType" format="enum">
       <enum name="none" value="0"/>
-      <enum name="fitCenter" value="1"/>
+      <enum name="centerInside" value="1"/>
       <enum name="centerCrop" value="2"/>
+    </attr>
+    <attr name="placeholderGravity">
+      <flag name="top" value="0x30"/>
+      <flag name="bottom" value="0x50"/>
+      <flag name="left" value="0x03"/>
+      <flag name="right" value="0x05"/>
+      <flag name="center_vertical" value="0x10"/>
+      <flag name="center_horizontal" value="0x01"/>
+      <flag name="center" value="0x11"/>
+    </attr>
+    <attr name="actualGravity">
+      <flag name="top" value="0x30"/>
+      <flag name="bottom" value="0x50"/>
+      <flag name="left" value="0x03"/>
+      <flag name="right" value="0x05"/>
+      <flag name="center_vertical" value="0x10"/>
+      <flag name="center_horizontal" value="0x01"/>
+      <flag name="center" value="0x11"/>
+    </attr>
+    <attr name="failureGravity">
+      <flag name="top" value="0x30"/>
+      <flag name="bottom" value="0x50"/>
+      <flag name="left" value="0x03"/>
+      <flag name="right" value="0x05"/>
+      <flag name="center_vertical" value="0x10"/>
+      <flag name="center_horizontal" value="0x01"/>
+      <flag name="center" value="0x11"/>
     </attr>
     <attr name="aspectRatio" format="float"/>
     <attr name="enableProgress" format="boolean"/>

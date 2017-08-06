@@ -23,6 +23,7 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
+import android.view.Gravity
 import com.hippo.ehviewer.util.Animate
 import com.hippo.ehviewer.util.DURATION_IN
 import com.hippo.ehviewer.util.DURATION_OUT
@@ -62,6 +63,18 @@ class NoiDrawable : Drawable(), Drawable.Callback {
     get() = failure.scaleType
     set(value) = setScaleType(failure, value)
 
+  var placeholderGravity: Int
+    get() = placeholder.gravity
+    set(value) = setGravity(placeholder, value)
+
+  var actualGravity: Int
+    get() = actual.gravity
+    set(value) = setGravity(actual, value)
+
+  var failureGravity: Int
+    get() = failure.gravity
+    set(value) = setGravity(failure, value)
+
   val isPlaceholderVisible: Boolean get() = placeholder.visible
 
   val isActualVisible: Boolean get() = actual.visible
@@ -87,6 +100,20 @@ class NoiDrawable : Drawable(), Drawable.Callback {
   private fun setScaleType(info: ChildInfo, scaleType: ScaleType) {
     if (info.scaleType != scaleType) {
       info.scaleType = scaleType
+
+      val bounds = this.bounds
+      if (!bounds.isEmpty) {
+        info.refreshMatrix(bounds)
+      }
+      if (info.visible) {
+        invalidateSelf()
+      }
+    }
+  }
+
+  private fun setGravity(info: ChildInfo, gravity: Int) {
+    if (info.gravity != gravity) {
+      info.gravity = gravity
 
       val bounds = this.bounds
       if (!bounds.isEmpty) {
@@ -158,6 +185,7 @@ class NoiDrawable : Drawable(), Drawable.Callback {
     var drawable: Drawable? = null
     var visible: Boolean = false
     var scaleType: ScaleType = ScaleType.NONE
+    var gravity: Int = Gravity.CENTER
     var matrix: Matrix = Matrix()
     var showing: Boolean = false
     val animate: Animate = object : Animate() {
@@ -207,7 +235,7 @@ class NoiDrawable : Drawable(), Drawable.Callback {
     fun refreshMatrix(bounds: Rect) {
       val drawable = this.drawable
       if (drawable != null) {
-        scaleType.refreshMatrix(drawable, bounds, matrix)
+        scaleType.refreshMatrix(drawable, bounds, matrix, gravity)
       }
     }
 

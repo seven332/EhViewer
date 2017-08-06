@@ -27,6 +27,7 @@ import android.os.Looper
 import android.os.Message
 import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import com.hippo.ehviewer.R
 import com.hippo.ehviewer.util.MAX_LEVEL
@@ -84,6 +85,18 @@ open class NoiView : View {
     get() = noiDrawable.failureScaleType
     set(value) { noiDrawable.failureScaleType = value }
 
+  var placeholderGravity: Int
+    get() = noiDrawable.placeholderGravity
+    set(value) { noiDrawable.placeholderGravity = value }
+
+  var actualGravity: Int
+    get() = noiDrawable.actualGravity
+    set(value) { noiDrawable.actualGravity = value }
+
+  var failureGravity: Int
+    get() = noiDrawable.failureGravity
+    set(value) { noiDrawable.failureGravity = value }
+
   var aspectRatio: Float = 0.0f
     set(value) {
       if (field != value) {
@@ -140,9 +153,12 @@ open class NoiView : View {
     val typedArray = context.obtainStyledAttributes(attrs, R.styleable.NoiView)
     placeholderDrawable = typedArray.getDrawable(context, R.styleable.NoiView_placeholderDrawable)
     failureDrawable = typedArray.getDrawable(context, R.styleable.NoiView_failureDrawable)
-    placeholderScaleType = typedArray.getInteger(R.styleable.NoiView_placeholderScaleType, 0).scaleType
-    actualScaleType = typedArray.getInteger(R.styleable.NoiView_actualScaleType, 0).scaleType
-    failureScaleType = typedArray.getInteger(R.styleable.NoiView_failureScaleType, 0).scaleType
+    placeholderScaleType = typedArray.getInt(R.styleable.NoiView_placeholderScaleType, 0).scaleType
+    actualScaleType = typedArray.getInt(R.styleable.NoiView_actualScaleType, 0).scaleType
+    failureScaleType = typedArray.getInt(R.styleable.NoiView_failureScaleType, 0).scaleType
+    placeholderGravity = typedArray.getInt(R.styleable.NoiView_placeholderGravity, Gravity.CENTER)
+    actualGravity = typedArray.getInt(R.styleable.NoiView_actualGravity, Gravity.CENTER)
+    failureGravity = typedArray.getInt(R.styleable.NoiView_failureGravity, Gravity.CENTER)
     aspectRatio = typedArray.getFloat(R.styleable.NoiView_aspectRatio, 0.0f)
     enableProgress = typedArray.getBoolean(R.styleable.NoiView_enableProgress, false)
     enableFade = typedArray.getBoolean(R.styleable.NoiView_enableFade, true)
@@ -152,7 +168,7 @@ open class NoiView : View {
   }
 
   private val Int.scaleType get() = when (this) {
-    1 -> ScaleType.FIT_CENTER
+    1 -> ScaleType.CENTER_INSIDE
     2 -> ScaleType.CENTER_CROP
     else -> ScaleType.NONE
   }

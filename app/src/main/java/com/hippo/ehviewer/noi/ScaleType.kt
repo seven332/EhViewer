@@ -19,6 +19,7 @@ package com.hippo.ehviewer.noi
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.view.Gravity
 
 /*
  * Created by Hippo on 2017/8/4.
@@ -27,13 +28,13 @@ import android.graphics.drawable.Drawable
 enum class ScaleType {
 
   NONE {
-    override fun doRefreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix) {
+    override fun doRefreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix, gravity: Int) {
       drawable.bounds.set(bounds)
     }
   },
 
-  FIT_CENTER {
-    override fun doRefreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix) {
+  CENTER_INSIDE {
+    override fun doRefreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix, gravity: Int) {
       drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
 
       val drawableRatio = drawable.intrinsicWidth.toFloat() / drawable.intrinsicHeight.toFloat()
@@ -45,10 +46,18 @@ enum class ScaleType {
       if (drawableRatio > boundsRatio) {
         scale = bounds.width().toFloat() / drawable.intrinsicWidth.toFloat()
         dx = 0.0f
-        dy = (bounds.height() - (bounds.width() / drawableRatio)) / 2
+        dy = when (gravity and Gravity.VERTICAL_GRAVITY_MASK) {
+          Gravity.TOP -> 0.0f
+          Gravity.BOTTOM -> bounds.height() - (bounds.width() / drawableRatio)
+          else -> (bounds.height() - (bounds.width() / drawableRatio)) / 2
+        }
       } else {
         scale = bounds.height().toFloat() / drawable.intrinsicHeight.toFloat()
-        dx = (bounds.width() - (bounds.height() * drawableRatio)) / 2
+        dx = when (gravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
+          Gravity.LEFT -> 0.0f
+          Gravity.RIGHT -> bounds.width() - (bounds.height() * drawableRatio)
+          else -> (bounds.width() - (bounds.height() * drawableRatio)) / 2
+        }
         dy = 0.0f
       }
 
@@ -59,7 +68,7 @@ enum class ScaleType {
   },
 
   CENTER_CROP {
-    override fun doRefreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix) {
+    override fun doRefreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix, gravity: Int) {
       drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
 
       val drawableRatio = drawable.intrinsicWidth.toFloat() / drawable.intrinsicHeight.toFloat()
@@ -70,12 +79,20 @@ enum class ScaleType {
       val dy: Float
       if (drawableRatio > boundsRatio) {
         scale = bounds.height().toFloat() / drawable.intrinsicHeight.toFloat()
-        dx = (bounds.width() - (bounds.height() * drawableRatio)) / 2
+        dx = when (gravity and Gravity.HORIZONTAL_GRAVITY_MASK) {
+          Gravity.LEFT -> 0.0f
+          Gravity.RIGHT -> bounds.width() - (bounds.height() * drawableRatio)
+          else -> (bounds.width() - (bounds.height() * drawableRatio)) / 2
+        }
         dy = 0.0f
       } else {
         scale = bounds.width().toFloat() / drawable.intrinsicWidth.toFloat()
         dx = 0.0f
-        dy = (bounds.height() - (bounds.width() / drawableRatio)) / 2
+        dy = when (gravity and Gravity.VERTICAL_GRAVITY_MASK) {
+          Gravity.TOP -> 0.0f
+          Gravity.BOTTOM -> bounds.height() - (bounds.width() / drawableRatio)
+          else -> (bounds.height() - (bounds.width() / drawableRatio)) / 2
+        }
       }
 
       matrix.reset()
@@ -84,7 +101,7 @@ enum class ScaleType {
     }
   };
 
-  fun refreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix) {
+  fun refreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix, gravity: Int) {
     val width = drawable.intrinsicWidth
     val height = drawable.intrinsicHeight
 
@@ -109,9 +126,9 @@ enum class ScaleType {
       matrix.postScale(scale, scale)
 
     } else {
-      doRefreshMatrix(drawable, bounds, matrix)
+      doRefreshMatrix(drawable, bounds, matrix, gravity)
     }
   }
 
-  abstract fun doRefreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix)
+  abstract fun doRefreshMatrix(drawable: Drawable, bounds: Rect, matrix: Matrix, gravity: Int)
 }
