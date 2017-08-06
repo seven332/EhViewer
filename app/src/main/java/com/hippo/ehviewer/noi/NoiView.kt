@@ -284,7 +284,7 @@ open class NoiView : View {
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
 
-    if (uri != null && drawable != null) {
+    if (uri != null || drawable != null) {
       cancel()
     }
   }
