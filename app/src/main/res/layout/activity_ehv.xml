@@ -21,7 +21,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <com.hippo.stage.StageLayout
+  <com.hippo.ehviewer.widget.ehv.EhvStageLayout
     android:id="@+id/stage_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
