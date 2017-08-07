@@ -17,142 +17,20 @@
 package com.hippo.ehviewer.noi
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.drawable.Animatable
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
 import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import com.hippo.ehviewer.R
-import com.hippo.ehviewer.util.MAX_LEVEL
-import com.hippo.ehviewer.util.MutableAny
-import com.hippo.ehviewer.util.MutableBoolean
-import com.hippo.ehviewer.util.check
 import com.hippo.ehviewer.util.getDrawable
-import com.hippo.ehviewer.util.progress
-import com.hippo.unifile.UniFile
-import io.reactivex.Single
-import io.reactivex.SingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
-import io.reactivex.schedulers.Schedulers
-import java.io.IOException
-import java.io.InputStream
 
 /*
- * Created by Hippo on 2017/7/28.
+ * Created by Hippo on 2017/8/7.
  */
 
 open class NoiView : View {
-
-  companion object {
-    private val NOI: Noi = com.hippo.ehviewer.NOI
-
-    private val HANDLE: Handler = object : Handler(Looper.getMainLooper()) {
-      override fun handleMessage(msg: Message) {
-        val obj = msg.obj
-        if (obj is NoiDrawable && obj.isPlaceholderVisible) {
-          obj.placeholderDrawable?.level = msg.what
-        }
-      }
-    }
-  }
-
-  private val noiDrawable: NoiDrawable = NoiDrawable().also { it.callback = this }
-
-  private var disposable: Disposable? = null
-
-  var placeholderDrawable: Drawable?
-    get() = noiDrawable.placeholderDrawable
-    set(value) { noiDrawable.placeholderDrawable = value }
-
-  val actualDrawable: Drawable? get() = noiDrawable.actualDrawable
-
-  var failureDrawable: Drawable?
-    get() = noiDrawable.failureDrawable
-    set(value) { noiDrawable.failureDrawable = value }
-
-  var placeholderScaleType: ScaleType
-    get() = noiDrawable.placeholderScaleType
-    set(value) { noiDrawable.placeholderScaleType = value }
-
-  var actualScaleType: ScaleType
-    get() = noiDrawable.actualScaleType
-    set(value) { noiDrawable.actualScaleType = value }
-
-  var failureScaleType: ScaleType
-    get() = noiDrawable.failureScaleType
-    set(value) { noiDrawable.failureScaleType = value }
-
-  var placeholderGravity: Int
-    get() = noiDrawable.placeholderGravity
-    set(value) { noiDrawable.placeholderGravity = value }
-
-  var actualGravity: Int
-    get() = noiDrawable.actualGravity
-    set(value) { noiDrawable.actualGravity = value }
-
-  var failureGravity: Int
-    get() = noiDrawable.failureGravity
-    set(value) { noiDrawable.failureGravity = value }
-
-  var aspectRatio: Float = 0.0f
-    set(value) {
-      if (field != value) {
-        field = value
-        requestLayout()
-      }
-    }
-
-  var enableProgress: Boolean = false
-
-  var enableFade: Boolean = true
-
-  var uri: String? = null
-    set(value) {
-      if (field != value) {
-        field = value
-
-        if (value != null) {
-          drawable = null
-        }
-
-        if (ViewCompat.isAttachedToWindow(this)) {
-          if (value != null) {
-            load(value)
-          } else {
-            cancel()
-          }
-        }
-      }
-    }
-
-  var drawable: Drawable? = null
-    set(value) {
-      if (field != value) {
-        field = value
-
-        if (value != null) {
-          uri = null
-        }
-
-        if (ViewCompat.isAttachedToWindow(this)) {
-          if (value != null) {
-            load(value)
-          } else {
-            cancel()
-          }
-        }
-      }
-    }
 
   constructor(context: Context): super(context)
 
@@ -174,6 +52,97 @@ open class NoiView : View {
     typedArray.recycle()
   }
 
+  private val task = NoiTask(context, BitmapDrawableResolver(context.resources))
+      .also { it.noiDrawable.callback = this }
+
+  var placeholderDrawable: Drawable?
+    get() = task.noiDrawable.placeholderDrawable
+    set(value) { task.noiDrawable.placeholderDrawable = value }
+
+  val actualDrawable: Drawable? get() = task.noiDrawable.actualDrawable
+
+  var failureDrawable: Drawable?
+    get() = task.noiDrawable.failureDrawable
+    set(value) { task.noiDrawable.failureDrawable = value }
+
+  var placeholderScaleType: ScaleType
+    get() = task.noiDrawable.placeholderScaleType
+    set(value) { task.noiDrawable.placeholderScaleType = value }
+
+  var actualScaleType: ScaleType
+    get() = task.noiDrawable.actualScaleType
+    set(value) { task.noiDrawable.actualScaleType = value }
+
+  var failureScaleType: ScaleType
+    get() = task.noiDrawable.failureScaleType
+    set(value) { task.noiDrawable.failureScaleType = value }
+
+  var placeholderGravity: Int
+    get() = task.noiDrawable.placeholderGravity
+    set(value) { task.noiDrawable.placeholderGravity = value }
+
+  var actualGravity: Int
+    get() = task.noiDrawable.actualGravity
+    set(value) { task.noiDrawable.actualGravity = value }
+
+  var failureGravity: Int
+    get() = task.noiDrawable.failureGravity
+    set(value) { task.noiDrawable.failureGravity = value }
+
+  var aspectRatio: Float = 0.0f
+    set(value) {
+      if (field != value) {
+        field = value
+        requestLayout()
+      }
+    }
+
+  var enableProgress: Boolean
+    get() = task.enableProgress
+    set(value) { task.enableProgress = value }
+
+  var enableFade: Boolean
+    get() = task.enableFade
+    set(value) { task.enableFade = value }
+
+  var uri: String? = null
+    set(value) {
+      if (field != value) {
+        field = value
+
+        if (value != null) {
+          drawable = null
+        }
+
+        if (ViewCompat.isAttachedToWindow(this)) {
+          if (value != null) {
+            task.load(value)
+          } else {
+            task.cancel()
+          }
+        }
+      }
+    }
+
+  var drawable: Drawable? = null
+    set(value) {
+      if (field != value) {
+        field = value
+
+        if (value != null) {
+          uri = null
+        }
+
+        if (ViewCompat.isAttachedToWindow(this)) {
+          if (value != null) {
+            task.load(value)
+          } else {
+            task.cancel()
+          }
+        }
+      }
+    }
+
   private val Int.scaleType get() = when (this) {
     1 -> ScaleType.CENTER_INSIDE
     2 -> ScaleType.CENTER_CROP
@@ -181,169 +150,7 @@ open class NoiView : View {
   }
 
   override fun verifyDrawable(who: Drawable?): Boolean {
-    return who == noiDrawable || super.verifyDrawable(who)
-  }
-
-  private fun startPlaceholder() {
-    val placeholder = noiDrawable.placeholderDrawable
-    if (placeholder is Animatable) {
-      placeholder.start()
-    }
-  }
-
-  private fun stopPlaceholder() {
-    val placeholder = noiDrawable.placeholderDrawable
-    if (placeholder is Animatable) {
-      placeholder.stop()
-    }
-  }
-
-  private fun load(drawable: Drawable) {
-    cancel()
-
-    noiDrawable.actualDrawable = drawable
-    noiDrawable.showActual(false)
-  }
-
-  private fun load(uri: String) {
-    cancel()
-
-    val drawable = getDrawable(uri)
-    if (drawable != null) {
-      noiDrawable.actualDrawable = drawable
-      noiDrawable.showActual(false)
-    } else {
-      startPlaceholder()
-      noiDrawable.showPlaceholder(false)
-      download(uri)
-    }
-  }
-
-  private fun http(uri: String, checker: RealChecker): Single<InputStream> {
-    var obj = NOI.http(uri)
-        .concurrentDuplicateUrl(false)
-        .asResponse()
-        .check(checker.httpChecker)
-
-    if (enableProgress) {
-      obj = obj.progress { _, read, total ->
-        val level = (read * MAX_LEVEL / total).toInt()
-        HANDLE.sendMessage(HANDLE.obtainMessage(level, noiDrawable))
-      }
-    }
-
-    return obj.map { it.body()!!.byteStream() }
-  }
-
-  private fun file(uri: String, checker: RealChecker): Single<InputStream> {
-    // It's not http, always set http checker to true
-    checker.httpChecker.value = true
-
-    val obj = object : Single<InputStream>() {
-      override fun subscribeActual(observer: SingleObserver<in InputStream>) {
-        observer.onSubscribe(Disposables.empty())
-        observer.onSuccess(UniFile.fromUri(context, Uri.parse(uri)).openInputStream())
-      }
-    }
-    return obj.subscribeOn(Schedulers.io())
-  }
-
-  private fun isHttp(uri: String): Boolean = uri.startsWith("http://") || uri.startsWith("https://")
-
-  private fun download(uri: String) {
-    val checker = RealChecker()
-    val drawableHolder = MutableAny<Drawable>(null)
-
-    (if (isHttp(uri)) http(uri, checker) else file(uri, checker))
-        .map { stream ->
-          val drawable = stream.use { decodeDrawable(uri, it, checker) }
-          var valid: Boolean = false
-          synchronized(checker) {
-            valid = checker.valid
-            if (valid) {
-              drawableHolder.value = drawable
-            }
-          }
-          if (!valid) {
-            recycleDrawable(drawable)
-            throw IOException("Disposed")
-          } else {
-            drawable
-          }
-        }
-        .doOnDispose {
-          var drawable: Drawable? = null
-          synchronized(checker) {
-            checker.failed()
-            drawable = drawableHolder.value
-            drawableHolder.value = null
-          }
-          drawable?.let { recycleDrawable(it) }
-        }
-        .observeOn(AndroidSchedulers.mainThread())
-        .register({ drawable ->
-          stopPlaceholder()
-          noiDrawable.actualDrawable = drawable
-          noiDrawable.showActual(enableFade)
-        }, {
-          stopPlaceholder()
-          noiDrawable.showFailure(enableFade)
-        })
-  }
-
-  /**
-   * Gets drawable for this uri.
-   *
-   * It's called in UI thread.
-   */
-  open fun getDrawable(uri: String): Drawable? =
-      NOI.bitmapCache[uri]?.let { BitmapDrawable(resources, it) }
-
-  /**
-   * Decodes stream to get drawable.
-   *
-   * It's called in IO thread.
-   */
-  @Throws(Throwable::class)
-  open fun decodeDrawable(uri: String, stream: InputStream, checker: Checker): Drawable {
-    val bitmap = BitmapFactory.decodeStream(stream)
-    if (bitmap == null) {
-      throw IOException("Fail to decode stream")
-    } else if (!checker.valid) {
-      bitmap.recycle()
-      throw IOException("Response body isn't fully read.")
-    } else {
-      NOI.bitmapCache[uri] = bitmap
-      return BitmapDrawable(resources, bitmap)
-    }
-  }
-
-  /** Recycler Drawable **/
-  open fun recycleDrawable(drawable: Drawable) {}
-
-  private fun cancel() {
-    disposable?.run { dispose() }
-    disposable = null
-    stopPlaceholder()
-
-    val oldDrawable = noiDrawable.actualDrawable
-    if (oldDrawable != null) {
-      recycleDrawable(oldDrawable)
-      noiDrawable.actualDrawable = null
-    }
-  }
-
-  private fun <T> Single<T>.register(
-      onSuccess: (T) -> Unit,
-      onError: (Throwable) -> Unit
-  ) {
-    disposable = subscribe({
-      onSuccess(it)
-      disposable = null
-    }, {
-      onError(it)
-      disposable = null
-    })
+    return who == task.noiDrawable || super.verifyDrawable(who)
   }
 
   override fun onAttachedToWindow() {
@@ -352,9 +159,9 @@ open class NoiView : View {
     val url = this.uri
     val drawable = this.drawable
     if (url != null) {
-      load(url)
+      task.load(url)
     } else if (drawable != null) {
-      load(drawable)
+      task.load(drawable)
     }
   }
 
@@ -362,12 +169,12 @@ open class NoiView : View {
     super.onDetachedFromWindow()
 
     if (uri != null || drawable != null) {
-      cancel()
+      task.cancel()
     }
   }
 
   override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-    noiDrawable.setBounds(0, 0, w, h)
+    task.noiDrawable.setBounds(0, 0, w, h)
   }
 
   override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -399,22 +206,6 @@ open class NoiView : View {
   }
 
   override fun onDraw(canvas: Canvas) {
-    noiDrawable.draw(canvas)
-  }
-
-  interface Checker {
-    val valid: Boolean
-  }
-
-  private class RealChecker : Checker {
-    val httpChecker = MutableBoolean(false)
-
-    private var failed = false
-
-    fun failed() {
-      failed = true
-    }
-
-    override val valid: Boolean get() = !failed && httpChecker.value
+    task.noiDrawable.draw(canvas)
   }
 }
