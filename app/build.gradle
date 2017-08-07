@@ -68,6 +68,9 @@ dependencies {
     // Modified okio
     compile 'com.github.seven332.okio:okio:1.13.0'
 
+    // UniFile
+    compile 'com.github.seven332:unifile:1.0.0'
+
     // Jsoup
     compile 'org.jsoup:jsoup:1.10.3'
 

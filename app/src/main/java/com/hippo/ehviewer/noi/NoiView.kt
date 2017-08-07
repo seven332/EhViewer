@@ -22,6 +22,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -31,14 +32,20 @@ import android.view.Gravity
 import android.view.View
 import com.hippo.ehviewer.R
 import com.hippo.ehviewer.util.MAX_LEVEL
+import com.hippo.ehviewer.util.MutableAny
 import com.hippo.ehviewer.util.MutableBoolean
 import com.hippo.ehviewer.util.check
 import com.hippo.ehviewer.util.getDrawable
 import com.hippo.ehviewer.util.progress
+import com.hippo.unifile.UniFile
 import io.reactivex.Single
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
+import io.reactivex.schedulers.Schedulers
 import java.io.IOException
+import java.io.InputStream
 
 /*
  * Created by Hippo on 2017/7/28.
@@ -201,9 +208,9 @@ open class NoiView : View {
   private fun load(uri: String) {
     cancel()
 
-    val bitmap = NOI.bitmapCache[uri]
-    if (bitmap != null) {
-      noiDrawable.actualDrawable = BitmapDrawable(resources, bitmap)
+    val drawable = getDrawable(uri)
+    if (drawable != null) {
+      noiDrawable.actualDrawable = drawable
       noiDrawable.showActual(false)
     } else {
       startPlaceholder()
@@ -212,12 +219,11 @@ open class NoiView : View {
     }
   }
 
-  private fun download(uri: String) {
-    val check = MutableBoolean(false)
+  private fun http(uri: String, checker: RealChecker): Single<InputStream> {
     var obj = NOI.http(uri)
         .concurrentDuplicateUrl(false)
         .asResponse()
-        .check(check)
+        .check(checker.httpChecker)
 
     if (enableProgress) {
       obj = obj.progress { _, read, total ->
@@ -226,22 +232,58 @@ open class NoiView : View {
       }
     }
 
-    obj.map { response ->
-          val bitmap = BitmapFactory.decodeStream(response.body()!!.byteStream())
-          if (bitmap == null) {
-            throw IOException("Fail to decode stream")
-          } else if (!check.value) {
-            bitmap.recycle()
-            throw IOException("Response body isn't fully read.")
+    return obj.map { it.body()!!.byteStream() }
+  }
+
+  private fun file(uri: String, checker: RealChecker): Single<InputStream> {
+    // It's not http, always set http checker to true
+    checker.httpChecker.value = true
+
+    val obj = object : Single<InputStream>() {
+      override fun subscribeActual(observer: SingleObserver<in InputStream>) {
+        observer.onSubscribe(Disposables.empty())
+        observer.onSuccess(UniFile.fromUri(context, Uri.parse(uri)).openInputStream())
+      }
+    }
+    return obj.subscribeOn(Schedulers.io())
+  }
+
+  private fun isHttp(uri: String): Boolean = uri.startsWith("http://") || uri.startsWith("https://")
+
+  private fun download(uri: String) {
+    val checker = RealChecker()
+    val drawableHolder = MutableAny<Drawable>(null)
+
+    (if (isHttp(uri)) http(uri, checker) else file(uri, checker))
+        .map { stream ->
+          val drawable = stream.use { decodeDrawable(uri, it, checker) }
+          var valid: Boolean = false
+          synchronized(checker) {
+            valid = checker.valid
+            if (valid) {
+              drawableHolder.value = drawable
+            }
+          }
+          if (!valid) {
+            recycleDrawable(drawable)
+            throw IOException("Disposed")
           } else {
-            NOI.bitmapCache[uri] = bitmap
-            bitmap
+            drawable
           }
         }
+        .doOnDispose {
+          var drawable: Drawable? = null
+          synchronized(checker) {
+            checker.failed()
+            drawable = drawableHolder.value
+            drawableHolder.value = null
+          }
+          drawable?.let { recycleDrawable(it) }
+        }
         .observeOn(AndroidSchedulers.mainThread())
-        .register({ bitmap ->
+        .register({ drawable ->
           stopPlaceholder()
-          noiDrawable.actualDrawable = BitmapDrawable(resources, bitmap)
+          noiDrawable.actualDrawable = drawable
           noiDrawable.showActual(enableFade)
         }, {
           stopPlaceholder()
@@ -249,11 +291,46 @@ open class NoiView : View {
         })
   }
 
+  /**
+   * Gets drawable for this uri.
+   *
+   * It's called in UI thread.
+   */
+  open fun getDrawable(uri: String): Drawable? =
+      NOI.bitmapCache[uri]?.let { BitmapDrawable(resources, it) }
+
+  /**
+   * Decodes stream to get drawable.
+   *
+   * It's called in IO thread.
+   */
+  @Throws(Throwable::class)
+  open fun decodeDrawable(uri: String, stream: InputStream, checker: Checker): Drawable {
+    val bitmap = BitmapFactory.decodeStream(stream)
+    if (bitmap == null) {
+      throw IOException("Fail to decode stream")
+    } else if (!checker.valid) {
+      bitmap.recycle()
+      throw IOException("Response body isn't fully read.")
+    } else {
+      NOI.bitmapCache[uri] = bitmap
+      return BitmapDrawable(resources, bitmap)
+    }
+  }
+
+  /** Recycler Drawable **/
+  open fun recycleDrawable(drawable: Drawable) {}
+
   private fun cancel() {
     disposable?.run { dispose() }
     disposable = null
     stopPlaceholder()
-    noiDrawable.actualDrawable = null
+
+    val oldDrawable = noiDrawable.actualDrawable
+    if (oldDrawable != null) {
+      recycleDrawable(oldDrawable)
+      noiDrawable.actualDrawable = null
+    }
   }
 
   private fun <T> Single<T>.register(
@@ -323,5 +400,21 @@ open class NoiView : View {
 
   override fun onDraw(canvas: Canvas) {
     noiDrawable.draw(canvas)
+  }
+
+  interface Checker {
+    val valid: Boolean
+  }
+
+  private class RealChecker : Checker {
+    val httpChecker = MutableBoolean(false)
+
+    private var failed = false
+
+    fun failed() {
+      failed = true
+    }
+
+    override val valid: Boolean get() = !failed && httpChecker.value
   }
 }
