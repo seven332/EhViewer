@@ -150,8 +150,12 @@ class GalleryDetailPaper(
     }
   }
 
+  private fun Float.rating() : String =
+      if (this != 0.0f) String.format("%.1f", this) else "|∀ﾟ"
+
   private fun Float.ratingText() : String {
-    val id = when (Math.ceil((this * 2).toDouble()).toInt().clamp(0, 10)) {
+    val id = if (this == 0.0f) R.string.rating_none
+    else when (Math.ceil((this * 2).toDouble()).toInt().clamp(0, 10)) {
       10 -> R.string.rating_10
       9 -> R.string.rating_9
       8 -> R.string.rating_8
@@ -189,7 +193,7 @@ class GalleryDetailPaper(
     content.find<TextView>(R.id.pages).text = context.string(R.string.gallery_detail_pages_value, info.pages)
     content.find<TextView>(R.id.favourited).text = context.string(R.string.gallery_detail_favourited_value, info.favourited)
     content.find<TextView>(R.id.date).text = info.date.prettyTime(context)
-    content.find<TextView>(R.id.rating).text = String.format("%.1f", info.rating)
+    content.find<TextView>(R.id.rating).text = info.rating.rating()
     content.find<TextView>(R.id.rating_text).text = info.rating.ratingText()
     content.find<TextView>(R.id.rated).let { rated ->
       rated.text = info.rated.toString()
@@ -198,7 +202,7 @@ class GalleryDetailPaper(
       rated.setCompoundDrawables(null, null, drawable, null)
     }
     content.find<ImageView>(R.id.rate).let { rate ->
-      val id = if (info.rating >= 2.5f) R.drawable.thumb_up_primary_x32 else R.drawable.thumb_down_primary_x32
+      val id = if (info.rating >= 2.5f || info.rating == 0.0f) R.drawable.thumb_up_primary_x32  else R.drawable.thumb_down_primary_x32
       val drawable = context.drawable(id)
       rate.setImageDrawable(drawable)
     }

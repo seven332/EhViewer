@@ -92,17 +92,17 @@
   <string name="pretty_time_before">%s</string>
 
   <!-- Rating -->
-  <string name="rating_10">masterpiece</string>
-  <string name="rating_9">amazing</string>
-  <string name="rating_8">great</string>
-  <string name="rating_7">good</string>
-  <string name="rating_6">okay</string>
-  <string name="rating_5">mediocre</string>
-  <string name="rating_4">bad</string>
-  <string name="rating_3">awful</string>
-  <string name="rating_2">painful</string>
-  <string name="rating_1">unbearable</string>
-  <string name="rating_0">disaster</string>
-  <string name="rating_none" translatable="false">(´_ゝ`)</string>
+  <string name="rating_10">Masterpiece</string>
+  <string name="rating_9">Amazing</string>
+  <string name="rating_8">Great</string>
+  <string name="rating_7">Good</string>
+  <string name="rating_6">Okay</string>
+  <string name="rating_5">Mediocre</string>
+  <string name="rating_4">Bad</string>
+  <string name="rating_3">Awful</string>
+  <string name="rating_2">Painful</string>
+  <string name="rating_1">Unbearable</string>
+  <string name="rating_0">Disaster</string>
+  <string name="rating_none">Not rated</string>
 
 </resources>
