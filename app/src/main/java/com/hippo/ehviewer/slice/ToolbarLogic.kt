@@ -34,9 +34,10 @@ interface ToolbarLogic : MvpLogic<ToolbarUi> {
   fun onDoubleClick()
 }
 
-open class ToolbarPen(
-    val state: ToolbarUiState = ToolbarUiState()
+open class ToolbarPen private constructor(
+    val state: ToolbarUiState
 ) : EhvPen<ToolbarUi>(), ToolbarLogic, ToolbarUi by state {
+  constructor() : this(ToolbarUiState())
 
   override fun createViewState(): ViewState<ToolbarUi> = state
 

@@ -36,4 +36,7 @@
   <dimen name="number_rating_size">16dp</dimen>
   <dimen name="number_rating_interval">1dp</dimen>
 
+  <dimen name="large_rating_size">36dp</dimen>
+  <dimen name="large_rating_interval">4dp</dimen>
+
 </resources>

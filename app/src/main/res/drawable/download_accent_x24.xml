@@ -22,8 +22,8 @@
   android:viewportWidth="24"
   android:viewportHeight="24">
 
-    <path
-      android:fillColor="@android:color/white"
-      android:pathData="@string/pd_menu"/>
+  <path
+    android:fillColor="?attr/colorAccent"
+    android:pathData="@string/pd_download"/>
 
 </vector>

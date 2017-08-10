@@ -52,9 +52,10 @@ interface GalleryListLogic : MvpLogic<GalleryListUi> {
   fun onClickGalleryInfo(info: GalleryInfo)
 }
 
-open class GalleryListPen(
-    val state: GalleryListUiState = GalleryListUiState()
+open class GalleryListPen private constructor(
+    val state: GalleryListUiState
 ) : EhvPen<GalleryListUi>(), GalleryListLogic, GalleryListUi by state {
+  constructor() : this (GalleryListUiState())
 
   private val data = GalleryData()
   private val builder = GLUrlBuilder()

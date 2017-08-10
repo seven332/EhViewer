@@ -25,6 +25,16 @@
   <string name="main_action_detail">Detail</string>
   <string name="main_action_brief">Brief</string>
 
+  <string name="gallery_detail_action_download">Download</string>
+  <string name="gallery_detail_action_read">Read</string>
+  <string name="gallery_detail_language">Language</string>
+  <string name="gallery_detail_pages">Pages</string>
+  <string name="gallery_detail_pages_value">%d pages</string>
+  <string name="gallery_detail_favourited">Favourited</string>
+  <string name="gallery_detail_favourited_value">%d times</string>
+  <string name="gallery_detail_date">Date</string>
+  <string name="gallery_detail_more_info">More info</string>
+
   <string name="error_unknown">Unknown Error</string>
   <string name="error_not_found">Not Found</string>
   <string name="error_tap_to_load">Tap to load</string>
@@ -80,5 +90,19 @@
   <string name="pretty_time_days">%d d</string>
   <string name="pretty_time_ago">%s</string>
   <string name="pretty_time_before">%s</string>
+
+  <!-- Rating -->
+  <string name="rating_10">masterpiece</string>
+  <string name="rating_9">amazing</string>
+  <string name="rating_8">great</string>
+  <string name="rating_7">good</string>
+  <string name="rating_6">okay</string>
+  <string name="rating_5">mediocre</string>
+  <string name="rating_4">bad</string>
+  <string name="rating_3">awful</string>
+  <string name="rating_2">painful</string>
+  <string name="rating_1">unbearable</string>
+  <string name="rating_0">disaster</string>
+  <string name="rating_none" translatable="false">(´_ゝ`)</string>
 
 </resources>

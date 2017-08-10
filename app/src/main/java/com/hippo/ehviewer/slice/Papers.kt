@@ -49,6 +49,18 @@ fun GroupPaper<*>.drawer(
     init: DrawerPaper.() -> Unit
 ) = inflateChild(containerId) { container -> DrawerPaper(logic).also { it.create(inflater, container) } }.apply { init() }
 
+fun GroupPaper<*>.statusBar(
+    logic: StatusBarLogic,
+    container: ViewGroup,
+    init: StatusBarPaper.() -> Unit
+) = StatusBarPaper(logic).also { it.create(inflater, container); it.init() }
+
+fun GroupPaper<*>.statusBar(
+    logic: StatusBarLogic,
+    containerId: Int,
+    init: StatusBarPaper.() -> Unit
+) = inflateChild(containerId) { container -> StatusBarPaper(logic).also { it.create(inflater, container) } }.apply { init() }
+
 fun GroupPaper<*>.toolbar(
     logic: ToolbarLogic,
     container: ViewGroup,
@@ -65,3 +77,14 @@ fun GroupPaper<*>.galleryList(
     logic: GalleryListLogic,
     containerId: Int
 ) = inflateChild(containerId) { container -> GalleryListPaper(logic).also { it.create(inflater, container) } }
+
+fun GroupPaper<*>.galleryDetail(
+    logic: GalleryDetailLogic,
+    container: ViewGroup,
+    init: GalleryDetailPaper.() -> Unit
+) = GalleryDetailPaper(logic).also { it.create(inflater, container); it.init() }
+
+fun GroupPaper<*>.galleryDetail(
+    logic: GalleryDetailLogic,
+    containerId: Int
+) = inflateChild(containerId) { container -> GalleryDetailPaper(logic).also { it.create(inflater, container) } }

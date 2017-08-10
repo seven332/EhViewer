@@ -24,6 +24,7 @@ import com.hippo.ehviewer.R
 import com.hippo.ehviewer.activity.EhvActivity
 import com.hippo.ehviewer.client.CATEGORY_NONE
 import com.hippo.ehviewer.client.categoryString
+import com.hippo.ehviewer.client.data.GalleryInfo
 import com.hippo.ehviewer.client.lang
 import com.hippo.ehviewer.mvp.EhvScene
 import com.hippo.ehviewer.mvp.MvpPaper
@@ -84,6 +85,10 @@ class MainScene : EhvScene() {
     override fun showMessage(message: String) {
       (activity as? EhvActivity)?.snack(message)
     }
+
+    override fun onClickGalleryInfo(info: GalleryInfo) {
+      stage?.pushScene(galleryDetail(info))
+    }
   }
 
   private val pen = pens(drawer, toolbar, galleryList) {
@@ -95,7 +100,7 @@ class MainScene : EhvScene() {
     drawer.setStatusBarAttrColor(R.attr.colorPrimaryDark)
 
     toolbar.setDoubleClickEnabled()
-    toolbar.setNavigationIcon(R.drawable.menu_white_x24)
+    toolbar.setNavigationIcon(R.drawable.menu_dark_x24)
 
     // Register menu updater
     EHV_PREFERENCES.listMode.observable.register {

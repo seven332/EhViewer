@@ -87,6 +87,7 @@ dependencies {
     compile "com.github.seven332:drawerlayout:$drawer_layout_library_version"
     compile "com.github.seven332:refreshlayout:$refresh_layout_library_version"
     compile 'com.github.seven332:swipeback:0.1.3'
+    compile 'com.google.android:flexbox:0.3.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
 
     // LeakCanary

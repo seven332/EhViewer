@@ -32,6 +32,22 @@ inline fun View.onClick(crossinline action: (View) -> Unit) : Disposable =
         .throttleFirst(500, TimeUnit.MILLISECONDS)
         .subscribe { action(this) }
 
+fun View.setPaddingLeft(paddingLeft: Int) {
+  setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+}
+
+fun View.setPaddingTop(paddingTop: Int) {
+  setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+}
+
+fun View.setPaddingRight(paddingRight: Int) {
+  setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+}
+
+fun View.setPaddingBottom(paddingBottom: Int) {
+  setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+}
+
 /**
  * Utility to return a default size. Uses the supplied size if the
  * MeasureSpec imposed no constraints. Will get suitable if allowed

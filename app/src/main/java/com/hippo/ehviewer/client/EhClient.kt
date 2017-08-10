@@ -17,51 +17,48 @@
 package com.hippo.ehviewer.client
 
 import com.hippo.ehviewer.client.data.GalleryInfo
+import com.hippo.ehviewer.client.parser.parseGalleryDetail
 import com.hippo.ehviewer.client.parser.parseGalleryList
+import com.hippo.ehviewer.client.parser.parseLofiGalleryDetail
 import com.hippo.ehviewer.client.parser.parseLofiGalleryList
-import com.hippo.ehviewer.util.asSingle
-import com.hippo.ehviewer.util.call
+import com.hippo.ehviewer.noi.Noi
 import io.reactivex.Observable
 import io.reactivex.Single
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 
 /*
  * Created by Hippo on 2017/7/24.
  */
 
-fun OkHttpClient.get(url: String): Single<Response> =
-    Request.Builder()
-        .get()
-        .url(url)
-        .build()
-        .call(this)
-        .asSingle()
-
 interface EhClient {
   fun galleryList(url: String): Single<Pair<List<GalleryInfo>, Int>>
+
+  fun galleryDetail(url: String): Single<GalleryInfo>
 }
 
-private class EClient(val client: OkHttpClient) : EhClient {
+private class EClient(val noi: Noi) : EhClient {
   override fun galleryList(url: String): Single<Pair<List<GalleryInfo>, Int>> =
-      client.get(url).parse { parseGalleryList(it) }
+      noi.http(url).asResponse().parse { parseGalleryList(it) }
+
+  override fun galleryDetail(url: String): Single<GalleryInfo> =
+      noi.http(url).asResponse().parse { parseGalleryDetail(it) }
 }
 
-private class LofiClient(val client: OkHttpClient) : EhClient {
-
+private class LofiClient(val noi: Noi) : EhClient {
   override fun galleryList(url: String): Single<Pair<List<GalleryInfo>, Int>> =
-      client.get(url).parse { parseLofiGalleryList(it) }
+      noi.http(url).asResponse().parse { parseLofiGalleryList(it) }
+
+  override fun galleryDetail(url: String): Single<GalleryInfo> =
+      noi.http(url).asResponse().parse { parseLofiGalleryDetail(it) }
 }
 
 private typealias ExClient = EClient
 
 /** Switches client automatically **/
-class AutoSwitchClient(client: OkHttpClient, ehModeObservable: Observable<Int>) : EhClient {
+class AutoSwitchClient(noi: Noi, ehModeObservable: Observable<Int>) : EhClient {
 
-  val eClient: EhClient by lazy { EClient(client) }
-  val lofiClient: EhClient by lazy { LofiClient(client) }
-  val exClient: EhClient by lazy { ExClient(client) }
+  val eClient: EhClient by lazy { EClient(noi) }
+  val lofiClient: EhClient by lazy { LofiClient(noi) }
+  val exClient: EhClient by lazy { ExClient(noi) }
 
   lateinit var current: EhClient
     private set
@@ -77,4 +74,6 @@ class AutoSwitchClient(client: OkHttpClient, ehModeObservable: Observable<Int>) 
   }
 
   override fun galleryList(url: String) = current.galleryList(url)
+
+  override fun galleryDetail(url: String) = current.galleryDetail(url)
 }

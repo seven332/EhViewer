@@ -35,10 +35,10 @@ interface DrawerLogic : MvpLogic<DrawerUi> {
   fun onCloseRightDrawer()
 }
 
-
-open class DrawerPen(
-    val state: DrawerUiState = DrawerUiState()
+open class DrawerPen private constructor(
+    val state: DrawerUiState
 ) : EhvPen<DrawerUi>(), DrawerLogic, DrawerUi by state {
+  constructor() : this(DrawerUiState())
 
   override fun createViewState(): ViewState<DrawerUi> = state
 

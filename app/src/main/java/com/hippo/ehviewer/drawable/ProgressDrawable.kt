@@ -23,6 +23,7 @@ import android.graphics.Path
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.support.v4.view.animation.PathInterpolatorCompat
 import android.view.animation.Interpolator
@@ -37,7 +38,7 @@ import com.hippo.ehviewer.util.lerp
  * Created by Hippo on 6/6/2017.
  */
 
-class ProgressDrawable : Drawable() {
+class ProgressDrawable : Drawable(), Animatable {
 
   companion object {
     private val TRIM_START_INTERPOLATOR: Interpolator
@@ -107,10 +108,20 @@ class ProgressDrawable : Drawable() {
     animates = listOf(trimStart, trimEnd, trimOffset, trimRotation)
   }
 
+  override fun start() {
+    indeterminate = true
+  }
+
+  override fun stop() {
+    indeterminate = false
+  }
+
+  override fun isRunning(): Boolean = indeterminate
+
   override fun onLevelChange(level: Int): Boolean {
     indeterminate = false
     trimStart = 0f
-    trimEnd = (level / MAX_LEVEL).toFloat()
+    trimEnd = level.toFloat() / MAX_LEVEL.toFloat()
     trimOffset = 0f
     trimRotation = 0f
     invalidateSelf()

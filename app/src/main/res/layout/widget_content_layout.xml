@@ -35,8 +35,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:layout_margin="@dimen/key_margin"
     android:gravity="center_horizontal"
-    android:drawablePadding="16dp"/>
+    android:drawablePadding="@dimen/key_margin"/>
 
   <com.hippo.ehviewer.widget.ProgressView
     android:id="@+id/progress_view"

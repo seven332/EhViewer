@@ -48,8 +48,10 @@ class GLUrlBuilder {
       appendTag(sb, "language", language)
     }
 
-    for ((namespace, tag) in tags) {
-      appendTag(sb, namespace, tag)
+    for ((namespace, list) in tags) {
+      for (tag in list) {
+        appendTag(sb, namespace, tag)
+      }
     }
 
     return if (sb.isNotEmpty()) sb.toString() else null

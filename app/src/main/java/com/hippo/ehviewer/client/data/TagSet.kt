@@ -16,15 +16,97 @@
 
 package com.hippo.ehviewer.client.data
 
+import android.os.Parcel
+import android.os.Parcelable
+
 /*
  * Created by Hippo on 2017/7/25.
  */
 
-class TagSet : HashSet<Pair<String, String>>() {
+class TagSet() : Iterable<Map.Entry<String, List<String>>>, Parcelable {
 
-  fun add(namespace: String, tag: String) = add(Pair(namespace, tag))
+  private val map = LinkedHashMap<String, MutableList<String>>()
 
-  fun remove(namespace: String, tag: String) = remove(Pair(namespace, tag))
+  fun add(namespace: String, tag: String) {
+    var list = map[namespace]
+    if (list == null) {
+      list = arrayListOf()
+      map[namespace] = list
+    }
+    list.add(tag)
+  }
 
-  fun firstTag() = iterator().run { if (hasNext()) next() else null }
+  fun remove(namespace: String, tag: String) {
+    val list = map[namespace]
+    if (list != null) {
+      list.remove(tag)
+      if (list.isEmpty()) {
+        map.remove(namespace)
+      }
+    }
+  }
+
+  override fun iterator(): Iterator<Map.Entry<String, List<String>>> = map.iterator()
+
+  fun size(): Int = map.values.sumBy { it.size }
+
+  fun isEmpty(): Boolean = map.isEmpty()
+
+  fun firstTag(): Pair<String, String>? {
+    val iterator = map.iterator()
+    if (iterator.hasNext()) {
+      val (namespace, tags) = iterator.next()
+      if (tags.isNotEmpty()) {
+        return Pair(namespace, tags[0])
+      } else {
+        return null
+      }
+    } else {
+      return null
+    }
+  }
+
+  fun set(tags: TagSet) {
+    map.clear()
+    for ((namespace, list) in tags) {
+      map[namespace] = ArrayList(list)
+    }
+  }
+
+  constructor(parcel: Parcel) : this() {
+    for (i in 0 until parcel.readInt()) {
+      val namespace = parcel.readString()
+      val list = arrayListOf<String>()
+      map[namespace] = list
+
+      for (j in 0 until parcel.readInt()) {
+        list.add(parcel.readString())
+      }
+    }
+  }
+
+  override fun writeToParcel(parcel: Parcel, flags: Int) {
+    parcel.writeInt(map.size)
+
+    for ((namespace, list) in map) {
+      parcel.writeString(namespace)
+
+      parcel.writeInt(list.size)
+      for (tag in list) {
+        parcel.writeString(tag)
+      }
+    }
+  }
+
+  override fun describeContents(): Int = 0
+
+  companion object CREATOR : Parcelable.Creator<TagSet> {
+    override fun createFromParcel(parcel: Parcel): TagSet {
+      return TagSet(parcel)
+    }
+
+    override fun newArray(size: Int): Array<TagSet?> {
+      return arrayOfNulls(size)
+    }
+  }
 }

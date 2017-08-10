@@ -22,11 +22,11 @@
 
   <!-- 54% black -->
   <color name="primary_drawable_light">#8a000000</color>
-  <!-- 100% white -->
-  <color name="primary_drawable_dark">#ffffffff</color>
-
   <!-- 38% black -->
   <color name="secondary_drawable_light">#61000000</color>
+
+  <!-- 100% white -->
+  <color name="primary_drawable_dark">#ffffffff</color>
   <!-- 50% white -->
   <color name="secondary_drawable_dark">#80ffffff</color>
 
@@ -39,6 +39,12 @@
   <color name="background_app_bar_dark">#ff212121</color>
   <color name="background_window_dark">#ff303030</color>
   <color name="background_content_dark">#ff424242</color>
+
+  <color name="primary_text_dark">#ffffffff</color>
+  <color name="secondary_text_dark">#b3ffffff</color>
+
+  <color name="primary_text_light">#de000000</color>
+  <color name="secondary_text_light">#8a000000</color>
 
   <!-- 12% black -->
   <color name="divider_light">#1f000000</color>

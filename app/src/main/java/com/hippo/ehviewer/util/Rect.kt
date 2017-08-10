@@ -22,7 +22,6 @@ import android.graphics.RectF
  * Created by Hippo on 2017/7/24.
  */
 
-
 fun RectF.centerTo(x: Int, y: Int) { offset(x - centerX(), y - centerY()) }
 
 fun RectF.centerTo(x: Float, y: Float) { offset(x - centerX(), y - centerY()) }

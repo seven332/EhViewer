@@ -22,7 +22,7 @@
   <item
     android:id="@+id/main_action_search"
     android:title="@string/main_action_search"
-    android:icon="@drawable/magnify_white_x24"
+    android:icon="@drawable/magnify_dark_x24"
     app:showAsAction="ifRoom"/>
 
   <item

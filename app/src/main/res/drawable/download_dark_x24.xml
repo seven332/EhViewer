@@ -15,11 +15,15 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:height="24dp"
+  android:width="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24">
 
-  <style name="AppTheme.Ehv" parent="AppTheme.NoActionBar">
-    <item name="android:windowTranslucentStatus">true</item>
-    <item name="android:windowTranslucentNavigation">false</item>
-  </style>
+  <path
+    android:fillColor="@color/primary_drawable_dark"
+    android:pathData="@string/pd_download"/>
 
-</resources>
+</vector>

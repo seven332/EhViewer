@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.client.data
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.hippo.ehviewer.client.CATEGORY_UNKNOWN
 import com.hippo.ehviewer.client.FAV_CAT_UNKNOWN
 import com.hippo.ehviewer.client.LANG_UNKNOWN
@@ -27,7 +29,7 @@ import com.hippo.ehviewer.client.LANG_UNKNOWN
 /**
  * `GalleryInfo` is the information about a gallery from api or html parsing.
  */
-class GalleryInfo {
+class GalleryInfo() : Parcelable {
 
   /**
    * Gallery ID.
@@ -51,7 +53,7 @@ class GalleryInfo {
    * c219d2cf41
    * ```
    */
-  var token: String? = null
+  var token: String = ""
 
   /**
    * Gallery title.
@@ -227,4 +229,72 @@ class GalleryInfo {
    * The child is a gallery which replaces this gallery.
    */
   var childToken: String? = null
+
+  constructor(parcel: Parcel) : this() {
+    gid = parcel.readLong()
+    token = parcel.readString()
+    title = parcel.readString()
+    titleJpn = parcel.readString()
+    coverFingerprint = parcel.readString()
+    coverUrl = parcel.readString()
+    coverRatio = parcel.readFloat()
+    category = parcel.readInt()
+    date = parcel.readLong()
+    uploader = parcel.readString()
+    rating = parcel.readFloat()
+    rated = parcel.readInt()
+    language = parcel.readInt()
+    favourited = parcel.readInt()
+    favouriteSlot = parcel.readInt()
+    invalid = parcel.readByte() != 0.toByte()
+    archiveKey = parcel.readString()
+    pages = parcel.readInt()
+    size = parcel.readLong()
+    torrents = parcel.readInt()
+    tags.set(parcel.readParcelable(this::class.java.classLoader))
+    parentGid = parcel.readLong()
+    parentToken = parcel.readString()
+    childGid = parcel.readLong()
+    childToken = parcel.readString()
+  }
+
+  override fun writeToParcel(parcel: Parcel, flags: Int) {
+    parcel.writeLong(gid)
+    parcel.writeString(token)
+    parcel.writeString(title)
+    parcel.writeString(titleJpn)
+    parcel.writeString(coverFingerprint)
+    parcel.writeString(coverUrl)
+    parcel.writeFloat(coverRatio)
+    parcel.writeInt(category)
+    parcel.writeLong(date)
+    parcel.writeString(uploader)
+    parcel.writeFloat(rating)
+    parcel.writeInt(rated)
+    parcel.writeInt(language)
+    parcel.writeInt(favourited)
+    parcel.writeInt(favouriteSlot)
+    parcel.writeByte(if (invalid) 1 else 0)
+    parcel.writeString(archiveKey)
+    parcel.writeInt(pages)
+    parcel.writeLong(size)
+    parcel.writeInt(torrents)
+    parcel.writeParcelable(tags, flags)
+    parcel.writeLong(parentGid)
+    parcel.writeString(parentToken)
+    parcel.writeLong(childGid)
+    parcel.writeString(childToken)
+  }
+
+  override fun describeContents(): Int = 0
+
+  companion object CREATOR : Parcelable.Creator<GalleryInfo> {
+    override fun createFromParcel(parcel: Parcel): GalleryInfo {
+      return GalleryInfo(parcel)
+    }
+
+    override fun newArray(size: Int): Array<GalleryInfo?> {
+      return arrayOfNulls(size)
+    }
+  }
 }

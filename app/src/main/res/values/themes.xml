@@ -20,7 +20,7 @@
   <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     <item name="colorPrimary">@color/teal_500</item>
     <item name="colorPrimaryDark">@color/teal_700</item>
-    <item name="colorAccent">@color/purple_a200</item>
+    <item name="colorAccent">@color/red_a200</item>
 
     <item name="colorControlHighlight">@color/ripple_light</item>
 
@@ -38,6 +38,7 @@
     <item name="clickableForeground">?attr/clickableBackground</item>
 
     <item name="android:listDivider">@drawable/list_divider_light</item>
+    <item name="android:windowBackground">?attr/backgroundColorWindow</item>
   </style>
 
   <style name="AppTheme.NoActionBar">

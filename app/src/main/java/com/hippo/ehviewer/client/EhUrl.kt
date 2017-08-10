@@ -59,6 +59,8 @@ interface EhUrl {
   fun galleryListUrl(query: Map<String, String>): String
 
   fun coverUrl(fingerprint: String, type: String): String
+
+  fun galleryDetailUrl(gid: Long, token: String): String
 }
 
 private abstract class BaseUrl(
@@ -70,6 +72,8 @@ private abstract class BaseUrl(
 
   override fun coverUrl(fingerprint: String, type: String): String =
       coverUrl + fingerprint.substring(0, 2) + "/" + fingerprint.substring(2, 4) + "/" + fingerprint + "_" + type + ".jpg"
+
+  override fun galleryDetailUrl(gid: Long, token: String): String = baseUrl + "g/" + gid + "/" + token + "/"
 }
 
 private class EUrl : BaseUrl(URL_E, URL_COVER_E)
@@ -101,4 +105,6 @@ class AutoSwitchUrl(ehModeObservable: Observable<Int>) : EhUrl {
   override fun galleryListUrl(query: Map<String, String>): String = current.galleryListUrl(query)
 
   override fun coverUrl(fingerprint: String, type: String): String = current.coverUrl(fingerprint, type)
+
+  override fun galleryDetailUrl(gid: Long, token: String): String = current.galleryDetailUrl(gid, token)
 }
