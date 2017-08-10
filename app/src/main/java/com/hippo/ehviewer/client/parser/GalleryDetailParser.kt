@@ -25,6 +25,7 @@ import com.hippo.ehviewer.client.parser.url.parseArchiveUrl
 import com.hippo.ehviewer.client.parser.url.parseCoverUrl
 import com.hippo.ehviewer.client.parser.url.parseGalleryDetailUrl
 import com.hippo.ehviewer.exception.ParseException
+import com.hippo.ehviewer.util.strip
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.util.regex.Pattern
@@ -122,7 +123,7 @@ fun parseGalleryDetail(document: Document): GalleryInfo? {
     element.children().takeIf { it.size >= 2 }?.also { children ->
       children[0].unescape().trim(':').takeIf { it.isNotEmpty() }?.also { namespace ->
         children[1].children().forEach { div ->
-          div.unescape().takeIf { it.isNotEmpty() }?.also { info.tags.add(namespace, it) }
+          div.unescape().substringBefore("|").strip().takeIf { it.isNotEmpty() }?.also { info.tags.add(namespace, it) }
         }
       }
     }
