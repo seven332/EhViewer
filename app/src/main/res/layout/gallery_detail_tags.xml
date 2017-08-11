@@ -15,15 +15,31 @@
   ~ limitations under the License.
   -->
 
-<com.google.android.flexbox.FlexboxLayout
+<FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/tags"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:padding="@dimen/key_margin"
-  app:flexDirection="row"
-  app:flexWrap="wrap"
-  app:alignContent="flex_start"
-  app:dividerDrawable="@drawable/divider_x8"
-  app:showDivider="middle"/>
+  android:padding="@dimen/key_margin">
+
+  <com.google.android.flexbox.FlexboxLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tags"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/key_margin"
+    android:paddingRight="@dimen/key_margin"
+    app:flexDirection="row"
+    app:flexWrap="wrap"
+    app:alignContent="flex_start"
+    app:dividerDrawable="@drawable/divider_x8"
+    app:showDivider="middle"/>
+
+  <TextView
+    android:id="@+id/no_tag"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:textColor="?attr/colorAccent"
+    android:text="@string/gallery_detail_no_tag"/>
+
+</FrameLayout>

@@ -66,6 +66,8 @@ class TagSet() : Iterable<Map.Entry<String, List<String>>>, Parcelable {
     }
   }
 
+  fun clear(): Unit = map.clear()
+
   fun set(tags: TagSet) {
     map.clear()
     for ((namespace, list) in tags) {

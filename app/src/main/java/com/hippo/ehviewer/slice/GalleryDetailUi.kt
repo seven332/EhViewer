@@ -173,6 +173,8 @@ class GalleryDetailPaper(
   }
 
   private fun FlexboxLayout.inflateTags(tags: TagSet) {
+    removeAllViews()
+
     for ((namespace, list) in tags) {
       val namespaceView = inflater.inflate(R.layout.gallery_detail_tags_namespace, this, false) as TextView
       namespaceView.text = namespace
@@ -206,7 +208,16 @@ class GalleryDetailPaper(
       val drawable = context.drawable(id)
       rate.setImageDrawable(drawable)
     }
-    content.find<FlexboxLayout>(R.id.tags).inflateTags(info.tags)
+    if (info.tags.isEmpty()) {
+      content.find<FlexboxLayout>(R.id.tags).visibility = View.GONE
+      content.find<TextView>(R.id.no_tag).visibility = View.VISIBLE
+    } else {
+      content.find<FlexboxLayout>(R.id.tags).let { tags ->
+        tags.visibility = View.VISIBLE
+        tags.inflateTags(info.tags)
+      }
+      content.find<TextView>(R.id.no_tag).visibility = View.GONE
+    }
   }
 
   override fun showContentTip(error: Throwable, animation: Boolean) {
