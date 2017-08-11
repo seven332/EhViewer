@@ -88,4 +88,33 @@ class GalleryDetailParserTest {
         "female" to listOf("females only")
     ), info.tags)
   }
+
+  @Test
+  fun testParseCommentsExHentai() {
+    val source = Okio.source(javaClass.classLoader.getResourceAsStream("gallery_comments_exhentai.html"))
+    val bufferedSource = Okio.buffer(source)
+    val body = bufferedSource.readUtf8()
+    val comments = parseComments(Jsoup.parse(body))
+
+    assertEquals(2, comments.size)
+
+    assertEquals(0, comments[0].id)
+    assertEquals("11 August 2017, 02:20 UTC".commentDate(), comments[0].date)
+    assertEquals("doggerhotter", comments[0].user)
+    assertEquals("raw: \n" +
+        "<a href=\"https://exhentai.org/g/1042775/eb45af810d/\">https://exhentai.org/g/1042775/eb45af810d/</a>", comments[0].comment)
+    assertEquals(0, comments[0].score)
+    assertEquals(false, comments[0].votedUp)
+    assertEquals(false, comments[0].votedDown)
+    assertEquals(null, comments[0].voteState)
+
+    assertEquals(1864159, comments[1].id)
+    assertEquals("11 August 2017, 03:39 UTC".commentDate(), comments[1].date)
+    assertEquals("Momo_Yuki", comments[1].user)
+    assertEquals("Over 300+MB....", comments[1].comment)
+    assertEquals(7, comments[1].score)
+    assertEquals(false, comments[1].votedUp)
+    assertEquals(false, comments[1].votedDown)
+    assertEquals("Base +7", comments[1].voteState)
+  }
 }

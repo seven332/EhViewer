@@ -33,15 +33,19 @@ import java.util.TimeZone
 
 private val DATE_FORMAT: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH).apply { timeZone = TimeZone.getTimeZone("UTC") }
 
+private val COMMENT_DATE_FORMAT: DateFormat = SimpleDateFormat("dd MMMMM yyyy, HH:mm z", Locale.ENGLISH)
+
 fun String.integer(): Int? = dropWhile { it == ',' || Character.isSpaceChar(it) || Character.isWhitespace(it) }.toIntOrNull()
 
 fun String.float(): Float? = dropWhile { it == ',' || Character.isSpaceChar(it) || Character.isWhitespace(it) }.toFloat()
 
-fun String.unescape(): String = replaceEach(
+fun String.unescape(): String? = replaceEach(
     arrayOf("&amp;", "&lt;", "&gt;", "&quot;", "&#039;", "&times;", "&nbsp;"),
-    arrayOf("&", "<", ">", "\"", "'", "×", "\u00a0")).strip()
+    arrayOf("&", "<", ">", "\"", "'", "×", "\u00a0")).strip().let { if (it.isEmpty()) null else it }
 
 fun String.date(): Long = try { DATE_FORMAT.parse(this).time } catch (e: ParseException) { 0 }
+
+fun String.commentDate(): Long = try { COMMENT_DATE_FORMAT.parse(this).time } catch (e: ParseException) { 0 }
 
 inline fun Element.elementById(id: String): Element? = getElementById(id)
 
@@ -61,6 +65,6 @@ inline fun Element.integer(): Int? = text().integer()
 
 inline fun Element.float(): Float? = text().float()
 
-inline fun Element.unescape(): String = text().unescape()
+inline fun Element.unescape(): String? = text().unescape()
 
 inline fun Element.date(): Long = text().date()

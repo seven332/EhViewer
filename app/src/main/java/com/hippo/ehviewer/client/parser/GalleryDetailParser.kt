@@ -19,6 +19,7 @@ package com.hippo.ehviewer.client.parser
 import com.hippo.ehviewer.client.CATEGORY_UNKNOWN
 import com.hippo.ehviewer.client.FAV_CAT_UNKNOWN
 import com.hippo.ehviewer.client.categoryValue
+import com.hippo.ehviewer.client.data.Comment
 import com.hippo.ehviewer.client.data.GalleryInfo
 import com.hippo.ehviewer.client.lang
 import com.hippo.ehviewer.client.parser.url.parseArchiveUrl
@@ -28,6 +29,7 @@ import com.hippo.ehviewer.exception.ParseException
 import com.hippo.ehviewer.util.strip
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import java.util.regex.Pattern
 
 /*
@@ -54,7 +56,7 @@ fun parseGalleryDetail(document: Document): GalleryInfo? {
         info.coverRatio = width.toFloat() / height.toFloat()
       }
 
-      matcher.group(3).unescape().also { url ->
+      matcher.group(3).unescape()?.also { url ->
         info.coverUrl = url
         info.coverFingerprint = url.parseCoverUrl()
       }
@@ -68,7 +70,7 @@ fun parseGalleryDetail(document: Document): GalleryInfo? {
 
   document.elementById("gd5")?.html()?.also { html ->
     PATTERN_ARCHIVE.matcher(html).takeIf { it.find() }?.also { matcher ->
-      matcher.group(1).unescape().parseArchiveUrl()?.also { (gid, token, archiveKey) ->
+      matcher.group(1).unescape()?.parseArchiveUrl()?.also { (gid, token, archiveKey) ->
         if (info.gid == gid && info.token == token) {
           info.archiveKey = archiveKey
         }
@@ -85,8 +87,8 @@ fun parseGalleryDetail(document: Document): GalleryInfo? {
 
   document.elementById("gdd")?.elementByTag("tbody")?.children()?.forEach { element ->
     element.children().takeIf { it.size >= 2 }?.also { children ->
-      val key = children[0].unescape()
-      val value = children[1].ownText().unescape()
+      val key = children[0].unescape() ?: ""
+      val value = children[1].ownText().unescape() ?: ""
 
       if (key.startsWith("Posted")) {
         info.date = value.date()
@@ -121,9 +123,9 @@ fun parseGalleryDetail(document: Document): GalleryInfo? {
 
   document.elementById("taglist")?.elementByTag("tbody")?.children()?.forEach { element ->
     element.children().takeIf { it.size >= 2 }?.also { children ->
-      children[0].unescape().trim(':').takeIf { it.isNotEmpty() }?.also { namespace ->
+      children[0].unescape()?.trim(':')?.takeIf { it.isNotEmpty() }?.also { namespace ->
         children[1].children().forEach { div ->
-          div.unescape().substringBefore("|").strip().takeIf { it.isNotEmpty() }?.also { info.tags.add(namespace, it) }
+          div.unescape()?.substringBefore("|")?.strip()?.takeIf { it.isNotEmpty() }?.also { info.tags.add(namespace, it) }
         }
       }
     }
@@ -148,6 +150,45 @@ private fun String.parseSize(): Long {
     'g' -> (num * 1024L * 1024L * 1024L).toLong()
     else -> num.toLong()
   }
+}
+
+fun parseComments(document: Document): List<Comment> {
+  val comments = mutableListOf<Comment>()
+  document.elementById("cdiv")?.children()?.forEach { element ->
+    if (element.className() == "c1") {
+      val comment = parseComment(element)
+      if (comment != null) {
+        comments.add(comment)
+      }
+    }
+  }
+  return comments
+}
+
+private fun parseComment(element: Element): Comment? {
+  val id = element.previousElementSibling()?.attr("name")?.takeIf { it.length > 1 }?.substring(1)?.toLongOrNull() ?: return null
+
+  val comment = Comment()
+  comment.id = id
+  comment.comment = element.elementByClass("c6")?.html()
+
+  element.elementByClass("c3")?.let { c3 ->
+    comment.date = c3.ownText().unescape()?.substringAfter("Posted on")?.substringBefore("by:")?.strip()?.commentDate() ?: 0
+    comment.user = c3.firstChild()?.unescape()
+  }
+
+  comment.score = element.elementByClass("c5")?.firstChild()?.integer() ?: 0
+
+  element.elementByClass("c4")?.children()?.let { children ->
+    if (children.size == 2) {
+      comment.votedUp = children[0].attr("style").strip().isNotEmpty()
+      comment.votedDown = children[1].attr("style").strip().isNotEmpty()
+    }
+  }
+
+  comment.voteState = element.elementByClass("c7")?.unescape()
+
+  return comment
 }
 
 fun parseGalleryDetail(body: String): GalleryInfo {
