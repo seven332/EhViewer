@@ -16,12 +16,13 @@
 
 package com.hippo.ehviewer.client.parser
 
+import com.hippo.ehviewer.client.data.Comment
 import com.hippo.ehviewer.client.data.GalleryInfo
 
 /*
  * Created by Hippo on 2017/7/31.
  */
 
-fun parseLofiGalleryDetail(body: String): GalleryInfo {
+fun parseLofiGalleryDetail(body: String): Pair<GalleryInfo, List<Comment>> {
   TODO()
 }

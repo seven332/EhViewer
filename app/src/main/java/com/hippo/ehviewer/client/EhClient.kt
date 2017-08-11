@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.client
 
+import com.hippo.ehviewer.client.data.Comment
 import com.hippo.ehviewer.client.data.GalleryInfo
 import com.hippo.ehviewer.client.parser.parseGalleryDetail
 import com.hippo.ehviewer.client.parser.parseGalleryList
@@ -32,14 +33,14 @@ import io.reactivex.Single
 interface EhClient {
   fun galleryList(url: String): Single<Pair<List<GalleryInfo>, Int>>
 
-  fun galleryDetail(url: String): Single<GalleryInfo>
+  fun galleryDetail(url: String): Single<Pair<GalleryInfo, List<Comment>>>
 }
 
 private class EClient(val noi: Noi) : EhClient {
   override fun galleryList(url: String): Single<Pair<List<GalleryInfo>, Int>> =
       noi.http(url).asResponse().parse { parseGalleryList(it) }
 
-  override fun galleryDetail(url: String): Single<GalleryInfo> =
+  override fun galleryDetail(url: String): Single<Pair<GalleryInfo, List<Comment>>> =
       noi.http(url).asResponse().parse { parseGalleryDetail(it) }
 }
 
@@ -47,7 +48,7 @@ private class LofiClient(val noi: Noi) : EhClient {
   override fun galleryList(url: String): Single<Pair<List<GalleryInfo>, Int>> =
       noi.http(url).asResponse().parse { parseLofiGalleryList(it) }
 
-  override fun galleryDetail(url: String): Single<GalleryInfo> =
+  override fun galleryDetail(url: String): Single<Pair<GalleryInfo, List<Comment>>> =
       noi.http(url).asResponse().parse { parseLofiGalleryDetail(it) }
 }
 

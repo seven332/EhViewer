@@ -37,6 +37,10 @@
 
     <include layout="@layout/gallery_detail_tags"/>
 
+    <include layout="@layout/gallery_detail_divider"/>
+
+    <include layout="@layout/gallery_detail_comments"/>
+
   </LinearLayout>
 
   <TextView

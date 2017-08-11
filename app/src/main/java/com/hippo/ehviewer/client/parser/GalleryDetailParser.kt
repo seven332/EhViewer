@@ -191,7 +191,9 @@ private fun parseComment(element: Element): Comment? {
   return comment
 }
 
-fun parseGalleryDetail(body: String): GalleryInfo {
+fun parseGalleryDetail(body: String): Pair<GalleryInfo, List<Comment>> {
   val document = Jsoup.parse(body)
-  return parseGalleryDetail(document) ?: throw ParseException("Can't parse gallery detail")
+  val info = parseGalleryDetail(document) ?: throw ParseException("Can't parse gallery detail")
+  val comments = parseComments(document)
+  return Pair(info, comments)
 }

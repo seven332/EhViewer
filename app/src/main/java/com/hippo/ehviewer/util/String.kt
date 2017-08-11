@@ -16,6 +16,8 @@
 
 package com.hippo.ehviewer.util
 
+import com.hippo.html.Html
+
 /*
  * Created by Hippo on 2017/7/26.
  */
@@ -169,3 +171,5 @@ fun String.strip(): String {
 
   return substring(start, end)
 }
+
+fun String.fromHtml(): CharSequence = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)

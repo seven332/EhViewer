@@ -45,8 +45,8 @@ open class GalleryDetailPen private constructor(
 
     EH_CLIENT.galleryDetail(EH_URL.galleryDetailUrl(info.gid, info.token))
         .observeOn(AndroidSchedulers.mainThread())
-        .register({
-          showContentBody(it, true)
+        .register({ (info, comments) ->
+          showContentBody(info, comments, true)
         }, {
           showContentTip(it, true)
         })

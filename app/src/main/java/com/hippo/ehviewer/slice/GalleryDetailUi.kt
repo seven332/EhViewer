@@ -25,6 +25,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.flexbox.FlexboxLayout
 import com.hippo.ehviewer.R
+import com.hippo.ehviewer.client.data.Comment
 import com.hippo.ehviewer.client.data.GalleryInfo
 import com.hippo.ehviewer.client.data.TagSet
 import com.hippo.ehviewer.client.lang
@@ -38,6 +39,7 @@ import com.hippo.ehviewer.util.drawable
 import com.hippo.ehviewer.util.explain
 import com.hippo.ehviewer.util.explainVividly
 import com.hippo.ehviewer.util.find
+import com.hippo.ehviewer.util.fromHtml
 import com.hippo.ehviewer.util.prettyTime
 import com.hippo.ehviewer.util.string
 import com.hippo.ehviewer.widget.ViewTransition
@@ -69,7 +71,7 @@ interface GalleryDetailUi : MvpUi {
   fun showProgress(animation: Boolean)
 
   @StrategyType(value = SingleByTag::class, tag = TAG_SHOW_CONTENT)
-  fun showContentBody(info: GalleryInfo, animation: Boolean)
+  fun showContentBody(info: GalleryInfo, comments: List<Comment>, animation: Boolean)
 
   @StrategyType(value = SingleByTag::class, tag = TAG_SHOW_CONTENT)
   fun showContentTip(error: Throwable, animation: Boolean)
@@ -188,7 +190,22 @@ class GalleryDetailPaper(
     }
   }
 
-  override fun showContentBody(info: GalleryInfo, animation: Boolean) {
+  private fun ViewGroup.inflateComments(comments: List<Comment>) {
+    for (i in 0 until minOf(2, comments.size)) {
+      val comment = comments[i]
+      val view = inflater.inflate(R.layout.gallery_detail_comments_item, this, false) as ViewGroup
+      view.find<TextView>(R.id.user).text = comment.user
+      view.find<TextView>(R.id.date).text = comment.date.prettyTime(context)
+      view.find<TextView>(R.id.comment).text = comment.comment?.fromHtml()
+      addView(view, i)
+    }
+    view.find<TextView>(R.id.comments_tip).text = context.string(
+        if (comments.isEmpty()) R.string.gallery_detail_no_comment
+        else R.string.gallery_detail_more_comments
+    )
+  }
+
+  override fun showContentBody(info: GalleryInfo, comments: List<Comment>, animation: Boolean) {
     contentTransition.show(contentBody, animation && !logic.isRestoring())
 
     content.find<TextView>(R.id.language).text = info.language.lang().let { if (it != 0) it else R.string.language_unknown }.let { context.string(it) }
@@ -218,6 +235,7 @@ class GalleryDetailPaper(
       }
       content.find<TextView>(R.id.no_tag).visibility = View.GONE
     }
+    content.find<ViewGroup>(R.id.comments).inflateComments(comments)
   }
 
   override fun showContentTip(error: Throwable, animation: Boolean) {

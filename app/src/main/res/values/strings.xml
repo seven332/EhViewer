@@ -35,6 +35,8 @@
   <string name="gallery_detail_date">Date</string>
   <string name="gallery_detail_more_info">More info</string>
   <string name="gallery_detail_no_tag">No tag</string>
+  <string name="gallery_detail_more_comments">More comments</string>
+  <string name="gallery_detail_no_comment">No comment</string>
 
   <string name="error_unknown">Unknown Error</string>
   <string name="error_not_found">Not Found</string>
