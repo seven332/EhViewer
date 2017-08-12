@@ -16,21 +16,20 @@
 
 package com.hippo.ehviewer.scene
 
+import android.os.Bundle
 import android.view.MenuItem
 import com.hippo.ehviewer.EHV_PREFERENCES
 import com.hippo.ehviewer.LIST_MODE_BRIEF
 import com.hippo.ehviewer.LIST_MODE_DETAIL
 import com.hippo.ehviewer.R
 import com.hippo.ehviewer.activity.EhvActivity
-import com.hippo.ehviewer.client.CATEGORY_NONE
-import com.hippo.ehviewer.client.categoryString
 import com.hippo.ehviewer.client.data.GalleryInfo
-import com.hippo.ehviewer.client.lang
 import com.hippo.ehviewer.mvp.EhvScene
 import com.hippo.ehviewer.mvp.MvpPaper
 import com.hippo.ehviewer.mvp.MvpPen
 import com.hippo.ehviewer.slice.DrawerPaper
 import com.hippo.ehviewer.slice.DrawerPen
+import com.hippo.ehviewer.slice.DumpPen
 import com.hippo.ehviewer.slice.GalleryListPen
 import com.hippo.ehviewer.slice.ToolbarPaper
 import com.hippo.ehviewer.slice.ToolbarPen
@@ -38,6 +37,7 @@ import com.hippo.ehviewer.slice.drawer
 import com.hippo.ehviewer.slice.galleryList
 import com.hippo.ehviewer.slice.papers
 import com.hippo.ehviewer.slice.pens
+import com.hippo.ehviewer.slice.setTitle
 import com.hippo.ehviewer.slice.toolbar
 import com.hippo.ehviewer.widget.Drawer
 
@@ -91,7 +91,9 @@ class MainScene : EhvScene() {
     }
   }
 
-  private val pen = pens(drawer, toolbar, galleryList) {
+  private lateinit var pen: DumpPen
+
+  override fun createPen(args: Bundle): MvpPen<*> = pens(drawer, toolbar, galleryList) {
     drawer.setDrawerContentMode(Drawer.FIT)
     drawer.setLeftDrawerMode(Drawer.NONE)
     drawer.setRightDrawerMode(Drawer.ACTION_BAR)
@@ -112,17 +114,9 @@ class MainScene : EhvScene() {
     }
 
     // Register title updater
-    galleryList.builderObservable.register { builder ->
-      builder.keyword?.takeIf { it.isNotEmpty() }?.also { toolbar.setTitle(it) } ?:
-          builder.category.categoryString()?.takeIf { it.isNotEmpty() }?.also { toolbar.setTitle(it) } ?:
-          builder.language.lang().takeIf { it != 0 }?.also { toolbar.setTitle(it) } ?:
-          builder.tags.run { firstTag() }?.also { toolbar.setTitle("${it.first}:${it.second}") } ?:
-          if (builder.tags.isEmpty() && builder.category == CATEGORY_NONE) toolbar.setTitle(R.string.main_homepage)
-          else toolbar.setTitle(R.string.main_search)
-    }
-  }
+    galleryList.builderObservable.register { toolbar.setTitle(it.toTitle()) }
 
-  override fun createPen(): MvpPen<*> = pen
+  }.apply { pen = this }
 
   override fun createPaper(): MvpPaper<*> = papers(pen) {
     drawer(drawer, it) {

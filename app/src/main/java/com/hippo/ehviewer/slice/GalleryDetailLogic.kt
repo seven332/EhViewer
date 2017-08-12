@@ -30,6 +30,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 
 interface GalleryDetailLogic : MvpLogic<GalleryDetailUi> {
 
+  fun onClickTag(namespace: String, tag: String)
 }
 
 open class GalleryDetailPen private constructor(
@@ -38,6 +39,8 @@ open class GalleryDetailPen private constructor(
   constructor() : this(GalleryDetailUiState())
 
   override fun createViewState(): ViewState<GalleryDetailUi> = state
+
+  override fun onClickTag(namespace: String, tag: String) {}
 
   fun init(info: GalleryInfo) {
     showContent(info, false)

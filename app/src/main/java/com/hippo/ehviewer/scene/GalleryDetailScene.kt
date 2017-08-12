@@ -17,10 +17,12 @@
 package com.hippo.ehviewer.scene
 
 import android.os.Bundle
+import com.hippo.ehviewer.client.GLUrlBuilder
 import com.hippo.ehviewer.client.data.GalleryInfo
 import com.hippo.ehviewer.mvp.EhvScene
 import com.hippo.ehviewer.mvp.MvpPaper
 import com.hippo.ehviewer.mvp.MvpPen
+import com.hippo.ehviewer.slice.DumpPen
 import com.hippo.ehviewer.slice.GalleryDetailPen
 import com.hippo.ehviewer.slice.StatusBarPen
 import com.hippo.ehviewer.slice.galleryDetail
@@ -42,24 +44,28 @@ class GalleryDetailScene : EhvScene() {
 
   private val statusBar = object : StatusBarPen() {}
 
-  private val galleryDetail = object : GalleryDetailPen() {}
-
-  private val pen = pens(statusBar, galleryDetail) {}
-
-  override fun createPen(): MvpPen<*> = pen
-
-  override fun createPaper(): MvpPaper<*> = papers(pen) {
-    galleryDetail(galleryDetail, it) {}
+  private val galleryDetail = object : GalleryDetailPen() {
+    override fun onClickTag(namespace: String, tag: String) {
+      stage?.let { stage ->
+        val builder = GLUrlBuilder()
+        builder.tags.add(namespace, tag)
+        stage.pushScene(galleryList(builder))
+      }
+    }
   }
 
-  override fun onCreate(args: Bundle) {
-    super.onCreate(args)
+  private lateinit var pen: DumpPen
 
+  override fun createPen(args: Bundle): MvpPen<*> = pens(statusBar, galleryDetail) {
     val info = args.getParcelable<GalleryInfo>(KEY_GALLERY_INFO)
     if (info != null) {
       galleryDetail.init(info)
     } else {
       // TODO
     }
+  }.apply { pen = this }
+
+  override fun createPaper(): MvpPaper<*> = papers(pen) {
+    galleryDetail(galleryDetail, it)
   }
 }

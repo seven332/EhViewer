@@ -16,19 +16,40 @@
 
 package com.hippo.ehviewer.client
 
+import android.content.Context
+import android.os.Parcel
+import android.os.Parcelable
+import com.hippo.ehviewer.R
 import com.hippo.ehviewer.client.data.TagSet
 
 /*
  * Created by Hippo on 2017/7/25.
  */
 
-class GLUrlBuilder {
+class GLUrlBuilder() : Parcelable {
 
   var page: Int = 0
   var category: Int = CATEGORY_NONE
   var language: Int = LANG_UNKNOWN
   var keyword: String? = null
   val tags = TagSet()
+
+  fun set(builder: GLUrlBuilder) {
+    page = builder.page
+    category = builder.category
+    language = builder.language
+    keyword = builder.keyword
+    tags.set(builder.tags)
+  }
+
+  fun toTitle(): Any {
+    return keyword?.takeIf { it.isNotEmpty() } ?:
+        category.categoryString()?.takeIf { it.isNotEmpty() } ?:
+        language.lang().takeIf { it != 0 } ?:
+        tags.firstTag()?.let { "${it.first}:${it.second}" } ?:
+        if (tags.isEmpty() && category == CATEGORY_NONE) R.string.gl_url_builder_homepage
+        else R.string.gl_url_builder_search
+  }
 
   private fun appendTag(sb: StringBuilder, namespace: String, tag: String) {
     if (sb.isNotEmpty()) sb.append(' ')
@@ -98,5 +119,26 @@ class GLUrlBuilder {
     }
 
     return query
+  }
+
+  constructor(parcel: Parcel) : this() {
+    page = parcel.readInt()
+    category = parcel.readInt()
+    language = parcel.readInt()
+    keyword = parcel.readString()
+  }
+
+  override fun writeToParcel(parcel: Parcel, flags: Int) {
+    parcel.writeInt(page)
+    parcel.writeInt(category)
+    parcel.writeInt(language)
+    parcel.writeString(keyword)
+  }
+
+  override fun describeContents(): Int = 0
+
+  companion object CREATOR : Parcelable.Creator<GLUrlBuilder> {
+    override fun createFromParcel(parcel: Parcel): GLUrlBuilder = GLUrlBuilder(parcel)
+    override fun newArray(size: Int): Array<GLUrlBuilder?> = arrayOfNulls(size)
   }
 }

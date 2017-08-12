@@ -30,7 +30,7 @@ import com.hippo.ehviewer.widget.content.ContentDataAdapter
 import com.hippo.ehviewer.widget.content.ContentLayout
 import com.hippo.viewstate.ViewState
 import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Observable
+import com.jakewharton.rxrelay2.Relay
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 /*
@@ -60,7 +60,7 @@ open class GalleryListPen private constructor(
   private val data = GalleryData()
   private val builder = GLUrlBuilder()
 
-  val builderObservable: Observable<GLUrlBuilder> = BehaviorRelay.createDefault(builder)
+  val builderObservable: Relay<GLUrlBuilder> = BehaviorRelay.createDefault(builder)
 
   override fun onCreate() {
     super.onCreate()
@@ -105,13 +105,19 @@ open class GalleryListPen private constructor(
     data.goTo(0)
   }
 
+  fun apply(builder: GLUrlBuilder) {
+    this.builder.set(builder)
+    builderObservable.accept(this.builder)
+    data.goTo(0)
+  }
+
   private inner class GalleryData : ContentData<GalleryInfo>() {
 
     override fun onRequireData(id: Int, page: Int) {
       builder.page = page
       EH_CLIENT.galleryList(EH_URL.galleryListUrl(builder.build()))
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe({ (data, pages) ->
+          .register({ (data, pages) ->
             setData(id, data, pages)
           }, {
             setError(id, it)

@@ -17,11 +17,20 @@
 package com.hippo.ehviewer.scene
 
 import android.os.Bundle
+import com.hippo.ehviewer.client.GLUrlBuilder
 import com.hippo.ehviewer.client.data.GalleryInfo
 
 /*
  * Created by Hippo on 2017/8/6.
  */
+
+fun galleryList(builder: GLUrlBuilder): GalleryListScene {
+  val args = Bundle()
+  args.putParcelable(GalleryListScene.KEY_GL_URL_BUILDER, builder)
+  val scene = GalleryListScene()
+  scene.setArgs(args)
+  return scene
+}
 
 fun galleryDetail(info: GalleryInfo): GalleryDetailScene {
   val args = Bundle()

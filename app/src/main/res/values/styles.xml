@@ -41,12 +41,13 @@
 
   <style name="Ehv.GalleryDetail.Info.Key">
     <item name="android:textSize">@dimen/text_small</item>
-    <item name="android:textColor">?attr/colorAccent</item>
+    <item name="android:textColor">?android:attr/textColorSecondary</item>
     <item name="android:textStyle">bold</item>
   </style>
 
   <style name="Ehv.GalleryDetail.Info.Value">
     <item name="android:textSize">@dimen/text_small</item>
+    <item name="android:textColor">?android:attr/textColorPrimary</item>
   </style>
 
   <style name="Ehv.GalleryDetail.Tags"/>

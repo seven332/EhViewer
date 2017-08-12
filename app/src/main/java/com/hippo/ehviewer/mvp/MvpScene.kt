@@ -39,7 +39,7 @@ abstract class MvpScene : Scene() {
   /**
    * Create a pen for this scene.
    */
-  protected abstract fun createPen(): MvpPen<*>
+  protected abstract fun createPen(args: Bundle): MvpPen<*>
 
   /**
    * Create a paper for the scene.
@@ -48,7 +48,7 @@ abstract class MvpScene : Scene() {
 
   override fun onCreate(args: Bundle) {
     super.onCreate(args)
-    pen = createPen()
+    pen = createPen(args)
     pen?.create() ?: error(ERROR_PEN_NULL)
   }
 

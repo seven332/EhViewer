@@ -185,6 +185,7 @@ class GalleryDetailPaper(
       for (tag in list) {
         val tagView = inflater.inflate(R.layout.gallery_detail_tags_tag, this, false) as TextView
         tagView.text = tag
+        tagView.setOnClickListener { logic.onClickTag(namespace, tag) }
         addView(tagView)
       }
     }

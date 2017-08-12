@@ -25,6 +25,10 @@
   <string name="main_action_detail">Detail</string>
   <string name="main_action_brief">Brief</string>
 
+  <string name="gallery_list_action_go_to">Go to</string>
+  <string name="gallery_list_action_detail">Detail</string>
+  <string name="gallery_list_action_brief">Brief</string>
+
   <string name="gallery_detail_action_download">Download</string>
   <string name="gallery_detail_action_read">Read</string>
   <string name="gallery_detail_language">Language</string>
@@ -37,6 +41,9 @@
   <string name="gallery_detail_no_tag">No tag</string>
   <string name="gallery_detail_more_comments">More comments</string>
   <string name="gallery_detail_no_comment">No comment</string>
+
+  <string name="gl_url_builder_homepage">Homepage</string>
+  <string name="gl_url_builder_search">Search</string>
 
   <string name="error_unknown">Unknown Error</string>
   <string name="error_not_found">Not Found</string>

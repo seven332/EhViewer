@@ -80,9 +80,8 @@ fun GroupPaper<*>.galleryList(
 
 fun GroupPaper<*>.galleryDetail(
     logic: GalleryDetailLogic,
-    container: ViewGroup,
-    init: GalleryDetailPaper.() -> Unit
-) = GalleryDetailPaper(logic).also { it.create(inflater, container); it.init() }
+    container: ViewGroup
+) = GalleryDetailPaper(logic).also { it.create(inflater, container) }
 
 fun GroupPaper<*>.galleryDetail(
     logic: GalleryDetailLogic,

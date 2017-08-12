@@ -69,6 +69,12 @@ interface ToolbarUi : MvpUi {
   fun inflateMenu(resId: Int)
 }
 
+fun ToolbarUi.setTitle(title: Any) {
+  when (title) {
+    is String -> setTitle(title)
+    is Int -> setTitle(title)
+  }
+}
 
 class ToolbarPaper(
     private val logic: ToolbarLogic
