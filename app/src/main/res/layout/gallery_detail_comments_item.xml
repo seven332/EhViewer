@@ -27,9 +27,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
-    android:layout_alignParentLeft="true"
-    android:maxLines="5"
-    android:ellipsize="end"/>
+    android:layout_alignParentLeft="true"/>
 
   <TextView
     android:id="@+id/date"
@@ -45,6 +43,8 @@
     android:layout_below="@id/user"
     android:layout_alignParentLeft="true"
     android:layout_marginTop="8dp"
+    android:maxLines="5"
+    android:ellipsize="end"
     android:textColor="?android:attr/textColorPrimary"/>
 
 </RelativeLayout>
