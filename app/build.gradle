@@ -64,6 +64,7 @@ dependencies {
 
     // OkHttp
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
 
     // Modified okio
     compile 'com.github.seven332.okio:okio:1.13.0'

@@ -24,6 +24,7 @@ import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -42,6 +43,7 @@ val EHV_PREFERENCES: EhvPreferences by lazy { EhvPreferences(EHV_APP) }
 val OK_HTTP_CLIENT: OkHttpClient by lazy {
   OkHttpClient.Builder()
       .cache(Cache(File(EHV_APP.cacheDir, "okhttp").apply { mkdirs() }, 50 * 1024 * 1024))
+      .addNetworkInterceptor(HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BASIC })
       .build()
 }
 
