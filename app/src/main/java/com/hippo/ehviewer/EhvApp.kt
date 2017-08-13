@@ -19,6 +19,7 @@ package com.hippo.ehviewer
 import android.app.Application
 import com.hippo.ehviewer.client.AutoSwitchClient
 import com.hippo.ehviewer.client.AutoSwitchUrl
+import com.hippo.ehviewer.network.CookieRepository
 import com.hippo.ehviewer.noi.Noi
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
@@ -43,6 +44,7 @@ val EHV_PREFERENCES: EhvPreferences by lazy { EhvPreferences(EHV_APP) }
 val OK_HTTP_CLIENT: OkHttpClient by lazy {
   OkHttpClient.Builder()
       .cache(Cache(File(EHV_APP.cacheDir, "okhttp").apply { mkdirs() }, 50 * 1024 * 1024))
+      .cookieJar(CookieRepository(EHV_APP))
       .addNetworkInterceptor(HttpLoggingInterceptor().also { it.level = HttpLoggingInterceptor.Level.BASIC })
       .build()
 }

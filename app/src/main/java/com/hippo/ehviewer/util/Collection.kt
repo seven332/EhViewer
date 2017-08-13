@@ -20,10 +20,26 @@ package com.hippo.ehviewer.util
  * Created by Hippo on 2017/7/24.
  */
 
+/**
+ * Performs the given [action] on each element. ANDs all results and returns it.
+ */
 inline fun <T> Iterable<T>.forEachAny(action: (T) -> Boolean): Boolean {
   var result = false
   for (element in this) {
     result = action(element) || result
   }
   return result
+}
+
+/**
+ * Performs the given [action] on each entry. Remove the entry if return `true`.
+ */
+inline fun <K, V> MutableMap<K, V>.forEachRemove(action: (K, V) -> Boolean ) {
+  val iterator = entries.iterator()
+  while (iterator.hasNext()) {
+    val entry = iterator.next()
+    if (action(entry.key, entry.value)) {
+      iterator.remove()
+    }
+  }
 }

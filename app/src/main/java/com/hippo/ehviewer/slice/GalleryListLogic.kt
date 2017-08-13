@@ -108,7 +108,6 @@ open class GalleryListPen private constructor(
   fun apply(builder: GLUrlBuilder) {
     this.builder.set(builder)
     builderObservable.accept(this.builder)
-    data.goTo(0)
   }
 
   private inner class GalleryData : ContentData<GalleryInfo>() {
