@@ -32,7 +32,6 @@ import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhEngine;
-import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.spider.SpiderDen;
@@ -40,7 +39,6 @@ import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.image.Image;
 import com.hippo.image.ImageBitmap;
 import com.hippo.network.StatusCodeException;
-import com.hippo.okhttp.CookieDB;
 import com.hippo.scene.SceneApplication;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
@@ -58,8 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cookie;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 public class EhApplication extends SceneApplication implements Thread.UncaughtExceptionHandler {
@@ -97,7 +93,6 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         super.onCreate();
 
         GetText.initialize(this);
-        CookieDB.initialize(this);
         StatusCodeException.initialize(this);
         Settings.initialize(this);
         ReadableTime.initialize(this);
@@ -158,29 +153,6 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         int version = Settings.getVersionCode();
         if (version < 52) {
             Settings.putGuideGallery(true);
-        }
-        if (version < 56) { // Make cookie long live
-            HttpUrl eUrl = HttpUrl.parse(EhUrl.HOST_E);
-            HttpUrl exUrl = HttpUrl.parse(EhUrl.HOST_EX);
-            EhCookieStore cookieStore = getEhCookieStore(this);
-
-            Cookie c;
-            c = cookieStore.get(eUrl, EhCookieStore.KEY_IPD_MEMBER_ID);
-            if (null != c) {
-                cookieStore.add(EhCookieStore.newCookie(c, c.domain(), true, true, true));
-            }
-            c = cookieStore.get(eUrl, EhCookieStore.KEY_IPD_PASS_HASH);
-            if (null != c) {
-                cookieStore.add(EhCookieStore.newCookie(c, c.domain(), true, true, true));
-            }
-            c = cookieStore.get(exUrl, EhCookieStore.KEY_IPD_MEMBER_ID);
-            if (null != c) {
-                cookieStore.add(EhCookieStore.newCookie(c, c.domain(), true, true, true));
-            }
-            c = cookieStore.get(exUrl, EhCookieStore.KEY_IPD_PASS_HASH);
-            if (null != c) {
-                cookieStore.add(EhCookieStore.newCookie(c, c.domain(), true, true, true));
-            }
         }
     }
 
@@ -243,7 +215,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     public static EhCookieStore getEhCookieStore(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mEhCookieStore == null) {
-            application.mEhCookieStore = new EhCookieStore();
+            application.mEhCookieStore = new EhCookieStore(context);
         }
         return application.mEhCookieStore;
     }

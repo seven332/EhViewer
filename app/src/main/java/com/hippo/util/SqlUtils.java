@@ -69,4 +69,54 @@ public class SqlUtils {
 
         return sb.toString();
     }
+
+    public static boolean getBoolean(Cursor cursor, String column, boolean defValue) {
+        try {
+            int index = cursor.getColumnIndex(column);
+            if (index != -1) {
+                return cursor.getInt(index) != 0;
+            }
+        } catch (Throwable e) { /* Ignore */ }
+        return defValue;
+    }
+
+    public static int getInt(Cursor cursor, String column, int defValue) {
+        try {
+            int index = cursor.getColumnIndex(column);
+            if (index != -1) {
+                return cursor.getInt(index);
+            }
+        } catch (Throwable e) { /* Ignore */ }
+        return defValue;
+    }
+
+    public static long getLong(Cursor cursor, String column, long defValue) {
+        try {
+            int index = cursor.getColumnIndex(column);
+            if (index != -1) {
+                return cursor.getLong(index);
+            }
+        } catch (Throwable e) { /* Ignore */ }
+        return defValue;
+    }
+
+    public static float getFloat(Cursor cursor, String column, float defValue) {
+        try {
+            int index = cursor.getColumnIndex(column);
+            if (index != -1) {
+                return cursor.getFloat(index);
+            }
+        } catch (Throwable e) { /* Ignore */ }
+        return defValue;
+    }
+
+    public static String getString(Cursor cursor, String column, String defValue) {
+        try {
+            int index = cursor.getColumnIndex(column);
+            if (index != -1) {
+                return cursor.getString(index);
+            }
+        } catch (Throwable e) { /* Ignore */ }
+        return defValue;
+    }
 }

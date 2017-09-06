@@ -44,6 +44,11 @@
 
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="recaptcha">Recaptcha (Not required)</string>
+
+    <string name="recaptcha_none">Click me</string>
+    <string name="recaptcha_loading">Loading…</string>
+    <string name="recaptcha_failure">Failed</string>
 
     <string name="sign_in">Sign in</string>
     <string name="register">Register</string>

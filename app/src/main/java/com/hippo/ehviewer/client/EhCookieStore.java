@@ -16,7 +16,9 @@
 
 package com.hippo.ehviewer.client;
 
-import com.hippo.okhttp.CookieDBStore;
+import android.content.Context;
+
+import com.hippo.network.CookieRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +28,7 @@ import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 
-public class EhCookieStore extends CookieDBStore {
+public class EhCookieStore extends CookieRepository {
 
     public static final String KEY_IPD_MEMBER_ID = "ipb_member_id";
     public static final String KEY_IPD_PASS_HASH = "ipb_pass_hash";
@@ -41,13 +43,18 @@ public class EhCookieStore extends CookieDBStore {
                     .expiresAt(Long.MAX_VALUE)
                     .build();
 
+    public EhCookieStore(Context context) {
+        super(context, "okhttp3-cookie.db");
+    }
+
     public void signOut() {
-        removeAll();
+        clear();
     }
 
     public boolean hasSignedIn() {
-        return contain(EhUrl.DOMAIN_EX, KEY_IPD_MEMBER_ID) &&
-                contain(EhUrl.DOMAIN_EX, KEY_IPD_PASS_HASH);
+        HttpUrl url = HttpUrl.parse(EhUrl.HOST_E);
+        return contains(url, KEY_IPD_MEMBER_ID) &&
+                contains(url, KEY_IPD_PASS_HASH);
     }
 
     public static Cookie newCookie(Cookie cookie, String newDomain, boolean forcePersistent,
@@ -82,10 +89,9 @@ public class EhCookieStore extends CookieDBStore {
     public List<Cookie> loadForRequest(HttpUrl url, Request request) {
         List<Cookie> cookies = super.loadForRequest(url, request);
         Object tag = request.tag();
-        String host = url.host();
 
-        boolean checkTips = domainMatch(host, EhUrl.DOMAIN_E);
-        boolean checkUconfig = (domainMatch(host, EhUrl.DOMAIN_E) || domainMatch(host, EhUrl.DOMAIN_EX)) && tag instanceof EhConfig;
+        boolean checkTips = domainMatch(url, EhUrl.DOMAIN_E);
+        boolean checkUconfig = (domainMatch(url, EhUrl.DOMAIN_E) || domainMatch(url, EhUrl.DOMAIN_EX)) && tag instanceof EhConfig;
 
         if (checkTips || checkUconfig) {
             List<Cookie> result = new ArrayList<>(cookies.size() + 1);
@@ -109,7 +115,7 @@ public class EhCookieStore extends CookieDBStore {
                 Cookie uconfigCookie = new Cookie.Builder()
                         .name(EhConfig.KEY_UCONFIG)
                         .value(ehConfig.uconfig())
-                        .domain(host)
+                        .domain(url.host())
                         .path("/")
                         .expiresAt(Long.MAX_VALUE)
                         .build();
@@ -119,27 +125,5 @@ public class EhCookieStore extends CookieDBStore {
         } else {
             return cookies;
         }
-    }
-
-    @Override
-    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-        List<Cookie> result = new ArrayList<>(cookies.size() + 2);
-
-        for (Cookie cookie: cookies) {
-            if (EhUrl.DOMAIN_E.equals(cookie.domain())) {
-                // Save id and hash for exhentai
-                if (KEY_IPD_MEMBER_ID.equals(cookie.name()) ||
-                        KEY_IPD_PASS_HASH.equals(cookie.name()) ||
-                        KEY_IGNEOUS.equals(cookie.name())) {
-                    result.add(newCookie(cookie, EhUrl.DOMAIN_E, true, true, true));
-                    result.add(newCookie(cookie, EhUrl.DOMAIN_EX, true, true, true));
-                    continue;
-                }
-            }
-
-            result.add(cookie);
-        }
-
-        super.saveFromResponse(url, Collections.unmodifiableList(result));
     }
 }

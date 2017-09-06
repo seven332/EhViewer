@@ -55,6 +55,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$supportLibrary"
     compile "com.android.support:design:$supportLibrary"
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
+    compile 'com.github.seven332:android-recaptcha:2bbb3459a8'
     compile 'com.github.seven332:animator:0.1.0'
     compile 'com.github.seven332:beerbelly:0.1.4'
     compile 'com.github.seven332:conaco:0.1.5-eh'
@@ -79,4 +80,6 @@ dependencies {
     compile 'org.greenrobot:greendao:2.2.0'
     compile 'org.jsoup:jsoup:1.9.2'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.4'
+    testCompile 'org.jooq:joor:0.9.6'
 }

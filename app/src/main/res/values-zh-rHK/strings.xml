@@ -28,6 +28,11 @@
 
     <string name="username">用户名</string>
     <string name="password">密碼</string>
+    <string name="recaptcha">驗證碼（非必需）</string>
+
+    <string name="recaptcha_none">點我</string>
+    <string name="recaptcha_loading">加載中…</string>
+    <string name="recaptcha_failure">失敗</string>
 
     <string name="sign_in">登錄</string>
     <string name="register">註冊</string>
