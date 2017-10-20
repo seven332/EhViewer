@@ -4,15 +4,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'android-chinese-string'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
         minSdkVersion 14
-        targetSdkVersion 25
-        versionCode 77
-        versionName "1.0.24"
+        targetSdkVersion 26
+        versionCode 78
+        versionName "1.0.25"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW",
                 "es"
@@ -52,8 +52,8 @@ clean {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "com.android.support:appcompat-v7:$supportLibrary"
-    compile "com.android.support:design:$supportLibrary"
+    compile "com.android.support:appcompat-v7:26.1.0"
+    compile "com.android.support:design:26.1.0"
     compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     compile 'com.github.seven332:android-recaptcha:2bbb3459a8'
     compile 'com.github.seven332:animator:0.1.0'
