@@ -35,7 +35,6 @@ public class AppConfig {
     private static final String APP_DIRNAME = "EhViewer";
 
     private static final String TEMP = "temp";
-    private static final String IMAGE = "image";
     private static final String CRASH = "crash";
     private static final String PARSE_ERROR = "parse_error";
     private static final String LOGCAT = "logcat";
@@ -95,7 +94,7 @@ public class AppConfig {
 
     @Nullable
     public static File getExternalImageDir() {
-        return getDirInExternalAppDir(IMAGE);
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
     }
 
     @Nullable
