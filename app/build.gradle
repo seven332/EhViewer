@@ -19,13 +19,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion "$target_sdk_version".toInteger()
     buildToolsVersion "$build_tools_version"
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
-        minSdkVersion 14
-        targetSdkVersion 25
+        minSdkVersion "$mini_sdk_version"
+        targetSdkVersion "$target_sdk_version"
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
