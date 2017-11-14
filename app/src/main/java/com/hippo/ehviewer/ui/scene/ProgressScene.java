@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,6 +31,8 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.data.GalleryDetail;
+import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
@@ -96,13 +99,12 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
             if (mGid == -1 || mPToken == null || mPage == -1) {
                 return false;
             }
-
-            EhRequest request = new EhRequest()
-                    .setMethod(EhClient.METHOD_GET_GALLERY_TOKEN)
-                    .setArgs(mGid, mPToken, mPage)
-                    .setCallback(new GetGalleryTokenListener(context,
-                            activity.getStageId(), getTag()));
-            EhApplication.getEhClient(context).execute(request);
+            GalleryDetail galleryInfo = EhApplication.getGalleryDetailCache(context).get(mGid);
+            Intent intent = new Intent(context, GalleryActivity.class);
+            intent.setAction(GalleryActivity.ACTION_EH);
+            intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, galleryInfo);
+            intent.putExtra(GalleryActivity.KEY_PAGE, mPage);
+            startActivity(intent);
             return true;
         }
         return false;
