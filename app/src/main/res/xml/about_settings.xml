@@ -24,6 +24,11 @@
         android:title="@string/settings_about_author"/>
 
     <com.hippo.preference.UrlPreference
+      android:key="telegram"
+      android:title="@string/settings_about_telegram"
+      app:url="https://t.me/ehviewer"/>
+
+    <com.hippo.preference.UrlPreference
         android:key="google_plus"
         android:title="@string/settings_about_google_plus"
         app:url="https://plus.google.com/communities/103823982034655188459"/>

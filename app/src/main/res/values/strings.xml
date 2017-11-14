@@ -527,6 +527,7 @@
     <string name="settings_about">About</string>
     <string name="settings_about_author">Author</string>
     <string name="settings_about_author_summary" translatable="false">Hippo &lt;ehviewersu$gmail.com&gt;</string>
+    <string name="settings_about_telegram">Telegram</string>
     <string name="settings_about_google_plus">Google+ Community</string>
     <string name="settings_about_website">Website</string>
     <string name="settings_about_source">Source</string>
