@@ -1,3 +1,5 @@
+[![Telegram](https://img.shields.io/badge/chat-Telegram-blue.svg)](https://t.me/ehviewer) [![G+](https://img.shields.io/badge/chat-G%2B-red.svg)](https://plus.google.com/communities/103823982034655188459)
+
 # EhViewer
 
 ![Icon](art/launcher_icon-web.png)
