@@ -50,17 +50,17 @@
     <string name="waring">警告</string>
     <string name="wrong_cookie_warning">看來您輸入的 Cookie 是錯誤的，最好再檢查一下。</string>
     <string name="i_will_check_it">好的</string>
-    <string name="i_dont_think_so">我覺得我沒打錯</string>
-    <string name="found_cookies">找到舊版 Cookie了!</string>
+    <string name="i_dont_think_so">我覺得沒打錯</string>
+    <string name="found_cookies">找到 Cookie了!</string>
 
-    <string name="invalid_download_location">下載路徑似乎無法使用。請至設定重新設定下載路徑。</string>
+    <string name="invalid_download_location">看來下載路徑似乎沒辦法使用。請至設定重新設定下載路徑。</string>
 
     <string name="cellular_network_warning">正在使用行動數據</string>
 
     <string name="error_bad_status_code">錯誤狀態碼：%d</string>
     <string name="error_timeout">逾時</string>
     <string name="error_unknown_host">未知的主機</string>
-    <string name="error_redirection">過多重新導向</string>
+    <string name="error_redirection">重新導向迴圈</string>
     <string name="error_socket">網路錯誤</string>
     <string name="error_unknown">奇怪的錯誤</string>
     <string name="error_cant_find_activity">找不到相對應的應用程式</string>
@@ -70,7 +70,7 @@
     <string name="error_decoding_failed">解碼失敗</string>
     <string name="error_not_found">沒能找到</string>
     <string name="error_empty">空</string>
-    <string name="error_invalid_zip_file">不正確的 zip 檔案</string>
+    <string name="error_invalid_zip_file">無效的 zip 檔案</string>
     <string name="error_reading_failed">讀取失敗</string>
     <string name="error_out_of_range">超出範圍</string>
     <string name="error_write_failed">寫入失敗</string>
@@ -81,14 +81,14 @@
     <string name="error_invalid_specify_gallery">指定的圖庫關鍵字應該看起來像 “618395 0439fa3666”</string>
     <string name="error_cant_create_temp_file">無法建立暫存檔案</string>
     <string name="error_cant_save_image">無法儲存圖片</string>
-    <string name="error_invalid_number">不正確的數字</string>
+    <string name="error_invalid_number">無效的數字</string>
 
     <string name="app_waring">本應用程式中內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用程式的作者不會對由其所造成的任何影響負責。</string>
     <string name="error_username_cannot_empty">使用者名稱不能是空的</string>
     <string name="error_password_cannot_empty">密碼不能是空的</string>
     <string name="skip_signing_in">略過登入</string>
     <string name="sign_in_failed">登入失敗</string>
-    <string name="sign_in_failed_plain">這可能是網站更新造成的，也有可能是發生了奇怪的事情。您可以選擇在登入按鈕下方透過網頁登入或者輸入 cookie，也可以略過登入。略過登入可能導致無法正常使用應用程式。如果你已經在 0.6.x 版登入過了，請先試試“透過 Cookie 登入”。</string>
+    <string name="sign_in_failed_plain">這可能是網站更新造成的，也有可能是哪裡出錯了。您可以選擇在登入按鈕下方透過網頁登入或者輸入 cookie，也可以略過登入。略過登入可能導致無法正常使用應用程式。如果你已經在 0.6.x 版登入過了，請先試試“透過 Cookie 登入”。</string>
     <string name="press_twice_exit">再按一次離開</string>
     <string name="content_layout_restore_tip">點擊重試</string>
     <string name="write_rationale">EhViewer 將請求裝置外部儲存空間的存取許可以下載圖庫。您願意授權嗎？</string>
@@ -100,7 +100,7 @@
 
     <!-- Crash -->
     <string name="send">傳送</string>
-    <string name="crash_explain">上次程式當掉了。你願意把錯誤紀錄傳送給開發者讓未來的使用者體驗變得更好嗎？（以電子郵件傳送）</string>
+    <string name="crash_explain">剛剛當掉了。你願意把錯誤紀錄傳送給開發者讓未來的使用者體驗變得更好嗎？（以電子郵件傳送）</string>
 
     <!-- Select scene -->
     <string name="select_scene">你想選擇哪個圖庫站台？</string>
@@ -284,7 +284,7 @@
     <string name="download_state_failed_2">還有 %d 尚未完成</string>
     <string name="download_state_finish">大功告成</string>
     <string name="stat_509_alert_title">509 警告</string>
-    <string name="stat_509_alert_text">圖片配額已用盡。請停止下載，休息一下。</string>
+    <string name="stat_509_alert_text">圖片流量已用盡。請停止下載，休息一下。</string>
     <string name="stat_download_done_title">下載結束</string>
     <string name="stat_download_done_text_succeeded">有 %d 項已成功下載</string>
     <string name="stat_download_done_text_failed">有 %d 項下載失敗</string>
@@ -430,7 +430,7 @@
     <string name="settings_download_download_location">下載路徑</string>
     <string name="settings_download_invalid_download_location">無效的下載路徑</string>
     <string name="settings_download_cant_get_download_location">無法取得下載路徑</string>
-    <string name="settings_download_pick_dir_kk">在 Android 4.4+  KitKat 中您無法把數據寫到外接 SD 卡裡，除非你駭了他。不過 &lt;SD card&gt;/Android/data/com.hippo.ehviewer 這個路徑比較特別，是可以寫入的。</string>
+    <string name="settings_download_pick_dir_kk">在 Android 4.4+  KitKat 中您無法把數據寫到外接 SD 卡裡，除非你駭了他。不過 &lt;SD card&gt;/Android/data/com.hippo.ehviewer 這個路徑比較特別，可以寫入。</string>
     <string name="settings_download_pick_dir_l">Android 5.0+ Lollipop 提供了新的寫入外接 SD 卡的 API。如果您想把下載路徑設定到外接 SD 卡上，點擊“檔案”按鈕</string>
     <string name="settings_download_document">檔案</string>
     <string name="settings_download_continue">繼續</string>
@@ -442,7 +442,7 @@
     <string name="settings_download_image_resolution_summary">%s，大於 1280x 的解析度可能不會生效</string>
     <string name="settings_download_image_resolution_auto">自動</string>
     <string name="settings_download_download_origin_image">下載原圖</string>
-    <string name="settings_download_download_origin_image_summary">這很危險！勾選這個選項會導致下載額度快速耗用</string>
+    <string name="settings_download_download_origin_image_summary">這很危險！勾選這個選項會導致圖片流量配額快速耗用</string>
     <string name="settings_download_media_scan">允許其他程式進行媒體掃描</string>
     <string name="settings_download_media_scan_summary_on">請別讓別人看到你的相簿</string>
     <string name="settings_download_media_scan_summary_off">大部分相簿軟體將會忽略顯示下載路徑中的影像</string>
@@ -507,7 +507,7 @@
     <string name="deselect_all">全取消</string>
     <string name="invert_selection">反轉選取</string>
     <string name="language">語言</string>
-    <string name="original">原作</string>
+    <string name="original">原史作品</string>
     <string name="translated">翻譯版</string>
     <string name="rewrite">改寫</string>
     <string name="language_japanese">日語</string>
