@@ -92,6 +92,8 @@ public final class EhFilter {
     }
 
     public synchronized void addFilter(Filter filter) {
+        // enable filter by default before it is added to database
+        filter.enable = true;
         EhDB.addFilter(filter);
 
         switch (filter.mode) {
@@ -114,6 +116,10 @@ public final class EhFilter {
                 Log.d(TAG, "Unknown mode: " + filter.mode);
                 break;
         }
+    }
+
+    public synchronized void triggerFilter(Filter filter) {
+        EhDB.triggerFilter(filter);
     }
 
     public synchronized void deleteFilter(Filter filter) {
@@ -153,7 +159,7 @@ public final class EhFilter {
         if (null != title && filters.size() > 0) {
             title = title.toLowerCase();
             for (int i = 0, n = filters.size(); i < n; i++) {
-                if (title.contains(filters.get(i).text)) {
+                if (filters.get(i).enable && title.contains(filters.get(i).text)) {
                     return false;
                 }
             }
@@ -172,7 +178,7 @@ public final class EhFilter {
         List<Filter> filters = mUploaderFilterList;
         if (null != uploader && filters.size() > 0) {
             for (int i = 0, n = filters.size(); i < n; i++) {
-                if (uploader.equals(filters.get(i).text)) {
+                if (filters.get(i).enable && uploader.equals(filters.get(i).text)) {
                     return false;
                 }
             }
@@ -229,7 +235,7 @@ public final class EhFilter {
         if (null != tags && filters.size() > 0) {
             for (String tag: tags) {
                 for (int i = 0, n = filters.size(); i < n; i++) {
-                    if (matchTag(tag, filters.get(i).text)) {
+                    if (filters.get(i).enable && matchTag(tag, filters.get(i).text)) {
                         return false;
                     }
                 }
@@ -264,7 +270,7 @@ public final class EhFilter {
         if (null != tags && filters.size() > 0) {
             for (String tag: tags) {
                 for (int i = 0, n = filters.size(); i < n; i++) {
-                    if (matchTagNamespace(tag, filters.get(i).text)) {
+                    if (filters.get(i).enable && matchTagNamespace(tag, filters.get(i).text)) {
                         return false;
                     }
                 }
