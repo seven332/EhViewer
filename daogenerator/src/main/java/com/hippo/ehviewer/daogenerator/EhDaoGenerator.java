@@ -32,7 +32,7 @@ public class EhDaoGenerator {
     private static final String OUT_DIR = "../app/src/main/java-gen";
     private static final String DELETE_DIR = "../app/src/main/java-gen/com/hippo/ehviewer/dao";
 
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
 
     private static final String DOWNLOAD_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/DownloadInfo.java";
     private static final String HISTORY_INFO_PATH = "../app/src/main/java-gen/com/hippo/ehviewer/dao/HistoryInfo.java";
@@ -190,6 +190,7 @@ public class EhDaoGenerator {
         entity.addIdProperty();
         entity.addIntProperty("mode").notNull();
         entity.addStringProperty("text");
+        entity.addBooleanProperty("enable");
     }
 
     private static void adjustDownloadInfo() throws Exception {
@@ -496,6 +497,7 @@ public class EhDaoGenerator {
         // Set field public
         javaClass.getField("mode").setPublic();
         javaClass.getField("text").setPublic();
+        javaClass.getField("enable").setPublic();
         // Add equals method
         javaClass.addImport("com.hippo.yorozuya.ObjectUtils");
         javaClass.addMethod("\t@Override\n" +

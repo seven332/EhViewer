@@ -93,6 +93,19 @@ public class EhDB {
         switch (oldVersion) {
             case 1: // 1 to 2
                 FilterDao.createTable(db, true);
+                break;
+            case 2: // add ENABLE column to table FILTER
+                db.execSQL("CREATE TABLE " + "\"FILTER2\" (" +
+                    "\"_id\" INTEGER PRIMARY KEY ," +
+                    "\"MODE\" INTEGER NOT NULL ," +
+                    "\"TEXT\" TEXT," +
+                    "\"ENABLE\" INTEGER);");
+                db.execSQL("INSERT INTO \"FILTER2\" (" +
+                        "_id, MODE, TEXT, ENABLE)" +
+                        "SELECT _id, MODE, TEXT, 1 FROM FILTER;");
+                db.execSQL("DROP TABLE FILTER");
+                db.execSQL("ALTER TABLE FILTER2 RENAME TO  FILTER");
+                break;
         }
     }
 
@@ -604,6 +617,11 @@ public class EhDB {
 
     public static synchronized void deleteFilter(Filter filter) {
         sDaoSession.getFilterDao().delete(filter);
+    }
+
+    public static synchronized void triggerFilter(Filter filter) {
+        filter.setEnable(!filter.enable);
+        sDaoSession.getFilterDao().update(filter);
     }
 
     public static synchronized boolean exportDB(Context context, File file) {
