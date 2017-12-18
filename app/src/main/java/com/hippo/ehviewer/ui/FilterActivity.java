@@ -78,6 +78,7 @@ public class FilterActivity extends ToolbarActivity {
         mRecyclerView.setClipChildren(false);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.hasFixedSize();
+        mRecyclerView.setItemAnimator(null);
 
         updateView(false);
     }
@@ -266,7 +267,7 @@ public class FilterActivity extends ToolbarActivity {
                     mFilterList.trigger(filter);
 
                     //for updating delete line on filter text
-                    mAdapter.notifyDataSetChanged();
+                    mAdapter.notifyItemChanged(getAdapterPosition());
                 }
 
             }
