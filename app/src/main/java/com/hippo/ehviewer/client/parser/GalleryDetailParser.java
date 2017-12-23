@@ -303,7 +303,7 @@ public class GalleryDetailParser {
                 // Sometimes parody tag is followed with '|' and english translate, just remove them
                 int index = tag.indexOf('|');
                 if (index >= 0) {
-                    tag = tag.substring(0, index);
+                    tag = tag.substring(0, index).trim();
                 }
                 group.addTag(tag);
             }
