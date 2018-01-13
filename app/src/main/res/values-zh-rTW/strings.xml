@@ -45,7 +45,7 @@
 
     <string name="default_display_name">Little Hippo</string>
 
-    <string name="cookie_explain">Cookie 是儲存在瀏覽器裡的一小塊資料。如果您不清楚 Cookie 什麼或者如何取得 Cookie，最好去查一下。\n\n請輸入特定的 Cookie 來登入。</string>
+    <string name="cookie_explain">Cookie 是儲存在瀏覽器裡的一小塊資料。如果您不清楚 Cookie 是什麼或者如何取得 Cookie，最好去查一下。\n\n請輸入特定的 Cookie 來登入。</string>
     <string name="text_is_empty">文字是空的</string>
     <string name="waring">警告</string>
     <string name="wrong_cookie_warning">看來您輸入的 Cookie 是錯誤的，最好再檢查一下。</string>
