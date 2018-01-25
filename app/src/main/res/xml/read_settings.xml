@@ -72,6 +72,11 @@
         android:defaultValue="true"/>
 
     <com.hippo.preference.SwitchPreference
+      android:key="gallery_show_page_interval"
+      android:title="@string/settings_read_show_page_interval"
+      android:defaultValue="true"/>
+
+    <com.hippo.preference.SwitchPreference
         android:key="volume_page"
         android:title="@string/settings_read_volume_page"
         android:defaultValue="false"/>

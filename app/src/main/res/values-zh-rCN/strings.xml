@@ -421,6 +421,7 @@
     <string name="settings_read_show_clock">显示时钟</string>
     <string name="settings_read_show_progress">显示进度</string>
     <string name="settings_read_show_battery">显示电量</string>
+    <string name="settings_read_show_page_interval">显示页面间隔</string>
     <string name="settings_read_volume_page">使用音量键翻页</string>
     <string name="settings_read_reading_fullscreen">全屏</string>
     <string name="settings_read_custom_screen_lightness">自定义屏幕亮度</string>

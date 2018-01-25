@@ -151,6 +151,13 @@
             android:textColor="@color/primary_text_dark"/>
 
         <android.support.v7.widget.SwitchCompat
+          android:id="@+id/show_page_interval"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/settings_read_show_page_interval"
+          android:textColor="@color/primary_text_dark"/>
+
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/volume_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -280,8 +280,8 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                 .setStartPage(startPage)
                 .setBackgroundColor(resources.getColor(R.color.gallery_background))
                 .setEdgeColor(primaryColor & 0xffffff | 0x33000000)
-                .setPagerInterval(resources.getDimensionPixelOffset(R.dimen.gallery_pager_interval))
-                .setScrollInterval(resources.getDimensionPixelOffset(R.dimen.gallery_scroll_interval))
+                .setPagerInterval(Settings.getShowPageInterval() ? resources.getDimensionPixelOffset(R.dimen.gallery_pager_interval) : 0)
+                .setScrollInterval(Settings.getShowPageInterval() ? resources.getDimensionPixelOffset(R.dimen.gallery_scroll_interval) : 0)
                 .setPageMinHeight(resources.getDimensionPixelOffset(R.dimen.gallery_page_min_height))
                 .setPageInfoInterval(resources.getDimensionPixelOffset(R.dimen.gallery_page_info_interval))
                 .setProgressColor(primaryColor)
@@ -702,6 +702,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         private final SwitchCompat mShowClock;
         private final SwitchCompat mShowProgress;
         private final SwitchCompat mShowBattery;
+        private final SwitchCompat mShowPageInterval;
         private final SwitchCompat mVolumePage;
         private final SwitchCompat mReadingFullscreen;
         private final SwitchCompat mCustomScreenLightness;
@@ -718,6 +719,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             mShowClock = (SwitchCompat) mView.findViewById(R.id.show_clock);
             mShowProgress = (SwitchCompat) mView.findViewById(R.id.show_progress);
             mShowBattery = (SwitchCompat) mView.findViewById(R.id.show_battery);
+            mShowPageInterval = (SwitchCompat) mView.findViewById(R.id.show_page_interval);
             mVolumePage = (SwitchCompat) mView.findViewById(R.id.volume_page);
             mReadingFullscreen = (SwitchCompat) mView.findViewById(R.id.reading_fullscreen);
             mCustomScreenLightness = (SwitchCompat) mView.findViewById(R.id.custom_screen_lightness);
@@ -731,6 +733,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             mShowClock.setChecked(Settings.getShowClock());
             mShowProgress.setChecked(Settings.getShowProgress());
             mShowBattery.setChecked(Settings.getShowBattery());
+            mShowPageInterval.setChecked(Settings.getShowPageInterval());
             mVolumePage.setChecked(Settings.getVolumePage());
             mReadingFullscreen.setChecked(Settings.getReadingFullscreen());
             mCustomScreenLightness.setChecked(Settings.getCustomScreenLightness());
@@ -759,6 +762,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             boolean showClock = mShowClock.isChecked();
             boolean showProgress = mShowProgress.isChecked();
             boolean showBattery = mShowBattery.isChecked();
+            boolean showPageInterval = mShowPageInterval.isChecked();
             boolean volumePage = mVolumePage.isChecked();
             boolean readingFullscreen = mReadingFullscreen.isChecked();
             boolean customScreenLightness = mCustomScreenLightness.isChecked();
@@ -774,6 +778,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             Settings.putShowClock(showClock);
             Settings.putShowProgress(showProgress);
             Settings.putShowBattery(showBattery);
+            Settings.putShowPageInterval(showPageInterval);
             Settings.putVolumePage(volumePage);
             Settings.putReadingFullscreen(readingFullscreen);
             Settings.putCustomScreenLightness(customScreenLightness);
@@ -812,6 +817,8 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             if (mBattery != null) {
                 mBattery.setVisibility(showBattery ? View.VISIBLE : View.GONE);
             }
+            mGalleryView.setPagerInterval(showPageInterval ? getResources().getDimensionPixelOffset(R.dimen.gallery_pager_interval) : 0);
+            mGalleryView.setScrollInterval(showPageInterval ? getResources().getDimensionPixelOffset(R.dimen.gallery_scroll_interval) : 0);
             setScreenLightness(customScreenLightness, screenLightness);
 
             // Update slider

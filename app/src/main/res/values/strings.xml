@@ -464,6 +464,7 @@
     <string name="settings_read_show_clock">Show clock</string>
     <string name="settings_read_show_progress">Show progress</string>
     <string name="settings_read_show_battery">Show battery</string>
+    <string name="settings_read_show_page_interval">Show page interval</string>
     <string name="settings_read_volume_page">Use volume key to turn pages</string>
     <string name="settings_read_reading_fullscreen">Fullscreen</string>
     <string name="settings_read_custom_screen_lightness">Custom screen lightness</string>

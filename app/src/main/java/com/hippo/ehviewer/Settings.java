@@ -520,6 +520,17 @@ public class Settings {
         putBoolean(KEY_SHOW_BATTERY, value);
     }
 
+    private static final String KEY_SHOW_PAGE_INTERVAL = "gallery_show_page_interval";
+    private static final boolean DEFAULT_SHOW_PAGE_INTERVAL = true;
+
+    public static boolean getShowPageInterval() {
+        return getBoolean(KEY_SHOW_PAGE_INTERVAL, DEFAULT_SHOW_PAGE_INTERVAL);
+    }
+
+    public static void putShowPageInterval(boolean value) {
+        putBoolean(KEY_SHOW_PAGE_INTERVAL, value);
+    }
+
     private static final String KEY_VOLUME_PAGE = "volume_page";
     private static final boolean DEFAULT_VOLUME_PAGE = false;
 
