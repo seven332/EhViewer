@@ -19,7 +19,8 @@ android {
     }
 
     lintOptions {
-        abortOnError true
+        abortOnError false
+        checkReleaseBuilds false
     }
 
     buildTypes {
@@ -82,4 +83,10 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.4'
     testCompile 'org.jooq:joor:0.9.6'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'com.github.seven332:image:bab9b11'
+    }
 }
