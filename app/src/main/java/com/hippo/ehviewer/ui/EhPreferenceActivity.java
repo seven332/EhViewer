@@ -18,6 +18,8 @@ package com.hippo.ehviewer.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.WindowManager;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.app.AppCompatPreferenceActivity;
@@ -59,6 +61,17 @@ public abstract class EhPreferenceActivity extends AppCompatPreferenceActivity {
         if (mTrackStarted) {
             EasyTracker.getInstance(this).activityStop(this);
             mTrackStarted = false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Settings.getEnabledSecurity()){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE);
+        }else{
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
     }
 }
