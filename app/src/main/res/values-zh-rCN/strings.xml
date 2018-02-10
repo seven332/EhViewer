@@ -480,9 +480,9 @@
     <string name="settings_advanced_clear_memory_cache">清理内存缓存</string>
     <string name="settings_advanced_clear_memory_cache_summary">清理缩略图、画廊信息的内存缓存</string>
     <string name="settings_advanced_read_cache_size">阅读缓存大小</string>
-    <string name="settings_advanced_pattern_protection_title">图案保护</string>
-    <string name="settings_advanced_pattern_protection_not_set">未设置图案保护</string>
-    <string name="settings_advanced_pattern_protection_set">已设置图案保护</string>
+    <string name="settings_privacy_pattern_protection_title">图案保护</string>
+    <string name="settings_privacy_pattern_protection_not_set">未设置图案保护</string>
+    <string name="settings_privacy_pattern_protection_set">已设置图案保护</string>
     <string name="settings_advanced_export_data">导出数据</string>
     <string name="settings_advanced_export_data_summary">保存数据至外置存储器，例如下载列表，快速搜索列表</string>
     <string name="settings_advanced_export_data_to">已导出数据至 %s</string>
@@ -504,8 +504,8 @@
     <string name="settings_about_donate_summary">支付宝：seven332$163.com</string>
     <string name="settings_about_donate_message">你的捐赠能帮助我开发更多更好的应用。\n\n支付宝：seven332$163.com</string>
     <string name="settings_about_donate_toast">邮箱地址已复制到剪切板</string>
-    <string name="settings_about_enable_analytics">启用数据统计</string>
-    <string name="settings_about_about_analytics">关于数据统计</string>
+    <string name="settings_privacy_enable_analytics">启用数据统计</string>
+    <string name="settings_privacy_about_analytics">关于数据统计</string>
     <string name="settings_about_version">版本号</string>
     <string name="settings_about_check_for_updates">检查更新</string>
     <string name="settings_about_beta_update_channel">更新测试版</string>
@@ -627,8 +627,8 @@
     <string name="download_archive_failure">无法下载压缩包</string>
     <string name="archive">压缩包</string>
     <string name="download_archive_failure_no_hath">下载压缩包需要 H@H 客户端</string>
-    <string name="settings_sec">隐私和安全</string>
-    <string name="settings_sec_secure">不允许屏幕抓取</string>
-    <string name="settings_sec_secure_summary">启用后，将不能截取该应用的屏幕截图，同时，将不会在系统任务切换器中显示该应用的内容预览\n\n重新启动应用以生效此更改</string>
+    <string name="settings_privacy">隐私</string>
+    <string name="settings_privacy_secure">不允许屏幕抓取</string>
+    <string name="settings_privacy_secure_summary">启用后，将不能截取该应用的屏幕截图，同时，将不会在系统任务切换器中显示该应用的内容预览\n\n重新启动应用以生效此更改</string>
 
 </resources>
