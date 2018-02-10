@@ -36,7 +36,6 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -393,13 +392,6 @@ public final class MainActivity extends StageActivity
         super.onResume();
 
         setNavCheckedItem(mNavCheckedItem);
-
-        if(Settings.getEnabledSecurity()){
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                    WindowManager.LayoutParams.FLAG_SECURE);
-        }else{
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
-        }
     }
 
     @Override

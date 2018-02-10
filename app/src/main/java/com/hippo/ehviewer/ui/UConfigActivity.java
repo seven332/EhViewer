@@ -32,7 +32,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JsPromptResult;
@@ -44,7 +43,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.widget.ProgressView;
@@ -248,17 +246,6 @@ public class UConfigActivity extends ToolbarActivity {
     public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
       showMessageDialog(message, result);
       return true;
-    }
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    if(Settings.getEnabledSecurity()){
-      getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-              WindowManager.LayoutParams.FLAG_SECURE);
-    }else{
-      getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
     }
   }
 }

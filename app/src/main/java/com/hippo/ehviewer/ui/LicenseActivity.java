@@ -19,11 +19,9 @@ package com.hippo.ehviewer.ui;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.webkit.WebView;
 
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.Settings;
 
 public class LicenseActivity extends ToolbarActivity {
 
@@ -59,17 +57,6 @@ public class LicenseActivity extends ToolbarActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(Settings.getEnabledSecurity()){
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                    WindowManager.LayoutParams.FLAG_SECURE);
-        }else{
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
     }
 }
