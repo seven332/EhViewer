@@ -52,6 +52,9 @@ public class EhUrl {
     public static final String URL_FAVORITES_EX = HOST_EX + "favorites.php";
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
 
+    public static final String UCONFIG_E = HOST_E + "uconfig.php";
+    public static final String UCONFIG_EX = HOST_EX + "uconfig.php";
+
     private static final String URL_PREFIX_THUMB_E = "https://ehgt.org/t/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
@@ -86,6 +89,16 @@ public class EhUrl {
                 return API_E;
             case SITE_EX:
                 return API_EX;
+        }
+    }
+
+    public static String getUConfigUrl() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_E:
+                return UCONFIG_E;
+            case SITE_EX:
+                return UCONFIG_EX;
         }
     }
 

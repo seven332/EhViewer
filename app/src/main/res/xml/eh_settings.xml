@@ -32,6 +32,12 @@
         app:entryValues="@array/gallery_site_entry_values"
         android:defaultValue="1"/>
 
+    <com.hippo.preference.ActivityPreference
+        android:key="u_config"
+        android:title="@string/settings_u_config"
+        android:summary="@string/settings_u_config_summary"
+        app:activity="com.hippo.ehviewer.ui.UConfigActivity"/>
+
     <com.hippo.preference.ListPreference
         android:key="list_mode"
         android:title="@string/settings_eh_list_mode"
@@ -68,26 +74,6 @@
       android:key="fix_thumb_url"
       android:title="@string/settings_eh_fix_thumb_url"
       android:defaultValue="false"/>
-
-    <com.hippo.ehviewer.preference.DefaultCategoryPreference
-        android:key="default_categories"
-        android:title="@string/settings_eh_default_categories"
-        android:summary="@string/settings_eh_default_categories_summary"/>
-
-    <com.hippo.ehviewer.preference.ExcludedTagNamespacesPreference
-        android:key="excluded_tag_namespaces"
-        android:title="@string/settings_eh_excluded_tag_namespaces"
-        android:summary="@string/settings_eh_excluded_tag_namespaces_summary"/>
-
-    <com.hippo.preference.ActivityPreference
-        android:key="excluded_languages"
-        android:title="@string/settings_eh_excluded_languages"
-        android:summary="@string/settings_eh_excluded_languages_summary"
-        app:activity="com.hippo.ehviewer.ui.ExcludedLanguagesActivity"/>
-
-    <com.hippo.ehviewer.preference.HatHProxyPreference
-        android:key="hath_proxy"
-        android:title="@string/settings_eh_hath_proxy"/>
 
     <com.hippo.preference.SwitchPreference
         android:key="show_jpn_title"

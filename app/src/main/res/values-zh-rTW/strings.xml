@@ -348,6 +348,10 @@
     <string name="set">設定</string>
     <string name="enable_fingerprint">允許使用指紋解鎖</string>
 
+    <!-- UConfig Activity -->
+    <string name="u_config">EHentai 設定</string>
+    <string name="apply">應用</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -365,6 +369,8 @@
     <string name="settings_eh_sign_out_warning">天哪，老兄，你真的要登出嗎？我是說，你真的要登出嗎？</string>
     <string name="settings_eh_sign_out_yes">沒錯，我是說，對</string>
     <string name="settings_eh_sign_out_tip">已登出，重新啟動程式以再次登入</string>
+    <string name="settings_u_config">EHentai 設定</string>
+    <string name="settings_u_config_summary">EHentai 網站上的設定</string>
     <string name="settings_eh_gallery_site">圖庫站台</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">詳細資料</string>
