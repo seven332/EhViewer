@@ -140,6 +140,8 @@
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
 
+    <string name="help_route">Settings->About->Help</string>
+
     <!-- Crash -->
     <string name="send">Send</string>
     <string name="crash_explain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
