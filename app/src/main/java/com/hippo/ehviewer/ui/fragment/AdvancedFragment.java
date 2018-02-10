@@ -42,7 +42,6 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
 
     private static final String KEY_DUMP_LOGCAT = "dump_logcat";
     private static final String KEY_CLEAR_MEMORY_CACHE = "clear_memory_cache";
-    private static final String KEY_PATTERN_PROTECTION = "pattern_protection";
     private static final String KEY_EXPORT_DATA = "export_data";
     private static final String KEY_IMPORT_DATA = "import_data";
 
@@ -65,11 +64,6 @@ public class AdvancedFragment extends PreferenceFragment implements Preference.O
     @Override
     public void onResume() {
         super.onResume();
-
-        Preference patternProtection = findPreference(KEY_PATTERN_PROTECTION);
-        patternProtection.setSummary(TextUtils.isEmpty(Settings.getSecurity()) ?
-                R.string.settings_advanced_pattern_protection_not_set :
-                R.string.settings_advanced_pattern_protection_set);
     }
 
     @Override

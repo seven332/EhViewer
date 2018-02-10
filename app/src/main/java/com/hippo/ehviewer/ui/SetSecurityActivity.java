@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 
 import com.hippo.ehviewer.R;
@@ -106,6 +107,17 @@ public class SetSecurityActivity extends ToolbarActivity implements View.OnClick
                         mFingerprint.isChecked() && !security.isEmpty());
             }
             finish();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Settings.getEnabledSecurity()){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE);
+        }else{
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
     }
 }

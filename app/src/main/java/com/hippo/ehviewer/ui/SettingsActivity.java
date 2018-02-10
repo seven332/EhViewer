@@ -30,14 +30,17 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ListAdapter;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.ui.fragment.AboutFragment;
 import com.hippo.ehviewer.ui.fragment.AdvancedFragment;
 import com.hippo.ehviewer.ui.fragment.DownloadFragment;
 import com.hippo.ehviewer.ui.fragment.EhFragment;
 import com.hippo.ehviewer.ui.fragment.ReadFragment;
+import com.hippo.ehviewer.ui.fragment.SecFragment;
 import com.hippo.util.DrawableManager;
 
 import java.lang.reflect.Field;
@@ -53,6 +56,7 @@ public final class SettingsActivity extends EhPreferenceActivity {
             DownloadFragment.class.getName(),
             AdvancedFragment.class.getName(),
             AboutFragment.class.getName(),
+            SecFragment.class.getName(),
     };
 
     private class FakeLayoutInflater extends LayoutInflater {
@@ -193,6 +197,17 @@ public final class SettingsActivity extends EhPreferenceActivity {
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Settings.getEnabledSecurity()){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE);
+        }else{
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
     }
 }

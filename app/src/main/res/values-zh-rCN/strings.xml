@@ -627,5 +627,8 @@
     <string name="download_archive_failure">无法下载压缩包</string>
     <string name="archive">压缩包</string>
     <string name="download_archive_failure_no_hath">下载压缩包需要 H@H 客户端</string>
+    <string name="settings_sec">隐私和安全</string>
+    <string name="settings_sec_secure">不允许屏幕抓取</string>
+    <string name="settings_sec_secure_summary">启用后，将不能截取该应用的屏幕截图，同时，将不会在系统任务切换器中显示该应用的内容预览\n\n重新启动应用以生效此更改</string>
 
 </resources>

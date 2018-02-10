@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.hippo.preference.ActivityPreference
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:key="pattern_protection"
+        android:title="@string/settings_advanced_pattern_protection_title"
+        app:activity="com.hippo.ehviewer.ui.SetSecurityActivity"/>
+
+    <com.hippo.preference.SwitchPreference
+        android:key="enabled_secure"
+        android:title="@string/settings_sec_secure"
+        app:summaryOn="@string/settings_sec_secure_summary"
+        app:summaryOff="@string/settings_sec_secure_summary"
+        android:defaultValue="false"/>
+</PreferenceScreen>
