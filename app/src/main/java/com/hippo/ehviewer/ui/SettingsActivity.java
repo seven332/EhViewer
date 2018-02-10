@@ -38,7 +38,7 @@ import com.hippo.ehviewer.ui.fragment.AdvancedFragment;
 import com.hippo.ehviewer.ui.fragment.DownloadFragment;
 import com.hippo.ehviewer.ui.fragment.EhFragment;
 import com.hippo.ehviewer.ui.fragment.ReadFragment;
-import com.hippo.ehviewer.ui.fragment.SecFragment;
+import com.hippo.ehviewer.ui.fragment.PrivacyFragment;
 import com.hippo.util.DrawableManager;
 
 import java.lang.reflect.Field;
@@ -54,7 +54,7 @@ public final class SettingsActivity extends EhPreferenceActivity {
             DownloadFragment.class.getName(),
             AdvancedFragment.class.getName(),
             AboutFragment.class.getName(),
-            SecFragment.class.getName(),
+            PrivacyFragment.class.getName(),
     };
 
     private class FakeLayoutInflater extends LayoutInflater {

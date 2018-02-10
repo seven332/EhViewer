@@ -33,8 +33,7 @@ import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.util.AppHelper;
 
 public class AboutFragment extends PreferenceFragment
-        implements Preference.OnPreferenceChangeListener,
-        Preference.OnPreferenceClickListener {
+        implements Preference.OnPreferenceClickListener {
 
     private static final String KEY_AUTHOR = "author";
     private static final String KEY_DONATE = "donate";
@@ -46,7 +45,6 @@ public class AboutFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.about_settings);
 
         Preference author = findPreference(KEY_AUTHOR);
-        Preference enableAnalytics = findPreference(Settings.KEY_ENABLE_ANALYTICS);
         Preference donate = findPreference(KEY_DONATE);
         Preference checkForUpdate = findPreference(KEY_CHECK_FOR_UPDATES);
 
@@ -56,21 +54,8 @@ public class AboutFragment extends PreferenceFragment
         author.setOnPreferenceClickListener(this);
         donate.setOnPreferenceClickListener(this);
         checkForUpdate.setOnPreferenceClickListener(this);
-
-        enableAnalytics.setOnPreferenceChangeListener(this);
     }
 
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        String key = preference.getKey();
-        if (Settings.KEY_ENABLE_ANALYTICS.equals(key)) {
-            if (newValue instanceof Boolean && (Boolean) newValue) {
-                Analytics.start(getActivity());
-            }
-            return true;
-        }
-        return true;
-    }
 
     @Override
     public boolean onPreferenceClick(Preference preference) {

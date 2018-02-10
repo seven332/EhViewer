@@ -455,9 +455,9 @@
     <string name="settings_advanced_clear_memory_cache">Borrar caché de memoria</string>
     <string name="settings_advanced_clear_memory_cache_summary">Borrar vistas previas, galerías, información y caché de memoria</string>
     <string name="settings_advanced_read_cache_size">Tamaño del caché (archivos temporales)</string>
-    <string name="settings_advanced_pattern_protection_title">Protección por patrón</string>
-    <string name="settings_advanced_pattern_protection_not_set">No se ha configurado la protección por patrón</string>
-    <string name="settings_advanced_pattern_protection_set">La protección por patrón ha sido configurado</string>
+    <string name="settings_privacy_pattern_protection_title">Protección por patrón</string>
+    <string name="settings_privacy_pattern_protection_not_set">No se ha configurado la protección por patrón</string>
+    <string name="settings_privacy_pattern_protection_set">La protección por patrón ha sido configurado</string>
     <string name="settings_advanced_export_data">Exportar datos</string>
     <string name="settings_advanced_export_data_summary">Guardar datos en almacenamiento externo, tales como la lista de descarga, lista de búsqueda rápida, entre otros</string>
     <string name="settings_advanced_export_data_to">Datos exportados en %s</string>
@@ -479,8 +479,8 @@
     <string name="settings_about_donate_summary">Alipay: seven332$163.com</string>
     <string name="settings_about_donate_message">Tu donación me ayuda a desarrollar más y mejores aplicaciones.\n\nAlipay: seven332$163.com</string>
     <string name="settings_about_donate_toast">Email copiado al portapapeles</string>
-    <string name="settings_about_enable_analytics">Habilitar analytics</string>
-    <string name="settings_about_about_analytics">Acerca de analytics</string>
+    <string name="settings_privacy_enable_analytics">Habilitar analytics</string>
+    <string name="settings_privacy_about_analytics">Acerca de analytics</string>
     <string name="settings_about_version">Versión de compilación</string>
     <string name="settings_about_check_for_updates">Verificar actualizaciones</string>
     <string name="settings_about_beta_update_channel">Canal de versiones de prueba</string>
@@ -617,8 +617,6 @@
     <string name="error_password_cannot_empty">La contraseña no puede estar vacía</string>
     <string name="error_something_wrong_happened">Ocurrió algo malo</string>
     <string name="dialog_archive_title">H@H Downloader</string>
-    <string name="settings_sec">Privacidad y seguridad</string>
-    <string name="settings_sec_secure">Captura de pantalla no permitida</string>
-    <string name="settings_sec_secure_summary">Si está habilitado, no puede tomar capturas de pantalla de la aplicación, y el sistema no mostrará el contenido de la aplicación en el selector de tareas</string>
+    <string name="settings_privacy">Privacidad</string>
 
 </resources>

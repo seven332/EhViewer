@@ -523,9 +523,9 @@
     <string name="settings_advanced_clear_memory_cache">Clear memory cache</string>
     <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
     <string name="settings_advanced_read_cache_size">Read cache size</string>
-    <string name="settings_advanced_pattern_protection_title">Pattern protection</string>
-    <string name="settings_advanced_pattern_protection_not_set">Pattern protection has not been set</string>
-    <string name="settings_advanced_pattern_protection_set">Pattern protection has been set</string>
+    <string name="settings_privacy_pattern_protection_title">Pattern protection</string>
+    <string name="settings_privacy_pattern_protection_not_set">Pattern protection has not been set</string>
+    <string name="settings_privacy_pattern_protection_set">Pattern protection has been set</string>
     <string name="settings_advanced_export_data">Export data</string>
     <string name="settings_advanced_export_data_summary">Save data to external storage, such as download list, quick search list</string>
     <string name="settings_advanced_export_data_to">Exported data to %s</string>
@@ -549,8 +549,8 @@
     <string name="settings_about_donate_summary">Alipay: seven332$163.com</string>
     <string name="settings_about_donate_message">Your donation can help me develop more and better applications.\n\nAlipay: seven332$163.com</string>
     <string name="settings_about_donate_toast">Email address copied to clipboard</string>
-    <string name="settings_about_enable_analytics">Enable analytics</string>
-    <string name="settings_about_about_analytics">About analytics</string>
+    <string name="settings_privacy_enable_analytics">Enable analytics</string>
+    <string name="settings_privacy_about_analytics">About analytics</string>
     <string name="settings_about_version">Build version</string>
     <string name="settings_about_check_for_updates">Check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
@@ -678,8 +678,8 @@
     <string name="download_archive_failure">Failed to download archive</string>
     <string name="archive">Archive</string>
     <string name="download_archive_failure_no_hath">Need H@H client for archive download</string>
-    <string name="settings_sec">Privacy and Security</string>
-    <string name="settings_sec_secure">Not Allowed Screen Capture</string>
-    <string name="settings_sec_secure_summary">If enabled, you cannot take screenshots of the app, and the system will not display app contents in the task switcher\n\nNeed to restart the app for this to take effect</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_privacy_secure">Not Allowed Screen Capture</string>
+    <string name="settings_privacy_secure_summary">If enabled, you cannot take screenshots of the app, and the system will not display app contents in the task switcher\n\nNeed to restart the app for this to take effect</string>
 
 </resources>

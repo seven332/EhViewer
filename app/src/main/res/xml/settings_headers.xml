@@ -34,8 +34,8 @@
         android:icon="@drawable/v_download_primary_x24"/>
 
     <header
-        android:fragment="com.hippo.ehviewer.ui.fragment.SecFragment"
-        android:title="@string/settings_sec"
+        android:fragment="com.hippo.ehviewer.ui.fragment.PrivacyFragment"
+        android:title="@string/settings_privacy"
         android:icon="@drawable/v_sec_primary_x24"/>
 
     <header
