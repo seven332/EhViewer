@@ -395,6 +395,7 @@
     <!-- UConfig Activity -->
     <string name="u_config">EHentai settings</string>
     <string name="apply">Apply</string>
+    <string name="apply_tip">Click the check mark to save the settings</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>

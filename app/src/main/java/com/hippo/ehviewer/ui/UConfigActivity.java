@@ -27,6 +27,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -82,12 +83,23 @@ public class UConfigActivity extends ToolbarActivity {
     }
 
     setContentView(R.layout.activity_u_config);
+    setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
     webView = (WebView) findViewById(R.id.webview);
     webView.getSettings().setJavaScriptEnabled(true);
     webView.setWebViewClient(new UConfigWebViewClient());
     webView.setWebChromeClient(new UConfigWebChromeClient());
     webView.loadUrl(url);
     progress = (ProgressView) findViewById(R.id.progress);
+
+    Snackbar.make(webView, R.string.apply_tip, Snackbar.LENGTH_LONG).show();
+  }
+
+  private void apply() {
+    webView.loadUrl("javascript:"
+        + "(function() {\n"
+        + "    var apply = document.getElementById(\"apply\").children[0];\n"
+        + "    apply.click();\n"
+        + "})();");
   }
 
   @Override
@@ -105,11 +117,7 @@ public class UConfigActivity extends ToolbarActivity {
         return true;
       case R.id.action_apply:
         if (loaded) {
-          webView.loadUrl("javascript:"
-              + "(function() {\n"
-              + "    var apply = document.getElementById(\"apply\").children[0];\n"
-              + "    apply.click();\n"
-              + "})();");
+          apply();
         }
         return true;
       default:
@@ -210,8 +218,7 @@ public class UConfigActivity extends ToolbarActivity {
       return true;
     }
 
-    @Override
-    public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+    private void showMessageDialog(String message, final JsResult result) {
       new AlertDialog.Builder(context)
           .setMessage(message)
           .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -227,28 +234,17 @@ public class UConfigActivity extends ToolbarActivity {
             }
           })
           .show();
+    }
 
+    @Override
+    public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+      showMessageDialog(message, result);
       return true;
     }
 
     @Override
     public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
-      new AlertDialog.Builder(context)
-          .setMessage(message)
-          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              result.confirm();
-            }
-          })
-          .setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-              result.cancel();
-            }
-          })
-          .show();
-
+      showMessageDialog(message, result);
       return true;
     }
   }

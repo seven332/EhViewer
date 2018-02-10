@@ -351,6 +351,7 @@
     <!-- UConfig Activity -->
     <string name="u_config">EHentai 設置</string>
     <string name="apply">應用</string>
+    <string name="apply_tip">點擊右上角的對勾來保存設置</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
