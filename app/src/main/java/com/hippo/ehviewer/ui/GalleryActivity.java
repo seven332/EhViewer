@@ -407,6 +407,12 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         if (mGLRootView != null) {
             mGLRootView.onResume();
         }
+        if(Settings.getEnabledSecurity()){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE);
+        }else{
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        }
     }
 
     @Override

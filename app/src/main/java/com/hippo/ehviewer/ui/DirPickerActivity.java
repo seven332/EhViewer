@@ -23,10 +23,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ripple.Ripple;
 import com.hippo.widget.DirExplorer;
 import com.hippo.yorozuya.ViewUtils;
@@ -147,6 +149,17 @@ public class DirPickerActivity extends ToolbarActivity
     public void onChangeDir(File dir) {
         if (null != mPath) {
             mPath.setText(dir.getPath());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Settings.getEnabledSecurity()){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE);
+        }else{
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
     }
 }

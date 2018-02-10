@@ -576,6 +576,19 @@ public class Settings {
     }
 
     /********************
+     ****** Privacy and Security
+     ********************/
+    public static final String KEY_SEC_SECURITY = "enabled_secure";
+    public static final boolean VALUE_SEC_SECURITY = false;
+
+    public static boolean getEnabledSecurity() {
+        return getBoolean(KEY_SEC_SECURITY, VALUE_SEC_SECURITY);
+    }
+    public static void putEnabledSecurity(boolean value) {
+        putBoolean(KEY_READING_FULLSCREEN, value);
+    }
+
+    /********************
      ****** Download
      ********************/
     public static final String KEY_DOWNLOAD_SAVE_SCHEME = "image_scheme";

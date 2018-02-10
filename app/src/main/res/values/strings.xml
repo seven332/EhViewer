@@ -678,5 +678,8 @@
     <string name="download_archive_failure">Failed to download archive</string>
     <string name="archive">Archive</string>
     <string name="download_archive_failure_no_hath">Need H@H client for archive download</string>
+    <string name="settings_sec">Privacy and Security</string>
+    <string name="settings_sec_secure">Not Allowed Screen Capture</string>
+    <string name="settings_sec_secure_summary">If enabled, you cannot take screenshots of the app, and the system will not display app contents in the task switcher\n\nNeed to restart the app for this to take effect</string>
 
 </resources>

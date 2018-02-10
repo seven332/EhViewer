@@ -617,5 +617,8 @@
     <string name="error_password_cannot_empty">La contraseña no puede estar vacía</string>
     <string name="error_something_wrong_happened">Ocurrió algo malo</string>
     <string name="dialog_archive_title">H@H Downloader</string>
+    <string name="settings_sec">Privacidad y seguridad</string>
+    <string name="settings_sec_secure">Captura de pantalla no permitida</string>
+    <string name="settings_sec_secure_summary">Si está habilitado, no puede tomar capturas de pantalla de la aplicación, y el sistema no mostrará el contenido de la aplicación en el selector de tareas</string>
 
 </resources>
