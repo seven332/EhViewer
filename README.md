@@ -22,4 +22,4 @@ Dependency Plugins 为用于提供其他 Plugins 运行环境的 Plugins。该�
 
 Source Plugins 为提供图片源的 Plugins。源可为设备本地，也可为通过网络访问的。
 
-Collection Plugins 为提供图片源的源的 Plugins，可理解为插件管理器，而被管理的插件为 Virtual Plugins。每个 Collection Plugins 都提供了一个新的插件系统，相当于一个 Collection Plugins 可充当多个 Source Plugins。而 Collection Plugins 所支持的 Plugins 并不要求一定要使用 Kotlin，可以使用脚本语言以避免平台问题。
+Collection Plugins 为提供图片源的源的 Plugins，可理解为插件管理器，而被管理的插件为 Virtual Source Plugins。每个 Collection Plugins 都提供了一个新的插件系统，相当于一个 Collection Plugins 可充当多个 Source Plugins。而 Collection Plugins 所支持的 Plugins 并不要求一定要使用 Kotlin，可以使用脚本语言以避免平台问题。
