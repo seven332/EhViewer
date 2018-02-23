@@ -8,15 +8,17 @@ EhViewer Evelin 是一个图片资源浏览器，其中漫画为主要对象。
 
 Core 为 Multiplatform Projects 中的 common 模块，完全用 Kotlin 来写。提供一套 API 接口供 Plugins 使用，并且以与平台无关的代码完成部分业务逻辑。
 
+API 为 Core 导出的一套供 Plugins 使用的接口。
+
 Core JS，Core JVM，Core Swift 为 Multiplatform Projects 中的 platform 模块，全部或部分用 Kotlin 来写。利用与平台相关的代码完善 Core 中的业务逻辑。
+
+SDK JS，SDK JVM，SDK Swift 由 Core JS，Core JVM，Core Swift 分别导出，为 Plugins 提供编译环境。
 
 Test JS，Test JVM，Test Swift 全部或部分用 Kotlin 来写。目的是方便开发者测试 Plugins。
 
 WEB，Android，IOS 为 Multiplatform Projects 中的 regular 模块，所用语言分平台讨论。这即为最终客户端，用于提供用户界面，并将用户界面与业务逻辑连接起来。
 
-API 为 Core 导出的一套供 Plugins 使用的接口。可参照 Android SDK。
-
-Plugins 即插件，全部或部分用 Kotlin 来写。Plugins 需要针对各平台，甚至各客户端分别编译一套。Plugins 可根据不同平台进行功能实现，故可能针对不同平台使用不同的代码。
+Plugins 即插件，全部或部分用 Kotlin 来写。Plugins 需要针对各平台，甚至各客户端分别编译一套。由于 API 由 Core 导出，可以实现各平台源码共用。同时 Plugins 可根据不同平台进行功能实现，故也可以针对不同平台使用不同的代码。
 
 Dependency Plugins 为用于提供其他 Plugins 运行环境的 Plugins。该种 Plugins 可能不需要由 Core 导出的 API，反而可由自身导出 API 供其他 Plugins 使用。目的是减小应用与 Plugins 的大小。
 
