@@ -370,8 +370,7 @@ public class EhEngine {
     public static GalleryComment[] commentGallery(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, String url, String comment) throws Exception {
         FormBody.Builder builder = new FormBody.Builder()
-                .add("commenttext", comment)
-                .add("postcomment", "Post New");
+                .add("commenttext_new", comment);
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(builder.build())
