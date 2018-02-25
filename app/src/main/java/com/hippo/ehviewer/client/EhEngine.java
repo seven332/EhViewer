@@ -55,6 +55,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -391,6 +392,12 @@ public class EhEngine {
             headers = response.headers();
             body = response.body().string();
             Document document = Jsoup.parse(body);
+
+            Elements elements = document.select("#chd + p");
+            if (elements.size() > 0) {
+                throw new EhException(elements.get(0).text());
+            }
+
             return GalleryDetailParser.parseComments(document);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
