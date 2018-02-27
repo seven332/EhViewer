@@ -101,7 +101,7 @@
     <string name="help_route">設定->アプリについて->ヘルプ</string>
 
     <!-- Crash -->
-    <string name="send">发送</string>
+    <string name="send">送信</string>
     <string name="crash_explain">前回のアプリがクラッシュしました。エラーログを開発者に送信して、今後のユーザーエクスペリエンスを向上させますか？（Eメール送信）</string>
 
     <!-- Select scene -->
@@ -167,7 +167,7 @@
     <string name="duplicate_quick_search">同じクイック検索がすでに名前が「%s」として存在しています。</string>
     <string name="duplicate_name">同じ名前が既に存在</string>
 
-    <string name="go_to_hint">第%1$dページ，合計%2$dページ</string>
+    <string name="go_to_hint">第%1$dページ、合計%2$dページ</string>
 
     <!-- search_min_rating -->
     <string name="star_2">星2</string>
@@ -465,7 +465,7 @@
     <string name="settings_download_clean_redundancy">ダウンロードリダンダンシーを整理</string>
     <string name="settings_download_clean_redundancy_summary">ダウンロードリストにない画像ファイルをダウンロードディレクトリから整理</string>
     <string name="settings_download_clean_redundancy_no_redundancy">リダンダンシーが見つからない</string>
-    <string name="settings_download_clean_redundancy_done">ダンダンシー整理完成、合計%dつ</string>
+    <string name="settings_download_clean_redundancy_done">ダンダンシー整理完成、%dつ</string>
 
     <string name="settings_advanced">詳細</string>
     <string name="settings_advanced_save_parse_error_body">解析失敗したときにページ内容を保存</string>
