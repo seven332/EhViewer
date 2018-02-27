@@ -133,7 +133,7 @@
     <string name="search_specify_gallery">指定ギャラリー</string>
     <string name="search_enable_advance">詳細オプションを有効にする</string>
 
-    <string name="search_tip">一般検索：搜索です。\n\n指定アップローダー：このアップローダーによってアップロードされたギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定タグ：このタッグを含むギャラリーを一覧表示します。 他のオプションは無視されます。\n\n指定画廊：このギャラリーにジャンプします。 キーワードは「gid token」のはずです。</string>
+    <string name="search_tip">一般検索：搜索です。\n\n指定アップローダー：このアップローダーによってアップロードされたギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定タグ：このタッグを含むギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定画廊：このギャラリーにジャンプします。キーワードは「gid token」のはずです。</string>
 
     <string name="search_sname">ギャラリーを検索</string>
     <string name="search_stags">ギャラリータグを検索</string>
@@ -440,8 +440,8 @@
     <string name="settings_download_download_location">ダウンロードパス</string>
     <string name="settings_download_invalid_download_location">無効なダウンロードパス</string>
     <string name="settings_download_cant_get_download_location">ダウンロードパスを取得できない</string>
-    <string name="settings_download_pick_dir_kk">おかしいことをしない限り、KitKatの外部SDカードにデータを書き込むことはできません。 ただし、&lt;SD card&gt;/Android/data/com.hippo.ehviewerこのパスは特殊なものであり、書き込むことができます。</string>
-    <string name="settings_download_pick_dir_l">Lollipopは外部SDカードに書き込むために新しいAPIを提供しました。 ダウンロードパスを外部SDカードに設定したい場合は、「ドキュメント」ボタンをクリックしてください</string>
+    <string name="settings_download_pick_dir_kk">おかしいことをしない限り、KitKatの外部SDカードにデータを書き込むことはできません。ただし、&lt;SD card&gt;/Android/data/com.hippo.ehviewerこのパスは特殊なものであり、書き込むことができます。</string>
+    <string name="settings_download_pick_dir_l">Lollipopは外部SDカードに書き込むために新しいAPIを提供しました。ダウンロードパスを外部SDカードに設定したい場合は、「ドキュメント」ボタンをクリックしてください</string>
     <string name="settings_download_document">ドキュメント</string>
     <string name="settings_download_continue">続く</string>
     <string name="settings_download_multi_thread_download">ダウンロードスレッド数</string>
