@@ -117,7 +117,7 @@
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint_exhentai">ExHentaiを検索</string>
     <string name="gallery_list_search_bar_hint_e_hentai">E-Hentaiを検索</string>
-    <string name="gallery_list_empty_hit">何も見つかない</string>
+    <string name="gallery_list_empty_hit">何も見つからない</string>
 
     <string name="search">検索</string>
 
@@ -167,7 +167,7 @@
     <string name="duplicate_quick_search">同じクイック検索がすでに名前が「%s」として存在しています。</string>
     <string name="duplicate_name">同じ名前が既に存在</string>
 
-    <string name="go_to_hint">第%1$dページ、合計%2$dページ</string>
+    <string name="go_to_hint">ページ%1$d、合計%2$dページ</string>
 
     <!-- search_min_rating -->
     <string name="star_2">星2</string>
@@ -351,12 +351,12 @@
     <string name="enable_fingerprint">指紋でのロック解除を許可する</string>
 
     <!-- UConfig Activity -->
-    <string name="u_config">EHentai設定</string>
+    <string name="u_config">EHentaiの設定</string>
     <string name="apply">応用</string>
     <string name="apply_tip">右上隅のチェックマークをクリックして設定を保存します。</string>
 
     <!-- Gallery Activity -->
-    <string name="page_menu_title">第%dページ</string>
+    <string name="page_menu_title">ページ%d</string>
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
     <string name="page_menu_save">保存</string>
@@ -379,14 +379,14 @@
     <string name="settings_eh_list_mode_detail">詳細</string>
     <string name="settings_eh_list_mode_thumb">サムネイル</string>
     <string name="settings_eh_detail_size">詳細サイズ</string>
-    <string name="settings_eh_detail_size_long">长</string>
+    <string name="settings_eh_detail_size_long">長</string>
     <string name="settings_eh_detail_size_short">短</string>
     <string name="settings_eh_thumb_size">サムネイルサイズ</string>
     <string name="settings_eh_thumb_size_large">大</string>
     <string name="settings_eh_thumb_size_middle">中</string>
     <string name="settings_eh_thumb_size_small">小</string>
     <string name="settings_eh_thumb_resolution">サムネイル解像度</string>
-    <string name="settings_eh_thumb_resolution_summary">%s、解像度を指定すると、サムネイルを取得できない場合があります</string>
+    <string name="settings_eh_thumb_resolution_summary">%s。解像度を指定すると、サムネイルを取得できない場合があります</string>
     <string name="settings_eh_thumb_resolution_auto">自動</string>
     <string name="settings_eh_fix_thumb_url">サムネイルリンクを修正</string>
     <string name="settings_eh_default_categories">ホームページをカテゴリ表示</string>
@@ -399,7 +399,7 @@
     <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
     <string name="settings_eh_hath_proxy_summary_2">未設定</string>
     <string name="settings_eh_show_jpn_title">日本語タイトルを表示</string>
-    <string name="settings_eh_show_jpn_title_summary_on">日本のタイトルを表示してみます。これにより、ギャラリーリストを取得する時間が長くなります</string>
+    <string name="settings_eh_show_jpn_title_summary_on">日本語タイトルを表示してみます。これにより、ギャラリーリストを取得する時間が長くなります</string>
     <string name="settings_eh_show_jpn_title_summary_off">デフォルトのタイトルを表示します。通常は英語</string>
     <string name="settings_eh_filter">フィルター</string>
     <string name="settings_eh_filter_summary">タイトル、アップローダ、タグ、タグセットをフィルター</string>
@@ -414,7 +414,7 @@
     <string name="settings_read_reading_direction_left_to_right">左から右へ</string>
     <string name="settings_read_reading_direction_right_to_Left">右から左へ</string>
     <string name="settings_read_reading_direction_top_to_bottom">上から下へ</string>
-    <string name="settings_read_page_scaling">ページをズーム</string>
+    <string name="settings_read_page_scaling">ページのズーム</string>
     <string name="settings_read_page_scaling_actual_size">元のサイズ</string>
     <string name="settings_read_page_scaling_fit_to_width">幅に合わせ</string>
     <string name="settings_read_page_scaling_fit_to_height">長さに合わせ</string>
@@ -433,7 +433,7 @@
     <string name="settings_read_show_page_interval">ページ間隔を表示</string>
     <string name="settings_read_volume_page">ボリュームキーでページをめくる</string>
     <string name="settings_read_reading_fullscreen">フルスクリーン</string>
-    <string name="settings_read_custom_screen_lightness">スクリーンの明るさをカスタム</string>
+    <string name="settings_read_custom_screen_lightness">スクリーンの明るさをカスタムに</string>
     <string name="settings_read_screen_lightness">スクリーンの明るさ</string>
 
     <string name="settings_download">ダウンロード</string>
@@ -449,7 +449,7 @@
     <string name="settings_download_preload_image">画像をプリロード</string>
     <string name="settings_download_preload_image_summary">%s枚の画像を後ろへプリロード</string>
     <string name="settings_download_image_resolution">画像解像度</string>
-    <string name="settings_download_image_resolution_summary">%s，1280xを超える解像度は良くない場合があります</string>
+    <string name="settings_download_image_resolution_summary">%s。1280xを超える解像度は良くない場合があります</string>
     <string name="settings_download_image_resolution_auto">自動</string>
     <string name="settings_download_download_origin_image">元の画像をダウンロード</string>
     <string name="settings_download_download_origin_image_summary">これは危険です！これを確認すると、ダウンロードクォータが急激に失われます</string>
@@ -481,8 +481,7 @@
     <string name="settings_advanced_clear_memory_cache_summary">サムネイル、ギャラリー情報のメモリキャッシュを整理</string>
     <string name="settings_advanced_read_cache_size">閲覧キャッシュサイズ</string>
     <string name="settings_privacy_pattern_protection_title">パターン保護</string>
-    <string name="settings_privacy_pattern_protection_not_set">パターン保護は
-未設定</string>
+    <string name="settings_privacy_pattern_protection_not_set">パターン保護は未設定</string>
     <string name="settings_privacy_pattern_protection_set">パターン保護は設定した</string>
     <string name="settings_advanced_export_data">データをエクスポート</string>
     <string name="settings_advanced_export_data_summary">データを外部メモリーにエクスポートする、例えダウンロードリスト、クイック検索リストなど</string>
@@ -502,8 +501,8 @@
     <string name="settings_about_license">オープンソースライセンス</string>
     <string name="settings_about_license_summary">EhViewerの誕生は、多くのオープンソースプロジェクトから切り離すことができません</string>
     <string name="settings_about_donate">寄付</string>
-    <string name="settings_about_donate_summary">Alipay：seven332$163.com</string>
-    <string name="settings_about_donate_message">あなたの寄付はより多くのより良いアプリの開発に役立ちます。\n\nAlipay：seven332$163.com</string>
+    <string name="settings_about_donate_summary">Alipay: seven332$163.com</string>
+    <string name="settings_about_donate_message">あなたの寄付はより多くのより良いアプリの開発に役立ちます。\n\nAlipay: seven332$163.com</string>
     <string name="settings_about_donate_toast">メールアドレスがクリップボードにコピーされた</string>
     <string name="settings_privacy_enable_analytics">データ統計を起用</string>
     <string name="settings_privacy_about_analytics">データ統計について</string>
