@@ -98,7 +98,7 @@
     <string name="accept">接受</string>
     <string name="reject">拒絕</string>
 
-    <string name="help_route">設定->關於->幫助</string>
+    <string name="help_route">設定->關於->說明</string>
 
     <!-- Crash -->
     <string name="send">傳送</string>
