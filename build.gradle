@@ -2,6 +2,7 @@
 
 buildscript {
     repositories {
+        google()
         jcenter()
         maven { url "https://jitpack.io" }
     }
@@ -16,6 +17,7 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
         jcenter()
         maven { url "https://jitpack.io" }
     }
@@ -26,7 +28,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    supportLibrary = '25.3.1'
+    supportLibrary = '27.1.0'
 }
 
 subprojects {
