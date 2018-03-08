@@ -38,6 +38,7 @@ public final class ExceptionUtils {
 
     @NonNull
     public static String getReadableString(@NonNull Exception e) {
+        e.printStackTrace();
         if (e instanceof MalformedURLException) {
             return GetText.getString(R.string.error_invalid_url);
         } else if (e instanceof ConnectTimeoutException ||
