@@ -76,6 +76,7 @@ dependencies {
     compile 'com.github.seven332:yorozuya-thread:0.1.1'
     compile 'com.github.seven332:yorozuya-collect:0.1.4'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.9.2'
+    compile 'com.squareup.okhttp3:okhttp:3.10.0'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     compile 'org.greenrobot:greendao:2.2.1'
     compile 'org.jsoup:jsoup:1.11.2'
@@ -89,5 +90,7 @@ configurations.all {
         force 'com.github.seven332:glgallery:0f276c0'
         force 'com.github.seven332:glview-image:4c744db'
         force 'com.github.seven332:image:bab9b11'
+
+        exclude group: 'com.github.seven332', module: 'okhttp'
     }
 }

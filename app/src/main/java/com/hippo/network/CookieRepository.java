@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
-import okhttp3.Request;
 
 public class CookieRepository implements CookieJar {
 
@@ -146,7 +145,7 @@ public class CookieRepository implements CookieJar {
   }
 
   @Override
-  public List<Cookie> loadForRequest(HttpUrl httpUrl, Request request) {
+  public List<Cookie> loadForRequest(HttpUrl httpUrl) {
     return getCookies(httpUrl);
   }
 
