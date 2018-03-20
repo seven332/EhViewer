@@ -144,7 +144,7 @@
 
         <provider
             android:name="com.hippo.content.FileProvider"
-            android:authorities="com.hippo.ehviewer.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">
 

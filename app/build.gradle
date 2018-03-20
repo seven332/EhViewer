@@ -28,6 +28,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "debugFlavor"
+    productFlavors {
+        releaseFlavor {
+            resValue "string", "app_name", "EhViewer"
+            applicationId "com.hippo.ehviewer"
+            buildConfigField 'String', 'AUTHORITY', '"com.hippo.ehviewer.fileprovider"'
+        }
+        debugFlavor {
+            resValue "string", "app_name", "EhViewerDebug"
+            applicationId "com.hippo.ehviewer.debug"
+            buildConfigField 'String', 'AUTHORITY', '"com.hippo.ehviewer.debug.fileprovider"'
+        }
+    }
 
     sourceSets {
         main {

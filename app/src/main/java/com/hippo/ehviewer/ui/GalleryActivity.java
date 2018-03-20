@@ -49,6 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.AppConfig;
+import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -860,7 +861,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
 
         Uri uri = new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
-                .authority("com.hippo.ehviewer.fileprovider")
+                .authority(BuildConfig.AUTHORITY)
                 .appendPath("image")
                 .appendPath(filename)
                 .build();
