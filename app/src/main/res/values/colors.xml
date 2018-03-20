@@ -114,6 +114,6 @@
     <color name="lock_pattern_view_success_color">@color/colorPrimary</color>
     <color name="lock_pattern_view_error_color">@color/red_500</color>
 
-    <color name="ic_launcher_background">#009688</color>
+    <color name="ic_launcher_background">@color/colorPrimary</color>
 
 </resources>
