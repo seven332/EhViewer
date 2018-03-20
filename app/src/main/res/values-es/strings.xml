@@ -17,8 +17,6 @@
 
 <resources>
 
-    <string name="app_name">EhViewer</string>
-
     <!-- Category -->
 
     <string name="homepage">Página de inicio</string>
