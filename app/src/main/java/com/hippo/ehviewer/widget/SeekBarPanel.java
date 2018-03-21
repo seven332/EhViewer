@@ -30,6 +30,7 @@ import com.hippo.yorozuya.ViewUtils;
 public class SeekBarPanel extends LinearLayout {
 
     private SeekBar mSeekBar;
+    private int[] mLocation = new int[2];
 
     public SeekBarPanel(Context context) {
         super(context);
@@ -54,10 +55,9 @@ public class SeekBarPanel extends LinearLayout {
         if (mSeekBar == null) {
             return super.onTouchEvent(event);
         } else {
-            int[] location = new int[2];
-            ViewUtils.getLocationInAncestor(mSeekBar, location, this);
-            final float offsetX = -location[0];
-            final float offsetY = -location[1];
+            ViewUtils.getLocationInAncestor(mSeekBar, mLocation, this);
+            final float offsetX = -mLocation[0];
+            final float offsetY = -mLocation[1];
             event.offsetLocation(offsetX, offsetY);
             mSeekBar.onTouchEvent(event);
             event.offsetLocation(-offsetX, -offsetY);
