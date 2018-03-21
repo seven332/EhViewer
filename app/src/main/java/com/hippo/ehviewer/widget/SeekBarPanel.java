@@ -21,7 +21,6 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
@@ -55,9 +54,10 @@ public class SeekBarPanel extends LinearLayout {
         if (mSeekBar == null) {
             return super.onTouchEvent(event);
         } else {
-            View containingView = (View) mSeekBar.getParent();
-            final float offsetX = -(containingView.getLeft() + mSeekBar.getLeft());
-            final float offsetY = -(containingView.getTop() + mSeekBar.getTop());
+            int[] location = new int[2];
+            ViewUtils.getLocationInAncestor(mSeekBar, location, this);
+            final float offsetX = -location[0];
+            final float offsetY = -location[1];
             event.offsetLocation(offsetX, offsetY);
             mSeekBar.onTouchEvent(event);
             event.offsetLocation(-offsetX, -offsetY);
