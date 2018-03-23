@@ -399,6 +399,19 @@
     <string name="apply">Apply</string>
     <string name="apply_tip">Click the check mark to save the settings</string>
 
+    <!-- Hosts Activity -->
+    <string name="hosts">Hosts</string>
+    <string name="hosts_tip">hosts.txt</string>
+    <string name="hosts_host">Host</string>
+    <string name="hosts_ip">IP</string>
+    <string name="add_host">Add a host</string>
+    <string name="add_host_add">Add</string>
+    <string name="edit_host">Edit the host</string>
+    <string name="edit_host_confirm">Confirm</string>
+    <string name="edit_host_delete">Delete</string>
+    <string name="invalid_host">Invalid host</string>
+    <string name="invalid_ip">Invalid IP</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -523,6 +536,8 @@
     <string name="settings_advanced_clear_memory_cache">Clear memory cache</string>
     <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
     <string name="settings_advanced_read_cache_size">Read cache size</string>
+    <string name="settings_advanced_hosts_title">Hosts</string>
+    <string name="settings_advanced_hosts_summary">Map hostnames to IP addresses</string>
     <string name="settings_privacy_pattern_protection_title">Pattern protection</string>
     <string name="settings_privacy_pattern_protection_not_set">Pattern protection has not been set</string>
     <string name="settings_privacy_pattern_protection_set">Pattern protection has been set</string>

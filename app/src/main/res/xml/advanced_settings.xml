@@ -48,6 +48,13 @@
         app:entryValues="@array/read_cache_size_entry_values"
         android:defaultValue="160"/>
 
+    <com.hippo.preference.ActivityPreference
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:key="hosts"
+      android:title="@string/settings_advanced_hosts_title"
+      android:summary="@string/settings_advanced_hosts_summary"
+      app:activity="com.hippo.ehviewer.ui.HostsActivity"/>
+
     <Preference
         android:key="export_data"
         android:title="@string/settings_advanced_export_data"

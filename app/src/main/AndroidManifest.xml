@@ -138,6 +138,12 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/u_config"/>
 
+        <activity
+          android:name="com.hippo.ehviewer.ui.HostsActivity"
+          android:configChanges="screenSize|uiMode"
+          android:theme="@style/AppTheme.NoActionBar"
+          android:label="@string/hosts"/>
+
         <service
             android:name="com.hippo.ehviewer.download.DownloadService"
             android:label="@string/download_service_label"/>

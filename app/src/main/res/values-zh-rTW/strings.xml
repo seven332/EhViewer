@@ -355,6 +355,19 @@
     <string name="apply">應用</string>
     <string name="apply_tip">點選右上角的對勾來儲存設定</string>
 
+    <!-- Hosts Activity -->
+    <string name="hosts">Hosts</string>
+    <string name="hosts_tip">hosts.txt</string>
+    <string name="hosts_host">Host</string>
+    <string name="hosts_ip">IP</string>
+    <string name="add_host">添加 host</string>
+    <string name="add_host_add">添加</string>
+    <string name="edit_host">編輯 host</string>
+    <string name="edit_host_confirm">確認</string>
+    <string name="edit_host_delete">刪除</string>
+    <string name="invalid_host">無效的 host</string>
+    <string name="invalid_ip">無效的 IP</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -480,6 +493,8 @@
     <string name="settings_advanced_clear_memory_cache">清除記憶體快取</string>
     <string name="settings_advanced_clear_memory_cache_summary">清除縮圖、圖庫詳細資料的記憶體快取</string>
     <string name="settings_advanced_read_cache_size">閱讀快取大小</string>
+    <string name="settings_advanced_hosts_title">Hosts</string>
+    <string name="settings_advanced_hosts_summary">將主機名稱對映到相應的IP位址</string>
     <string name="settings_privacy_pattern_protection_title">繪圖解鎖</string>
     <string name="settings_privacy_pattern_protection_not_set">尚未設定繪圖解鎖</string>
     <string name="settings_privacy_pattern_protection_set">已設定繪圖解鎖</string>

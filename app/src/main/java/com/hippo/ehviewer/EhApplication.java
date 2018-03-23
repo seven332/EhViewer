@@ -31,6 +31,7 @@ import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
+import com.hippo.ehviewer.client.EhDns;
 import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.download.DownloadManager;
@@ -81,6 +82,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     private LruCache<Long, GalleryDetail> mGalleryDetailCache;
     private SimpleDiskCache mSpiderInfoCache;
     private DownloadManager mDownloadManager;
+    private Hosts mHosts;
 
     private final List<Activity> mActivityList = new ArrayList<>();
 
@@ -238,6 +240,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
                     .readTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .cookieJar(getEhCookieStore(application))
+                    .dns(new EhDns(application))
                     .build();
         }
         return application.mOkHttpClient;
@@ -301,6 +304,15 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
             application.mDownloadManager = new DownloadManager(application);
         }
         return application.mDownloadManager;
+    }
+
+    @NonNull
+    public static Hosts getHosts(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mHosts == null) {
+            application.mHosts = new Hosts(application, "hosts.db");
+        }
+        return application.mHosts;
     }
 
     private boolean handleException(Throwable ex) {
