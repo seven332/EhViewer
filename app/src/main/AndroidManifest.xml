@@ -133,7 +133,7 @@
             android:label="@string/set_pattern_protection"/>
 
         <activity
-            android:name=".ui.UConfigActivity"
+            android:name="com.hippo.ehviewer.ui.UConfigActivity"
             android:configChanges="screenSize|uiMode"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/u_config"/>
