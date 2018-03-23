@@ -861,7 +861,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
 
         Uri uri = new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
-                .authority(BuildConfig.AUTHORITY)
+                .authority(BuildConfig.FILE_PROVIDER_AUTHORITY)
                 .appendPath("image")
                 .appendPath(filename)
                 .build();
