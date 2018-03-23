@@ -17,6 +17,8 @@
 
 <resources>
 
+    <string name="app_name">EhViewer</string>
+
     <string name="homepage">ホームページ</string>
     <string name="whats_hot">人気</string>
     <string name="favourite">気に入り</string>

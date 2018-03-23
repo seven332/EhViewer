@@ -17,6 +17,8 @@
 
 <resources>
 
+    <string name="app_name">EhViewer</string>
+
     <string name="homepage">主頁</string>
     <string name="whats_hot">熱門</string>
     <string name="favourite">收藏</string>
