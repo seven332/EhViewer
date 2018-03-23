@@ -17,6 +17,8 @@
 
 <resources>
 
+    <string name="app_name">EhViewer</string>
+
     <string name="homepage">홈</string>
     <string name="whats_hot">인기 갤러리</string>
     <string name="favourite">즐겨찾기</string>
