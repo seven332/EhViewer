@@ -770,4 +770,104 @@ public class EhDB {
             return context.getString(R.string.cant_read_the_file);
         }
     }
+
+    /**
+     * @param uri The db uri
+     * @return error string, null for no error
+     */
+    public static synchronized String importDB(Context context, Uri uri) {
+        try {
+            File file = new File(context.getCacheDir().getPath()+"/import.db");
+
+            InputStream is = null;
+            OutputStream os = null;
+            ContentResolver resolver = context.getContentResolver();
+            try {
+                is = resolver.openInputStream(uri);
+                os = new FileOutputStream(file);
+                IOUtils.copy(is, os);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                IOUtils.closeQuietly(is);
+                IOUtils.closeQuietly(os);
+            }
+
+            SQLiteDatabase db = SQLiteDatabase.openDatabase(
+                    file.getPath(), null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+            int newVersion = DaoMaster.SCHEMA_VERSION;
+            int oldVersion = db.getVersion();
+            if (oldVersion < newVersion) {
+                upgradeDB(db, oldVersion);
+                db.setVersion(newVersion);
+            } else if (oldVersion > newVersion) {
+                return context.getString(R.string.cant_read_the_file);
+            }
+
+            DaoMaster daoMaster = new DaoMaster(db);
+            DaoSession session = daoMaster.newSession();
+
+            // Downloads
+            DownloadManager manager = EhApplication.getDownloadManager(context);
+            List<DownloadInfo> downloadInfoList = session.getDownloadsDao().queryBuilder().list();
+            manager.addDownload(downloadInfoList);
+
+            // Download label
+            List<DownloadLabel> downloadLabelList = session.getDownloadLabelDao().queryBuilder().list();
+            manager.addDownloadLabel(downloadLabelList);
+
+            // Download dirname
+            List<DownloadDirname> downloadDirnameList = session.getDownloadDirnameDao().queryBuilder().list();
+            for (DownloadDirname dirname: downloadDirnameList) {
+                putDownloadDirname(dirname.getGid(), dirname.getDirname());
+            }
+
+            // History
+            List<HistoryInfo> historyInfoList = session.getHistoryDao().queryBuilder().list();
+            putHistoryInfo(historyInfoList);
+
+            // QuickSearch
+            List<QuickSearch> quickSearchList = session.getQuickSearchDao().queryBuilder().list();
+            List<QuickSearch> currentQuickSearchList = sDaoSession.getQuickSearchDao().queryBuilder().list();
+            for (QuickSearch quickSearch: quickSearchList) {
+                String name = quickSearch.name;
+                for (QuickSearch q: currentQuickSearchList) {
+                    if (ObjectUtils.equal(q.name, name)) {
+                        // The same name
+                        name = null;
+                        break;
+                    }
+                }
+                if (null == name) {
+                    continue;
+                }
+                insertQuickSearch(quickSearch);
+            }
+
+            // LocalFavorites
+            List<LocalFavoriteInfo> localFavoriteInfoList = session.getLocalFavoritesDao().queryBuilder().list();
+            for (LocalFavoriteInfo info: localFavoriteInfoList) {
+                putLocalFavorites(info);
+            }
+
+            // Bookmarks
+            // TODO
+
+            // Filter
+            List<Filter> filterList = session.getFilterDao().queryBuilder().list();
+            List<Filter> currentFilterList = sDaoSession.getFilterDao().queryBuilder().list();
+            for (Filter filter: filterList) {
+                if (!currentFilterList.contains(filter)) {
+                    addFilter(filter);
+                }
+            }
+
+            file.delete();
+
+            return null;
+        } catch (Exception e) {
+            // Ignore
+            return context.getString(R.string.cant_read_the_file);
+        }
+    }
 }

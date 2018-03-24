@@ -48,6 +48,7 @@ public class AdvancedFragment extends PreferenceFragment
     private static final String KEY_EXPORT_DATA = "export_data";
     private static final String KEY_IMPORT_DATA = "import_data";
 
+    private static final int READ_REQUEST_CODE = 42;
     private static final int WRITE_REQUEST_CODE = 43;
 
     @Override
@@ -144,31 +145,52 @@ public class AdvancedFragment extends PreferenceFragment
                 }
             }
         }
+
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                String error = EhDB.importDB(getActivity(), uri);
+                if (null == error) {
+                    error = getString(R.string.settings_advanced_import_data_successfully);
+                }
+                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
-    private static void importData(final Context context) {
-        final File dir = AppConfig.getExternalDataDir();
-        if (null == dir) {
-            Toast.makeText(context, R.string.cant_get_data_dir, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        final String[] files = dir.list();
-        if (null == files || files.length <= 0) {
-            Toast.makeText(context, R.string.cant_find_any_data, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Arrays.sort(files);
-        new AlertDialog.Builder(context).setItems(files, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                File file = new File(dir, files[which]);
-                String error = EhDB.importDB(context, file);
-                if (null == error) {
-                    error = context.getString(R.string.settings_advanced_import_data_successfully);
-                }
-                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+    private void importData(final Context context) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            startActivityForResult(intent, READ_REQUEST_CODE);
+
+        }else {
+            final File dir = AppConfig.getExternalDataDir();
+            if (null == dir) {
+                Toast.makeText(context, R.string.cant_get_data_dir, Toast.LENGTH_SHORT).show();
+                return;
             }
-        }).show();
+            final String[] files = dir.list();
+            if (null == files || files.length <= 0) {
+                Toast.makeText(context, R.string.cant_find_any_data, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Arrays.sort(files);
+            new AlertDialog.Builder(context).setItems(files, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    File file = new File(dir, files[which]);
+                    String error = EhDB.importDB(context, file);
+                    if (null == error) {
+                        error = context.getString(R.string.settings_advanced_import_data_successfully);
+                    }
+                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+                }
+            }).show();
+        }
     }
 
     @Override
