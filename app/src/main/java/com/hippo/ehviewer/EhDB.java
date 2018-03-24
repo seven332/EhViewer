@@ -16,10 +16,14 @@
 
 package com.hippo.ehviewer;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.DocumentsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -51,6 +55,7 @@ import com.hippo.yorozuya.collect.SparseJLArray;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -647,6 +652,40 @@ public class EhDB {
         }
         // Delete failed file
         file.delete();
+        return false;
+    }
+
+    public static synchronized boolean exportDB(Context context, Uri uri) {
+        File dbFile = context.getDatabasePath("eh.db");
+        if (null == dbFile || !dbFile.isFile()) {
+            return false;
+        }
+        if (null == uri) {
+            return false;
+        }
+        InputStream is = null;
+        OutputStream os = null;
+        ContentResolver resolver = context.getContentResolver();
+        try {
+            is = new FileInputStream(dbFile);
+            os = resolver.openOutputStream(uri);
+            IOUtils.copy(is, os);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
+        }
+        // Delete failed file
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                DocumentsContract.deleteDocument(resolver, uri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
         return false;
     }
 
