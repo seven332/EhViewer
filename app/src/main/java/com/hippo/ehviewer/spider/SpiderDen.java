@@ -323,7 +323,12 @@ public final class SpiderDen {
     @Nullable
     public OutputStreamPipe openOutputStreamPipe(int index, @Nullable String extension) {
         if (mMode == SpiderQueen.MODE_READ) {
-            return openCacheOutputStreamPipe(index);
+            // Return the download pipe is the gallery has been downloaded
+            OutputStreamPipe pipe = openDownloadOutputStreamPipe(index, extension);
+            if (pipe == null) {
+                pipe = openCacheOutputStreamPipe(index);
+            }
+            return pipe;
         } else if (mMode == SpiderQueen.MODE_DOWNLOAD) {
             return openDownloadOutputStreamPipe(index, extension);
         } else {
