@@ -48,6 +48,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -143,6 +146,29 @@
           android:configChanges="screenSize|uiMode"
           android:theme="@style/AppTheme.NoActionBar"
           android:label="@string/hosts"/>
+
+        <activity
+            android:name="com.hippo.ehviewer.shortcuts.StartAllDownloadActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:process=":bg"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.hippo.ehviewer.shortcuts.StopAllDownloadActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:process=":bg"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name="com.hippo.ehviewer.download.DownloadService"
