@@ -373,10 +373,12 @@
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
     <string name="page_menu_save">保存</string>
+    <string name="page_menu_save_to">保存到...</string>
     <string name="page_menu_add_bookmark">添加书签</string>
     <string name="gallery_menu_title">菜单</string>
     <string name="share_image">分享图片</string>
     <string name="image_saved">图片已保存至 %s</string>
+    <string name="os_not_support">当前系统不支持</string>
 
     <!-- Settings -->
     <string name="settings_eh">EH</string>

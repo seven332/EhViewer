@@ -417,10 +417,12 @@
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
     <string name="page_menu_save">Save</string>
+    <string name="page_menu_save_to">Save to...</string>
     <string name="page_menu_add_bookmark">Add a bookmark</string>
     <string name="gallery_menu_title">Menu</string>
     <string name="share_image">Share image</string>
     <string name="image_saved">Image saved to %s</string>
+    <string name="os_not_support">Current Android version does not support</string>
 
     <string name="settings_eh">EH</string>
     <string name="settings_eh_sign_out">Sign out</string>

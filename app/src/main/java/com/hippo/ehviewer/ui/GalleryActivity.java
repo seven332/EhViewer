@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -69,6 +70,7 @@ import com.hippo.util.SystemUiHelper;
 import com.hippo.widget.ColorView;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.ConcurrentPool;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
@@ -76,6 +78,11 @@ import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChangeListener,
         GalleryView.Listener {
@@ -94,11 +101,14 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
     private static final long SLIDER_ANIMATION_DURING = 150;
     private static final long HIDE_SLIDER_DELAY = 3000;
 
+    private static final int WRITE_REQUEST_CODE = 43;
+
     private String mAction;
     private String mFilename;
     private Uri mUri;
     private GalleryInfo mGalleryInfo;
     private int mPage;
+    private String mCacheFileName;
 
     @Nullable
     private GLRootView mGLRootView;
@@ -897,6 +907,65 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, file.getUri()));
     }
 
+    private void saveImageTo(int page) {
+        if (null == mGalleryProvider) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT){
+            Toast.makeText(this, getString(R.string.os_not_support), Toast.LENGTH_SHORT).show();
+        }else {
+            File dir = getCacheDir();
+            UniFile file;
+            if (null == (file = mGalleryProvider.save(page, UniFile.fromFile(dir), mGalleryProvider.getImageFilename(page)))) {
+                Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String filename = file.getName();
+            if (filename == null) {
+                Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            mCacheFileName = filename;
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_TITLE, filename);
+            startActivityForResult(intent, WRITE_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (resultData != null){
+                Uri uri = resultData.getData();
+                String filepath = getCacheDir() + "/" + mCacheFileName;
+                File cachefile = new File(filepath);
+
+                InputStream is = null;
+                OutputStream os = null;
+                ContentResolver resolver = getContentResolver();
+
+                try {
+                    is = new FileInputStream(cachefile);
+                    os = resolver.openOutputStream(uri);
+                    IOUtils.copy(is, os);
+                } catch (IOException e) {
+                        e.printStackTrace();
+                } finally {
+                    IOUtils.closeQuietly(is);
+                    IOUtils.closeQuietly(os);
+                }
+
+                cachefile.delete();
+
+                Toast.makeText(this, getString(R.string.image_saved, uri.getPath()), Toast.LENGTH_SHORT).show();
+                // Sync media store
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+            }
+        }
+    }
+
     private void showPageDialog(final int page) {
         Resources resources = GalleryActivity.this.getResources();
         new AlertDialog.Builder(GalleryActivity.this)
@@ -918,7 +987,8 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                             case 2: // Save
                                 saveImage(page);
                                 break;
-                            case 3: // Add a bookmark
+                            case 3: // Save to
+                                saveImageTo(page);
                                 break;
                         }
                     }

@@ -204,6 +204,7 @@
         <item>@string/page_menu_refresh</item>
         <item>@string/page_menu_share</item>
         <item>@string/page_menu_save</item>
+        <item>@string/page_menu_save_to</item>
     </string-array>
 
     <string-array name="gallery_list_menu_entries">
