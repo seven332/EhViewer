@@ -37,8 +37,7 @@ public class ShortcutsActivity extends Activity{
             if (action.equals(DownloadService.ACTION_START_ALL)){
                 intent.setAction(DownloadService.ACTION_START_ALL);
                 startService(intent);
-            }
-            if (action.equals(DownloadService.ACTION_STOP_ALL)){
+            } else if (action.equals(DownloadService.ACTION_STOP_ALL)){
                 intent.setAction(DownloadService.ACTION_STOP_ALL);
                 startService(intent);
             }
