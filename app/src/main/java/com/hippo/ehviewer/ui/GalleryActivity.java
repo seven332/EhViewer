@@ -966,22 +966,21 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         AlertDialog.Builder builder = new AlertDialog.Builder(GalleryActivity.this);
         builder.setTitle(resources.getString(R.string.page_menu_title, page + 1));
 
+        final CharSequence[] items;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            final CharSequence[] items = {
+            items = new CharSequence[]{
                     getString(R.string.page_menu_refresh),
                     getString(R.string.page_menu_share),
                     getString(R.string.page_menu_save),
                     getString(R.string.page_menu_save_to)};
-            pageDialogListener(builder, items, page);
-            builder.show();
         }else {
-            final CharSequence[] items = {
+            items = new CharSequence[]{
                     getString(R.string.page_menu_refresh),
                     getString(R.string.page_menu_share),
                     getString(R.string.page_menu_save)};
-            pageDialogListener(builder, items, page);
-            builder.show();
         }
+        pageDialogListener(builder, items, page);
+        builder.show();
     }
 
     private void pageDialogListener(AlertDialog.Builder builder, CharSequence[] items, int page){
