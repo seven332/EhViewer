@@ -12,7 +12,7 @@
             android:action="start_all"
             android:targetPackage="com.hippo.ehviewer"
             android:targetClass="com.hippo.ehviewer.shortcuts.ShortcutsActivity"/>
-        <categories android:name="android.intent.category.DEFAULT" />
+        <categories android:name="android.shortcut.conversation" />
     </shortcut>
 
     <shortcut
@@ -26,7 +26,7 @@
             android:action="stop_all"
             android:targetPackage="com.hippo.ehviewer"
             android:targetClass="com.hippo.ehviewer.shortcuts.ShortcutsActivity" />
-        <categories android:name="android.intent.category.DEFAULT" />
+        <categories android:name="android.shortcut.conversation" />
     </shortcut>
 
 </shortcuts>
