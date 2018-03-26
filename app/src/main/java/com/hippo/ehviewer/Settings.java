@@ -952,6 +952,17 @@ public class Settings {
         return getIntFromStr(KEY_READ_CACHE_SIZE, DEFAULT_READ_CACHE_SIZE);
     }
 
+    public static final String KEY_BUILT_IN_HOSTS = "built_in_hosts";
+    private static final boolean DEFAULT_BUILT_IN_HOSTS = false;
+
+    public static boolean getBuiltInHosts() {
+        return getBoolean(KEY_BUILT_IN_HOSTS, DEFAULT_BUILT_IN_HOSTS);
+    }
+
+    public static void putBuiltInHosts(boolean value) {
+        putBoolean(KEY_BUILT_IN_HOSTS, value);
+    }
+
     /********************
      ****** Guide
      ********************/

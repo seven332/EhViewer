@@ -536,8 +536,10 @@
     <string name="settings_advanced_clear_memory_cache">Clear memory cache</string>
     <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
     <string name="settings_advanced_read_cache_size">Read cache size</string>
+    <string name="settings_advanced_built_in_hosts_title">Built-in hosts.txt</string>
+    <string name="settings_advanced_built_in_hosts_summary">The host-to-IP mapping provided by the app\nIt can be overrode by custom hosts.txt</string>
     <string name="settings_advanced_custom_hosts_title">Custom hosts.txt</string>
-    <string name="settings_advanced_custom_hosts_summary">Map hostnames to IP addresses</string>
+    <string name="settings_advanced_custom_hosts_summary">Map hostnames to IP addresses\nIt can override built-in hosts.txt</string>
     <string name="settings_privacy_pattern_protection_title">Pattern protection</string>
     <string name="settings_privacy_pattern_protection_not_set">Pattern protection has not been set</string>
     <string name="settings_privacy_pattern_protection_set">Pattern protection has been set</string>

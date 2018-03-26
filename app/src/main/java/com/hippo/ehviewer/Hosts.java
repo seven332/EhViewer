@@ -142,7 +142,7 @@ public class Hosts {
   }
 
   @Nullable
-  private static InetAddress toInetAddress(String host, String ip) {
+  public static InetAddress toInetAddress(String host, String ip) {
     if (!isValidHost(host)) {
       return null;
     }

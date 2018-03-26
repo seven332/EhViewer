@@ -493,8 +493,10 @@
     <string name="settings_advanced_clear_memory_cache">清除記憶體快取</string>
     <string name="settings_advanced_clear_memory_cache_summary">清除縮圖、圖庫詳細資料的記憶體快取</string>
     <string name="settings_advanced_read_cache_size">閱讀快取大小</string>
+    <string name="settings_advanced_built_in_hosts_title">內建 hosts.txt</string>
+    <string name="settings_advanced_built_in_hosts_summary">應用提供的主機到IP的對映\n可被自定義 hosts.txt 覆蓋</string>
     <string name="settings_advanced_custom_hosts_title">自定義 hosts.txt</string>
-    <string name="settings_advanced_custom_hosts_summary">將主機名稱對映到相應的IP位址</string>
+    <string name="settings_advanced_custom_hosts_summary">將主機名稱對映到相應的IP位址\n可覆蓋內建 hosts.txt</string>
     <string name="settings_privacy_pattern_protection_title">繪圖解鎖</string>
     <string name="settings_privacy_pattern_protection_not_set">尚未設定繪圖解鎖</string>
     <string name="settings_privacy_pattern_protection_set">已設定繪圖解鎖</string>

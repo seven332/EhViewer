@@ -48,12 +48,18 @@
         app:entryValues="@array/read_cache_size_entry_values"
         android:defaultValue="160"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="built_in_hosts"
+        android:title="@string/settings_advanced_built_in_hosts_title"
+        android:summary="@string/settings_advanced_built_in_hosts_summary"
+        android:defaultValue="false"/>
+
     <com.hippo.preference.ActivityPreference
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:key="custom_hosts"
         android:title="@string/settings_advanced_custom_hosts_title"
         android:summary="@string/settings_advanced_custom_hosts_summary"
-        app:activity="com.hippo.ehviewer.ui.HostsActivity" />
+        app:activity="com.hippo.ehviewer.ui.HostsActivity"/>
 
     <Preference
         android:key="export_data"

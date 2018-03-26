@@ -23,14 +23,33 @@ package com.hippo.ehviewer.client;
 import android.content.Context;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Hosts;
+import com.hippo.ehviewer.Settings;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import okhttp3.Dns;
 
 public class EhDns implements Dns {
+
+  private static final Map<String, InetAddress> builtInHosts;
+
+  static {
+    Map<String, InetAddress> map = new HashMap<>();
+    put(map, "e-hentai.org", "104.24.255.11");
+    put(map, "forums.e-hentai.org", "94.100.18.243");
+    builtInHosts = map;
+  }
+
+  private static void put(Map<String, InetAddress> map, String host, String ip) {
+    InetAddress address = Hosts.toInetAddress(host, ip);
+    if (address != null) {
+      map.put(host, address);
+    }
+  }
 
   private final Hosts hosts;
 
@@ -45,6 +64,13 @@ public class EhDns implements Dns {
     InetAddress inetAddress = hosts.get(hostname);
     if (inetAddress != null) {
       return Collections.singletonList(inetAddress);
+    }
+
+    if (Settings.getBuiltInHosts()) {
+      inetAddress = builtInHosts.get(hostname);
+      if (inetAddress != null) {
+        return Collections.singletonList(inetAddress);
+      }
     }
 
     try {
