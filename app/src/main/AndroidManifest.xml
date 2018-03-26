@@ -154,9 +154,6 @@
             android:taskAffinity=""
             android:process=":bg"
             android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.CREATE_SHORTCUT" />
-            </intent-filter>
         </activity>
 
         <activity android:name="com.hippo.ehviewer.shortcuts.StopAllDownloadActivity"
@@ -165,9 +162,6 @@
             android:taskAffinity=""
             android:process=":bg"
             android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.CREATE_SHORTCUT" />
-            </intent-filter>
         </activity>
 
         <service
