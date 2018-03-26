@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
     <shortcut
         android:shortcutId="start_all"
         android:enabled="true"
@@ -8,11 +9,12 @@
         android:shortcutLongLabel="@string/download_start_all"
         android:shortcutDisabledMessage="@string/download_start_all">
         <intent
-            android:action="android.intent.action.MAIN"
+            android:action="start_all"
             android:targetPackage="com.hippo.ehviewer.debug"
-            android:targetClass="com.hippo.ehviewer.shortcuts.StartAllDownloadActivity" />
-        <categories android:name="android.shortcut.conversation" />
+            android:targetClass="com.hippo.ehviewer.shortcuts.ShortcutsActivity"/>
+        <categories android:name="android.intent.category.DEFAULT" />
     </shortcut>
+
     <shortcut
         android:shortcutId="stop_all"
         android:enabled="true"
@@ -21,10 +23,10 @@
         android:shortcutLongLabel="@string/download_stop_all"
         android:shortcutDisabledMessage="@string/download_stop_all">
         <intent
-            android:action="android.intent.action.MAIN"
+            android:action="stop_all"
             android:targetPackage="com.hippo.ehviewer.debug"
-            android:targetClass="com.hippo.ehviewer.shortcuts.StopAllDownloadActivity" />
-        <categories android:name="android.shortcut.conversation" />
+            android:targetClass="com.hippo.ehviewer.shortcuts.ShortcutsActivity" />
+        <categories android:name="android.intent.category.DEFAULT" />
     </shortcut>
 
 </shortcuts>
