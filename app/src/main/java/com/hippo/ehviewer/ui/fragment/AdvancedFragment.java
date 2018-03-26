@@ -98,20 +98,11 @@ public class AdvancedFragment extends PreferenceFragment
             Runtime.getRuntime().gc();
         } else if (KEY_EXPORT_DATA.equals(key)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-                String filename = ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db";
-                exportData("*/*", filename);
+                showExportDialog();
                 return true;
 
-            }else {
-                File dir = AppConfig.getExternalDataDir();
-                if (dir != null) {
-                    File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db");
-                    if (EhDB.exportDB(getActivity(), file)) {
-                        Toast.makeText(getActivity(),
-                                getString(R.string.settings_advanced_export_data_to, file.getPath()), Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                }
+            } else if (defaultExportData()){
+                    return true;
             }
             Toast.makeText(getActivity(),R.string.settings_advanced_export_data_failed, Toast.LENGTH_SHORT).show();
             return true;
@@ -123,11 +114,48 @@ public class AdvancedFragment extends PreferenceFragment
         return false;
     }
 
-    private void exportData(String mimeType, String fileName){
+    private void showExportDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.settings_advanced_export_data_to_location));
+        final CharSequence[] items = new CharSequence[]{
+                getString(R.string.settings_advanced_export_data_device_storage),
+                getString(R.string.settings_advanced_export_data_document_storage)
+        };
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i){
+                    case 0:
+                        defaultExportData();
+                        break;
+                    case 1:
+                        customExportData();
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private boolean defaultExportData(){
+        File dir = AppConfig.getExternalDataDir();
+        if (dir != null) {
+            File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db");
+            if (EhDB.exportDB(getActivity(), file)) {
+                Toast.makeText(getActivity(),
+                        getString(R.string.settings_advanced_export_data_to, file.getPath()), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void customExportData(){
+        String filename = ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db";
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType(mimeType);
-        intent.putExtra(Intent.EXTRA_TITLE, fileName);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_TITLE, filename);
         startActivityForResult(intent, WRITE_REQUEST_CODE);
 
     }

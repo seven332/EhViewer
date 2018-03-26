@@ -417,7 +417,7 @@
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
     <string name="page_menu_save">Save</string>
-    <string name="page_menu_save_to">Save to...</string>
+    <string name="page_menu_save_to">Save to&#8230;</string>
     <string name="page_menu_add_bookmark">Add a bookmark</string>
     <string name="gallery_menu_title">Menu</string>
     <string name="share_image">Share image</string>
@@ -549,6 +549,9 @@
     <string name="settings_advanced_export_data_summary">Save data to external storage, such as download list, quick search list</string>
     <string name="settings_advanced_export_data_to">Exported data to %s</string>
     <string name="settings_advanced_export_data_failed">Export data failed</string>
+    <string name="settings_advanced_export_data_device_storage">Device Storage</string>
+    <string name="settings_advanced_export_data_document_storage">Document Storage</string>
+    <string name="settings_advanced_export_data_to_location">Export data to&#8230;</string>
     <string name="settings_advanced_import_data">Import data</string>
     <string name="settings_advanced_import_data_summary">Load data which saved before</string>
     <string name="settings_advanced_import_data_successfully">Import data successfully</string>
