@@ -152,7 +152,6 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:excludeFromRecents="true"
             android:taskAffinity=""
-            android:process=":bg"
             android:launchMode="singleTask">
         </activity>
 
