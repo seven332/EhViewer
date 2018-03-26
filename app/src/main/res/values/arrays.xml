@@ -200,19 +200,6 @@
         <item>640</item>
     </string-array>
 
-    <string-array name="page_menu_entries">
-        <item>@string/page_menu_refresh</item>
-        <item>@string/page_menu_share</item>
-        <item>@string/page_menu_save</item>
-    </string-array>
-
-    <string-array name="page_menu_entries_new">
-        <item>@string/page_menu_refresh</item>
-        <item>@string/page_menu_share</item>
-        <item>@string/page_menu_save</item>
-        <item>@string/page_menu_save_to</item>
-    </string-array>
-
     <string-array name="gallery_list_menu_entries">
         <item>@string/download</item>
         <item>@string/add_to_favourites</item>

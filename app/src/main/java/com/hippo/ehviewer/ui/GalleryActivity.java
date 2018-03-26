@@ -967,51 +967,47 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         builder.setTitle(resources.getString(R.string.page_menu_title, page + 1));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            builder.setItems(R.array.page_menu_entries_new, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (mGalleryProvider == null) {
-                        return;
-                    }
-
-                    switch (which) {
-                        case 0: // Refresh
-                            mGalleryProvider.forceRequest(page);
-                            break;
-                        case 1: // Share
-                            shareImage(page);
-                            break;
-                        case 2: // Save
-                            saveImage(page);
-                            break;
-                        case 3: // Save to
-                            saveImageTo(page);
-                            break;
-                    }
-                }
-            }).show();
+            final CharSequence[] items = {
+                    getString(R.string.page_menu_refresh),
+                    getString(R.string.page_menu_share),
+                    getString(R.string.page_menu_save),
+                    getString(R.string.page_menu_save_to)};
+            pageDialogListener(builder, items, page);
+            builder.show();
         }else {
-            builder.setItems(R.array.page_menu_entries, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (mGalleryProvider == null) {
-                        return;
-                    }
-
-                    switch (which) {
-                        case 0: // Refresh
-                            mGalleryProvider.forceRequest(page);
-                            break;
-                        case 1: // Share
-                            shareImage(page);
-                            break;
-                        case 2: // Save
-                            saveImage(page);
-                            break;
-                    }
-                }
-            }).show();
+            final CharSequence[] items = {
+                    getString(R.string.page_menu_refresh),
+                    getString(R.string.page_menu_share),
+                    getString(R.string.page_menu_save)};
+            pageDialogListener(builder, items, page);
+            builder.show();
         }
+    }
+
+    private void pageDialogListener(AlertDialog.Builder builder, CharSequence[] items, int page){
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mGalleryProvider == null) {
+                    return;
+                }
+
+                switch (which) {
+                    case 0: // Refresh
+                        mGalleryProvider.forceRequest(page);
+                        break;
+                    case 1: // Share
+                        shareImage(page);
+                        break;
+                    case 2: // Save
+                        saveImage(page);
+                        break;
+                    case 3: // Save to
+                        saveImageTo(page);
+                        break;
+                }
+            }
+        });
     }
 
     private class NotifyTask implements Runnable {
