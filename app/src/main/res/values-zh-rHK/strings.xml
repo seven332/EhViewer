@@ -356,7 +356,7 @@
     <string name="apply_tip">點擊右上角的對勾來保存設置</string>
 
     <!-- Hosts Activity -->
-    <string name="hosts">Hosts</string>
+    <string name="hosts">hosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
     <string name="hosts_host">Host</string>
     <string name="hosts_ip">IP</string>
@@ -493,7 +493,7 @@
     <string name="settings_advanced_clear_memory_cache">清理內存緩存</string>
     <string name="settings_advanced_clear_memory_cache_summary">清理縮略圖、畫廊信息的內存緩存</string>
     <string name="settings_advanced_read_cache_size">閲讀緩存大小</string>
-    <string name="settings_advanced_hosts_title">Hosts</string>
+    <string name="settings_advanced_hosts_title">hosts.txt</string>
     <string name="settings_advanced_hosts_summary">將主機名稱對映到相應的IP位址</string>
     <string name="settings_privacy_pattern_protection_title">圖案保護</string>
     <string name="settings_privacy_pattern_protection_not_set">未設置圖案保護</string>

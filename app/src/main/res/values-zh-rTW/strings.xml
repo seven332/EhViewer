@@ -356,7 +356,7 @@
     <string name="apply_tip">點選右上角的對勾來儲存設定</string>
 
     <!-- Hosts Activity -->
-    <string name="hosts">Hosts</string>
+    <string name="hosts">hosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
     <string name="hosts_host">Host</string>
     <string name="hosts_ip">IP</string>
@@ -493,7 +493,7 @@
     <string name="settings_advanced_clear_memory_cache">清除記憶體快取</string>
     <string name="settings_advanced_clear_memory_cache_summary">清除縮圖、圖庫詳細資料的記憶體快取</string>
     <string name="settings_advanced_read_cache_size">閱讀快取大小</string>
-    <string name="settings_advanced_hosts_title">Hosts</string>
+    <string name="settings_advanced_hosts_title">hosts.txt</string>
     <string name="settings_advanced_hosts_summary">將主機名稱對映到相應的IP位址</string>
     <string name="settings_privacy_pattern_protection_title">繪圖解鎖</string>
     <string name="settings_privacy_pattern_protection_not_set">尚未設定繪圖解鎖</string>
