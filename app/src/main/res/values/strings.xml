@@ -422,7 +422,6 @@
     <string name="gallery_menu_title">Menu</string>
     <string name="share_image">Share image</string>
     <string name="image_saved">Image saved to %s</string>
-    <string name="os_not_support">Current Android version does not support</string>
 
     <string name="settings_eh">EH</string>
     <string name="settings_eh_sign_out">Sign out</string>
