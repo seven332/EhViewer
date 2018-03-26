@@ -19,6 +19,8 @@ package com.hippo.ehviewer.shortcuts;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.hippo.ehviewer.download.DownloadService;
 
@@ -26,13 +28,23 @@ import com.hippo.ehviewer.download.DownloadService;
  * Created by onlymash on 3/25/18.
  */
 
-public class StartAllDownloadActivity extends Activity{
+public class ShortcutsActivity extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = new Intent(this, DownloadService.class);
-        intent.setAction(DownloadService.ACTION_START_ALL);
-        startService(intent);
+        String action = null;
+        action = getIntent().getAction();
+        if (!action.isEmpty()){
+            Intent intent = new Intent(this, DownloadService.class);
+            if (action.equals(DownloadService.ACTION_START_ALL)){
+                intent.setAction(DownloadService.ACTION_START_ALL);
+                startService(intent);
+            }
+            if (action.equals(DownloadService.ACTION_STOP_ALL)){
+                intent.setAction(DownloadService.ACTION_STOP_ALL);
+                startService(intent);
+            }
+        }
         finish();
     }
 }

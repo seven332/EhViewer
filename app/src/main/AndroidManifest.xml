@@ -148,15 +148,7 @@
           android:label="@string/hosts"/>
 
         <activity
-            android:name="com.hippo.ehviewer.shortcuts.StartAllDownloadActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:process=":bg"
-            android:launchMode="singleTask">
-        </activity>
-
-        <activity android:name="com.hippo.ehviewer.shortcuts.StopAllDownloadActivity"
+            android:name="com.hippo.ehviewer.shortcuts.ShortcutsActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:excludeFromRecents="true"
             android:taskAffinity=""
