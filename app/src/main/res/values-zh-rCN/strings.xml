@@ -378,7 +378,6 @@
     <string name="gallery_menu_title">菜单</string>
     <string name="share_image">分享图片</string>
     <string name="image_saved">图片已保存至 %s</string>
-    <string name="os_not_support">当前系统不支持</string>
 
     <!-- Settings -->
     <string name="settings_eh">EH</string>
