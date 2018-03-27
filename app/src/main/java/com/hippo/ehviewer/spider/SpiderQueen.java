@@ -430,11 +430,11 @@ public final class SpiderQueen implements Runnable {
     }
 
     public Object forceRequest(int index) {
-        return request(index, true, false);
+        return request(index, true, true, false);
     }
 
     public Object request(int index) {
-        return request(index, false, true);
+        return request(index, true, false, true);
     }
 
     private int getPageState(int index) {
@@ -483,7 +483,7 @@ public final class SpiderQueen implements Runnable {
      * Float for download percent<br>
      * null for wait
      */
-    private Object request(int index, boolean force, boolean addNeighbor) {
+    private Object request(int index, boolean ignoreError, boolean force, boolean addNeighbor) {
         if (mQueenThread == null) {
             return null;
         }
@@ -492,7 +492,8 @@ public final class SpiderQueen implements Runnable {
         int state = getPageState(index);
 
         // Fix state for force
-        if (force && (state == STATE_FINISHED || state == STATE_FAILED)) {
+        if ((force && (state == STATE_FINISHED || state == STATE_FAILED)) ||
+            (ignoreError && state == STATE_FAILED)) {
             // Update state to none at once
             updatePageState(index, STATE_NONE);
             state = STATE_NONE;
@@ -1400,7 +1401,7 @@ public final class SpiderQueen implements Runnable {
                     // Can't find the file, it might be removed from cache,
                     // Reset it state and request it
                     updatePageState(index, STATE_NONE, null);
-                    request(index, false, false);
+                    request(index, false, false, false);
                     continue;
                 }
 
