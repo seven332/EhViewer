@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.tasks.DefaultAndroidTask
-
 apply plugin: 'com.android.application'
 apply plugin: 'android-chinese-string'
 
@@ -52,7 +50,7 @@ task copyNotice(type: Copy) {
     finalizedBy ":daogenerator:executeDaoGenerator"
 }
 
-tasks.withType(DefaultAndroidTask) {
+tasks.withType(JavaCompile) {
     task -> task.dependsOn copyNotice
 }
 
