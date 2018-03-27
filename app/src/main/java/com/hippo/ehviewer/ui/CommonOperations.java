@@ -206,6 +206,12 @@ public final class CommonOperations {
                         }
                     }, activity.getString(R.string.remember_favorite_collection), false)
                     .setTitle(R.string.add_favorites_dialog_title)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            listener.onCancel();
+                        }
+                    })
                     .show();
         }
     }

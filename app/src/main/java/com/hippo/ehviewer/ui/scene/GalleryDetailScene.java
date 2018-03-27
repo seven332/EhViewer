@@ -1538,6 +1538,14 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    private void onModifyFavoritesFailure(boolean addOrRemove) {
+        mModifingFavorites = false;
+    }
+
+    private void onModifyFavoritesCancel(boolean addOrRemove) {
+        mModifingFavorites = false;
+    }
+
     private class ModifyFavoritesListener extends EhCallback<GalleryDetailScene, Void> {
 
         private final boolean mAddOrRemove;
@@ -1564,10 +1572,19 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         public void onFailure(Exception e) {
             showTip(mAddOrRemove ? R.string.remove_from_favorite_failure :
                     R.string.add_to_favorite_failure, LENGTH_SHORT);
+            GalleryDetailScene scene = getScene();
+            if (scene != null) {
+                scene.onModifyFavoritesFailure(mAddOrRemove);
+            }
         }
 
         @Override
-        public void onCancel() {}
+        public void onCancel() {
+            GalleryDetailScene scene = getScene();
+            if (scene != null) {
+                scene.onModifyFavoritesCancel(mAddOrRemove);
+            }
+        }
 
         @Override
         public boolean isInstance(SceneFragment scene) {
