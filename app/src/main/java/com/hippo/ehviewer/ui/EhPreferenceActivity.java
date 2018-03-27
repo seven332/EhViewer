@@ -86,9 +86,9 @@ public abstract class EhPreferenceActivity extends AppCompatPreferenceActivity {
             if (split.length == 1) {
                 locale = new Locale(split[0]);
             } else if (split.length == 2) {
-                locale = new Locale(split[0], split[0]);
+                locale = new Locale(split[0], split[1]);
             } else if (split.length == 3) {
-                locale = new Locale(split[0], split[0], split[0]);
+                locale = new Locale(split[0], split[1], split[2]);
             }
         }
 
