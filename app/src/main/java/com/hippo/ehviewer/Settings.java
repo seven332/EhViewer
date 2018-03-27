@@ -963,6 +963,17 @@ public class Settings {
         putBoolean(KEY_BUILT_IN_HOSTS, value);
     }
 
+    public static final String KEY_APP_LANGUAGE = "app_language";
+    private static final String DEFAULT_APP_LANGUAGE = "system";
+
+    public static String getAppLanguage() {
+        return getString(KEY_APP_LANGUAGE, DEFAULT_APP_LANGUAGE);
+    }
+
+    public static void putAppLanguage(String value) {
+        putString(KEY_APP_LANGUAGE, value);
+    }
+
     /********************
      ****** Guide
      ********************/

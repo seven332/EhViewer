@@ -16,15 +16,16 @@
 
 package com.hippo.ehviewer.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.WindowManager;
-
 import com.google.analytics.tracking.android.EasyTracker;
+import com.hippo.content.ContextLocalWrapper;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
+import java.util.Locale;
 
 public abstract class EhActivity extends AppCompatActivity {
 
@@ -73,5 +74,27 @@ public abstract class EhActivity extends AppCompatActivity {
         }else{
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Locale locale = null;
+        String language = Settings.getAppLanguage();
+        if (language != null && !language.equals("system")) {
+            String[] split = language.split("-");
+            if (split.length == 1) {
+                locale = new Locale(split[0]);
+            } else if (split.length == 2) {
+                locale = new Locale(split[0], split[0]);
+            } else if (split.length == 3) {
+                locale = new Locale(split[0], split[0], split[0]);
+            }
+        }
+
+        if (locale != null) {
+            newBase = ContextLocalWrapper.wrap(newBase, locale);
+        }
+
+        super.attachBaseContext(newBase);
     }
 }

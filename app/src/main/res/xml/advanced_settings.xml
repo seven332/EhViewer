@@ -48,6 +48,15 @@
         app:entryValues="@array/read_cache_size_entry_values"
         android:defaultValue="160"/>
 
+    <com.hippo.preference.ListPreference
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:key="app_language"
+      android:title="@string/settings_advanced_app_language_title"
+      android:summary="%s"
+      app:entries="@array/app_language_entries"
+      app:entryValues="@array/app_language_entry_values"
+      android:defaultValue="system"/>
+
     <com.hippo.preference.SwitchPreference
         android:key="built_in_hosts"
         android:title="@string/settings_advanced_built_in_hosts_title"

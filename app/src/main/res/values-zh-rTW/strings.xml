@@ -493,6 +493,7 @@
     <string name="settings_advanced_clear_memory_cache">清除記憶體快取</string>
     <string name="settings_advanced_clear_memory_cache_summary">清除縮圖、圖庫詳細資料的記憶體快取</string>
     <string name="settings_advanced_read_cache_size">閱讀快取大小</string>
+    <string name="settings_advanced_app_language_title">App 介面語言</string>
     <string name="settings_advanced_built_in_hosts_title">內建 hosts.txt</string>
     <string name="settings_advanced_built_in_hosts_summary">應用提供的主機到IP的對映\n可被自定義 hosts.txt 覆蓋</string>
     <string name="settings_advanced_custom_hosts_title">自定義 hosts.txt</string>
@@ -569,6 +570,8 @@
     <string name="cant_get_data_dir">無法取得檔案資料夾</string>
     <string name="cant_find_any_data">找不到任何資料</string>
     <string name="cant_read_the_file">無法讀取檔案</string>
+
+    <string name="app_language_system">系統語言（預設）</string>
 
     <!-- License -->
     <string name="license">授權</string>

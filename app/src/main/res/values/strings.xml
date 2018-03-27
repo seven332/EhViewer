@@ -537,6 +537,7 @@
     <string name="settings_advanced_clear_memory_cache">Clear memory cache</string>
     <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
     <string name="settings_advanced_read_cache_size">Read cache size</string>
+    <string name="settings_advanced_app_language_title">App language</string>
     <string name="settings_advanced_built_in_hosts_title">Built-in hosts.txt</string>
     <string name="settings_advanced_built_in_hosts_summary">The host-to-IP mapping provided by the app\nIt can be overrode by custom hosts.txt</string>
     <string name="settings_advanced_custom_hosts_title">Custom hosts.txt</string>
@@ -586,6 +587,15 @@
     <string name="cant_get_data_dir">Can\'t get data dir</string>
     <string name="cant_find_any_data">Can\'t find any data</string>
     <string name="cant_read_the_file">Can\'t read the file</string>
+
+    <string name="app_language_system">System Language (Default)</string>
+    <string name="app_language_en" translatable="false">English</string>
+    <string name="app_language_es" translatable="false">Español</string>
+    <string name="app_language_ja" translatable="false">日本語</string>
+    <string name="app_language_ko" translatable="false">한국어</string>
+    <string name="app_language_zh_cn" translatable="false">中文（中国）</string>
+    <string name="app_language_zh_hk" translatable="false">中文（香港）</string>
+    <string name="app_language_zh_tw" translatable="false">國文（臺灣）</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">Excluded languages</string>

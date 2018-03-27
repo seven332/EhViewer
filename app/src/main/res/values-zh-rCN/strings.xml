@@ -494,6 +494,7 @@
     <string name="settings_advanced_clear_memory_cache">清理内存缓存</string>
     <string name="settings_advanced_clear_memory_cache_summary">清理缩略图、画廊信息的内存缓存</string>
     <string name="settings_advanced_read_cache_size">阅读缓存大小</string>
+    <string name="settings_advanced_app_language_title">App 界面语言</string>
     <string name="settings_advanced_built_in_hosts_title">内置 hosts.txt</string>
     <string name="settings_advanced_built_in_hosts_summary">应用提供的主机到IP的映射\n可被自定义 hosts.txt 覆盖</string>
     <string name="settings_advanced_custom_hosts_title">自定义 hosts.txt</string>
@@ -570,6 +571,8 @@
     <string name="cant_get_data_dir">无法获取数据文件夹</string>
     <string name="cant_find_any_data">找不到任何数据</string>
     <string name="cant_read_the_file">无法读取文件</string>
+
+    <string name="app_language_system">系统语言（默认）</string>
 
     <!-- License -->
     <string name="license">开源许可</string>
