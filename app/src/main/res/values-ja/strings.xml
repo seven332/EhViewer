@@ -21,7 +21,7 @@
 
     <string name="homepage">ホームページ</string>
     <string name="whats_hot">人気</string>
-    <string name="favourite">気に入り</string>
+    <string name="favourite">お気に入り</string>
     <string name="history">閲覧履歴</string>
     <string name="downloads">ダウンロード</string>
     <string name="settings">設定</string>
@@ -41,56 +41,56 @@
     <string name="display_name_dialog_title">ニックネームを入力</string>
     <string name="display_name">ニックネーム</string>
     <string name="display_name_is_empty">ニックネームが空</string>
-    <string name="sign_in_first">ログインください</string>
+    <string name="sign_in_first">ログインしてください</string>
 
     <string name="default_display_name">Little Hippo</string>
 
     <string name="cookie_explain">Cookieは、ブラウザに格納された小さなデータです。Cookie及びその入手方法がかわからない場合は、Webで検索してください。\n\n特定のCookieを入力することでログインしてください。</string>
     <string name="text_is_empty">テキストが空</string>
     <string name="waring">警告</string>
-    <string name="wrong_cookie_warning">あなたが入力したCookieは間違ったようです。チェックしてください。</string>
-    <string name="i_will_check_it">よい</string>
-    <string name="i_dont_think_so">間違ってない</string>
+    <string name="wrong_cookie_warning">あなたが入力したCookieは間違っているようです。チェックしてください。</string>
+    <string name="i_will_check_it">正しいです</string>
+    <string name="i_dont_think_so">間違っています</string>
     <string name="found_cookies">古いCookieを探す</string>
 
     <string name="invalid_download_location">ダウンロードパスは利用できません。ダウンロードパスをリセットしてください。</string>
 
-    <string name="cellular_network_warning">モバイルネットワークを使っている</string>
+    <string name="cellular_network_warning">モバイルネットワークを使用中です。</string>
 
     <string name="error_bad_status_code">間違ったステータスコード：%d</string>
     <string name="error_timeout">タイムアウト</string>
     <string name="error_unknown_host">未知ホスト</string>
-    <string name="error_redirection">リダイレクトが多すぎ</string>
-    <string name="error_socket">ネットエラー</string>
-    <string name="error_unknown">おかしいエラー</string>
-    <string name="error_cant_find_activity">アクティビティが見つからない</string>
-    <string name="error_cannot_parse_the_url">リンクを分析できない</string>
-    <string name="error_not_folder_path">フォルダパスではない</string>
-    <string name="error_no_provider">providerがない</string>
-    <string name="error_decoding_failed">デコード失敗</string>
-    <string name="error_not_found">見つからない</string>
+    <string name="error_redirection">リダイレクトが多すぎます</string>
+    <string name="error_socket">ネットワークエラー</string>
+    <string name="error_unknown">未知なエラー</string>
+    <string name="error_cant_find_activity">アクティビティが見つかりません。</string>
+    <string name="error_cannot_parse_the_url">リンクを分析できません。</string>
+    <string name="error_not_folder_path">フォルダが見つかりません。</string>
+    <string name="error_no_provider">プロバイダが見つかりません。</string>
+    <string name="error_decoding_failed">デコードに失敗しました。</string>
+    <string name="error_not_found">見つかりませんでした。</string>
     <string name="error_empty">空</string>
-    <string name="error_invalid_zip_file">無効のzipファイル</string>
-    <string name="error_reading_failed">読み取り失敗</string>
-    <string name="error_out_of_range">範囲外</string>
-    <string name="error_write_failed">書き込み失敗</string>
-    <string name="error_parse_error">分析失敗</string>
+    <string name="error_invalid_zip_file">無効なzipファイルです。</string>
+    <string name="error_reading_failed">読み取りに失敗しました。</string>
+    <string name="error_out_of_range">範囲外です。</string>
+    <string name="error_write_failed">書き込みに失敗しました。</string>
+    <string name="error_parse_error">分析に失敗しました。</string>
     <string name="error_509">509</string>
-    <string name="error_invalid_url">無効のリンク</string>
-    <string name="error_get_ptoken_error">pToken取得エラー</string>
-    <string name="error_invalid_specify_gallery">指定ギャラリーのキーワードは「618395 0439fa3666」のようはずです。</string>
-    <string name="error_cant_create_temp_file">一時ファイルを作成できない</string>
-    <string name="error_cant_save_image">画像を保存できない</string>
-    <string name="error_invalid_number">無効数字</string>
+    <string name="error_invalid_url">無効なリンクです。</string>
+    <string name="error_get_ptoken_error">pToken取得に失敗しました。</string>
+    <string name="error_invalid_specify_gallery">指定ギャラリーのキーワードは、例えば「618395 0439fa3666」のようになるはずです。</string>
+    <string name="error_cant_create_temp_file">一時ファイルを作成できません。</string>
+    <string name="error_cant_save_image">画像を保存できません。</string>
+    <string name="error_invalid_number">無効な数字です。</string>
 
-    <string name="app_waring">このアプリの内容はインターネットからのもので、内容によっては生理や心理に回復不能な損害を与えることが可能です。このアプリの作成者は、このアプリケによって引き起こされるいかなる結果に対しても責任を負いません。</string>
-    <string name="error_username_cannot_empty">ユーザー名が空は不可能</string>
-    <string name="error_password_cannot_empty">パスワードが空は不可能</string>
-    <string name="skip_signing_in">ログインをスキップ</string>
-    <string name="sign_in_failed">ログイン失敗</string>
+    <string name="app_waring">このアプリの内容はインターネットからのもので、内容によっては生理や心理に回復不能な損害を与える可能性があります。。このアプリの作成者は、このアプリケーションによって引き起こされるいかなる結果に対しても責任を負いません。</string>
+    <string name="error_username_cannot_empty">ユーザー名を入力してください。</string>
+    <string name="error_password_cannot_empty">パスワードを入力してください。</string>
+    <string name="skip_signing_in">ログインをスキップします。</string>
+    <string name="sign_in_failed">ログインに失敗しました。</string>
     <string name="sign_in_failed_plain">これはウェブサイトのアップデートによって引き起こされることかもしれず、またおかしいことが起こったかもしれません。ログインボタンの下でWebでログインするか、Cookieを入力するか、あるいはログインをスキップします。ログインをスキップするでアプリが正常に使用できなくなることがあります。0.6.xバージョンでログインした場合は、「Cookieでログイン」を選択することが推奨です。</string>
     <string name="press_twice_exit">もう一度押して終了</string>
-    <string name="content_layout_restore_tip">クリックしてもう一度試し</string>
+    <string name="content_layout_restore_tip">クリックしてもう一度試す</string>
     <string name="write_rationale">EhViewerはギャラリーをダウンロードするためにデバイスのストレージへのアクセスを要求します。あなたは許可しますか？</string>
     <string name="you_rejected_me">痛い</string>
     <string name="analytics_explain">あなたは、開発者があなたのデバイスや使用状況に関する情報を収集できるように同意しますか？これは開発にとって大きな助けになります。&lt;br&gt;&lt;br&gt;データ統計サービスはGoogleアナリティクスによって提供で、 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; にプライバシーポリシーを閲覧できます。&lt;br&gt;&lt;br&gt;データ統計に参加することに同意すると、Android APIのバージョン、デバイスモデル、言語の場所、アプリのバージョン番号、セッションの長さ、使用するアプリの数など、デバイス情報とアプリの使用状況が記録されます。開発者は、電話番号、電子メールアドレス、IMEIの情報は記録しないことを約束します。&lt;br&gt;&lt;br&gt;統計に参加することに同意するまで、あなたの情報は記録されません。&lt;br&gt;&lt;br&gt;記録されたデータはGoogleアナリティクスで分析され、分析レポートはアプリ開発者のみがアクセスできます。</string>
@@ -112,12 +112,12 @@
     <!-- Update -->
     <string name="update">更新</string>
     <string name="update_plain">バージョン：%1$s\nサイズ：%2$s\n\n%3$s</string>
-    <string name="update_to_date">EhViewerはもう最新バージョン</string>
+    <string name="update_to_date">EhViewerは既に最新バージョンです。</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint_exhentai">ExHentaiを検索</string>
     <string name="gallery_list_search_bar_hint_e_hentai">E-Hentaiを検索</string>
-    <string name="gallery_list_empty_hit">何も見つからない</string>
+    <string name="gallery_list_empty_hit">何も見つかりませんでした。</string>
 
     <string name="search">検索</string>
 
@@ -133,7 +133,7 @@
     <string name="search_specify_gallery">指定ギャラリー</string>
     <string name="search_enable_advance">詳細オプションを有効にする</string>
 
-    <string name="search_tip">一般検索：搜索です。\n\n指定アップローダー：このアップローダーによってアップロードされたギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定タグ：このタッグを含むギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定画廊：このギャラリーにジャンプします。キーワードは「gid token」のはずです。</string>
+    <string name="search_tip">一般検索：検索です。\n\n指定アップローダー：このアップローダーによってアップロードされたギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定タグ：このタッグを含むギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定画廊：このギャラリーにジャンプします。キーワードは「gid token」のはずです。</string>
 
     <string name="search_sname">ギャラリーを検索</string>
     <string name="search_stags">ギャラリータグを検索</string>
@@ -151,21 +151,21 @@
     <string name="search_se">削除されたギャラリーを表示</string>
     <string name="select_image_first">まずは画像を選択してください</string>
 
-    <string name="add_to_favourites">気に入り</string>
+    <string name="add_to_favourites">お気に入り</string>
 
     <string name="quick_search">クイック検索</string>
     <string name="quick_search_tip">「+」をクリックしてクイック検索を追加</string>
     <string name="add_quick_search_dialog_title">クイック検索を追加</string>
-    <string name="name_is_empty">ネームが空</string>
+    <string name="name_is_empty">タイトルが空</string>
     <string name="delete">削除</string>
     <string name="delete_quick_search_title">クイック検索を削除</string>
     <string name="delete_quick_search_message">「%s」を削除？</string>
     <string name="no_quick_search">ここがクイック検索</string>
     <string name="add_quick_search_tip">ギャラリーリストのステータスはクイック検索として保存されます。検索パネルのステータスを保存する場合は、まず検索を実行してください。</string>
-    <string name="readme">私を読んで</string>
-    <string name="image_search_not_quick_search">画像検索をクイック検索として追加できません</string>
+    <string name="readme">README</string>
+    <string name="image_search_not_quick_search">画像検索をクイック検索として追加できませんでした。</string>
     <string name="duplicate_quick_search">同じクイック検索がすでに名前が「%s」として存在しています。</string>
-    <string name="duplicate_name">同じ名前が既に存在</string>
+    <string name="duplicate_name">同じ名前が既に存在します。</string>
 
     <string name="go_to_hint">ページ%1$d、合計%2$dページ</string>
 
@@ -176,44 +176,44 @@
     <string name="star_5">星5</string>
 
     <!-- Gallery detail -->
-    <string name="error_cannot_find_gallery">ギャラリーを見つけない</string>
+    <string name="error_cannot_find_gallery">ギャラリーを見つけることが出来ませんでした。</string>
     <string name="download">ダウンロード</string>
     <string name="read">閲覧</string>
-    <string name="more_information">詳しい情報を見る</string>
+    <string name="more_information">詳細情報を見る</string>
     <plurals name="page_count">
         <item quantity="other">%dページ</item>
     </plurals>
     <string name="favored_times">\u2665 %d</string>
     <string name="rating_text">%1$s (%2$.2f, %3$d)</string>
-    <string name="favorites">気に入り</string>
+    <string name="favorites">お気に入り</string>
     <string name="torrent_count">トレント (%d)</string>
     <string name="share">シェア</string>
-    <string name="rate">採点</string>
+    <string name="rate">評価</string>
     <string name="similar_gallery">類似のギャラリー</string>
     <string name="search_cover">カバーを検索</string>
     <string name="no_tags">タグなし</string>
     <string name="no_comments">コメントなし</string>
-    <string name="no_more_comments">すべてのコメントが表示された</string>
+    <string name="no_more_comments">すべてのコメントが表示されました。</string>
     <string name="more_comment">他のコメントを見る</string>
     <string name="no_previews">プレビューなし</string>
-    <string name="no_more_previews">すべてのプレビューが表示された</string>
+    <string name="no_more_previews">すべてのプレビューが表示されました。</string>
     <string name="more_previews">他のプレビューを見る</string>
     <string name="refresh">リフレッシュ</string>
     <string name="open_in_other_app">他のアプリケーションで開く</string>
-    <string name="rate_successfully">採点成功</string>
-    <string name="rate_failed">採点失敗</string>
+    <string name="rate_successfully">評価成功</string>
+    <string name="rate_failed">評価失敗</string>
     <string name="no_torrents">トレントなし</string>
     <string name="torrents">トレント</string>
-    <string name="favorited">気に入った</string>
-    <string name="not_favorited">気に入りに追加してない</string>
-    <string name="add_favorites_dialog_title">気に入りに追加</string>
-    <string name="remember_favorite_collection">気に入りを覚える</string>
-    <string name="add_to_favorite_success">気に入りに追加した</string>
-    <string name="remove_from_favorite_success">気に入りから削除</string>
-    <string name="add_to_favorite_failure">気に入りに追加失敗</string>
-    <string name="remove_from_favorite_failure">気に入りから削除失敗</string>
+    <string name="favorited">追加済み</string>
+    <string name="not_favorited">未追加</string>
+    <string name="add_favorites_dialog_title">お気に入りに追加しました。</string>
+    <string name="remember_favorite_collection">お気に入りを記憶します。</string>
+    <string name="add_to_favorite_success">お気に入りに追加しました。</string>
+    <string name="remove_from_favorite_success">お気に入りから削除しました。</string>
+    <string name="add_to_favorite_failure">お気に入りに追加失敗しました。</string>
+    <string name="remove_from_favorite_failure">お気に入りからの削除に失敗しました。</string>
     <string name="block_the_uploader">アップローダフィルター「%s」を追加？</string>
-    <string name="filter_added">フィルターが追加された</string>
+    <string name="filter_added">フィルターが追加されました。</string>
 
     <!-- Rating -->
     <string name="rating10">良すぎてたまらない</string>
@@ -230,7 +230,7 @@
 
     <!-- Gallery Info -->
     <string name="gallery_info">ギャラリー詳細</string>
-    <string name="copied_to_clipboard">クリップボードにコピーされた</string>
+    <string name="copied_to_clipboard">クリップボードにコピーされました。</string>
     <string name="header_key">キー</string>
     <string name="header_value">値</string>
     <string name="key_gid">Gid</string>
@@ -241,33 +241,33 @@
     <string name="key_thumb">サムネイル</string>
     <string name="key_category">カテゴリー</string>
     <string name="key_uploader">アップローダー</string>
-    <string name="key_posted">アップロード時間</string>
+    <string name="key_posted">アップロード日時</string>
     <string name="key_parent">親ギャラリー</string>
     <string name="key_visible">可視性</string>
     <string name="key_language">言語</string>
     <string name="key_pages">ページ数</string>
     <string name="key_size">サイズ</string>
-    <string name="key_favorite_count">気に入り回数</string>
-    <string name="key_favorited">気に入った</string>
-    <string name="key_rating_count">採点回数</string>
-    <string name="key_rating">採点</string>
+    <string name="key_favorite_count">お気に入り回数</string>
+    <string name="key_favorited">お気に入り追加済み</string>
+    <string name="key_rating_count">評価回数</string>
+    <string name="key_rating">評価</string>
     <string name="key_torrents">トレント数</string>
     <string name="key_torrent_url">トレント</string>
 
     <!-- Gallery Comments -->
     <string name="gallery_comments">ギャラリーコメント</string>
-    <string name="no_one_comments_gallery">コメントはまだない</string>
-    <string name="comment_successfully">コメント成功</string>
-    <string name="comment_failed">コメント失敗</string>
-    <string name="copy_comment_text">コメントテキストをコピー</string>
+    <string name="no_one_comments_gallery">コメントはまだありません。</string>
+    <string name="comment_successfully">コメントに成功しました。</string>
+    <string name="comment_failed">コメントに失敗しました。</string>
+    <string name="copy_comment_text">コメントをコピーしました。</string>
     <string name="vote_up">賛成</string>
-    <string name="cancel_vote_up">もう賛成しない</string>
-    <string name="vote_down">ゴミコメント</string>
-    <string name="cancel_vote_down">ゴミコメントではない</string>
-    <string name="vote_up_successfully">もう賛成した</string>
-    <string name="cancel_vote_up_successfully">もう賛成しなかった</string>
-    <string name="vote_down_successfully">ゴミコメントと指定した</string>
-    <string name="cancel_vote_down_successfully">もうゴミコメントと指定しない</string>
+    <string name="cancel_vote_up">賛成を取り消す</string>
+    <string name="vote_down">反対</string>
+    <string name="cancel_vote_down">反対を取り消す</string>
+    <string name="vote_up_successfully">賛成しました。</string>
+    <string name="cancel_vote_up_successfully">賛成を取り消しました。</string>
+    <string name="vote_down_successfully">反対しました。</string>
+    <string name="cancel_vote_down_successfully">反対を取り消しました。</string>
     <string name="vote_failed">投票失敗</string>
     <string name="check_vote_status">投票状況を見る</string>
 
@@ -325,7 +325,7 @@
     <!-- History -->
     <string name="no_history">ここが閲覧履歴</string>
     <string name="clear_all">全部クリア</string>
-    <string name="clear_all_history">すべて閲覧履歴をクリア？</string>
+    <string name="clear_all_history">すべての閲覧履歴をクリアしますか？</string>
 
     <!-- Filter -->
     <string name="filter">フィルター</string>
@@ -360,7 +360,7 @@
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
     <string name="page_menu_save">保存</string>
-    <string name="page_menu_add_bookmark">ブックマークを追加</string>
+    <string name="page_menu_add_bookmark">ブックマークに追加</string>
     <string name="gallery_menu_title">メニュー</string>
     <string name="share_image">画像をシェア</string>
     <string name="image_saved">画像は%sに保存された</string>
@@ -368,10 +368,10 @@
     <!-- Settings -->
     <string name="settings_eh">EH</string>
     <string name="settings_eh_sign_out">ログアウト</string>
-    <string name="settings_eh_sign_out_summary">ログアウト後はアプリを再起動して、再度ログインします。</string>
-    <string name="settings_eh_sign_out_warning">おう、マイディア、君は本当にログアウトしたい？本当にログアウトしますか？</string>
-    <string name="settings_eh_sign_out_yes">イエス、オレはログアウトします</string>
-    <string name="settings_eh_sign_out_tip">ログアウトした。アプリを再起動することで再度ログインします。</string>
+    <string name="settings_eh_sign_out_summary">ログアウト後にアプリを再起動して、再度ログインします。</string>
+    <string name="settings_eh_sign_out_warning">本当にログアウトしますか？</string>
+    <string name="settings_eh_sign_out_yes">ログアウトします</string>
+    <string name="settings_eh_sign_out_tip">ログアウトしました。アプリを再起動することで再度ログインします。</string>
     <string name="settings_u_config">EHentai設定</string>
     <string name="settings_u_config_summary">EHentaiサイト上の設定</string>
     <string name="settings_eh_gallery_site">ギャラリーサイト</string>
