@@ -21,7 +21,7 @@
     android:viewportWidth="432">
     <path
         android:fillAlpha="1"
-        android:fillColor="#009688"
+        android:fillColor="@color/colorPrimary"
         android:pathData="M0,0h432v432h-432z" />
     <path
         android:fillAlpha="1"
