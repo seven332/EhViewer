@@ -30,14 +30,13 @@ public class ShortcutsActivity extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String action = getIntent().getAction();
-        Intent intent = new Intent(this, DownloadService.class);
-        if (action.equals(DownloadService.ACTION_START_ALL)){
-            intent.setAction(DownloadService.ACTION_START_ALL);
-            startService(intent);
-        } else if (action.equals(DownloadService.ACTION_STOP_ALL)){
-            intent.setAction(DownloadService.ACTION_STOP_ALL);
-            startService(intent);
+        String action = null;
+        Intent intent = getIntent();
+        if (intent != null){
+            action = intent.getAction();
+            if (action != null){
+                startService(new Intent(this, DownloadService.class).setAction(action));
+            }
         }
         finish();
     }
