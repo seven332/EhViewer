@@ -28,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
@@ -47,6 +48,7 @@ public class SecurityScene extends SolidScene implements
 
     private static final int MAX_RETRY_TIMES = 5;
     private static final long ERROR_TIMEOUT_MILLIS = 1200;
+    private static final long UNRECOVERABLE_ERROR_TIMEOUT_MILLIS = ERROR_TIMEOUT_MILLIS * 2;
     private static final long SUCCESS_DELAY_MILLIS = 100;
 
     private static final String KEY_RETRY_TIMES = "retry_times";
@@ -54,6 +56,7 @@ public class SecurityScene extends SolidScene implements
     @Nullable
     private LockPatternView mPatternView;
     private ImageView mFingerprintIcon;
+    private TextView mFingerprintText;
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
@@ -111,7 +114,8 @@ public class SecurityScene extends SolidScene implements
             mSensorManager.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
         }
 
-        if (isFingerprintAuthAvailable()) {
+        // Redundant SDK version checking prevents false positive inspection
+        if (isFingerprintAuthAvailable() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mFingerprintCancellationSignal = new CancellationSignal();
             // The line below prevents the false positive inspection from Android Studio
             // noinspection ResourceType
@@ -119,6 +123,8 @@ public class SecurityScene extends SolidScene implements
                     new FingerprintManager.AuthenticationCallback() {
                         @Override
                         public void onAuthenticationError(int errMsgId, CharSequence errString) {
+                            mFingerprintText.setText(errString);
+                            mFingerprintText.setVisibility(View.VISIBLE);
                             fingerprintError(true);
                         }
 
@@ -151,7 +157,9 @@ public class SecurityScene extends SolidScene implements
         if (null != mShakeDetector) {
             mSensorManager.unregisterListener(mShakeDetector);
         }
-        if (isFingerprintAuthAvailable() && mFingerprintCancellationSignal != null) {
+        // Redundant SDK version checking prevents false positive inspection
+        if (isFingerprintAuthAvailable() && mFingerprintCancellationSignal != null
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mFingerprintCancellationSignal.cancel();
             mFingerprintCancellationSignal = null;
         }
@@ -173,9 +181,11 @@ public class SecurityScene extends SolidScene implements
         mPatternView.setOnPatternListener(this);
 
         mFingerprintIcon = (ImageView) ViewUtils.$$(view, R.id.fingerprint_icon);
+        mFingerprintText = (TextView) ViewUtils.$$(view, R.id.fingerprint_text);
         if (Settings.getEnableFingerprint() && isFingerprintAuthAvailable()) {
             mFingerprintIcon.setVisibility(View.VISIBLE);
             mFingerprintIcon.setImageResource(R.drawable.ic_fp_40px);
+            mFingerprintText.setVisibility(View.INVISIBLE);
         }
         return view;
     }
@@ -234,11 +244,16 @@ public class SecurityScene extends SolidScene implements
     private boolean isFingerprintAuthAvailable() {
         // The line below prevents the false positive inspection from Android Studio
         // noinspection ResourceType
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && Settings.getEnableFingerprint()
-                && mFingerprintManager != null
-                && mFingerprintManager.isHardwareDetected()
-                && mFingerprintManager.hasEnrolledFingerprints();
+        try {
+            return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && Settings.getEnableFingerprint()
+                    && mFingerprintManager != null
+                    && mFingerprintManager.isHardwareDetected()
+                    && mFingerprintManager.hasEnrolledFingerprints();
+        } catch (SecurityException e) {
+            // Some Samsung devices throw this on hasEnrolledFingerprints().
+            return false;
+        }
     }
 
     private Runnable mResetFingerprintRunnable = new Runnable() {
@@ -246,6 +261,8 @@ public class SecurityScene extends SolidScene implements
         public void run() {
             if (mFingerprintIcon != null)
                 mFingerprintIcon.setImageResource(R.drawable.ic_fp_40px);
+            if (mFingerprintText != null)
+                mFingerprintText.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -257,9 +274,12 @@ public class SecurityScene extends SolidScene implements
             mFingerprintIcon.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mFingerprintIcon.setVisibility(View.INVISIBLE);
+                    if (mFingerprintIcon != null)
+                        mFingerprintIcon.setVisibility(View.INVISIBLE);
+                    if (mFingerprintText != null)
+                        mFingerprintText.setVisibility(View.INVISIBLE);
                 }
-            }, ERROR_TIMEOUT_MILLIS);
+            }, UNRECOVERABLE_ERROR_TIMEOUT_MILLIS);
         } else {
             mFingerprintIcon.postDelayed(mResetFingerprintRunnable, ERROR_TIMEOUT_MILLIS);
         }
