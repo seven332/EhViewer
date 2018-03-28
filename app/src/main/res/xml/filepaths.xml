@@ -17,6 +17,6 @@
 
 <path xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <external-path name="image" path="EhViewer/image"/>
+    <external-path name="temp" path="EhViewer/temp"/>
 
 </path>

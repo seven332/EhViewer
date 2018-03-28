@@ -846,7 +846,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             return;
         }
 
-        File dir = AppConfig.getExternalImageDir();
+        File dir = AppConfig.getExternalTempDir();
         if (null == dir) {
             Toast.makeText(this, R.string.error_cant_create_temp_file, Toast.LENGTH_SHORT).show();
             return;
@@ -871,17 +871,15 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         Uri uri = new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(BuildConfig.FILE_PROVIDER_AUTHORITY)
-                .appendPath("image")
+                .appendPath("temp")
                 .appendPath(filename)
                 .build();
+
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.setType(mimeType);
         startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
-
-        // Sync media store
-        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, file.getUri()));
     }
 
     private void saveImage(int page) {

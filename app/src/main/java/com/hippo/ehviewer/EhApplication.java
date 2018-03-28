@@ -146,6 +146,9 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
         if (null != dir) {
             FileUtils.deleteContent(dir);
         }
+
+        // Add .nomedia to external temp dir
+        CommonOperations.ensureNoMediaFile(UniFile.fromFile(AppConfig.getExternalTempDir()));
     }
 
     private void update() {
