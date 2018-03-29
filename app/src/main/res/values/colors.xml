@@ -114,4 +114,6 @@
     <color name="lock_pattern_view_success_color">@color/colorPrimary</color>
     <color name="lock_pattern_view_error_color">@color/red_500</color>
 
+    <!--Shortcut Background-->
+    <color name="ic_shortcut_background">#F5F5F5</color>
 </resources>
