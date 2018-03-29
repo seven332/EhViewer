@@ -5,6 +5,6 @@
     <foreground>
         <inset
             android:drawable="@drawable/ic_play_arrow_44dp"
-            android:inset="22%"/>
+            android:inset="23%"/>
     </foreground>
 </adaptive-icon>
