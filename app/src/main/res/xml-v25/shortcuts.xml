@@ -4,7 +4,7 @@
     <shortcut
         android:shortcutId="start_all"
         android:enabled="true"
-        android:icon="@mipmap/ic_shortcut_start"
+        android:icon="@drawable/ic_shortcut_start"
         android:shortcutShortLabel="@string/download_start_all"
         android:shortcutLongLabel="@string/download_start_all"
         android:shortcutDisabledMessage="@string/download_start_all">
@@ -18,7 +18,7 @@
     <shortcut
         android:shortcutId="stop_all"
         android:enabled="true"
-        android:icon="@mipmap/ic_shortcut_stop"
+        android:icon="@drawable/ic_shortcut_stop"
         android:shortcutShortLabel="@string/download_stop_all"
         android:shortcutLongLabel="@string/download_stop_all"
         android:shortcutDisabledMessage="@string/download_stop_all">
