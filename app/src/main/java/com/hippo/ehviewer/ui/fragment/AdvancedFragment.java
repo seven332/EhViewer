@@ -107,7 +107,12 @@ public class AdvancedFragment extends PreferenceFragment
             Toast.makeText(getActivity(),R.string.settings_advanced_export_data_failed, Toast.LENGTH_SHORT).show();
             return true;
         } else if (KEY_IMPORT_DATA.equals(key)) {
-            importData(getActivity());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+                showImportDialog();
+            } else {
+                defaulfImportData();
+            }
+
             getActivity().setResult(Activity.RESULT_OK);
             return true;
         }
@@ -160,6 +165,62 @@ public class AdvancedFragment extends PreferenceFragment
 
     }
 
+    private void showImportDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.settings_advanced_import_data));
+        final CharSequence[] items = new CharSequence[]{
+                getString(R.string.settings_advanced_export_data_device_storage),
+                getString(R.string.settings_advanced_export_data_document_storage)
+        };
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i){
+                    case 0:
+                        defaulfImportData();
+                        break;
+                    case 1:
+                        customImportData();
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void defaulfImportData(){
+        Context context = getActivity();
+        final File dir = AppConfig.getExternalDataDir();
+        if (null == dir) {
+            Toast.makeText(context, R.string.cant_get_data_dir, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final String[] files = dir.list();
+        if (null == files || files.length <= 0) {
+            Toast.makeText(context, R.string.cant_find_any_data, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Arrays.sort(files);
+        new AlertDialog.Builder(context).setItems(files, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                File file = new File(dir, files[which]);
+                String error = EhDB.importDB(context, file);
+                if (null == error) {
+                    error = context.getString(R.string.settings_advanced_import_data_successfully);
+                }
+                Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+            }
+        }).show();
+    }
+
+    private void customImportData(){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        startActivityForResult(intent, READ_REQUEST_CODE);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
 
@@ -184,40 +245,6 @@ public class AdvancedFragment extends PreferenceFragment
                 }
                 Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-
-    private void importData(final Context context) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
-            startActivityForResult(intent, READ_REQUEST_CODE);
-
-        }else {
-            final File dir = AppConfig.getExternalDataDir();
-            if (null == dir) {
-                Toast.makeText(context, R.string.cant_get_data_dir, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            final String[] files = dir.list();
-            if (null == files || files.length <= 0) {
-                Toast.makeText(context, R.string.cant_find_any_data, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Arrays.sort(files);
-            new AlertDialog.Builder(context).setItems(files, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    File file = new File(dir, files[which]);
-                    String error = EhDB.importDB(context, file);
-                    if (null == error) {
-                        error = context.getString(R.string.settings_advanced_import_data_successfully);
-                    }
-                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
-                }
-            }).show();
         }
     }
 
