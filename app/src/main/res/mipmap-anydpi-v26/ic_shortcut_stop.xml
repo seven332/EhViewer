@@ -5,6 +5,6 @@
     <foreground>
         <inset
             android:drawable="@drawable/ic_pause_44dp"
-            android:inset="22%"/>
+            android:inset="23%"/>
     </foreground>
 </adaptive-icon>
