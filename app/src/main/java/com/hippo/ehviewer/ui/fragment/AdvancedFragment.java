@@ -121,10 +121,10 @@ public class AdvancedFragment extends PreferenceFragment
 
     private void showExportDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.settings_advanced_export_data_to_location));
+        builder.setTitle(getString(R.string.settings_advanced_export_data_location));
         final CharSequence[] items = new CharSequence[]{
-                getString(R.string.settings_advanced_export_data_device_storage),
-                getString(R.string.settings_advanced_export_data_document_storage)
+                getString(R.string.settings_advanced_data_device_storage),
+                getString(R.string.settings_advanced_data_document_storage)
         };
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
@@ -167,10 +167,10 @@ public class AdvancedFragment extends PreferenceFragment
 
     private void showImportDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.settings_advanced_import_data));
+        builder.setTitle(getString(R.string.settings_advanced_import_data_location));
         final CharSequence[] items = new CharSequence[]{
-                getString(R.string.settings_advanced_export_data_device_storage),
-                getString(R.string.settings_advanced_export_data_document_storage)
+                getString(R.string.settings_advanced_data_device_storage),
+                getString(R.string.settings_advanced_data_document_storage)
         };
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
