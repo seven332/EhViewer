@@ -1092,7 +1092,7 @@ public class DownloadsScene extends ToolbarScene
             }
             int size = list.size();
             int index = recyclerView.getChildAdapterPosition(itemView);
-            if (index < 0 && index >= size) {
+            if (index < 0 || index >= size) {
                 return;
             }
 
