@@ -635,7 +635,7 @@ public class DownloadsScene extends ToolbarScene
             if (list == null) {
                 return false;
             }
-            if (position < 0 && position >= list.size()) {
+            if (position < 0 || position >= list.size()) {
                 return false;
             }
 
