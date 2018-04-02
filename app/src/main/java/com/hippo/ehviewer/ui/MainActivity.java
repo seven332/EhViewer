@@ -241,10 +241,7 @@ public final class MainActivity extends StageActivity
         if ((action != null) && Intent.ACTION_VIEW.equals(action)) {
             Announcer announcer = null;
             Uri data = intent.getData();
-            if (data != null){
-                announcer = EhUrlOpener.parseUrl(data.toString());
-            }
-            if (announcer != null) {
+            if ((data != null) && ((announcer = EhUrlOpener.parseUrl(data.toString())) != null)){
                 startScene(processAnnouncer(announcer));
                 return true;
             }
