@@ -29,7 +29,7 @@
         android:layout_marginBottom="16dp"
         android:gravity="center_horizontal"
         android:textSize="@dimen/text_little_small"
-        android:textColor="@color/primary_text_light"/>
+        android:textColor="?android:attr/textColorPrimary"/>
 
     <com.hippo.ehviewer.widget.GalleryRatingBar
         android:id="@+id/rating_view"

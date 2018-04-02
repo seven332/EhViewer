@@ -52,7 +52,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:ellipsize="marquee"
                 android:fadingEdge="horizontal"
-                android:textColor="@color/preference_header_title_light"/>
+                android:textColor="?android:attr/textColorPrimary"/>
 
             <TextView
                 android:id="@android:id/summary"

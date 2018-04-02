@@ -22,5 +22,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textAppearance="@style/TextAppearance.AppCompat.Title"
-    android:textColor="@color/primary_text_light"
+    android:textColor="?android:attr/textColorPrimary"
     android:padding="8dp"/>
