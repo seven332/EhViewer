@@ -19,7 +19,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/card_grey_no_padding_2dp">
+    android:background="@drawable/card_selected">
 
     <com.hippo.ehviewer.widget.TileThumb
         xmlns:app="http://schemas.android.com/apk/res-auto"

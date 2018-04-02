@@ -52,6 +52,7 @@
     <color name="yellow_800">#fff9a825</color>
     <color name="deep_orange_400">#ffff7043</color>
     <color name="grey_500">#ff9e9e9e</color>
+    <color name="grey_400">#ffbdbdbd</color>
     <color name="grey_300">#ffe0e0e0</color>
     <color name="grey_200">#ffeeeeee</color>
     <color name="brown_500">#ff795548</color>
@@ -116,4 +117,15 @@
 
     <!--Shortcut background-->
     <color name="shortcut_bg">#F5F5F5</color>
+
+    <!--Card color-->
+    <color name="card_shadow_1">#00CCCCCC</color>
+    <color name="card_shadow_2">#10CCCCCC</color>
+    <color name="card_shadow_3">#20CCCCCC</color>
+    <color name="card_shadow_4">#30CCCCCC</color>
+    <color name="card_shadow_5">#50CCCCCC</color>
+
+    <color name="card_bg">@android:color/white</color>
+    <color name="card_selected_bg">@color/grey_400</color>
+
 </resources>
