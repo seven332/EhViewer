@@ -115,7 +115,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         boolean hasFirstRefresh;
@@ -264,14 +264,15 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
             Assert.assertNotNull(mInflater);
         }
 
+        @NonNull
         @Override
-        public GalleryPreviewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public GalleryPreviewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new GalleryPreviewHolder(mInflater.inflate(R.layout.item_gallery_preview, parent, false));
         }
 
         @Override
         @SuppressLint("SetTextI18n")
-        public void onBindViewHolder(GalleryPreviewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull GalleryPreviewHolder holder, int position) {
             if (null != mHelper) {
                 GalleryPreview preview = mHelper.getDataAt(position);
                 preview.load(holder.image);

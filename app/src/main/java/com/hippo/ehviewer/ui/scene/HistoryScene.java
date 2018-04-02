@@ -22,6 +22,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -337,13 +338,14 @@ public class HistoryScene extends ToolbarScene
             }
         }
 
+        @NonNull
         @Override
-        public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public HistoryHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new HistoryHolder(mInflater.inflate(R.layout.item_gallery_list, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(HistoryHolder holder, int position) {
+        public void onBindViewHolder(@NonNull HistoryHolder holder, int position) {
             if (null == mLazyList) {
                 return;
             }
@@ -355,7 +357,7 @@ public class HistoryScene extends ToolbarScene
             holder.rating.setRating(gi.rating);
             TextView category = holder.category;
             String newCategoryText = EhUtils.getCategory(gi.category);
-            if (!newCategoryText.equals(category.getText())) {
+            if (!newCategoryText.equals(category.getText().toString())) {
                 category.setText(newCategoryText);
                 category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
             }

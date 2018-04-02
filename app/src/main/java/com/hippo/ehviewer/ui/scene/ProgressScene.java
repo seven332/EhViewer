@@ -161,7 +161,6 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
         outState.putInt(KEY_PAGE, mPage);
     }
 
-    @Nullable
     @Override
     public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

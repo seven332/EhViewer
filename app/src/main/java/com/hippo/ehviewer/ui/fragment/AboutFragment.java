@@ -65,8 +65,10 @@ public class AboutFragment extends PreferenceFragment
                     "About EhViewer", null);
         } else if (KEY_DONATE.equals(key)) {
             ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-            cmb.setPrimaryClip(ClipData.newPlainText(null, "seven332$163.com".replace('$', '@')));
-            Toast.makeText(getActivity(), R.string.settings_about_donate_toast, Toast.LENGTH_SHORT).show();
+            if (cmb != null){
+                cmb.setPrimaryClip(ClipData.newPlainText(null, "seven332$163.com".replace('$', '@')));
+                Toast.makeText(getActivity(), R.string.settings_about_donate_toast, Toast.LENGTH_SHORT).show();
+            }
 
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.settings_about_donate)

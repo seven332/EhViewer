@@ -142,7 +142,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putStringArrayList(KEY_KEYS, mKeys);
         outState.putStringArrayList(KEY_VALUES, mValues);
@@ -196,8 +196,10 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         Context context = getContext2();
         if (null != context && 0 != position && null != mValues) {
             ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            cmb.setPrimaryClip(ClipData.newPlainText(null, mValues.get(position)));
-            showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
+            if (cmb != null){
+                cmb.setPrimaryClip(ClipData.newPlainText(null, mValues.get(position)));
+                showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
+            }
             return true;
         } else {
             return false;
@@ -243,14 +245,15 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
             }
         }
 
+        @NonNull
         @Override
-        public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public InfoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new InfoHolder(mInflater.inflate(viewType == TYPE_HEADER ?
                     R.layout.item_gallery_info_header : R.layout.item_gallery_info_data, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(InfoHolder holder, int position) {
+        public void onBindViewHolder(@NonNull InfoHolder holder, int position) {
             if (mKeys != null && mValues != null) {
                 holder.key.setText(mKeys.get(position));
                 holder.value.setText(mValues.get(position));

@@ -142,7 +142,7 @@ public abstract class BaseScene extends SceneFragment {
 
     @Nullable
     @Override
-    public final View onCreateView(LayoutInflater inflater,
+    public final View onCreateView(@Nullable LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return onCreateView2(LayoutInflater.from(getContext2()), container, savedInstanceState);
     }

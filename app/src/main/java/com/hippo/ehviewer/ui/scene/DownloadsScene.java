@@ -268,7 +268,7 @@ public class DownloadsScene extends ToolbarScene
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_LABEL, mLabel);
     }
@@ -1135,13 +1135,14 @@ public class DownloadsScene extends ToolbarScene
             return mList.get(position).gid;
         }
 
+        @NonNull
         @Override
-        public DownloadHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public DownloadHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new DownloadHolder(mInflater.inflate(R.layout.item_download, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(DownloadHolder holder, int position) {
+        public void onBindViewHolder(@NonNull DownloadHolder holder, int position) {
             if (mList == null) {
                 return;
             }
@@ -1153,7 +1154,7 @@ public class DownloadsScene extends ToolbarScene
             holder.rating.setRating(info.rating);
             TextView category = holder.category;
             String newCategoryText = EhUtils.getCategory(info.category);
-            if (!newCategoryText.equals(category.getText())) {
+            if (!newCategoryText.equals(category.getText().toString())) {
                 category.setText(newCategoryText);
                 category.setBackgroundColor(EhUtils.getCategoryColor(info.category));
             }
