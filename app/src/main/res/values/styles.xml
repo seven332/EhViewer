@@ -138,4 +138,10 @@
         <item name="sv_detailTextAppearance">@style/Guide.Text</item>
     </style>
 
+    <style name="RatingBar" parent="Widget.AppCompat.RatingBar">
+        <item name="colorControlActivated">@color/yellow_800</item>
+        <item name="colorControlNormal">@color/grey_400</item>
+    </style>
+
+
 </resources>
