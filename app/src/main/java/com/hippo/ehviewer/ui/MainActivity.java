@@ -238,20 +238,24 @@ public final class MainActivity extends StageActivity
         }
 
         String action = intent.getAction();
-        if (Intent.ACTION_VIEW.equals(action)) {
-            Announcer announcer = EhUrlOpener.parseUrl(intent.getData().toString());
+        if ((action != null) && Intent.ACTION_VIEW.equals(action)) {
+            Announcer announcer = null;
+            Uri data = intent.getData();
+            if (data != null){
+                announcer = EhUrlOpener.parseUrl(data.toString());
+            }
             if (announcer != null) {
                 startScene(processAnnouncer(announcer));
                 return true;
             }
         } else if (Intent.ACTION_SEND.equals(action)) {
             String type = intent.getType();
-            if ("text/plain".equals(type)) {
+            if ((type != null) && "text/plain".equals(type)) {
                 ListUrlBuilder builder = new ListUrlBuilder();
                 builder.setKeyword(intent.getStringExtra(Intent.EXTRA_TEXT));
                 startScene(processAnnouncer(GalleryListScene.getStartAnnouncer(builder)));
                 return true;
-            } else if (type.startsWith("image/")) {
+            } else if ((type != null) && type.startsWith("image/")) {
                 Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 if (null != uri) {
                     UniFile file = UniFile.fromUri(this, uri);
