@@ -51,6 +51,9 @@
     <color name="light_green_600">#ff7cb342</color>
     <color name="yellow_800">#fff9a825</color>
     <color name="deep_orange_400">#ffff7043</color>
+    <color name="grey_900">#ff212121</color>
+    <color name="grey_800">#ff424242</color>
+    <color name="grey_600">#ff757575</color>
     <color name="grey_500">#ff9e9e9e</color>
     <color name="grey_400">#ffbdbdbd</color>
     <color name="grey_300">#ffe0e0e0</color>
@@ -128,4 +131,5 @@
     <color name="card_bg">@android:color/white</color>
     <color name="card_selected_bg">@color/grey_400</color>
 
+    <color name="primary_icon">@color/colorPrimary</color>
 </resources>

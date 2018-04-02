@@ -83,7 +83,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="@color/primary_icon"
             android:textStyle="bold"
             android:text="@string/accept"/>
 

@@ -389,6 +389,12 @@
     <string name="settings_u_config">EHentai 设置</string>
     <string name="settings_u_config_summary">EHentai 网站上的设置</string>
     <string name="settings_eh_gallery_site">画廊站点</string>
+    <string name="settings_eh_night_mode">夜间模式</string>
+    <string name="settings_eh_night_mode_system">跟随系统</string>
+    <string name="settings_eh_night_mode_auto">自动</string>
+    <string name="settings_eh_night_mode_on">开</string>
+    <string name="settings_eh_night_mode_off">关</string>
+    <string name="settings_eh_night_mode_restart_effective">重启 EhViewer 生效</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">详情</string>
     <string name="settings_eh_list_mode_thumb">缩略图</string>

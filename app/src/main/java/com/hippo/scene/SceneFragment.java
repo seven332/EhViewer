@@ -102,7 +102,6 @@ public class SceneFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         view.setTag(R.id.fragment_tag, getTag());
-        view.setBackgroundColor(getResources().getColor(R.color.background_light));
 
         // Notify
         FragmentActivity activity = getActivity();

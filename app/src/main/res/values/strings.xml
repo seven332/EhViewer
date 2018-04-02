@@ -432,6 +432,12 @@
     <string name="settings_u_config">EHentai settings</string>
     <string name="settings_u_config_summary">Settings on EHentai website</string>
     <string name="settings_eh_gallery_site">Gallery site</string>
+    <string name="settings_eh_night_mode">Night mode</string>
+    <string name="settings_eh_night_mode_system">Follow system</string>
+    <string name="settings_eh_night_mode_auto">Auto</string>
+    <string name="settings_eh_night_mode_on">On</string>
+    <string name="settings_eh_night_mode_off">Off</string>
+    <string name="settings_eh_night_mode_restart_effective">Effective after restarting EhViewer</string>
     <string name="settings_eh_list_mode">List mode</string>
     <string name="settings_eh_list_mode_detail">Detail</string>
     <string name="settings_eh_list_mode_thumb">Thumb</string>
