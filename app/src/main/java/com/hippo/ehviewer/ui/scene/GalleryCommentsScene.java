@@ -322,7 +322,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         rv.setAdapter(new RecyclerView.Adapter<InfoHolder>() {
             @Override
             public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new InfoHolder(inflater.inflate(R.layout.item_favorite_info_data, parent, false));
+                return new InfoHolder(inflater.inflate(R.layout.item_favorite_list, parent, false));
             }
 
             @Override
