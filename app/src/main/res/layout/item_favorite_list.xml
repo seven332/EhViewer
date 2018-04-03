@@ -20,8 +20,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingLeft="?attr/dialogPreferredPadding"
-    android:paddingRight="?attr/dialogPreferredPadding">
+    android:background="?android:attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/key"
@@ -29,7 +28,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:textColor="@color/primary_text_light"
-        android:padding="8dp"/>
+        android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:gravity="center_vertical"
+        android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+        android:paddingRight="?attr/listPreferredItemPaddingRight"
+        android:minHeight="?attr/listPreferredItemHeightSmall" />
 
     <TextView
         android:id="@+id/value"
@@ -37,6 +40,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColor="@color/primary_text_light"
-        android:padding="8dp"/>
+        android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:gravity="center_vertical"
+        android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+        android:paddingRight="?attr/listPreferredItemPaddingRight"
+        android:minHeight="?attr/listPreferredItemHeightSmall" />
 
 </LinearLayout>

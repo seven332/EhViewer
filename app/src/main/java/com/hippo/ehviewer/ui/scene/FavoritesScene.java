@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -43,9 +44,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -55,7 +53,6 @@ import com.hippo.annotation.Implemented;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
-import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -70,6 +67,7 @@ import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.DrawerLifeCircle;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
+import com.hippo.ehviewer.widget.EhDrawerLayout;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.ripple.Ripple;
@@ -80,9 +78,7 @@ import com.hippo.util.DrawableManager;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.SearchBarMover;
-import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ObjectUtils;
-import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -96,7 +92,7 @@ import java.util.List;
 public class FavoritesScene extends BaseScene implements
         EasyRecyclerView.OnItemClickListener, EasyRecyclerView.OnItemLongClickListener,
         FastScroller.OnDragHandlerListener, SearchBarMover.Helper, SearchBar.Helper,
-        FabLayout.OnClickFabListener, EasyRecyclerView.CustomChoiceListener, AdapterView.OnItemClickListener {
+        FabLayout.OnClickFabListener, EasyRecyclerView.CustomChoiceListener {
 
     private static final long ANIMATE_TIME = 300L;
 
@@ -129,12 +125,11 @@ public class FavoritesScene extends BaseScene implements
     private DrawerArrowDrawable mLeftDrawable;
 
     @Nullable
-    @DrawerLifeCircle
-    private ArrayAdapter<String> mDrawerAdapter;
+    private EhDrawerLayout mDrawerLayout;
+
     @Nullable
     @DrawerLifeCircle
-    private List<String> mDrawerList;
-
+    private FavDrawerAdapter mDrawerAdapter;
     @Nullable
     @WholeLifeCircle
     private EhClient mClient;
@@ -143,13 +138,16 @@ public class FavoritesScene extends BaseScene implements
     private String[] mFavCatArray;
     @Nullable
     @WholeLifeCircle
+    private int[] mFavCountArray;
+    @Nullable
+    @WholeLifeCircle
     private FavListUrlBuilder mUrlBuilder;
 
     public int current; // -1 for error
     public int limit; // -1 for error
 
-    @Nullable
-    private int[] mFavCountArray;
+    private int mLocalSize = 0;
+    private int mCloudSize = 0;
 
     private boolean mHasFirstRefresh;
     private boolean mSearchMode;
@@ -206,7 +204,7 @@ public class FavoritesScene extends BaseScene implements
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         boolean hasFirstRefresh;
@@ -236,6 +234,7 @@ public class FavoritesScene extends BaseScene implements
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_favorites, container, false);
         ContentLayout contentLayout = (ContentLayout) view.findViewById(R.id.content_layout);
+        mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(getActivity2(), R.id.draw_view);
         mRecyclerView = contentLayout.getRecyclerView();
         FastScroller fastScroller = contentLayout.getFastScroller();
         RefreshLayout refreshLayout = contentLayout.getRefreshLayout();
@@ -410,95 +409,73 @@ public class FavoritesScene extends BaseScene implements
         mOldKeyword = null;
     }
 
-    private class InfoHolder extends RecyclerView.ViewHolder {
+    private class FavDrawerHolder extends RecyclerView.ViewHolder {
 
         private final TextView key;
         private final TextView value;
 
-        public InfoHolder(View itemView) {
+        private FavDrawerHolder(View itemView) {
             super(itemView);
             key = (TextView) ViewUtils.$$(itemView, R.id.key);
             value = (TextView) ViewUtils.$$(itemView, R.id.value);
         }
     }
 
-    private class InfoAdapter extends RecyclerView.Adapter<InfoHolder> {
-
-        private static final int TYPE_HEADER = 0;
-        private static final int TYPE_DATA = 1;
+    private class FavDrawerAdapter extends RecyclerView.Adapter<FavDrawerHolder> {
 
         private final LayoutInflater mInflater;
 
-        public InfoAdapter(LayoutInflater inflater) {
+        private FavDrawerAdapter(LayoutInflater inflater) {
             mInflater = inflater;
         }
 
         @Override
         public int getItemViewType(int position) {
-            return 0 == position ? TYPE_HEADER : TYPE_DATA;
+            return position;
         }
 
+        @NonNull
         @Override
-        public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new InfoHolder(mInflater.inflate(TYPE_HEADER == viewType ?
-                    R.layout.item_favorite_info_header : R.layout.item_favorite_info_data, parent, false));
+        public FavDrawerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new FavDrawerHolder(mInflater.inflate(R.layout.item_favorite_list, parent, false));
         }
 
         @Override
         @SuppressLint("SetTextI18n")
-        public void onBindViewHolder(InfoHolder holder, int position) {
+        public void onBindViewHolder(@NonNull FavDrawerHolder holder, int position) {
             if (0 == position) {
-                holder.key.setText(R.string.collections);
-                holder.value.setText(R.string.count);
-                holder.itemView.setEnabled(false);
+                holder.key.setText(R.string.local_favorites);
+                holder.value.setText(Integer.toString(mLocalSize));
+                holder.itemView.setEnabled(true);
+            } else if (1 == position){
+                holder.key.setText(R.string.cloud_favorites);
+                holder.value.setText(Integer.toString(mCloudSize));
+                holder.itemView.setEnabled(true);
             } else {
                 if (null == mFavCatArray || null == mFavCountArray ||
-                        mFavCatArray.length < position || mFavCountArray.length < position) {
+                        mFavCatArray.length < (position - 1) ||
+                        mFavCountArray.length < (position - 1)) {
                     return;
                 }
-                holder.key.setText(mFavCatArray[position - 1]);
-                holder.value.setText(Integer.toString(mFavCountArray[position - 1]));
+                holder.key.setText(mFavCatArray[position - 2]);
+                holder.value.setText(Integer.toString(mFavCountArray[position - 2]));
                 holder.itemView.setEnabled(true);
             }
         }
 
         @Override
         public int getItemCount() {
-            return 11;
+            return 12;
         }
-    }
-
-    @SuppressLint("InflateParams")
-    private void showFavoritesInfoDialog() {
-        Context context = getContext2();
-        if (null == context || null == mFavCatArray || null == mFavCountArray) {
-            return;
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        context = builder.getContext();
-        final LayoutInflater inflater = LayoutInflater.from(context);
-        EasyRecyclerView rv = (EasyRecyclerView) inflater.inflate(R.layout.dialog_recycler_view, null);
-        rv.setAdapter(new InfoAdapter(inflater));
-        rv.setLayoutManager(new LinearLayoutManager(context));
-        LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider),
-                LayoutUtils.dp2pix(context, 1));
-        decoration.setPadding(ResourcesUtils.getAttrDimensionPixelOffset(context, R.attr.dialogPreferredPadding));
-        rv.addItemDecoration(decoration);
-        rv.setSelector(Ripple.generateRippleDrawable(context, false));
-        rv.setClipToPadding(false);
-        builder.setView(rv).show();
     }
 
     @Override
     public View onCreateDrawerView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.drawer_list, container, false);
-        Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
-        ListView listView = (ListView) view.findViewById(R.id.list_view);
-
+        View view = inflater.inflate(R.layout.drawer_list_fav, container, false);
         final Context context = getContext2();
+        Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
+
         Assert.assertNotNull(context);
 
         toolbar.setTitle(R.string.collections);
@@ -508,9 +485,6 @@ public class FavoritesScene extends BaseScene implements
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 switch (id) {
-                    case R.id.action_info:
-                        showFavoritesInfoDialog();
-                        return true;
                     case R.id.action_default_favorites_slot:
                         String[] items = new String[12];
                         items[0] = getString(R.string.let_me_select);
@@ -531,15 +505,13 @@ public class FavoritesScene extends BaseScene implements
             }
         });
 
-        mDrawerList = new ArrayList<>(12);
-        mDrawerList.add(getString(R.string.local_favorites));
-        mDrawerList.add(getString(R.string.cloud_favorites));
-        if (mFavCatArray != null) {
-            Collections.addAll(mDrawerList, mFavCatArray);
-        }
-        mDrawerAdapter = new ArrayAdapter<>(context, R.layout.item_simple_list, mDrawerList);
-        listView.setAdapter(mDrawerAdapter);
-        listView.setOnItemClickListener(this);
+        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view_drawer);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+
+        mDrawerAdapter = new FavDrawerAdapter(inflater);
+        recyclerView.setAdapter(mDrawerAdapter);
+        recyclerView.setOnItemClickListener(this);
 
         return view;
     }
@@ -549,7 +521,6 @@ public class FavoritesScene extends BaseScene implements
         super.onDestroyDrawerView();
 
         mDrawerAdapter = null;
-        mDrawerList = null;
     }
 
     @Override
@@ -590,19 +561,53 @@ public class FavoritesScene extends BaseScene implements
     @Override
     @Implemented(EasyRecyclerView.OnItemClickListener.class)
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
-            mRecyclerView.toggleItemChecked(position);
-        } else if (mHelper != null) {
-            GalleryInfo gi = mHelper.getDataAt(position);
-            Bundle args = new Bundle();
-            args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
-            args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
-            Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
-            View thumb;
-            if (ApiHelper.SUPPORT_TRANSITION && null != (thumb = view.findViewById(R.id.thumb))) {
-                announcer.setTranHelper(new EnterGalleryDetailTransaction(thumb));
+        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(Gravity.RIGHT)){
+            // Skip if in search mode
+            if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
+                return true;
             }
-            startScene(announcer);
+
+            if (mUrlBuilder == null || mHelper == null) {
+                return true;
+            }
+
+            // Local favorite position is 0, All favorite position is 1, so position - 2 is OK
+            int newFavCat = position - 2;
+
+            // Check is the same
+            if (mUrlBuilder.getFavCat() == newFavCat) {
+                return true;
+            }
+
+            // Ensure outOfCustomChoiceMode to avoid error
+            if (mRecyclerView != null) {
+                mRecyclerView.isInCustomChoice();
+            }
+
+            exitSearchMode(true);
+
+            mUrlBuilder.setKeyword(null);
+            mUrlBuilder.setFavCat(newFavCat);
+            updateSearchBar();
+            mHelper.refresh();
+
+            closeDrawer(Gravity.RIGHT);
+
+        } else {
+            if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
+                mRecyclerView.toggleItemChecked(position);
+            } else if (mHelper != null) {
+                GalleryInfo gi = mHelper.getDataAt(position);
+                Bundle args = new Bundle();
+                args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
+                args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
+                Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
+                View thumb;
+                if (ApiHelper.SUPPORT_TRANSITION && null != (thumb = view.findViewById(R.id.thumb))) {
+                    announcer.setTranHelper(new EnterGalleryDetailTransaction(thumb));
+                }
+                startScene(announcer);
+            }
         }
         return true;
     }
@@ -805,41 +810,6 @@ public class FavoritesScene extends BaseScene implements
         }
     }
 
-    @Override
-    @Implemented(AdapterView.OnItemClickListener.class)
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // Skip if in search mode
-        if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
-            return;
-        }
-
-        if (mUrlBuilder == null || mHelper == null) {
-            return;
-        }
-
-        // Local favorite position is 0, All favorite position is 1, so position - 2 is OK
-        int newFavCat = position - 2;
-
-        // Check is the same
-        if (mUrlBuilder.getFavCat() == newFavCat) {
-            return;
-        }
-
-        // Ensure outOfCustomChoiceMode to avoid error
-        if (mRecyclerView != null) {
-            mRecyclerView.isInCustomChoice();
-        }
-
-        exitSearchMode(true);
-
-        mUrlBuilder.setKeyword(null);
-        mUrlBuilder.setFavCat(newFavCat);
-        updateSearchBar();
-        mHelper.refresh();
-
-        closeDrawer(Gravity.RIGHT);
-    }
-
     private void enterSearchMode(boolean animation) {
         if (mSearchMode ||mSearchBar == null || mSearchBarMover == null || mLeftDrawable == null) {
             return;
@@ -864,11 +834,9 @@ public class FavoritesScene extends BaseScene implements
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId)) {
 
-            if (mFavCatArray != null && mDrawerList != null) {
-                for (int i = 0; i < 10; i++) {
-                    mFavCatArray[i] = result.catArray[i];
-                    mDrawerList.set(i + 2, result.catArray[i]);
-                }
+            if (mFavCatArray != null) {
+
+                System.arraycopy(result.catArray, 0, mFavCatArray, 0,10);
 
                 if (mDrawerAdapter != null) {
                     mDrawerAdapter.notifyDataSetChanged();
@@ -876,6 +844,12 @@ public class FavoritesScene extends BaseScene implements
             }
 
             mFavCountArray = result.countArray;
+            if (mFavCountArray != null){
+                mCloudSize = 0;
+                for (int i = 0; i < 10; i++ ){
+                    mCloudSize = mCloudSize + mFavCountArray[i];
+                }
+            }
 
             updateSearchBar();
             mHelper.setPages(taskId, result.pages);
@@ -903,6 +877,7 @@ public class FavoritesScene extends BaseScene implements
                 mHelper.setPages(taskId, 0);
                 mHelper.onGetPageData(taskId, Collections.EMPTY_LIST);
             } else {
+                mLocalSize = list.size();
                 mHelper.setPages(taskId, 1);
                 mHelper.onGetPageData(taskId, list);
             }
