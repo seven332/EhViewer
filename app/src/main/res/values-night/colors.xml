@@ -10,7 +10,7 @@
     <color name="secondary_text_disabled_light">#36ffffff</color>
     <color name="secondary_text_disabled_dark">#24000000</color>
 
-    <color name="background_light">@color/background_dark</color>
+    <color name="background">@color/background_dark</color>
 
     <color name="card_shadow_1">#00222222</color>
     <color name="card_shadow_2">#10222222</color>

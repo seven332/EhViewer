@@ -37,6 +37,7 @@
     <color name="secondary_text_default_dark">#61ffffff</color>
     <color name="secondary_text_disabled_light">#24000000</color>
 
+    <color name="background">@color/background_light</color>
     <color name="background_dark">#ff303030</color>
     <color name="background_light">#fffafafa</color>
 
