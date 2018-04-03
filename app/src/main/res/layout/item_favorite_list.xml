@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2018 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -24,26 +24,27 @@
 
     <TextView
         android:id="@+id/key"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:textColor="@color/primary_text_light"
+        android:textColor="?android:attr/textColorPrimary"
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:gravity="center_vertical"
         android:paddingLeft="?attr/listPreferredItemPaddingLeft"
-        android:paddingRight="?attr/listPreferredItemPaddingRight"
-        android:minHeight="?attr/listPreferredItemHeightSmall" />
+        android:minHeight="?attr/listPreferredItemHeightSmall"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/value"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textColor="@color/primary_text_light"
+        android:textColor="?android:attr/textColorPrimary"
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:gravity="center_vertical"
-        android:paddingLeft="?attr/listPreferredItemPaddingLeft"
         android:paddingRight="?attr/listPreferredItemPaddingRight"
-        android:minHeight="?attr/listPreferredItemHeightSmall" />
+        android:minHeight="?attr/listPreferredItemHeightSmall"/>
 
 </LinearLayout>
