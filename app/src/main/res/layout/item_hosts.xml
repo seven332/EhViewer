@@ -29,7 +29,7 @@
     android:id="@+id/host"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textColor="@color/primary_text_light"/>
+    android:textColor="?android:attr/textColorPrimary"/>
 
   <TextView
     android:id="@+id/ip"

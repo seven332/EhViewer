@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.CardTitle">
+        <item name="android:textSize">@dimen/text_little_small</item>
+        <item name="android:textColor">@color/primary_text_dark</item>
+    </style>
+</resources>

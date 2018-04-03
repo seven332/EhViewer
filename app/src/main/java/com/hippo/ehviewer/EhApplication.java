@@ -25,6 +25,7 @@ import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
@@ -102,6 +103,8 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
         EhEngine.initialize();
         BitmapUtils.initialize(this);
 
+        setNightMode();
+
         if (EhDB.needMerge()) {
             EhDB.mergeOldDB(this);
         }
@@ -134,6 +137,13 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
 
         if (DEBUG_PRINT_NATIVE_MEMORY || DEBUG_PRINT_IMAGE_COUNT) {
             debugPrint();
+        }
+    }
+
+    private void setNightMode(){
+        int mode = Settings.getNightMode();
+        if (AppCompatDelegate.getDefaultNightMode() != mode){
+            AppCompatDelegate.setDefaultNightMode(mode);
         }
     }
 

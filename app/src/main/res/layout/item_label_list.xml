@@ -53,7 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@android:color/white">
+        android:background="@color/background">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,7 +71,7 @@
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:textSize="@dimen/text_little_small"
-                android:textColor="@color/primary_text_light"/>
+                android:textColor="?android:attr/textColorPrimary"/>
 
             <View
                 android:id="@+id/drag_handler"

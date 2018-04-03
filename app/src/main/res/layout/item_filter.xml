@@ -49,7 +49,7 @@
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:textSize="@dimen/text_little_small"
-                android:textColor="@color/primary_text_light"/>
+                android:textColor="?android:attr/textColorPrimary"/>
 
         </LinearLayout>
 

@@ -43,6 +43,6 @@
         android:layout_below="@id/user"
         android:layout_marginTop="8.0dp"
         android:ellipsize="end"
-        android:textColor="@color/primary_text_light"/>
+        android:textColor="?android:attr/textColorPrimary"/>
 
 </RelativeLayout>

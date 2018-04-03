@@ -39,6 +39,14 @@
         app:activity="com.hippo.ehviewer.ui.UConfigActivity"/>
 
     <com.hippo.preference.ListPreference
+        android:key="night_mode"
+        android:title="@string/settings_eh_night_mode"
+        android:summary="%s"
+        app:entries="@array/night_mode_entries"
+        app:entryValues="@array/night_mode_entry_values"
+        android:defaultValue="1"/>
+
+    <com.hippo.preference.ListPreference
         android:key="list_mode"
         android:title="@string/settings_eh_list_mode"
         android:summary="%s"

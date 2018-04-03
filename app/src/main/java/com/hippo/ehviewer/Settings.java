@@ -248,6 +248,13 @@ public class Settings {
         putIntToStr(KEY_GALLERY_SITE, value);
     }
 
+    public static final String KEY_NIGHT_MODE = "night_mode";
+    private static final int DEFAULT_NIGHT_MODE = 0;
+
+    public static int getNightMode() {
+        return getIntFromStr(KEY_NIGHT_MODE, DEFAULT_NIGHT_MODE);
+    }
+
     public static final String KEY_LIST_MODE = "list_mode";
     private static final int DEFAULT_LIST_MODE = 0;
 

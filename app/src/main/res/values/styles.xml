@@ -91,7 +91,7 @@
         <item name="android:minHeight">48dp</item>
         <item name="android:minWidth">88dp</item>
         <item name="android:padding">8dp</item>
-        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textColor">@color/primary_icon</item>
     </style>
 
     <style name="ButtonInCard.Accent">
@@ -137,5 +137,11 @@
         <item name="sv_titleTextAppearance">@style/Guide.Title</item>
         <item name="sv_detailTextAppearance">@style/Guide.Text</item>
     </style>
+
+    <style name="RatingBar" parent="Widget.AppCompat.RatingBar">
+        <item name="colorControlActivated">@color/yellow_800</item>
+        <item name="colorControlNormal">@color/grey_400</item>
+    </style>
+
 
 </resources>

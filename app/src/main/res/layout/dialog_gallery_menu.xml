@@ -40,8 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settings_read_screen_rotation"
-                android:textColor="@color/primary_text_dark"/>
+                android:text="@string/settings_read_screen_rotation"/>
 
             <com.hippo.widget.CuteSpinner
                 android:id="@+id/screen_rotation"
@@ -63,8 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settings_read_reading_direction"
-                android:textColor="@color/primary_text_dark"/>
+                android:text="@string/settings_read_reading_direction"/>
 
             <com.hippo.widget.CuteSpinner
                 android:id="@+id/reading_direction"
@@ -86,8 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settings_read_page_scaling"
-                android:textColor="@color/primary_text_dark"/>
+                android:text="@string/settings_read_page_scaling"/>
 
             <com.hippo.widget.CuteSpinner
                 android:id="@+id/page_scaling"
@@ -109,8 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:text="@string/settings_read_start_position"
-                android:textColor="@color/primary_text_dark"/>
+                android:text="@string/settings_read_start_position"/>
 
             <com.hippo.widget.CuteSpinner
                 android:id="@+id/start_position"
@@ -126,57 +122,49 @@
             android:id="@+id/keep_screen_on"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_keep_screen_on"
-            android:textColor="@color/primary_text_dark"/>
+            android:text="@string/settings_read_keep_screen_on"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/show_clock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_show_clock"
-            android:textColor="@color/primary_text_dark"/>
+            android:text="@string/settings_read_show_clock"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/show_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_show_progress"
-            android:textColor="@color/primary_text_dark"/>
+            android:text="@string/settings_read_show_progress"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/show_battery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_show_battery"
-            android:textColor="@color/primary_text_dark"/>
+            android:text="@string/settings_read_show_battery"/>
 
         <android.support.v7.widget.SwitchCompat
           android:id="@+id/show_page_interval"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:text="@string/settings_read_show_page_interval"
-          android:textColor="@color/primary_text_dark"/>
+          android:text="@string/settings_read_show_page_interval"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/volume_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_volume_page"
-            android:textColor="@color/primary_text_dark"/>
+            android:text="@string/settings_read_volume_page"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/reading_fullscreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_reading_fullscreen"
-            android:textColor="@color/primary_text_dark"/>
+            android:text="@string/settings_read_reading_fullscreen"/>
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/custom_screen_lightness"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_read_custom_screen_lightness"
-            android:textColor="@color/primary_text_dark"/>
+            android:text="@string/settings_read_custom_screen_lightness"/>
 
         <SeekBar
             android:id="@+id/screen_lightness"

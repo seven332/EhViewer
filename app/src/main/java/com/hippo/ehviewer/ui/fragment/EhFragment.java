@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.widget.Toast;
 
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
@@ -36,11 +37,13 @@ public class EhFragment extends PreferenceFragment
         Preference listMode = findPreference(Settings.KEY_LIST_MODE);
         Preference detailSize = findPreference(Settings.KEY_DETAIL_SIZE);
         Preference thumbSize = findPreference(Settings.KEY_THUMB_SIZE);
+        Preference nightMode = findPreference(Settings.KEY_NIGHT_MODE);
 
         gallerySite.setOnPreferenceChangeListener(this);
         listMode.setOnPreferenceChangeListener(this);
         detailSize.setOnPreferenceChangeListener(this);
         thumbSize.setOnPreferenceChangeListener(this);
+        nightMode.setOnPreferenceChangeListener(this);
     }
 
     @Override
@@ -55,6 +58,11 @@ public class EhFragment extends PreferenceFragment
         } else if (Settings.KEY_DETAIL_SIZE.equals(key)) {
             getActivity().setResult(Activity.RESULT_OK);
         } else if (Settings.KEY_THUMB_SIZE.equals(key)) {
+            getActivity().setResult(Activity.RESULT_OK);
+        } else if (Settings.KEY_NIGHT_MODE.equals(key)) {
+            Toast.makeText(getActivity(),
+                    getString(R.string.settings_eh_night_mode_restart_effective),
+                    Toast.LENGTH_SHORT).show();
             getActivity().setResult(Activity.RESULT_OK);
         }
         return true;
