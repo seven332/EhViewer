@@ -31,6 +31,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -45,9 +48,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -165,6 +166,9 @@ public final class GalleryListScene extends BaseScene
     private SearchBarMover mSearchBarMover;
     @Nullable
     private AddDeleteDrawable mActionFabDrawable;
+
+    @Nullable
+    private List<QuickSearch> mQuickSearchList;
 
     @Nullable
     private final Animator.AnimatorListener mActionFabAnimatorListener = new SimpleAnimatorListener() {
@@ -538,8 +542,8 @@ public final class GalleryListScene extends BaseScene
         mActionFabDrawable = null;
     }
 
-    private void showQuickSearchTipDialog(final List<QuickSearch> list,
-            final ArrayAdapter<QuickSearch> adapter, final ListView listView, final TextView tip) {
+    private void showQuickSearchTipDialog(final QsDrawerAdapter adapter,
+                                          final EasyRecyclerView recyclerView, final TextView tip) {
         Context context = getContext2();
         if (null == context) {
             return;
@@ -553,13 +557,13 @@ public final class GalleryListScene extends BaseScene
                 if (builder.isChecked()) {
                     Settings.putQuickSearchTip(false);
                 }
-                showAddQuickSearchDialog(list, adapter, listView, tip);
+                showAddQuickSearchDialog(adapter, recyclerView, tip);
             }
         }).show();
     }
 
-    private void showAddQuickSearchDialog(final List<QuickSearch> list,
-            final ArrayAdapter<QuickSearch> adapter, final ListView listView, final TextView tip) {
+    private void showAddQuickSearchDialog(final QsDrawerAdapter adapter,
+                                          final EasyRecyclerView recyclerView, final TextView tip) {
         Context context = getContext2();
         final ListUrlBuilder urlBuilder = mUrlBuilder;
         if (null == context || null == urlBuilder) {
@@ -573,7 +577,7 @@ public final class GalleryListScene extends BaseScene
         }
 
         // Check duplicate
-        for (QuickSearch q: list) {
+        for (QuickSearch q: mQuickSearchList) {
             if (urlBuilder.equalsQuickSearch(q)) {
                 showTip(getString(R.string.duplicate_quick_search, q.name), LENGTH_SHORT);
                 return;
@@ -597,7 +601,7 @@ public final class GalleryListScene extends BaseScene
                 }
 
                 // Check name duplicate
-                for (QuickSearch q: list) {
+                for (QuickSearch q: mQuickSearchList) {
                     if (text.equals(q.name)) {
                         builder.setError(getString(R.string.duplicate_name));
                         return;
@@ -609,15 +613,15 @@ public final class GalleryListScene extends BaseScene
                 QuickSearch quickSearch = urlBuilder.toQuickSearch();
                 quickSearch.name = text;
                 EhDB.insertQuickSearch(quickSearch);
-                list.add(quickSearch);
+                mQuickSearchList.add(quickSearch);
                 adapter.notifyDataSetChanged();
 
-                if (0 == list.size()) {
+                if (0 == mQuickSearchList.size()) {
                     tip.setVisibility(View.VISIBLE);
-                    listView.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.GONE);
                 } else {
                     tip.setVisibility(View.GONE);
-                    listView.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -626,33 +630,19 @@ public final class GalleryListScene extends BaseScene
     @Override
     public View onCreateDrawerView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.drawer_list, container, false);
+        View view = inflater.inflate(R.layout.drawer_list_fav, container, false);
         Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
         final TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
-        final ListView listView = (ListView) ViewUtils.$$(view, R.id.list_view);
 
         Context context = getContext2();
         Assert.assertNotNull(context);
 
-        final List<QuickSearch> list = EhDB.getAllQuickSearch();
-        final ArrayAdapter<QuickSearch> adapter = new ArrayAdapter<>(context, R.layout.item_simple_list, list);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (null == mHelper || null == mUrlBuilder) {
-                    return;
-                }
-
-                mUrlBuilder.set(list.get(position));
-                mUrlBuilder.setPageIndex(0);
-                onUpdateUrlBuilder();
-                mHelper.refresh();
-                setState(STATE_NORMAL);
-                closeDrawer(Gravity.RIGHT);
-            }
-        });
-
+        final EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view_drawer);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+        final QsDrawerAdapter qsDrawerAdapter = new QsDrawerAdapter(inflater);
+        recyclerView.setAdapter(qsDrawerAdapter);
+        mQuickSearchList = EhDB.getAllQuickSearch();
         tip.setText(R.string.quick_search_tip);
         toolbar.setTitle(R.string.quick_search);
         toolbar.inflateMenu(R.menu.drawer_gallery_list);
@@ -663,28 +653,107 @@ public final class GalleryListScene extends BaseScene
                 switch (id) {
                     case R.id.action_add:
                         if (Settings.getQuickSearchTip()) {
-                            showQuickSearchTipDialog(list, adapter, listView, tip);
+                            showQuickSearchTipDialog(qsDrawerAdapter, recyclerView, tip);
                         } else {
-                            showAddQuickSearchDialog(list, adapter, listView, tip);
+                            showAddQuickSearchDialog(qsDrawerAdapter, recyclerView, tip);
                         }
-                        break;
-                    case R.id.action_settings:
-                        startScene(new Announcer(QuickSearchScene.class));
                         break;
                 }
                 return true;
             }
         });
 
-        if (0 == list.size()) {
+        if (0 == mQuickSearchList.size()) {
             tip.setVisibility(View.VISIBLE);
-            listView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
         } else {
             tip.setVisibility(View.GONE);
-            listView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
 
         return view;
+    }
+
+    private class QsDrawerHolder extends RecyclerView.ViewHolder {
+
+        private final TextView key;
+        private final ImageView option;
+
+        private QsDrawerHolder(View itemView) {
+            super(itemView);
+            key = (TextView) ViewUtils.$$(itemView, R.id.tv_key);
+            option = (ImageView) ViewUtils.$$(itemView, R.id.iv_option);
+        }
+    }
+
+    private class QsDrawerAdapter extends RecyclerView.Adapter<QsDrawerHolder> {
+
+        private final LayoutInflater mInflater;
+
+        private QsDrawerAdapter(LayoutInflater inflater) {
+
+            this.mInflater = inflater;
+        }
+
+        @NonNull
+        @Override
+        public QsDrawerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new QsDrawerHolder(mInflater.inflate(R.layout.item_quicksearch_list, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull QsDrawerHolder holder, int position) {
+            if (mQuickSearchList != null){
+                holder.key.setText(mQuickSearchList.get(position).getName());
+                holder.key.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (null == mHelper || null == mUrlBuilder) {
+                            return;
+                        }
+
+                        mUrlBuilder.set(mQuickSearchList.get(position));
+                        mUrlBuilder.setPageIndex(0);
+                        onUpdateUrlBuilder();
+                        mHelper.refresh();
+                        setState(STATE_NORMAL);
+                        closeDrawer(Gravity.RIGHT);
+                    }
+                });
+                holder.option.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PopupMenu popupMenu = new PopupMenu(getContext2(), holder.option);
+                        popupMenu.inflate(R.menu.quicksearch_option);
+                        popupMenu.show();
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                            final QuickSearch quickSearch = mQuickSearchList.get(position);
+
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.menu_qs_remove:
+                                        EhDB.deleteQuickSearch(quickSearch);
+                                        mQuickSearchList.remove(position);
+                                        notifyDataSetChanged();
+                                        break;
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            if (mQuickSearchList != null){
+                return mQuickSearchList.size();
+            }
+            return 0;
+        }
     }
 
     private boolean checkDoubleClickExit() {
