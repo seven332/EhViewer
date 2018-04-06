@@ -630,7 +630,7 @@ public final class GalleryListScene extends BaseScene
     @Override
     public View onCreateDrawerView(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.drawer_list_fav, container, false);
+        View view = inflater.inflate(R.layout.drawer_list_rv, container, false);
         Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
         final TextView tip = (TextView) ViewUtils.$$(view, R.id.tip);
 
@@ -698,7 +698,7 @@ public final class GalleryListScene extends BaseScene
         @NonNull
         @Override
         public QsDrawerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new QsDrawerHolder(mInflater.inflate(R.layout.item_quicksearch_list, parent, false));
+            return new QsDrawerHolder(mInflater.inflate(R.layout.item_drawer_list, parent, false));
         }
 
         @Override

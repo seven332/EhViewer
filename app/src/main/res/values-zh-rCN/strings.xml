@@ -321,6 +321,7 @@
     <string name="rename_label_title">重命名标签</string>
     <string name="delete_label_title">删除标签</string>
     <string name="delete_label_message">删除“%s”？</string>
+    <string name="rename_label">重命名</string>
 
     <!-- History -->
     <string name="no_history">这里是阅读历史</string>
