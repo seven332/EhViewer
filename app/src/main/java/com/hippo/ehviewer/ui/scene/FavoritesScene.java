@@ -480,7 +480,7 @@ public class FavoritesScene extends BaseScene implements
     @Override
     public View onCreateDrawerView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.drawer_list_fav, container, false);
+        View view = inflater.inflate(R.layout.drawer_list_rv, container, false);
         final Context context = getContext2();
         Toolbar toolbar = (Toolbar) ViewUtils.$$(view, R.id.toolbar);
 
