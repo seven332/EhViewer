@@ -718,26 +718,38 @@ public class Settings {
     /********************
      ****** Favorites
      ********************/
-    public static final String KEY_FAV_CAT_0 = "fav_cat_0";
-    public static final String KEY_FAV_CAT_1 = "fav_cat_1";
-    public static final String KEY_FAV_CAT_2 = "fav_cat_2";
-    public static final String KEY_FAV_CAT_3 = "fav_cat_3";
-    public static final String KEY_FAV_CAT_4 = "fav_cat_4";
-    public static final String KEY_FAV_CAT_5 = "fav_cat_5";
-    public static final String KEY_FAV_CAT_6 = "fav_cat_6";
-    public static final String KEY_FAV_CAT_7 = "fav_cat_7";
-    public static final String KEY_FAV_CAT_8 = "fav_cat_8";
-    public static final String KEY_FAV_CAT_9 = "fav_cat_9";
-    public static final String DEFAULT_FAV_CAT_0 = "Favorites 0";
-    public static final String DEFAULT_FAV_CAT_1 = "Favorites 1";
-    public static final String DEFAULT_FAV_CAT_2 = "Favorites 2";
-    public static final String DEFAULT_FAV_CAT_3 = "Favorites 3";
-    public static final String DEFAULT_FAV_CAT_4 = "Favorites 4";
-    public static final String DEFAULT_FAV_CAT_5 = "Favorites 5";
-    public static final String DEFAULT_FAV_CAT_6 = "Favorites 6";
-    public static final String DEFAULT_FAV_CAT_7 = "Favorites 7";
-    public static final String DEFAULT_FAV_CAT_8 = "Favorites 8";
-    public static final String DEFAULT_FAV_CAT_9 = "Favorites 9";
+    private static final String KEY_FAV_CAT_0 = "fav_cat_0";
+    private static final String KEY_FAV_CAT_1 = "fav_cat_1";
+    private static final String KEY_FAV_CAT_2 = "fav_cat_2";
+    private static final String KEY_FAV_CAT_3 = "fav_cat_3";
+    private static final String KEY_FAV_CAT_4 = "fav_cat_4";
+    private static final String KEY_FAV_CAT_5 = "fav_cat_5";
+    private static final String KEY_FAV_CAT_6 = "fav_cat_6";
+    private static final String KEY_FAV_CAT_7 = "fav_cat_7";
+    private static final String KEY_FAV_CAT_8 = "fav_cat_8";
+    private static final String KEY_FAV_CAT_9 = "fav_cat_9";
+    private static final String DEFAULT_FAV_CAT_0 = "Favorites 0";
+    private static final String DEFAULT_FAV_CAT_1 = "Favorites 1";
+    private static final String DEFAULT_FAV_CAT_2 = "Favorites 2";
+    private static final String DEFAULT_FAV_CAT_3 = "Favorites 3";
+    private static final String DEFAULT_FAV_CAT_4 = "Favorites 4";
+    private static final String DEFAULT_FAV_CAT_5 = "Favorites 5";
+    private static final String DEFAULT_FAV_CAT_6 = "Favorites 6";
+    private static final String DEFAULT_FAV_CAT_7 = "Favorites 7";
+    private static final String DEFAULT_FAV_CAT_8 = "Favorites 8";
+    private static final String DEFAULT_FAV_CAT_9 = "Favorites 9";
+
+    private static final String KEY_FAV_COUNT_0 = "fav_count_0";
+    private static final String KEY_FAV_COUNT_1 = "fav_count_1";
+    private static final String KEY_FAV_COUNT_2 = "fav_count_2";
+    private static final String KEY_FAV_COUNT_3 = "fav_count_3";
+    private static final String KEY_FAV_COUNT_4 = "fav_count_4";
+    private static final String KEY_FAV_COUNT_5 = "fav_count_5";
+    private static final String KEY_FAV_COUNT_6 = "fav_count_6";
+    private static final String KEY_FAV_COUNT_7 = "fav_count_7";
+    private static final String KEY_FAV_COUNT_8 = "fav_count_8";
+    private static final String KEY_FAV_COUNT_9 = "fav_count_9";
+    private static final int DEFAULT_FAV_COUNT = 0;
 
     public static String[] getFavCat() {
         String[] favCat = new String[10];
@@ -767,6 +779,37 @@ public class Settings {
                 .putString(KEY_FAV_CAT_7, value[7])
                 .putString(KEY_FAV_CAT_8, value[8])
                 .putString(KEY_FAV_CAT_9, value[9])
+                .apply();
+    }
+
+    public static int[] getFavCount() {
+        int[] favCount = new int[10];
+        favCount[0] = sSettingsPre.getInt(KEY_FAV_COUNT_0, DEFAULT_FAV_COUNT);
+        favCount[1] = sSettingsPre.getInt(KEY_FAV_COUNT_1, DEFAULT_FAV_COUNT);
+        favCount[2] = sSettingsPre.getInt(KEY_FAV_COUNT_2, DEFAULT_FAV_COUNT);
+        favCount[3] = sSettingsPre.getInt(KEY_FAV_COUNT_3, DEFAULT_FAV_COUNT);
+        favCount[4] = sSettingsPre.getInt(KEY_FAV_COUNT_4, DEFAULT_FAV_COUNT);
+        favCount[5] = sSettingsPre.getInt(KEY_FAV_COUNT_5, DEFAULT_FAV_COUNT);
+        favCount[6] = sSettingsPre.getInt(KEY_FAV_COUNT_6, DEFAULT_FAV_COUNT);
+        favCount[7] = sSettingsPre.getInt(KEY_FAV_COUNT_7, DEFAULT_FAV_COUNT);
+        favCount[8] = sSettingsPre.getInt(KEY_FAV_COUNT_8, DEFAULT_FAV_COUNT);
+        favCount[9] = sSettingsPre.getInt(KEY_FAV_COUNT_9, DEFAULT_FAV_COUNT);
+        return favCount;
+    }
+
+    public static void putFavCount(int[] count) {
+        Assert.assertEquals(10, count.length);
+        sSettingsPre.edit()
+                .putInt(KEY_FAV_COUNT_0, count[0])
+                .putInt(KEY_FAV_COUNT_1, count[1])
+                .putInt(KEY_FAV_COUNT_2, count[2])
+                .putInt(KEY_FAV_COUNT_3, count[3])
+                .putInt(KEY_FAV_COUNT_4, count[4])
+                .putInt(KEY_FAV_COUNT_5, count[5])
+                .putInt(KEY_FAV_COUNT_6, count[6])
+                .putInt(KEY_FAV_COUNT_7, count[7])
+                .putInt(KEY_FAV_COUNT_8, count[8])
+                .putInt(KEY_FAV_COUNT_9, count[9])
                 .apply();
     }
 

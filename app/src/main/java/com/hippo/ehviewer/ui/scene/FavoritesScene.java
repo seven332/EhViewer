@@ -179,6 +179,7 @@ public class FavoritesScene extends BaseScene implements
         Assert.assertNotNull(context);
         mClient = EhApplication.getEhClient(context);
         mFavCatArray = Settings.getFavCat();
+        mFavCountArray = Settings.getFavCount();
 
         if (savedInstanceState == null) {
             onInit();
@@ -234,7 +235,9 @@ public class FavoritesScene extends BaseScene implements
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_favorites, container, false);
         ContentLayout contentLayout = (ContentLayout) view.findViewById(R.id.content_layout);
-        mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(getActivity2(), R.id.draw_view);
+        MainActivity activity = getActivity2();
+        Assert.assertNotNull(activity);
+        mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(activity, R.id.draw_view);
         mRecyclerView = contentLayout.getRecyclerView();
         FastScroller fastScroller = contentLayout.getFastScroller();
         RefreshLayout refreshLayout = contentLayout.getRefreshLayout();
@@ -437,7 +440,7 @@ public class FavoritesScene extends BaseScene implements
         @NonNull
         @Override
         public FavDrawerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new FavDrawerHolder(mInflater.inflate(R.layout.item_favorite_list, parent, false));
+            return new FavDrawerHolder(mInflater.inflate(R.layout.item_drawer_favorites, parent, false));
         }
 
         @Override
@@ -465,6 +468,9 @@ public class FavoritesScene extends BaseScene implements
 
         @Override
         public int getItemCount() {
+            if (null == mFavCatArray) {
+                return 2;
+            }
             return 12;
         }
     }
@@ -835,12 +841,7 @@ public class FavoritesScene extends BaseScene implements
                 mHelper.isCurrentTask(taskId)) {
 
             if (mFavCatArray != null) {
-
                 System.arraycopy(result.catArray, 0, mFavCatArray, 0,10);
-
-                if (mDrawerAdapter != null) {
-                    mDrawerAdapter.notifyDataSetChanged();
-                }
             }
 
             mFavCountArray = result.countArray;
@@ -854,6 +855,10 @@ public class FavoritesScene extends BaseScene implements
             updateSearchBar();
             mHelper.setPages(taskId, result.pages);
             mHelper.onGetPageData(taskId, result.galleryInfoList);
+
+            if (mDrawerAdapter != null) {
+                mDrawerAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -1119,7 +1124,7 @@ public class FavoritesScene extends BaseScene implements
         private final int mTaskId;
         private final String mKeyword;
 
-        public AddFavoritesListener(Context context, int stageId,
+        private AddFavoritesListener(Context context, int stageId,
                 String sceneTag, int taskId, String keyword) {
             super(context, stageId, sceneTag);
             mTaskId = taskId;
@@ -1158,7 +1163,7 @@ public class FavoritesScene extends BaseScene implements
         private final boolean mLocal;
         private final String mKeyword;
 
-        public GetFavoritesListener(Context context, int stageId,
+        private GetFavoritesListener(Context context, int stageId,
                 String sceneTag, int taskId, boolean local, String keyword) {
             super(context, stageId, sceneTag);
             mTaskId = taskId;
@@ -1170,6 +1175,7 @@ public class FavoritesScene extends BaseScene implements
         public void onSuccess(FavoritesParser.Result result) {
             // Put fav cat
             Settings.putFavCat(result.catArray);
+            Settings.putFavCount(result.countArray);
             FavoritesScene scene = getScene();
             if (scene != null) {
                 if (mLocal) {
