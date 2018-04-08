@@ -20,31 +20,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:minHeight="?attr/listPreferredItemHeightSmall"
     android:background="?android:attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/key"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:textColor="?android:attr/textColorPrimary"
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:gravity="center_vertical"
-        android:paddingLeft="?attr/listPreferredItemPaddingLeft"
-        android:minHeight="?attr/listPreferredItemHeightSmall"/>
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:paddingLeft="?attr/listPreferredItemPaddingLeft"/>
 
     <TextView
         android:id="@+id/value"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:textColor="?android:attr/textColorPrimary"
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:gravity="center_vertical"
-        android:paddingRight="?attr/listPreferredItemPaddingRight"
-        android:minHeight="?attr/listPreferredItemHeightSmall"/>
+        android:paddingRight="?attr/listPreferredItemPaddingRight"/>
 
 </LinearLayout>
