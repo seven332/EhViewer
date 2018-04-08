@@ -749,6 +749,10 @@ public class Settings {
     private static final String KEY_FAV_COUNT_7 = "fav_count_7";
     private static final String KEY_FAV_COUNT_8 = "fav_count_8";
     private static final String KEY_FAV_COUNT_9 = "fav_count_9";
+
+    private static final String KEY_FAV_LOCAL = "fav_local";
+    private static final String KEY_FAV_CLOUD = "fav_cloud";
+
     private static final int DEFAULT_FAV_COUNT = 0;
 
     public static String[] getFavCat() {
@@ -811,6 +815,22 @@ public class Settings {
                 .putInt(KEY_FAV_COUNT_8, count[8])
                 .putInt(KEY_FAV_COUNT_9, count[9])
                 .apply();
+    }
+
+    public static int getFavLocalCount() {
+        return sSettingsPre.getInt(KEY_FAV_LOCAL, DEFAULT_FAV_COUNT);
+    }
+
+    public static void putFavLocalCount(int count) {
+        sSettingsPre.edit().putInt(KEY_FAV_LOCAL, count).apply();
+    }
+
+    public static int getFavCloudCount() {
+        return sSettingsPre.getInt(KEY_FAV_CLOUD, DEFAULT_FAV_COUNT);
+    }
+
+    public static void putFavCloudCount(int count) {
+        sSettingsPre.edit().putInt(KEY_FAV_CLOUD, count).apply();
     }
 
     private static final String KEY_RECENT_FAV_CAT = "recent_fav_cat";

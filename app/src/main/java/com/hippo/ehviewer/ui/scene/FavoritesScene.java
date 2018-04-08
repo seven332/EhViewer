@@ -180,6 +180,8 @@ public class FavoritesScene extends BaseScene implements
         mClient = EhApplication.getEhClient(context);
         mFavCatArray = Settings.getFavCat();
         mFavCountArray = Settings.getFavCount();
+        mLocalSize = Settings.getFavLocalCount();
+        mCloudSize = Settings.getFavCloudCount();
 
         if (savedInstanceState == null) {
             onInit();
@@ -850,6 +852,7 @@ public class FavoritesScene extends BaseScene implements
                 for (int i = 0; i < 10; i++ ){
                     mCloudSize = mCloudSize + mFavCountArray[i];
                 }
+                Settings.putFavCloudCount(mCloudSize);
             }
 
             updateSearchBar();
@@ -883,6 +886,7 @@ public class FavoritesScene extends BaseScene implements
                 mHelper.onGetPageData(taskId, Collections.EMPTY_LIST);
             } else {
                 mLocalSize = list.size();
+                Settings.putFavLocalCount(mLocalSize);
                 mHelper.setPages(taskId, 1);
                 mHelper.onGetPageData(taskId, list);
             }
