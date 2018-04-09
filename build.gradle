@@ -28,7 +28,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    supportLibrary = '27.1.0'
+    supportLibrary = '27.1.1'
 }
 
 subprojects {
