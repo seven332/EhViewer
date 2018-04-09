@@ -146,8 +146,8 @@ public class FavoritesScene extends BaseScene implements
     public int current; // -1 for error
     public int limit; // -1 for error
 
-    private int mLocalSize = 0;
-    private int mCloudSize = 0;
+    private int mFavLocalCount = 0;
+    private int mFavCountSum = 0;
 
     private boolean mHasFirstRefresh;
     private boolean mSearchMode;
@@ -180,8 +180,8 @@ public class FavoritesScene extends BaseScene implements
         mClient = EhApplication.getEhClient(context);
         mFavCatArray = Settings.getFavCat();
         mFavCountArray = Settings.getFavCount();
-        mLocalSize = Settings.getFavLocalCount();
-        mCloudSize = Settings.getFavCloudCount();
+        mFavLocalCount = Settings.getFavLocalCount();
+        mFavCountSum = Settings.getFavCloudCount();
 
         if (savedInstanceState == null) {
             onInit();
@@ -228,6 +228,8 @@ public class FavoritesScene extends BaseScene implements
 
         mClient = null;
         mFavCatArray = null;
+        mFavCountArray = null;
+        mFavCountSum = 0;
         mUrlBuilder = null;
     }
 
@@ -450,11 +452,11 @@ public class FavoritesScene extends BaseScene implements
         public void onBindViewHolder(@NonNull FavDrawerHolder holder, int position) {
             if (0 == position) {
                 holder.key.setText(R.string.local_favorites);
-                holder.value.setText(Integer.toString(mLocalSize));
+                holder.value.setText(Integer.toString(mFavLocalCount));
                 holder.itemView.setEnabled(true);
             } else if (1 == position){
                 holder.key.setText(R.string.cloud_favorites);
-                holder.value.setText(Integer.toString(mCloudSize));
+                holder.value.setText(Integer.toString(mFavCountSum));
                 holder.itemView.setEnabled(true);
             } else {
                 if (null == mFavCatArray || null == mFavCountArray ||
@@ -848,11 +850,11 @@ public class FavoritesScene extends BaseScene implements
 
             mFavCountArray = result.countArray;
             if (mFavCountArray != null){
-                mCloudSize = 0;
+                mFavCountSum = 0;
                 for (int i = 0; i < 10; i++ ){
-                    mCloudSize = mCloudSize + mFavCountArray[i];
+                    mFavCountSum = mFavCountSum + mFavCountArray[i];
                 }
-                Settings.putFavCloudCount(mCloudSize);
+                Settings.putFavCloudCount(mFavCountSum);
             }
 
             updateSearchBar();
@@ -885,8 +887,8 @@ public class FavoritesScene extends BaseScene implements
                 mHelper.setPages(taskId, 0);
                 mHelper.onGetPageData(taskId, Collections.EMPTY_LIST);
             } else {
-                mLocalSize = list.size();
-                Settings.putFavLocalCount(mLocalSize);
+                mFavLocalCount = list.size();
+                Settings.putFavLocalCount(mFavLocalCount);
                 mHelper.setPages(taskId, 1);
                 mHelper.onGetPageData(taskId, list);
             }
