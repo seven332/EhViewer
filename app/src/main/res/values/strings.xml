@@ -365,6 +365,7 @@
     <string name="rename_label_title">Rename label</string>
     <string name="delete_label_title">Delete label</string>
     <string name="delete_label_message">Delete \"%s\"?</string>
+    <string name="rename_label">Rename</string>
 
     <!-- History -->
     <string name="no_history">Viewed galleries will be shown here</string>

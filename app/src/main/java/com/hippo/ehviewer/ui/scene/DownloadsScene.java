@@ -32,10 +32,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Display;
@@ -45,9 +49,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -56,6 +59,7 @@ import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.hippo.app.CheckBoxDialogBuilder;
+import com.hippo.app.EditTextDialogBuilder;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.ProgressNotifier;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
@@ -127,7 +131,9 @@ public class DownloadsScene extends ToolbarScene
     @Nullable
     private String mLabel;
     @Nullable
-    private List<DownloadInfo> mList;
+    private List<DownloadInfo> mListInfo;
+    @Nullable
+    private List<DownloadLabel> mListLabel = null;
 
     /*---------------
      View life cycle
@@ -145,7 +151,11 @@ public class DownloadsScene extends ToolbarScene
 
     private ShowcaseView mShowcaseView;
 
+    private DownloadLabelAdapter mLabelAdapter;
+
     private int mInitPosition = -1;
+
+    private List<String> mLabels;
 
     @Override
     public int getNavCheckedItem() {
@@ -170,8 +180,8 @@ public class DownloadsScene extends ToolbarScene
                 updateView();
 
                 // Get position
-                if (null != mList) {
-                    int position = mList.indexOf(info);
+                if (null != mListInfo) {
+                    int position = mListInfo.indexOf(info);
                     if (position >= 0 && null != mRecyclerView) {
                         mRecyclerView.scrollToPosition(position);
                     } else {
@@ -208,7 +218,7 @@ public class DownloadsScene extends ToolbarScene
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mList = null;
+        mListInfo = null;
 
         DownloadManager manager = mDownloadManager;
         if (null == manager) {
@@ -233,12 +243,12 @@ public class DownloadsScene extends ToolbarScene
         }
 
         if (mLabel == null) {
-            mList = mDownloadManager.getDefaultDownloadInfoList();
+            mListInfo = mDownloadManager.getDefaultDownloadInfoList();
         } else {
-            mList = mDownloadManager.getLabelDownloadInfoList(mLabel);
-            if (mList == null) {
+            mListInfo = mDownloadManager.getLabelDownloadInfoList(mLabel);
+            if (mListInfo == null) {
                 mLabel = null;
-                mList = mDownloadManager.getDefaultDownloadInfoList();
+                mListInfo = mDownloadManager.getDefaultDownloadInfoList();
             }
         }
 
@@ -495,7 +505,7 @@ public class DownloadsScene extends ToolbarScene
 
     public void updateView() {
         if (mViewTransition != null) {
-            if (mList == null || mList.size() == 0) {
+            if (mListInfo == null || mListInfo.size() == 0) {
                 mViewTransition.showView(1);
             } else {
                 mViewTransition.showView(0);
@@ -506,7 +516,7 @@ public class DownloadsScene extends ToolbarScene
     @Override
     public View onCreateDrawerView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.drawer_list, container, false);
+        View view = inflater.inflate(R.layout.drawer_list_rv, container, false);
 
         final Context context = getContext2();
         Assert.assertNotNull(context);
@@ -519,8 +529,12 @@ public class DownloadsScene extends ToolbarScene
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 switch (id) {
-                    case R.id.action_settings:
-                        startScene(new Announcer(DownloadLabelsScene.class));
+                    case R.id.action_add:
+                        EditTextDialogBuilder builder = new EditTextDialogBuilder(context, null, getString(R.string.download_labels));
+                        builder.setTitle(R.string.new_label_title);
+                        builder.setPositiveButton(android.R.string.ok, null);
+                        AlertDialog dialog = builder.show();
+                        new NewLabelDialogHelper(builder, dialog);
                         return true;
                     case R.id.action_default_download_label:
                         DownloadManager dm = mDownloadManager;
@@ -560,36 +574,146 @@ public class DownloadsScene extends ToolbarScene
             }
         });
 
-        List<DownloadLabel> list = EhApplication.getDownloadManager(context).getLabelList();
-        final List<String> labels = new ArrayList<>(list.size() + 1);
-        // Add default label name
-        labels.add(getString(R.string.default_download_label_name));
-        for (DownloadLabel raw: list) {
-            labels.add(raw.getLabel());
-        }
+        initLabels();
 
-        // TODO handle download label items update
-        ListView listView = (ListView) view.findViewById(R.id.list_view);
-        listView.setAdapter(new ArrayAdapter<>(context, R.layout.item_simple_list, labels));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String label;
-                if (position == 0) {
-                    label = null;
-                } else {
-                    label = labels.get(position);
-                }
-                if (!ObjectUtils.equal(label, mLabel)) {
-                    mLabel = label;
-                    updateForLabel();
-                    updateView();
-                    closeDrawer(Gravity.RIGHT);
-                }
-            }
-        });
+        mLabelAdapter = new DownloadLabelAdapter(inflater);
+        final EasyRecyclerView recyclerView =  (EasyRecyclerView) view.findViewById(R.id.recycler_view_drawer);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+        recyclerView.setAdapter(mLabelAdapter);
 
         return view;
+    }
+
+    private void initLabels(){
+        final Context context = getContext2();
+        if (context == null){
+            return;
+        }
+        mListLabel = EhApplication.getDownloadManager(context).getLabelList();
+        mLabels = new ArrayList<>(mListLabel.size() + 1);
+        // Add default label name
+        mLabels.add(getString(R.string.default_download_label_name));
+        for (DownloadLabel raw: mListLabel) {
+            mLabels.add(raw.getLabel());
+        }
+    }
+
+    private class DownloadLabelHolder extends RecyclerView.ViewHolder {
+
+        private final TextView label;
+        private final ImageView option;
+
+        private DownloadLabelHolder(View itemView) {
+            super(itemView);
+            label = (TextView) ViewUtils.$$(itemView, R.id.tv_key);
+            option = (ImageView) ViewUtils.$$(itemView, R.id.iv_option);
+        }
+    }
+
+    private class DownloadLabelAdapter extends RecyclerView.Adapter<DownloadLabelHolder> {
+
+        private final LayoutInflater mInflater;
+
+        private DownloadLabelAdapter(LayoutInflater inflater) {
+            this.mInflater = inflater;
+        }
+
+        @NonNull
+        @Override
+        public DownloadLabelHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new DownloadLabelHolder(mInflater.inflate(R.layout.item_drawer_list, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull DownloadLabelHolder holder, int position) {
+            if (mLabels != null){
+                Context context = getContext2();
+                String label = mLabels.get(position);
+                if (mDownloadManager == null) {
+                    if (context != null){
+                        mDownloadManager = EhApplication.getDownloadManager(context);
+                    }
+                }
+                List<DownloadInfo> list = null;
+                if (mDownloadManager != null){
+                    if (position == 0){
+                        list = mDownloadManager.getDefaultDownloadInfoList();
+                    } else {
+                        list = mDownloadManager.getLabelDownloadInfoList(label);
+                    }
+                }
+                if (list != null){
+                    holder.label.setText(label + " [" + list.size() + "]");
+                } else {
+                    holder.label.setText(label);
+                }
+                if (position == 0){
+                    holder.option.setVisibility(View.GONE);
+                }
+
+                holder.label.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String label;
+                        if (position == 0) {
+                            label = null;
+                        } else {
+                            label = mLabels.get(position);
+                        }
+                        if (!ObjectUtils.equal(label, mLabel)) {
+                            mLabel = label;
+                            updateForLabel();
+                            updateView();
+                            closeDrawer(Gravity.RIGHT);
+                        }
+                    }
+                });
+
+                if (position > 0){
+                    holder.option.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (context != null){
+                                PopupMenu popupMenu = new PopupMenu(context, holder.option);
+                                popupMenu.inflate(R.menu.download_label_option);
+                                popupMenu.show();
+                                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                                    @Override
+                                    public boolean onMenuItemClick(MenuItem item) {
+                                        switch (item.getItemId()){
+                                            case R.id.menu_label_rename:
+                                                if (mListLabel != null && position <= mListLabel.size()){
+                                                    DownloadLabel raw = mListLabel.get(position-1);
+                                                    EditTextDialogBuilder builder = new EditTextDialogBuilder(
+                                                            context, raw.getLabel(), getString(R.string.download_labels));
+                                                    builder.setTitle(R.string.rename_label_title);
+                                                    builder.setPositiveButton(android.R.string.ok, null);
+                                                    AlertDialog dialog = builder.show();
+                                                    new RenameLabelDialogHelper(builder, dialog, raw.getLabel());
+                                                }
+                                                break;
+                                            case R.id.menu_label_remove:
+                                                mDownloadManager.deleteLabel(label);
+                                                mLabels.remove(position);
+                                                notifyDataSetChanged();
+                                                break;
+                                        }
+                                        return false;
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return mLabels.size();
+        }
     }
 
     @Override
@@ -631,7 +755,7 @@ public class DownloadsScene extends ToolbarScene
             recyclerView.toggleItemChecked(position);
             return true;
         } else {
-            List<DownloadInfo> list = mList;
+            List<DownloadInfo> list = mListInfo;
             if (list == null) {
                 return false;
             }
@@ -681,7 +805,7 @@ public class DownloadsScene extends ToolbarScene
         if (0 == position) {
             recyclerView.checkAll();
         } else {
-            List<DownloadInfo> list = mList;
+            List<DownloadInfo> list = mListInfo;
             if (list == null) {
                 return;
             }
@@ -763,7 +887,7 @@ public class DownloadsScene extends ToolbarScene
 
     @Override
     public void onAdd(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
-        if (mList != list) {
+        if (mListInfo != list) {
             return;
         }
         if (mAdapter != null) {
@@ -774,7 +898,7 @@ public class DownloadsScene extends ToolbarScene
 
     @Override
     public void onUpdate(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list) {
-        if (mList != list) {
+        if (mListInfo != list) {
             return;
         }
 
@@ -819,7 +943,7 @@ public class DownloadsScene extends ToolbarScene
 
     @Override
     public void onRemove(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
-        if (mList != list) {
+        if (mListInfo != list) {
             return;
         }
         if (mAdapter != null) {
@@ -968,7 +1092,7 @@ public class DownloadsScene extends ToolbarScene
         private final LongList mGidList;
         private final CheckBoxDialogBuilder mBuilder;
 
-        public DeleteRangeDialogHelper(List<DownloadInfo> downloadInfoList,
+        private DeleteRangeDialogHelper(List<DownloadInfo> downloadInfoList,
                 LongList gidList, CheckBoxDialogBuilder builder) {
             mDownloadInfoList = downloadInfoList;
             mGidList = gidList;
@@ -1007,6 +1131,10 @@ public class DownloadsScene extends ToolbarScene
                 // Delete file
                 deleteFileAsync(files);
             }
+            if (mLabelAdapter != null) {
+                initLabels();
+                mLabelAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -1015,7 +1143,7 @@ public class DownloadsScene extends ToolbarScene
         private final String[] mLabels;
         private final List<DownloadInfo> mDownloadInfoList;
 
-        public MoveDialogHelper(String[] labels, List<DownloadInfo> downloadInfoList) {
+        private MoveDialogHelper(String[] labels, List<DownloadInfo> downloadInfoList) {
             mLabels = labels;
             mDownloadInfoList = downloadInfoList;
         }
@@ -1038,6 +1166,9 @@ public class DownloadsScene extends ToolbarScene
                 label = mLabels[which];
             }
             EhApplication.getDownloadManager(context).changeLabel(mDownloadInfoList, label);
+            if (mLabelAdapter != null) {
+                mLabelAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -1055,7 +1186,7 @@ public class DownloadsScene extends ToolbarScene
         public final TextView percent;
         public final TextView speed;
 
-        public DownloadHolder(View itemView) {
+        private DownloadHolder(View itemView) {
             super(itemView);
 
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
@@ -1086,7 +1217,7 @@ public class DownloadsScene extends ToolbarScene
             if (null == context || null == activity || null == recyclerView || recyclerView.isInCustomChoice()) {
                 return;
             }
-            List<DownloadInfo> list = mList;
+            List<DownloadInfo> list = mListInfo;
             if (list == null) {
                 return;
             }
@@ -1122,30 +1253,31 @@ public class DownloadsScene extends ToolbarScene
 
         private final LayoutInflater mInflater;
 
-        public DownloadAdapter() {
+        private DownloadAdapter() {
             mInflater = getLayoutInflater2();
             Assert.assertNotNull(mInflater);
         }
 
         @Override
         public long getItemId(int position) {
-            if (mList == null || position < 0 || position >= mList.size()) {
+            if (mListInfo == null || position < 0 || position >= mListInfo.size()) {
                 return 0;
             }
-            return mList.get(position).gid;
+            return mListInfo.get(position).gid;
         }
 
+        @NonNull
         @Override
-        public DownloadHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public DownloadHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new DownloadHolder(mInflater.inflate(R.layout.item_download, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(DownloadHolder holder, int position) {
-            if (mList == null) {
+        public void onBindViewHolder(@NonNull DownloadHolder holder, int position) {
+            if (mListInfo == null) {
                 return;
             }
-            DownloadInfo info = mList.get(position);
+            DownloadInfo info = mListInfo.get(position);
             holder.thumb.load(EhCacheKeyFactory.getThumbKey(info.gid), info.thumb,
                     new ThumbDataContainer(info), true);
             holder.title.setText(EhUtils.getSuitableTitle(info));
@@ -1153,7 +1285,7 @@ public class DownloadsScene extends ToolbarScene
             holder.rating.setRating(info.rating);
             TextView category = holder.category;
             String newCategoryText = EhUtils.getCategory(info.category);
-            if (!newCategoryText.equals(category.getText())) {
+            if (!newCategoryText.equals(category.getText().toString())) {
                 category.setText(newCategoryText);
                 category.setBackgroundColor(EhUtils.getCategoryColor(info.category));
             }
@@ -1168,7 +1300,7 @@ public class DownloadsScene extends ToolbarScene
 
         @Override
         public int getItemCount() {
-            return mList == null ? 0 : mList.size();
+            return mListInfo == null ? 0 : mListInfo.size();
         }
     }
 
@@ -1271,6 +1403,99 @@ public class DownloadsScene extends ToolbarScene
         public void remove() {
             if (mFile != null) {
                 mFile.delete();
+            }
+        }
+    }
+
+    private class RenameLabelDialogHelper implements View.OnClickListener {
+
+        private final EditTextDialogBuilder mBuilder;
+        private final AlertDialog mDialog;
+        private final String mOriginalLabel;
+
+        private RenameLabelDialogHelper(EditTextDialogBuilder builder, AlertDialog dialog,
+                                        String originalLabel) {
+            mBuilder = builder;
+            mDialog = dialog;
+            mOriginalLabel = originalLabel;
+            Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            if (button != null) {
+                button.setOnClickListener(this);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            Context context = getContext2();
+            if (null == context) {
+                return;
+            }
+
+            String text = mBuilder.getText();
+            if (TextUtils.isEmpty(text)) {
+                mBuilder.setError(getString(R.string.label_text_is_empty));
+            } else if (getString(R.string.default_download_label_name).equals(text)) {
+                mBuilder.setError(getString(R.string.label_text_is_invalid));
+            } else if (EhApplication.getDownloadManager(context).containLabel(text)) {
+                mBuilder.setError(getString(R.string.label_text_exist));
+            } else {
+                mBuilder.setError(null);
+                mDialog.dismiss();
+                EhApplication.getDownloadManager(context).renameLabel(mOriginalLabel, text);
+                if (mLabelAdapter != null) {
+                    initLabels();
+                    mLabelAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
+    private class NewLabelDialogHelper implements View.OnClickListener {
+
+        private final EditTextDialogBuilder mBuilder;
+        private final AlertDialog mDialog;
+
+        private NewLabelDialogHelper(EditTextDialogBuilder builder, AlertDialog dialog) {
+            mBuilder = builder;
+            mDialog = dialog;
+            Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            if (button != null) {
+                button.setOnClickListener(this);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            Context context = getContext2();
+            if (null == context) {
+                return;
+            }
+
+            String text = mBuilder.getText();
+            if (TextUtils.isEmpty(text)) {
+                mBuilder.setError(getString(R.string.label_text_is_empty));
+            } else if (getString(R.string.default_download_label_name).equals(text)) {
+                mBuilder.setError(getString(R.string.label_text_is_invalid));
+            } else if (EhApplication.getDownloadManager(context).containLabel(text)) {
+                mBuilder.setError(getString(R.string.label_text_exist));
+            } else {
+                mBuilder.setError(null);
+                mDialog.dismiss();
+                EhApplication.getDownloadManager(context).addLabel(text);
+                if (mAdapter != null && mListInfo != null) {
+                    mAdapter.notifyItemInserted(mListInfo.size() - 1);
+                }
+                if (mViewTransition != null) {
+                    if (mListInfo != null && mListInfo.size() > 0) {
+                        mViewTransition.showView(0);
+                    } else {
+                        mViewTransition.showView(1);
+                    }
+                }
+            }
+            if (mLabelAdapter != null) {
+                initLabels();
+                mLabelAdapter.notifyDataSetChanged();
             }
         }
     }

@@ -25,10 +25,4 @@
         android:title="@string/add"
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/v_settings_dark_x24"
-        android:title="@string/settings"
-        app:showAsAction="ifRoom"/>
-
 </menu>
