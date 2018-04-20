@@ -21,6 +21,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -86,7 +87,6 @@ public final class QuickSearchScene extends ToolbarScene {
     }
 
     @SuppressWarnings("deprecation")
-    @Nullable
     @Override
     public View onCreateView3(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -201,13 +201,14 @@ public final class QuickSearchScene extends ToolbarScene {
             Assert.assertNotNull(mInflater);
         }
 
+        @NonNull
         @Override
-        public QuickSearchHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public QuickSearchHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new QuickSearchHolder(mInflater.inflate(R.layout.item_label_list, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(QuickSearchHolder holder, int position) {
+        public void onBindViewHolder(@NonNull QuickSearchHolder holder, int position) {
             if (mQuickSearchList != null) {
                 holder.label.setText(mQuickSearchList.get(position).name);
             }

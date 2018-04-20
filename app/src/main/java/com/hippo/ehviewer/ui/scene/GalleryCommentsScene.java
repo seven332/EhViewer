@@ -169,7 +169,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(KEY_API_UID, mApiUid);
         outState.putString(KEY_API_KEY, mApiKey);
@@ -178,7 +178,6 @@ public final class GalleryCommentsScene extends ToolbarScene
         outState.putParcelableArray(KEY_COMMENTS, mComments);
     }
 
-    @Nullable
     @Override
     public View onCreateView3(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -326,7 +325,7 @@ public final class GalleryCommentsScene extends ToolbarScene
             }
 
             @Override
-            public void onBindViewHolder(InfoHolder holder, int position) {
+            public void onBindViewHolder(@NonNull InfoHolder holder, int position) {
                 holder.key.setText(userArray[position]);
                 holder.value.setText(voteArray[position]);
             }
@@ -386,8 +385,10 @@ public final class GalleryCommentsScene extends ToolbarScene
                         switch (id) {
                             case R.id.copy:
                                 ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                                cmb.setPrimaryClip(ClipData.newPlainText(null, comment.comment));
-                                showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
+                                if (cmb != null){
+                                    cmb.setPrimaryClip(ClipData.newPlainText(null, comment.comment));
+                                    showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
+                                }
                                 break;
                             case R.id.vote_up:
                                 voteComment(comment.id, 1);
@@ -622,8 +623,9 @@ public final class GalleryCommentsScene extends ToolbarScene
             Assert.assertNotNull(mInflater);
         }
 
+        @NonNull
         @Override
-        public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public CommentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new CommentHolder(mInflater.inflate(R.layout.item_gallery_comment, parent, false));
         }
 
@@ -646,7 +648,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         }
 
         @Override
-        public void onBindViewHolder(CommentHolder holder, int position) {
+        public void onBindViewHolder(@NonNull CommentHolder holder, int position) {
             Context context = getContext2();
             if (null == context || null == mComments) {
                 return;

@@ -21,6 +21,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -344,13 +345,14 @@ public class DownloadLabelsScene extends ToolbarScene {
             Assert.assertNotNull(mInflater);
         }
 
+        @NonNull
         @Override
-        public LabelHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public LabelHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new LabelHolder(mInflater.inflate(R.layout.item_label_list, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(LabelHolder holder, int position) {
+        public void onBindViewHolder(@NonNull LabelHolder holder, int position) {
             if (mList != null) {
                 holder.label.setText(mList.get(position).getLabel());
             }

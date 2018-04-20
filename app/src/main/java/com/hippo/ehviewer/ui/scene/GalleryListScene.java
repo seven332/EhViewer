@@ -379,7 +379,6 @@ public final class GalleryListScene extends BaseScene
         mNavCheckedId = checkedItemId;
     }
 
-    @Nullable
     @Override
     public View onCreateView2(LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
