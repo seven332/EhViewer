@@ -498,7 +498,12 @@ public class EhDaoGenerator {
         javaClass.getField("mode").setPublic();
         javaClass.getField("text").setPublic();
         javaClass.getField("enable").setPublic();
-        // Add equals method
+        // Add hashCode method and equals method
+        javaClass.addImport("com.hippo.util.HashCodeUtils");
+        javaClass.addMethod("\t@Override\n" +
+                "\tpublic int hashCode() {\n" +
+                "\t\treturn HashCodeUtils.hashCode(mode, text);\n" +
+                "\t}");
         javaClass.addImport("com.hippo.yorozuya.ObjectUtils");
         javaClass.addMethod("\t@Override\n" +
                 "\tpublic boolean equals(Object o) {\n" +
