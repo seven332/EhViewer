@@ -61,6 +61,7 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
     private static final String TAG = EhApplication.class.getSimpleName();
 
     public static final boolean BETA = false;
+    public static final boolean AUTO_UPDATE = true;
 
     private static final boolean DEBUG_CONACO = false;
     private static final boolean DEBUG_PRINT_NATIVE_MEMORY = false;

@@ -949,6 +949,8 @@ public class Settings {
      ********************/
     private static final String KEY_BETA_UPDATE_CHANNEL = "beta_update_channel";
     private static final boolean DEFAULT_BETA_UPDATE_CHANNEL = EhApplication.BETA;
+    private static final String KEY_AUTO_CHECK_FOR_UPDATES = "auto_check_for_updates";
+    private static final boolean DEFAULT_AUTO_CHECK_FOR_UPDATES = EhApplication.AUTO_UPDATE;
 
     public static boolean getBetaUpdateChannel() {
         return getBoolean(KEY_BETA_UPDATE_CHANNEL, DEFAULT_BETA_UPDATE_CHANNEL);
@@ -956,6 +958,10 @@ public class Settings {
 
     public static void putBetaUpdateChannel(boolean value) {
         putBoolean(KEY_BETA_UPDATE_CHANNEL, value);
+    }
+
+    public static boolean getAutoCheckUpdateEnable() {
+        return getBoolean(KEY_AUTO_CHECK_FOR_UPDATES, DEFAULT_AUTO_CHECK_FOR_UPDATES);
     }
 
     /********************

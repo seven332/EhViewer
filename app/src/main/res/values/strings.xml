@@ -572,6 +572,7 @@
     <string name="settings_privacy_about_analytics">About analytics</string>
     <string name="settings_about_version">Build version</string>
     <string name="settings_about_check_for_updates">Check for updates</string>
+    <string name="settings_about_auto_check_for_updates">Auto check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
     <string name="settings_about_beta_update_channel_summary">Beta release might be broken on your devices</string>
 
