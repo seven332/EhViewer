@@ -72,6 +72,11 @@
         android:summary="@string/settings_about_beta_update_channel_summary"
         android:defaultValue="@bool/beta"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="auto_check_for_updates"
+        android:title="@string/settings_about_auto_check_for_updates"
+        android:defaultValue="@bool/auto_check_update"/>
+
     <Preference
         android:key="donate"
         android:title="@string/settings_about_donate"/>
