@@ -93,7 +93,7 @@
     <string name="content_layout_restore_tip">다시 시도하려면 누르기</string>
     <string name="write_rationale">앱이 갤러리를 다운로드하려면 WRITE_EXTERNAL_STORAGE 권한이 필요합니다. 권한을 허용하시겠습니까?</string>
     <string name="you_rejected_me">안돼요</string>
-    <string name="analytics_explain">앱 개발자에게 기기 및 사용 정보를 보내시겠습니까? 앱 개발에 굉장한 도움이 됩니다. &lt;br&gt;&lt;br&gt;데이터 분석 서비스는 Google Analytics를 사용하며, 개인 정보 보호 정책은 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 에서 확인하실 수 있습니다.&lt;br&gt;&lt;br&gt;데이터 분석을 허용하면 사용자의 기기 및 앱 사용 정보가 수집됩니다. 전화번호나 이메일 주소, IMEI와 같은 개인 정보는 수집하지 않습니다.&lt;br&gt;&lt;br&gt;데이터 분석을 허용하기 전까지는 정보가 수집되지 않습니다.&lt;br&gt;&lt;br&gt;수집된 정보는 Google Analytics에 의해 분석됩니다. 분석된 정보는 이 애플리케이션의 개발자만 볼 수 있습니다.</string>
+    <string name="analytics_explain">앱 개발자에게 기기 및 사용 정보를 보내시겠습니까? 앱 개발에 굉장한 도움이 됩니다. &lt;br&gt;&lt;br&gt;데이터 분석 서비스는 Google Analytics를 사용하며, 개인 정보 보호 정책은 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 에서 확인하실 수 있습니다.&lt;br&gt;&lt;br&gt;데이터 분석을 허용하면 사용자의 기기 및 앱 사용 정보가 수집됩니다. 전화번호나 이메일 주소, IMEI와 같은 개인 정보는 수집하지 않습니다.&lt;br&gt;&lt;br&gt;데이터 분석을 허용하기 전까지는 정보를 수집하지 않습니다.&lt;br&gt;&lt;br&gt;수집한 정보는 Google Analytics에 의해 분석됩니다. 분석된 정보는 이 애플리케이션의 개발자만 볼 수 있습니다.</string>
     <string name="get_it">알겠습니다</string>
     <string name="accept">동의</string>
     <string name="reject">거부</string>
@@ -164,7 +164,7 @@
     <string name="add_quick_search_tip">갤러리 목록의 상태가 빠른 검색으로 저장됩니다. 검색 패널의 상태를 저장하려면 먼저 검색 옵션을 지정하세요.</string>
     <string name="readme">README</string>
     <string name="image_search_not_quick_search">이미지 검색은 빠른 검색에 추가할 수 없습니다.</string>
-    <string name="duplicate_quick_search">중복되는 빠른 검색 항목이 있습니다. 이름은 \"%s\"입니다.</string>
+    <string name="duplicate_quick_search">이미 같은 내용의 빠른 검색 항목이 있습니다. 이름은 \"%s\"입니다.</string>
     <string name="duplicate_name">같은 이름의 항목이 이미 있습니다.</string>
 
     <string name="go_to_hint">페이지 %1$d, 총 %2$d 페이지</string>
@@ -206,8 +206,8 @@
     <string name="not_favorited">즐겨찾기에 없음</string>
     <string name="add_favorites_dialog_title">즐겨찾기에 추가</string>
     <string name="remember_favorite_collection">즐겨찾기 저장 위치 기억</string>
-    <string name="add_to_favorite_success">즐겨찾기에 추가되었습니다.</string>
-    <string name="remove_from_favorite_success">즐겨찾기에서 제거되었습니다.</string>
+    <string name="add_to_favorite_success">즐겨찾기에 추가했습니다.</string>
+    <string name="remove_from_favorite_success">즐겨찾기에서 제거했습니다.</string>
     <string name="add_to_favorite_failure">즐겨찾기에 추가하지 못했습니다.</string>
     <string name="remove_from_favorite_failure">즐겨찾기에서 제거하지 못했습니다.</string>
     <string name="block_the_uploader">필터 목록에 \"%s\" 업로더를 추가하시겠습니까?</string>
@@ -215,7 +215,7 @@
 
     <!-- Gallery Info -->
     <string name="gallery_info">갤러리 정보</string>
-    <string name="copied_to_clipboard">클립보드에 복사되었습니다.</string>
+    <string name="copied_to_clipboard">클립보드에 복사했습니다.</string>
     <string name="header_key">키</string>
     <string name="header_value">값</string>
     <string name="key_gid">GID</string>
@@ -340,13 +340,27 @@
     <string name="apply">적용</string>
     <string name="apply_tip">설정을 저장하려면 체크 표시를 누르세요.</string>
 
+    <!-- Hosts Activity -->
+    <string name="hosts">사용자 지정 hosts.txt</string>
+    <string name="hosts_tip">hosts.txt</string>
+    <string name="hosts_host">호스트</string>
+    <string name="hosts_ip">IP</string>
+    <string name="add_host">호스트 추가</string>
+    <string name="add_host_add">추가</string>
+    <string name="edit_host">호스트 편집</string>
+    <string name="edit_host_confirm">확인</string>
+    <string name="edit_host_delete">삭제</string>
+    <string name="invalid_host">잘못된 호스트</string>
+    <string name="invalid_ip">잘못된 IP</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">페이지 %d</string>
     <string name="page_menu_save">저장</string>
+    <string name="page_menu_save_to">다른 이름으로 저장</string>
     <string name="page_menu_add_bookmark">북마크에 추가</string>
     <string name="gallery_menu_title">메뉴</string>
     <string name="share_image">이미지 공유</string>
-    <string name="image_saved">이미지가 %s 경로에 저장됨</string>
+    <string name="image_saved">이미지를 %s 경로에 저장함</string>
 
     <string name="settings_eh">EH</string>
     <string name="settings_eh_sign_out">로그아웃</string>
@@ -354,7 +368,7 @@
     <string name="settings_u_config">E-Hentai 설정</string>
     <string name="settings_u_config_summary">E-Hentai 사이트의 설정 페이지를 엽니다.</string>
     <string name="settings_eh_sign_out_warning">정말 로그아웃하시겠습니까?</string>
-    <string name="settings_eh_sign_out_tip">로그아웃되었습니다. 로그인하려면 앱을 다시 시작하세요.</string>
+    <string name="settings_eh_sign_out_tip">로그아웃했습니다. 로그인하려면 앱을 다시 시작하세요.</string>
     <string name="settings_eh_gallery_site">갤러리 사이트</string>
     <string name="settings_eh_list_mode">목록 모드</string>
     <string name="settings_eh_list_mode_detail">자세히</string>
@@ -454,13 +468,18 @@
     <string name="settings_advanced_dump_logcat">로그캣 덤프</string>
     <string name="settings_advanced_dump_logcat_summary">외부 저장소에 로그캣 저장</string>
     <string name="settings_advanced_dump_logcat_failed">로그캣을 덤프하지 못했습니다.</string>
-    <string name="settings_advanced_dump_logcat_to">%s 경로에 로그캣이 저장되었습니다.</string>
+    <string name="settings_advanced_dump_logcat_to">%s 경로에 로그캣을 저장했습니다.</string>
     <string name="settings_advanced_clear_download_path_cache">다운로드 경로 캐시 삭제</string>
-    <string name="settings_advanced_clear_download_path_cache_summary">갤러리 다운로드 경로가 잘못되었을 때 다운로드 경로 캐시를 삭제하면 문제가 해결될 수 있습니다.</string>
+    <string name="settings_advanced_clear_download_path_cache_summary">갤러리 다운로드 경로가 잘못되었을 때 다운로드 경로 캐시를 삭제하면 문제를 해결할 수 있습니다.</string>
     <string name="settings_advanced_clear_download_path_cache_message">다운로드 경로 캐시를 지우시겠습니까?</string>
     <string name="settings_advanced_clear_memory_cache">메모리 캐시 삭제</string>
     <string name="settings_advanced_clear_memory_cache_summary">섬네일, 갤러리 정보 메모리 캐시 삭제</string>
     <string name="settings_advanced_read_cache_size">읽기 캐시 크기</string>
+    <string name="settings_advanced_app_language_title">앱 언어 (Language)</string>
+    <string name="settings_advanced_built_in_hosts_title">앱 내장 hosts.txt</string>
+    <string name="settings_advanced_built_in_hosts_summary">앱에 내장된 호스트-IP 지정 규칙을 사용합니다.\n대신 사용자 지정 hosts.txt 파일을 사용할 수도 있습니다.</string>
+    <string name="settings_advanced_custom_hosts_title">사용자 지정 hosts.txt</string>
+    <string name="settings_advanced_custom_hosts_summary">호스트 이름을 IP 주소에 지정합니다.\n앱에 내장된 규칙은 무시됩니다.</string>
     <string name="settings_privacy_pattern_protection_title">패턴 보호</string>
     <string name="settings_privacy_pattern_protection_not_set">패턴 보호가 설정되어 있지 않음</string>
     <string name="settings_privacy_pattern_protection_set">패턴 보호가 설정됨</string>
@@ -487,6 +506,7 @@
     <string name="settings_privacy_about_analytics">데이터 분석 정보</string>
     <string name="settings_about_version">빌드 버전</string>
     <string name="settings_about_check_for_updates">업데이트 확인</string>
+    <string name="settings_about_auto_check_for_updates">업데이트 자동 확인</string>
     <string name="settings_about_beta_update_channel">베타 업데이트 채널</string>
     <string name="settings_about_beta_update_channel_summary">베타 버전은 사용자의 기기에서 정상적으로 작동하지 않을 수 있습니다.</string>
 
@@ -502,6 +522,8 @@
     <string name="cant_get_data_dir">데이터 디렉터리를 찾을 수 없습니다.</string>
     <string name="cant_find_any_data">데이터를 가져올 수 없습니다.</string>
     <string name="cant_read_the_file">파일을 읽을 수 없습니다.</string>
+
+    <string name="app_language_system">시스템 언어 (기본값)</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">제외할 언어</string>
@@ -609,4 +631,5 @@
     <string name="settings_privacy_secure">화면 캡처 허용 안 함</string>
     <string name="settings_privacy_secure_summary">이 옵션을 켜면 이 앱에서 스크린샷을 찍을 수 없고, 멀티태스킹 화면에서 앱의 내용을 볼 수 없습니다.\n\n이 옵션을 변경하면 앱을 다시 시작해야 합니다.</string>
 
+    <string name="download_service">다운로드 서비스</string>
 </resources>
