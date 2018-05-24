@@ -714,10 +714,13 @@ public final class SpiderQueen implements Runnable {
         spiderInfo.pages = GalleryDetailParser.parsePages(body);
         spiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
         PreviewSet previewSet = GalleryDetailParser.parsePreviewSet(body);
-        if ((index >= 0 && index < spiderInfo.pages - 1) || (index == 0 && spiderInfo.pages == 1)) {
-            spiderInfo.previewPerPage = previewSet.size();
-        } else {
-            spiderInfo.previewPerPage = Math.max(spiderInfo.previewPerPage, previewSet.size());
+
+        if (previewSet.size() > 0) {
+            if (index == 0) {
+                spiderInfo.previewPerPage = previewSet.size();
+            } else {
+                spiderInfo.previewPerPage = previewSet.getPosition(0) / index;
+            }
         }
 
         for (int i = 0, n = previewSet.size(); i < n; i++) {
@@ -762,6 +765,9 @@ public final class SpiderQueen implements Runnable {
             previewIndex = index / spiderInfo.previewPerPage;
         } else {
             previewIndex = 0;
+        }
+        if (spiderInfo.previewPages > 0) {
+            previewIndex = Math.min(previewIndex, spiderInfo.previewPages - 1);
         }
 
         try {
