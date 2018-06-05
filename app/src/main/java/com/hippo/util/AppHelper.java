@@ -58,9 +58,10 @@ public class AppHelper {
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, text);
         sendIntent.setType("text/plain");
+        Intent chooser = Intent.createChooser(sendIntent, from.getString(R.string.share));
 
         try {
-            from.startActivity(sendIntent);
+            from.startActivity(chooser);
             return true;
         } catch (ActivityNotFoundException e) {
             Toast.makeText(from, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
