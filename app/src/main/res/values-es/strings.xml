@@ -42,7 +42,7 @@
 
     <string name="default_display_name">Little Hippo</string>
 
-    <string name="cookie_explain">Una cookie es una pequeña pieza de datos almacenados en el navegador web. Búsquelo si no sabe lo que es o cómo obtenerlo.\n\nIngrese cookies especiales para iniciar sesión.</string>
+    <string name="cookie_explain">Una cookie es una pequeña pieza de datos almacenados en el navegador web. Búsquelo en Google si no sabe lo qué es o cómo obtenerlo.\n\nIngrese cookies especiales para iniciar sesión.</string>
     <string name="text_is_empty">El texto está vacío</string>
     <string name="waring">Advertencia</string>
     <string name="wrong_cookie_warning">Parece que las cookies que ingresaste son incorrectas. Debe revisarlos.</string>
@@ -167,7 +167,7 @@
 
     <!-- Gallery detail -->
     <string name="error_cannot_find_gallery">No se encuentra la galería</string>
-    <string name="download">Descargas</string>
+    <string name="download">Descargar</string>
     <string name="read">Leer</string>
     <string name="more_information">Más información</string>
     <plurals name="page_count">
@@ -196,7 +196,7 @@
     <string name="no_torrents">Sin torrents</string>
     <string name="torrents">Torrents</string>
     <string name="favorited">Favorito</string>
-    <string name="not_favorited">Sin favoritos</string>
+    <string name="not_favorited">No en favoritos</string>
     <string name="add_favorites_dialog_title">Añadir a favoritos</string>
     <string name="remember_favorite_collection">Recordar favoritos</string>
     <string name="remove_from_favorite_success">Eliminado de favoritos</string>
@@ -265,7 +265,7 @@
 
     <!-- Download -->
     <string name="scene_download_title">Descargas - %s</string>
-    <string name="no_download_info">Las descargas de galerías se muestran acá</string>
+    <string name="no_download_info">Las galerías descargadas se mostrarán acá</string>
     <string name="download_state_wait">Esperando</string>
     <string name="download_state_downloading">Descargando</string>
     <string name="download_state_downloaded">Descargado</string>
@@ -346,15 +346,17 @@
 
     <string name="settings_eh">EH</string>
     <string name="settings_eh_sign_out">Cerrar sesión</string>
-    <string name="settings_eh_sign_out_summary">Reinicie la aplicación para iniciar sesiónn</string>
+    <string name="settings_eh_sign_out_summary">Deberás reiniciar la aplicación</string>
     <string name="settings_eh_sign_out_warning">¿Estás seguro de cerrar sesión?</string>
     <string name="settings_eh_sign_out_yes">@android:string/ok</string>
-    <string name="settings_eh_sign_out_tip">Sesión cerrada. Reinicie la aplicación para iniciar sesión</string>
+    <string name="settings_eh_sign_out_tip">Sesión cerrada. Reinicie la aplicación para volver iniciar sesión</string>
+	<string name="settings_u_config">Configuración de EHentai</string>
+    <string name="settings_u_config_summary">Configurar en la página de EHentai</string>
     <string name="settings_eh_gallery_site">Seleccionar galería</string>
     <string name="settings_eh_list_mode">Modo lista</string>
-    <string name="settings_eh_list_mode_detail">Detallado</string>
-    <string name="settings_eh_list_mode_thumb">Vista previa</string>
-    <string name="settings_eh_detail_size">Detalles de tamaño</string>
+    <string name="settings_eh_list_mode_detail">Con detalles</string>
+    <string name="settings_eh_list_mode_thumb">Solo portada</string>
+    <string name="settings_eh_detail_size">Tamañp del detalle</string>
     <string name="settings_eh_detail_size_long">Largo</string>
     <string name="settings_eh_detail_size_short">Corto</string>
     <string name="settings_eh_thumb_size">Tamaño de vista previa</string>
@@ -406,13 +408,13 @@
     <string name="settings_read_show_clock">Mostrar hora</string>
     <string name="settings_read_show_progress">Mostrar progreso</string>
     <string name="settings_read_show_battery">Mostrar batería</string>
-    <string name="settings_read_volume_page">Pasar páginas con tecla de volumen</string>
+    <string name="settings_read_volume_page">Pasar páginas con tecla del volumen</string>
     <string name="settings_read_reading_fullscreen">Pantalla completa</string>
     <string name="settings_read_custom_screen_lightness">Brillo de pantalla personalizado</string>
     <string name="settings_read_screen_lightness">Brillo de la pantalla</string>
 
     <string name="settings_download">Descargas</string>
-    <string name="settings_download_download_location">Localización de descargas</string>
+    <string name="settings_download_download_location">Ruta de descargas</string>
     <string name="settings_download_invalid_download_location">Ruta de descarga invalida</string>
     <string name="settings_download_cant_get_download_location">No se puede obtener ruta de descargas</string>
     <string name="settings_download_pick_dir_kk">No puedes escribir ningún tipo de datos en tu memoria SD externa en Android 4.4+ a no ser que la hayas hakeado. Pero &lt;SD card&gt;/Android/data/com.hippo.ehviewer es especial, puedes escribir en ello.</string>
@@ -420,11 +422,11 @@
     <string name="settings_download_document">Document</string>
     <string name="settings_download_continue">Continuar</string>
     <string name="settings_download_media_scan">Permitir escaneo de medios</string>
-    <string name="settings_download_media_scan_summary_on">Mantenga las aplicaciones de galería fuera del alcanze de otra personas (podrán ver las galerías almacenadas)</string>
-    <string name="settings_download_media_scan_summary_off">Las aplicaciones de galería de imágenes ignoraran la ruta de descargas de galerías</string>
+    <string name="settings_download_media_scan_summary_on">Las galerías de imágenes mostrarán los doujinshis/mangas descargados. ¡Cuidado con prestar tu móvil o tablet!</string>
+    <string name="settings_download_media_scan_summary_off">Las de galería de imágenes no mostrarán los doujinshis/mangas descargados</string>
     <string name="settings_download_multi_thread_download">Multi-hilos al descargar</string>
     <string name="settings_download_multi_thread_download_summary">Máximo de %s imágenes</string>
-    <string name="settings_download_preload_image">Precargar Imagen</string>
+    <string name="settings_download_preload_image">Precargar imagen</string>
     <string name="settings_download_preload_image_summary">Precargar las siguientes %s imágenes</string>
     <string name="settings_download_image_resolution">Resolución de la imagen</string>
     <string name="settings_download_image_resolution_summary">%s, resoluciones mayores a 1280x podrían dar error</string>
@@ -432,15 +434,15 @@
     <string name="settings_download_download_origin_image">Descargar imagen original</string>
     <string name="settings_download_download_origin_image_summary">¡Cuidado! Podrías recibir error 509</string>
     <string name="settings_download_restore_download_items">Restaurar los elementos de descarga</string>
-    <string name="settings_download_restore_download_items_summary">Restaurar todos los elementos de descarga en la ubicación de descarga</string>
+    <string name="settings_download_restore_download_items_summary">Restaurar todos los elementos de descarga en la ruta de descarga</string>
     <string name="settings_download_restoring">Restaurando...</string>
     <string name="settings_download_restore_not_found">No se han encontrado elementos para restaurar</string>
     <string name="settings_download_restore_failed">Restauración fallida</string>
     <string name="settings_download_restore_successfully">Restauración de %d elementos completados</string>
-    <string name="settings_download_clean_redundancy">Borrar descargas innecesarias</string>
-    <string name="settings_download_clean_redundancy_summary">Eliminar las imágenes de la galería que no se encuentran en la lista de descarga pero sí la ubicación de descarga</string>
-    <string name="settings_download_clean_redundancy_no_redundancy">Sin elementos innecesarios</string>
-    <string name="settings_download_clean_redundancy_done">Borrado de redundancia completado, un total de %d elementos borrados</string>
+    <string name="settings_download_clean_redundancy">Borrar imágenes sobrantes</string>
+    <string name="settings_download_clean_redundancy_summary">Elimina las imágenes almacenadas en la ruta de descarga que no se encuentran en la lista de descarga</string>
+    <string name="settings_download_clean_redundancy_no_redundancy">Sin imágenes para borrar</string>
+    <string name="settings_download_clean_redundancy_done">Borrado de imágenes completada, un total de %d elementos borrados</string>
 
     <string name="settings_advanced">Avanzado</string>
     <string name="settings_advanced_save_parse_error_body">Guardar contenido en HTML al analizar el error</string>
@@ -455,6 +457,7 @@
     <string name="settings_advanced_clear_memory_cache">Borrar caché de memoria</string>
     <string name="settings_advanced_clear_memory_cache_summary">Borrar vistas previas, galerías, información y caché de memoria</string>
     <string name="settings_advanced_read_cache_size">Tamaño del caché (archivos temporales)</string>
+	<string name="settings_advanced_app_language_title">Lenguaje de la aplicación</string>
     <string name="settings_privacy_pattern_protection_title">Protección por patrón</string>
     <string name="settings_privacy_pattern_protection_not_set">No se ha configurado la protección por patrón</string>
     <string name="settings_privacy_pattern_protection_set">La protección por patrón ha sido configurado</string>
@@ -483,6 +486,7 @@
     <string name="settings_privacy_about_analytics">Acerca de analytics</string>
     <string name="settings_about_version">Versión de compilación</string>
     <string name="settings_about_check_for_updates">Verificar actualizaciones</string>
+	<string name="settings_about_auto_check_for_updates">Verificar automáticamente actualizaciones</string>
     <string name="settings_about_beta_update_channel">Canal de versiones de prueba</string>
     <string name="settings_about_beta_update_channel_summary">Las versiones de prueba podrían tener errores</string>
 
@@ -497,6 +501,7 @@
     <string name="cant_get_data_dir">No se puede obtener el directorio de datos</string>
     <string name="cant_find_any_data">No se pueden encuentran datos</string>
     <string name="cant_read_the_file">No se puede leer el archivo</string>
+	<string name="app_language_system">Lenguaje del sistema (Defecto)</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">Excluir idiomas</string>
@@ -618,5 +623,8 @@
     <string name="error_something_wrong_happened">Ocurrió algo malo</string>
     <string name="dialog_archive_title">H@H Downloader</string>
     <string name="settings_privacy">Privacidad</string>
+    <string name="settings_privacy_secure">Impedir capturas de pantalla</string>
+    <string name="settings_privacy_secure_summary">Si habilitas esta opción no podrás hacer captura de pantalla y el sistema no mostrará una previsualización en el multitareas.\n\nDeberás reiniciar la aplicación para activar esta función.</string>
 
+	
 </resources>
