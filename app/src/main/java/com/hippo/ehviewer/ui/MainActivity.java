@@ -33,6 +33,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -412,10 +413,12 @@ public final class MainActivity extends StageActivity
     public void onSceneViewCreated(SceneFragment scene, Bundle savedInstanceState) {
         super.onSceneViewCreated(scene, savedInstanceState);
 
+        Log.d("TAG", "onSceneViewCreated");
+
         if (scene instanceof BaseScene && mRightDrawer != null && mDrawerLayout != null) {
             BaseScene baseScene = (BaseScene) scene;
             mRightDrawer.removeAllViews();
-            View drawerView = baseScene.onCreateDrawerView(
+            View drawerView = baseScene.createDrawerView(
                     baseScene.getLayoutInflater2(), mRightDrawer, savedInstanceState);
             if (drawerView != null) {
                 mRightDrawer.addView(drawerView);
@@ -432,7 +435,7 @@ public final class MainActivity extends StageActivity
 
         if (scene instanceof BaseScene) {
             BaseScene baseScene = (BaseScene) scene;
-            baseScene.onDestroyDrawerView();
+            baseScene.destroyDrawerView();
         }
     }
 

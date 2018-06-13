@@ -19,18 +19,20 @@ package com.hippo.ehviewer.ui.scene;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.util.SparseArray;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
 import com.hippo.util.AppHelper;
@@ -40,7 +42,15 @@ public abstract class BaseScene extends SceneFragment {
     public static final int LENGTH_SHORT = 0;
     public static final int LENGTH_LONG = 1;
 
+    public static final String KEY_DRAWER_VIEW_STATE =
+        "com.hippo.ehviewer.ui.scene.BaseScene:DRAWER_VIEW_STATE";
+
     private Context mThemeContext;
+
+    @Nullable
+    private View drawerView;
+    @Nullable
+    private SparseArray<Parcelable> drawerViewState;
 
     public void updateAvatar() {
         FragmentActivity activity = getActivity();
@@ -132,9 +142,37 @@ public abstract class BaseScene extends SceneFragment {
         return 0;
     }
 
+    public final View createDrawerView(LayoutInflater inflater,
+        @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        drawerView = onCreateDrawerView(inflater, container, savedInstanceState);
+
+        if (drawerView != null) {
+            SparseArray<Parcelable> saved = drawerViewState;
+            if (saved == null && savedInstanceState != null) {
+                saved = savedInstanceState.getSparseParcelableArray(KEY_DRAWER_VIEW_STATE);
+            }
+            if (saved != null) {
+                drawerView.restoreHierarchyState(saved);
+            }
+        }
+
+        return drawerView;
+    }
+
     public View onCreateDrawerView(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return null;
+    }
+
+    public final void destroyDrawerView() {
+        if (drawerView != null) {
+            drawerViewState = new SparseArray<>();
+            drawerView.saveHierarchyState(drawerViewState);
+        }
+
+        onDestroyDrawerView();
+
+        drawerView = null;
     }
 
     public void onDestroyDrawerView() {
@@ -220,6 +258,17 @@ public abstract class BaseScene extends SceneFragment {
         FragmentActivity activity = getActivity();
         if (null != activity && null != view) {
             AppHelper.showSoftInput(activity, view);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (drawerView != null) {
+            drawerViewState = new SparseArray<>();
+            drawerView.saveHierarchyState(drawerViewState);
+            outState.putSparseParcelableArray(KEY_DRAWER_VIEW_STATE, drawerViewState);
         }
     }
 }
