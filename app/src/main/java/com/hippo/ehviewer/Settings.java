@@ -1100,4 +1100,15 @@ public class Settings {
     public static void putGuideGallery(boolean value) {
         putBoolean(KEY_GUIDE_GALLERY, value);
     }
+
+    private static final String KEY_CLIPBOARD_TEXT = "clipboard_text";
+    private static final String DEFAULT_CLIPBOARD_TEXT = "";
+
+    public static String getClipboardText() {
+        return getString(KEY_CLIPBOARD_TEXT, DEFAULT_CLIPBOARD_TEXT);
+    }
+
+    public static void putClipboardText(String value) {
+        putString(KEY_CLIPBOARD_TEXT, value);
+    }
 }

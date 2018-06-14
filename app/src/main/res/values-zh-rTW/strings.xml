@@ -57,6 +57,9 @@
 
     <string name="cellular_network_warning">正在使用行動數據</string>
 
+    <string name="clipboard_gallery_url_dialog_title">發現圖庫</string>
+    <string name="clipboard_gallery_url_dialog_message">剪貼簿裡有圖庫連結，要不要看看？</string>
+
     <string name="error_bad_status_code">錯誤狀態碼：%d</string>
     <string name="error_timeout">逾時</string>
     <string name="error_unknown_host">未知的主機</string>
