@@ -99,7 +99,7 @@ public final class MainActivity extends StageActivity
     private static final int REQUEST_CODE_SETTINGS = 0;
 
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
-    private static final String KEY_CLIP_TEXT = "clip_text";
+    private static final String KEY_CLIP_TEXT_HASH_CODE = "clip_text_hash_code";
 
     /*---------------
      Whole life cycle
@@ -117,7 +117,7 @@ public final class MainActivity extends StageActivity
 
     private int mNavCheckedItem = 0;
 
-    private String mClipText = null;
+    private int mClipTextHashCode = 0;
 
     static {
         registerLaunchMode(SecurityScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
@@ -373,19 +373,19 @@ public final class MainActivity extends StageActivity
         PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getString(R.string.write_rationale), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
 
-        mClipText = Settings.getClipboardText();
+        mClipTextHashCode = Settings.getClipboardTextHashCode();
     }
 
     private void onRestore(Bundle savedInstanceState) {
         mNavCheckedItem = savedInstanceState.getInt(KEY_NAV_CHECKED_ITEM);
-        mClipText = savedInstanceState.getString(KEY_CLIP_TEXT);
+        mClipTextHashCode = savedInstanceState.getInt(KEY_CLIP_TEXT_HASH_CODE);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putInt(KEY_NAV_CHECKED_ITEM, mNavCheckedItem);
-        outState.putString(KEY_CLIP_TEXT, mClipText);
+        outState.putInt(KEY_CLIP_TEXT_HASH_CODE, mClipTextHashCode);
     }
 
     @Override
@@ -421,8 +421,9 @@ public final class MainActivity extends StageActivity
 
     private void checkClipboardUrl() {
         String text = getTextFromClipboard();
+        int hashCode = text != null ? text.hashCode() : 0;
 
-        if (text != null && !text.equals(mClipText)) {
+        if (text != null && hashCode != 0 && mClipTextHashCode != hashCode) {
             Pair<Long, String> pair = EhUrl.parseGalleryDetailUrl(text);
             if (pair != null) {
                 long gid = pair.first;
@@ -442,8 +443,10 @@ public final class MainActivity extends StageActivity
             }
         }
 
-        mClipText = text;
-        Settings.putClipboardText(text);
+        if (mClipTextHashCode != hashCode) {
+            mClipTextHashCode = hashCode;
+            Settings.putClipboardTextHashCode(hashCode);
+        }
     }
 
     @Override

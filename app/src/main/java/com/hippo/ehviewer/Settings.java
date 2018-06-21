@@ -1101,14 +1101,14 @@ public class Settings {
         putBoolean(KEY_GUIDE_GALLERY, value);
     }
 
-    private static final String KEY_CLIPBOARD_TEXT = "clipboard_text";
-    private static final String DEFAULT_CLIPBOARD_TEXT = "";
+    private static final String KEY_CLIPBOARD_TEXT_HASH_CODE = "clipboard_text_hash_code";
+    private static final int DEFAULT_CLIPBOARD_TEXT_HASH_CODE = 0;
 
-    public static String getClipboardText() {
-        return getString(KEY_CLIPBOARD_TEXT, DEFAULT_CLIPBOARD_TEXT);
+    public static int getClipboardTextHashCode() {
+        return getInt(KEY_CLIPBOARD_TEXT_HASH_CODE, DEFAULT_CLIPBOARD_TEXT_HASH_CODE);
     }
 
-    public static void putClipboardText(String value) {
-        putString(KEY_CLIPBOARD_TEXT, value);
+    public static void putClipboardTextHashCode(int value) {
+        putInt(KEY_CLIPBOARD_TEXT_HASH_CODE, value);
     }
 }
