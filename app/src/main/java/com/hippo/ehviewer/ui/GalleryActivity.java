@@ -623,6 +623,16 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
     }
 
     @Override
+    public void onTapErrorText(int index) {
+        NotifyTask task = mNotifyTaskPool.pop();
+        if (task == null) {
+            task = new NotifyTask();
+        }
+        task.setData(NotifyTask.KEY_TAP_ERROR_TEXT, index);
+        SimpleHandler.getInstance().post(task);
+    }
+
+    @Override
     public void onLongPressPage(int index) {
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
@@ -1014,7 +1024,8 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         public static final int KEY_CURRENT_INDEX = 2;
         public static final int KEY_TAP_SLIDER_AREA = 3;
         public static final int KEY_TAP_MENU_AREA = 4;
-        public static final int KEY_LONG_PRESS_PAGE = 5;
+        public static final int KEY_TAP_ERROR_TEXT = 5;
+        public static final int KEY_LONG_PRESS_PAGE = 6;
 
         private int mKey;
         private int mValue;
@@ -1047,6 +1058,12 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             }
         }
 
+        private void onTapErrorText(int index) {
+            if (mGalleryProvider != null) {
+                mGalleryProvider.forceRequest(index);
+            }
+        }
+
         private void onLongPressPage(final int index) {
             showPageDialog(index);
         }
@@ -1073,6 +1090,9 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                     break;
                 case KEY_TAP_SLIDER_AREA:
                     onTapSliderArea();
+                    break;
+                case KEY_TAP_ERROR_TEXT:
+                    onTapErrorText(mValue);
                     break;
                 case KEY_LONG_PRESS_PAGE:
                     onLongPressPage(mValue);
