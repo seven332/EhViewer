@@ -85,6 +85,7 @@ import com.hippo.util.PermissionRequester;
 import com.hippo.widget.LoadImageView;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
+import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -408,18 +409,38 @@ public final class MainActivity extends StageActivity
         checkClipboardUrl();
     }
 
-    private String getTextFromClipboard() {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            if (clipboard != null) {
-                ClipData clip = clipboard.getPrimaryClip();
-                if (clip != null && clip.getItemCount() > 0) {
-                    return clip.getItemAt(0).getText().toString();
-                }
-            }
-        return null;
+    @Override
+    protected void onTransactScene() {
+        super.onTransactScene();
+
+        checkClipboardUrl();
     }
 
     private void checkClipboardUrl() {
+        SimpleHandler.getInstance().postDelayed(() -> {
+            if (!isSolid()) {
+                checkClipboardUrlInternal();
+            }
+        }, 300);
+    }
+
+    private boolean isSolid() {
+        Class<?> topClass = getTopSceneClass();
+        return topClass == null || SolidScene.class.isAssignableFrom(topClass);
+    }
+
+    private String getTextFromClipboard() {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard != null) {
+            ClipData clip = clipboard.getPrimaryClip();
+            if (clip != null && clip.getItemCount() > 0) {
+                return clip.getItemAt(0).getText().toString();
+            }
+        }
+        return null;
+    }
+
+    private void checkClipboardUrlInternal() {
         String text = getTextFromClipboard();
         int hashCode = text != null ? text.hashCode() : 0;
 
