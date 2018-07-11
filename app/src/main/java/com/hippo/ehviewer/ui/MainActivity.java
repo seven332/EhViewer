@@ -433,7 +433,7 @@ public final class MainActivity extends StageActivity
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboard != null) {
             ClipData clip = clipboard.getPrimaryClip();
-            if (clip != null && clip.getItemCount() > 0) {
+            if (clip != null && clip.getItemCount() > 0 && clip.getItemAt(0).getText() != null) {
                 return clip.getItemAt(0).getText().toString();
             }
         }
