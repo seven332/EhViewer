@@ -12,7 +12,7 @@ android {
         versionName "1.0.30"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW",
-                "es", "ja", "ko"
+                "es", "ja", "ko", "fr", "de"
     }
 
     compileOptions {
