@@ -657,7 +657,7 @@
     <string name="settings_advanced_built_in_hosts_title">"hosts.txt integré "</string>
     <string name="settings_advanced_built_in_hosts_summary">Mapper l\'hôte à l\'adresse IP selon les règles de l\'app\nIls pouvent être redéfinits par hosts.txt personnalisé</string>
     <string name="settings_advanced_custom_hosts_title">hosts.txt personalisé</string>
-    <string name="settings_advanced_custom_hosts_summary">Mapper l\'hôte à l\'adresse IP\nIls pouvent redéfinir par hosts.txt de l\'app</string>
+    <string name="settings_advanced_custom_hosts_summary">Mapper l\'hôte à l\'adresse IP\nIls pouvent redéfinir l'hosts.txt de l\'app</string>
     <string name="app_language_system">Langue du système (défaut)</string>
 
 </resources>
