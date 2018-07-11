@@ -625,6 +625,27 @@
     <string name="settings_privacy">Privacidad</string>
     <string name="settings_privacy_secure">Impedir capturas de pantalla</string>
     <string name="settings_privacy_secure_summary">Si habilitas esta opción no podrás hacer captura de pantalla y el sistema no mostrará una previsualización en el multitareas.\n\nDeberás reiniciar la aplicación para activar esta función.</string>
+    <string name="clipboard_gallery_url_dialog_title">Galería detectada</string>
+    <string name="clipboard_gallery_url_dialog_message">Se ha detectado un vínculo de galería en el portapapeles. ¿Quieres entrarlo?</string>
+    <string name="page_menu_save_to">Guardar a...</string>
+    <string name="enable_fingerprint">Usar huellas digitales para desbloquear</string>
+    <string name="u_config">Ajustes EHentai</string>
+    <string name="apply">Aplicar</string>
+    <string name="apply_tip">Toca la marca de verificación para guardar los cambios</string>
+    <string name="hosts">Personalizado hosts.txt</string>
+    <string name="hosts_tip">hosts.txt</string>
+    <string name="hosts_host">Anfitrión</string>
+    <string name="hosts_ip">IP</string>
+    <string name="add_host">Añadir una anfitrión</string>
+    <string name="add_host_add">Añadir</string>
+    <string name="edit_host">Anfitrión</string>
+    <string name="edit_host_confirm">Aplicar</string>
+    <string name="edit_host_delete">Borrar</string>
+    <string name="invalid_host">Anfitrión inválida</string>
+    <string name="invalid_ip">IP inválida</string>
+    <string name="recaptcha_none">Toca acá</string>
+    <string name="recaptcha_loading">Cargando...</string>
+    <string name="recaptcha_failure">Fallado</string>
 
-	
+
 </resources>
