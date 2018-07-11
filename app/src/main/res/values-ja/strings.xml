@@ -345,7 +345,7 @@
 
     <!-- Set Security -->
     <string name="set_pattern_protection">パターン保護を設定</string>
-    <string name="set_pattern_protection_tip">パターンを描いてパターン保護を設定する\n空白のままパターン保護を解除する</string>
+    <string name="set_pattern_protection_tip">パターンを描いてパターン保護を設定します\n空白のまま続行してパターン保護をクリアします</string>
     <string name="set">設定</string>
     <string name="enable_fingerprint">指紋でロックを解除</string>
 
@@ -475,8 +475,8 @@
     <string name="settings_advanced_clear_memory_cache">メモリキャッシュをクリア</string>
     <string name="settings_advanced_clear_memory_cache_summary">サムネイルとギャラリー情報のメモリキャッシュをクリア</string>
     <string name="settings_advanced_read_cache_size">閲覧キャッシュのサイズ</string>
-    <string name="settings_privacy_pattern_protection_title">パターンロック</string>
-    <string name="settings_privacy_pattern_protection_not_set">パターンロックは設定されていません</string>
+    <string name="settings_privacy_pattern_protection_title">パターン保護</string>
+    <string name="settings_privacy_pattern_protection_not_set">パターン保護は設定されていません</string>
     <string name="settings_privacy_pattern_protection_set">パターン保護は設定済みです</string>
     <string name="settings_advanced_export_data">データをエクスポート</string>
     <string name="settings_advanced_export_data_summary">ダウンロードリストやクイック検索などのデータを外部ストレージにエクスポートします</string>
