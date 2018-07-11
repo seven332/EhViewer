@@ -219,8 +219,10 @@
 
     <string-array name="app_language_entries">
         <item>@string/app_language_system</item>
+        <item>@string/app_language_de</item>
         <item>@string/app_language_en</item>
         <item>@string/app_language_es</item>
+        <item>@string/app_language_fr</item>
         <item>@string/app_language_ja</item>
         <item>@string/app_language_ko</item>
         <item>@string/app_language_zh_cn</item>
@@ -230,8 +232,10 @@
 
     <string-array name="app_language_entry_values">
         <item>system</item>
+        <item>de</item>
         <item>en</item>
         <item>es</item>
+        <item>fr</item>
         <item>ja</item>
         <item>ko</item>
         <item>zh-CN</item>
