@@ -88,7 +88,7 @@
     <string name="error_password_cannot_empty">パスワードを入力してください。</string>
     <string name="skip_signing_in">ログインをスキップ</string>
     <string name="sign_in_failed">ログインに失敗しました。</string>
-    <string name="sign_in_failed_plain">これはウェブサイトのアップデートによって引き起こされることかもしれず、またおかしいことが起こったかもしれません。ログインボタンの下でWebでログインするか、Cookieを入力するか、あるいはログインをスキップします。ログインをスキップするでアプリが正常に使用できなくなることがあります。0.6.xバージョンでログインした場合は、「Cookieでログイン」を選択することが推奨です。</string>
+    <string name="sign_in_failed_plain">このエラーの原因は、ウェブサイトがメンテ中であることか、または不明なエラーが発生したことである可能性があります。ログインボタンの下でWebでログインするか、Cookieを入力してログインするか、またはログインをスキップしてみてください。ログインをスキップすると「Sad Panda」エラーが発生することがあります。0.6.xバージョンでログインした場合、Cookieでログインすることをおすすめします。</string>
     <string name="press_twice_exit">もう一度押して終了します</string>
     <string name="content_layout_restore_tip">クリックしてもう一度試す</string>
     <string name="write_rationale">EhViewerはギャラリーをダウンロードするためのWRITE_EXTERNAL_STORAGE権限を請求します。許可してもらえないでしょうか？</string>
@@ -121,56 +121,56 @@
 
     <string name="search">検索</string>
 
-    <string name="keyword_search">キーワード検索</string>
-    <string name="image_search">画像検索</string>
+    <string name="keyword_search">キーワードで検索</string>
+    <string name="image_search">画像で検索</string>
 
-    <string name="search_normal">普通検索</string>
-    <string name="search_advance">詳細オプション</string>
+    <string name="search_normal">検索</string>
+    <string name="search_advance">その他のオプション</string>
     <string name="search_image">画像検索</string>
     <string name="search_normal_search">一般検索</string>
-    <string name="search_specify_uploader">指定アップローダー</string>
-    <string name="search_specify_tag">指定タグ</string>
-    <string name="search_specify_gallery">指定ギャラリー</string>
-    <string name="search_enable_advance">詳細オプションを有効にする</string>
+    <string name="search_specify_uploader">アップローダを検索</string>
+    <string name="search_specify_tag">タグを検索</string>
+    <string name="search_specify_gallery">ギャラリーにアクセス</string>
+    <string name="search_enable_advance">その他のオプションを有効化</string>
 
-    <string name="search_tip">一般検索：検索です。\n\n指定アップローダー：このアップローダーによってアップロードされたギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定タグ：このタッグを含むギャラリーを一覧表示します。他のオプションは無視されます。\n\n指定画廊：このギャラリーにジャンプします。キーワードは「gid token」のはずです。</string>
+    <string name="search_tip">普通検索：検索します。\n\nアップローダを検索：このアップローダーがアップロードしたギャラリーをリストします。他のオプションは無視されます。\n\nタグを検索：指定したタグを含むギャラリーをリストします。他のオプションは無視されます。\n\nギャラリーにアクセス：指定したギャラリーに行きます。キーワードは「gid token」です。</string>
 
     <string name="search_sname">ギャラリーを検索</string>
     <string name="search_stags">ギャラリータグを検索</string>
     <string name="search_sdesc">ギャラリー説明を検索</string>
-    <string name="search_storr">トレントファイル名を検索</string>
-    <string name="search_sto">トレントのあるギャラリーだけを表示</string>
+    <string name="search_storr">Torrentファイル名を検索</string>
+    <string name="search_sto">Torrentのあるギャラリーのみを表示</string>
     <string name="search_sdt1">低希望タグを検索</string>
     <string name="search_sdt2">低評価タグを検索</string>
-    <string name="search_sh">削除されたギャラリーを表示</string>
+    <string name="search_sh">削除済みのギャラリーを表示</string>
     <string name="search_sr">評価の下限：</string>
 
     <string name="select_image">画像を選択</string>
-    <string name="search_uss">類似検索を使用</string>
+    <string name="search_uss">類似検索を有効化</string>
     <string name="search_osc">カバーのみを検索</string>
-    <string name="search_se">削除されたギャラリーを表示</string>
-    <string name="select_image_first">まずは画像を選択してください</string>
+    <string name="search_se">削除済みのギャラリーを表示</string>
+    <string name="select_image_first">画像を選択してください</string>
 
-    <string name="add_to_favourites">お気に入り</string>
+    <string name="add_to_favourites">お気に入りに追加</string>
 
     <string name="quick_search">クイック検索</string>
-    <string name="quick_search_tip">「+」をクリックしてクイック検索を追加</string>
+    <string name="quick_search_tip">「+」をタップしてクイック検索を追加します</string>
     <string name="add_quick_search_dialog_title">クイック検索を追加</string>
     <string name="name_is_empty">タイトルが空</string>
     <string name="delete">削除</string>
     <string name="delete_quick_search_title">クイック検索を削除</string>
-    <string name="delete_quick_search_message">「%s」を削除？</string>
-    <string name="no_quick_search">ここがクイック検索</string>
-    <string name="add_quick_search_tip">ギャラリーリストのステータスはクイック検索として保存されます。検索パネルのステータスを保存する場合は、まず検索を実行してください。</string>
-    <string name="readme">README</string>
+    <string name="delete_quick_search_message">「%s」を削除しますか？</string>
+    <string name="no_quick_search">クイック検索はここに表示されます</string>
+    <string name="add_quick_search_tip">ギャラリー検索結果の設定などはクイック検索として保存されます。検索の設定などを保存するには、まず検索を実行してください。</string>
+    <string name="readme">説明</string>
     <string name="image_search_not_quick_search">画像検索をクイック検索として追加できませんでした。</string>
-    <string name="duplicate_quick_search">同じクイック検索がすでに名前が「%s」として存在しています。</string>
-    <string name="duplicate_name">同じ名前が既に存在します。</string>
+    <string name="duplicate_quick_search">「%s」というクイック検索は既に存在しています。</string>
+    <string name="duplicate_name">この名前は既に使用されています。</string>
 
     <string name="go_to_hint">ページ%1$d、合計%2$dページ</string>
 
     <!-- search_min_rating -->
-  
+
     <string name="star_2">2つ星</string>
     <string name="star_3">3つ星</string>
     <string name="star_4">4つ星</string>
@@ -194,13 +194,13 @@
     <string name="search_cover">カバーを検索</string>
     <string name="no_tags">タグなし</string>
     <string name="no_comments">コメントなし</string>
-    <string name="no_more_comments">すべてのコメントが表示されました。</string>
+    <string name="no_more_comments">コメントはこれ以上ありません</string>
     <string name="more_comment">他のコメントを見る</string>
     <string name="no_previews">プレビューなし</string>
-    <string name="no_more_previews">すべてのプレビューが表示されました。</string>
+    <string name="no_more_previews">プレビューはこれ以上ありません</string>
     <string name="more_previews">他のプレビューを見る</string>
-    <string name="refresh">リフレッシュ</string>
-    <string name="open_in_other_app">他のアプリケーションで開く</string>
+    <string name="refresh">再ロード</string>
+    <string name="open_in_other_app">他のアプリで開く</string>
     <string name="rate_successfully">評価しました</string>
     <string name="rate_failed">評価できませんでした</string>
     <string name="no_torrents">トレントなし</string>
@@ -213,7 +213,7 @@
     <string name="remove_from_favorite_success">お気に入りから削除しました。</string>
     <string name="add_to_favorite_failure">お気に入りに追加失敗しました。</string>
     <string name="remove_from_favorite_failure">お気に入りからの削除に失敗しました。</string>
-    <string name="block_the_uploader">アップローダフィルター「%s」を追加？</string>
+    <string name="block_the_uploader">アップローダフィルター「%s」を追加しますか？</string>
     <string name="filter_added">フィルターが追加されました。</string>
 
     <!-- Rating -->
@@ -222,7 +222,7 @@
     <string name="rating8">とてもいい</string>
     <string name="rating7">いい</string>
     <string name="rating6">まあまあ</string>
-    <string name="rating5">普通だな</string>
+    <string name="rating5">普通</string>
     <string name="rating4">悪い</string>
     <string name="rating3">とても悪い</string>
     <string name="rating2">目の障害になる</string>
@@ -252,19 +252,19 @@
     <string name="key_favorited">お気に入り追加済み</string>
     <string name="key_rating_count">評価回数</string>
     <string name="key_rating">評価</string>
-    <string name="key_torrents">トレント数</string>
-    <string name="key_torrent_url">トレント</string>
+    <string name="key_torrents">Torrent数</string>
+    <string name="key_torrent_url">Torrent</string>
 
     <!-- Gallery Comments -->
     <string name="gallery_comments">ギャラリーコメント</string>
     <string name="no_one_comments_gallery">コメントはまだありません。</string>
     <string name="comment_successfully">コメントを送信しました。</string>
     <string name="comment_failed">コメントに失敗しました。</string>
-    <string name="copy_comment_text">コメントをコピーしました。</string>
-    <string name="vote_up">賛成</string>
-    <string name="cancel_vote_up">賛成を取り消す</string>
+    <string name="copy_comment_text">コメントをコピー</string>
+    <string name="vote_up">いいね！</string>
+    <string name="cancel_vote_up">いいね！を消す</string>
     <string name="vote_down">反対</string>
-    <string name="cancel_vote_down">反対を取り消す</string>
+    <string name="cancel_vote_down">反対を消す</string>
     <string name="vote_up_successfully">いいね！しました。</string>
     <string name="cancel_vote_up_successfully">いいね！を取り消しました。</string>
     <string name="vote_down_successfully">反対しました。</string>
@@ -285,7 +285,7 @@
     <string name="download_state_downloaded">ダウンロード済み</string>
     <string name="download_state_failed">ダウンロードエラー</string>
     <string name="download_state_failed_2">%d 未完成</string>
-    <string name="download_state_finish">完成済み</string>
+    <string name="download_state_finish">ダウンロード完了</string>
     <string name="stat_509_alert_title">509エラー</string>
     <string name="stat_509_alert_text">ダウンロード制限に達しました。しばらくしてからもう一度やり直してください。</string>
     <string name="stat_download_done_title">ダウンロード完了</string>
@@ -312,9 +312,9 @@
     <string name="added_to_download_list">ダウンロードリストに追加しました</string>
 
     <!-- Download label -->
-    <string name="no_download_label">ここがダウンロードラベル</string>
+    <string name="no_download_label">ダウンロードラベルはここに表示されます</string>
     <string name="add">追加</string>
-    <string name="new_label_title">新ラベル</string>
+    <string name="new_label_title">ラベルを作成</string>
     <string name="label_text_is_empty">ラベルテキストを入力してください</string>
     <string name="label_text_is_invalid">「デフォルト」は無効なラベルです</string>
     <string name="label_text_exist">ラベルは既に存在しています</string>
@@ -324,7 +324,7 @@
 
     <!-- History -->
     <string name="no_history">閲覧履歴はここに表示されます</string>
-    <string name="clear_all">すべてクリア</string>
+    <string name="clear_all">すべて削除</string>
     <string name="clear_all_history">閲覧履歴をすべて削除しますか？</string>
 
     <!-- Filter -->
@@ -333,7 +333,7 @@
     <string name="filter_uploader">アップローダ</string>
     <string name="filter_tag">タグ</string>
     <string name="filter_tag_namespace">タグの名前空間</string>
-    <string name="delete_title_filter">タイトルフィルター「%s」を削除しますか？</string>
+    <string name="delete_title_filter">タイトル フィルター「%s」を削除しますか？</string>
     <string name="delete_uploader_filter">アップローダ フィルター「%s」を削除しますか？</string>
     <string name="delete_tag_filter">タグ フィルター「%s」を削除しますか？</string>
     <string name="delete_filter">フィルター「%s」を削除しますか？</string>
@@ -341,7 +341,7 @@
     <string name="add_filter">フィルターを追加</string>
     <string name="show_definition">ヘルプを表示</string>
     <string name="filter_text">フィルターテキスト</string>
-    <string name="filter_tip">タイトルフィルター：このキーワードがタイトルに含むギャラリーを除外します。\n\nアップローダー：このアップローダーがアップロードしたギャラリーを除外します。\n\nタグフィルター：このタグを含むギャラリーを除外します。ギャラリーリストを取得する時間が長くなります。\n\nタグセットフィルター：このタグセットを含むギャラリーを除外します。ギャラリーリストを取得する時間が長くなります。</string>
+    <string name="filter_tip">タイトルフィルター：タイトルにキーワードがあるギャラリーを除外します。\n\nアップローダ：このアップローダがアップロードしたギャラリーを除外します。\n\nタグフィルター：このタグを含むギャラリーを除外します。ギャラリーリストを取得するのにもっと時間がかかります。\n\nタグセットフィルター：このタグセットを含むギャラリーを除外します。ギャラリーリストを取得するのにもっと時間がかかります。</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">パターン保護を設定</string>
@@ -352,7 +352,7 @@
     <!-- UConfig Activity -->
     <string name="u_config">EHentaiの設定</string>
     <string name="apply">適用</string>
-    <string name="apply_tip">右上隅のチェックマークをクリックして設定を保存します。</string>
+    <string name="apply_tip">右上隅のチェックマークをタップして設定を保存します。</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">ページ%d</string>
@@ -374,12 +374,12 @@
     <string name="settings_u_config">EHentaiの設定</string>
     <string name="settings_u_config_summary">EHentaiサイト上の設定</string>
     <string name="settings_eh_gallery_site">ギャラリーサイト</string>
-    <string name="settings_eh_list_mode">リストモード</string>
-    <string name="settings_eh_list_mode_detail">詳細</string>
+    <string name="settings_eh_list_mode">リスト表示モード</string>
+    <string name="settings_eh_list_mode_detail">詳細情報</string>
     <string name="settings_eh_list_mode_thumb">サムネイル</string>
-    <string name="settings_eh_detail_size">詳細サイズ</string>
-    <string name="settings_eh_detail_size_long">長</string>
-    <string name="settings_eh_detail_size_short">短</string>
+    <string name="settings_eh_detail_size">詳細情報のサイズ</string>
+    <string name="settings_eh_detail_size_long">長い</string>
+    <string name="settings_eh_detail_size_short">短い</string>
     <string name="settings_eh_thumb_size">サムネイルサイズ</string>
     <string name="settings_eh_thumb_size_large">大</string>
     <string name="settings_eh_thumb_size_middle">中</string>
@@ -388,7 +388,7 @@
     <string name="settings_eh_thumb_resolution_summary">%s。解像度を正しく設定しないと、サムネイルを取得できない場合があります</string>
     <string name="settings_eh_thumb_resolution_auto">自動</string>
     <string name="settings_eh_fix_thumb_url">サムネイルリンクを修正</string>
-    <string name="settings_eh_default_categories">ホームページをカテゴリ表示</string>
+    <string name="settings_eh_default_categories">ホームページに表示されるカテゴリ</string>
     <string name="settings_eh_default_categories_summary">ホームページに表示されるデフォルトカテゴリ</string>
     <string name="settings_eh_excluded_tag_namespaces">タグセットを除外</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">指定したタグセットをデフォルト検索から除外</string>
@@ -401,11 +401,11 @@
     <string name="settings_eh_show_jpn_title_summary_on">日本語タイトルを表示しようとします。有効にすると、ギャラリーリストを取得するのにもっと時間がかかることがあります</string>
     <string name="settings_eh_show_jpn_title_summary_off">デフォルトのタイトルを表示します。多くの場合は英語のタイトルです。</string>
     <string name="settings_eh_filter">フィルター</string>
-    <string name="settings_eh_filter_summary">タイトル、アップローダ、タグ、タグセットをフィルター</string>
+    <string name="settings_eh_filter_summary">タイトル、アップローダ、タグとタグセットをフィルター</string>
     <string name="settings_eh_cellular_network_warning">モバイルネットワーク警告</string>
 
     <string name="settings_read">閲覧</string>
-    <string name="settings_read_screen_rotation">スクリーン方向</string>
+    <string name="settings_read_screen_rotation">画面の向き</string>
     <string name="settings_read_screen_rotation_default">システムデフォルト</string>
     <string name="settings_read_screen_rotation_portrait">縦画面</string>
     <string name="settings_read_screen_rotation_landscape">横画面</string>
@@ -417,7 +417,7 @@
     <string name="settings_read_page_scaling_actual_size">元のサイズ</string>
     <string name="settings_read_page_scaling_fit_to_width">幅に合わせる</string>
     <string name="settings_read_page_scaling_fit_to_height">長さに合わせる</string>
-    <string name="settings_read_page_scaling_fit_to_screen">スクリーンに合わせる</string>
+    <string name="settings_read_page_scaling_fit_to_screen">画面に合わせる</string>
     <string name="settings_read_page_scaling_fixed_scale">固定したスケール</string>
     <string name="settings_read_start_position">ページを開く位置</string>
     <string name="settings_read_start_position_top_left">左上隅</string>
@@ -444,14 +444,14 @@
     <string name="settings_download_continue">続行</string>
     <string name="settings_download_multi_thread_download">ダウンロードスレッド数</string>
     <string name="settings_download_multi_thread_download_summary">同時に最大%s枚の画像をダウンロードできる</string>
-    <string name="settings_download_preload_image">画像を事前にロード</string>
-    <string name="settings_download_preload_image_summary">%s枚の画像を事前にロードします</string>
+    <string name="settings_download_preload_image">画像をプリロード</string>
+    <string name="settings_download_preload_image_summary">%s枚の画像をプリロードします</string>
     <string name="settings_download_image_resolution">画像解像度</string>
     <string name="settings_download_image_resolution_summary">現在は%sです。1280xを超える解像度は不安定です</string>
     <string name="settings_download_image_resolution_auto">自動</string>
     <string name="settings_download_download_origin_image">オリジナル画像をダウンロード</string>
     <string name="settings_download_media_scan">メディアスキャンを許可</string>
-    <string name="settings_download_media_scan_summary_on">この場合はギャラリーアプリは他人に見せないほうがいいでしょう</string>
+    <string name="settings_download_media_scan_summary_on">ギャラリーアプリを他人に見せないでください</string>
     <string name="settings_download_restore_download_items">ダウンロードタスクを復元</string>
     <string name="settings_download_restore_download_items_summary">ダウンロードディレクトリのダウンロードタスクを復元</string>
     <string name="settings_download_restoring">復元中</string>
@@ -459,7 +459,7 @@
     <string name="settings_download_restore_failed">復元できませんでした</string>
     <string name="settings_download_restore_successfully">%s件のタスクが復元されました</string>
     <string name="settings_download_clean_redundancy">ダウンロードフォルダの不要なファイルを整理</string>
-    <string name="settings_download_clean_redundancy_summary">ダウンロードディレクトリからダウンロードタスクにない画像ファイルを削除します</string>
+    <string name="settings_download_clean_redundancy_summary">ダウンロードディレクトリからダウンロードタスクにない画像ファイルを削除</string>
     <string name="settings_download_clean_redundancy_no_redundancy">不要なファイルが見つかりませんでした</string>
     <string name="settings_download_clean_redundancy_done">%d件のファイルを削除しました</string>
 
@@ -470,14 +470,14 @@
     <string name="settings_advanced_dump_logcat_summary">ログを外部ストレージに保存</string>
     <string name="settings_advanced_dump_logcat_failed">ログをエクスポートできませんでした</string>
     <string name="settings_advanced_dump_logcat_to">ログを%sにエクスポートしました</string>
-    <string name="settings_advanced_clear_download_path_cache">ギャラリーのダウンロードパスキャッシュをクリア</string>
-    <string name="settings_advanced_clear_download_path_cache_message">ギャラリーのダウンロードパスキャッシュをクリア？</string>
+    <string name="settings_advanced_clear_download_path_cache">ギャラリーのダウンロード パス キャッシュをクリア</string>
+    <string name="settings_advanced_clear_download_path_cache_message">ギャラリーのダウンロード パス キャッシュをクリアしますか？</string>
     <string name="settings_advanced_clear_memory_cache">メモリキャッシュをクリア</string>
     <string name="settings_advanced_clear_memory_cache_summary">サムネイルとギャラリー情報のメモリキャッシュをクリア</string>
     <string name="settings_advanced_read_cache_size">閲覧キャッシュのサイズ</string>
     <string name="settings_privacy_pattern_protection_title">パターン保護</string>
     <string name="settings_privacy_pattern_protection_not_set">パターン保護は設定されていません</string>
-    <string name="settings_privacy_pattern_protection_set">パターン保護は設定済みです</string>
+    <string name="settings_privacy_pattern_protection_set">パターン保護は設定されています</string>
     <string name="settings_advanced_export_data">データをエクスポート</string>
     <string name="settings_advanced_export_data_summary">ダウンロードリストやクイック検索などのデータを外部ストレージにエクスポートします</string>
     <string name="settings_advanced_export_data_to">データを%sにエクスポート</string>
@@ -498,11 +498,11 @@
     <string name="settings_about_donate_summary">Alipay：seven332$163.com</string>
     <string name="settings_about_donate_message">ご寄付ありがとうございます。これからもいろんなアプリの開発を進めさせていただきます。\n\nAlipay：seven332$163.com</string>
     <string name="settings_about_donate_toast">メールアドレスがクリップボードにコピーされました</string>
-    <string name="settings_privacy_enable_analytics">データ統計を有効化</string>
+    <string name="settings_privacy_enable_analytics">データ統計に参加</string>
     <string name="settings_privacy_about_analytics">データ統計について</string>
     <string name="settings_about_version">バージョン番号</string>
-    <string name="settings_about_check_for_updates">アップデートを確認</string>
-    <string name="settings_about_beta_update_channel">ベータ版にアップデート</string>
+    <string name="settings_about_check_for_updates">更新を確認</string>
+    <string name="settings_about_beta_update_channel">ベータ版を使用</string>
     <string name="settings_about_beta_update_channel_summary">ベータ版では予期せぬエラーが発生することがあります</string>
 
     <!-- ExcludedLanguagesScene -->
@@ -540,7 +540,7 @@
     <string name="ip">IP</string>
     <string name="port">ポート</string>
     <string name="Passkey">パスキー</string>
-    <string name="domain_not_supported">ドメイン名はサポートしない</string>
+    <string name="domain_not_supported">ドメイン名には対応していません</string>
     <string name="invalid_port">無効なポート</string>
 
     <string name="cant_get_data_dir">データフォルダを取得できませんでした</string>
@@ -563,7 +563,7 @@
     <string name="delete_favorites_dialog_title">お気に入りから削除</string>
     <string name="delete_favorites_dialog_message">%d件の項目をお気に入りリストから削除します？</string>
     <string name="move_favorites_dialog_title">お気に入りを移動</string>
-    <string name="default_favorites_collection">既定お気に入り</string>
+    <string name="default_favorites_collection">既定のお気に入りリスト</string>
     <string name="let_me_select">手動で選択</string>
     <string name="favorites_info">お気に入り情報</string>
     <string name="collections">お気に入りコレクション</string>
@@ -581,7 +581,7 @@
     <string name="guide_download_labels_title">ダウンロードラベル</string>
     <string name="guide_download_labels_text">右からスワイプすると、ダウンロードラベルパネルが開きます</string>
     <string name="guide_download_thumb_title">ギャラリーの詳細</string>
-    <string name="guide_download_thumb_text">サムネイルをクリックすると、ギャラリー詳細を表示します</string>
+    <string name="guide_download_thumb_text">サムネイルをタップすると、ギャラリー詳細を表示します</string>
     <string name="guide_gallery_left">ページをめくる</string>
     <string name="guide_gallery_right">ページをめくる</string>
     <string name="guide_gallery_menu">メニュー</string>
@@ -619,16 +619,16 @@
     <string name="download_archive_started">圧縮パッケージのダウンロードを開始しました</string>
     <string name="download_archive_failure">圧縮パッケージをダウンロードできませんでした</string>
     <string name="archive">圧縮パッケージ</string>
-    <string name="download_archive_failure_no_hath">圧縮パッケージのダウンロードにはH@Hのクライアントが必要です</string>
+    <string name="download_archive_failure_no_hath">圧縮パッケージのダウンロードにはH@Hクライアントが必要です</string>
     <string name="settings_privacy">プライバシー</string>
     <string name="settings_privacy_secure">スクリーンキャプチャを防ぐ</string>
-    <string name="settings_privacy_secure_summary">有効にすると、アプリの画面をキャプチャーできなくなり、アプリの内容も最近のアプリリストに表示されません。\n\n変更を適用するには、アプリを再起動してください。</string>
+    <string name="settings_privacy_secure_summary">有効にすると、アプリの画面をキャプチャーできなくなり、アプリの内容も「最近のアプリ」リストに表示されません。\n\n変更を適用するには、アプリを再起動してください。</string>
     <string name="default_download_label_name">デフォルト</string>
     <string name="no_filter">フィルターはここに表示されます</string>
     <string name="settings_download_pick_dir_kk">デバイスをroot化してパッチを適用しないと、Android 4.4以降では外部SDカードへ書き込めません。が、SDカード/Android/data/com.hippo.ehviewerは例外で書き込めます。</string>
     <string name="settings_download_media_scan_summary_off">ほとんどのギャラリーアプリはダウンロードパスの内容を表示しません</string>
     <string name="settings_download_download_origin_image_summary">有効にすると、ダウンロード制限にもっとはやく達する恐れがあります</string>
-    <string name="settings_advanced_clear_download_path_cache_summary">ギャラリー ダウンロード パスは無効なようで、もう一度ダウンロードする必要があります。ダウンロードパスのキャッシュをクリアしてみてください。</string>
+    <string name="settings_advanced_clear_download_path_cache_summary">ギャラリー ダウンロード パスは無効なようで、もう一度ダウンロードする必要があると表示されている場合は、ダウンロードパスのキャッシュをクリアしてみてください。</string>
     <string name="clipboard_gallery_url_dialog_title">ギャラリーリンクが発見されました</string>
     <string name="clipboard_gallery_url_dialog_message">クリップボードにあるギャラリーにアクセスしますか？</string>
     <string name="page_menu_save_to">名前を付けて保存</string>
@@ -646,15 +646,13 @@
     <string name="invalid_ip">無効なIPです</string>
     <string name="settings_advanced_built_in_hosts_title">既定hosts.txt</string>
     <string name="guide_gallery_long_click">メニューを呼び出すには、長押ししてください</string>
-    <string name="star_2">2つ星</string>
-    <string name="star_4">4つ星</string>
     <string name="settings_about_changelog">変更履歴</string>
     <string name="app_language_system">システム言語（既定）</string>
     <string name="settings_about_telegram">Telegram</string>
-    <string name="settings_about_auto_check_for_updates">アップデートを自動で確認</string>
+    <string name="settings_about_auto_check_for_updates">更新を自動で確認</string>
     <string name="download_service">ダウンロードサービス</string>
-    <string name="settings_advanced_built_in_hosts_summary">ホストをアプリ既定のIPにマッピング\nカスタムhosts.txtに上書きされます</string>
+    <string name="settings_advanced_built_in_hosts_summary">ホストをアプリ既定のIPにマッピング\nカスタムhosts.txtに上書きされます。</string>
     <string name="settings_advanced_custom_hosts_title">カスタムhosts.txt</string>
-    <string name="settings_advanced_custom_hosts_summary">ホスト名をIPにマッピング\n既定のhosts.txtを上書きできます</string>
+    <string name="settings_advanced_custom_hosts_summary">ホスト名をIPにマッピング\n既定のhosts.txtを上書きできます。</string>
 
 </resources>
