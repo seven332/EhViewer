@@ -448,7 +448,7 @@
     <string name="settings_download_continue">Continuer</string>
     <string name="settings_download_media_scan">Permettre le scannage des fiches multimédias</string>
     <string name="settings_download_media_scan_summary_on">Ne montre jamais vos applications galerie à personne</string>
-    <string name="settings_download_media_scan_summary_off">La plupart d\'applications galerie ignore les images dans le chemin de téléchargement</string>
+    <string name="settings_download_media_scan_summary_off">La plupart d\'applications galerie ignorent les images dans le chemin de téléchargement</string>
     <string name="settings_download_multi_thread_download">Téléchargement multi-thread</string>
     <string name="settings_download_multi_thread_download_summary">Jusqu\'à %s image(s)</string>
     <string name="settings_download_preload_image">Charger les images d\'avance</string>
@@ -456,7 +456,7 @@
     <string name="settings_download_image_resolution">Resolution d\'image</string>
     <string name="settings_download_image_resolution_summary">%s, résolutions mieux que 1280x riquent de ne pas fonctionner</string>
     <string name="settings_download_image_resolution_auto">Auto</string>
-    <string name="settings_download_download_origin_image">Download original image</string>
+    <string name="settings_download_download_origin_image">Télécharger l'images originales</string>
     <string name="settings_download_download_origin_image_summary">Vous allez obtenir l\'erreur 509 plus facilement</string>
     <string name="settings_download_restore_download_items">Rétablir les galeries téléchargées</string>
     <string name="settings_download_restore_download_items_summary">Rétablir tous objets déjà téléchargés dans la destination de téléchargement</string>
