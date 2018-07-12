@@ -25,7 +25,7 @@
     <string name="cookie_explain">Die Cookies speichern in Browser deine Informationen. Falls du nicht wisst, was die Cookie sind, suche im Internet darüber.</string>
     <string name="text_is_empty">Der Text wird nicht eingegeben</string>
     <string name="waring">Achtung</string>
-    <string name="wrong_cookie_warning">Die eingegebene Cookies sehen korrekt nicht aus. Überprüfe sie.</string>
+    <string name="wrong_cookie_warning">Die eingegebenen Cookies sehen korrekt nicht aus. Überprüfe sie.</string>
     <string name="i_will_check_it">In Ordnung!</string>
     <string name="i_dont_think_so">Sie sind absolut korrekt!</string>
     <string name="found_cookies">Cookies werden gefunden</string>
@@ -127,10 +127,10 @@
     <string name="search_cover">Nach den Umschlag suchen</string>
     <string name="no_tags">Kein Etikett</string>
     <string name="no_comments">Kein Kommentar</string>
-    <string name="no_more_comments">Keine weitere Kommentare</string>
+    <string name="no_more_comments">Keine weiteren Kommentare</string>
     <string name="more_comment">Weitere Kommentare</string>
     <string name="no_previews">Keine Vorschau</string>
-    <string name="no_more_previews">Keine weitere Vorschauen</string>
+    <string name="no_more_previews">Keine weiteren Vorschauen</string>
     <string name="more_previews">Weitere Vorschauen</string>
     <string name="refresh">Aktualisieren</string>
     <string name="open_in_other_app">Öffnen mit …</string>
@@ -382,7 +382,7 @@
     <string name="settings_download_image_resolution_auto">Automatisch</string>
     <string name="settings_download_download_origin_image">Originale Bilder herunterladen</string>
     <string name="settings_download_download_origin_image_summary">Wenn es aktiviert wird, wird der 509-Fehler dir schneller widerfahren</string>
-    <string name="settings_download_restore_download_items">Download-Items wiederherstellen</string>
+    <string name="settings_download_restore_download_items">Download-Elemente wiederherstellen</string>
     <string name="settings_download_restore_download_items_summary">Alle Download-Elemente im Downloadspfad wiederherstellen</string>
     <string name="settings_download_restoring">Elemente werden wiederhergestellt</string>
     <string name="settings_download_restore_not_found">Keine zu wiederhestellenden Elemente</string>
@@ -390,7 +390,7 @@
     <string name="settings_download_restore_successfully">%d Element(e) wiederhergestellt</string>
     <string name="settings_download_clean_redundancy">Unnötige Dateien löschen</string>
     <string name="settings_download_clean_redundancy_summary">Bilddateien, die sich im Downloadpfad befinden, aber nicht in Downloadsliste, löschen</string>
-    <string name="settings_download_clean_redundancy_no_redundancy">Keine zu löschend Dateien gefunden</string>
+    <string name="settings_download_clean_redundancy_no_redundancy">Keine zu löschenden Dateien gefunden</string>
     <string name="settings_download_clean_redundancy_done">Reinigung abgeschlossen. %d Datei(en) wurde(n) gelöscht.</string>
     <string name="settings_advanced">Erweiterte Optionen</string>
     <string name="settings_advanced_save_parse_error_body">HTML-Datei beim Parsing-Fehler speichern</string>
