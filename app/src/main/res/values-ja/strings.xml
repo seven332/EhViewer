@@ -71,15 +71,15 @@
     <string name="error_not_found">見つかりませんでした。</string>
     <string name="error_empty">空</string>
     <string name="error_invalid_zip_file">無効なzipファイルです。</string>
-    <string name="error_reading_failed">読み取りに失敗しました。</string>
+    <string name="error_reading_failed">読み込めませんでした。</string>
     <string name="error_out_of_range">範囲外です。</string>
-    <string name="error_write_failed">書き込みに失敗しました。</string>
-    <string name="error_parse_error">分析に失敗しました。</string>
-    <string name="error_509">509</string>
+    <string name="error_write_failed">書き込めませんでした</string>
+    <string name="error_parse_error">ファイル解析に失敗しました。</string>
+    <string name="error_509">509エラー</string>
     <string name="error_invalid_url">無効なリンクです。</string>
     <string name="error_get_ptoken_error">pTokenの取得に失敗しました。</string>
     <string name="error_invalid_specify_gallery">ギャラリーのキーワードのフォーマット：「618395 0439fa3666」</string>
-    <string name="error_cant_create_temp_file">臨時ファイルを作成できませんでした</string>
+    <string name="error_cant_create_temp_file">一時ファイルを作成できませんでした</string>
     <string name="error_cant_save_image">画像を保存できませんでした</string>
     <string name="error_invalid_number">無効な数字です</string>
 
