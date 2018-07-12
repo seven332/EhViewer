@@ -157,16 +157,16 @@
 
     <string name="quick_search">Recherche rapide</string>
     <string name="quick_search_tip">Appuyez sur \"+\" pour ajouter une Recherche rapide</string>
-    <string name="add_quick_search_dialog_title">Ajouter la recherche rapide</string>
+    <string name="add_quick_search_dialog_title">Ajouter la Recherche rapide</string>
     <string name="name_is_empty">Entrez un nom</string>
     <string name="delete">Supprimer</string>
-    <string name="delete_quick_search_title">Supprimer les recherches rapides</string>
+    <string name="delete_quick_search_title">Supprimer les Recherches rapides</string>
     <string name="delete_quick_search_message">Supprimer \"%s\" ?</string>
     <string name="no_quick_search">Recherches rapides s\'afficheront ici.</string>
-    <string name="add_quick_search_tip">Le resultat de la liste de galerie sera sauvegardé comme une recherche rapide. Cherchez d\'abord pour sauvegarder l\'état du panneau recherche.</string>
+    <string name="add_quick_search_tip">Le resultat de la liste de galerie sera sauvegardé comme une Recherche rapide. Cherchez d\'abord pour sauvegarder l\'état du panneau recherche.</string>
     <string name="readme">README</string>
-    <string name="image_search_not_quick_search">Impossible d\'ajouter recherche d\'une image comme une recherche rapide.</string>
-    <string name="duplicate_quick_search">Une même recherche rapide déjà existe. Son nom est \"%s\".</string>
+    <string name="image_search_not_quick_search">Impossible d\'ajouter recherche d\'une image comme une Recherche rapide.</string>
+    <string name="duplicate_quick_search">Une Recherche rapide avec le nom \"%s\" déjà existe.</string>
     <string name="duplicate_name">Ce nom déjà existe</string>
 
     <string name="go_to_hint">Page %1$d, avec un totale de %2$d pages</string>
