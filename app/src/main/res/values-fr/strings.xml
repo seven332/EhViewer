@@ -181,7 +181,7 @@
     <string name="error_cannot_find_gallery">La galerie introuvable</string>
     <string name="download">Télécharger</string>
     <string name="read">Lire</string>
-    <string name="more_information">Plus d\'informations</string>
+    <string name="more_information">Voir plus d\'informations</string>
     <plurals name="page_count">
         <item quantity="one">%d page</item>
         <item quantity="other">%d pages</item>
@@ -197,10 +197,10 @@
     <string name="no_tags">Aucun tag</string>
     <string name="no_comments">Aucun commentaire</string>
     <string name="no_more_comments">Pas d\'autres commentaires</string>
-    <string name="more_comment">Plus de commentaires</string>
+    <string name="more_comment">Voir plus de commentaires</string>
     <string name="no_previews">Aucun aperçu</string>
     <string name="no_more_previews">Pas d\'autres aperçus</string>
-    <string name="more_previews">Plus aperçus</string>
+    <string name="more_previews">Voir plus d\'aperçus</string>
     <string name="refresh">Rafraîchir</string>
     <string name="open_in_other_app">Ouvrir avec une autre appli</string>
     <string name="rate_successfully">Noté avec succès</string>
