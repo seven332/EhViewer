@@ -111,13 +111,14 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
             Analytics.start(this);
         }
 
-        // Check no media file
-        UniFile downloadLocation = Settings.getDownloadLocation();
-        if (Settings.getMediaScan()) {
-            CommonOperations.removeNoMediaFile(downloadLocation);
-        } else {
-            CommonOperations.ensureNoMediaFile(downloadLocation);
-        }
+        // Disable no media file checker for now. Some devices stuck here.
+//        // Check no media file
+//        UniFile downloadLocation = Settings.getDownloadLocation();
+//        if (Settings.getMediaScan()) {
+//            CommonOperations.removeNoMediaFile(downloadLocation);
+//        } else {
+//            CommonOperations.ensureNoMediaFile(downloadLocation);
+//        }
 
         // Clear temp dir
         clearTempDir();
