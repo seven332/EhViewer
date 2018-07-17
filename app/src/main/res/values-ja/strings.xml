@@ -362,7 +362,7 @@
     <string name="page_menu_add_bookmark">ブックマークに追加</string>
     <string name="gallery_menu_title">メニュー</string>
     <string name="share_image">画像を共有</string>
-    <string name="image_saved">画像は%sに保存された</string>
+    <string name="image_saved">画像は%sに保存されました</string>
 
     <!-- Settings -->
     <string name="settings_eh">EH</string>
