@@ -16,7 +16,7 @@
     <string name="sign_in">Anmelden</string>
     <string name="register">Konto erstellen</string>
     <string name="sign_in_via_webview">Mit WebView anmelden</string>
-    <string name="sign_in_via_cookies">Mit die Cookies anmelden</string>
+    <string name="sign_in_via_cookies">Mit den Cookies anmelden</string>
     <string name="display_name_dialog_title">Spitzname eingeben</string>
     <string name="display_name">Spitzname</string>
     <string name="display_name_is_empty">Spitzname wird nicht eingegeben</string>
@@ -310,7 +310,7 @@
     <string name="settings_eh_detail_size_short">Kurz</string>
     <string name="settings_eh_thumb_size">Größe des Miniaturbilds</string>
     <string name="settings_eh_thumb_size_large">Groß</string>
-    <string name="settings_eh_thumb_size_middle">Mittelteil</string>
+    <string name="settings_eh_thumb_size_middle">Mittel</string>
     <string name="settings_eh_thumb_size_small">Klein</string>
     <string name="settings_eh_thumb_resolution">Auslösung der Miniaturbilder</string>
     <string name="settings_eh_thumb_resolution_summary">Nun %s. Mit abnormale Auslösung kann die Miniaturbilder nicht normalerweise geladen werden.</string>
@@ -450,7 +450,7 @@
     <string name="error_password_cannot_empty">Gibt das Passwort ein</string>
     <string name="skip_signing_in">Anmeldung überspringen</string>
     <string name="sign_in_failed">Anmeldung fehlgeschlagen</string>
-    <string name="sign_in_failed_plain">Der Fehler könnte wegen des Updates der Webseite aufgetretet werden. Versuche, dich anzumelden, indem du WebView benutzt oder Cookie eingeben, oder überspringe die Anmeldung mit die Taste unter ANMELDEN-Taste. Du könntest aber den Sad Panda sehen, wenn du dich nicht anmelden. Falls du dich mit Version unter 0.6.x anmeldetest, versuche, dich mit Cookie anzumelden.</string>
+    <string name="sign_in_failed_plain">Der Fehler könnte wegen des Updates der Webseite aufgetretet werden. Versuche, dich anzumelden, indem du WebView benutzt oder Cookie eingeben, oder überspringe die Anmeldung mit der Taste unter ANMELDEN-Taste. Du könntest aber den Sad Panda sehen, wenn du dich nicht anmelden. Falls du dich mit Version unter 0.6.x anmeldetest, versuche, dich mit Cookie anzumelden.</string>
     <string name="content_layout_restore_tip">Zum Wiederholen antippen</string>
     <string name="write_rationale">EhViewer fordert jetzt die Genehmigung WRITE_EXTERNAL_STORAGE an, um die Galerie herunterzuladen. Die Genehmigung gewähren?</string>
     <string name="you_rejected_me">Mir ist weh ums Herz</string>
@@ -478,7 +478,7 @@
     <string name="settings_about_check_for_updates">Auf Update überprüfen</string>
     <string name="settings_about_auto_check_for_updates">Auf Updates automatisch überprüfen</string>
     <string name="settings_about_beta_update_channel">Beta-Version testen</string>
-    <string name="settings_about_beta_update_channel_summary">Beta-Version könnte nicht funktionieren</string>
+    <string name="settings_about_beta_update_channel_summary">Beta-Version kann funktionieren möglicherweise nicht</string>
     <string name="enable">Aktivieren</string>
     <string name="enabled">Aktiviert</string>
     <string name="disabled">Nicht aktiviert</string>
