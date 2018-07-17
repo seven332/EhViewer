@@ -234,7 +234,7 @@
     <string name="key_posted">Publicado</string>
     <string name="key_parent">Padre</string>
     <string name="key_visible">Visible</string>
-    <string name="key_language">Lenguaje</string>
+    <string name="key_language">Idioma</string>
     <string name="key_pages">Páginas</string>
     <string name="key_size">Tamaño</string>
     <string name="key_favorite_count">Número de favoritos</string>
@@ -457,7 +457,7 @@
     <string name="settings_advanced_clear_memory_cache">Borrar caché de memoria</string>
     <string name="settings_advanced_clear_memory_cache_summary">Borrar vistas previas, galerías, información y caché de memoria</string>
     <string name="settings_advanced_read_cache_size">Tamaño del caché (archivos temporales)</string>
-	<string name="settings_advanced_app_language_title">Lenguaje de la aplicación</string>
+	<string name="settings_advanced_app_language_title">Idioma de la aplicación</string>
     <string name="settings_privacy_pattern_protection_title">Protección por patrón</string>
     <string name="settings_privacy_pattern_protection_not_set">No se ha configurado la protección por patrón</string>
     <string name="settings_privacy_pattern_protection_set">La protección por patrón ha sido configurado</string>
