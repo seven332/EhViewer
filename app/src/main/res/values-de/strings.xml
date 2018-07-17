@@ -485,7 +485,7 @@
     <string name="ip">IP</string>
     <string name="port">Port</string>
     <string name="Passkey">Schlüssel</string>
-    <string name="domain_not_supported">Die Domain ist nicht unterstützt.</string>
+    <string name="domain_not_supported">Der Domain ist nicht unterstützt.</string>
     <string name="invalid_port">Ungültiger Port</string>
     <string name="cant_get_data_dir">Datenverzeichnis konnte geladen werden</string>
     <string name="cant_find_any_data">Keine Daten gefunden</string>
