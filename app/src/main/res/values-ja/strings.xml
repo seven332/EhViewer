@@ -207,8 +207,8 @@
     <string name="torrents">トレント</string>
     <string name="favorited">追加済み</string>
     <string name="not_favorited">未追加</string>
-    <string name="add_favorites_dialog_title">お気に入りに追加しました。</string>
-    <string name="remember_favorite_collection">お気に入りを記憶します。</string>
+    <string name="add_favorites_dialog_title">お気に入りに追加</string>
+    <string name="remember_favorite_collection">お気に入りを記憶</string>
     <string name="add_to_favorite_success">お気に入りに追加しました。</string>
     <string name="remove_from_favorite_success">お気に入りから削除しました。</string>
     <string name="add_to_favorite_failure">お気に入りに追加失敗しました。</string>
