@@ -632,7 +632,7 @@
     <string name="u_config">Ajustes EHentai</string>
     <string name="apply">Aplicar</string>
     <string name="apply_tip">Toca la marca de verificación para guardar los cambios</string>
-    <string name="hosts">Personalizado hosts.txt</string>
+    <string name="hosts">hosts.txt personalizado </string>
     <string name="hosts_tip">hosts.txt</string>
     <string name="hosts_host">Anfitrión</string>
     <string name="hosts_ip">IP</string>
