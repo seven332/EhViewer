@@ -73,11 +73,11 @@
     <string name="gallery_list_search_bar_hint_e_hentai">E-Hentai durchsuchen</string>
     <string name="gallery_list_empty_hit">Die Welt ist so groß und der Panda sitzt ganz allein</string>
     <string name="search">Suchen</string>
-    <string name="keyword_search">"Suche nach das Schlüsselwort "</string>
-    <string name="image_search">Suche nach ein Bild</string>
+    <string name="keyword_search">"Suche nach dem Schlüsselwort "</string>
+    <string name="image_search">Suche nach einem Bild</string>
     <string name="search_normal">Normale Suche</string>
     <string name="search_advance">Erweiterte Optionen</string>
-    <string name="search_image">Suche nach ein Bild</string>
+    <string name="search_image">Suche nach einem Bild</string>
     <string name="search_normal_search">Normale Suche</string>
     <string name="search_specify_uploader">Einen Uploader spezifizieren</string>
     <string name="search_specify_tag">Ein Etikett spezifizieren</string>
@@ -124,7 +124,7 @@
     <string name="share">Teilen</string>
     <string name="rate">Bewerten</string>
     <string name="similar_gallery">Ähnlich</string>
-    <string name="search_cover">Nach den Umschlag suchen</string>
+    <string name="search_cover">Nach dem Umschlag suchen</string>
     <string name="no_tags">Kein Etikett</string>
     <string name="no_comments">Kein Kommentar</string>
     <string name="no_more_comments">Keine weiteren Kommentare</string>
@@ -344,9 +344,9 @@
     <string name="settings_read_reading_direction_top_to_bottom">Von oben nach unter</string>
     <string name="settings_read_page_scaling">Seitenskalierung</string>
     <string name="settings_read_page_scaling_actual_size">Originale Größe</string>
-    <string name="settings_read_page_scaling_fit_to_width">Nach die Länge anpassen</string>
-    <string name="settings_read_page_scaling_fit_to_height">Nach die Höhe anpassen</string>
-    <string name="settings_read_page_scaling_fit_to_screen">Nach den Bildschirm anpassen</string>
+    <string name="settings_read_page_scaling_fit_to_width">Nach der Länge anpassen</string>
+    <string name="settings_read_page_scaling_fit_to_height">Nach der Höhe anpassen</string>
+    <string name="settings_read_page_scaling_fit_to_screen">Nach dem Bildschirm anpassen</string>
     <string name="settings_read_page_scaling_fixed_scale">Festgesetzte Größe</string>
     <string name="settings_read_start_position">Seiten umblättern von</string>
     <string name="settings_read_start_position_top_left">Oben links</string>
