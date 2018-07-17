@@ -189,7 +189,7 @@
     <string name="no_one_comments_gallery">Keine Kommentare</string>
     <string name="comment_successfully">Kommentar erfolgreich gesendet</string>
     <string name="comment_failed">Kommentar nicht gesendet</string>
-    <string name="copy_comment_text">Inhant des Kommentars kopieren</string>
+    <string name="copy_comment_text">Inhalt des Kommentars kopieren</string>
     <string name="vote_up">Für den Kommentar stimmen</string>
     <string name="cancel_vote_up">Positive Stimmung abbrechen</string>
     <string name="vote_down">Gegen den Kommentar stimmen</string>
