@@ -470,7 +470,7 @@
     <string name="settings_advanced_dump_logcat_summary">ログを外部ストレージに保存</string>
     <string name="settings_advanced_dump_logcat_failed">ログをエクスポートできませんでした</string>
     <string name="settings_advanced_dump_logcat_to">ログを%sにエクスポートしました</string>
-    <string name="settings_advanced_clear_download_path_cache">ギャラリーのダウンロード パス キャッシュをクリア</string>
+    <string name="settings_advanced_clear_download_path_cache">ｷﾞｬﾗﾘｰのﾀﾞｳﾝﾛｰﾄﾞﾊﾟｽをｸﾘｱ</string>
     <string name="settings_advanced_clear_download_path_cache_message">ギャラリーのダウンロード パス キャッシュをクリアしますか？</string>
     <string name="settings_advanced_clear_memory_cache">メモリキャッシュをクリア</string>
     <string name="settings_advanced_clear_memory_cache_summary">サムネイルとギャラリー情報のメモリキャッシュをクリア</string>
