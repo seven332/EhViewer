@@ -272,7 +272,7 @@
     <string name="enable_fingerprint">Mit Fingerabdrücke entsperren</string>
     <string name="u_config">EHentai-Einstellungen</string>
     <string name="apply">Übernehmen</string>
-    <string name="apply_tip">Zum Speichern der Einstellungen ans Häkchen tippen</string>
+    <string name="apply_tip">Zum Speichern der Einstellungen aufHäkchen tippen</string>
     <string name="hosts">Angepasstes hosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
     <string name="hosts_host">Host</string>
