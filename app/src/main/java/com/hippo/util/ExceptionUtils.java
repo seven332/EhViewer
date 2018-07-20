@@ -18,19 +18,17 @@ package com.hippo.util;
 
 
 import android.support.annotation.NonNull;
-
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.network.StatusCodeException;
-
-import org.apache.http.conn.ConnectTimeoutException;
-
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import javax.net.ssl.SSLException;
+import org.apache.http.conn.ConnectTimeoutException;
 
 public final class ExceptionUtils {
 
@@ -56,7 +54,7 @@ public final class ExceptionUtils {
             return sb.toString();
         } else if (e instanceof ProtocolException && e.getMessage().startsWith("Too many follow-up requests:")) {
             return GetText.getString(R.string.error_redirection);
-        } else if (e instanceof ProtocolException || e instanceof SocketException) {
+        } else if (e instanceof ProtocolException || e instanceof SocketException || e instanceof SSLException) {
             return GetText.getString(R.string.error_socket);
         } else if (e instanceof EhException) {
             return e.getMessage();
