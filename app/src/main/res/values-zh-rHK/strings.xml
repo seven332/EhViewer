@@ -60,7 +60,7 @@
     <string name="clipboard_gallery_url_dialog_title">發現畫廊</string>
     <string name="clipboard_gallery_url_dialog_message">剪切板裏有畫廊鏈接，要不要看看？</string>
 
-    <string name="error_bad_status_code">錯誤的狀態碼：%d</string>
+    <string name="error_bad_status_code">錯誤狀態碼：%d</string>
     <string name="error_timeout">超時</string>
     <string name="error_unknown_host">未知主機</string>
     <string name="error_redirection">太多重定向</string>
