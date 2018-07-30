@@ -88,8 +88,8 @@
     <string name="search_sdesc">Nach Galeriebeschreibungen suchen</string>
     <string name="search_storr">Nach Torrentdateien suchen</string>
     <string name="search_sto">Nur die Galerien mit Torrentdateien anzeigen</string>
-    <string name="search_sdt1">Nach unwichtige Etiketten suchen</string>
-    <string name="search_sdt2">Nach unerwünschte Etiketten suchen</string>
+    <string name="search_sdt1">Nach unwichtigen Etiketten suchen</string>
+    <string name="search_sdt2">Nach unerwünschten Etiketten suchen</string>
     <string name="search_sh">Gelöschte Galerien anzeigen</string>
     <string name="search_sr">Mindestpunktzahl:</string>
     <string name="select_image">Bild wählen</string>
@@ -312,8 +312,8 @@
     <string name="settings_eh_thumb_size_large">Groß</string>
     <string name="settings_eh_thumb_size_middle">Mittel</string>
     <string name="settings_eh_thumb_size_small">Klein</string>
-    <string name="settings_eh_thumb_resolution">Auslösung der Miniaturbilder</string>
-    <string name="settings_eh_thumb_resolution_summary">Nun %s. Mit abnormale Auslösung kann die Miniaturbilder nicht normalerweise geladen werden.</string>
+    <string name="settings_eh_thumb_resolution">Auflösung der Miniaturbilder</string>
+    <string name="settings_eh_thumb_resolution_summary">Nun %s. Mit abnormale Auflösung kann die Miniaturbilder nicht normalerweise geladen werden.</string>
     <string name="settings_eh_thumb_resolution_auto">Automatisch</string>
     <string name="settings_eh_fix_thumb_url">Link der Miniaturbilder reparieren</string>
     <string name="settings_eh_default_categories">Auf Startseite angezeigte Kategorie</string>
@@ -377,8 +377,8 @@
     <string name="settings_download_multi_thread_download_summary">Bis zu %s Bild(er)</string>
     <string name="settings_download_preload_image">Bilder vorabladen</string>
     <string name="settings_download_preload_image_summary">Die nächste %s Bilder vorabladen</string>
-    <string name="settings_download_image_resolution">Auslösung der Bilder</string>
-    <string name="settings_download_image_resolution_summary">%s. Auslösung über 1280x funktioniert möglicherweise nicht</string>
+    <string name="settings_download_image_resolution">Auflösung der Bilder</string>
+    <string name="settings_download_image_resolution_summary">%s. Auflösung über 1280x funktioniert möglicherweise nicht</string>
     <string name="settings_download_image_resolution_auto">Automatisch</string>
     <string name="settings_download_download_origin_image">Originale Bilder herunterladen</string>
     <string name="settings_download_download_origin_image_summary">Wenn es aktiviert wird, wird der 509-Fehler dir schneller widerfahren</string>
