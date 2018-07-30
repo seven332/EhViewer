@@ -329,7 +329,7 @@
     <string name="settings_eh_hath_proxy_summary_2">Nicht festgelegt</string>
     <string name="settings_eh_show_jpn_title">Japanische Titel anzeigen</string>
     <string name="settings_eh_show_jpn_title_summary_on">Versuchen, japanische Titel anzuzeigen. Es wird länger dauern, Galerieliste zu laden.</string>
-    <string name="settings_eh_show_jpn_title_summary_off">Standard-Titel anzeigen. Sie sind oft in Englisch.</string>
+    <string name="settings_eh_show_jpn_title_summary_off">Standardtitel anzeigen. Sie sind oft in Englisch.</string>
     <string name="settings_eh_filter">Filter</string>
     <string name="settings_eh_filter_summary">Nach Titel, Hochlader, Etikett und Etikett-Namensraum filtern</string>
     <string name="settings_eh_cellular_network_warning">Achtung auf mobile Daten anzeigen</string>
@@ -396,9 +396,9 @@
     <string name="settings_advanced_save_parse_error_body">HTML-Datei beim Parsing-Fehler speichern</string>
     <string name="settings_advanced_save_parse_error_body_summary">Die Datei könnte etwas privat enthalten</string>
     <string name="settings_advanced_dump_logcat">Logcat-Protokoll speichern</string>
-    <string name="settings_advanced_dump_logcat_summary">Logcat-Protokoll-Datei auf externem Speicher speichern</string>
+    <string name="settings_advanced_dump_logcat_summary">Logcat-Protokolldatei auf externem Speicher speichern</string>
     <string name="settings_advanced_dump_logcat_failed">Speichern gescheitert</string>
-    <string name="settings_advanced_dump_logcat_to">Protokoll-Datei wurde auf %s gespeichert.</string>
+    <string name="settings_advanced_dump_logcat_to">Protokolldatei wurde auf %s gespeichert.</string>
     <string name="settings_advanced_clear_download_path_cache">Downloadpfadzwischenspeicher löschen</string>
     <string name="license">Open Source-Lizenzen</string>
     <string name="dir_picker">Verzeichnis auswählen</string>
@@ -467,7 +467,7 @@
     <string name="settings_about_changelog">Änderungsprotokoll</string>
     <string name="settings_about_help">Hilfe</string>
     <string name="settings_about_license">Lizenzen</string>
-    <string name="settings_about_license_summary">EhViewer wurde dank viele Open Source-Projekte entwicklt.</string>
+    <string name="settings_about_license_summary">EhViewer wurde dank vieler Open Source-Projekte entwicklt.</string>
     <string name="settings_about_donate">Spenden</string>
     <string name="settings_about_donate_summary">Alipay: seven332$163.com</string>
     <string name="settings_about_donate_message">Deine Spende hilft mir dabei, mehr gute Apps zu entwickln</string>
