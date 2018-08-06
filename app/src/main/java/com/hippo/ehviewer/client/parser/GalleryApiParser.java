@@ -53,6 +53,7 @@ public class GalleryApiParser {
                 tags[j] = tagJa.getString(j);
             }
             gi.simpleTags = tags;
+            gi.pages = Integer.parseInt(g.getString("filecount"));
         }
     }
 

@@ -32,6 +32,7 @@ class GalleryHolder extends RecyclerView.ViewHolder {
     public final SimpleRatingView rating;
     public final TextView category;
     public final TextView posted;
+    public final TextView pages;
     public final TextView simpleLanguage;
 
     public GalleryHolder(View itemView) {
@@ -43,6 +44,7 @@ class GalleryHolder extends RecyclerView.ViewHolder {
         rating = (SimpleRatingView) itemView.findViewById(R.id.rating);
         category = (TextView) itemView.findViewById(R.id.category);
         posted = (TextView) itemView.findViewById(R.id.posted);
+        pages = (TextView) itemView.findViewById(R.id.pages);
         simpleLanguage = (TextView) itemView.findViewById(R.id.simple_language);
     }
 }

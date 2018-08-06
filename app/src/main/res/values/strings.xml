@@ -461,6 +461,8 @@
     <string name="settings_eh_show_jpn_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
+    <string name="settings_eh_show_gallery_pages">Show gallery pages</string>
+    <string name="settings_eh_show_gallery_pages_summary">Display the number of pages in the gallery list. It takes more time to get gallery list</string>
     <string name="settings_eh_filter">Filter</string>
     <string name="settings_eh_filter_summary">Filter by title, uploader, tag and tag namespace</string>
     <string name="settings_eh_cellular_network_warning">Cellular network warning</string>

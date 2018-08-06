@@ -81,12 +81,21 @@
         android:layout_marginBottom="4dp"/>
 
     <TextView
-        android:id="@+id/simple_language"
+        android:id="@+id/pages"
         style="@style/CardMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/posted"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="6dp"/>
+
+    <TextView
+        android:id="@+id/simple_language"
+        style="@style/CardMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/posted"
+        android:layout_toLeftOf="@+id/pages"
         android:layout_marginRight="6dp"/>
 
 </RelativeLayout>

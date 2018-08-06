@@ -314,6 +314,13 @@ public class Settings {
         return getBoolean(KEY_SHOW_JPN_TITLE, DEFAULT_SHOW_JPN_TITLE);
     }
 
+    private static final String KEY_SHOW_GALLERY_PAGES = "show_gallery_pages";
+    private static final boolean DEFAULT_SHOW_GALLERY_PAGES = false;
+
+    public static boolean getShowGalleryPages() {
+        return getBoolean(KEY_SHOW_GALLERY_PAGES, DEFAULT_SHOW_GALLERY_PAGES);
+    }
+
     public static final String KEY_DEFAULT_CATEGORIES = "default_categories";
     public static final int DEFAULT_DEFAULT_CATEGORIES = EhUtils.ALL_CATEGORY;
 

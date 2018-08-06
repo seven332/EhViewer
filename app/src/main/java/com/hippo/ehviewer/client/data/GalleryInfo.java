@@ -90,6 +90,7 @@ public class GalleryInfo implements Parcelable {
     public float rating;
     @Nullable
     public String[] simpleTags;
+    public int pages;
 
     public int thumbWidth;
     public int thumbHeight;

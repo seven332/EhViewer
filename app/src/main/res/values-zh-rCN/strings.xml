@@ -418,6 +418,8 @@
     <string name="settings_eh_show_jpn_title">显示日文标题</string>
     <string name="settings_eh_show_jpn_title_summary_on">尝试显示日文标题。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
+    <string name="settings_eh_show_gallery_pages">显示画廊页数</string>
+    <string name="settings_eh_show_gallery_pages_summary">在画廊列表中显示页数。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_filter">过滤</string>
     <string name="settings_eh_filter_summary">过滤标题，上传者，标签和标签组</string>
     <string name="settings_eh_cellular_network_warning">移动网络警告</string>

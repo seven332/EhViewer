@@ -209,7 +209,7 @@ public class EhEngine {
             }
         }
 
-        if (list.size() > 0 && (Settings.getShowJpnTitle() || sEhFilter.needCallApi())) {
+        if (list.size() > 0 && (Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
 
@@ -905,7 +905,7 @@ public class EhEngine {
             }
         }
 
-        if (list.size() > 0 && (Settings.getShowJpnTitle() || sEhFilter.needCallApi())) {
+        if (list.size() > 0 && (Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
 

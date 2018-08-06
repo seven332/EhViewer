@@ -27,8 +27,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.hippo.drawable.TriangleDrawable;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.R;
@@ -38,7 +38,6 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.widget.TileThumb;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -179,6 +178,17 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                     category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
                 }
                 holder.posted.setText(gi.posted);
+                if (gi.pages == 0) {
+                    holder.pages.setText(null);
+                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.simpleLanguage.getLayoutParams();
+                    lp.addRule(RelativeLayout.LEFT_OF, 0);
+                    lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                } else {
+                    holder.pages.setText(Integer.toString(gi.pages) + "P");
+                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.simpleLanguage.getLayoutParams();
+                    lp.addRule(RelativeLayout.LEFT_OF, R.id.pages);
+                    lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
+                }
                 holder.simpleLanguage.setText(gi.simpleLanguage);
                 break;
             }

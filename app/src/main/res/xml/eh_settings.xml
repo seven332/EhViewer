@@ -82,6 +82,12 @@
         app:summaryOff="@string/settings_eh_show_jpn_title_summary_off"
         android:defaultValue="false"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="show_gallery_pages"
+        android:title="@string/settings_eh_show_gallery_pages"
+        android:summary="@string/settings_eh_show_gallery_pages_summary"
+        android:defaultValue="false"/>
+
     <com.hippo.preference.ActivityPreference
         android:key="filter"
         android:title="@string/settings_eh_filter"
