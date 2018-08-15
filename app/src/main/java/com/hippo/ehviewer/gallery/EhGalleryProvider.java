@@ -73,7 +73,7 @@ public class EhGalleryProvider extends GalleryProvider2 implements SpiderQueen.O
     @NonNull
     @Override
     public String getImageFilename(int index) {
-        return String.format(Locale.US, "%d-%08d", mGalleryInfo.gid, index + 1);
+        return String.format(Locale.US, "%d-%s-%08d", mGalleryInfo.gid, mGalleryInfo.token, index + 1);
     }
 
     @Override
