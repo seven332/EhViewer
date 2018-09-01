@@ -31,4 +31,9 @@
         android:title="@string/download_stop_all"
         app:showAsAction="ifRoom"/>
 
+    <item
+      android:id="@+id/action_reset_reading_progress"
+      android:title="@string/download_reset_reading_progress"
+      app:showAsAction="never"/>
+
 </menu>

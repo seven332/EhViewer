@@ -489,6 +489,17 @@ public class DownloadsScene extends ToolbarScene
                 }
                 return true;
             }
+            case R.id.action_reset_reading_progress: {
+                new AlertDialog.Builder(getContext())
+                        .setMessage(R.string.reset_reading_progress_message)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                            if (mDownloadManager != null) {
+                                mDownloadManager.resetAllReadingProgress();
+                            }
+                        }).show();
+                return true;
+            }
         }
         return false;
     }
