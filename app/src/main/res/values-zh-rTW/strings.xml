@@ -298,7 +298,7 @@
     <string name="stat_download_done_line_failed"> %s 下載失敗</string>
     <string name="download_remove_dialog_title">移除下載佇列</string>
     <string name="download_remove_dialog_message">將 %s 從下載佇列中移除嗎?</string>
-    <string name="download_remove_dialog_message_2">從下載佇列中移除 %s 項任務嗎？</string>
+    <string name="download_remove_dialog_message_2">從下載佇列中移除 %d 項任務嗎？</string>
     <string name="download_remove_dialog_check_text">刪除圖檔</string>
     <string name="stat_download_action_stop_all">全部停止</string>
     <string name="drawer_download_label_title">標籤</string>
