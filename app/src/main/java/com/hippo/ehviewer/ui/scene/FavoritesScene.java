@@ -1023,13 +1023,14 @@ public class FavoritesScene extends BaseScene implements
                         gidArray[i] = gi.gid;
                         tokenArray[i] = gi.token;
                     }
+                    List<GalleryInfo> modifyGiListBackup = new ArrayList<>(mModifyGiList);
                     mModifyGiList.clear();
 
                     EhRequest request = new EhRequest();
                     request.setMethod(EhClient.METHOD_ADD_FAVORITES_RANGE);
                     request.setCallback(new AddFavoritesListener(getContext(),
                             activity.getStageId(), getTag(),
-                            taskId, mUrlBuilder.getKeyword()));
+                            taskId, mUrlBuilder.getKeyword(), modifyGiListBackup));
                     request.setArgs(gidArray, tokenArray, mModifyFavCat);
                     mClient.execute(request);
                 } else {
@@ -1129,12 +1130,14 @@ public class FavoritesScene extends BaseScene implements
 
         private final int mTaskId;
         private final String mKeyword;
+        private final List<GalleryInfo> mBackup;
 
         private AddFavoritesListener(Context context, int stageId,
-                String sceneTag, int taskId, String keyword) {
+                String sceneTag, int taskId, String keyword, List<GalleryInfo> backup) {
             super(context, stageId, sceneTag);
             mTaskId = taskId;
             mKeyword = keyword;
+            mBackup = backup;
         }
 
         @Override
@@ -1147,6 +1150,10 @@ public class FavoritesScene extends BaseScene implements
 
         @Override
         public void onFailure(Exception e) {
+            // TODO It's a failure, add all of backup back to db.
+            // But how to known which one is failed?
+            EhDB.putLocalFavorites(mBackup);
+
             FavoritesScene scene = getScene();
             if (scene != null) {
                 scene.onGetFavoritesLocal(mKeyword, mTaskId);
