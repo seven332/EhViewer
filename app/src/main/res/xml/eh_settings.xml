@@ -24,6 +24,11 @@
         android:title="@string/settings_eh_sign_out"
         android:summary="@string/settings_eh_sign_out_summary"/>
 
+    <com.hippo.ehviewer.preference.IdentityCookiePreference
+        android:key="identity_cookie"
+        android:title="@string/settings_eh_identity_cookies"
+        android:summary="@string/settings_eh_identity_cookies_summary"/>
+
     <com.hippo.preference.ListPreference
         android:key="gallery_site"
         android:title="@string/settings_eh_gallery_site"

@@ -434,6 +434,11 @@
     <string name="settings_eh_sign_out_warning">Do you really want to sign out?</string>
     <string name="settings_eh_sign_out_yes">@android:string/ok</string>
     <string name="settings_eh_sign_out_tip">Signed out, restart the application to sign in</string>
+    <string name="settings_eh_identity_cookies">Identity cookies</string>
+    <string name="settings_eh_identity_cookies_summary">It can be used to sign in</string>
+    <string name="settings_eh_identity_cookies_signed">Identity cookies can be used to sign in to this account.&lt;br&gt;&lt;b&gt;KEEP IT SAFE&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_tourist">Not signed in.</string>
+    <string name="settings_eh_identity_cookies_copy">Copy</string>
     <string name="settings_u_config">EHentai settings</string>
     <string name="settings_u_config_summary">Settings on EHentai website</string>
     <string name="settings_eh_gallery_site">Gallery site</string>
