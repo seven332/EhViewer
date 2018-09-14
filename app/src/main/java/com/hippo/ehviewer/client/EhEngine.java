@@ -120,7 +120,9 @@ public class EhEngine {
             throw new StatusCodeException(code);
         }
 
-        throw e;
+        if (e != null) {
+            throw e;
+        }
     }
 
     private static void throwException(Call call, int code, @Nullable Headers headers,
