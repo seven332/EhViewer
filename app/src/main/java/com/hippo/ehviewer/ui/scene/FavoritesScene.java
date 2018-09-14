@@ -883,14 +883,21 @@ public class FavoritesScene extends BaseScene implements
             } else {
                 list = EhDB.searchLocalFavorites(keyword);
             }
+
             if (list.size() == 0) {
                 mHelper.setPages(taskId, 0);
                 mHelper.onGetPageData(taskId, Collections.EMPTY_LIST);
             } else {
-                mFavLocalCount = list.size();
-                Settings.putFavLocalCount(mFavLocalCount);
                 mHelper.setPages(taskId, 1);
                 mHelper.onGetPageData(taskId, list);
+            }
+
+            if (TextUtils.isEmpty(keyword)) {
+                mFavLocalCount = list.size();
+                Settings.putFavLocalCount(mFavLocalCount);
+                if (mDrawerAdapter != null) {
+                    mDrawerAdapter.notifyDataSetChanged();
+                }
             }
         }
     }
