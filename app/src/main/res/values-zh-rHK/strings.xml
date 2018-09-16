@@ -518,7 +518,7 @@
     <string name="settings_advanced_export_data_to">已導出數據至 %s</string>
     <string name="settings_advanced_export_data_failed">導出數據失敗</string>
     <string name="settings_advanced_import_data">導入數據</string>
-    <string name="settings_advanced_import_data_summary">從置存儲器導入數據</string>
+    <string name="settings_advanced_import_data_summary">從外置存儲器導入數據</string>
     <string name="settings_advanced_import_data_successfully">導入數據成功</string>
 
     <string name="settings_about">關於</string>
