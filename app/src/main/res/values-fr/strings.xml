@@ -447,7 +447,7 @@
     <string name="settings_download_document">Document</string>
     <string name="settings_download_continue">Continuer</string>
     <string name="settings_download_media_scan">Permettre le scannage multimédia</string>
-    <string name="settings_download_media_scan_summary_on">Ne montre jamais vos applications galerie à personne</string>
+    <string name="settings_download_media_scan_summary_on">Ne montrez jamais vos applications galerie à personne</string>
     <string name="settings_download_media_scan_summary_off">La plupart d\'applications galerie ignorent les images dans le chemin de téléchargement</string>
     <string name="settings_download_multi_thread_download">Téléchargement multi-thread</string>
     <string name="settings_download_multi_thread_download_summary">Jusqu\'à %s image(s)</string>
