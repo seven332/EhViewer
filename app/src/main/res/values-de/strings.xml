@@ -509,5 +509,5 @@
     <string name="settings_advanced_custom_hosts_title">Angepasstes hosts.txt</string>
     <string name="settings_advanced_custom_hosts_summary">Hostname auf die angepassten IP umstellen\nDie Regeln können die von der App festgelegt überschreiben</string>
     <string name="download_reset_reading_progress">Lesefortschritte zurücksetzen</string>
-    <string name="reset_reading_progress_message">Lesefortschritte von allen heruntergeladene Galerie zurücksetzen?</string>
+    <string name="reset_reading_progress_message">Lesefortschritte von allen heruntergeladenen Galerie zurücksetzen?</string>
 </resources>
