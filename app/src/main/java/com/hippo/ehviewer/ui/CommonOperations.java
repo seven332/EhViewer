@@ -197,8 +197,8 @@ public final class CommonOperations {
             new ListCheckBoxDialogBuilder(activity, items,
                     (builder, dialog, position) -> {
                         int slot1 = position - 1;
-                        doAddToFavorites(activity, galleryInfo, slot1, listener);
                         updateGalleryDetail(galleryInfo, items[position]);
+                        doAddToFavorites(activity, galleryInfo, slot1, listener);
                         if (builder.isChecked()) {
                             Settings.putDefaultFavSlot(slot1);
                         } else {
