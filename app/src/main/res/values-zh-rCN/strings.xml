@@ -666,4 +666,5 @@
     <string name="settings_privacy_secure_summary">启用后，将不能截取该应用的屏幕截图，同时，将不会在系统任务切换器中显示该应用的内容预览\n\n重新启动应用以生效此更改</string>
 
     <string name="download_service">下载服务</string>
+    <string name="favorite_name">收藏画廊</string>
 </resources>
