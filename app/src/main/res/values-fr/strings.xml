@@ -456,7 +456,7 @@
     <string name="settings_download_image_resolution">Resolution d\'image</string>
     <string name="settings_download_image_resolution_summary">%s, résolutions mieux que 1280x riquent de ne pas fonctionner</string>
     <string name="settings_download_image_resolution_auto">Auto</string>
-    <string name="settings_download_download_origin_image">Télécharger l'images originales</string>
+    <string name="settings_download_download_origin_image">Télécharger l\'images originales</string>
     <string name="settings_download_download_origin_image_summary">Vous allez obtenir l\'erreur 509 plus facilement</string>
     <string name="settings_download_restore_download_items">Rétablir les galeries téléchargées</string>
     <string name="settings_download_restore_download_items_summary">Rétablir tous objets déjà téléchargés dans la destination de téléchargement</string>
@@ -637,7 +637,7 @@
     <string name="archive">Fiches archives</string>
     <string name="download_archive_failure_no_hath">Client H@H est nécessaire pour le téléchargement de fiches archives</string>
     <string name="settings_privacy">Confidentialité</string>
-    <string name="settings_privacy_secure">Empêcher captures d\'ecran</string>
+    <string name="settings_privacy_secure">Empêcher les captures d\'ecran</string>
     <string name="settings_privacy_secure_summary">Quand cette option est activée, vous ne pouvez prendre auncun capture d\'écran de l\'application, et le systéme n\'affiche pas le contenu d\'écran dans le sélecteur de tâches.\n\nRedémarrage de l\'application nécessaire pour appliquer le changement</string>
     <string name="clipboard_gallery_url_dialog_title">Lien de galerie detecté</string>
     <string name="clipboard_gallery_url_dialog_message">Voulez-vous accéder la galerie dans vos presse-papiers ?</string>
@@ -652,12 +652,12 @@
     <string name="edit_host_delete">Supprimer</string>
     <string name="invalid_host">Hôte invalide</string>
     <string name="invalid_ip">IP invalide</string>
-    <string name="page_menu_save_to">Sauvegarder dans...</string>
+    <string name="page_menu_save_to">Sauvegarder à...</string>
     <string name="settings_advanced_app_language_title">Langue de l\'app (Language)</string>
     <string name="settings_advanced_built_in_hosts_title">"hosts.txt integré "</string>
     <string name="settings_advanced_built_in_hosts_summary">Mapper l\'hôte à l\'adresse IP selon les règles de l\'app\nIls pouvent être redéfinits par hosts.txt personnalisé</string>
     <string name="settings_advanced_custom_hosts_title">hosts.txt personalisé</string>
-    <string name="settings_advanced_custom_hosts_summary">Mapper l\'hôte à l\'adresse IP\nIls pouvent redéfinir l'hosts.txt de l\'app</string>
+    <string name="settings_advanced_custom_hosts_summary">Mapper l\'hôte à l\'adresse IP\nIls pouvent redéfinir l\'hosts.txt de l\'app</string>
     <string name="app_language_system">Langue du système (défaut)</string>
 
 </resources>
