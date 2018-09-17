@@ -82,7 +82,7 @@
     <string name="error_get_ptoken_error">Échec d\'obtention de pToken</string>
     <string name="error_invalid_specify_gallery">Le mot-clé doit réssembler à \"618395 0439fa3666\" pour spécifier une galerie</string>
     <string name="error_cant_create_temp_file">Impossible de créer un fiche temporaire</string>
-    <string name="error_cant_save_image">Impossible de sauvegarder l\'image</string>
+    <string name="error_cant_save_image">Impossible d\'enregistrer l\'image</string>
     <string name="error_invalid_number">Nombre invalide</string>
 
     <string name="app_waring">Le contenu de l\'application provient de l\'Internet, dont quelque chose peut vous causer le dommage physique ou mentale. Vous l\'avez bien compris et voulez continuer quand même.</string>
@@ -364,7 +364,7 @@
     <string name="page_menu_title">Page %d</string>
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
-    <string name="page_menu_save">Sauvegarder</string>
+    <string name="page_menu_save">Enregistrer</string>
     <string name="page_menu_add_bookmark">Ajouter un signet</string>
     <string name="gallery_menu_title">Menu</string>
     <string name="share_image">Partager l\'image</string>
@@ -655,7 +655,7 @@
     <string name="edit_host_delete">Supprimer</string>
     <string name="invalid_host">Hôte invalide</string>
     <string name="invalid_ip">IP invalide</string>
-    <string name="page_menu_save_to">Sauvegarder à...</string>
+    <string name="page_menu_save_to">Enregistrer sous...</string>
     <string name="settings_advanced_app_language_title">Langue de l\'app (Language)</string>
     <string name="settings_advanced_built_in_hosts_title">"hosts.txt integré "</string>
     <string name="settings_advanced_built_in_hosts_summary">Mapper l\'hôte à l\'adresse IP selon les règles de l\'app\nIls pouvent être redéfinits par hosts.txt personnalisé</string>
