@@ -33,6 +33,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.download.DownloadManager;
@@ -185,34 +186,34 @@ public final class CommonOperations {
     public static void addToFavorites(final Activity activity, final GalleryInfo galleryInfo,
             final EhClient.Callback<Void> listener) {
         int slot = Settings.getDefaultFavSlot();
+        String[] items = new String[11];
+        items[0] = activity.getString(R.string.local_favorites);
+        String[] favCat = Settings.getFavCat();
+        System.arraycopy(favCat, 0, items, 1, 10);
         if (slot >= -1 && slot <= 9) {
             doAddToFavorites(activity, galleryInfo, slot, listener);
+            updateGalleryDetail(galleryInfo, items[slot+1]);
         } else {
-            String[] items = new String[11];
-            items[0] = activity.getString(R.string.local_favorites);
-            String[] favCat = Settings.getFavCat();
-            System.arraycopy(favCat, 0, items, 1, 10);
             new ListCheckBoxDialogBuilder(activity, items,
-                    new ListCheckBoxDialogBuilder.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(ListCheckBoxDialogBuilder builder, AlertDialog dialog, int position) {
-                            int slot = position - 1;
-                            doAddToFavorites(activity, galleryInfo, slot, listener);
-                            if (builder.isChecked()) {
-                                Settings.putDefaultFavSlot(slot);
-                            } else {
-                                Settings.putDefaultFavSlot(Settings.INVALID_DEFAULT_FAV_SLOT);
-                            }
+                    (builder, dialog, position) -> {
+                        int slot1 = position - 1;
+                        doAddToFavorites(activity, galleryInfo, slot1, listener);
+                        updateGalleryDetail(galleryInfo, items[position]);
+                        if (builder.isChecked()) {
+                            Settings.putDefaultFavSlot(slot1);
+                        } else {
+                            Settings.putDefaultFavSlot(Settings.INVALID_DEFAULT_FAV_SLOT);
                         }
                     }, activity.getString(R.string.remember_favorite_collection), false)
                     .setTitle(R.string.add_favorites_dialog_title)
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            listener.onCancel();
-                        }
-                    })
+                    .setOnCancelListener(dialog -> listener.onCancel())
                     .show();
+        }
+    }
+
+    private static void updateGalleryDetail(GalleryInfo galleryInfo, String favoriteName) {
+        if (galleryInfo instanceof GalleryDetail) {
+            ((GalleryDetail) galleryInfo).favoriteName = favoriteName;
         }
     }
 
