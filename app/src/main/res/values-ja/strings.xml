@@ -304,6 +304,8 @@
     <string name="download_labels">ダウンロードラベル</string>
     <string name="download_start_all">すべて開始</string>
     <string name="download_stop_all">すべて停止</string>
+    <string name="download_reset_reading_progress">閲覧進捗をリセット</string>
+    <string name="reset_reading_progress_message">すべてのダウンロード済みのギャラリーの閲覧進捗をリセットしますか？</string>
     <string name="download_service_label">EhViewerダウンロードサービス</string>
     <string name="download_speed_text">%s</string>
     <string name="download_speed_text_2">%1$s、残り%2$s</string>
