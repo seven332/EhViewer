@@ -178,7 +178,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                     category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
                 }
                 holder.posted.setText(gi.posted);
-                if (gi.pages == 0) {
+                if (gi.pages == 0 || !Settings.getShowGalleryPages()) {
                     holder.pages.setText(null);
                     RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.simpleLanguage.getLayoutParams();
                     lp.addRule(RelativeLayout.LEFT_OF, 0);
