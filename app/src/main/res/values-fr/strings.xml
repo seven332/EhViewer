@@ -307,6 +307,8 @@
     <string name="download_labels">Labels de téléchargement</string>
     <string name="download_start_all">Commencer tout</string>
     <string name="download_stop_all">Arrêter tout</string>
+    <string name="download_reset_reading_progress">Réinitialiser les progrès de lecture</string>
+    <string name="reset_reading_progress_message">Réinitialiser les progrès de lecture de toutes galéries téléchargées ?</string>
     <string name="download_service_label">Service du téléchargement EhViewer</string>
     <string name="download_speed_text">%s</string>
     <string name="download_speed_text_2">%1$s, encore %2$s</string>
@@ -511,6 +513,7 @@
     <string name="settings_privacy_about_analytics">A propos de l\'analyse</string>
     <string name="settings_about_version">Numéro de version</string>
     <string name="settings_about_check_for_updates">Chercher mise à jour</string>
+    <string name="settings_about_auto_check_for_updates">Chercher les MÀJ automatiquement</string>
     <string name="settings_about_beta_update_channel">Chaîne de mises à jour beta</string>
     <string name="settings_about_beta_update_channel_summary">Versions beta riquent de ne pas fonctionner correctement sur votre appareil</string>
 
