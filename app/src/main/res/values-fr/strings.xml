@@ -433,7 +433,7 @@
     <string name="settings_read_show_progress">Montrer le progrès</string>
     <string name="settings_read_show_battery">Montrer le niveau de batterie</string>
     <string name="settings_read_show_page_interval">Montrer l\'intervalle des pages</string>
-    <string name="settings_read_volume_page">Permettre de tourner la page avec les boutons Volume</string>
+    <string name="settings_read_volume_page">Tourner la page avec les Volumes</string>
     <string name="settings_read_reading_fullscreen">Plein d\'écran</string>
     <string name="settings_read_custom_screen_lightness">Utiliser la luminosité d\'écran personalisée</string>
     <string name="settings_read_screen_lightness">Luminosité d\'écran</string>
@@ -446,7 +446,7 @@
     <string name="settings_download_pick_dir_l">Android 5.0+ a implémenté un nouveau API, qui permet les applications à écrire dans la carte SD. Appuyez sur \"DOCUMENT\" pour définir la carte SD comme la destination de téléchargement</string>
     <string name="settings_download_document">Document</string>
     <string name="settings_download_continue">Continuer</string>
-    <string name="settings_download_media_scan">Permettre le scannage des fiches multimédias</string>
+    <string name="settings_download_media_scan">Permettre le scannage multimédia</string>
     <string name="settings_download_media_scan_summary_on">Ne montre jamais vos applications galerie à personne</string>
     <string name="settings_download_media_scan_summary_off">La plupart d\'applications galerie ignorent les images dans le chemin de téléchargement</string>
     <string name="settings_download_multi_thread_download">Téléchargement multi-thread</string>
@@ -470,7 +470,7 @@
     <string name="settings_download_clean_redundancy_done">Nettoyage complété avec succès, %d objets effacés</string>
 
     <string name="settings_advanced">Avancé</string>
-    <string name="settings_advanced_save_parse_error_body">Sauvegarder le contenu de HTML après l\'erreur d\'analyse syntaxique</string>
+    <string name="settings_advanced_save_parse_error_body">Sauv. les HTMLs avec erreurs</string>
     <string name="settings_advanced_save_parse_error_body_summary">Le fiche HTML pouvait contenir les informations personnelles</string>
     <string name="settings_advanced_dump_logcat">Sauvegarder le journal logcat</string>
     <string name="settings_advanced_dump_logcat_summary">Sauvegarder le journal logcat au stockage externe</string>
