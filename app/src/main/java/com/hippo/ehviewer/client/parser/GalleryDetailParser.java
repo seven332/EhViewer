@@ -227,6 +227,14 @@ public class GalleryDetailParser {
             // isFavorited
             Element gdf = gm.getElementById("gdf");
             gd.isFavorited = null != gdf && !StringUtils.trim(gdf.text()).equals("Add to Favorites");
+            if (gdf != null) {
+                final String favoriteName = StringUtils.trim(gdf.text());
+                if (favoriteName.equals("Add to Favorites")) {
+                    gd.favoriteName = "";
+                } else {
+                    gd.favoriteName = StringUtils.trim(gdf.text());
+                }
+            }
         } catch (Exception e) {
             throw new ParseException("Can't parse gallery detail", body);
         }

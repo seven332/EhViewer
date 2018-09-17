@@ -726,4 +726,5 @@
     <string name="settings_privacy_secure_summary">If enabled, you cannot take screenshots of the app, and the system will not display app contents in the task switcher\n\nYou need to restart the app for the changes to take effect</string>
 
     <string name="download_service">Download Service</string>
+    <string name="favorite_name">Favorite</string>
 </resources>
