@@ -19,18 +19,20 @@ package com.hippo.ehviewer.ui.fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
-import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.util.AppHelper;
+import java.io.UnsupportedEncodingException;
 
 public class AboutFragment extends PreferenceFragment
         implements Preference.OnPreferenceClickListener {
@@ -49,13 +51,11 @@ public class AboutFragment extends PreferenceFragment
         Preference checkForUpdate = findPreference(KEY_CHECK_FOR_UPDATES);
 
         author.setSummary(getString(R.string.settings_about_author_summary).replace('$', '@'));
-        donate.setSummary(getString(R.string.settings_about_donate_summary).replace('$', '@'));
 
         author.setOnPreferenceClickListener(this);
         donate.setOnPreferenceClickListener(this);
         checkForUpdate.setOnPreferenceClickListener(this);
     }
-
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
@@ -64,17 +64,51 @@ public class AboutFragment extends PreferenceFragment
             AppHelper.sendEmail(getActivity(), EhApplication.getDeveloperEmail(),
                     "About EhViewer", null);
         } else if (KEY_DONATE.equals(key)) {
-            ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-            cmb.setPrimaryClip(ClipData.newPlainText(null, "seven332$163.com".replace('$', '@')));
-            Toast.makeText(getActivity(), R.string.settings_about_donate_toast, Toast.LENGTH_SHORT).show();
-
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.settings_about_donate)
-                    .setMessage(getString(R.string.settings_about_donate_message).replace('$', '@'))
-                    .show();
+            showDonationDialog();
         } else if (KEY_CHECK_FOR_UPDATES.equals(key)) {
             CommonOperations.checkUpdate(getActivity(), true);
         }
         return true;
+    }
+
+    private void showDonationDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setView(R.layout.dialog_donate)
+                .show();
+
+        String alipayStr = base64Decode("c2V2ZW4zMzJAMTYzLmNvbQ==");
+        TextView alipayText = dialog.findViewById(R.id.alipay_text);
+        alipayText.setText(alipayStr);
+        dialog.findViewById(R.id.alipay_copy).setOnClickListener(v -> copyToClipboard(alipayStr));
+
+        String paypalStr = base64Decode("aHR0cHM6Ly9wYXlwYWwubWUvc2V2ZW4zMzI=");
+        TextView paypalText = dialog.findViewById(R.id.paypal_text);
+        paypalText.setText(paypalStr);
+        dialog.findViewById(R.id.paypal_open).setOnClickListener(v -> openUrl(paypalStr));
+        dialog.findViewById(R.id.paypal_copy).setOnClickListener(v -> copyToClipboard(paypalStr));
+    }
+
+    private static String base64Decode(String encoded) {
+        byte[] bytes = Base64.decode(encoded, Base64.DEFAULT);
+        try {
+            return new String(bytes, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void copyToClipboard(String text) {
+        ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        if (cmb != null) {
+            cmb.setPrimaryClip(ClipData.newPlainText(null, text));
+            Toast.makeText(getActivity(), R.string.settings_about_donate_copied, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openUrl(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        Intent chooser = Intent.createChooser(intent, "");
+        startActivity(chooser);
     }
 }

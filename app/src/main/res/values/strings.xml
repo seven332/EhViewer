@@ -577,9 +577,12 @@
     <string name="settings_about_license">License</string>
     <string name="settings_about_license_summary">EhViewer is made possible by many open source projects</string>
     <string name="settings_about_donate">Donate</string>
-    <string name="settings_about_donate_summary">Alipay: seven332$163.com</string>
-    <string name="settings_about_donate_message">Your donation can help me develop more and better applications.\n\nAlipay: seven332$163.com</string>
-    <string name="settings_about_donate_toast">Email address copied to clipboard</string>
+    <string name="settings_about_donate_message">Your donation can not bring you any privileges. But it helps me maintain this app.</string>
+    <string name="settings_about_donate_alipay">Alipay</string>
+    <string name="settings_about_donate_paypal">PayPal</string>
+    <string name="settings_about_donate_open">Open</string>
+    <string name="settings_about_donate_copy">Copy</string>
+    <string name="settings_about_donate_copied">Copied</string>
     <string name="settings_privacy_enable_analytics">Enable analytics</string>
     <string name="settings_privacy_about_analytics">About analytics</string>
     <string name="settings_about_version">Build version</string>

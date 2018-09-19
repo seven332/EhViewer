@@ -497,9 +497,6 @@
     <string name="settings_about_license">オープンソースライセンス</string>
     <string name="settings_about_license_summary">いろんなオープンソースプロジェクトなしで、EhViewerが生まれることはありません。</string>
     <string name="settings_about_donate">寄付</string>
-    <string name="settings_about_donate_summary">Alipay：seven332$163.com</string>
-    <string name="settings_about_donate_message">ご寄付ありがとうございます。これからもいろんなアプリの開発を進めさせていただきます。\n\nAlipay：seven332$163.com</string>
-    <string name="settings_about_donate_toast">メールアドレスがクリップボードにコピーされました</string>
     <string name="settings_privacy_enable_analytics">データ統計に参加</string>
     <string name="settings_privacy_about_analytics">データ統計について</string>
     <string name="settings_about_version">バージョン番号</string>

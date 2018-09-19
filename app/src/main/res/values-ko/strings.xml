@@ -500,8 +500,6 @@
     <string name="settings_about_license">라이선스</string>
     <string name="settings_about_license_summary">EhViewer는 많은 오픈 소스 프로젝트 덕분에 만들 수 있었습니다.</string>
     <string name="settings_about_donate">후원</string>
-    <string name="settings_about_donate_message">후원해 주시면 더 좋은 앱을 만드는 데 도움이 됩니다.\n\nAlipay: seven332$163.com</string>
-    <string name="settings_about_donate_toast">이메일 주소를 클립보드에 복사했습니다.</string>
     <string name="settings_privacy_enable_analytics">데이터 분석 사용</string>
     <string name="settings_privacy_about_analytics">데이터 분석 정보</string>
     <string name="settings_about_version">빌드 버전</string>

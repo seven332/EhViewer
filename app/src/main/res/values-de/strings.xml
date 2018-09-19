@@ -469,9 +469,6 @@
     <string name="settings_about_license">Lizenzen</string>
     <string name="settings_about_license_summary">EhViewer wurde dank vieler Open Source-Projekte entwicklt.</string>
     <string name="settings_about_donate">Spenden</string>
-    <string name="settings_about_donate_summary">Alipay: seven332$163.com</string>
-    <string name="settings_about_donate_message">Deine Spende hilft mir dabei, mehr gute Apps zu entwickln</string>
-    <string name="settings_about_donate_toast">E-Mail-Addresse wurde zur Zwischenablage kopiert</string>
     <string name="settings_privacy_enable_analytics">Analyse aktivieren</string>
     <string name="settings_privacy_about_analytics">Über die Analyse</string>
     <string name="settings_about_version">Versionnummer</string>

@@ -531,9 +531,12 @@
     <string name="settings_about_license">開源許可</string>
     <string name="settings_about_license_summary">EhViewer 的誕生離不開許多開源項目</string>
     <string name="settings_about_donate">捐贈</string>
-    <string name="settings_about_donate_summary">支付寶：seven332$163.com</string>
-    <string name="settings_about_donate_message">你的捐贈能幫助我開發更多更好的應用。\n\n支付寶：seven332$163.com</string>
-    <string name="settings_about_donate_toast">郵箱地址已複製到剪切板</string>
+    <string name="settings_about_donate_message">你的捐贈不能為你帶來特權，但能幫助我繼續維護這個應用。</string>
+    <string name="settings_about_donate_alipay">支付寶</string>
+    <string name="settings_about_donate_paypal">PayPal</string>
+    <string name="settings_about_donate_open">打開</string>
+    <string name="settings_about_donate_copy">複製</string>
+    <string name="settings_about_donate_copied">已複製</string>
     <string name="settings_privacy_enable_analytics">啟用數據統計</string>
     <string name="settings_privacy_about_analytics">關於數據統計</string>
     <string name="settings_about_version">版本號</string>
