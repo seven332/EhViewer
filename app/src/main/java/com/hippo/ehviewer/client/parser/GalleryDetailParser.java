@@ -230,7 +230,7 @@ public class GalleryDetailParser {
             if (gdf != null) {
                 final String favoriteName = StringUtils.trim(gdf.text());
                 if (favoriteName.equals("Add to Favorites")) {
-                    gd.favoriteName = "";
+                    gd.favoriteName = null;
                 } else {
                     gd.favoriteName = StringUtils.trim(gdf.text());
                 }

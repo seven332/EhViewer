@@ -53,7 +53,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.hippo.beerbelly.BeerBelly;
 import com.hippo.drawable.RoundSideRectDrawable;
 import com.hippo.ehviewer.AppConfig;
@@ -106,9 +105,6 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
-
-import junit.framework.Assert;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -116,6 +112,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+import junit.framework.Assert;
 
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener,
         com.hippo.ehviewer.download.DownloadManager.DownloadInfoListener,
@@ -766,7 +763,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         if (gd.isFavorited || EhDB.containLocalFavorites(gd.gid)) {
             mHeart.setVisibility(View.VISIBLE);
-            if (gd.favoriteName == null || gd.favoriteName.isEmpty()) {
+            if (gd.favoriteName == null) {
                 mHeart.setText(R.string.local_favorites);
             } else {
                 mHeart.setText(gd.favoriteName);
@@ -1538,7 +1535,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private void onModifyFavoritesSuccess(boolean addOrRemove) {
         mModifingFavorites = false;
         if (mGalleryDetail != null) {
-            mGalleryDetail.isFavorited = !addOrRemove;
+            mGalleryDetail.isFavorited = !addOrRemove && mGalleryDetail.favoriteName != null;
             updateFavoriteDrawable();
         }
     }

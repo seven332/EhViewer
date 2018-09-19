@@ -191,15 +191,17 @@ public final class CommonOperations {
         String[] favCat = Settings.getFavCat();
         System.arraycopy(favCat, 0, items, 1, 10);
         if (slot >= -1 && slot <= 9) {
+            String newFavoriteName = slot >= 0 ? items[slot + 1] : null;
             doAddToFavorites(activity, galleryInfo, slot, galleryInfo instanceof GalleryDetail
-                    ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, items[slot+1])
+                    ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, newFavoriteName)
                     : listener);
         } else {
             new ListCheckBoxDialogBuilder(activity, items,
                     (builder, dialog, position) -> {
                         int slot1 = position - 1;
+                        String newFavoriteName = (slot1 >= 0 && slot1 <= 9) ? items[slot1+1] : null;
                         doAddToFavorites(activity, galleryInfo, slot1, galleryInfo instanceof GalleryDetail
-                                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, items[position])
+                                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, newFavoriteName)
                                 : listener);
                         if (builder.isChecked()) {
                             Settings.putDefaultFavSlot(slot1);
@@ -220,7 +222,7 @@ public final class CommonOperations {
         request.setMethod(EhClient.METHOD_ADD_FAVORITES);
         request.setArgs(galleryInfo.gid, galleryInfo.token, -1, "");
         request.setCallback(galleryInfo instanceof GalleryDetail
-                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, "")
+                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, null)
                 : listener);
         client.execute(request);
     }
