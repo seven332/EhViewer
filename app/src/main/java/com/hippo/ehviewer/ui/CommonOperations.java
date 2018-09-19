@@ -191,14 +191,16 @@ public final class CommonOperations {
         String[] favCat = Settings.getFavCat();
         System.arraycopy(favCat, 0, items, 1, 10);
         if (slot >= -1 && slot <= 9) {
-            doAddToFavorites(activity, galleryInfo, slot, listener);
-            updateGalleryDetail(galleryInfo, items[slot+1]);
+            doAddToFavorites(activity, galleryInfo, slot, galleryInfo instanceof GalleryDetail
+                    ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, items[slot+1])
+                    : listener);
         } else {
             new ListCheckBoxDialogBuilder(activity, items,
                     (builder, dialog, position) -> {
                         int slot1 = position - 1;
-                        updateGalleryDetail(galleryInfo, items[position]);
-                        doAddToFavorites(activity, galleryInfo, slot1, listener);
+                        doAddToFavorites(activity, galleryInfo, slot1, galleryInfo instanceof GalleryDetail
+                                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, items[position])
+                                : listener);
                         if (builder.isChecked()) {
                             Settings.putDefaultFavSlot(slot1);
                         } else {
@@ -211,20 +213,46 @@ public final class CommonOperations {
         }
     }
 
-    private static void updateGalleryDetail(GalleryInfo galleryInfo, String favoriteName) {
-        if (galleryInfo instanceof GalleryDetail) {
-            ((GalleryDetail) galleryInfo).favoriteName = favoriteName;
-        }
-    }
-
     public static void removeFromFavorites(Activity activity, GalleryInfo galleryInfo,
             final EhClient.Callback<Void> listener) {
         EhClient client = EhApplication.getEhClient(activity);
         EhRequest request = new EhRequest();
         request.setMethod(EhClient.METHOD_ADD_FAVORITES);
         request.setArgs(galleryInfo.gid, galleryInfo.token, -1, "");
-        request.setCallback(listener);
+        request.setCallback(galleryInfo instanceof GalleryDetail
+                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, "")
+                : listener);
         client.execute(request);
+    }
+
+    private static class UpdateFavoriteNameCallback implements EhClient.Callback<Void> {
+
+        private final EhClient.Callback<Void> delegate;
+        private final GalleryDetail detail;
+        private final String newFavoriteName;
+
+        UpdateFavoriteNameCallback(EhClient.Callback<Void> delegate, GalleryDetail detail,
+                String newFavoriteName) {
+            this.delegate = delegate;
+            this.detail = detail;
+            this.newFavoriteName = newFavoriteName;
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            detail.favoriteName = newFavoriteName;
+            delegate.onSuccess(result);
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            delegate.onFailure(e);
+        }
+
+        @Override
+        public void onCancel() {
+            delegate.onCancel();
+        }
     }
 
     // TODO Add context if activity and context are different style
