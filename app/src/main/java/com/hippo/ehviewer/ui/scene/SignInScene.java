@@ -43,6 +43,7 @@ import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.widget.RecaptchaView;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.ViewUtils;
 
@@ -328,7 +329,7 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
         finish();
     }
 
-    private void whetherToSkip() {
+    private void whetherToSkip(Exception e) {
         Context context = getContext2();
         if (null == context) {
             return;
@@ -336,12 +337,12 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
 
         new AlertDialog.Builder(context)
                 .setTitle(R.string.sign_in_failed)
-                .setMessage(R.string.sign_in_failed_plain)
+                .setMessage(ExceptionUtils.getReadableString(e))
                 .setPositiveButton(R.string.get_it, null)
                 .show();
     }
 
-    public void onSignInEnd() {
+    public void onSignInEnd(Exception e) {
         Context context = getContext2();
         if (null == context) {
             return;
@@ -352,7 +353,7 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
         } else {
             mSigningIn = false;
             hideProgress();
-            whetherToSkip();
+            whetherToSkip(e);
         }
     }
 
@@ -375,7 +376,7 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
 
             SignInScene scene = getScene();
             if (scene != null) {
-                scene.onSignInEnd();
+                scene.onSignInEnd(null);
             }
         }
 
@@ -386,7 +387,7 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
 
             SignInScene scene = getScene();
             if (scene != null) {
-                scene.onSignInEnd();
+                scene.onSignInEnd(e);
             }
         }
 

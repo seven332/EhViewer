@@ -26,11 +26,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
-
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
+import com.hippo.content.RecordingApplication;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhCookieStore;
+import com.hippo.ehviewer.client.EhDns;
 import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.download.DownloadManager;
@@ -39,7 +40,6 @@ import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.image.Image;
 import com.hippo.image.ImageBitmap;
 import com.hippo.network.StatusCodeException;
-import com.hippo.scene.SceneApplication;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.BitmapUtils;
@@ -48,21 +48,20 @@ import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.SimpleHandler;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 
-public class EhApplication extends SceneApplication implements Thread.UncaughtExceptionHandler {
+public class EhApplication extends RecordingApplication implements Thread.UncaughtExceptionHandler {
 
     private static final String TAG = EhApplication.class.getSimpleName();
 
     public static final boolean BETA = false;
+    public static final boolean AUTO_UPDATE = true;
 
     private static final boolean DEBUG_CONACO = false;
     private static final boolean DEBUG_PRINT_NATIVE_MEMORY = false;
@@ -81,6 +80,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
     private LruCache<Long, GalleryDetail> mGalleryDetailCache;
     private SimpleDiskCache mSpiderInfoCache;
     private DownloadManager mDownloadManager;
+    private Hosts mHosts;
 
     private final List<Activity> mActivityList = new ArrayList<>();
 
@@ -111,13 +111,14 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
             Analytics.start(this);
         }
 
-        // Check no media file
-        UniFile downloadLocation = Settings.getDownloadLocation();
-        if (Settings.getMediaScan()) {
-            CommonOperations.removeNoMediaFile(downloadLocation);
-        } else {
-            CommonOperations.ensureNoMediaFile(downloadLocation);
-        }
+        // Disable no media file checker for now. Some devices stuck here.
+//        // Check no media file
+//        UniFile downloadLocation = Settings.getDownloadLocation();
+//        if (Settings.getMediaScan()) {
+//            CommonOperations.removeNoMediaFile(downloadLocation);
+//        } else {
+//            CommonOperations.ensureNoMediaFile(downloadLocation);
+//        }
 
         // Clear temp dir
         clearTempDir();
@@ -147,6 +148,9 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
         if (null != dir) {
             FileUtils.deleteContent(dir);
         }
+
+        // Add .nomedia to external temp dir
+        CommonOperations.ensureNoMediaFile(UniFile.fromFile(AppConfig.getExternalTempDir()));
     }
 
     private void update() {
@@ -238,6 +242,7 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
                     .readTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .cookieJar(getEhCookieStore(application))
+                    .dns(new EhDns(application))
                     .build();
         }
         return application.mOkHttpClient;
@@ -301,6 +306,15 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
             application.mDownloadManager = new DownloadManager(application);
         }
         return application.mDownloadManager;
+    }
+
+    @NonNull
+    public static Hosts getHosts(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mHosts == null) {
+            application.mHosts = new Hosts(application, "hosts.db");
+        }
+        return application.mHosts;
     }
 
     private boolean handleException(Throwable ex) {

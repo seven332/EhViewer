@@ -53,7 +53,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.hippo.beerbelly.BeerBelly;
 import com.hippo.drawable.RoundSideRectDrawable;
 import com.hippo.ehviewer.AppConfig;
@@ -106,9 +105,6 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
-
-import junit.framework.Assert;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -116,6 +112,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+import junit.framework.Assert;
 
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener,
         com.hippo.ehviewer.download.DownloadManager.DownloadInfoListener,
@@ -766,6 +763,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         if (gd.isFavorited || EhDB.containLocalFavorites(gd.gid)) {
             mHeart.setVisibility(View.VISIBLE);
+            if (gd.favoriteName == null) {
+                mHeart.setText(R.string.local_favorites);
+            } else {
+                mHeart.setText(gd.favoriteName);
+            }
             mHeartOutline.setVisibility(View.GONE);
         } else {
             mHeart.setVisibility(View.GONE);
@@ -1533,9 +1535,17 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private void onModifyFavoritesSuccess(boolean addOrRemove) {
         mModifingFavorites = false;
         if (mGalleryDetail != null) {
-            mGalleryDetail.isFavorited = !addOrRemove;
+            mGalleryDetail.isFavorited = !addOrRemove && mGalleryDetail.favoriteName != null;
             updateFavoriteDrawable();
         }
+    }
+
+    private void onModifyFavoritesFailure(boolean addOrRemove) {
+        mModifingFavorites = false;
+    }
+
+    private void onModifyFavoritesCancel(boolean addOrRemove) {
+        mModifingFavorites = false;
     }
 
     private class ModifyFavoritesListener extends EhCallback<GalleryDetailScene, Void> {
@@ -1564,10 +1574,19 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         public void onFailure(Exception e) {
             showTip(mAddOrRemove ? R.string.remove_from_favorite_failure :
                     R.string.add_to_favorite_failure, LENGTH_SHORT);
+            GalleryDetailScene scene = getScene();
+            if (scene != null) {
+                scene.onModifyFavoritesFailure(mAddOrRemove);
+            }
         }
 
         @Override
-        public void onCancel() {}
+        public void onCancel() {
+            GalleryDetailScene scene = getScene();
+            if (scene != null) {
+                scene.onModifyFavoritesCancel(mAddOrRemove);
+            }
+        }
 
         @Override
         public boolean isInstance(SceneFragment scene) {

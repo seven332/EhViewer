@@ -33,6 +33,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.download.DownloadManager;
@@ -185,27 +186,31 @@ public final class CommonOperations {
     public static void addToFavorites(final Activity activity, final GalleryInfo galleryInfo,
             final EhClient.Callback<Void> listener) {
         int slot = Settings.getDefaultFavSlot();
+        String[] items = new String[11];
+        items[0] = activity.getString(R.string.local_favorites);
+        String[] favCat = Settings.getFavCat();
+        System.arraycopy(favCat, 0, items, 1, 10);
         if (slot >= -1 && slot <= 9) {
-            doAddToFavorites(activity, galleryInfo, slot, listener);
+            String newFavoriteName = slot >= 0 ? items[slot + 1] : null;
+            doAddToFavorites(activity, galleryInfo, slot, galleryInfo instanceof GalleryDetail
+                    ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, newFavoriteName)
+                    : listener);
         } else {
-            String[] items = new String[11];
-            items[0] = activity.getString(R.string.local_favorites);
-            String[] favCat = Settings.getFavCat();
-            System.arraycopy(favCat, 0, items, 1, 10);
             new ListCheckBoxDialogBuilder(activity, items,
-                    new ListCheckBoxDialogBuilder.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(ListCheckBoxDialogBuilder builder, AlertDialog dialog, int position) {
-                            int slot = position - 1;
-                            doAddToFavorites(activity, galleryInfo, slot, listener);
-                            if (builder.isChecked()) {
-                                Settings.putDefaultFavSlot(slot);
-                            } else {
-                                Settings.putDefaultFavSlot(Settings.INVALID_DEFAULT_FAV_SLOT);
-                            }
+                    (builder, dialog, position) -> {
+                        int slot1 = position - 1;
+                        String newFavoriteName = (slot1 >= 0 && slot1 <= 9) ? items[slot1+1] : null;
+                        doAddToFavorites(activity, galleryInfo, slot1, galleryInfo instanceof GalleryDetail
+                                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, newFavoriteName)
+                                : listener);
+                        if (builder.isChecked()) {
+                            Settings.putDefaultFavSlot(slot1);
+                        } else {
+                            Settings.putDefaultFavSlot(Settings.INVALID_DEFAULT_FAV_SLOT);
                         }
                     }, activity.getString(R.string.remember_favorite_collection), false)
                     .setTitle(R.string.add_favorites_dialog_title)
+                    .setOnCancelListener(dialog -> listener.onCancel())
                     .show();
         }
     }
@@ -216,8 +221,40 @@ public final class CommonOperations {
         EhRequest request = new EhRequest();
         request.setMethod(EhClient.METHOD_ADD_FAVORITES);
         request.setArgs(galleryInfo.gid, galleryInfo.token, -1, "");
-        request.setCallback(listener);
+        request.setCallback(galleryInfo instanceof GalleryDetail
+                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, null)
+                : listener);
         client.execute(request);
+    }
+
+    private static class UpdateFavoriteNameCallback implements EhClient.Callback<Void> {
+
+        private final EhClient.Callback<Void> delegate;
+        private final GalleryDetail detail;
+        private final String newFavoriteName;
+
+        UpdateFavoriteNameCallback(EhClient.Callback<Void> delegate, GalleryDetail detail,
+                String newFavoriteName) {
+            this.delegate = delegate;
+            this.detail = detail;
+            this.newFavoriteName = newFavoriteName;
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            detail.favoriteName = newFavoriteName;
+            delegate.onSuccess(result);
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            delegate.onFailure(e);
+        }
+
+        @Override
+        public void onCancel() {
+            delegate.onCancel();
+        }
     }
 
     // TODO Add context if activity and context are different style

@@ -26,7 +26,6 @@ import java.util.List;
 
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
-import okhttp3.Request;
 
 public class EhCookieStore extends CookieRepository {
 
@@ -86,41 +85,26 @@ public class EhCookieStore extends CookieRepository {
     }
 
     @Override
-    public List<Cookie> loadForRequest(HttpUrl url, Request request) {
-        List<Cookie> cookies = super.loadForRequest(url, request);
-        Object tag = request.tag();
+    public List<Cookie> loadForRequest(HttpUrl url) {
+        List<Cookie> cookies = super.loadForRequest(url);
 
         boolean checkTips = domainMatch(url, EhUrl.DOMAIN_E);
-        boolean checkUconfig = (domainMatch(url, EhUrl.DOMAIN_E) || domainMatch(url, EhUrl.DOMAIN_EX)) && tag instanceof EhConfig;
 
-        if (checkTips || checkUconfig) {
+        if (checkTips) {
             List<Cookie> result = new ArrayList<>(cookies.size() + 1);
             // Add all but skip some
             for (Cookie cookie: cookies) {
                 String name = cookie.name();
-                if (checkTips && EhConfig.KEY_CONTENT_WARNING.equals(name)) {
+                if (EhConfig.KEY_CONTENT_WARNING.equals(name)) {
                     continue;
                 }
-                if (checkUconfig && EhConfig.KEY_UCONFIG.equals(name)) {
+                if (EhConfig.KEY_UCONFIG.equals(name)) {
                     continue;
                 }
                 result.add(cookie);
             }
             // Add some
-            if (checkTips) {
-                result.add(sTipsCookie);
-            }
-            if (checkUconfig) {
-                EhConfig ehConfig = (EhConfig) tag;
-                Cookie uconfigCookie = new Cookie.Builder()
-                        .name(EhConfig.KEY_UCONFIG)
-                        .value(ehConfig.uconfig())
-                        .domain(url.host())
-                        .path("/")
-                        .expiresAt(Long.MAX_VALUE)
-                        .build();
-                result.add(uconfigCookie);
-            }
+            result.add(sTipsCookie);
             return Collections.unmodifiableList(result);
         } else {
             return cookies;

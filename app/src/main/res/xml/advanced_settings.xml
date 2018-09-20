@@ -48,11 +48,27 @@
         app:entryValues="@array/read_cache_size_entry_values"
         android:defaultValue="160"/>
 
+    <com.hippo.preference.ListPreference
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:key="app_language"
+      android:title="@string/settings_advanced_app_language_title"
+      android:summary="%s"
+      app:entries="@array/app_language_entries"
+      app:entryValues="@array/app_language_entry_values"
+      android:defaultValue="system"/>
+
+    <com.hippo.preference.SwitchPreference
+        android:key="built_in_hosts"
+        android:title="@string/settings_advanced_built_in_hosts_title"
+        android:summary="@string/settings_advanced_built_in_hosts_summary"
+        android:defaultValue="false"/>
+
     <com.hippo.preference.ActivityPreference
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:key="pattern_protection"
-        android:title="@string/settings_advanced_pattern_protection_title"
-        app:activity="com.hippo.ehviewer.ui.SetSecurityActivity"/>
+        android:key="custom_hosts"
+        android:title="@string/settings_advanced_custom_hosts_title"
+        android:summary="@string/settings_advanced_custom_hosts_summary"
+        app:activity="com.hippo.ehviewer.ui.HostsActivity"/>
 
     <Preference
         android:key="export_data"

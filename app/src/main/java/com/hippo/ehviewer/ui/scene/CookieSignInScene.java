@@ -196,12 +196,6 @@ public class CookieSignInScene extends SolidScene implements EditText.OnEditorAc
         } else {
             mIpbPassHashLayout.setError(null);
         }
-        if (TextUtils.isEmpty(igneous)) {
-            mIgneousLayout.setError(getString(R.string.text_is_empty));
-            return;
-        } else {
-            mIgneousLayout.setError(null);
-        }
 
         hideSoftInput();
 
@@ -242,7 +236,9 @@ public class CookieSignInScene extends SolidScene implements EditText.OnEditorAc
         store.addCookie(newCookie(EhCookieStore.KEY_IPD_MEMBER_ID, id, EhUrl.DOMAIN_EX));
         store.addCookie(newCookie(EhCookieStore.KEY_IPD_PASS_HASH, hash, EhUrl.DOMAIN_E));
         store.addCookie(newCookie(EhCookieStore.KEY_IPD_PASS_HASH, hash, EhUrl.DOMAIN_EX));
-        store.addCookie(newCookie(EhCookieStore.KEY_IGNEOUS, igneous, EhUrl.DOMAIN_E));
-        store.addCookie(newCookie(EhCookieStore.KEY_IGNEOUS, igneous, EhUrl.DOMAIN_EX));
+        if (!igneous.isEmpty()) {
+            store.addCookie(newCookie(EhCookieStore.KEY_IGNEOUS, igneous, EhUrl.DOMAIN_E));
+            store.addCookie(newCookie(EhCookieStore.KEY_IGNEOUS, igneous, EhUrl.DOMAIN_EX));
+        }
     }
 }

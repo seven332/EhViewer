@@ -231,6 +231,9 @@ public abstract class StageActivity extends EhActivity {
     protected void onUnregister() {
     }
 
+    protected void onTransactScene() {
+    }
+
     public int getStageId() {
         return mStageId;
     }
@@ -311,6 +314,7 @@ public abstract class StageActivity extends EhActivity {
 
                     // Commit
                     transaction.commitAllowingStateLoss();
+                    onTransactScene();
 
                     // New arguments
                     if (args != null && fragment instanceof SceneFragment) {
@@ -384,6 +388,7 @@ public abstract class StageActivity extends EhActivity {
 
         // Commit
         transaction.commitAllowingStateLoss();
+        onTransactScene();
 
         // Check request
         if (announcer.requestFrom != null) {
@@ -460,6 +465,7 @@ public abstract class StageActivity extends EhActivity {
 
         // Commit
         transaction.commitAllowingStateLoss();
+        onTransactScene();
 
         if (!createNewScene && args != null) {
             // TODO Call onNewArguments when view created ?
@@ -538,6 +544,7 @@ public abstract class StageActivity extends EhActivity {
         }
         transaction.remove(scene);
         transaction.commitAllowingStateLoss();
+        onTransactScene();
 
         // Remove tag
         mSceneTagList.remove(index);
@@ -562,6 +569,7 @@ public abstract class StageActivity extends EhActivity {
         transaction.detach(fragment);
         transaction.attach(fragment);
         transaction.commitAllowingStateLoss();
+        onTransactScene();
     }
 
     @Override

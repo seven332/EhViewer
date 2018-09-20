@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2018 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,27 +16,23 @@
   -->
 
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:padding="@dimen/keyline_margin">
+
+  <TextView
+    android:id="@+id/message"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingLeft="?attr/dialogPreferredPadding"
-    android:paddingRight="?attr/dialogPreferredPadding">
+    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
-    <TextView
-        android:id="@+id/key"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:textColor="@color/primary_text_light"
-        android:padding="8dp"/>
-
-    <TextView
-        android:id="@+id/value"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textColor="@color/primary_text_light"
-        android:padding="8dp"/>
+  <EditText
+    android:id="@+id/value"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/keyline_margin"
+    android:inputType="text"/>
 
 </LinearLayout>

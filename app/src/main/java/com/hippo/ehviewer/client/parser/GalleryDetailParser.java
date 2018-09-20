@@ -227,6 +227,14 @@ public class GalleryDetailParser {
             // isFavorited
             Element gdf = gm.getElementById("gdf");
             gd.isFavorited = null != gdf && !StringUtils.trim(gdf.text()).equals("Add to Favorites");
+            if (gdf != null) {
+                final String favoriteName = StringUtils.trim(gdf.text());
+                if (favoriteName.equals("Add to Favorites")) {
+                    gd.favoriteName = null;
+                } else {
+                    gd.favoriteName = StringUtils.trim(gdf.text());
+                }
+            }
         } catch (Exception e) {
             throw new ParseException("Can't parse gallery detail", body);
         }
@@ -397,7 +405,7 @@ public class GalleryDetailParser {
             // time
             Element c3 = JsoupUtils.getElementByClass(element, "c3");
             String temp = c3.ownText();
-            temp = temp.substring("Posted on ".length(), temp.length() - " by:  ".length());
+            temp = temp.substring("Posted on ".length(), temp.length() - " by:".length());
             comment.time = WEB_COMMENT_DATE_FORMAT.parse(temp).getTime();
             // user
             comment.user = c3.child(0).text();

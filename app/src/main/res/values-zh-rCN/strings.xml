@@ -57,7 +57,10 @@
 
     <string name="cellular_network_warning">正在使用移动网络</string>
 
-    <string name="error_bad_status_code">错误的状态码：%d</string>
+    <string name="clipboard_gallery_url_dialog_title">发现画廊</string>
+    <string name="clipboard_gallery_url_dialog_message">剪切板里有画廊链接，要不要看看？</string>
+
+    <string name="error_bad_status_code">错误状态码：%d</string>
     <string name="error_timeout">超时</string>
     <string name="error_unknown_host">未知主机</string>
     <string name="error_redirection">太多重定向</string>
@@ -97,6 +100,8 @@
     <string name="get_it">知道了</string>
     <string name="accept">接受</string>
     <string name="reject">拒绝</string>
+
+    <string name="help_route">设置->关于->帮助</string>
 
     <!-- Crash -->
     <string name="send">发送</string>
@@ -302,6 +307,8 @@
     <string name="download_labels">下载标签</string>
     <string name="download_start_all">全部开始</string>
     <string name="download_stop_all">全部停止</string>
+    <string name="download_reset_reading_progress">重置阅读进度</string>
+    <string name="reset_reading_progress_message">重置所有已下载画廊的阅读进度？</string>
     <string name="download_service_label">EhViewer 下载服务</string>
     <string name="download_speed_text">%s</string>
     <string name="download_speed_text_2">%1$s，剩余 %2$s</string>
@@ -348,11 +355,30 @@
     <string name="set">设置</string>
     <string name="enable_fingerprint">允许使用指纹解锁</string>
 
+    <!-- UConfig Activity -->
+    <string name="u_config">EHentai 设置</string>
+    <string name="apply">应用</string>
+    <string name="apply_tip">点击右上角的对勾来保存设置</string>
+
+    <!-- Hosts Activity -->
+    <string name="hosts">自定义 hosts.txt</string>
+    <string name="hosts_tip">hosts.txt</string>
+    <string name="hosts_host">Host</string>
+    <string name="hosts_ip">IP</string>
+    <string name="add_host">添加 host</string>
+    <string name="add_host_add">添加</string>
+    <string name="edit_host">编辑 host</string>
+    <string name="edit_host_confirm">确认</string>
+    <string name="edit_host_delete">删除</string>
+    <string name="invalid_host">无效的 host</string>
+    <string name="invalid_ip">无效的 IP</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
     <string name="page_menu_save">保存</string>
+    <string name="page_menu_save_to">保存到...</string>
     <string name="page_menu_add_bookmark">添加书签</string>
     <string name="gallery_menu_title">菜单</string>
     <string name="share_image">分享图片</string>
@@ -365,6 +391,13 @@
     <string name="settings_eh_sign_out_warning">天哪，我的老伙计，你要退出登录吗？我是说，你真的要退出登录吗？</string>
     <string name="settings_eh_sign_out_yes">是的，我是说，真的</string>
     <string name="settings_eh_sign_out_tip">已退出登录，重启应用以便再次登录</string>
+    <string name="settings_eh_identity_cookies">身份 Cookie</string>
+    <string name="settings_eh_identity_cookies_summary">可用于登录</string>
+    <string name="settings_eh_identity_cookies_signed">身份 Cookie 可用于登录该账号。&lt;br&gt;&lt;b&gt;注意数据安全&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_tourist">未登录</string>
+    <string name="settings_eh_identity_cookies_copy">复制</string>
+    <string name="settings_u_config">EHentai 设置</string>
+    <string name="settings_u_config_summary">EHentai 网站上的设置</string>
     <string name="settings_eh_gallery_site">画廊站点</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">详情</string>
@@ -392,6 +425,8 @@
     <string name="settings_eh_show_jpn_title">显示日文标题</string>
     <string name="settings_eh_show_jpn_title_summary_on">尝试显示日文标题。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
+    <string name="settings_eh_show_gallery_pages">显示画廊页数</string>
+    <string name="settings_eh_show_gallery_pages_summary">在画廊列表中显示页数。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_filter">过滤</string>
     <string name="settings_eh_filter_summary">过滤标题，上传者，标签和标签组</string>
     <string name="settings_eh_cellular_network_warning">移动网络警告</string>
@@ -471,15 +506,20 @@
     <string name="settings_advanced_clear_memory_cache">清理内存缓存</string>
     <string name="settings_advanced_clear_memory_cache_summary">清理缩略图、画廊信息的内存缓存</string>
     <string name="settings_advanced_read_cache_size">阅读缓存大小</string>
-    <string name="settings_advanced_pattern_protection_title">图案保护</string>
-    <string name="settings_advanced_pattern_protection_not_set">未设置图案保护</string>
-    <string name="settings_advanced_pattern_protection_set">已设置图案保护</string>
+    <string name="settings_advanced_app_language_title">App 界面语言</string>
+    <string name="settings_advanced_built_in_hosts_title">内置 hosts.txt</string>
+    <string name="settings_advanced_built_in_hosts_summary">应用提供的主机到IP的映射\n可被自定义 hosts.txt 覆盖</string>
+    <string name="settings_advanced_custom_hosts_title">自定义 hosts.txt</string>
+    <string name="settings_advanced_custom_hosts_summary">将主机名称映射到相应的IP地址\n可覆盖内置 hosts.txt</string>
+    <string name="settings_privacy_pattern_protection_title">图案保护</string>
+    <string name="settings_privacy_pattern_protection_not_set">未设置图案保护</string>
+    <string name="settings_privacy_pattern_protection_set">已设置图案保护</string>
     <string name="settings_advanced_export_data">导出数据</string>
     <string name="settings_advanced_export_data_summary">保存数据至外置存储器，例如下载列表，快速搜索列表</string>
     <string name="settings_advanced_export_data_to">已导出数据至 %s</string>
     <string name="settings_advanced_export_data_failed">导出数据失败</string>
     <string name="settings_advanced_import_data">导入数据</string>
-    <string name="settings_advanced_import_data_summary">从置存储器导入数据</string>
+    <string name="settings_advanced_import_data_summary">从外置存储器导入数据</string>
     <string name="settings_advanced_import_data_successfully">导入数据成功</string>
 
     <string name="settings_about">关于</string>
@@ -492,13 +532,17 @@
     <string name="settings_about_license">开源许可</string>
     <string name="settings_about_license_summary">EhViewer 的诞生离不开许多开源项目</string>
     <string name="settings_about_donate">捐赠</string>
-    <string name="settings_about_donate_summary">支付宝：seven332$163.com</string>
-    <string name="settings_about_donate_message">你的捐赠能帮助我开发更多更好的应用。\n\n支付宝：seven332$163.com</string>
-    <string name="settings_about_donate_toast">邮箱地址已复制到剪切板</string>
-    <string name="settings_about_enable_analytics">启用数据统计</string>
-    <string name="settings_about_about_analytics">关于数据统计</string>
+    <string name="settings_about_donate_message">你的捐赠不能为你带来特权，但能帮助我继续维护这个应用。</string>
+    <string name="settings_about_donate_alipay">支付宝</string>
+    <string name="settings_about_donate_paypal">PayPal</string>
+    <string name="settings_about_donate_open">打开</string>
+    <string name="settings_about_donate_copy">复制</string>
+    <string name="settings_about_donate_copied">已复制</string>
+    <string name="settings_privacy_enable_analytics">启用数据统计</string>
+    <string name="settings_privacy_about_analytics">关于数据统计</string>
     <string name="settings_about_version">版本号</string>
     <string name="settings_about_check_for_updates">检查更新</string>
+    <string name="settings_about_auto_check_for_updates">自动检查更新</string>
     <string name="settings_about_beta_update_channel">更新测试版</string>
     <string name="settings_about_beta_update_channel_summary">测试版可能在你的设备上出现不可预知的错误</string>
 
@@ -543,6 +587,8 @@
     <string name="cant_get_data_dir">无法获取数据文件夹</string>
     <string name="cant_find_any_data">找不到任何数据</string>
     <string name="cant_read_the_file">无法读取文件</string>
+
+    <string name="app_language_system">系统语言（默认）</string>
 
     <!-- License -->
     <string name="license">开源许可</string>
@@ -618,5 +664,10 @@
     <string name="download_archive_failure">无法下载压缩包</string>
     <string name="archive">压缩包</string>
     <string name="download_archive_failure_no_hath">下载压缩包需要 H@H 客户端</string>
+    <string name="settings_privacy">隐私</string>
+    <string name="settings_privacy_secure">不允许屏幕抓取</string>
+    <string name="settings_privacy_secure_summary">启用后，将不能截取该应用的屏幕截图，同时，将不会在系统任务切换器中显示该应用的内容预览\n\n重新启动应用以生效此更改</string>
 
+    <string name="download_service">下载服务</string>
+    <string name="favorite_name">收藏画廊</string>
 </resources>

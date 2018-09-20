@@ -314,6 +314,13 @@ public class Settings {
         return getBoolean(KEY_SHOW_JPN_TITLE, DEFAULT_SHOW_JPN_TITLE);
     }
 
+    private static final String KEY_SHOW_GALLERY_PAGES = "show_gallery_pages";
+    private static final boolean DEFAULT_SHOW_GALLERY_PAGES = false;
+
+    public static boolean getShowGalleryPages() {
+        return getBoolean(KEY_SHOW_GALLERY_PAGES, DEFAULT_SHOW_GALLERY_PAGES);
+    }
+
     public static final String KEY_DEFAULT_CATEGORIES = "default_categories";
     public static final int DEFAULT_DEFAULT_CATEGORIES = EhUtils.ALL_CATEGORY;
 
@@ -576,6 +583,19 @@ public class Settings {
     }
 
     /********************
+     ****** Privacy and Security
+     ********************/
+    public static final String KEY_SEC_SECURITY = "enable_secure";
+    public static final boolean VALUE_SEC_SECURITY = false;
+
+    public static boolean getEnabledSecurity() {
+        return getBoolean(KEY_SEC_SECURITY, VALUE_SEC_SECURITY);
+    }
+    public static void putEnabledSecurity(boolean value) {
+        putBoolean(KEY_READING_FULLSCREEN, value);
+    }
+
+    /********************
      ****** Download
      ********************/
     public static final String KEY_DOWNLOAD_SAVE_SCHEME = "image_scheme";
@@ -705,26 +725,42 @@ public class Settings {
     /********************
      ****** Favorites
      ********************/
-    public static final String KEY_FAV_CAT_0 = "fav_cat_0";
-    public static final String KEY_FAV_CAT_1 = "fav_cat_1";
-    public static final String KEY_FAV_CAT_2 = "fav_cat_2";
-    public static final String KEY_FAV_CAT_3 = "fav_cat_3";
-    public static final String KEY_FAV_CAT_4 = "fav_cat_4";
-    public static final String KEY_FAV_CAT_5 = "fav_cat_5";
-    public static final String KEY_FAV_CAT_6 = "fav_cat_6";
-    public static final String KEY_FAV_CAT_7 = "fav_cat_7";
-    public static final String KEY_FAV_CAT_8 = "fav_cat_8";
-    public static final String KEY_FAV_CAT_9 = "fav_cat_9";
-    public static final String DEFAULT_FAV_CAT_0 = "Favorites 0";
-    public static final String DEFAULT_FAV_CAT_1 = "Favorites 1";
-    public static final String DEFAULT_FAV_CAT_2 = "Favorites 2";
-    public static final String DEFAULT_FAV_CAT_3 = "Favorites 3";
-    public static final String DEFAULT_FAV_CAT_4 = "Favorites 4";
-    public static final String DEFAULT_FAV_CAT_5 = "Favorites 5";
-    public static final String DEFAULT_FAV_CAT_6 = "Favorites 6";
-    public static final String DEFAULT_FAV_CAT_7 = "Favorites 7";
-    public static final String DEFAULT_FAV_CAT_8 = "Favorites 8";
-    public static final String DEFAULT_FAV_CAT_9 = "Favorites 9";
+    private static final String KEY_FAV_CAT_0 = "fav_cat_0";
+    private static final String KEY_FAV_CAT_1 = "fav_cat_1";
+    private static final String KEY_FAV_CAT_2 = "fav_cat_2";
+    private static final String KEY_FAV_CAT_3 = "fav_cat_3";
+    private static final String KEY_FAV_CAT_4 = "fav_cat_4";
+    private static final String KEY_FAV_CAT_5 = "fav_cat_5";
+    private static final String KEY_FAV_CAT_6 = "fav_cat_6";
+    private static final String KEY_FAV_CAT_7 = "fav_cat_7";
+    private static final String KEY_FAV_CAT_8 = "fav_cat_8";
+    private static final String KEY_FAV_CAT_9 = "fav_cat_9";
+    private static final String DEFAULT_FAV_CAT_0 = "Favorites 0";
+    private static final String DEFAULT_FAV_CAT_1 = "Favorites 1";
+    private static final String DEFAULT_FAV_CAT_2 = "Favorites 2";
+    private static final String DEFAULT_FAV_CAT_3 = "Favorites 3";
+    private static final String DEFAULT_FAV_CAT_4 = "Favorites 4";
+    private static final String DEFAULT_FAV_CAT_5 = "Favorites 5";
+    private static final String DEFAULT_FAV_CAT_6 = "Favorites 6";
+    private static final String DEFAULT_FAV_CAT_7 = "Favorites 7";
+    private static final String DEFAULT_FAV_CAT_8 = "Favorites 8";
+    private static final String DEFAULT_FAV_CAT_9 = "Favorites 9";
+
+    private static final String KEY_FAV_COUNT_0 = "fav_count_0";
+    private static final String KEY_FAV_COUNT_1 = "fav_count_1";
+    private static final String KEY_FAV_COUNT_2 = "fav_count_2";
+    private static final String KEY_FAV_COUNT_3 = "fav_count_3";
+    private static final String KEY_FAV_COUNT_4 = "fav_count_4";
+    private static final String KEY_FAV_COUNT_5 = "fav_count_5";
+    private static final String KEY_FAV_COUNT_6 = "fav_count_6";
+    private static final String KEY_FAV_COUNT_7 = "fav_count_7";
+    private static final String KEY_FAV_COUNT_8 = "fav_count_8";
+    private static final String KEY_FAV_COUNT_9 = "fav_count_9";
+
+    private static final String KEY_FAV_LOCAL = "fav_local";
+    private static final String KEY_FAV_CLOUD = "fav_cloud";
+
+    private static final int DEFAULT_FAV_COUNT = 0;
 
     public static String[] getFavCat() {
         String[] favCat = new String[10];
@@ -755,6 +791,53 @@ public class Settings {
                 .putString(KEY_FAV_CAT_8, value[8])
                 .putString(KEY_FAV_CAT_9, value[9])
                 .apply();
+    }
+
+    public static int[] getFavCount() {
+        int[] favCount = new int[10];
+        favCount[0] = sSettingsPre.getInt(KEY_FAV_COUNT_0, DEFAULT_FAV_COUNT);
+        favCount[1] = sSettingsPre.getInt(KEY_FAV_COUNT_1, DEFAULT_FAV_COUNT);
+        favCount[2] = sSettingsPre.getInt(KEY_FAV_COUNT_2, DEFAULT_FAV_COUNT);
+        favCount[3] = sSettingsPre.getInt(KEY_FAV_COUNT_3, DEFAULT_FAV_COUNT);
+        favCount[4] = sSettingsPre.getInt(KEY_FAV_COUNT_4, DEFAULT_FAV_COUNT);
+        favCount[5] = sSettingsPre.getInt(KEY_FAV_COUNT_5, DEFAULT_FAV_COUNT);
+        favCount[6] = sSettingsPre.getInt(KEY_FAV_COUNT_6, DEFAULT_FAV_COUNT);
+        favCount[7] = sSettingsPre.getInt(KEY_FAV_COUNT_7, DEFAULT_FAV_COUNT);
+        favCount[8] = sSettingsPre.getInt(KEY_FAV_COUNT_8, DEFAULT_FAV_COUNT);
+        favCount[9] = sSettingsPre.getInt(KEY_FAV_COUNT_9, DEFAULT_FAV_COUNT);
+        return favCount;
+    }
+
+    public static void putFavCount(int[] count) {
+        Assert.assertEquals(10, count.length);
+        sSettingsPre.edit()
+                .putInt(KEY_FAV_COUNT_0, count[0])
+                .putInt(KEY_FAV_COUNT_1, count[1])
+                .putInt(KEY_FAV_COUNT_2, count[2])
+                .putInt(KEY_FAV_COUNT_3, count[3])
+                .putInt(KEY_FAV_COUNT_4, count[4])
+                .putInt(KEY_FAV_COUNT_5, count[5])
+                .putInt(KEY_FAV_COUNT_6, count[6])
+                .putInt(KEY_FAV_COUNT_7, count[7])
+                .putInt(KEY_FAV_COUNT_8, count[8])
+                .putInt(KEY_FAV_COUNT_9, count[9])
+                .apply();
+    }
+
+    public static int getFavLocalCount() {
+        return sSettingsPre.getInt(KEY_FAV_LOCAL, DEFAULT_FAV_COUNT);
+    }
+
+    public static void putFavLocalCount(int count) {
+        sSettingsPre.edit().putInt(KEY_FAV_LOCAL, count).apply();
+    }
+
+    public static int getFavCloudCount() {
+        return sSettingsPre.getInt(KEY_FAV_CLOUD, DEFAULT_FAV_COUNT);
+    }
+
+    public static void putFavCloudCount(int count) {
+        sSettingsPre.edit().putInt(KEY_FAV_CLOUD, count).apply();
     }
 
     private static final String KEY_RECENT_FAV_CAT = "recent_fav_cat";
@@ -873,6 +956,8 @@ public class Settings {
      ********************/
     private static final String KEY_BETA_UPDATE_CHANNEL = "beta_update_channel";
     private static final boolean DEFAULT_BETA_UPDATE_CHANNEL = EhApplication.BETA;
+    private static final String KEY_AUTO_CHECK_FOR_UPDATES = "auto_check_for_updates";
+    private static final boolean DEFAULT_AUTO_CHECK_FOR_UPDATES = EhApplication.AUTO_UPDATE;
 
     public static boolean getBetaUpdateChannel() {
         return getBoolean(KEY_BETA_UPDATE_CHANNEL, DEFAULT_BETA_UPDATE_CHANNEL);
@@ -880,6 +965,10 @@ public class Settings {
 
     public static void putBetaUpdateChannel(boolean value) {
         putBoolean(KEY_BETA_UPDATE_CHANNEL, value);
+    }
+
+    public static boolean getAutoCheckUpdateEnable() {
+        return getBoolean(KEY_AUTO_CHECK_FOR_UPDATES, DEFAULT_AUTO_CHECK_FOR_UPDATES);
     }
 
     /********************
@@ -939,6 +1028,28 @@ public class Settings {
         return getIntFromStr(KEY_READ_CACHE_SIZE, DEFAULT_READ_CACHE_SIZE);
     }
 
+    public static final String KEY_BUILT_IN_HOSTS = "built_in_hosts";
+    private static final boolean DEFAULT_BUILT_IN_HOSTS = false;
+
+    public static boolean getBuiltInHosts() {
+        return getBoolean(KEY_BUILT_IN_HOSTS, DEFAULT_BUILT_IN_HOSTS);
+    }
+
+    public static void putBuiltInHosts(boolean value) {
+        putBoolean(KEY_BUILT_IN_HOSTS, value);
+    }
+
+    public static final String KEY_APP_LANGUAGE = "app_language";
+    private static final String DEFAULT_APP_LANGUAGE = "system";
+
+    public static String getAppLanguage() {
+        return getString(KEY_APP_LANGUAGE, DEFAULT_APP_LANGUAGE);
+    }
+
+    public static void putAppLanguage(String value) {
+        putString(KEY_APP_LANGUAGE, value);
+    }
+
     /********************
      ****** Guide
      ********************/
@@ -995,5 +1106,16 @@ public class Settings {
 
     public static void putGuideGallery(boolean value) {
         putBoolean(KEY_GUIDE_GALLERY, value);
+    }
+
+    private static final String KEY_CLIPBOARD_TEXT_HASH_CODE = "clipboard_text_hash_code";
+    private static final int DEFAULT_CLIPBOARD_TEXT_HASH_CODE = 0;
+
+    public static int getClipboardTextHashCode() {
+        return getInt(KEY_CLIPBOARD_TEXT_HASH_CODE, DEFAULT_CLIPBOARD_TEXT_HASH_CODE);
+    }
+
+    public static void putClipboardTextHashCode(int value) {
+        putInt(KEY_CLIPBOARD_TEXT_HASH_CODE, value);
     }
 }

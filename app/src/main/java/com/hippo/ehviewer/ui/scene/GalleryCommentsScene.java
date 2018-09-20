@@ -69,6 +69,7 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
 import com.hippo.util.DrawableManager;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.util.TextUrl;
 import com.hippo.view.ViewTransition;
@@ -321,7 +322,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         rv.setAdapter(new RecyclerView.Adapter<InfoHolder>() {
             @Override
             public InfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new InfoHolder(inflater.inflate(R.layout.item_favorite_info_data, parent, false));
+                return new InfoHolder(inflater.inflate(R.layout.item_drawer_favorites, parent, false));
             }
 
             @Override
@@ -737,7 +738,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         @Override
         public void onFailure(Exception e) {
-            showTip(R.string.comment_failed, LENGTH_SHORT);
+            showTip(getContent().getString(R.string.comment_failed) + "\n" + ExceptionUtils.getReadableString(e), LENGTH_SHORT);
         }
 
         @Override

@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hippo.ehviewer.AppConfig;
+import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -68,6 +70,7 @@ import com.hippo.util.SystemUiHelper;
 import com.hippo.widget.ColorView;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.ConcurrentPool;
+import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
@@ -75,6 +78,10 @@ import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChangeListener,
         GalleryView.Listener {
@@ -93,11 +100,14 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
     private static final long SLIDER_ANIMATION_DURING = 150;
     private static final long HIDE_SLIDER_DELAY = 3000;
 
+    private static final int WRITE_REQUEST_CODE = 43;
+
     private String mAction;
     private String mFilename;
     private Uri mUri;
     private GalleryInfo mGalleryInfo;
     private int mPage;
+    private String mCacheFileName;
 
     @Nullable
     private GLRootView mGLRootView;
@@ -613,6 +623,16 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
     }
 
     @Override
+    public void onTapErrorText(int index) {
+        NotifyTask task = mNotifyTaskPool.pop();
+        if (task == null) {
+            task = new NotifyTask();
+        }
+        task.setData(NotifyTask.KEY_TAP_ERROR_TEXT, index);
+        SimpleHandler.getInstance().post(task);
+    }
+
+    @Override
     public void onLongPressPage(int index) {
         NotifyTask task = mNotifyTaskPool.pop();
         if (task == null) {
@@ -836,7 +856,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             return;
         }
 
-        File dir = AppConfig.getExternalImageDir();
+        File dir = AppConfig.getExternalTempDir();
         if (null == dir) {
             Toast.makeText(this, R.string.error_cant_create_temp_file, Toast.LENGTH_SHORT).show();
             return;
@@ -860,18 +880,16 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
 
         Uri uri = new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
-                .authority("com.hippo.ehviewer.fileprovider")
-                .appendPath("image")
+                .authority(BuildConfig.FILE_PROVIDER_AUTHORITY)
+                .appendPath("temp")
                 .appendPath(filename)
                 .build();
+
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.setType(mimeType);
         startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
-
-        // Sync media store
-        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, file.getUri()));
     }
 
     private void saveImage(int page) {
@@ -896,32 +914,107 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, file.getUri()));
     }
 
+    private void saveImageTo(int page) {
+        if (null == mGalleryProvider) {
+            return;
+        }
+        File dir = getCacheDir();
+        UniFile file;
+        if (null == (file = mGalleryProvider.save(page, UniFile.fromFile(dir), mGalleryProvider.getImageFilename(page)))) {
+            Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String filename = file.getName();
+        if (filename == null) {
+            Toast.makeText(this, R.string.error_cant_save_image, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mCacheFileName = filename;
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_TITLE, filename);
+        startActivityForResult(intent, WRITE_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (resultData != null){
+                Uri uri = resultData.getData();
+                String filepath = getCacheDir() + "/" + mCacheFileName;
+                File cachefile = new File(filepath);
+
+                InputStream is = null;
+                OutputStream os = null;
+                ContentResolver resolver = getContentResolver();
+
+                try {
+                    is = new FileInputStream(cachefile);
+                    os = resolver.openOutputStream(uri);
+                    IOUtils.copy(is, os);
+                } catch (IOException e) {
+                        e.printStackTrace();
+                } finally {
+                    IOUtils.closeQuietly(is);
+                    IOUtils.closeQuietly(os);
+                }
+
+                cachefile.delete();
+
+                Toast.makeText(this, getString(R.string.image_saved, uri.getPath()), Toast.LENGTH_SHORT).show();
+                // Sync media store
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+            }
+        }
+    }
+
     private void showPageDialog(final int page) {
         Resources resources = GalleryActivity.this.getResources();
-        new AlertDialog.Builder(GalleryActivity.this)
-                .setTitle(resources.getString(R.string.page_menu_title, page + 1))
-                .setItems(R.array.page_menu_entries, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (mGalleryProvider == null) {
-                            return;
-                        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(GalleryActivity.this);
+        builder.setTitle(resources.getString(R.string.page_menu_title, page + 1));
 
-                        switch (which) {
-                            case 0: // Refresh
-                                mGalleryProvider.forceRequest(page);
-                                break;
-                            case 1: // Share
-                                shareImage(page);
-                                break;
-                            case 2: // Save
-                                saveImage(page);
-                                break;
-                            case 3: // Add a bookmark
-                                break;
-                        }
-                    }
-                }).show();
+        final CharSequence[] items;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            items = new CharSequence[]{
+                    getString(R.string.page_menu_refresh),
+                    getString(R.string.page_menu_share),
+                    getString(R.string.page_menu_save),
+                    getString(R.string.page_menu_save_to)};
+        }else {
+            items = new CharSequence[]{
+                    getString(R.string.page_menu_refresh),
+                    getString(R.string.page_menu_share),
+                    getString(R.string.page_menu_save)};
+        }
+        pageDialogListener(builder, items, page);
+        builder.show();
+    }
+
+    private void pageDialogListener(AlertDialog.Builder builder, CharSequence[] items, int page){
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mGalleryProvider == null) {
+                    return;
+                }
+
+                switch (which) {
+                    case 0: // Refresh
+                        mGalleryProvider.forceRequest(page);
+                        break;
+                    case 1: // Share
+                        shareImage(page);
+                        break;
+                    case 2: // Save
+                        saveImage(page);
+                        break;
+                    case 3: // Save to
+                        saveImageTo(page);
+                        break;
+                }
+            }
+        });
     }
 
     private class NotifyTask implements Runnable {
@@ -931,7 +1024,8 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         public static final int KEY_CURRENT_INDEX = 2;
         public static final int KEY_TAP_SLIDER_AREA = 3;
         public static final int KEY_TAP_MENU_AREA = 4;
-        public static final int KEY_LONG_PRESS_PAGE = 5;
+        public static final int KEY_TAP_ERROR_TEXT = 5;
+        public static final int KEY_LONG_PRESS_PAGE = 6;
 
         private int mKey;
         private int mValue;
@@ -964,6 +1058,12 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             }
         }
 
+        private void onTapErrorText(int index) {
+            if (mGalleryProvider != null) {
+                mGalleryProvider.forceRequest(index);
+            }
+        }
+
         private void onLongPressPage(final int index) {
             showPageDialog(index);
         }
@@ -990,6 +1090,9 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                     break;
                 case KEY_TAP_SLIDER_AREA:
                     onTapSliderArea();
+                    break;
+                case KEY_TAP_ERROR_TEXT:
+                    onTapErrorText(mValue);
                     break;
                 case KEY_LONG_PRESS_PAGE:
                     onLongPressPage(mValue);

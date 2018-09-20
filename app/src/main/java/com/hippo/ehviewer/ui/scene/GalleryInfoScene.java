@@ -128,6 +128,8 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         mValues.add(Integer.toString(gd.torrentCount));
         mKeys.add(resources.getString(R.string.key_torrent_url));
         mValues.add(gd.torrentUrl);
+        mKeys.add(resources.getString(R.string.favorite_name));
+        mValues.add(gd.favoriteName);
     }
 
     protected void onInit() {

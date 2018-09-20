@@ -25,10 +25,4 @@
         android:title="@string/default_favorites_collection"
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/action_info"
-        android:icon="@drawable/v_info_dark_x24"
-        android:title="@string/favorites_info"
-        app:showAsAction="ifRoom"/>
-
 </menu>

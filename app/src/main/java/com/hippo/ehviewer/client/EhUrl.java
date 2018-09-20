@@ -17,13 +17,13 @@
 package com.hippo.ehviewer.client;
 
 import android.support.annotation.NonNull;
-
+import android.util.Pair;
 import com.hippo.ehviewer.Settings;
 import com.hippo.network.UrlBuilder;
-
 import java.util.List;
 import java.util.ListIterator;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import okhttp3.HttpUrl;
 
 public class EhUrl {
@@ -52,8 +52,13 @@ public class EhUrl {
     public static final String URL_FAVORITES_EX = HOST_EX + "favorites.php";
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
 
+    public static final String UCONFIG_E = HOST_E + "uconfig.php";
+    public static final String UCONFIG_EX = HOST_EX + "uconfig.php";
+
     private static final String URL_PREFIX_THUMB_E = "https://ehgt.org/t/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
+
+    public static final Pattern PATTERN_DETAIL_URL = Pattern.compile("g/(\\d+)/([0-9a-f]{10})");
 
     public static String getGalleryDetailUrl(long gid, String token) {
         return getGalleryDetailUrl(gid, token, 0, false);
@@ -86,6 +91,16 @@ public class EhUrl {
                 return API_E;
             case SITE_EX:
                 return API_EX;
+        }
+    }
+
+    public static String getUConfigUrl() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_E:
+                return UCONFIG_E;
+            case SITE_EX:
+                return UCONFIG_EX;
         }
     }
 
@@ -164,6 +179,15 @@ public class EhUrl {
             return getThumbUrlPrefix() + thirdLastSegment + "/" + secondLastSegment + "/" + lastSegment;
         } else {
             return originUrl;
+        }
+    }
+
+    public static Pair<Long, String> parseGalleryDetailUrl(String url) {
+        Matcher matcher = PATTERN_DETAIL_URL.matcher(url);
+        if (matcher.find()) {
+            return new Pair<>(Long.parseLong(matcher.group(1)), matcher.group(2));
+        } else {
+            return null;
         }
     }
 }

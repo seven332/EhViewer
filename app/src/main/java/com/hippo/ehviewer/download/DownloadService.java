@@ -16,12 +16,14 @@
 
 package com.hippo.ehviewer.download;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -90,6 +92,8 @@ public class DownloadService extends Service implements DownloadManager.Download
     private static int sFinishedCount;
     private static int sDownloadedCount;
 
+    private String CHANNEL_ID;
+
     public static void clear() {
         sFailedCount = 0;
         sFinishedCount = 0;
@@ -102,7 +106,12 @@ public class DownloadService extends Service implements DownloadManager.Download
     public void onCreate() {
         super.onCreate();
 
+        CHANNEL_ID = getPackageName()+".download";
         mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            mNotifyManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, getString(R.string.download_service),
+                    NotificationManager.IMPORTANCE_LOW));
+        }
         mDownloadManager = EhApplication.getDownloadManager(getApplicationContext());
         mDownloadManager.setDownloadListener(this);
     }
@@ -208,14 +217,15 @@ public class DownloadService extends Service implements DownloadManager.Download
         stopAllIntent.setAction(ACTION_STOP_ALL);
         PendingIntent piStopAll = PendingIntent.getService(this, 0, stopAllIntent, 0);
 
-        mDownloadingBuilder = new NotificationCompat.Builder(getApplicationContext())
+        mDownloadingBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setColor(getResources().getColor(R.color.colorPrimary))
                 .addAction(R.drawable.ic_pause_x24, getString(R.string.stat_download_action_stop_all), piStopAll)
-                .setShowWhen(false);
+                .setShowWhen(false)
+                .setChannelId(CHANNEL_ID);
 
         mDownloadingDelay = new NotificationDelay(this, mNotifyManager, mDownloadingBuilder, ID_DOWNLOADING);
     }
@@ -238,14 +248,15 @@ public class DownloadService extends Service implements DownloadManager.Download
         PendingIntent piActivity = PendingIntent.getActivity(DownloadService.this, 0,
                 activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        mDownloadedBuilder = new NotificationCompat.Builder(getApplicationContext())
+        mDownloadedBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(getString(R.string.stat_download_done_title))
                 .setDeleteIntent(piClear)
                 .setOngoing(false)
                 .setAutoCancel(true)
-                .setContentIntent(piActivity);
+                .setContentIntent(piActivity)
+                .setChannelId(CHANNEL_ID);
 
         mDownloadedDelay = new NotificationDelay(this, mNotifyManager, mDownloadedBuilder, ID_DOWNLOADED);
     }
@@ -255,14 +266,15 @@ public class DownloadService extends Service implements DownloadManager.Download
             return;
         }
 
-        m509dBuilder = new NotificationCompat.Builder(getApplicationContext())
+        m509dBuilder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_alert)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentText(getString(R.string.stat_509_alert_title))
                 .setContentText(getString(R.string.stat_509_alert_text))
                 .setAutoCancel(true)
                 .setOngoing(false)
-                .setCategory(NotificationCompat.CATEGORY_ERROR);
+                .setCategory(NotificationCompat.CATEGORY_ERROR)
+                .setChannelId(CHANNEL_ID);
 
         m509Delay = new NotificationDelay(this, mNotifyManager, m509dBuilder, ID_509);
     }

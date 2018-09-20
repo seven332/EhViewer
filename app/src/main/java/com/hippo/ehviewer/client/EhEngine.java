@@ -55,6 +55,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class EhEngine {
         sEhFilter = EhFilter.getInstance();
     }
 
-    private static void throwException(Call call, int code, @Nullable Headers headers,
+    private static void doThrowException(Call call, int code, @Nullable Headers headers,
             @Nullable String body, Exception e) throws Exception {
         if (call.isCanceled()) {
             throw new CancelledException();
@@ -117,6 +118,20 @@ public class EhEngine {
 
         if (code >= 400) {
             throw new StatusCodeException(code);
+        }
+
+        if (e != null) {
+            throw e;
+        }
+    }
+
+    private static void throwException(Call call, int code, @Nullable Headers headers,
+        @Nullable String body, Exception e) throws Exception {
+        try {
+            doThrowException(call, code, headers, body, e);
+        } catch (Throwable error) {
+            error.printStackTrace();
+            throw error;
         }
     }
 
@@ -196,7 +211,7 @@ public class EhEngine {
             }
         }
 
-        if (list.size() > 0 && (Settings.getShowJpnTitle() || sEhFilter.needCallApi())) {
+        if (list.size() > 0 && (Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
 
@@ -370,8 +385,7 @@ public class EhEngine {
     public static GalleryComment[] commentGallery(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, String url, String comment) throws Exception {
         FormBody.Builder builder = new FormBody.Builder()
-                .add("commenttext", comment)
-                .add("postcomment", "Post New");
+                .add("commenttext_new", comment);
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
                 .post(builder.build())
@@ -392,6 +406,12 @@ public class EhEngine {
             headers = response.headers();
             body = response.body().string();
             Document document = Jsoup.parse(body);
+
+            Elements elements = document.select("#chd + p");
+            if (elements.size() > 0) {
+                throw new EhException(elements.get(0).text());
+            }
+
             return GalleryDetailParser.parseComments(document);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
@@ -887,7 +907,7 @@ public class EhEngine {
             }
         }
 
-        if (list.size() > 0 && (Settings.getShowJpnTitle() || sEhFilter.needCallApi())) {
+        if (list.size() > 0 && (Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
 

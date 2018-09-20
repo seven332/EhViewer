@@ -430,11 +430,11 @@ public final class SpiderQueen implements Runnable {
     }
 
     public Object forceRequest(int index) {
-        return request(index, true, false);
+        return request(index, true, true, false);
     }
 
     public Object request(int index) {
-        return request(index, false, true);
+        return request(index, true, false, true);
     }
 
     private int getPageState(int index) {
@@ -483,7 +483,7 @@ public final class SpiderQueen implements Runnable {
      * Float for download percent<br>
      * null for wait
      */
-    private Object request(int index, boolean force, boolean addNeighbor) {
+    private Object request(int index, boolean ignoreError, boolean force, boolean addNeighbor) {
         if (mQueenThread == null) {
             return null;
         }
@@ -492,7 +492,8 @@ public final class SpiderQueen implements Runnable {
         int state = getPageState(index);
 
         // Fix state for force
-        if (force && (state == STATE_FINISHED || state == STATE_FAILED)) {
+        if ((force && (state == STATE_FINISHED || state == STATE_FAILED)) ||
+            (ignoreError && state == STATE_FAILED)) {
             // Update state to none at once
             updatePageState(index, STATE_NONE);
             state = STATE_NONE;
@@ -518,7 +519,7 @@ public final class SpiderQueen implements Runnable {
                 } else {
                     size = Integer.MAX_VALUE;
                 }
-                for (int i = index + 1, n = index + i + mPreloadNumber; i < n && i < size; i++) {
+                for (int i = index + 1, n = index + 1 + mPreloadNumber; i < n && i < size; i++) {
                     if (STATE_NONE == getPageState(i)) {
                         mRequestPageQueue2.add(i);
                     }
@@ -713,10 +714,13 @@ public final class SpiderQueen implements Runnable {
         spiderInfo.pages = GalleryDetailParser.parsePages(body);
         spiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
         PreviewSet previewSet = GalleryDetailParser.parsePreviewSet(body);
-        if ((index >= 0 && index < spiderInfo.pages - 1) || (index == 0 && spiderInfo.pages == 1)) {
-            spiderInfo.previewPerPage = previewSet.size();
-        } else {
-            spiderInfo.previewPerPage = Math.max(spiderInfo.previewPerPage, previewSet.size());
+
+        if (previewSet.size() > 0) {
+            if (index == 0) {
+                spiderInfo.previewPerPage = previewSet.size();
+            } else {
+                spiderInfo.previewPerPage = previewSet.getPosition(0) / index;
+            }
         }
 
         for (int i = 0, n = previewSet.size(); i < n; i++) {
@@ -761,6 +765,9 @@ public final class SpiderQueen implements Runnable {
             previewIndex = index / spiderInfo.previewPerPage;
         } else {
             previewIndex = 0;
+        }
+        if (spiderInfo.previewPages > 0) {
+            previewIndex = Math.min(previewIndex, spiderInfo.previewPages - 1);
         }
 
         try {
@@ -1047,6 +1054,8 @@ public final class SpiderQueen implements Runnable {
             String pageUrl = null;
             boolean interrupt = false;
             boolean leakSkipHathKey = false;
+
+            Log.d("TAG", "index = " + index);
 
             // Try twice
             for (int i = 0; i < 5; i++) {
@@ -1400,7 +1409,7 @@ public final class SpiderQueen implements Runnable {
                     // Can't find the file, it might be removed from cache,
                     // Reset it state and request it
                     updatePageState(index, STATE_NONE, null);
-                    request(index, false, false);
+                    request(index, false, false, false);
                     continue;
                 }
 

@@ -73,16 +73,9 @@
         android:defaultValue="@bool/beta"/>
 
     <com.hippo.preference.SwitchPreference
-        android:key="enable_analytics"
-        android:title="@string/settings_about_enable_analytics"
-        android:defaultValue="true"/>
-
-    <com.hippo.preference.MessagePreference
-        android:key="about_analytics"
-        android:title="@string/settings_about_about_analytics"
-        app:dialogMessage="@string/analytics_explain"
-        app:dialogMessageHtml="true"
-        app:dialogMessageLinkify="true"/>
+        android:key="auto_check_for_updates"
+        android:title="@string/settings_about_auto_check_for_updates"
+        android:defaultValue="@bool/auto_check_update"/>
 
     <Preference
         android:key="donate"

@@ -73,6 +73,9 @@
 
     <string name="cellular_network_warning">Connected to cellular networks</string>
 
+    <string name="clipboard_gallery_url_dialog_title">Gallery Detected</string>
+    <string name="clipboard_gallery_url_dialog_message">A gallery url was found in your clipboard. Check it now?</string>
+
     <string name="error_status_code_400" translatable="false">Bad Request</string>
     <string name="error_status_code_401" translatable="false">Unauthorized</string>
     <string name="error_status_code_402" translatable="false">Payment Required</string>
@@ -140,6 +143,8 @@
     <string name="accept">Accept</string>
     <string name="reject">Reject</string>
 
+    <string name="help_route">Settings->About->Help</string>
+
     <!-- Crash -->
     <string name="send">Send</string>
     <string name="crash_explain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
@@ -152,7 +157,7 @@
     <!-- Update -->
     <string name="update">Update</string>
     <string name="update_plain">Version: %1$s\nSize: %2$s\n\n%3$s</string>
-    <string name="update_to_date">EhViewer is update to date</string>
+    <string name="update_to_date">You are using the latest version of EhViewer</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint_exhentai">Search ExHentai</string>
@@ -346,6 +351,8 @@
     <string name="download_labels">Download labels</string>
     <string name="download_start_all">Start all</string>
     <string name="download_stop_all">Stop all</string>
+    <string name="download_reset_reading_progress">Reset reading progress</string>
+    <string name="reset_reading_progress_message">Reset the reading progress of all downloaded galleries?</string>
     <string name="download_service_label">EhViewer Download Service</string>
     <string name="download_speed_text">%s</string>
     <string name="download_speed_text_2">%1$s, %2$s left</string>
@@ -392,11 +399,30 @@
     <string name="set">Set</string>
     <string name="enable_fingerprint">Also allow unlock with fingerprint</string>
 
+    <!-- UConfig Activity -->
+    <string name="u_config">EHentai settings</string>
+    <string name="apply">Apply</string>
+    <string name="apply_tip">Click the check mark to save the settings</string>
+
+    <!-- Hosts Activity -->
+    <string name="hosts">Custom hosts.txt</string>
+    <string name="hosts_tip">hosts.txt</string>
+    <string name="hosts_host">Host</string>
+    <string name="hosts_ip">IP</string>
+    <string name="add_host">Add a host</string>
+    <string name="add_host_add">Add</string>
+    <string name="edit_host">Edit the host</string>
+    <string name="edit_host_confirm">Confirm</string>
+    <string name="edit_host_delete">Delete</string>
+    <string name="invalid_host">Invalid host</string>
+    <string name="invalid_ip">Invalid IP</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
     <string name="page_menu_save">Save</string>
+    <string name="page_menu_save_to">Save to...</string>
     <string name="page_menu_add_bookmark">Add a bookmark</string>
     <string name="gallery_menu_title">Menu</string>
     <string name="share_image">Share image</string>
@@ -408,6 +434,13 @@
     <string name="settings_eh_sign_out_warning">Do you really want to sign out?</string>
     <string name="settings_eh_sign_out_yes">@android:string/ok</string>
     <string name="settings_eh_sign_out_tip">Signed out, restart the application to sign in</string>
+    <string name="settings_eh_identity_cookies">Identity cookies</string>
+    <string name="settings_eh_identity_cookies_summary">It can be used to sign in</string>
+    <string name="settings_eh_identity_cookies_signed">Identity cookies can be used to sign in to this account.&lt;br&gt;&lt;b&gt;KEEP IT SAFE&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_tourist">Not signed in.</string>
+    <string name="settings_eh_identity_cookies_copy">Copy</string>
+    <string name="settings_u_config">EHentai settings</string>
+    <string name="settings_u_config_summary">Settings on EHentai website</string>
     <string name="settings_eh_gallery_site">Gallery site</string>
     <string name="settings_eh_list_mode">List mode</string>
     <string name="settings_eh_list_mode_detail">Detail</string>
@@ -435,6 +468,8 @@
     <string name="settings_eh_show_jpn_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
     <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
+    <string name="settings_eh_show_gallery_pages">Show gallery pages</string>
+    <string name="settings_eh_show_gallery_pages_summary">Display the number of pages in the gallery list. It takes more time to get gallery list</string>
     <string name="settings_eh_filter">Filter</string>
     <string name="settings_eh_filter_summary">Filter by title, uploader, tag and tag namespace</string>
     <string name="settings_eh_cellular_network_warning">Cellular network warning</string>
@@ -514,9 +549,14 @@
     <string name="settings_advanced_clear_memory_cache">Clear memory cache</string>
     <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
     <string name="settings_advanced_read_cache_size">Read cache size</string>
-    <string name="settings_advanced_pattern_protection_title">Pattern protection</string>
-    <string name="settings_advanced_pattern_protection_not_set">Pattern protection has not been set</string>
-    <string name="settings_advanced_pattern_protection_set">Pattern protection has been set</string>
+    <string name="settings_advanced_app_language_title">App language</string>
+    <string name="settings_advanced_built_in_hosts_title">Built-in hosts.txt</string>
+    <string name="settings_advanced_built_in_hosts_summary">The host-to-IP mapping provided by the app\nIt can be overridden by custom hosts.txt</string>
+    <string name="settings_advanced_custom_hosts_title">Custom hosts.txt</string>
+    <string name="settings_advanced_custom_hosts_summary">Map hostnames to IP addresses\nIt can override built-in hosts.txt</string>
+    <string name="settings_privacy_pattern_protection_title">Pattern protection</string>
+    <string name="settings_privacy_pattern_protection_not_set">Pattern protection has not been set</string>
+    <string name="settings_privacy_pattern_protection_set">Pattern protection has been set</string>
     <string name="settings_advanced_export_data">Export data</string>
     <string name="settings_advanced_export_data_summary">Save data to external storage, such as download list, quick search list</string>
     <string name="settings_advanced_export_data_to">Exported data to %s</string>
@@ -537,13 +577,17 @@
     <string name="settings_about_license">License</string>
     <string name="settings_about_license_summary">EhViewer is made possible by many open source projects</string>
     <string name="settings_about_donate">Donate</string>
-    <string name="settings_about_donate_summary">Alipay: seven332$163.com</string>
-    <string name="settings_about_donate_message">Your donation can help me develop more and better applications.\n\nAlipay: seven332$163.com</string>
-    <string name="settings_about_donate_toast">Email address copied to clipboard</string>
-    <string name="settings_about_enable_analytics">Enable analytics</string>
-    <string name="settings_about_about_analytics">About analytics</string>
+    <string name="settings_about_donate_message">Your donation can not bring you any privileges. But it helps me maintain this app.</string>
+    <string name="settings_about_donate_alipay">Alipay</string>
+    <string name="settings_about_donate_paypal">PayPal</string>
+    <string name="settings_about_donate_open">Open</string>
+    <string name="settings_about_donate_copy">Copy</string>
+    <string name="settings_about_donate_copied">Copied</string>
+    <string name="settings_privacy_enable_analytics">Enable analytics</string>
+    <string name="settings_privacy_about_analytics">About analytics</string>
     <string name="settings_about_version">Build version</string>
     <string name="settings_about_check_for_updates">Check for updates</string>
+    <string name="settings_about_auto_check_for_updates">Auto check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
     <string name="settings_about_beta_update_channel_summary">Beta release might be broken on your devices</string>
 
@@ -559,6 +603,17 @@
     <string name="cant_get_data_dir">Can\'t get data dir</string>
     <string name="cant_find_any_data">Can\'t find any data</string>
     <string name="cant_read_the_file">Can\'t read the file</string>
+
+    <string name="app_language_system">System Language (Default)</string>
+    <string name="app_language_de">Deutsch</string>
+    <string name="app_language_en" translatable="false">English</string>
+    <string name="app_language_es" translatable="false">Español</string>
+    <string name="app_language_fr">français (France)</string>
+    <string name="app_language_ja" translatable="false">日本語</string>
+    <string name="app_language_ko" translatable="false">한국어</string>
+    <string name="app_language_zh_cn" translatable="false">中文（大陆）</string>
+    <string name="app_language_zh_hk" translatable="false">中文（香港）</string>
+    <string name="app_language_zh_tw" translatable="false">國文（臺灣）</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">Excluded languages</string>
@@ -669,5 +724,10 @@
     <string name="download_archive_failure">Failed to download archive</string>
     <string name="archive">Archive</string>
     <string name="download_archive_failure_no_hath">Need H@H client for archive download</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_privacy_secure">Prevent screenshots</string>
+    <string name="settings_privacy_secure_summary">If enabled, you cannot take screenshots of the app, and the system will not display app contents in the task switcher\n\nYou need to restart the app for the changes to take effect</string>
 
+    <string name="download_service">Download Service</string>
+    <string name="favorite_name">Favorite</string>
 </resources>
