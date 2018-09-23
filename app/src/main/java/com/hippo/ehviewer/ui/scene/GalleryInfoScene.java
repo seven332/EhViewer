@@ -33,6 +33,7 @@ import android.widget.TextView;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryDetail;
@@ -199,6 +200,12 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         if (null != context && 0 != position && null != mValues) {
             ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             cmb.setPrimaryClip(ClipData.newPlainText(null, mValues.get(position)));
+
+            if (position == 3) {
+                // Save it to avoid detect the gallery
+                Settings.putClipboardTextHashCode(mValues.get(position).hashCode());
+            }
+
             showTip(R.string.copied_to_clipboard, LENGTH_SHORT);
             return true;
         } else {
