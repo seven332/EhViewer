@@ -461,7 +461,6 @@
     <string name="settings_advanced_read_cache_size">Größe des Lesezwischenspeichers</string>
     <string name="settings_advanced_built_in_hosts_title">Standard-hosts.txt</string>
     <string name="settings_download_pick_dir_kk">Die App kann keine Daten auf Android 4.4 zum externen Speicher beschreiben, wenn du das System nicht hackst. Sie aber kann zu /Android/data/com.hippo.ehviewer beschreiben.</string>
-    <string name="settings_about_google_plus">Google+ Community</string>
     <string name="settings_about_website">Webseite</string>
     <string name="settings_about_source">Quellcode</string>
     <string name="settings_about_changelog">Änderungsprotokoll</string>

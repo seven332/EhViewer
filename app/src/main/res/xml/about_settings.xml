@@ -29,11 +29,6 @@
       app:url="https://t.me/ehviewer"/>
 
     <com.hippo.preference.UrlPreference
-        android:key="google_plus"
-        android:title="@string/settings_about_google_plus"
-        app:url="https://plus.google.com/communities/103823982034655188459"/>
-
-    <com.hippo.preference.UrlPreference
         android:key="website"
         android:title="@string/settings_about_website"
         app:url="http://www.ehviewer.com"/>
