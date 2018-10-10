@@ -323,9 +323,16 @@ public class HistoryScene extends ToolbarScene
             implements SwipeableItemAdapter<HistoryHolder> {
 
         private final LayoutInflater mInflater;
+        private final int mListThumbWidth;
+        private final int mListThumbHeight;
 
         public HistoryAdapter() {
             mInflater = getLayoutInflater2();
+
+            View calculator = mInflater.inflate(R.layout.item_gallery_list_thumb_height, null);
+            ViewUtils.measureView(calculator, 1024, ViewGroup.LayoutParams.WRAP_CONTENT);
+            mListThumbHeight = calculator.getMeasuredHeight();
+            mListThumbWidth = mListThumbHeight * 2 / 3;
         }
 
         @Override
@@ -339,7 +346,14 @@ public class HistoryScene extends ToolbarScene
 
         @Override
         public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new HistoryHolder(mInflater.inflate(R.layout.item_gallery_list, parent, false));
+            HistoryHolder holder = new HistoryHolder(mInflater.inflate(R.layout.item_gallery_list, parent, false));
+
+            ViewGroup.LayoutParams lp = holder.thumb.getLayoutParams();
+            lp.width = mListThumbWidth;
+            lp.height = mListThumbHeight;
+            holder.thumb.setLayoutParams(lp);
+
+            return holder;
         }
 
         @Override
