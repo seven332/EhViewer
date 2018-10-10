@@ -1132,10 +1132,17 @@ public class DownloadsScene extends ToolbarScene
     private class DownloadAdapter extends RecyclerView.Adapter<DownloadHolder> {
 
         private final LayoutInflater mInflater;
+        private final int mListThumbWidth;
+        private final int mListThumbHeight;
 
         public DownloadAdapter() {
             mInflater = getLayoutInflater2();
             Assert.assertNotNull(mInflater);
+
+            View calculator = mInflater.inflate(R.layout.item_gallery_list_thumb_height, null);
+            ViewUtils.measureView(calculator, 1024, ViewGroup.LayoutParams.WRAP_CONTENT);
+            mListThumbHeight = calculator.getMeasuredHeight();
+            mListThumbWidth = mListThumbHeight * 2 / 3;
         }
 
         @Override
@@ -1148,7 +1155,14 @@ public class DownloadsScene extends ToolbarScene
 
         @Override
         public DownloadHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new DownloadHolder(mInflater.inflate(R.layout.item_download, parent, false));
+            DownloadHolder holder = new DownloadHolder(mInflater.inflate(R.layout.item_download, parent, false));
+
+            ViewGroup.LayoutParams lp = holder.thumb.getLayoutParams();
+            lp.width = mListThumbWidth;
+            lp.height = mListThumbHeight;
+            holder.thumb.setLayoutParams(lp);
+
+            return holder;
         }
 
         @Override
