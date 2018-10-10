@@ -38,6 +38,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.widget.TileThumb;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
+import com.hippo.yorozuya.ViewUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -58,6 +59,8 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
     private final int mPaddingTopSB;
     private MarginItemDecoration mListDecoration;
     private MarginItemDecoration mGirdDecoration;
+    private final int mListThumbWidth;
+    private final int mListThumbHeight;
     private int mType = TYPE_INVALID;
 
     public GalleryAdapter(@NonNull LayoutInflater inflater, @NonNull Resources resources,
@@ -70,6 +73,11 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
 
         mRecyclerView.setAdapter(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        View calculator = inflater.inflate(R.layout.item_gallery_list_thumb_height, null);
+        ViewUtils.measureView(calculator, 1024, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mListThumbHeight = calculator.getMeasuredHeight();
+        mListThumbWidth = mListThumbHeight * 2 / 3;
 
         setType(type);
     }
@@ -146,7 +154,17 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                 layoutId = R.layout.item_gallery_grid;
                 break;
         }
-        return new GalleryHolder(mInflater.inflate(layoutId, parent, false));
+
+        GalleryHolder holder = new GalleryHolder(mInflater.inflate(layoutId, parent, false));
+
+        if (viewType == TYPE_LIST) {
+            ViewGroup.LayoutParams lp = holder.thumb.getLayoutParams();
+            lp.width = mListThumbWidth;
+            lp.height = mListThumbHeight;
+            holder.thumb.setLayoutParams(lp);
+        }
+
+        return holder;
     }
 
     @Override
