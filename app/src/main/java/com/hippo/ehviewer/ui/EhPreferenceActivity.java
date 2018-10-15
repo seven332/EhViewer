@@ -22,13 +22,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.hippo.app.AppCompatPreferenceActivity;
+import com.hippo.app.PrettyPreferenceActivity;
 import com.hippo.content.ContextLocalWrapper;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 import java.util.Locale;
 
-public abstract class EhPreferenceActivity extends AppCompatPreferenceActivity {
+public abstract class EhPreferenceActivity extends PrettyPreferenceActivity {
 
     private boolean mTrackStarted;
 

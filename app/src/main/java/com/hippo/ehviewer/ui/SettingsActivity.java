@@ -17,31 +17,21 @@
 package com.hippo.ehviewer.ui;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListAdapter;
-
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.fragment.AboutFragment;
 import com.hippo.ehviewer.ui.fragment.AdvancedFragment;
 import com.hippo.ehviewer.ui.fragment.DownloadFragment;
 import com.hippo.ehviewer.ui.fragment.EhFragment;
-import com.hippo.ehviewer.ui.fragment.ReadFragment;
 import com.hippo.ehviewer.ui.fragment.PrivacyFragment;
+import com.hippo.ehviewer.ui.fragment.ReadFragment;
 import com.hippo.util.DrawableManager;
-
-import java.lang.reflect.Field;
 import java.util.List;
 
 public final class SettingsActivity extends EhPreferenceActivity {
@@ -56,77 +46,6 @@ public final class SettingsActivity extends EhPreferenceActivity {
             AboutFragment.class.getName(),
             PrivacyFragment.class.getName(),
     };
-
-    private class FakeLayoutInflater extends LayoutInflater {
-
-        private final LayoutInflater mInflater;
-
-        protected FakeLayoutInflater(LayoutInflater inflater) {
-            super(null);
-            mInflater = inflater;
-        }
-
-        @Override
-        public LayoutInflater cloneInContext(Context newContext) {
-            return null;
-        }
-
-        @Override
-        public View inflate(int resource, ViewGroup root, boolean attachToRoot) {
-            return mInflater.inflate(R.layout.item_preference_header, root, attachToRoot);
-        }
-    }
-
-    @SuppressWarnings("TryWithIdenticalCatches")
-    private void replaceHeaderLayoutResId() {
-        try {
-            ListAdapter adapter = getListAdapter();
-            Class headerAdapterClazz = Class.forName("android.preference.PreferenceActivity$HeaderAdapter");
-            if (!headerAdapterClazz.isInstance(adapter)) {
-                return;
-            }
-
-            boolean ok = false;
-
-            // For lollipop and above this work
-            try {
-                Field field = headerAdapterClazz.getDeclaredField("mLayoutResId");
-                field.setAccessible(true);
-                field.setInt(adapter, R.layout.item_preference_header);
-
-                ok = true;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-
-            // For pre-lollipop this work
-            if (!ok) {
-                try {
-                    Field field = headerAdapterClazz.getDeclaredField("mInflater");
-                    field.setAccessible(true);
-                    field.set(adapter, new FakeLayoutInflater((LayoutInflater) field.get(adapter)));
-
-                    ok = true;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (ClassCastException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (ok) {
-                getListView().setDivider(new ColorDrawable(Color.TRANSPARENT));
-                getListView().setDividerHeight(0);
-            }
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void setActionBarUpIndicator(Drawable drawable) {
         ActionBarDrawerToggle.Delegate delegate = getDrawerToggleDelegate();
@@ -145,8 +64,6 @@ public final class SettingsActivity extends EhPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setActionBarUpIndicator(DrawableManager.getDrawable(this, R.drawable.v_arrow_left_dark_x24));
-
-        replaceHeaderLayoutResId();
     }
 
     @Override
