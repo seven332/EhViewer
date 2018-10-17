@@ -44,6 +44,14 @@
         app:activity="com.hippo.ehviewer.ui.UConfigActivity"/>
 
     <com.hippo.preference.ListPreference
+        android:key="theme"
+        android:title="@string/settings_eh_theme"
+        android:summary="%s"
+        app:entries="@array/theme_entries"
+        app:entryValues="@array/theme_entry_values"
+        android:defaultValue="0"/>
+
+    <com.hippo.preference.ListPreference
         android:key="list_mode"
         android:title="@string/settings_eh_list_mode"
         android:summary="%s"

@@ -441,6 +441,10 @@
     <string name="settings_eh_identity_cookies_copy">Copy</string>
     <string name="settings_u_config">EHentai settings</string>
     <string name="settings_u_config_summary">Settings on EHentai website</string>
+    <string name="settings_eh_theme">Theme</string>
+    <string name="settings_eh_theme_light">Light</string>
+    <string name="settings_eh_theme_dark">Dark</string>
+    <string name="settings_eh_theme_black">Black</string>
     <string name="settings_eh_gallery_site">Gallery site</string>
     <string name="settings_eh_list_mode">List mode</string>
     <string name="settings_eh_list_mode_detail">Detail</string>
