@@ -207,7 +207,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                 LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
         mRecyclerView.addItemDecoration(decoration);
-        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), mRecyclerView.getPaddingTop(),
@@ -340,7 +340,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                 LayoutUtils.dp2pix(context, 1));
         decoration.setPadding(ResourcesUtils.getAttrDimensionPixelOffset(context, R.attr.dialogPreferredPadding));
         rv.addItemDecoration(decoration);
-        rv.setSelector(Ripple.generateRippleDrawable(context, false));
+        rv.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
         rv.setClipToPadding(false);
         builder.setView(rv).show();
     }

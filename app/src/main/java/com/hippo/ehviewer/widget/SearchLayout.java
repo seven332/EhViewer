@@ -37,7 +37,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
 import com.hippo.ehviewer.R;
@@ -46,7 +46,6 @@ import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ripple.Ripple;
 import com.hippo.widget.RadioGridGroup;
 import com.hippo.yorozuya.ViewUtils;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -139,7 +138,7 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         mNormalSearchModeHelp = (ImageView) normalView.findViewById(R.id.normal_search_mode_help);
         mEnableAdvanceSwitch = (SwitchCompat) normalView.findViewById(R.id.search_enable_advance);
         mNormalSearchModeHelp.setOnClickListener(this);
-        Ripple.addRipple(mNormalSearchModeHelp, false);
+        Ripple.addRipple(mNormalSearchModeHelp, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme));
         mEnableAdvanceSwitch.setOnCheckedChangeListener(SearchLayout.this);
         mEnableAdvanceSwitch.setSwitchPadding(resources.getDimensionPixelSize(R.dimen.switch_padding));
 

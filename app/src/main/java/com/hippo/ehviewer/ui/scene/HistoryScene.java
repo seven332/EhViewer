@@ -31,7 +31,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
@@ -42,6 +41,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
@@ -66,10 +66,8 @@ import com.hippo.widget.LoadImageView;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
-
-import junit.framework.Assert;
-
 import de.greenrobot.dao.query.LazyList;
+import junit.framework.Assert;
 
 public class HistoryScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
@@ -127,7 +125,7 @@ public class HistoryScene extends ToolbarScene
         layoutManager.setColumnSize(resources.getDimensionPixelOffset(Settings.getDetailSizeResId()));
         layoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);

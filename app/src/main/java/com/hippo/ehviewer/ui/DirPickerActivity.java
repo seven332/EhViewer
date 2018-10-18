@@ -25,12 +25,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.hippo.android.resource.AttrResources;
 import com.hippo.ehviewer.R;
 import com.hippo.ripple.Ripple;
 import com.hippo.widget.DirExplorer;
 import com.hippo.yorozuya.ViewUtils;
-
 import java.io.File;
 
 public class DirPickerActivity extends ToolbarActivity
@@ -70,7 +69,7 @@ public class DirPickerActivity extends ToolbarActivity
         mDirExplorer.setCurrentFile(file);
         mDirExplorer.setOnChangeDirListener(this);
 
-        Ripple.addRipple(mOk, false);
+        Ripple.addRipple(mOk, !AttrResources.getAttrBoolean(this, R.attr.isLightTheme));
 
         mOk.setOnClickListener(this);
 

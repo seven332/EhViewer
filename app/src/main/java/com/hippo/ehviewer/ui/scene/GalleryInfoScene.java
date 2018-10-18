@@ -169,7 +169,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
                 LayoutUtils.dp2pix(context, 1));
         decoration.setPadding(context.getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
         mRecyclerView.addItemDecoration(decoration);
-        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOnItemClickListener(this);

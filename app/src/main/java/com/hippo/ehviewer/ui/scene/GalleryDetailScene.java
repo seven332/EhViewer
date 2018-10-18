@@ -53,6 +53,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import com.hippo.android.resource.AttrResources;
 import com.hippo.beerbelly.BeerBelly;
 import com.hippo.drawable.RoundSideRectDrawable;
 import com.hippo.ehviewer.AppConfig;
@@ -428,6 +429,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mTip.setCompoundDrawables(null, drawable, null, null);
         mTip.setOnClickListener(this);
 
+        boolean isDarkTheme = !AttrResources.getAttrBoolean(context, R.attr.isLightTheme);
         mHeader = ViewUtils.$$(mainView, R.id.header);
         mColorBg = ViewUtils.$$(mHeader, R.id.color_bg);
         mThumb = (LoadImageView) ViewUtils.$$(mHeader, R.id.thumb);
@@ -438,9 +440,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mActionGroup = (ViewGroup) ViewUtils.$$(mHeader, R.id.action_card);
         mDownload = (TextView) ViewUtils.$$(mActionGroup, R.id.download);
         mRead = ViewUtils.$$(mActionGroup, R.id.read);
-        Ripple.addRipple(mOtherActions, false);
-        Ripple.addRipple(mDownload, false);
-        Ripple.addRipple(mRead, false);
+        Ripple.addRipple(mOtherActions, isDarkTheme);
+        Ripple.addRipple(mDownload, isDarkTheme);
+        Ripple.addRipple(mRead, isDarkTheme);
         mUploader.setOnClickListener(this);
         mCategory.setOnClickListener(this);
         mOtherActions.setOnClickListener(this);
@@ -459,7 +461,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mSize = (TextView) ViewUtils.$$(mInfo, R.id.size);
         mPosted = (TextView) ViewUtils.$$(mInfo, R.id.posted);
         mFavoredTimes = (TextView) ViewUtils.$$(mInfo, R.id.favoredTimes);
-        Ripple.addRipple(mInfo, false);
+        Ripple.addRipple(mInfo, isDarkTheme);
         mInfo.setOnClickListener(this);
 
         mActions = ViewUtils.$$(belowHeader, R.id.actions);
@@ -474,13 +476,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mRate = (TextView) ViewUtils.$$(mActions, R.id.rate);
         mSimilar = (TextView) ViewUtils.$$(mActions, R.id.similar);
         mSearchCover = (TextView) ViewUtils.$$(mActions, R.id.search_cover);
-        Ripple.addRipple(mHeartGroup, false);
-        Ripple.addRipple(mTorrent, false);
-        Ripple.addRipple(mArchive, false);
-        Ripple.addRipple(mShare, false);
-        Ripple.addRipple(mRate, false);
-        Ripple.addRipple(mSimilar, false);
-        Ripple.addRipple(mSearchCover, false);
+        Ripple.addRipple(mHeartGroup, isDarkTheme);
+        Ripple.addRipple(mTorrent, isDarkTheme);
+        Ripple.addRipple(mArchive, isDarkTheme);
+        Ripple.addRipple(mShare, isDarkTheme);
+        Ripple.addRipple(mRate, isDarkTheme);
+        Ripple.addRipple(mSimilar, isDarkTheme);
+        Ripple.addRipple(mSearchCover, isDarkTheme);
         mHeartGroup.setOnClickListener(this);
         mTorrent.setOnClickListener(this);
         mArchive.setOnClickListener(this);
@@ -495,13 +497,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         mComments = (LinearLayout) ViewUtils.$$(belowHeader, R.id.comments);
         mCommentsText = (TextView) ViewUtils.$$(mComments, R.id.comments_text);
-        Ripple.addRipple(mComments, false);
+        Ripple.addRipple(mComments, isDarkTheme);
         mComments.setOnClickListener(this);
 
         mPreviews = ViewUtils.$$(belowHeader, R.id.previews);
         mGridLayout = (SimpleGridAutoSpanLayout) ViewUtils.$$(mPreviews, R.id.grid_layout);
         mPreviewText = (TextView) ViewUtils.$$(mPreviews, R.id.preview_text);
-        Ripple.addRipple(mPreviews, false);
+        Ripple.addRipple(mPreviews, isDarkTheme);
         mPreviews.setOnClickListener(this);
 
         mProgress = ViewUtils.$$(mainView, R.id.progress);

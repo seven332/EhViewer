@@ -86,7 +86,7 @@ public class HostsActivity extends ToolbarActivity
         LayoutUtils.dp2pix(this, 1));
     decoration.setShowLastDivider(true);
     recyclerView.addItemDecoration(decoration);
-    recyclerView.setSelector(Ripple.generateRippleDrawable(this, false));
+    recyclerView.setSelector(Ripple.generateRippleDrawable(this, !AttrResources.getAttrBoolean(this, R.attr.isLightTheme)));
     recyclerView.setHasFixedSize(true);
     recyclerView.setOnItemClickListener(this);
     recyclerView.setPadding(

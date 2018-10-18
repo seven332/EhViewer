@@ -50,11 +50,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
+import com.hippo.android.resource.AttrResources;
 import com.hippo.app.CheckBoxDialogBuilder;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.ProgressNotifier;
@@ -94,15 +94,13 @@ import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 import com.hippo.yorozuya.collect.LongList;
-
-import junit.framework.Assert;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import junit.framework.Assert;
 
 public class DownloadsScene extends ToolbarScene
         implements DownloadManager.DownloadInfoListener,
@@ -301,7 +299,7 @@ public class DownloadsScene extends ToolbarScene
         mLayoutManager.setColumnSize(resources.getDimensionPixelOffset(Settings.getDetailSizeResId()));
         mLayoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, false));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);
@@ -1085,8 +1083,10 @@ public class DownloadsScene extends ToolbarScene
             thumb.setOnClickListener(this);
             start.setOnClickListener(this);
             stop.setOnClickListener(this);
-            Ripple.addRipple(start, false);
-            Ripple.addRipple(stop, false);
+
+            boolean isDarkTheme = !AttrResources.getAttrBoolean(getContext2(), R.attr.isLightTheme);
+            Ripple.addRipple(start, isDarkTheme);
+            Ripple.addRipple(stop, isDarkTheme);
         }
 
         @Override

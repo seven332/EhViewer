@@ -21,7 +21,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.hippo.android.resource.AttrResources;
 import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
@@ -70,8 +70,9 @@ public class CrashScene extends SolidScene implements View.OnClickListener {
         mCancel.setOnClickListener(this);
         mSend.setOnClickListener(this);
 
-        Ripple.addRipple(mCancel, true);
-        Ripple.addRipple(mSend, true);
+        boolean isDarkTheme = !AttrResources.getAttrBoolean(getContext2(), R.attr.isLightTheme);
+        Ripple.addRipple(mCancel, isDarkTheme);
+        Ripple.addRipple(mSend, isDarkTheme);
 
         return view;
     }
