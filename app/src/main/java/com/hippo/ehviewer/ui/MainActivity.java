@@ -143,6 +143,19 @@ public final class MainActivity extends StageActivity
     }
 
     @Override
+    protected int getThemeResId(int theme) {
+        switch (theme) {
+            case Settings.THEME_LIGHT:
+            default:
+                return R.style.AppTheme_Main;
+            case Settings.THEME_DARK:
+                return R.style.AppTheme_Main_Dark;
+            case Settings.THEME_BLACK:
+                return R.style.AppTheme_Main_Black;
+        }
+    }
+
+    @Override
     public int getContainerViewId() {
         return R.id.fragment_container;
     }

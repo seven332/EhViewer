@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
 import android.view.WindowManager;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.hippo.app.PrettyPreferenceActivity;
@@ -32,8 +33,13 @@ public abstract class EhPreferenceActivity extends PrettyPreferenceActivity {
 
     private boolean mTrackStarted;
 
+    @StyleRes
+    protected abstract int getThemeResId(int theme);
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTheme(getThemeResId(Settings.getTheme()));
+
         super.onCreate(savedInstanceState);
 
         ((EhApplication) getApplication()).registerActivity(this);

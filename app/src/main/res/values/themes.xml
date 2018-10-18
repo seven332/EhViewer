@@ -70,9 +70,61 @@
     <style name="AppTheme.Main" parent="AppTheme.NoActionBar">
     </style>
 
+    <style name="AppTheme.Main.Dark" parent="AppTheme.Dark.NoActionBar">
+    </style>
+
+    <style name="AppTheme.Main.Black" parent="AppTheme.Dark.NoActionBar">
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorAccent">@android:color/black</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.Toolbar" parent="AppTheme.NoActionBar">
+    </style>
+
+    <style name="AppTheme.Toolbar.Dark" parent="AppTheme.Dark.NoActionBar">
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorAccent">@android:color/black</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.Toolbar.Black" parent="AppTheme.Dark.NoActionBar">
+    </style>
+
     <style name="AppTheme.Gallery" parent="AppTheme.Dark.NoActionBar">
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="android:windowBackground">@color/gallery_background</item>
+    </style>
+
+    <style name="AppTheme.Gallery.Dark" parent="AppTheme.Dark.NoActionBar">
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="android:windowBackground">@color/gallery_background</item>
+    </style>
+
+    <style name="AppTheme.Gallery.Black" parent="AppTheme.Dark.NoActionBar">
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorAccent">@android:color/black</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.Settings" parent="AppTheme">
+    </style>
+
+    <style name="AppTheme.Settings.Dark" parent="AppTheme.Dark">
+    </style>
+
+    <style name="AppTheme.Settings.Black" parent="AppTheme.Dark">
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorAccent">@android:color/black</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
     </style>
 
     <!-- ============ -->

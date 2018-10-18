@@ -25,8 +25,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.Settings;
 
 public abstract class ToolbarActivity extends EhActivity {
+
+    @Override
+    protected int getThemeResId(int theme) {
+        switch (theme) {
+            case Settings.THEME_LIGHT:
+            default:
+                return R.style.AppTheme_Toolbar;
+            case Settings.THEME_DARK:
+                return R.style.AppTheme_Toolbar_Dark;
+            case Settings.THEME_BLACK:
+                return R.style.AppTheme_Toolbar_Black;
+        }
+    }
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {

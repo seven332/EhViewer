@@ -19,6 +19,7 @@ package com.hippo.ehviewer.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import com.google.analytics.tracking.android.EasyTracker;
@@ -31,8 +32,13 @@ public abstract class EhActivity extends AppCompatActivity {
 
     private boolean mTrackStarted;
 
+    @StyleRes
+    protected abstract int getThemeResId(int theme);
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTheme(getThemeResId(Settings.getTheme()));
+
         super.onCreate(savedInstanceState);
 
         ((EhApplication) getApplication()).registerActivity(this);

@@ -182,6 +182,19 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         }
     };
 
+    @Override
+    protected int getThemeResId(int theme) {
+        switch (theme) {
+            case Settings.THEME_LIGHT:
+            default:
+                return R.style.AppTheme_Gallery;
+            case Settings.THEME_DARK:
+                return R.style.AppTheme_Gallery_Dark;
+            case Settings.THEME_BLACK:
+                return R.style.AppTheme_Gallery_Black;
+        }
+    }
+
     private void buildProvider() {
         if (mGalleryProvider != null) {
             return;
