@@ -28,6 +28,7 @@
         <!-- For dark theme, it's primary light color -->
         <!-- For black theme, it's primary light color -->
         <attr name="colorDrawableThemePrimary" format="color"/>
+        <attr name="colorTextThemeAccent" format="color"/>
         <attr name="toolbarPopupTheme" format="reference"/>
     </declare-styleable>
 

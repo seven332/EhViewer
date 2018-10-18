@@ -81,7 +81,7 @@
     </style>
 
     <style name="TextAppearance.CategoryTitle" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColor">?attr/colorTextThemeAccent</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -103,7 +103,7 @@
     </style>
 
     <style name="ButtonInCard.Accent">
-        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:textColor">?attr/colorTextThemeAccent</item>
     </style>
 
     <style name="Slider">

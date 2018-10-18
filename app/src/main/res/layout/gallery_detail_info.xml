@@ -88,6 +88,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:text="@string/more_information"
-        android:textColor="?attr/colorAccent"/>
+        android:textColor="?attr/colorTextThemeAccent"/>
 
 </LinearLayout>

@@ -152,7 +152,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="8dp"
                 android:text="@string/sign_in_via_webview"
-                android:textColor="?attr/colorAccent"/>
+                android:textColor="?attr/colorTextThemeAccent"/>
 
             <TextView
                 android:id="@+id/sign_in_via_cookies"
@@ -161,7 +161,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="8dp"
                 android:text="@string/sign_in_via_cookies"
-                android:textColor="?attr/colorAccent"/>
+                android:textColor="?attr/colorTextThemeAccent"/>
 
             <TextView
                 android:id="@+id/skip_signing_in"
@@ -169,7 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/skip_signing_in"
-                android:textColor="?attr/colorAccent"/>
+                android:textColor="?attr/colorTextThemeAccent"/>
 
         </LinearLayout>
     </ScrollView>

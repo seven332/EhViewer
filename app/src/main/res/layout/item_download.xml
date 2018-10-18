@@ -106,7 +106,7 @@
           android:layout_marginBottom="4dp"
           android:layout_alignParentRight="true"
           android:paddingRight="16dp"
-          android:textColor="?attr/colorAccent"/>
+          android:textColor="?attr/colorTextThemeAccent"/>
 
         <ProgressBar
           android:id="@+id/progress_bar"
