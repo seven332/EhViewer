@@ -23,7 +23,7 @@
     android:viewportHeight="24">
 
     <path
-        android:fillColor="?attr/colorPrimary"
+        android:fillColor="?attr/colorPrimaryDrawable"
         android:pathData="@string/pd_thumb_up"/>
 
 </vector>
