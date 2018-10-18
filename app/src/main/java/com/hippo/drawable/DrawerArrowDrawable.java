@@ -28,6 +28,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
+import android.support.annotation.ColorInt;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.MathUtils;
 
@@ -66,11 +67,11 @@ public class DrawerArrowDrawable extends Drawable {
     /**
      * @param context used to get the configuration for the drawable from
      */
-    public DrawerArrowDrawable(Context context) {
+    public DrawerArrowDrawable(Context context, int color) {
         Resources resources = context.getResources();
 
         mPaint.setAntiAlias(true);
-        mPaint.setColor(resources.getColor(R.color.primary_drawable_light));
+        mPaint.setColor(color);
         mSize = resources.getDimensionPixelSize(R.dimen.dad_drawable_size);
         // round this because having this floating may cause bad measurements
         mBarSize = Math.round(resources.getDimension(R.dimen.dad_bar_size));
@@ -142,6 +143,11 @@ public class DrawerArrowDrawable extends Drawable {
         canvas.drawPath(mPath, mPaint);
 
         canvas.restore();
+    }
+
+    public void setColor(@ColorInt int color) {
+        mPaint.setColor(color);
+        invalidateSelf();
     }
 
     @Override

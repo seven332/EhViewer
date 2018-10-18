@@ -49,6 +49,7 @@ import android.widget.TextView;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
+import com.hippo.android.resource.AttrResources;
 import com.hippo.annotation.Implemented;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
@@ -273,7 +274,7 @@ public class FavoritesScene extends BaseScene implements
 
         refreshLayout.setHeaderTranslationY(paddingTopSB);
 
-        mLeftDrawable = new DrawerArrowDrawable(context);
+        mLeftDrawable = new DrawerArrowDrawable(context, AttrResources.getAttrColor(context, R.attr.colorPrimaryDrawable));
         mSearchBar.setLeftDrawable(mLeftDrawable);
         mSearchBar.setRightDrawable(DrawableManager.getDrawable(context, R.drawable.v_magnify_x24));
         mSearchBar.setHelper(this);
