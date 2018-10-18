@@ -23,7 +23,7 @@
     android:viewportHeight="24">
 
     <path
-        android:fillColor="?attr/colorDrawablePrimary"
+        android:fillColor="?attr/colorDrawableThemePrimary"
         android:pathData="@string/pd_file_find"/>
 
 </vector>

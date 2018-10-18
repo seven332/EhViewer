@@ -23,11 +23,11 @@
         <!-- For light theme, it's primary dark color -->
         <!-- For dark theme, it's primary light color -->
         <!-- For black theme, it's primary light color -->
-        <attr name="colorDrawableOpposite" format="color"/>
+        <attr name="colorDrawablePrimary" format="color"/>
         <!-- For light theme, it's primary color -->
         <!-- For dark theme, it's primary light color -->
         <!-- For black theme, it's primary light color -->
-        <attr name="colorDrawablePrimary" format="color"/>
+        <attr name="colorDrawableThemePrimary" format="color"/>
         <attr name="toolbarPopupTheme" format="reference"/>
     </declare-styleable>
 

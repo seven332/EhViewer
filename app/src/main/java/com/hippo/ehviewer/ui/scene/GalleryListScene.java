@@ -425,8 +425,8 @@ public final class GalleryListScene extends BaseScene
 
         refreshLayout.setHeaderTranslationY(paddingTopSB);
 
-        mLeftDrawable = new DrawerArrowDrawable(context, AttrResources.getAttrColor(context, R.attr.colorDrawableOpposite));
-        mRightDrawable = new AddDeleteDrawable(context, AttrResources.getAttrColor(context, R.attr.colorDrawableOpposite));
+        mLeftDrawable = new DrawerArrowDrawable(context, AttrResources.getAttrColor(context, R.attr.colorDrawablePrimary));
+        mRightDrawable = new AddDeleteDrawable(context, AttrResources.getAttrColor(context, R.attr.colorDrawablePrimary));
         mSearchBar.setLeftDrawable(mLeftDrawable);
         mSearchBar.setRightDrawable(mRightDrawable);
         mSearchBar.setHelper(this);
