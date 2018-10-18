@@ -17,31 +17,19 @@
 
 <resources>
 
-    <style name="AppTheme.Main" parent="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar.Translucent">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="colorDivider">@color/divider_light</item>
-        <item name="colorToolbar">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.Main.Dark" parent="AppTheme.Dark.NoActionBar">
-        <item name="colorPrimaryDark">@android:color/black</item>
+    <style name="AppTheme.Dark.NoActionBar.Translucent">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="colorDivider">@color/divider_dark</item>
-        <item name="colorToolbar">?android:attr/colorBackground</item>
     </style>
 
-    <style name="AppTheme.Main.Black" parent="AppTheme.Dark.NoActionBar">
-        <item name="colorPrimary">@android:color/black</item>
-        <item name="colorPrimaryDark">@android:color/black</item>
-        <item name="colorAccent">@android:color/black</item>
+    <style name="AppTheme.Black.NoActionBar.Translucent">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowBackground">@android:color/black</item>
-        <item name="android:colorBackground">@android:color/black</item>
-        <item name="colorDivider">@color/divider_dark</item>
-        <item name="colorToolbar">?android:attr/colorBackground</item>
     </style>
 
 </resources>
