@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:maxWidth="@dimen/drawer_max_width"
-            android:background="@color/background_light"
+            android:background="?android:attr/windowBackground"
             android:clickable="true"/>
 
     </com.hippo.ehviewer.widget.EhDrawerLayout>

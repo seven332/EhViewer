@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import com.hippo.android.resource.AttrResources;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.collect.IntList;
 
@@ -102,7 +103,7 @@ public class SceneFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         view.setTag(R.id.fragment_tag, getTag());
-        view.setBackgroundColor(getResources().getColor(R.color.background_light));
+        view.setBackgroundDrawable(AttrResources.getAttrDrawable(getContext(), android.R.attr.windowBackground));
 
         // Notify
         FragmentActivity activity = getActivity();
