@@ -29,7 +29,7 @@
         android:background="?attr/colorToolbar"
         android:saveEnabled="false"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="?attr/toolbarPopupTheme"/>
 
     <FrameLayout
         android:layout_width="match_parent"

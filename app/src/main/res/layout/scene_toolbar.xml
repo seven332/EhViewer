@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:background="?attr/colorToolbar"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="?attr/toolbarPopupTheme"/>
 
     <FrameLayout
         android:id="@+id/content_panel"
