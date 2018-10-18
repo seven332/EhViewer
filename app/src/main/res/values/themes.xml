@@ -29,7 +29,7 @@
 
         <item name="colorDivider">@color/divider_light</item>
         <item name="colorToolbar">@color/colorPrimary</item>
-        <item name="colorPrimaryDrawable">@color/primary_drawable_light</item>
+        <item name="colorOppositeDrawable">@color/primary_drawable_light</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -51,7 +51,7 @@
 
         <item name="colorDivider">@color/divider_dark</item>
         <item name="colorToolbar">?android:attr/colorBackground</item>
-        <item name="colorPrimaryDrawable">@color/primary_drawable_dark</item>
+        <item name="colorOppositeDrawable">@color/primary_drawable_dark</item>
     </style>
 
     <style name="AppTheme.Dark.NoActionBar">
@@ -76,7 +76,7 @@
 
         <item name="colorDivider">@color/divider_dark</item>
         <item name="colorToolbar">?android:attr/colorBackground</item>
-        <item name="colorPrimaryDrawable">@color/primary_drawable_dark</item>
+        <item name="colorOppositeDrawable">@color/primary_drawable_dark</item>
     </style>
 
     <style name="AppTheme.Black.NoActionBar">
