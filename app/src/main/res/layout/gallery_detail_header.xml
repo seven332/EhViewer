@@ -40,7 +40,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="24dp"/>
+            android:layout_height="26dp"/>
 
     </LinearLayout>
 
@@ -121,38 +121,43 @@
 
         </RelativeLayout>
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
             android:id="@+id/action_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/keyline_margin"
             android:layout_marginRight="@dimen/keyline_margin"
-            android:orientation="horizontal"
-            android:background="@drawable/card_white_no_padding_2dp">
+            style="@style/CardView.Normal">
 
-            <TextView
-                android:id="@+id/download"
-                style="@style/ButtonInCard"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:orientation="horizontal">
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/divider"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/download"
+                    style="@style/ButtonInCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/read"
-                style="@style/ButtonInCard"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="?attr/colorAccent"
-                android:text="@string/read"/>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/divider"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"/>
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/read"
+                    style="@style/ButtonInCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="?attr/colorAccent"
+                    android:text="@string/read"/>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
     </LinearLayout>
 </FrameLayout>

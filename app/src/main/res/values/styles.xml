@@ -41,7 +41,7 @@
 
     <style name="TextAppearance.CardTitle">
         <item name="android:textSize">@dimen/text_little_small</item>
-        <item name="android:textColor">@color/primary_text_light</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="CardTitle">
@@ -53,7 +53,7 @@
 
     <style name="TextAppearance.CardMessage">
         <item name="android:textSize">@dimen/text_small</item>
-        <item name="android:textColor">@color/secondary_text_light</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="CardMessage">
@@ -136,6 +136,15 @@
         <item name="sv_backgroundColor">@color/guide_bg</item>
         <item name="sv_titleTextAppearance">@style/Guide.Title</item>
         <item name="sv_detailTextAppearance">@style/Guide.Text</item>
+    </style>
+
+    <style name="CardView.Normal">
+        <item name="cardCornerRadius">2dp</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="cardElevation">4dp</item>
+        <item name="cardMaxElevation">4dp</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="contentPadding">0dp</item>
     </style>
 
 </resources>

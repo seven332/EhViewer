@@ -15,120 +15,125 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/card_background_no_padding">
+    style="@style/CardView.Normal">
 
-    <com.hippo.widget.LoadImageView
-        android:id="@+id/thumb"
-        android:layout_width="@dimen/gallery_list_thumb_width"
-        android:layout_height="@dimen/gallery_list_thumb_height"/>
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/title"
-        style="@style/CardTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_toRightOf="@id/thumb"/>
+        <com.hippo.widget.LoadImageView
+          android:id="@+id/thumb"
+          android:layout_width="@dimen/gallery_list_thumb_width"
+          android:layout_height="@dimen/gallery_list_thumb_height"/>
 
-    <TextView
-        android:id="@+id/uploader"
-        style="@style/CardMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/title"
-        android:layout_below="@id/title"
-        android:layout_marginTop="2dp"/>
+        <TextView
+          android:id="@+id/title"
+          style="@style/CardTitle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentTop="true"
+          android:layout_marginLeft="8dp"
+          android:layout_marginRight="8dp"
+          android:layout_marginTop="4dp"
+          android:layout_toRightOf="@id/thumb"/>
 
-    <com.hippo.ehviewer.widget.SimpleRatingView
-        android:id="@+id/rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/title"
-        android:layout_below="@id/uploader"
-        android:layout_marginTop="2dp"/>
+        <TextView
+          android:id="@+id/uploader"
+          style="@style/CardMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/title"
+          android:layout_below="@id/title"
+          android:layout_marginTop="2dp"/>
 
-    <TextView
-        android:id="@+id/category"
-        style="@style/CardMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/title"
-        android:layout_alignBottom="@id/thumb"
-        android:layout_marginBottom="8dp"
-        android:paddingBottom="2dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="2dp"
-        android:textColor="@android:color/white"
-        android:textAllCaps="true"/>
+        <com.hippo.ehviewer.widget.SimpleRatingView
+          android:id="@+id/rating"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/title"
+          android:layout_below="@id/uploader"
+          android:layout_marginTop="2dp"/>
 
-    <FrameLayout
-        android:id="@+id/actions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/thumb"
-        android:layout_alignParentRight="true"
-        android:paddingRight="8dp">
+        <TextView
+          android:id="@+id/category"
+          style="@style/CardMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/title"
+          android:layout_alignBottom="@id/thumb"
+          android:layout_marginBottom="8dp"
+          android:paddingBottom="2dp"
+          android:paddingLeft="8dp"
+          android:paddingRight="8dp"
+          android:paddingTop="2dp"
+          android:textColor="@android:color/white"
+          android:textAllCaps="true"/>
 
-        <ImageView
-            android:id="@+id/start"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            app:srcCompat="@drawable/v_play_x24"/>
+        <FrameLayout
+          android:id="@+id/actions"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignBottom="@+id/thumb"
+          android:layout_alignParentRight="true"
+          android:paddingRight="8dp">
 
-        <ImageView
-            android:id="@+id/stop"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            app:srcCompat="@drawable/v_pause_x24"/>
+            <ImageView
+              android:id="@+id/start"
+              android:layout_width="40dp"
+              android:layout_height="40dp"
+              android:padding="8dp"
+              app:srcCompat="@drawable/v_play_x24"/>
 
-    </FrameLayout>
+            <ImageView
+              android:id="@+id/stop"
+              android:layout_width="40dp"
+              android:layout_height="40dp"
+              android:padding="8dp"
+              app:srcCompat="@drawable/v_pause_x24"/>
 
-    <TextView
-        android:id="@+id/state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/actions"
-        android:layout_marginBottom="4dp"
-        android:layout_alignParentRight="true"
-        android:paddingRight="16dp"
-        android:textColor="?attr/colorAccent"/>
+        </FrameLayout>
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/title"
-        android:layout_marginRight="8dp"
-        android:layout_above="@id/actions"
-        android:indeterminate="false"/>
+        <TextView
+          android:id="@+id/state"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@id/actions"
+          android:layout_marginBottom="4dp"
+          android:layout_alignParentRight="true"
+          android:paddingRight="16dp"
+          android:textColor="?attr/colorAccent"/>
 
-    <TextView
-        android:id="@+id/percent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/progress_bar"
-        android:layout_alignLeft="@id/title"
-        android:textSize="@dimen/text_super_small"/>
+        <ProgressBar
+          android:id="@+id/progress_bar"
+          style="?android:attr/progressBarStyleHorizontal"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/title"
+          android:layout_marginRight="8dp"
+          android:layout_above="@id/actions"
+          android:indeterminate="false"/>
 
-    <TextView
-        android:id="@+id/speed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/progress_bar"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="8dp"
-        android:textSize="@dimen/text_super_small"/>
+        <TextView
+          android:id="@+id/percent"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@id/progress_bar"
+          android:layout_alignLeft="@id/title"
+          android:textSize="@dimen/text_super_small"/>
 
-</RelativeLayout>
+        <TextView
+          android:id="@+id/speed"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@id/progress_bar"
+          android:layout_alignParentRight="true"
+          android:layout_marginRight="8dp"
+          android:textSize="@dimen/text_super_small"/>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

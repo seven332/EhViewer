@@ -41,7 +41,7 @@
                 android:layout_marginLeft="48dp"
                 android:layout_marginRight="48dp"
                 android:textSize="@dimen/text_little_large"
-                android:textColor="@color/secondary_text_light"
+                android:textColor="?android:attr/textColorSecondary"
                 android:singleLine="true"
                 android:maxLines="1"/>
 

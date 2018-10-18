@@ -452,7 +452,7 @@ public final class GalleryListScene extends BaseScene
 
         mSearchFab.setOnClickListener(this);
 
-        mSearchBarMover = new SearchBarMover(this, mSearchBar, mRecyclerView, mSearchLayout);
+        mSearchBarMover = new SearchBarMover(this, ViewUtils.$$(view, R.id.search_bar_card), mRecyclerView, mSearchLayout);
 
         // Update list url builder
         onUpdateUrlBuilder();

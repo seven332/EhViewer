@@ -62,6 +62,7 @@ clean {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:$supportLibrary"
+    implementation "com.android.support:cardview-v7:$supportLibrary"
     implementation "com.android.support:design:$supportLibrary"
     implementation 'com.github.amlcurran.showcaseview:library:5.4.3'
     implementation 'com.github.seven332:android-recaptcha:2bbb3459a8'

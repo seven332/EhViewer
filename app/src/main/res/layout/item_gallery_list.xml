@@ -14,88 +14,93 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/card_background_no_padding">
+    style="@style/CardView.Normal">
 
-    <com.hippo.widget.LoadImageView
-        android:id="@+id/thumb"
-        android:layout_width="@dimen/gallery_list_thumb_width"
-        android:layout_height="@dimen/gallery_list_thumb_height"
-        app:retryType="click"/>
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/title"
-        style="@style/CardTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_toRightOf="@id/thumb"/>
+        <com.hippo.widget.LoadImageView
+          android:id="@+id/thumb"
+          android:layout_width="@dimen/gallery_list_thumb_width"
+          android:layout_height="@dimen/gallery_list_thumb_height"
+          app:retryType="click"/>
 
-    <TextView
-        android:id="@+id/uploader"
-        style="@style/CardMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/title"
-        android:layout_below="@id/title"
-        android:layout_marginTop="2dp"/>
+        <TextView
+          android:id="@+id/title"
+          style="@style/CardTitle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentTop="true"
+          android:layout_marginLeft="8dp"
+          android:layout_marginRight="8dp"
+          android:layout_marginTop="4dp"
+          android:layout_toRightOf="@id/thumb"/>
 
-    <TextView
-        android:id="@+id/category"
-        style="@style/CardMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/title"
-        android:layout_alignBottom="@id/thumb"
-        android:layout_marginBottom="8dp"
-        android:paddingBottom="2dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="2dp"
-        android:textColor="@android:color/white"
-        android:textAllCaps="true"/>
+        <TextView
+          android:id="@+id/uploader"
+          style="@style/CardMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/title"
+          android:layout_below="@id/title"
+          android:layout_marginTop="2dp"/>
 
-    <com.hippo.ehviewer.widget.SimpleRatingView
-        android:id="@+id/rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/title"
-        android:layout_above="@id/category"
-        android:layout_marginBottom="4dp"/>
+        <TextView
+          android:id="@+id/category"
+          style="@style/CardMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/title"
+          android:layout_alignBottom="@id/thumb"
+          android:layout_marginBottom="8dp"
+          android:paddingBottom="2dp"
+          android:paddingLeft="8dp"
+          android:paddingRight="8dp"
+          android:paddingTop="2dp"
+          android:textColor="@android:color/white"
+          android:textAllCaps="true"/>
 
-    <TextView
-        android:id="@+id/posted"
-        style="@style/CardMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/thumb"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="6dp"
-        android:layout_marginBottom="4dp"/>
+        <com.hippo.ehviewer.widget.SimpleRatingView
+          android:id="@+id/rating"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@id/title"
+          android:layout_above="@id/category"
+          android:layout_marginBottom="4dp"/>
 
-    <TextView
-        android:id="@+id/pages"
-        style="@style/CardMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/posted"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="6dp"/>
+        <TextView
+          android:id="@+id/posted"
+          style="@style/CardMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignBottom="@id/thumb"
+          android:layout_alignParentRight="true"
+          android:layout_marginRight="6dp"
+          android:layout_marginBottom="4dp"/>
 
-    <TextView
-        android:id="@+id/simple_language"
-        style="@style/CardMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/posted"
-        android:layout_toLeftOf="@+id/pages"
-        android:layout_marginRight="6dp"/>
+        <TextView
+          android:id="@+id/pages"
+          style="@style/CardMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@id/posted"
+          android:layout_alignParentRight="true"
+          android:layout_marginRight="6dp"/>
 
-</RelativeLayout>
+        <TextView
+          android:id="@+id/simple_language"
+          style="@style/CardMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_above="@id/posted"
+          android:layout_toLeftOf="@+id/pages"
+          android:layout_marginRight="6dp"/>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
