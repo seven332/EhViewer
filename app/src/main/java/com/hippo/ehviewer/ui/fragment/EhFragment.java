@@ -20,7 +20,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 
@@ -32,11 +32,13 @@ public class EhFragment extends PreferenceFragment
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.eh_settings);
 
+        Preference theme = findPreference(Settings.KEY_THEME);
         Preference gallerySite = findPreference(Settings.KEY_GALLERY_SITE);
         Preference listMode = findPreference(Settings.KEY_LIST_MODE);
         Preference detailSize = findPreference(Settings.KEY_DETAIL_SIZE);
         Preference thumbSize = findPreference(Settings.KEY_THUMB_SIZE);
 
+        theme.setOnPreferenceChangeListener(this);
         gallerySite.setOnPreferenceChangeListener(this);
         listMode.setOnPreferenceChangeListener(this);
         detailSize.setOnPreferenceChangeListener(this);
@@ -46,7 +48,10 @@ public class EhFragment extends PreferenceFragment
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
-        if (Settings.KEY_GALLERY_SITE.equals(key)) {
+        if (Settings.KEY_THEME.equals(key)) {
+            ((EhApplication) getActivity().getApplication()).recreate();
+            return true;
+        } else if (Settings.KEY_GALLERY_SITE.equals(key)) {
             getActivity().setResult(Activity.RESULT_OK);
             return true;
         } else if (Settings.KEY_LIST_MODE.equals(key)) {
