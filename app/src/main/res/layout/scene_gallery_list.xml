@@ -32,21 +32,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/search_bar_card"
+    <com.hippo.ehviewer.widget.SearchBar
+        android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/gallery_search_bar_margin_h"
         android:layout_marginRight="@dimen/gallery_search_bar_margin_h"
         android:layout_marginTop="@dimen/gallery_search_bar_margin_v"
-        style="@style/CardView.Normal">
-
-        <com.hippo.ehviewer.widget.SearchBar
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </android.support.v7.widget.CardView>
+        style="@style/CardView.Normal"/>
 
     <com.hippo.widget.FabLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"

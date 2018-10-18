@@ -279,7 +279,7 @@ public class FavoritesScene extends BaseScene implements
         mSearchBar.setHelper(this);
         mSearchBar.setAllowEmptySearch(false);
         updateSearchBar();
-        mSearchBarMover = new SearchBarMover(this, ViewUtils.$$(view, R.id.search_bar_card), mRecyclerView);
+        mSearchBarMover = new SearchBarMover(this, mSearchBar, mRecyclerView);
 
         mFabLayout.setExpanded(false, false);
         mFabLayout.setAutoCancel(false);

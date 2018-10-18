@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -38,23 +39,20 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.hippo.ehviewer.R;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SearchBar extends FrameLayout implements View.OnClickListener,
+public class SearchBar extends CardView implements View.OnClickListener,
         TextView.OnEditorActionListener, TextWatcher,
         SearchEditText.SearchEditTextListener {
 
