@@ -17,6 +17,14 @@
 
 <resources>
 
+    <style name="ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="background">?attr/colorToolbar</item>
+    </style>
+
+    <style name="ActionBarStyle.Dark" parent="@style/Widget.AppCompat.ActionBar.Solid">
+        <item name="background">?attr/colorToolbar</item>
+    </style>
+
     <!-- TextAppearance -->
     <style name="TextAppearance" parent="TextAppearance.AppCompat">
     </style>

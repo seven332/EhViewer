@@ -19,6 +19,7 @@
 
     <declare-styleable name="Theme">
         <attr name="colorDivider" format="color"/>
+        <attr name="colorToolbar" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="ProgressView">
