@@ -457,7 +457,7 @@ public final class MainActivity extends StageActivity
         String text = getTextFromClipboard();
         int hashCode = text != null ? text.hashCode() : 0;
 
-        if (text != null && hashCode != 0 && mClipTextHashCode != hashCode) {
+        if (text != null && hashCode != 0 && mClipTextHashCode != hashCode && Settings.getClipboardTextHashCode() != hashCode) {
             Pair<Long, String> pair = EhUrl.parseGalleryDetailUrl(text);
             if (pair != null) {
                 long gid = pair.first;
