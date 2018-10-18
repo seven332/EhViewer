@@ -113,11 +113,7 @@
 
     <style name="Indicating">
         <item name="indicatorHeight">1dp</item>
-        <item name="indicatorColor">@color/divider</item>
-    </style>
-
-    <style name="Indicating.Dark">
-        <item name="indicatorColor">@color/divider_dark</item>
+        <item name="indicatorColor">?attr/colorDivider</item>
     </style>
 
     <style name="Widget.Design.FloatingActionButton.Mini">

@@ -24,13 +24,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.R;
 import com.hippo.ripple.Ripple;
 import com.hippo.yorozuya.LayoutUtils;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
         setAdapter(mAdapter);
         setLayoutManager(new LinearLayoutManager(context));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL, getResources().getColor(R.color.divider),
+                LinearDividerItemDecoration.VERTICAL, AttrResources.getAttrColor(context, R.attr.colorDivider),
                 LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
         addItemDecoration(decoration);

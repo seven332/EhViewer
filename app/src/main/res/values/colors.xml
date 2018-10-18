@@ -95,7 +95,7 @@
     <color name="unknown_bg">@android:color/black</color>
 
     <!-- divider -->
-    <color name="divider">#20000000</color>
+    <color name="divider_light">#20000000</color>
     <color name="divider_dark">#20ffffff</color>
 
     <!-- shadow -->

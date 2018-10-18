@@ -29,7 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.R;
@@ -40,10 +40,8 @@ import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ripple.Ripple;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ViewUtils;
-
-import junit.framework.Assert;
-
 import java.util.ArrayList;
+import junit.framework.Assert;
 
 public final class GalleryInfoScene extends ToolbarScene implements EasyRecyclerView.OnItemClickListener {
 
@@ -166,7 +164,8 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL, context.getResources().getColor(R.color.divider),
+                LinearDividerItemDecoration.VERTICAL,
+                AttrResources.getAttrColor(context, R.attr.colorDivider),
                 LayoutUtils.dp2pix(context, 1));
         decoration.setPadding(context.getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
         mRecyclerView.addItemDecoration(decoration);

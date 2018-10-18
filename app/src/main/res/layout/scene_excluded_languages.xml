@@ -43,7 +43,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/divider"/>
+            android:background="?attr/colorDivider"/>
 
         <TextView
             android:id="@+id/ok"
@@ -78,7 +78,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/divider"/>
+            android:background="?attr/colorDivider"/>
 
         <TextView
             android:id="@+id/deselect_all"
@@ -94,7 +94,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/divider"/>
+            android:background="?attr/colorDivider"/>
 
         <TextView
             android:id="@+id/invert_selection"
@@ -148,7 +148,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="@dimen/keyline_margin"
         android:layout_marginRight="@dimen/keyline_margin"
-        android:background="@color/divider"/>
+        android:background="?attr/colorDivider"/>
 
     <com.hippo.easyrecyclerview.EasyRecyclerView
         android:id="@+id/recycler_view"

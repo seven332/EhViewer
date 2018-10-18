@@ -86,7 +86,7 @@
         <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
-            android:background="@color/divider"/>
+            android:background="?attr/colorDivider"/>
 
     </com.hippo.widget.ShadowLinearLayout>
 </FrameLayout>

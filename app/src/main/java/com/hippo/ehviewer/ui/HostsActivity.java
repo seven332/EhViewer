@@ -37,6 +37,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.EhApplication;
@@ -81,7 +82,7 @@ public class HostsActivity extends ToolbarActivity
     recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
         LinearDividerItemDecoration.VERTICAL,
-        getResources().getColor(R.color.divider),
+        AttrResources.getAttrColor(this, R.attr.colorDivider),
         LayoutUtils.dp2pix(this, 1));
     decoration.setShowLastDivider(true);
     recyclerView.addItemDecoration(decoration);
