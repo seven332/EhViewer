@@ -33,9 +33,10 @@
         <item name="drawableColorPrimary">@color/primary_drawable_light</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_light</item>
         <item name="drawableColorThemePrimary">@color/colorPrimary</item>
-        <item name="contentColorPrimary">@color/grey_100</item>
+        <item name="contentColorPrimary">@color/content_light</item>
         <item name="contentColorThemePrimary">@color/colorPrimary</item>
         <item name="contentColorThemeAccent">@color/colorAccent</item>
+        <item name="contentColorReactive">@color/content_reactive_light</item>
         <item name="widgetColorThemePrimary">@color/colorPrimary</item>
         <item name="widgetColorThemeAccent">@color/colorAccent</item>
         <item name="guideBackgroundColor">@color/guide_bg</item>
@@ -70,9 +71,10 @@
         <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
         <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
-        <item name="contentColorPrimary">@color/grey_800</item>
+        <item name="contentColorPrimary">@color/content_dark</item>
         <item name="contentColorThemePrimary">?attr/contentColorPrimary</item>
         <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
+        <item name="contentColorReactive">@color/content_reactive_dark</item>
         <item name="widgetColorThemePrimary">@color/grey_700</item>
         <item name="widgetColorThemeAccent">@color/grey_700</item>
         <item name="guideBackgroundColor">#e5303030</item>
@@ -110,9 +112,10 @@
         <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
         <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
-        <item name="contentColorPrimary">@color/grey_800</item>
+        <item name="contentColorPrimary">@color/content_black</item>
         <item name="contentColorThemePrimary">?attr/contentColorPrimary</item>
         <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
+        <item name="contentColorReactive">@color/content_reactive_black</item>
         <item name="widgetColorThemePrimary">@color/grey_700</item>
         <item name="widgetColorThemeAccent">@color/grey_700</item>
         <item name="guideBackgroundColor">#e5000000</item>

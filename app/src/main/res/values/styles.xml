@@ -148,4 +148,8 @@
         <item name="contentPadding">0dp</item>
     </style>
 
+    <style name="CardView.Reactive" parent="CardView.Normal">
+        <item name="cardBackgroundColor">?attr/contentColorReactive</item>
+    </style>
+
 </resources>
