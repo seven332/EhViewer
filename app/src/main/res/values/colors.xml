@@ -48,6 +48,10 @@
     <color name="content_activated_dark">@color/grey_600</color>
     <color name="content_activated_black">@color/grey_700</color>
 
+    <color name="widget_light">@color/grey_200</color>
+    <color name="widget_dark">@color/grey_700</color>
+    <color name="widget_black">@color/grey_800</color>
+
     <color name="red_500">#fff44336</color>
     <color name="teal_500">#ff009688</color>
     <color name="teal_700">#ff00796b</color>
