@@ -25,6 +25,10 @@
         <!-- For dark theme, it's primary light color -->
         <!-- For black theme, it's primary light color -->
         <attr name="drawableColorPrimary" format="color"/>
+        <!-- For light theme, it's secondary dark color -->
+        <!-- For dark theme, it's secondary light color -->
+        <!-- For black theme, it's secondary light color -->
+        <attr name="drawableColorSecondary" format="color"/>
         <!-- For light theme, it's primary color -->
         <!-- For dark theme, it's primary light color -->
         <!-- For black theme, it's primary light color -->

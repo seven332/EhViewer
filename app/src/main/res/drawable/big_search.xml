@@ -23,7 +23,7 @@
     android:viewportHeight="24">
 
     <path
-        android:fillColor="@color/big_icon"
+        android:fillColor="?attr/drawableColorSecondary"
         android:pathData="@string/pd_big_search"/>
 
 </vector>
