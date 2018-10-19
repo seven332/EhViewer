@@ -144,6 +144,7 @@
         <item name="cardElevation">4dp</item>
         <item name="cardMaxElevation">4dp</item>
         <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardBackgroundColor">?attr/contentColorPrimary</item>
         <item name="contentPadding">0dp</item>
     </style>
 

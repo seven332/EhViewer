@@ -723,7 +723,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
 
         if ((oldState == STATE_INIT || oldState == STATE_FAILED || oldState == STATE_REFRESH) &&
-                (state == STATE_NORMAL || state == STATE_REFRESH_HEADER)) {
+                (state == STATE_NORMAL || state == STATE_REFRESH_HEADER) && AttrResources.getAttrBoolean(getContext2(), R.attr.isLightTheme)) {
             if (!createCircularReveal()) {
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
@@ -834,8 +834,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             mNoTags.setVisibility(View.GONE);
         }
 
-        int colorTag = resources.getColor(R.color.colorPrimary);
-        int colorName = resources.getColor(R.color.purple_a400);
+        int colorTag = AttrResources.getAttrColor(context, R.attr.contentColorThemePrimary);//resources.getColor(R.color.colorPrimary);
+        int colorName = AttrResources.getAttrColor(context, R.attr.contentColorThemeAccent);//resources.getColor(R.color.purple_a400);
         for (GalleryTagGroup tg : tagGroups) {
             LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.gallery_tag_group, mTags, false);
             ll.setOrientation(LinearLayout.HORIZONTAL);

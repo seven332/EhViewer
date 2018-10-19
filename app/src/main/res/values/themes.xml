@@ -32,7 +32,9 @@
         <item name="drawableColorPrimary">@color/primary_drawable_light</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_light</item>
         <item name="drawableColorThemePrimary">@color/colorPrimary</item>
-
+        <item name="contentColorPrimary">@color/grey_100</item>
+        <item name="contentColorThemePrimary">@color/colorPrimary</item>
+        <item name="contentColorThemeAccent">@color/colorAccent</item>
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
@@ -58,6 +60,9 @@
         <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
         <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
+        <item name="contentColorPrimary">@color/grey_800</item>
+        <item name="contentColorThemePrimary">?attr/contentColorPrimary</item>
+        <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
@@ -87,6 +92,9 @@
         <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
         <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
+        <item name="contentColorPrimary">@color/grey_800</item>
+        <item name="contentColorThemePrimary">?attr/contentColorPrimary</item>
+        <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>

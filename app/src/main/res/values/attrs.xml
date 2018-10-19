@@ -33,6 +33,10 @@
         <!-- For dark theme, it's primary light color -->
         <!-- For black theme, it's primary light color -->
         <attr name="drawableColorThemePrimary" format="color"/>
+        <!-- Color of card background -->
+        <attr name="contentColorPrimary" format="color"/>
+        <attr name="contentColorThemePrimary" format="color"/>
+        <attr name="contentColorThemeAccent" format="color"/>
         <attr name="toolbarPopupTheme" format="reference"/>
     </declare-styleable>
 
