@@ -114,7 +114,8 @@
     <color name="guide_bg">#e5009688</color>
 
     <!-- Lock pattern view -->
-    <color name="lock_pattern_view_regular_color">#8a000000</color>
+    <color name="lock_pattern_view_regular_color_light">#8a000000</color>
+    <color name="lock_pattern_view_regular_color_dark">#8affffff</color>
     <color name="lock_pattern_view_success_color">@color/colorPrimary</color>
     <color name="lock_pattern_view_error_color">@color/red_500</color>
 

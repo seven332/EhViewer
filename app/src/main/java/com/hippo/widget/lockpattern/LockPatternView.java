@@ -38,9 +38,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Interpolator;
-
+import com.hippo.android.resource.AttrResources;
 import com.hippo.ehviewer.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -270,7 +269,8 @@ public class LockPatternView extends View {
         mPathPaint.setAntiAlias(true);
         mPathPaint.setDither(true);
 
-        mRegularColor = getResources().getColor(R.color.lock_pattern_view_regular_color);
+        mRegularColor = getResources().getColor(AttrResources.getAttrBoolean(context, R.attr.isLightTheme) ?
+            R.color.lock_pattern_view_regular_color_light : R.color.lock_pattern_view_regular_color_dark);
         mErrorColor = getResources().getColor(R.color.lock_pattern_view_error_color);
         mSuccessColor = getResources().getColor(R.color.lock_pattern_view_success_color);
 
