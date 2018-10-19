@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:divider="@drawable/divider_gallery_detail"
+            android:divider="?attr/galleryDetailDivider"
             android:showDividers="middle"
             android:dividerPadding="@dimen/keyline_margin">
 

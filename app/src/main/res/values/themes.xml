@@ -43,6 +43,7 @@
         <item name="guideTextColor">?android:attr/textColorSecondaryInverse</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="galleryDetailDivider">@drawable/divider_gallery_detail_light</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -78,6 +79,7 @@
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="galleryDetailDivider">@drawable/divider_gallery_detail_dark</item>
     </style>
 
     <style name="AppTheme.Dark.NoActionBar">
@@ -116,6 +118,7 @@
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="galleryDetailDivider">@drawable/divider_gallery_detail_dark</item>
     </style>
 
     <style name="AppTheme.Black.NoActionBar">

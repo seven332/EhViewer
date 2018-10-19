@@ -44,6 +44,7 @@
         <attr name="guideTitleColor" format="color"/>
         <attr name="guideTextColor" format="color"/>
         <attr name="toolbarPopupTheme" format="reference"/>
+        <attr name="galleryDetailDivider" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="ProgressView">
