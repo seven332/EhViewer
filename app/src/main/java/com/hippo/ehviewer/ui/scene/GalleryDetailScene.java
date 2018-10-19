@@ -834,8 +834,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             mNoTags.setVisibility(View.GONE);
         }
 
-        int colorTag = AttrResources.getAttrColor(context, R.attr.contentColorThemePrimary);//resources.getColor(R.color.colorPrimary);
-        int colorName = AttrResources.getAttrColor(context, R.attr.contentColorThemeAccent);//resources.getColor(R.color.purple_a400);
+        int colorTag = AttrResources.getAttrColor(context, R.attr.contentColorThemePrimary);
+        int colorName = AttrResources.getAttrColor(context, R.attr.contentColorThemeAccent);
         for (GalleryTagGroup tg : tagGroups) {
             LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.gallery_tag_group, mTags, false);
             ll.setOrientation(LinearLayout.HORIZONTAL);
