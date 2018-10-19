@@ -52,7 +52,7 @@
     <dimen name="gallery_grid_margin_v">4dp</dimen>
 
     <!-- 8dp - 4dp, 4dp for card padding -->
-    <dimen name="gallery_search_bar_margin_h">4dp</dimen>
+    <dimen name="gallery_search_bar_margin_h">6dp</dimen>
     <!-- 12dp - 4dp, 4dp for card padding -->
     <dimen name="gallery_search_bar_margin_v">8dp</dimen>
 

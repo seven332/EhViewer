@@ -141,8 +141,8 @@
     <style name="CardView.Normal">
         <item name="cardCornerRadius">2dp</item>
         <item name="cardUseCompatPadding">true</item>
-        <item name="cardElevation">4dp</item>
-        <item name="cardMaxElevation">4dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardMaxElevation">2dp</item>
         <item name="cardPreventCornerOverlap">true</item>
         <item name="cardBackgroundColor">?attr/contentColorPrimary</item>
         <item name="contentPadding">0dp</item>
