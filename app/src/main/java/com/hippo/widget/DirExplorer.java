@@ -72,7 +72,7 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
         setAdapter(mAdapter);
         setLayoutManager(new LinearLayoutManager(context));
         LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
-                LinearDividerItemDecoration.VERTICAL, AttrResources.getAttrColor(context, R.attr.colorDivider),
+                LinearDividerItemDecoration.VERTICAL, AttrResources.getAttrColor(context, R.attr.dividerColor),
                 LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
         addItemDecoration(decoration);

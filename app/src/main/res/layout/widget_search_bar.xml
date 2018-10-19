@@ -80,13 +80,13 @@
                 android:id="@+id/list_header"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="?attr/colorDivider"/>
+                android:background="?attr/dividerColor"/>
 
             <ListView
                 android:id="@+id/search_bar_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="?attr/colorDivider"
+                android:divider="?attr/dividerColor"
                 android:dividerHeight="1dp"/>
 
         </LinearLayout>

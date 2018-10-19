@@ -18,11 +18,11 @@
 <resources>
 
     <style name="ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="background">?attr/colorToolbar</item>
+        <item name="background">?attr/toolbarColor</item>
     </style>
 
     <style name="ActionBarStyle.Dark" parent="@style/Widget.AppCompat.ActionBar.Solid">
-        <item name="background">?attr/colorToolbar</item>
+        <item name="background">?attr/toolbarColor</item>
     </style>
 
     <!-- TextAppearance -->
@@ -81,7 +81,7 @@
     </style>
 
     <style name="TextAppearance.CategoryTitle" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">?attr/colorTextThemeAccent</item>
+        <item name="android:textColor">?attr/textColorThemeAccent</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -103,7 +103,7 @@
     </style>
 
     <style name="ButtonInCard.Accent">
-        <item name="android:textColor">?attr/colorTextThemeAccent</item>
+        <item name="android:textColor">?attr/textColorThemeAccent</item>
     </style>
 
     <style name="Slider">
@@ -121,7 +121,7 @@
 
     <style name="Indicating">
         <item name="indicatorHeight">1dp</item>
-        <item name="indicatorColor">?attr/colorDivider</item>
+        <item name="indicatorColor">?attr/dividerColor</item>
     </style>
 
     <style name="Widget.Design.FloatingActionButton.Mini">

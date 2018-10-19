@@ -144,7 +144,7 @@
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="?attr/colorDivider"
+                    android:background="?attr/dividerColor"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"/>
 
@@ -154,7 +154,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="?attr/colorTextThemeAccent"
+                    android:textColor="?attr/textColorThemeAccent"
                     android:text="@string/read"/>
 
             </LinearLayout>

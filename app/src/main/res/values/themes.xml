@@ -27,11 +27,11 @@
         <item name="actionBarStyle">@style/ActionBarStyle</item>
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
 
-        <item name="colorDivider">@color/divider_light</item>
-        <item name="colorToolbar">@color/colorPrimary</item>
-        <item name="colorTextThemeAccent">@color/colorAccent</item>
-        <item name="colorDrawablePrimary">@color/primary_drawable_light</item>
-        <item name="colorDrawableThemePrimary">@color/colorPrimary</item>
+        <item name="dividerColor">@color/divider_light</item>
+        <item name="toolbarColor">@color/colorPrimary</item>
+        <item name="textColorThemeAccent">@color/colorAccent</item>
+        <item name="drawableColorPrimary">@color/primary_drawable_light</item>
+        <item name="drawableColorThemePrimary">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -51,11 +51,11 @@
         <item name="actionBarStyle">@style/ActionBarStyle.Dark</item>
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
 
-        <item name="colorDivider">@color/divider_dark</item>
-        <item name="colorToolbar">?android:attr/colorBackground</item>
-        <item name="colorTextThemeAccent">?android:attr/textColorSecondary</item>
-        <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
-        <item name="colorDrawableThemePrimary">@color/primary_drawable_dark</item>
+        <item name="dividerColor">@color/divider_dark</item>
+        <item name="toolbarColor">?android:attr/colorBackground</item>
+        <item name="textColorThemeAccent">?android:attr/textColorSecondary</item>
+        <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
+        <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
     </style>
 
     <style name="AppTheme.Dark.NoActionBar">
@@ -78,11 +78,11 @@
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
 
-        <item name="colorDivider">@color/divider_dark</item>
-        <item name="colorToolbar">?android:attr/colorBackground</item>
-        <item name="colorTextThemeAccent">?android:attr/textColorSecondary</item>
-        <item name="colorDrawablePrimary">@color/primary_drawable_dark</item>
-        <item name="colorDrawableThemePrimary">@color/primary_drawable_dark</item>
+        <item name="dividerColor">@color/divider_dark</item>
+        <item name="toolbarColor">?android:attr/colorBackground</item>
+        <item name="textColorThemeAccent">?android:attr/textColorSecondary</item>
+        <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
+        <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
     </style>
 
     <style name="AppTheme.Black.NoActionBar">

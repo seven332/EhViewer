@@ -18,17 +18,17 @@
 <resources>
 
     <declare-styleable name="Theme">
-        <attr name="colorDivider" format="color"/>
-        <attr name="colorToolbar" format="color"/>
+        <attr name="dividerColor" format="color"/>
+        <attr name="toolbarColor" format="color"/>
+        <attr name="textColorThemeAccent" format="color"/>
         <!-- For light theme, it's primary dark color -->
         <!-- For dark theme, it's primary light color -->
         <!-- For black theme, it's primary light color -->
-        <attr name="colorDrawablePrimary" format="color"/>
+        <attr name="drawableColorPrimary" format="color"/>
         <!-- For light theme, it's primary color -->
         <!-- For dark theme, it's primary light color -->
         <!-- For black theme, it's primary light color -->
-        <attr name="colorDrawableThemePrimary" format="color"/>
-        <attr name="colorTextThemeAccent" format="color"/>
+        <attr name="drawableColorThemePrimary" format="color"/>
         <attr name="toolbarPopupTheme" format="reference"/>
     </declare-styleable>
 
@@ -62,7 +62,7 @@
     <declare-styleable name="DividerView">
         <attr name="dividerWidth" format="dimension"/>
         <attr name="dividerHeight" format="dimension"/>
-        <attr name="dividerColor" format="color"/>
+        <attr name="dividerColor"/>
     </declare-styleable>
 
     <declare-styleable name="AutoWrapLayout">

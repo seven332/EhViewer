@@ -82,7 +82,7 @@ public class HostsActivity extends ToolbarActivity
     recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     LinearDividerItemDecoration decoration = new LinearDividerItemDecoration(
         LinearDividerItemDecoration.VERTICAL,
-        AttrResources.getAttrColor(this, R.attr.colorDivider),
+        AttrResources.getAttrColor(this, R.attr.dividerColor),
         LayoutUtils.dp2pix(this, 1));
     decoration.setShowLastDivider(true);
     recyclerView.addItemDecoration(decoration);
