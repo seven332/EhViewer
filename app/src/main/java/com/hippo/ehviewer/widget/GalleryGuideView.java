@@ -18,15 +18,13 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import com.hippo.android.resource.AttrResources;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.yorozuya.ViewUtils;
@@ -60,9 +58,9 @@ public class GalleryGuideView extends ViewGroup implements View.OnClickListener 
     }
 
     private void init(Context context) {
-        mBgColor = ContextCompat.getColor(context, R.color.guide_bg);
+        mBgColor = AttrResources.getAttrColor(context, R.attr.guideBackgroundColor);
         mPaint = new Paint();
-        mPaint.setColor(Color.WHITE);
+        mPaint.setColor(AttrResources.getAttrColor(context, R.attr.guideTitleColor));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(context.getResources().getDimension(R.dimen.gallery_guide_divider_width));
         setOnClickListener(this);

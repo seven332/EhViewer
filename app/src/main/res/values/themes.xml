@@ -149,11 +149,15 @@
 
     <style name="AppTheme.Toolbar.Black" parent="AppTheme.Black.NoActionBar"/>
 
-    <style name="AppTheme.Gallery" parent="AppTheme.Dark.NoActionBar"/>
+    <style name="AppTheme.Gallery" parent="AppTheme.Dark.NoActionBar">
+        <item name="gallerySliderBackgroundColor">@color/gallery_slider_background_dark</item>
+    </style>
 
-    <style name="AppTheme.Gallery.Dark" parent="AppTheme.Dark.NoActionBar"/>
+    <style name="AppTheme.Gallery.Dark"/>
 
-    <style name="AppTheme.Gallery.Black" parent="AppTheme.Black.NoActionBar"/>
+    <style name="AppTheme.Gallery.Black" parent="AppTheme.Black.NoActionBar">
+        <item name="gallerySliderBackgroundColor">@color/gallery_slider_background_black</item>
+    </style>
 
     <style name="AppTheme.Settings" parent="AppTheme"/>
 

@@ -49,6 +49,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hippo.android.resource.AttrResources;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.R;
@@ -301,7 +302,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                 .setScaleMode(Settings.getPageScaling())
                 .setStartPosition(Settings.getStartPosition())
                 .setStartPage(startPage)
-                .setBackgroundColor(resources.getColor(R.color.gallery_background))
+                .setBackgroundColor(AttrResources.getAttrColor(this, android.R.attr.colorBackground))
                 .setEdgeColor(primaryColor & 0xffffff | 0x33000000)
                 .setPagerInterval(Settings.getShowPageInterval() ? resources.getDimensionPixelOffset(R.dimen.gallery_pager_interval) : 0)
                 .setScrollInterval(Settings.getShowPageInterval() ? resources.getDimensionPixelOffset(R.dimen.gallery_scroll_interval) : 0)
