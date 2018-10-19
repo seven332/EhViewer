@@ -17,11 +17,7 @@
 
 <resources>
 
-    <style name="ActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="background">?attr/toolbarColor</item>
-    </style>
-
-    <style name="ActionBarStyle.Dark" parent="@style/Widget.AppCompat.ActionBar.Solid">
+    <style name="ActionBarStyle" parent="@style/Widget.AppCompat.ActionBar.Solid">
         <item name="background">?attr/toolbarColor</item>
     </style>
 

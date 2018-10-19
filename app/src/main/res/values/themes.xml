@@ -25,7 +25,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
-        <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
 
         <item name="dividerColor">@color/divider_light</item>
         <item name="toolbarColor">@color/colorPrimary</item>
@@ -33,6 +32,8 @@
         <item name="drawableColorPrimary">@color/primary_drawable_light</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_light</item>
         <item name="drawableColorThemePrimary">@color/colorPrimary</item>
+
+        <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -49,8 +50,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="actionBarStyle">@style/ActionBarStyle.Dark</item>
-        <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="actionBarStyle">@style/ActionBarStyle</item>
 
         <item name="dividerColor">@color/divider_dark</item>
         <item name="toolbarColor">?android:attr/colorBackground</item>
@@ -58,6 +58,8 @@
         <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
         <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
+
+        <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
 
     <style name="AppTheme.Dark.NoActionBar">
@@ -74,18 +76,19 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="actionBarStyle">@style/ActionBarStyle.Dark</item>
-        <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="actionBarStyle">@style/ActionBarStyle</item>
 
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
 
         <item name="dividerColor">@color/divider_dark</item>
-        <item name="toolbarColor">?android:attr/colorBackground</item>
+        <item name="toolbarColor">@android:color/black</item>
         <item name="textColorThemeAccent">?android:attr/textColorSecondary</item>
         <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
         <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
+
+        <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
 
     <style name="AppTheme.Black.NoActionBar">
