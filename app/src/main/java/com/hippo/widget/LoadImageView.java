@@ -29,7 +29,6 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-
 import com.hippo.conaco.Conaco;
 import com.hippo.conaco.ConacoTask;
 import com.hippo.conaco.DataContainer;
@@ -40,7 +39,7 @@ import com.hippo.ehviewer.R;
 import com.hippo.image.ImageBitmap;
 import com.hippo.image.ImageDrawable;
 import com.hippo.image.RecycledException;
-
+import com.hippo.util.DrawableManager;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -309,7 +308,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
     public void onFailure() {
         mFailed = true;
         clearDrawable();
-        setImageDrawable(getContext().getResources().getDrawable(R.drawable.image_failed));
+        setImageDrawable(DrawableManager.getDrawable(getContext(), R.drawable.image_failed));
         if (mRetryType == RETRY_TYPE_CLICK) {
             setOnClickListener(this);
         } else if (mRetryType == RETRY_TYPE_LONG_CLICK) {
