@@ -50,6 +50,8 @@
         <attr name="guideTitleColor" format="color"/>
         <attr name="guideTextColor" format="color"/>
 
+        <attr name="galleryDetailHeaderBackgroundColor" format="color"/>
+
         <attr name="gallerySliderBackgroundColor" format="color"/>
 
         <attr name="toolbarPopupTheme" format="reference"/>

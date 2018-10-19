@@ -42,6 +42,7 @@
         <item name="guideBackgroundColor">@color/guide_bg</item>
         <item name="guideTitleColor">?android:attr/textColorPrimaryInverse</item>
         <item name="guideTextColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="galleryDetailHeaderBackgroundColor">?attr/contentColorThemePrimary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_light</item>
@@ -61,7 +62,7 @@
         <item name="colorPrimary">@color/grey_500</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/grey_500</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
 
         <item name="dividerColor">@color/divider_dark</item>
@@ -80,6 +81,7 @@
         <item name="guideBackgroundColor">#e5303030</item>
         <item name="guideTitleColor">?android:attr/textColorPrimary</item>
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
+        <item name="galleryDetailHeaderBackgroundColor">?attr/contentColorThemePrimary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_dark</item>
@@ -99,7 +101,7 @@
         <item name="colorPrimary">@color/grey_500</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/grey_500</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
 
         <item name="android:windowBackground">@android:color/black</item>
@@ -122,6 +124,7 @@
         <item name="guideBackgroundColor">#e5000000</item>
         <item name="guideTitleColor">?android:attr/textColorPrimary</item>
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
+        <item name="galleryDetailHeaderBackgroundColor">@android:color/black</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_dark</item>
