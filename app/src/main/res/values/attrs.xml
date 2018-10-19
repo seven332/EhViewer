@@ -37,6 +37,8 @@
         <attr name="contentColorPrimary" format="color"/>
         <attr name="contentColorThemePrimary" format="color"/>
         <attr name="contentColorThemeAccent" format="color"/>
+        <attr name="widgetColorThemePrimary" format="color"/>
+        <attr name="widgetColorThemeAccent" format="color"/>
         <attr name="toolbarPopupTheme" format="reference"/>
     </declare-styleable>
 

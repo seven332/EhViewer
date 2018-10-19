@@ -27,7 +27,7 @@
 
     <!-- Progress View -->
     <style name="ProgressView">
-        <item name="color">?attr/colorAccent</item>
+        <item name="color">?attr/widgetColorThemeAccent</item>
         <item name="indeterminate">true</item>
         <item name="android:minWidth">48dp</item>
         <item name="android:minHeight">48dp</item>
@@ -105,7 +105,7 @@
     <style name="Slider">
         <item name="thickness">2dp</item>
         <item name="radius">6dp</item>
-        <item name="color">?attr/colorAccent</item>
+        <item name="color">?attr/widgetColorThemeAccent</item>
         <item name="textColor">@android:color/white</item>
         <item name="textSize">12sp</item>
         <item name="dark">false</item>

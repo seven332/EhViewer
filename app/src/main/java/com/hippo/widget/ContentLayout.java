@@ -30,7 +30,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.easyrecyclerview.HandlerDrawable;
@@ -43,9 +43,7 @@ import com.hippo.util.ExceptionUtils;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.LayoutUtils;
-import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.collect.IntList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +90,7 @@ public class ContentLayout extends FrameLayout {
 
         mFastScroller.attachToRecyclerView(mRecyclerView);
         HandlerDrawable drawable = new HandlerDrawable();
-        drawable.setColor(ResourcesUtils.getAttrColor(context, R.attr.colorAccent));
+        drawable.setColor(AttrResources.getAttrColor(context, R.attr.widgetColorThemeAccent));
         mFastScroller.setHandlerDrawable(drawable);
 
         mRefreshLayout.setHeaderColorSchemeResources(

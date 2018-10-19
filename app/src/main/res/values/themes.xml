@@ -35,6 +35,9 @@
         <item name="contentColorPrimary">@color/grey_100</item>
         <item name="contentColorThemePrimary">@color/colorPrimary</item>
         <item name="contentColorThemeAccent">@color/colorAccent</item>
+        <item name="widgetColorThemePrimary">@color/colorPrimary</item>
+        <item name="widgetColorThemeAccent">@color/colorAccent</item>
+
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
@@ -63,6 +66,8 @@
         <item name="contentColorPrimary">@color/grey_800</item>
         <item name="contentColorThemePrimary">?attr/contentColorPrimary</item>
         <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
+        <item name="widgetColorThemePrimary">@color/grey_700</item>
+        <item name="widgetColorThemeAccent">@color/grey_700</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
@@ -95,6 +100,8 @@
         <item name="contentColorPrimary">@color/grey_800</item>
         <item name="contentColorThemePrimary">?attr/contentColorPrimary</item>
         <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
+        <item name="widgetColorThemePrimary">@color/grey_700</item>
+        <item name="widgetColorThemeAccent">@color/grey_700</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>

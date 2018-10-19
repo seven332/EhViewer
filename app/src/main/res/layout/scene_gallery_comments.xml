@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="?attr/colorPrimary">
+            android:background="?attr/contentColorPrimary">
 
             <EditText
                 android:id="@+id/edit_text"
@@ -94,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_reply_dark_x24"
-            app:backgroundTint="?attr/colorPrimary"
+            app:backgroundTint="?attr/widgetColorThemePrimary"
             style="@style/Widget.Design.FloatingActionButton"/>
 
     </com.hippo.widget.FabLayout>

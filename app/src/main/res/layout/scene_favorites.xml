@@ -48,21 +48,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_delete_dark_x24"
-            app:backgroundTint="?attr/colorAccent"
+            app:backgroundTint="?attr/widgetColorThemeAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_folder_move_dark_x24"
-            app:backgroundTint="?attr/colorAccent"
+            app:backgroundTint="?attr/widgetColorThemeAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_close_dark_x24"
-            app:backgroundTint="?attr/colorPrimary"
+            app:backgroundTint="?attr/widgetColorThemePrimary"
             style="@style/Widget.Design.FloatingActionButton"/>
 
     </com.hippo.widget.FabLayout>

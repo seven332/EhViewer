@@ -64,7 +64,6 @@ import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
-import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 import de.greenrobot.dao.query.LazyList;
 import junit.framework.Assert;
@@ -142,7 +141,7 @@ public class HistoryScene extends ToolbarScene
 
         fastScroller.attachToRecyclerView(mRecyclerView);
         HandlerDrawable handlerDrawable = new HandlerDrawable();
-        handlerDrawable.setColor(ResourcesUtils.getAttrColor(context, R.attr.colorAccent));
+        handlerDrawable.setColor(AttrResources.getAttrColor(context, R.attr.widgetColorThemeAccent));
         fastScroller.setHandlerDrawable(handlerDrawable);
 
         updateLazyList();
