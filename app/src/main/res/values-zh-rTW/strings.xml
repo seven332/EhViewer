@@ -397,6 +397,10 @@
     <string name="settings_eh_identity_cookies_copy">複製</string>
     <string name="settings_u_config">EHentai 設定</string>
     <string name="settings_u_config_summary">EHentai 網站上的設定</string>
+    <string name="settings_eh_theme">主題</string>
+    <string name="settings_eh_theme_light">亮色</string>
+    <string name="settings_eh_theme_dark">暗色</string>
+    <string name="settings_eh_theme_black">黑色</string>
     <string name="settings_eh_gallery_site">圖庫站台</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">詳細資料</string>
