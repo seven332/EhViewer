@@ -38,6 +38,9 @@
         <item name="contentColorThemeAccent">@color/colorAccent</item>
         <item name="widgetColorThemePrimary">@color/colorPrimary</item>
         <item name="widgetColorThemeAccent">@color/colorAccent</item>
+        <item name="guideBackgroundColor">@color/guide_bg</item>
+        <item name="guideTitleColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="guideTextColor">?android:attr/textColorSecondaryInverse</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
@@ -70,6 +73,9 @@
         <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
         <item name="widgetColorThemePrimary">@color/grey_700</item>
         <item name="widgetColorThemeAccent">@color/grey_700</item>
+        <item name="guideBackgroundColor">#e5303030</item>
+        <item name="guideTitleColor">?android:attr/textColorPrimary</item>
+        <item name="guideTextColor">?android:attr/textColorSecondary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
@@ -105,6 +111,9 @@
         <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
         <item name="widgetColorThemePrimary">@color/grey_700</item>
         <item name="widgetColorThemeAccent">@color/grey_700</item>
+        <item name="guideBackgroundColor">#e5000000</item>
+        <item name="guideTitleColor">?android:attr/textColorPrimary</item>
+        <item name="guideTextColor">?android:attr/textColorSecondary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>

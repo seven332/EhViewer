@@ -40,6 +40,9 @@
         <attr name="contentColorThemeAccent" format="color"/>
         <attr name="widgetColorThemePrimary" format="color"/>
         <attr name="widgetColorThemeAccent" format="color"/>
+        <attr name="guideBackgroundColor" format="color"/>
+        <attr name="guideTitleColor" format="color"/>
+        <attr name="guideTextColor" format="color"/>
         <attr name="toolbarPopupTheme" format="reference"/>
     </declare-styleable>
 

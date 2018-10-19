@@ -125,15 +125,15 @@
     </style>
 
     <style name="Guide.Title" parent="TextAppearance.AppCompat.Title">
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">?attr/guideTitleColor</item>
     </style>
 
     <style name="Guide.Text" parent="TextAppearance.AppCompat.Subhead">
-        <item name="android:textColor">#deffffff</item>
+        <item name="android:textColor">?attr/guideTextColor</item>
     </style>
 
     <style name="Guide">
-        <item name="sv_backgroundColor">@color/guide_bg</item>
+        <item name="sv_backgroundColor">?attr/guideBackgroundColor</item>
         <item name="sv_titleTextAppearance">@style/Guide.Title</item>
         <item name="sv_detailTextAppearance">@style/Guide.Text</item>
     </style>
