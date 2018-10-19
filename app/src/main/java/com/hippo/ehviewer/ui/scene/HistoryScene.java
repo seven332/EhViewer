@@ -387,7 +387,7 @@ public class HistoryScene extends ToolbarScene
 
         @Override
         public int onGetSwipeReactionType(HistoryHolder holder, int position, int x, int y) {
-            return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H;
+            return SwipeableItemConstants.REACTION_CAN_SWIPE_LEFT;
         }
 
         @Override
@@ -397,8 +397,8 @@ public class HistoryScene extends ToolbarScene
         public SwipeResultAction onSwipeItem(HistoryHolder holder, int position, int result) {
             switch (result) {
                 case SwipeableItemConstants.RESULT_SWIPED_LEFT:
-                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
                     return new SwipeResultActionClear(position);
+                case SwipeableItemConstants.RESULT_SWIPED_RIGHT:
                 case SwipeableItemConstants.RESULT_CANCELED:
                 default:
                     return new SwipeResultActionDefault();
