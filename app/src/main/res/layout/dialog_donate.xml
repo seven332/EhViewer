@@ -36,7 +36,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:text="@string/settings_about_donate_alipay"
-    android:textColor="?attr/colorPrimary"
+    android:textColor="?attr/textColorThemePrimary"
     android:textStyle="bold"
     android:textSize="@dimen/text_little_small"/>
 
@@ -63,7 +63,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:text="@string/settings_about_donate_paypal"
-    android:textColor="?attr/colorPrimary"
+    android:textColor="?attr/textColorThemePrimary"
     android:textStyle="bold"
     android:textSize="@dimen/text_little_small"/>
 

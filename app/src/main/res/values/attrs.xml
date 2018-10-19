@@ -20,6 +20,7 @@
     <declare-styleable name="Theme">
         <attr name="dividerColor" format="color"/>
         <attr name="toolbarColor" format="color"/>
+        <attr name="textColorThemePrimary" format="color"/>
         <attr name="textColorThemeAccent" format="color"/>
         <!-- For light theme, it's primary dark color -->
         <!-- For dark theme, it's primary light color -->

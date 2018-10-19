@@ -28,6 +28,7 @@
 
         <item name="dividerColor">@color/divider_light</item>
         <item name="toolbarColor">@color/colorPrimary</item>
+        <item name="textColorThemePrimary">@color/colorPrimary</item>
         <item name="textColorThemeAccent">@color/colorAccent</item>
         <item name="drawableColorPrimary">@color/primary_drawable_light</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_light</item>
@@ -59,6 +60,7 @@
 
         <item name="dividerColor">@color/divider_dark</item>
         <item name="toolbarColor">?android:attr/colorBackground</item>
+        <item name="textColorThemePrimary">?android:attr/textColorSecondary</item>
         <item name="textColorThemeAccent">?android:attr/textColorSecondary</item>
         <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
@@ -93,6 +95,7 @@
 
         <item name="dividerColor">@color/divider_dark</item>
         <item name="toolbarColor">@android:color/black</item>
+        <item name="textColorThemePrimary">?android:attr/textColorSecondary</item>
         <item name="textColorThemeAccent">?android:attr/textColorSecondary</item>
         <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
         <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>

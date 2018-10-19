@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cookie_explain"
-                    android:textColor="@android:color/black"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="@dimen/text_little_small"/>
 
                 <android.support.design.widget.TextInputLayout
@@ -146,7 +146,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/textColorThemePrimary"
             android:textStyle="bold"
             android:text="@android:string/ok"/>
 

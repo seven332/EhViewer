@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/crash_explain"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="@dimen/text_little_small"
                 android:lineSpacingExtra="8dp"/>
 
@@ -75,6 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="?attr/textColorThemeAccent"
             android:textStyle="bold"
             android:text="@android:string/cancel"/>
 
@@ -84,7 +85,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/textColorThemePrimary"
             android:textStyle="bold"
             android:text="@string/send"/>
 

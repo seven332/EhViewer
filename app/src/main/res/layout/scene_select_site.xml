@@ -115,7 +115,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/textColorThemePrimary"
             android:textStyle="bold"
             android:text="@android:string/ok"/>
 
