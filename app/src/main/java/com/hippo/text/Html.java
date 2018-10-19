@@ -46,9 +46,10 @@ import android.text.style.TextAppearanceSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
-
-import com.hippo.ehviewer.R;
-
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Locale;
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
 import org.xml.sax.Attributes;
@@ -57,11 +58,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * This class processes HTML strings into displayable styled text.
@@ -678,7 +674,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         }
 
         if (d == null) {
-            d = Html.sResources.getDrawable(R.drawable.image_failed);
+            d = Resources.getSystem().getDrawable(android.R.drawable.ic_menu_report_image);
             d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
         }
 
