@@ -42,6 +42,8 @@
         <item name="guideBackgroundColor">@color/guide_bg</item>
         <item name="guideTitleColor">?android:attr/textColorPrimaryInverse</item>
         <item name="guideTextColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="tagGroupBackgroundColor">@color/tag_group_background_light</item>
+        <item name="tagBackgroundColor">@color/tag_background_light</item>
         <item name="galleryDetailHeaderBackgroundColor">?attr/contentColorThemePrimary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
@@ -81,6 +83,8 @@
         <item name="guideBackgroundColor">#e5303030</item>
         <item name="guideTitleColor">?android:attr/textColorPrimary</item>
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
+        <item name="tagGroupBackgroundColor">@color/tag_group_background_dark</item>
+        <item name="tagBackgroundColor">@color/tag_background_dark</item>
         <item name="galleryDetailHeaderBackgroundColor">?attr/contentColorThemePrimary</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
@@ -124,6 +128,8 @@
         <item name="guideBackgroundColor">#e5000000</item>
         <item name="guideTitleColor">?android:attr/textColorPrimary</item>
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
+        <item name="tagGroupBackgroundColor">@color/tag_group_background_black</item>
+        <item name="tagBackgroundColor">@color/tag_background_black</item>
         <item name="galleryDetailHeaderBackgroundColor">@android:color/black</item>
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
