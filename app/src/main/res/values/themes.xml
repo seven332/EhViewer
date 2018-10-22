@@ -39,6 +39,7 @@
         <item name="contentColorReactive">@color/content_reactive_light</item>
         <item name="widgetColorThemePrimary">@color/colorPrimary</item>
         <item name="widgetColorThemeAccent">@color/colorAccent</item>
+        <item name="progressColor">@color/progress_light</item>
         <item name="guideBackgroundColor">@color/guide_bg</item>
         <item name="guideTitleColor">?android:attr/textColorPrimaryInverse</item>
         <item name="guideTextColor">?android:attr/textColorSecondaryInverse</item>
@@ -81,6 +82,7 @@
         <item name="contentColorReactive">@color/content_reactive_dark</item>
         <item name="widgetColorThemePrimary">@color/widget_dark</item>
         <item name="widgetColorThemeAccent">@color/widget_dark</item>
+        <item name="progressColor">@color/progress_dark</item>
         <item name="guideBackgroundColor">#e5303030</item>
         <item name="guideTitleColor">?android:attr/textColorPrimary</item>
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
@@ -127,6 +129,7 @@
         <item name="contentColorReactive">@color/content_reactive_black</item>
         <item name="widgetColorThemePrimary">@color/widget_black</item>
         <item name="widgetColorThemeAccent">@color/widget_black</item>
+        <item name="progressColor">@color/progress_black</item>
         <item name="guideBackgroundColor">#e5000000</item>
         <item name="guideTitleColor">?android:attr/textColorPrimary</item>
         <item name="guideTextColor">?android:attr/textColorSecondary</item>

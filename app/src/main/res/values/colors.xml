@@ -52,6 +52,10 @@
     <color name="widget_dark">@color/grey_700</color>
     <color name="widget_black">@color/grey_850</color>
 
+    <color name="progress_light">@color/colorAccent</color>
+    <color name="progress_dark">@color/grey_600</color>
+    <color name="progress_black">@color/grey_700</color>
+
     <color name="tag_group_background_light">@color/colorAccent</color>
     <color name="tag_group_background_dark">@color/grey_775</color>
     <color name="tag_group_background_black">@color/grey_875</color>

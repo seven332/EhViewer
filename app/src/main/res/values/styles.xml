@@ -27,7 +27,7 @@
 
     <!-- Progress View -->
     <style name="ProgressView">
-        <item name="color">?attr/widgetColorThemeAccent</item>
+        <item name="color">?attr/progressColor</item>
         <item name="indeterminate">true</item>
         <item name="android:minWidth">48dp</item>
         <item name="android:minHeight">48dp</item>
