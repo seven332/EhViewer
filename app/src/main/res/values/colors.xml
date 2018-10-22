@@ -50,7 +50,7 @@
 
     <color name="widget_light">@color/grey_200</color>
     <color name="widget_dark">@color/grey_700</color>
-    <color name="widget_black">@color/grey_800</color>
+    <color name="widget_black">@color/grey_850</color>
 
     <color name="tag_group_background_light">@color/colorAccent</color>
     <color name="tag_group_background_dark">@color/grey_775</color>
@@ -59,6 +59,10 @@
     <color name="tag_background_light">@color/colorPrimary</color>
     <color name="tag_background_dark">@color/grey_775</color>
     <color name="tag_background_black">@color/grey_875</color>
+
+    <color name="gallery_detail_button_background_light">@color/grey_100</color>
+    <color name="gallery_detail_button_background_dark">@color/grey_800</color>
+    <color name="gallery_detail_button_background_black">@color/grey_900</color>
 
     <color name="red_500">#fff44336</color>
     <color name="teal_500">#ff009688</color>

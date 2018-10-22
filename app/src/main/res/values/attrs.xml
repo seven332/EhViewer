@@ -54,6 +54,7 @@
         <attr name="tagBackgroundColor" format="color"/>
 
         <attr name="galleryDetailHeaderBackgroundColor" format="color"/>
+        <attr name="galleryDetailButtonBackgroundColor" format="color"/>
 
         <attr name="gallerySliderBackgroundColor" format="color"/>
 
