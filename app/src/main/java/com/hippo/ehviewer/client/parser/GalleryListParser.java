@@ -182,6 +182,60 @@ public class GalleryListParser {
         return gi;
     }
 
+    @Nullable
+    private static GalleryInfo parseGalleryInfoThumbVersion(Element e) {
+        GalleryInfo gi = new GalleryInfo();
+
+        // Title (required)
+        Element id2 = JsoupUtils.getElementByClass(e, "id2");
+        if (id2 == null) {
+            return null;
+        }
+        gi.title = id2.text().trim();
+
+        // gid, token (required)
+        Element a = id2.children().first();
+        if (a == null) {
+            return null;
+        }
+        GalleryDetailUrlParser.Result result = GalleryDetailUrlParser.parse(a.attr("href"));
+        if (result == null) {
+            return null;
+        }
+        gi.gid = result.gid;
+        gi.token = result.token;
+
+        // Thumbnail
+        Element id3 = JsoupUtils.getElementByClass(e, "id3");
+        if (id3 != null) {
+            a = id3.children().first();
+            if (a != null) {
+                Element img = a.children().first();
+                if (img != null) {
+                    gi.thumb = EhUtils.handleThumbUrlResolution(img.attr("src"));
+                }
+            }
+        }
+
+        // Category
+        Element id41 = JsoupUtils.getElementByClass(e, "id41");
+        if (id41 != null) {
+            gi.category = EhUtils.getCategory(id41.attr("title").trim());
+        } else {
+            gi.category = EhUtils.UNKNOWN;
+        }
+
+        // Rating
+        Element id43 = JsoupUtils.getElementByClass(e, "id43");
+        if (id43 != null) {
+            gi.rating = NumberUtils.parseFloatSafely(parseRating(id43.attr("style")), -1.0f);
+        } else {
+            gi.rating = -1.0f;
+        }
+
+        return gi;
+    }
+
     public static Result parse(@NonNull String body) throws Exception {
         Result result = new Result();
         Document d = Jsoup.parse(body);
@@ -211,6 +265,23 @@ public class GalleryListParser {
             result.galleryInfoList = list;
         } catch (Exception e) {
             throw new ParseException("Can't parse gallery list", body);
+        }
+
+        // Maybe it's thumbnail version
+        if (result.galleryInfoList.isEmpty()) {
+            try {
+                Elements es = d.getElementsByClass("itg").first().children();
+                List<GalleryInfo> list = new ArrayList<>(es.size() - 1);
+                for (int i = 0; i < es.size(); i++) {
+                    GalleryInfo gi = parseGalleryInfoThumbVersion(es.get(i));
+                    if (null != gi) {
+                        list.add(gi);
+                    }
+                }
+                result.galleryInfoList = list;
+            } catch (Exception e) {
+                throw new ParseException("Can't parse gallery list", body);
+            }
         }
 
         return result;
