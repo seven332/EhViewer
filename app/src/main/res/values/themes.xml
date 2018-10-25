@@ -20,12 +20,13 @@
     <!-- ========== -->
     <!-- Base Theme -->
     <!-- ========== -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="BaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
 
+        <item name="colorEdgeEffect">@color/colorPrimary</item>
         <item name="dividerColor">@color/divider_light</item>
         <item name="toolbarColor">@color/colorPrimary</item>
         <item name="textColorThemePrimary">@color/colorPrimary</item>
@@ -53,6 +54,9 @@
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_light</item>
     </style>
 
+    <style name="AppTheme" parent="BaseTheme">
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -63,7 +67,7 @@
     <!-- =============== -->
     <!-- Base Dark Theme -->
     <!-- =============== -->
-    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+    <style name="BaseTheme.Dark" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/grey_900</item>
         <item name="colorAccent">@color/colorPrimary</item>
@@ -74,6 +78,7 @@
         <item name="android:colorBackground">@color/grey_850</item>
         <item name="colorBackgroundFloating">@color/grey_850</item>
 
+        <item name="colorEdgeEffect">@color/grey_500</item>
         <item name="dividerColor">@color/divider_dark</item>
         <item name="toolbarColor">?android:attr/colorBackground</item>
         <item name="textColorThemePrimary">?android:attr/textColorSecondary</item>
@@ -101,6 +106,9 @@
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_dark</item>
     </style>
 
+    <style name="AppTheme.Dark" parent="BaseTheme.Dark">
+    </style>
+
     <style name="AppTheme.Dark.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -111,7 +119,7 @@
     <!-- =============== -->
     <!-- Base Black Theme -->
     <!-- =============== -->
-    <style name="AppTheme.Black" parent="Theme.AppCompat">
+    <style name="BaseTheme.Black" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@android:color/black</item>
         <item name="colorAccent">@color/colorPrimary</item>
@@ -124,6 +132,7 @@
 
         <item name="android:textColorPrimary">@color/primary_text_material_black</item>
 
+        <item name="colorEdgeEffect">@color/grey_500</item>
         <item name="dividerColor">@color/divider_dark</item>
         <item name="toolbarColor">@android:color/black</item>
         <item name="textColorThemePrimary">?android:attr/textColorSecondary</item>
@@ -149,6 +158,9 @@
 
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_dark</item>
+    </style>
+
+    <style name="AppTheme.Black" parent="BaseTheme.Black">
     </style>
 
     <style name="AppTheme.Black.NoActionBar">

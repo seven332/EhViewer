@@ -48,7 +48,6 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.hippo.android.resource.AttrResources;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.BuildConfig;
@@ -77,7 +76,6 @@ import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -295,7 +293,6 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         mGLRootView = (GLRootView) ViewUtils.$$(this, R.id.gl_root_view);
         mGalleryAdapter = new GalleryAdapter(mGLRootView, mGalleryProvider);
         Resources resources = getResources();
-        int primaryColor = ResourcesUtils.getAttrColor(this, R.attr.colorPrimary);
         mGalleryView = new GalleryView.Builder(this, mGalleryAdapter)
                 .setListener(this)
                 .setLayoutMode(Settings.getReadingDirection())
@@ -303,12 +300,12 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                 .setStartPosition(Settings.getStartPosition())
                 .setStartPage(startPage)
                 .setBackgroundColor(AttrResources.getAttrColor(this, android.R.attr.colorBackground))
-                .setEdgeColor(primaryColor & 0xffffff | 0x33000000)
+                .setEdgeColor(AttrResources.getAttrColor(this, R.attr.colorEdgeEffect) & 0xffffff | 0x33000000)
                 .setPagerInterval(Settings.getShowPageInterval() ? resources.getDimensionPixelOffset(R.dimen.gallery_pager_interval) : 0)
                 .setScrollInterval(Settings.getShowPageInterval() ? resources.getDimensionPixelOffset(R.dimen.gallery_scroll_interval) : 0)
                 .setPageMinHeight(resources.getDimensionPixelOffset(R.dimen.gallery_page_min_height))
                 .setPageInfoInterval(resources.getDimensionPixelOffset(R.dimen.gallery_page_info_interval))
-                .setProgressColor(primaryColor)
+                .setProgressColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimary))
                 .setProgressSize(resources.getDimensionPixelOffset(R.dimen.gallery_progress_size))
                 .setPageTextColor(AttrResources.getAttrColor(this, android.R.attr.textColorSecondary))
                 .setPageTextSize(resources.getDimensionPixelOffset(R.dimen.gallery_page_text_size))

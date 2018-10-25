@@ -18,6 +18,8 @@
 <resources>
 
     <declare-styleable name="Theme">
+        <attr name="colorEdgeEffect" format="color"/>
+
         <attr name="dividerColor" format="color"/>
         <attr name="toolbarColor" format="color"/>
 
