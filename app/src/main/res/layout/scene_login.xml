@@ -130,7 +130,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="?attr/textColorThemeAccent"
+                    android:textColor="?attr/colorAccent"
                     android:textStyle="bold"
                     android:text="@string/register"/>
 
@@ -140,7 +140,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="?attr/textColorThemePrimary"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold"
                     android:text="@string/sign_in"/>
 

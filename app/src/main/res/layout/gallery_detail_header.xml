@@ -141,7 +141,8 @@
                     style="@style/ButtonInCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:textColor="?attr/textColorThemePrimary"/>
 
                 <View
                     android:layout_width="1dp"
