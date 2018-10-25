@@ -30,6 +30,9 @@
     <color name="primary_drawable_black">#ccffffff</color>
     <color name="secondary_drawable_black">#3dffffff</color>
 
+    <color name="primary_text_default_material_black">#d9ffffff</color>
+    <color name="primary_text_disabled_material_black">#4dffffff</color>
+
     <color name="background_dark">#ff303030</color>
     <color name="background_light">#fffafafa</color>
 
