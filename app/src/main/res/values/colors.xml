@@ -21,21 +21,14 @@
     <!-- secondary_drawable_light   26% -->
     <!-- primary_drawable_dark     100% -->
     <!-- secondary_drawable_dark    30% -->
+    <!-- primary_drawable_black     80% -->
+    <!-- secondary_drawable_black   24% -->
     <color name="primary_drawable_light">#8a000000</color>
     <color name="secondary_drawable_light">#42000000</color>
     <color name="primary_drawable_dark">#ffffffff</color>
     <color name="secondary_drawable_dark">#4dffffff</color>
-
-    <!-- Text -->
-    <color name="primary_text_default_light">#de000000</color>
-    <color name="primary_text_default_light_inverse">#ffffffff</color>
-    <color name="primary_text_disabled_dark">#4dffffff</color>
-    <color name="secondary_text_default_light">#8a000000</color>
-    <color name="secondary_text_disabled_dark">#36ffffff</color>
-    <color name="primary_text_default_dark">#deffffff</color>
-    <color name="primary_text_disabled_light">#39000000</color>
-    <color name="secondary_text_default_dark">#61ffffff</color>
-    <color name="secondary_text_disabled_light">#24000000</color>
+    <color name="primary_drawable_black">#ccffffff</color>
+    <color name="secondary_drawable_black">#3dffffff</color>
 
     <color name="background_dark">#ff303030</color>
     <color name="background_light">#fffafafa</color>

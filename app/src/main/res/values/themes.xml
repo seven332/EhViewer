@@ -45,6 +45,7 @@
         <item name="guideTextColor">?android:attr/textColorSecondaryInverse</item>
         <item name="tagGroupBackgroundColor">@color/tag_group_background_light</item>
         <item name="tagBackgroundColor">@color/tag_background_light</item>
+        <item name="galleryDetailHeaderTitleColor">?android:attr/textColorPrimaryInverse</item>
         <item name="galleryDetailHeaderBackgroundColor">?attr/contentColorThemePrimary</item>
         <item name="galleryDetailButtonBackgroundColor">@color/gallery_detail_button_background_light</item>
 
@@ -88,6 +89,7 @@
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
         <item name="tagGroupBackgroundColor">@color/tag_group_background_dark</item>
         <item name="tagBackgroundColor">@color/tag_background_dark</item>
+        <item name="galleryDetailHeaderTitleColor">?android:attr/textColorPrimary</item>
         <item name="galleryDetailHeaderBackgroundColor">?attr/contentColorThemePrimary</item>
         <item name="galleryDetailButtonBackgroundColor">@color/gallery_detail_button_background_dark</item>
 
@@ -120,9 +122,9 @@
         <item name="toolbarColor">@android:color/black</item>
         <item name="textColorThemePrimary">?android:attr/textColorSecondary</item>
         <item name="textColorThemeAccent">?android:attr/textColorSecondary</item>
-        <item name="drawableColorPrimary">@color/primary_drawable_dark</item>
-        <item name="drawableColorSecondary">@color/secondary_drawable_dark</item>
-        <item name="drawableColorThemePrimary">@color/primary_drawable_dark</item>
+        <item name="drawableColorPrimary">@color/primary_drawable_black</item>
+        <item name="drawableColorSecondary">@color/secondary_drawable_black</item>
+        <item name="drawableColorThemePrimary">@color/primary_drawable_black</item>
         <item name="contentColorPrimary">@color/content_black</item>
         <item name="contentColorThemePrimary">?attr/contentColorPrimary</item>
         <item name="contentColorThemeAccent">?attr/contentColorPrimary</item>
@@ -135,6 +137,7 @@
         <item name="guideTextColor">?android:attr/textColorSecondary</item>
         <item name="tagGroupBackgroundColor">@color/tag_group_background_black</item>
         <item name="tagBackgroundColor">@color/tag_background_black</item>
+        <item name="galleryDetailHeaderTitleColor">?android:attr/textColorPrimary</item>
         <item name="galleryDetailHeaderBackgroundColor">@android:color/black</item>
         <item name="galleryDetailButtonBackgroundColor">@color/gallery_detail_button_background_black</item>
 

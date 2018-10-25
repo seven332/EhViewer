@@ -83,7 +83,7 @@
                 android:layout_below="@id/title"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="@dimen/keyline_margin"
-                android:textColor="@color/primary_text_dark"
+                android:textColor="?attr/galleryDetailHeaderTitleColor"
                 android:textSize="@dimen/text_little_small"
                 android:singleLine="true"
                 android:ellipsize="end"/>

@@ -310,7 +310,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                 .setPageInfoInterval(resources.getDimensionPixelOffset(R.dimen.gallery_page_info_interval))
                 .setProgressColor(primaryColor)
                 .setProgressSize(resources.getDimensionPixelOffset(R.dimen.gallery_progress_size))
-                .setPageTextColor(resources.getColor(R.color.secondary_text_default_dark))
+                .setPageTextColor(AttrResources.getAttrColor(this, android.R.attr.textColorSecondary))
                 .setPageTextSize(resources.getDimensionPixelOffset(R.dimen.gallery_page_text_size))
                 .setPageTextTypeface(Typeface.DEFAULT)
                 .setErrorTextColor(resources.getColor(R.color.red_500))
