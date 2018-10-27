@@ -50,6 +50,7 @@
         <item name="galleryDetailHeaderBackgroundColor">?attr/contentColorThemePrimary</item>
         <item name="galleryDetailButtonBackgroundColor">@color/gallery_detail_button_background_light</item>
 
+        <item name="preferenceHeaderBackground">@drawable/preference_header_background_light</item>
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_light</item>
     </style>
@@ -102,6 +103,7 @@
         <item name="galleryDetailHeaderBackgroundColor">?attr/contentColorThemePrimary</item>
         <item name="galleryDetailButtonBackgroundColor">@color/gallery_detail_button_background_dark</item>
 
+        <item name="preferenceHeaderBackground">@drawable/preference_header_background_dark</item>
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_dark</item>
     </style>
@@ -156,6 +158,7 @@
         <item name="galleryDetailHeaderBackgroundColor">@android:color/black</item>
         <item name="galleryDetailButtonBackgroundColor">@color/gallery_detail_button_background_black</item>
 
+        <item name="preferenceHeaderBackground">@drawable/preference_header_background_black</item>
         <item name="toolbarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
         <item name="galleryDetailDivider">@drawable/divider_gallery_detail_dark</item>
     </style>

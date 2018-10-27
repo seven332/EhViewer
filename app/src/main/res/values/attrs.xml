@@ -63,6 +63,8 @@
 
         <attr name="gallerySliderBackgroundColor" format="color"/>
 
+        <attr name="preferenceHeaderBackground" format="reference"/>
+
         <attr name="toolbarPopupTheme" format="reference"/>
         <attr name="galleryDetailDivider" format="reference"/>
     </declare-styleable>

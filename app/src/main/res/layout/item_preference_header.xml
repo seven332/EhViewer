@@ -22,7 +22,7 @@
     android:gravity="center_vertical"
     android:minHeight="72dp"
     android:orientation="horizontal"
-    android:background="@drawable/preference_header_background">
+    android:background="?attr/preferenceHeaderBackground">
 
     <ImageView
         android:id="@android:id/icon"
