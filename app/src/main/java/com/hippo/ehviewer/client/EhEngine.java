@@ -211,7 +211,7 @@ public class EhEngine {
             }
         }
 
-        if (list.size() > 0 && (Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
+        if (list.size() > 0 && (TextUtils.isEmpty(list.get(0).uploader) || Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
 
@@ -479,11 +479,13 @@ public class EhEngine {
             throw e;
         }
 
-        if (callApi && result.galleryInfoList.size() > 0) {
-            fillGalleryListByApi(task, okHttpClient, result.galleryInfoList);
+        List<GalleryInfo> list = result.galleryInfoList;
+
+        if (list.size() > 0 && (TextUtils.isEmpty(list.get(0).uploader) || Settings.getShowJpnTitle() || Settings.getShowGalleryPages())) {
+            fillGalleryListByApi(task, okHttpClient, list);
         }
 
-        for (GalleryInfo info : result.galleryInfoList) {
+        for (GalleryInfo info : list) {
             info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
         }
 
@@ -590,11 +592,12 @@ public class EhEngine {
             throw e;
         }
 
-        if (callApi && result.galleryInfoList.size() > 0) {
-            fillGalleryListByApi(task, okHttpClient, result.galleryInfoList);
+        List<GalleryInfo> list = result.galleryInfoList;
+        if (list.size() > 0 && (TextUtils.isEmpty(list.get(0).uploader) || Settings.getShowJpnTitle() || Settings.getShowGalleryPages())) {
+            fillGalleryListByApi(task, okHttpClient, list);
         }
 
-        for (GalleryInfo info : result.galleryInfoList) {
+        for (GalleryInfo info : list) {
             info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
         }
 
@@ -907,7 +910,7 @@ public class EhEngine {
             }
         }
 
-        if (list.size() > 0 && (Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
+        if (list.size() > 0 && (TextUtils.isEmpty(list.get(0).uploader) || Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
 
