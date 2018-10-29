@@ -34,13 +34,30 @@
 
         <com.hippo.ehviewer.widget.EhNavigationView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/nav_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:maxWidth="@dimen/drawer_max_width"
-            app:headerLayout="@layout/nav_header_main"
-            app:menu="@menu/nav_drawer_main"/>
+            android:orientation="vertical"
+            android:background="?android:attr/windowBackground">
+
+            <android.support.design.widget.NavigationView
+                android:id="@+id/nav_view"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@null"
+                app:headerLayout="@layout/nav_header_main"
+                app:menu="@menu/nav_drawer_main"/>
+
+            <Button
+                android:id="@+id/change_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+
+        </com.hippo.ehviewer.widget.EhNavigationView>
 
         <com.hippo.ehviewer.widget.EhDrawerView
             android:id="@+id/right_drawer"

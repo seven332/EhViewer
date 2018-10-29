@@ -19,6 +19,11 @@
 
     <string name="app_name">EhViewer</string>
 
+    <!-- Theme -->
+    <string name="theme_light">亮色主題</string>
+    <string name="theme_dark">暗色主題</string>
+    <string name="theme_black">黑色主題</string>
+
     <string name="homepage">主頁</string>
     <string name="whats_hot">熱門</string>
     <string name="favourite">收藏</string>

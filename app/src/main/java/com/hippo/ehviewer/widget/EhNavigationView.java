@@ -21,12 +21,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.util.AttributeSet;
-
+import android.widget.LinearLayout;
 import com.hippo.drawerlayout.DrawerLayoutChild;
 
-public class EhNavigationView extends NavigationView implements DrawerLayoutChild {
+public class EhNavigationView extends LinearLayout implements DrawerLayoutChild {
 
     private static final int SCRIM_COLOR = 0x44000000;
     private static final boolean DRAW_SCRIM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;

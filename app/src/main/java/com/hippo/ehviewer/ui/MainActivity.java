@@ -40,12 +40,14 @@ import android.util.Pair;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.Crash;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrl;
@@ -115,6 +117,8 @@ public final class MainActivity extends StageActivity
     private LoadImageView mAvatar;
     @Nullable
     private TextView mDisplayName;
+    @Nullable
+    private Button mChangeTheme;
 
     private int mNavCheckedItem = 0;
 
@@ -335,6 +339,7 @@ public final class MainActivity extends StageActivity
         View headerLayout = mNavView.getHeaderView(0);
         mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
         mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
+        mChangeTheme = (Button) ViewUtils.$$(this, R.id.change_theme);
 
         mDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         // Pre-L need shadow drawable
@@ -349,6 +354,12 @@ public final class MainActivity extends StageActivity
             mNavView.setNavigationItemSelectedListener(this);
         }
 
+        mChangeTheme.setText(getThemeText());
+        mChangeTheme.setOnClickListener(v -> {
+            Settings.putTheme(getNextTheme());
+            ((EhApplication) getApplication()).recreate();
+        });
+
         if (savedInstanceState == null) {
             onInit();
             if (Settings.getAutoCheckUpdateEnable()) {
@@ -360,6 +371,35 @@ public final class MainActivity extends StageActivity
             }
         } else {
             onRestore(savedInstanceState);
+        }
+    }
+
+    private String getThemeText() {
+        int resId;
+        switch (Settings.getTheme()) {
+            default:
+            case Settings.THEME_LIGHT:
+                resId = R.string.theme_light;
+                break;
+            case Settings.THEME_DARK:
+                resId = R.string.theme_dark;
+                break;
+            case Settings.THEME_BLACK:
+                resId = R.string.theme_black;
+                break;
+        }
+        return getString(resId);
+    }
+
+    private int getNextTheme() {
+        switch (Settings.getTheme()) {
+            default:
+            case Settings.THEME_LIGHT:
+                return Settings.THEME_DARK;
+            case Settings.THEME_DARK:
+                return Settings.THEME_BLACK;
+            case Settings.THEME_BLACK:
+                return Settings.THEME_LIGHT;
         }
     }
 

@@ -22,6 +22,11 @@
     <string name="site_e" translatable="false">e-hentai</string>
     <string name="site_ex" translatable="false">exhentai</string>
 
+    <!-- Theme -->
+    <string name="theme_light">Light Theme</string>
+    <string name="theme_dark">Dark Theme</string>
+    <string name="theme_black">Black Theme</string>
+
     <!-- Category -->
     <string name="doujinshi" translatable="false">DOUJINSHI</string>
     <string name="manga" translatable="false">MANGA</string>

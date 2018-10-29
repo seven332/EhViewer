@@ -248,6 +248,10 @@ public class Settings {
         return getIntFromStr(KEY_THEME, DEFAULT_THEME);
     }
 
+    public static void putTheme(int theme) {
+        putIntToStr(KEY_THEME, theme);
+    }
+
     public static final String KEY_GALLERY_SITE = "gallery_site";
     private static final int DEFAULT_GALLERY_SITE = 1;
 
