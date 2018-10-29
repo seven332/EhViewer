@@ -79,6 +79,23 @@ public class GalleryInfo implements Parcelable {
             Pattern.compile("[(\\[]dutch[)\\]]", Pattern.CASE_INSENSITIVE),
     };
 
+    public static final String[] S_LANG_TAGS = {
+        "language:english",
+        "language:chinese",
+        "language:spanish",
+        "language:korean",
+        "language:russian",
+        "language:french",
+        "language:portuguese",
+        "language:thai",
+        "language:german",
+        "language:italian",
+        "language:vietnamese",
+        "language:polish",
+        "language:hungarian",
+        "language:dutch",
+    };
+
     public long gid ;
     public String token;
     public String title;
@@ -105,6 +122,26 @@ public class GalleryInfo implements Parcelable {
     public String simpleLanguage;
 
     public final void generateSLang() {
+        if (simpleTags != null) {
+            generateSLangFromTags();
+        }
+        if (simpleLanguage == null && title != null) {
+            generateSLangFromTitle();
+        }
+    }
+
+    private void generateSLangFromTags() {
+        for (String tag : simpleTags) {
+            for (int i = 0; i < S_LANGS.length; i++) {
+                if (S_LANG_TAGS[i].equals(tag)) {
+                    simpleLanguage = S_LANGS[i];
+                    return;
+                }
+            }
+        }
+    }
+
+    private void generateSLangFromTitle() {
         for (int i = 0; i < S_LANGS.length; i++) {
             if (S_LANG_PATTERNS[i].matcher(title).find()) {
                 simpleLanguage = S_LANGS[i];

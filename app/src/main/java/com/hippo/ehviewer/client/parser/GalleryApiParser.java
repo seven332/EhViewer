@@ -54,6 +54,7 @@ public class GalleryApiParser {
             }
             gi.simpleTags = tags;
             gi.pages = Integer.parseInt(g.getString("filecount"));
+            gi.generateSLang();
         }
     }
 
