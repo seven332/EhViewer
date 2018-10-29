@@ -233,6 +233,8 @@ public class GalleryListParser {
             gi.rating = -1.0f;
         }
 
+        gi.generateSLang();
+
         return gi;
     }
 
