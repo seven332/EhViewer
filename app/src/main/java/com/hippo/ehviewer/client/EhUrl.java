@@ -58,7 +58,7 @@ public class EhUrl {
     private static final String URL_PREFIX_THUMB_E = "https://ehgt.org/t/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
-    public static final Pattern PATTERN_DETAIL_URL = Pattern.compile("g/(\\d+)/([0-9a-f]{10})");
+    public static final Pattern PATTERN_DETAIL_URL = Pattern.compile("(?:g|mpv)/(\\d+)/([0-9a-f]{10})");
 
     public static String getGalleryDetailUrl(long gid, String token) {
         return getGalleryDetailUrl(gid, token, 0, false);
