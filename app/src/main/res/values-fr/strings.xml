@@ -662,7 +662,7 @@
     <string name="settings_eh_theme_light">Blanc</string>
     <string name="settings_eh_theme_dark">Gris</string>
     <string name="settings_eh_theme_black">Noir</string>
-    <string name="settings_about_donate_message">Faire un don ne verrouille aucune fonction cachée, mais vous m\'aiderez à maintainer cette application.</string>
+    <string name="settings_about_donate_message">Faire un don ne verrouille aucune fonction cachée, mais vous m\'aiderez à maintenir cette application.</string>
     <string name="settings_about_donate_alipay">Alipay</string>
     <string name="settings_about_donate_paypal">PayPal</string>
     <string name="settings_about_donate_open">Ouvrir</string>
