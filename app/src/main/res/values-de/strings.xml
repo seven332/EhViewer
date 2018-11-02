@@ -272,7 +272,7 @@
     <string name="enable_fingerprint">Mit Fingerabdrücke entsperren</string>
     <string name="u_config">EHentai-Einstellungen</string>
     <string name="apply">Übernehmen</string>
-    <string name="apply_tip">Zum Speichern der Einstellungen aufHäkchen tippen</string>
+    <string name="apply_tip">Zum Speichern der Einstellungen auf Häkchen tippen</string>
     <string name="hosts">Angepasstes hosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
     <string name="hosts_host">Host</string>
@@ -510,7 +510,7 @@
     <string name="settings_eh_theme_light">Weiß</string>
     <string name="settings_eh_theme_dark">Dunkel</string>
     <string name="settings_eh_theme_black">Schwarz</string>
-    <string name="settings_about_donate_message">Du bekomme kein Privileg davon. Deine Spende hilft mir dabei, diese App instand zu halten.</string>
+    <string name="settings_about_donate_message">Du bekommest kein Privileg davon. Deine Spende hilft mir dabei, diese App instand zu halten.</string>
     <string name="settings_about_donate_alipay">Alipay</string>
     <string name="settings_about_donate_paypal">PayPal</string>
     <string name="settings_about_donate_open">Öffnen</string>
