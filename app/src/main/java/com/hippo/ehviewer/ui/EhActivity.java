@@ -22,15 +22,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hippo.content.ContextLocalWrapper;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 import java.util.Locale;
 
 public abstract class EhActivity extends AppCompatActivity {
-
-    private boolean mTrackStarted;
 
     @StyleRes
     protected abstract int getThemeResId(int theme);
@@ -42,6 +40,10 @@ public abstract class EhActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         ((EhApplication) getApplication()).registerActivity(this);
+
+        if (Settings.getEnableAnalytics()) {
+            FirebaseAnalytics.getInstance(this);
+        }
     }
 
     @Override
@@ -49,26 +51,6 @@ public abstract class EhActivity extends AppCompatActivity {
         super.onDestroy();
 
         ((EhApplication) getApplication()).unregisterActivity(this);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        if (Settings.getEnableAnalytics()) {
-            EasyTracker.getInstance(this).activityStart(this);
-            mTrackStarted = true;
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        if (mTrackStarted) {
-            EasyTracker.getInstance(this).activityStop(this);
-            mTrackStarted = false;
-        }
     }
 
     @Override

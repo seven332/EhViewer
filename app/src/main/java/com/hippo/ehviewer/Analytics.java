@@ -17,8 +17,7 @@
 package com.hippo.ehviewer;
 
 import android.content.Context;
-
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 
 public final class Analytics {
@@ -26,6 +25,6 @@ public final class Analytics {
     private Analytics() {}
 
     public static void start(Context context) {
-        EasyTracker.getInstance(context).set("&uid", Settings.getUserID());
+        FirebaseAnalytics.getInstance(context).setUserId(Settings.getUserID());
     }
 }
