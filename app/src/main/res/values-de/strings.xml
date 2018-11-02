@@ -506,4 +506,19 @@
     <string name="settings_advanced_custom_hosts_summary">Hostname auf die angepassten IP umstellen\nDie Regeln können die von der App festgelegt überschreiben</string>
     <string name="download_reset_reading_progress">Lesefortschritte zurücksetzen</string>
     <string name="reset_reading_progress_message">Lesefortschritte von allen heruntergeladenen Galerie zurücksetzen?</string>
+       <string name="settings_eh_theme">Thema</string>
+    <string name="settings_eh_theme_light">Weiß</string>
+    <string name="settings_eh_theme_dark">Dunkel</string>
+    <string name="settings_eh_theme_black">Schwarz</string>
+    <string name="settings_about_donate_message">Du bekomme kein Privileg davon. Deine Spende hilft mir dabei, diese App instand zu halten.</string>
+    <string name="settings_about_donate_alipay">Alipay</string>
+    <string name="settings_about_donate_paypal">PayPal</string>
+    <string name="settings_about_donate_open">Öffnen</string>
+    <string name="settings_about_donate_copy">Kopieren</string>
+    <string name="settings_about_donate_copied">Kopiert</string>
+    <string name="settings_eh_identity_cookies">Konto-Cookies</string>
+    <string name="settings_eh_identity_cookies_summary">Die Cookies, die dich angemeldet halten.</string>
+    <string name="settings_eh_identity_cookies_signed">Wenn jemand die folgende Informationen hat, kann er sich als du anmelden. &lt;br&gt;&lt;b&gt;ALSO GEHEIM HALTEN!&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_tourist">Du hast dich noch nicht angemeldet.</string>
+    <string name="settings_eh_identity_cookies_copy">Kopieren</string>
 </resources>
