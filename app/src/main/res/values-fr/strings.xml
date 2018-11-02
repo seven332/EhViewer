@@ -658,5 +658,19 @@
     <string name="settings_advanced_custom_hosts_title">hosts.txt personalisé</string>
     <string name="settings_advanced_custom_hosts_summary">Mapper l\'hôte à l\'adresse IP\nIls pouvent redéfinir l\'hosts.txt de l\'app</string>
     <string name="app_language_system">Langue du système (défaut)</string>
-
+   <string name="settings_eh_theme">Thème</string>
+    <string name="settings_eh_theme_light">Blanc</string>
+    <string name="settings_eh_theme_dark">Gris</string>
+    <string name="settings_eh_theme_black">Noir</string>
+    <string name="settings_about_donate_message">Faire un don ne verrouille aucune fonction cachée, mais vous m\'aiderez à maintainer cette application.</string>
+    <string name="settings_about_donate_alipay">Alipay</string>
+    <string name="settings_about_donate_paypal">PayPal</string>
+    <string name="settings_about_donate_open">Ouvrir</string>
+    <string name="settings_about_donate_copy">Copier</string>
+    <string name="settings_about_donate_copied">Copiée</string>
+    <string name="settings_eh_identity_cookies">Voir les cookies</string>
+    <string name="settings_eh_identity_cookies_summary">Les cookies qui sont utilisés pour vous identifier</string>
+    <string name="settings_eh_identity_cookies_signed">Tout le monde peut utiliser les cookies de ce compte pour s'y connecter.&lt;br&gt;&lt;b&gt;GARDEZ-LES BIEN !&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_tourist">Vous ne vous êtes pas connecté.</string>
+    <string name="settings_eh_identity_cookies_copy">Copier</string>
 </resources>
