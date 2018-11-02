@@ -653,4 +653,19 @@
     <string name="settings_advanced_custom_hosts_title">カスタムhosts.txt</string>
     <string name="settings_advanced_custom_hosts_summary">ホスト名をIPにマッピング\n既定のhosts.txtを上書きできます。</string>
 
+     <string name="settings_eh_theme">テーマ</string>
+    <string name="settings_eh_theme_light">ライト</string>
+    <string name="settings_eh_theme_dark">ダーク</string>
+    <string name="settings_eh_theme_black">ブラック</string>
+    <string name="settings_about_donate_message">寄付していただいても追加の機能を解禁したりしませんが、このアプリの開発を助けられます</string>
+    <string name="settings_about_donate_alipay">Alipay</string>
+    <string name="settings_about_donate_paypal">PayPal</string>
+    <string name="settings_about_donate_open">開く</string>
+    <string name="settings_about_donate_copy">コピー</string>
+    <string name="settings_about_donate_copied">コピーしました</string>
+    <string name="settings_eh_identity_cookies">アカウントのCookies</string>
+    <string name="settings_eh_identity_cookies_summary">ログイン用のCookiesです</string>
+    <string name="settings_eh_identity_cookies_signed">下記の情報を持つ誰でもこのアカウントにログインできますので&lt;br&gt;&lt;b&gt;絶対に他人に渡さないように！&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_tourist">まだログインしていません</string>
+    <string name="settings_eh_identity_cookies_copy">コピー</string>
 </resources>
