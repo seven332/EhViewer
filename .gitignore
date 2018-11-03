@@ -7,4 +7,4 @@
 .idea
 /captures
 release
-app/google-services.json
+google-services.json
