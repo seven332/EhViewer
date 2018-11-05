@@ -56,7 +56,7 @@
     <string name="error_cant_create_temp_file">Die Temporäre Datei konnte erstellt nicht werden</string>
     <string name="error_cant_save_image">Das Bild konnte nicht gespeichert werden</string>
     <string name="error_invalid_number">Nummer ungültig</string>
-    <string name="analytics_explain">Darf der Entwickler die Informationen deines Geräts und deiner Nutzung einsammeln? Diese Informationen sind für die Entwicklung sehr nützlich.&lt;br&gt;&lt;br&gt;Daten-Analyse ist von Google Analytics zur Verfügung gestellt, dessen Datenschutz-Bestimmungen auf &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;verfügbar sind.&lt;br&gt;&lt;br&gt;Wenn du die Daten-Analyse teilnimmst, werden Informationen deines Geräts und deiner Nutzung, z. B. die Android API-Version, das Gerätsmodell, die Sprache, die App-Version, die Sessionszeit, eingesammelt. Der Entwickler verspricht, dass private Informationen wie deine Telefonnummer, deine E-Mail-Adresse, die IMEI usw., eingesammelt nicht werden.&lt;br&gt;&lt;br&gt;Falls du die Daten-Analyse nicht teilnimmst, wird keine Information eingesammelt.&lt;br&gt;&lt;br&gt;Die eingesammelten Informationen werden von Google Analytics analysiert. Nur der Entwickler kann auf den Analyse-Bericht zugreifen.</string>
+    <string name="analytics_explain">Darf der Entwickler die Informationen deines Geräts und deiner Nutzung einsammeln? Diese Informationen sind für die Entwicklung sehr nützlich.&lt;br&gt;&lt;br&gt;Daten-Analyse ist von Google Analytics zur Verfügung gestellt, dessen Datenschutz-Bestimmungen auf &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;verfügbar sind.&lt;br&gt;&lt;br&gt;Wenn du die Daten-Analyse teilnimmst, werden Informationen deines Geräts und deiner Nutzung, z. B. die Android API-Version, das Gerätsmodell, die Sprache, die App-Version, die Sessionszeit, gesammelt. Der Entwickler verspricht, dass private Informationen wie deine Telefonnummer, deine E-Mail-Adresse, die IMEI usw., gesammelt nicht werden.&lt;br&gt;&lt;br&gt;Falls du die Daten-Analyse nicht teilnimmst, wird keine Information gesammelt.&lt;br&gt;&lt;br&gt;Die gesammelten Informationen werden von Google Analytics analysiert. Nur der Entwickler kann auf den Analyse-Bericht zugreifen.</string>
     <string name="get_it">Verstanden</string>
     <string name="accept">Akzeptieren</string>
     <string name="reject">Ablehnen</string>
@@ -496,7 +496,7 @@
     <string name="settings_advanced_export_data_to">Daten wurden zu %s exportiert</string>
     <string name="settings_advanced_export_data_failed">Datenexport gescheitert</string>
     <string name="settings_advanced_import_data">Daten importieren</string>
-    <string name="settings_advanced_import_data_summary">Gespeichert Daten wiederherstellen</string>
+    <string name="settings_advanced_import_data_summary">Gespeicherte Daten wiederherstellen</string>
     <string name="settings_advanced_import_data_successfully">Daten wurden erfolgreich importiert</string>
     <string name="settings_about">Über die App</string>
     <string name="settings_about_author">Entwickler</string>
