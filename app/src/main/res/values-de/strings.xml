@@ -394,7 +394,7 @@
     <string name="settings_download_clean_redundancy_done">Reinigung abgeschlossen. %d Datei(en) wurde(n) gelöscht.</string>
     <string name="settings_advanced">Erweiterte Optionen</string>
     <string name="settings_advanced_save_parse_error_body">HTML-Datei beim Parsing-Fehler speichern</string>
-    <string name="settings_advanced_save_parse_error_body_summary">Die Datei könnte etwas privat enthalten</string>
+    <string name="settings_advanced_save_parse_error_body_summary">Die Datei könnte etwas Privates enthalten</string>
     <string name="settings_advanced_dump_logcat">Logcat-Protokoll speichern</string>
     <string name="settings_advanced_dump_logcat_summary">Logcat-Protokolldatei auf externem Speicher speichern</string>
     <string name="settings_advanced_dump_logcat_failed">Speichern gescheitert</string>
