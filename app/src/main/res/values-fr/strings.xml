@@ -437,7 +437,7 @@
     <string name="settings_read_show_page_interval">Montrer l\'intervalle des pages</string>
     <string name="settings_read_volume_page">Tourner la page avec les Volumes</string>
     <string name="settings_read_reading_fullscreen">Plein d\'écran</string>
-    <string name="settings_read_custom_screen_lightness">Utiliser la luminosité d\'écran personalisée</string>
+    <string name="settings_read_custom_screen_lightness">Personaliser la luminosité d\'écran</string>
     <string name="settings_read_screen_lightness">Luminosité d\'écran</string>
 
     <string name="settings_download">Téléchargement</string>
@@ -463,7 +463,7 @@
     <string name="settings_download_restore_download_items">Rétablir les galeries téléchargées</string>
     <string name="settings_download_restore_download_items_summary">Rétablir tous objets déjà téléchargés dans la destination de téléchargement</string>
     <string name="settings_download_restoring">Rétablissement en cours</string>
-    <string name="settings_download_restore_not_found">Auncun objets à rétablir trouvé</string>
+    <string name="settings_download_restore_not_found">Aucun objet trouvé à rétablir</string>
     <string name="settings_download_restore_failed">Échec de rétablissement</string>
     <string name="settings_download_restore_successfully">%d objets rétablis avec succès</string>
     <string name="settings_download_clean_redundancy">Effacer fiches inutiles de téléchargement</string>
@@ -482,8 +482,8 @@
     <string name="settings_advanced_clear_download_path_cache_summary">Quand il y a une erreur et vous devez télécharger quelque chose à nouveau, vider le cache là-dedans pouvait résoudre le problème.</string>
     <string name="settings_advanced_clear_download_path_cache_message">Vider le cache ?</string>
     <string name="settings_advanced_clear_memory_cache">Vider le cache du stockage</string>
-    <string name="settings_advanced_clear_memory_cache_summary">Effacer le cache des miniatures, les informations galeries</string>
-    <string name="settings_advanced_read_cache_size">Taille du cache pour le lecture</string>
+    <string name="settings_advanced_clear_memory_cache_summary">Effacer le cache des miniatures et des informations galeries</string>
+    <string name="settings_advanced_read_cache_size">Taille du cache pour la lecture</string>
     <string name="settings_privacy_pattern_protection_title">Modéle de déverrouillage</string>
     <string name="settings_privacy_pattern_protection_not_set">Aucun modéle de déverrouillage</string>
     <string name="settings_privacy_pattern_protection_set">Modéle de déverrouillage défini</string>
@@ -505,7 +505,7 @@
     <string name="settings_about_license">Licence</string>
     <string name="settings_about_license_summary">EhViewer ne peut être né qu\'à grâce de beaucoup de projets Open Source.</string>
     <string name="settings_about_donate">Faire un don</string>
-    <string name="settings_privacy_enable_analytics">Activer analyse</string>
+    <string name="settings_privacy_enable_analytics">Activer l\'analyse</string>
     <string name="settings_privacy_about_analytics">A propos de l\'analyse</string>
     <string name="settings_about_version">Numéro de version</string>
     <string name="settings_about_check_for_updates">Chercher mise à jour</string>
@@ -637,7 +637,7 @@
     <string name="download_archive_failure_no_hath">Client H@H est nécessaire pour le téléchargement de fiches archives</string>
     <string name="settings_privacy">Confidentialité</string>
     <string name="settings_privacy_secure">Empêcher les captures d\'ecran</string>
-    <string name="settings_privacy_secure_summary">Quand cette option est activée, vous ne pouvez prendre auncun capture d\'écran de l\'application, et le systéme n\'affiche pas le contenu d\'écran dans le sélecteur de tâches.\n\nRedémarrage de l\'application nécessaire pour appliquer le changement</string>
+    <string name="settings_privacy_secure_summary">Quand cette option est activée, vous ne pouvez prendre aucune capture d\'écran de l\'application, et le systéme n\'affiche pas le contenu d\'écran dans le sélecteur de tâches.\n\nRedémarrage de l\'application est nécessaire pour appliquer le changement</string>
     <string name="clipboard_gallery_url_dialog_title">Lien de galerie detecté</string>
     <string name="clipboard_gallery_url_dialog_message">Voulez-vous accéder la galerie dans vos presse-papiers ?</string>
     <string name="hosts">Personnalisé hosts.txt</string>
