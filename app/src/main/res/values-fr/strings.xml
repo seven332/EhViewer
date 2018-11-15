@@ -670,7 +670,7 @@
     <string name="settings_about_donate_copied">Copiée</string>
     <string name="settings_eh_identity_cookies">Voir les cookies</string>
     <string name="settings_eh_identity_cookies_summary">Les cookies qui sont utilisés pour vous identifier</string>
-    <string name="settings_eh_identity_cookies_signed">Tout le monde peut utiliser les cookies de ce compte pour s'y connecter.&lt;br&gt;&lt;b&gt;GARDEZ-LES BIEN !&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_signed">Tout le monde peut utiliser les cookies de ce compte pour s\'y connecter.&lt;br&gt;&lt;b&gt;GARDEZ-LES BIEN !&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
     <string name="settings_eh_identity_cookies_tourist">Vous ne vous êtes pas connecté.</string>
     <string name="settings_eh_identity_cookies_copy">Copier</string>
 </resources>
