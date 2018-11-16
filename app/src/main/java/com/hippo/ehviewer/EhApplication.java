@@ -26,6 +26,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+import android.util.SparseArray;
+
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.content.RecordingApplication;
@@ -48,30 +50,27 @@ import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.SimpleHandler;
+
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 
 public class EhApplication extends RecordingApplication implements Thread.UncaughtExceptionHandler {
 
-    private static final String TAG = EhApplication.class.getSimpleName();
-
     public static final boolean BETA = false;
     public static final boolean AUTO_UPDATE = true;
-
+    private static final String TAG = EhApplication.class.getSimpleName();
     private static final boolean DEBUG_CONACO = false;
     private static final boolean DEBUG_PRINT_NATIVE_MEMORY = false;
     private static final boolean DEBUG_PRINT_IMAGE_COUNT = false;
     private static final long DEBUG_PRINT_INTERVAL = 3000L;
-
-    private Thread.UncaughtExceptionHandler mDefaultHandler;
-
     private final IntIdGenerator mIdGenerator = new IntIdGenerator();
-    private final HashMap<Integer, Object> mGlobalStuffMap = new HashMap<>();
+    private final SparseArray<Object> mGlobalStuffMap = new SparseArray<>();
+    private final List<Activity> mActivityList = new ArrayList<>();
+    private Thread.UncaughtExceptionHandler mDefaultHandler;
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
     private OkHttpClient mOkHttpClient;
@@ -81,140 +80,6 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
     private SimpleDiskCache mSpiderInfoCache;
     private DownloadManager mDownloadManager;
     private Hosts mHosts;
-
-    private final List<Activity> mActivityList = new ArrayList<>();
-
-    @Override
-    public void onCreate() {
-        // Prepare to catch crash
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(this);
-
-        super.onCreate();
-
-        GetText.initialize(this);
-        StatusCodeException.initialize(this);
-        Settings.initialize(this);
-        ReadableTime.initialize(this);
-        Html.initialize(this);
-        AppConfig.initialize(this);
-        SpiderDen.initialize(this);
-        EhDB.initialize(this);
-        EhEngine.initialize();
-        BitmapUtils.initialize(this);
-
-        if (EhDB.needMerge()) {
-            EhDB.mergeOldDB(this);
-        }
-
-        if (Settings.getEnableAnalytics()) {
-            Analytics.start(this);
-        }
-
-        // Disable no media file checker for now. Some devices stuck here.
-//        // Check no media file
-//        UniFile downloadLocation = Settings.getDownloadLocation();
-//        if (Settings.getMediaScan()) {
-//            CommonOperations.removeNoMediaFile(downloadLocation);
-//        } else {
-//            CommonOperations.ensureNoMediaFile(downloadLocation);
-//        }
-
-        // Clear temp dir
-        clearTempDir();
-
-        // Check app update
-        update();
-
-        // Update version code
-        try {
-            PackageInfo pi= getPackageManager().getPackageInfo(getPackageName(), 0);
-            Settings.putVersionCode(pi.versionCode);
-        } catch (PackageManager.NameNotFoundException e) {
-            // Ignore
-        }
-
-        if (DEBUG_PRINT_NATIVE_MEMORY || DEBUG_PRINT_IMAGE_COUNT) {
-            debugPrint();
-        }
-    }
-
-    private void clearTempDir() {
-        File dir = AppConfig.getTempDir();
-        if (null != dir) {
-            FileUtils.deleteContent(dir);
-        }
-        dir = AppConfig.getExternalTempDir();
-        if (null != dir) {
-            FileUtils.deleteContent(dir);
-        }
-
-        // Add .nomedia to external temp dir
-        CommonOperations.ensureNoMediaFile(UniFile.fromFile(AppConfig.getExternalTempDir()));
-    }
-
-    private void update() {
-        int version = Settings.getVersionCode();
-        if (version < 52) {
-            Settings.putGuideGallery(true);
-        }
-    }
-
-    public void clearMemoryCache() {
-        if (null != mConaco) {
-            mConaco.getBeerBelly().clearMemory();
-        }
-        if (null != mGalleryDetailCache) {
-            mGalleryDetailCache.evictAll();
-        }
-    }
-
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-
-        if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
-            clearMemoryCache();
-        }
-    }
-
-    private void debugPrint() {
-        new Runnable() {
-            @Override
-            public void run() {
-                if (DEBUG_PRINT_NATIVE_MEMORY) {
-                    Log.i(TAG, "Native memory: " + FileUtils.humanReadableByteCount(
-                            Debug.getNativeHeapAllocatedSize(), false));
-                }
-                if (DEBUG_PRINT_IMAGE_COUNT) {
-                    Log.i(TAG, "Image count: " + Image.getImageCount());
-                }
-                SimpleHandler.getInstance().postDelayed(this, DEBUG_PRINT_INTERVAL);
-            }
-        }.run();
-    }
-
-    public int putGlobalStuff(@NonNull Object o) {
-        int id = mIdGenerator.nextId();
-        mGlobalStuffMap.put(id, o);
-        return id;
-    }
-
-    public boolean containGlobalStuff(int id) {
-        return mGlobalStuffMap.containsKey(id);
-    }
-
-    public Object getGlobalStuff(int id) {
-        return mGlobalStuffMap.get(id);
-    }
-
-    public Object removeGlobalStuff(int id) {
-        return mGlobalStuffMap.remove(id);
-    }
-
-    public boolean removeGlobalStuff(Object o) {
-        return mGlobalStuffMap.values().removeAll(Collections.singleton(o));
-    }
 
     public static EhCookieStore getEhCookieStore(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
@@ -317,6 +182,149 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
         return application.mHosts;
     }
 
+    @NonNull
+    public static String getDeveloperEmail() {
+        return "ehviewersu$gmail.com".replace('$', '@');
+    }
+
+    @Override
+    public void onCreate() {
+        // Prepare to catch crash
+        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(this);
+
+        super.onCreate();
+
+        GetText.initialize(this);
+        StatusCodeException.initialize(this);
+        Settings.initialize(this);
+        ReadableTime.initialize(this);
+        Html.initialize(this);
+        AppConfig.initialize(this);
+        SpiderDen.initialize(this);
+        EhDB.initialize(this);
+        EhEngine.initialize();
+        BitmapUtils.initialize(this);
+
+        if (EhDB.needMerge()) {
+            EhDB.mergeOldDB(this);
+        }
+
+        if (Settings.getEnableAnalytics()) {
+            Analytics.start(this);
+        }
+
+        // Disable no media file checker for now. Some devices stuck here.
+//        // Check no media file
+//        UniFile downloadLocation = Settings.getDownloadLocation();
+//        if (Settings.getMediaScan()) {
+//            CommonOperations.removeNoMediaFile(downloadLocation);
+//        } else {
+//            CommonOperations.ensureNoMediaFile(downloadLocation);
+//        }
+
+        // Clear temp dir
+        clearTempDir();
+
+        // Check app update
+        update();
+
+        // Update version code
+        try {
+            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+            Settings.putVersionCode(pi.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            // Ignore
+        }
+
+        if (DEBUG_PRINT_NATIVE_MEMORY || DEBUG_PRINT_IMAGE_COUNT) {
+            debugPrint();
+        }
+    }
+
+    private void clearTempDir() {
+        File dir = AppConfig.getTempDir();
+        if (null != dir) {
+            FileUtils.deleteContent(dir);
+        }
+        dir = AppConfig.getExternalTempDir();
+        if (null != dir) {
+            FileUtils.deleteContent(dir);
+        }
+
+        // Add .nomedia to external temp dir
+        CommonOperations.ensureNoMediaFile(UniFile.fromFile(AppConfig.getExternalTempDir()));
+    }
+
+    private void update() {
+        int version = Settings.getVersionCode();
+        if (version < 52) {
+            Settings.putGuideGallery(true);
+        }
+    }
+
+    public void clearMemoryCache() {
+        if (null != mConaco) {
+            mConaco.getBeerBelly().clearMemory();
+        }
+        if (null != mGalleryDetailCache) {
+            mGalleryDetailCache.evictAll();
+        }
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
+            clearMemoryCache();
+        }
+    }
+
+    private void debugPrint() {
+        new Runnable() {
+            @Override
+            public void run() {
+                if (DEBUG_PRINT_NATIVE_MEMORY) {
+                    Log.i(TAG, "Native memory: " + FileUtils.humanReadableByteCount(
+                            Debug.getNativeHeapAllocatedSize(), false));
+                }
+                if (DEBUG_PRINT_IMAGE_COUNT) {
+                    Log.i(TAG, "Image count: " + Image.getImageCount());
+                }
+                SimpleHandler.getInstance().postDelayed(this, DEBUG_PRINT_INTERVAL);
+            }
+        }.run();
+    }
+
+    public int putGlobalStuff(@NonNull Object o) {
+        int id = mIdGenerator.nextId();
+        mGlobalStuffMap.put(id, o);
+        return id;
+    }
+
+    public boolean containGlobalStuff(int id) {
+        return (mGlobalStuffMap.get(id) != null);
+    }
+
+    public Object getGlobalStuff(int id) {
+        return mGlobalStuffMap.get(id);
+    }
+
+    public Object removeGlobalStuff(int id) {
+        return mGlobalStuffMap.get(id);
+    }
+
+    public boolean removeGlobalStuff(Object o) {
+        int default_ = mGlobalStuffMap.indexOfValue(o);
+        if (default_ < 0) {
+            return false;
+        } else {
+            mGlobalStuffMap.removeAt(mGlobalStuffMap.indexOfValue(o));
+            return true;
+        }
+    }
+
     private boolean handleException(Throwable ex) {
         if (ex == null) {
             return false;
@@ -343,11 +351,6 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
 
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
-    }
-
-    @NonNull
-    public static String getDeveloperEmail() {
-        return "ehviewersu$gmail.com".replace('$', '@');
     }
 
     public void registerActivity(Activity activity) {

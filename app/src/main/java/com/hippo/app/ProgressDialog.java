@@ -73,7 +73,7 @@ public class ProgressDialog extends AlertDialog {
     private boolean mIndeterminate;
 
     private boolean mHasStarted;
-    private Handler mViewUpdateHandler;
+    private static Handler mViewUpdateHandler;
 
     public ProgressDialog(Context context) {
         super(context);
