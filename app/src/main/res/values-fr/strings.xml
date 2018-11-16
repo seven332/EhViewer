@@ -609,23 +609,23 @@
     <string name="yesterday">Hier</string>
     <string name="some_days_ago">Il y a %d jours</string>
     <plurals name="second">
-        <item quantity="one">sec</item>
+        <item quantity="one">%d sec</item>
         <item quantity="other">secs</item>
     </plurals>
     <plurals name="minute">
-        <item quantity="one">min</item>
+        <item quantity="one">%d min</item>
         <item quantity="other">mins</item>
     </plurals>
     <plurals name="hour">
-        <item quantity="one">heure</item>
+        <item quantity="one">%d heure</item>
         <item quantity="other">heures</item>
     </plurals>
     <plurals name="day">
-        <item quantity="one">jour</item>
+        <item quantity="one">%d jour</item>
         <item quantity="other">jours</item>
     </plurals>
     <plurals name="year">
-        <item quantity="one">an</item>
+        <item quantity="one">%d an</item>
         <item quantity="other">ans</item>
     </plurals>
     <string name="dialog_archive_title">H@H Downloader</string>
@@ -650,7 +650,7 @@
     <string name="edit_host_delete">Supprimer</string>
     <string name="invalid_host">Hôte invalide</string>
     <string name="invalid_ip">IP invalide</string>
-    <string name="page_menu_save_to">Enregistrer sous...</string>
+    <string name="page_menu_save_to">Enregistrer sous…</string>
     <string name="settings_advanced_app_language_title">Langue de l\'app (Language)</string>
     <string name="settings_advanced_built_in_hosts_title">"hosts.txt integré "</string>
     <string name="settings_advanced_built_in_hosts_summary">Mapper l\'hôte à l\'adresse IP selon les règles de l\'app\nIls pouvent être redéfinits par hosts.txt personnalisé</string>
