@@ -146,7 +146,7 @@
     <string name="remove_from_favorite_success">Aus Favoriten entfernt</string>
     <string name="add_to_favorite_failure">Fehler beim Hinzufügen zu Favoriten</string>
     <string name="remove_from_favorite_failure">Fehler beim Entfernen aus Favoriten</string>
-    <string name="block_the_uploader">Den Uploader zu die Filterliste hinzufügen?</string>
+    <string name="block_the_uploader">Den Uploader \"%s\" zu die Filterliste hinzufügen?</string>
     <string name="filter_added">Der Filter wurde hinzugefügt</string>
     <string name="rating10">EIN MEISTERSTÜCK</string>
     <string name="rating9">WUNDERVOLL</string>
@@ -506,7 +506,7 @@
     <string name="settings_advanced_custom_hosts_summary">Hostname auf die angepassten IP umstellen\nDie Regeln können die von der App festgelegt überschreiben</string>
     <string name="download_reset_reading_progress">Lesefortschritte zurücksetzen</string>
     <string name="reset_reading_progress_message">Lesefortschritte von allen heruntergeladenen Galerie zurücksetzen?</string>
-       <string name="settings_eh_theme">Thema</string>
+    <string name="settings_eh_theme">Thema</string>
     <string name="settings_eh_theme_light">Weiß</string>
     <string name="settings_eh_theme_dark">Dunkel</string>
     <string name="settings_eh_theme_black">Schwarz</string>
