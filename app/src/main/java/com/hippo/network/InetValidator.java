@@ -26,6 +26,9 @@ public final class InetValidator {
 
     private static final Pattern IPV4_PATTERN = Pattern.compile(IPV4_REGEX);
 
+    private InetValidator() {
+    }
+
     public static boolean isValidInet4Address(String inet4Address) {
         if (null == inet4Address) {
             return false;
@@ -45,7 +48,7 @@ public final class InetValidator {
             int iIpSegment;
             try {
                 iIpSegment = Integer.parseInt(ipSegment);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 return false;
             }
             if (iIpSegment > 255) {
@@ -61,6 +64,4 @@ public final class InetValidator {
     public static boolean isValidInetPort(int inetPort) {
         return inetPort >= 0 && inetPort <= 65535;
     }
-
-    private InetValidator() {}
 }

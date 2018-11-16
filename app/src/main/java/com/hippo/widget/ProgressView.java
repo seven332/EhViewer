@@ -258,6 +258,10 @@ public class ProgressView extends View {
         invalidate();
     }
 
+    public boolean isIndeterminate() {
+        return mIndeterminate;
+    }
+
     public void setIndeterminate(boolean indeterminate) {
         if (mIndeterminate != indeterminate) {
             mIndeterminate = indeterminate;
@@ -269,10 +273,6 @@ public class ProgressView extends View {
                 stopAnimation();
             }
         }
-    }
-
-    public boolean isIndeterminate() {
-        return mIndeterminate;
     }
 
     public void setProgress(float progress) {

@@ -165,9 +165,8 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      * </p>
      *
      * @param featureId The desired feature as defined in
-     * {@link android.view.Window} or {@link android.support.v4.view.WindowCompat}.
+     *                  {@link android.view.Window} or {@link android.support.v4.view.WindowCompat}.
      * @return Returns true if the requested feature is supported and now enabled.
-     *
      * @see android.app.Activity#requestWindowFeature
      * @see android.view.Window#requestFeature
      */
@@ -228,7 +227,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
     /**
      * Support version of {@link #onCreateNavigateUpTaskStack(android.app.TaskStackBuilder)}.
      * This method will be called on all platform versions.
-     *
+     * <p>
      * Define the synthetic task stack that will be generated during Up navigation from
      * a different task.
      *
@@ -255,7 +254,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
     /**
      * Support version of {@link #onPrepareNavigateUpTaskStack(android.app.TaskStackBuilder)}.
      * This method will be called on all platform versions.
-     *
+     * <p>
      * Prepare the synthetic task stack that will be generated during Up navigation
      * from a different task.
      *
@@ -291,7 +290,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      * {@link #supportNavigateUpTo(android.content.Intent)} for help implementing custom Up navigation.</p>
      *
      * @return true if Up navigation completed successfully and this Activity was finished,
-     *         false otherwise.
+     * false otherwise.
      */
     public boolean onSupportNavigateUp() {
         Intent upIntent = getSupportParentActivityIntent();
@@ -346,7 +345,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      *
      * @param targetIntent An intent representing the target destination for up navigation
      * @return true if navigating up should recreate a new task stack, false if the same task
-     *         should be used for the destination
+     * should be used for the destination
      */
     public boolean supportShouldUpRecreateTask(Intent targetIntent) {
         return NavUtils.shouldUpRecreateTask(this, targetIntent);

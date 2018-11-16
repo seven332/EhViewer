@@ -46,10 +46,7 @@ import android.text.style.TextAppearanceSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Locale;
+
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
 import org.xml.sax.Attributes;
@@ -59,6 +56,11 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Locale;
+
 /**
  * This class processes HTML strings into displayable styled text.
  * Not all HTML tags are supported.
@@ -67,40 +69,12 @@ public class Html {
 
     static Resources sResources;
 
+    private Html() {
+    }
+
     public static void initialize(Context context) {
         sResources = context.getResources();
     }
-
-    /**
-     * Retrieves images for HTML &lt;img&gt; tags.
-     */
-    public interface ImageGetter {
-        /**
-         * This method is called when the HTML parser encounters an
-         * &lt;img&gt; tag.  The <code>source</code> argument is the
-         * string from the "src" attribute; the return value should be
-         * a Drawable representation of the image or <code>null</code>
-         * for a generic replacement image.  Make sure you call
-         * setBounds() on your Drawable if it doesn't already have
-         * its bounds set.
-         */
-        Drawable getDrawable(String source);
-    }
-
-    /**
-     * Is notified when HTML tags are encountered that the parser does
-     * not know how to interpret.
-     */
-    public interface TagHandler {
-        /**
-         * This method will be called whenn the HTML parser encounters
-         * a tag that it does not know how to interpret.
-         */
-        void handleTag(boolean opening, String tag,
-                Editable output, XMLReader xmlReader);
-    }
-
-    private Html() { }
 
     /**
      * Returns displayable styled text from the provided HTML string.
@@ -115,15 +89,6 @@ public class Html {
     }
 
     /**
-     * Lazy initialization holder for HTML parser. This class will
-     * a) be preloaded by the zygote, or b) not loaded until absolutely
-     * necessary.
-     */
-    private static class HtmlParser {
-        private static final HTMLSchema schema = new HTMLSchema();
-    }
-
-    /**
      * Returns displayable styled text from the provided HTML string.
      * Any &lt;img&gt; tags in the HTML will use the specified ImageGetter
      * to request a representation of the image (use null if you don't
@@ -133,7 +98,7 @@ public class Html {
      * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
      */
     public static SpannableStringBuilder fromHtml(String source, ImageGetter imageGetter,
-            TagHandler tagHandler) {
+                                                  TagHandler tagHandler) {
         Parser parser = new Parser();
         try {
             parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
@@ -184,7 +149,7 @@ public class Html {
             String elements = " ";
             boolean needDiv = false;
 
-            for(int j = 0; j < style.length; j++) {
+            for (int j = 0; j < style.length; j++) {
                 if (style[j] instanceof AlignmentSpan) {
                     Layout.Alignment align =
                             ((AlignmentSpan) style[j]).getAlignment();
@@ -211,7 +176,7 @@ public class Html {
     }
 
     private static void withinDiv(StringBuilder out, Spanned text,
-            int start, int end) {
+                                  int start, int end) {
         int next;
         for (int i = start; i < end; i = next) {
             next = text.nextSpanTransition(i, end, QuoteSpan.class);
@@ -248,7 +213,7 @@ public class Html {
     }
 
     private static void withinBlockquote(StringBuilder out, Spanned text,
-            int start, int end) {
+                                         int start, int end) {
         out.append(getOpenParaTagWithDirection(text, start, end));
 
         int next;
@@ -277,8 +242,8 @@ public class Html {
 
     /* Returns true if the caller should close and reopen the paragraph. */
     private static boolean withinParagraph(StringBuilder out, Spanned text,
-            int start, int end, int nl,
-            boolean last) {
+                                           int start, int end, int nl,
+                                           boolean last) {
         int next;
         for (int i = start; i < end; i = next) {
             next = text.nextSpanTransition(i, end, CharacterStyle.class);
@@ -401,7 +366,7 @@ public class Html {
     }
 
     private static void withinStyle(StringBuilder out, CharSequence text,
-            int start, int end) {
+                                    int start, int end) {
         for (int i = start; i < end; i++) {
             char c = text.charAt(i);
 
@@ -434,6 +399,44 @@ public class Html {
             }
         }
     }
+
+    /**
+     * Retrieves images for HTML &lt;img&gt; tags.
+     */
+    public interface ImageGetter {
+        /**
+         * This method is called when the HTML parser encounters an
+         * &lt;img&gt; tag.  The <code>source</code> argument is the
+         * string from the "src" attribute; the return value should be
+         * a Drawable representation of the image or <code>null</code>
+         * for a generic replacement image.  Make sure you call
+         * setBounds() on your Drawable if it doesn't already have
+         * its bounds set.
+         */
+        Drawable getDrawable(String source);
+    }
+
+    /**
+     * Is notified when HTML tags are encountered that the parser does
+     * not know how to interpret.
+     */
+    public interface TagHandler {
+        /**
+         * This method will be called whenn the HTML parser encounters
+         * a tag that it does not know how to interpret.
+         */
+        void handleTag(boolean opening, String tag,
+                       Editable output, XMLReader xmlReader);
+    }
+
+    /**
+     * Lazy initialization holder for HTML parser. This class will
+     * a) be preloaded by the zygote, or b) not loaded until absolutely
+     * necessary.
+     */
+    private static class HtmlParser {
+        private static final HTMLSchema schema = new HTMLSchema();
+    }
 }
 
 class HtmlToSpannedConverter implements ContentHandler {
@@ -441,6 +444,151 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static final float[] HEADER_SIZES = {
             1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
     };
+    private static final HashMap<String, Integer> sColorNameMap;
+
+    static {
+        sColorNameMap = new HashMap<>();
+        sColorNameMap.put("aliceblue", 0xFFF0F8FF);
+        sColorNameMap.put("antiquewhite", 0xFFFAEBD7);
+        sColorNameMap.put("aqua", 0xFFFFFF);
+        sColorNameMap.put("aquamarine", 0xFF7FFFD4);
+        sColorNameMap.put("azure", 0xFFF0FFFF);
+        sColorNameMap.put("beige", 0xFFF5F5DC);
+        sColorNameMap.put("bisque", 0xFFFFE4C4);
+        sColorNameMap.put("black", 0xFF0);
+        sColorNameMap.put("blanchedalmond", 0xFFFFEBCD);
+        sColorNameMap.put("blue", 0xFFFF);
+        sColorNameMap.put("blueviolet", 0xFF8A2BE2);
+        sColorNameMap.put("brown", 0xFFA52A2A);
+        sColorNameMap.put("burlywood", 0xFFDEB887);
+        sColorNameMap.put("cadetblue", 0xFF5F9EA0);
+        sColorNameMap.put("chartreuse", 0xFF7FFF00);
+        sColorNameMap.put("chocolate", 0xFFD2691E);
+        sColorNameMap.put("coral", 0xFFFF7F50);
+        sColorNameMap.put("cornflowerblue", 0xFF6495ED);
+        sColorNameMap.put("cornsilk", 0xFFFFF8DC);
+        sColorNameMap.put("crimson", 0xFFDC143C);
+        sColorNameMap.put("cyan", 0xFFFFFF);
+        sColorNameMap.put("darkblue", 0xFF8B);
+        sColorNameMap.put("darkcyan", 0xFF8B8B);
+        sColorNameMap.put("darkgoldenrod", 0xFFB8860B);
+        sColorNameMap.put("darkgray", 0xFFA9A9A9);
+        sColorNameMap.put("darkgreen", 0xFF6400);
+        sColorNameMap.put("darkkhaki", 0xFFBDB76B);
+        sColorNameMap.put("darkmagenta", 0xFF8B008B);
+        sColorNameMap.put("darkolivegreen", 0xFF556B2F);
+        sColorNameMap.put("darkorange", 0xFFFF8C00);
+        sColorNameMap.put("darkorchid", 0xFF9932CC);
+        sColorNameMap.put("darkred", 0xFF8B0000);
+        sColorNameMap.put("darksalmon", 0xFFE9967A);
+        sColorNameMap.put("darkseagreen", 0xFF8FBC8F);
+        sColorNameMap.put("darkslateblue", 0xFF483D8B);
+        sColorNameMap.put("darkslategray", 0xFF2F4F4F);
+        sColorNameMap.put("darkturquoise", 0xFFCED1);
+        sColorNameMap.put("darkviolet", 0xFF9400D3);
+        sColorNameMap.put("deeppink", 0xFFFF1493);
+        sColorNameMap.put("deepskyblue", 0xFFBFFF);
+        sColorNameMap.put("dimgray", 0xFF696969);
+        sColorNameMap.put("dodgerblue", 0xFF1E90FF);
+        sColorNameMap.put("firebrick", 0xFFB22222);
+        sColorNameMap.put("floralwhite", 0xFFFFFAF0);
+        sColorNameMap.put("forestgreen", 0xFF228B22);
+        sColorNameMap.put("fuchsia", 0xFFFF00FF);
+        sColorNameMap.put("gainsboro", 0xFFDCDCDC);
+        sColorNameMap.put("ghostwhite", 0xFFF8F8FF);
+        sColorNameMap.put("gold", 0xFFFFD700);
+        sColorNameMap.put("goldenrod", 0xFFDAA520);
+        sColorNameMap.put("gray", 0xFF808080);
+        sColorNameMap.put("green", 0xFF8000);
+        sColorNameMap.put("greenyellow", 0xFFADFF2F);
+        sColorNameMap.put("honeydew", 0xFFF0FFF0);
+        sColorNameMap.put("hotpink", 0xFFFF69B4);
+        sColorNameMap.put("indianred", 0xFFCD5C5C);
+        sColorNameMap.put("indigo", 0xFF4B0082);
+        sColorNameMap.put("ivory", 0xFFFFFFF0);
+        sColorNameMap.put("khaki", 0xFFF0E68C);
+        sColorNameMap.put("lavender", 0xFFE6E6FA);
+        sColorNameMap.put("lavenderblush", 0xFFFFF0F5);
+        sColorNameMap.put("lawngreen", 0xFF7CFC00);
+        sColorNameMap.put("lemonchiffon", 0xFFFFFACD);
+        sColorNameMap.put("lightblue", 0xFFADD8E6);
+        sColorNameMap.put("lightcoral", 0xFFF08080);
+        sColorNameMap.put("lightcyan", 0xFFE0FFFF);
+        sColorNameMap.put("lightgoldenrodyellow", 0xFFFAFAD2);
+        sColorNameMap.put("lightgreen", 0xFF90EE90);
+        sColorNameMap.put("lightgrey", 0xFFD3D3D3);
+        sColorNameMap.put("lightpink", 0xFFFFB6C1);
+        sColorNameMap.put("lightsalmon", 0xFFFFA07A);
+        sColorNameMap.put("lightseagreen", 0xFF20B2AA);
+        sColorNameMap.put("lightskyblue", 0xFF87CEFA);
+        sColorNameMap.put("lightslategray", 0xFF778899);
+        sColorNameMap.put("lightsteelblue", 0xFFB0C4DE);
+        sColorNameMap.put("lightyellow", 0xFFFFFFE0);
+        sColorNameMap.put("lime", 0xFFFF00);
+        sColorNameMap.put("limegreen", 0xFF32CD32);
+        sColorNameMap.put("linen", 0xFFFAF0E6);
+        sColorNameMap.put("magenta", 0xFFFF00FF);
+        sColorNameMap.put("maroon", 0xFF800000);
+        sColorNameMap.put("mediumaquamarine", 0xFF66CDAA);
+        sColorNameMap.put("mediumblue", 0xFFCD);
+        sColorNameMap.put("mediumorchid", 0xFFBA55D3);
+        sColorNameMap.put("mediumpurple", 0xFF9370DB);
+        sColorNameMap.put("mediumseagreen", 0xFF3CB371);
+        sColorNameMap.put("mediumslateblue", 0xFF7B68EE);
+        sColorNameMap.put("mediumspringgreen", 0xFFFA9A);
+        sColorNameMap.put("mediumturquoise", 0xFF48D1CC);
+        sColorNameMap.put("mediumvioletred", 0xFFC71585);
+        sColorNameMap.put("midnightblue", 0xFF191970);
+        sColorNameMap.put("mintcream", 0xFFF5FFFA);
+        sColorNameMap.put("mistyrose", 0xFFFFE4E1);
+        sColorNameMap.put("moccasin", 0xFFFFE4B5);
+        sColorNameMap.put("navajowhite", 0xFFFFDEAD);
+        sColorNameMap.put("navy", 0xFF80);
+        sColorNameMap.put("oldlace", 0xFFFDF5E6);
+        sColorNameMap.put("olive", 0xFF808000);
+        sColorNameMap.put("olivedrab", 0xFF6B8E23);
+        sColorNameMap.put("orange", 0xFFFFA500);
+        sColorNameMap.put("orangered", 0xFFFF4500);
+        sColorNameMap.put("orchid", 0xFFDA70D6);
+        sColorNameMap.put("palegoldenrod", 0xFFEEE8AA);
+        sColorNameMap.put("palegreen", 0xFF98FB98);
+        sColorNameMap.put("paleturquoise", 0xFFAFEEEE);
+        sColorNameMap.put("palevioletred", 0xFFDB7093);
+        sColorNameMap.put("papayawhip", 0xFFFFEFD5);
+        sColorNameMap.put("peachpuff", 0xFFFFDAB9);
+        sColorNameMap.put("peru", 0xFFCD853F);
+        sColorNameMap.put("pink", 0xFFFFC0CB);
+        sColorNameMap.put("plum", 0xFFDDA0DD);
+        sColorNameMap.put("powderblue", 0xFFB0E0E6);
+        sColorNameMap.put("purple", 0xFF800080);
+        sColorNameMap.put("red", 0xFFFF0000);
+        sColorNameMap.put("rosybrown", 0xFFBC8F8F);
+        sColorNameMap.put("royalblue", 0xFF4169E1);
+        sColorNameMap.put("saddlebrown", 0xFF8B4513);
+        sColorNameMap.put("salmon", 0xFFFA8072);
+        sColorNameMap.put("sandybrown", 0xFFF4A460);
+        sColorNameMap.put("seagreen", 0xFF2E8B57);
+        sColorNameMap.put("seashell", 0xFFFFF5EE);
+        sColorNameMap.put("sienna", 0xFFA0522D);
+        sColorNameMap.put("silver", 0xFFC0C0C0);
+        sColorNameMap.put("skyblue", 0xFF87CEEB);
+        sColorNameMap.put("slateblue", 0xFF6A5ACD);
+        sColorNameMap.put("slategray", 0xFF708090);
+        sColorNameMap.put("snow", 0xFFFFFAFA);
+        sColorNameMap.put("springgreen", 0xFFFF7F);
+        sColorNameMap.put("steelblue", 0xFF4682B4);
+        sColorNameMap.put("tan", 0xFFD2B48C);
+        sColorNameMap.put("teal", 0xFF8080);
+        sColorNameMap.put("thistle", 0xFFD8BFD8);
+        sColorNameMap.put("tomato", 0xFFFF6347);
+        sColorNameMap.put("turquoise", 0xFF40E0D0);
+        sColorNameMap.put("violet", 0xFFEE82EE);
+        sColorNameMap.put("wheat", 0xFFF5DEB3);
+        sColorNameMap.put("white", 0xFFFFFFFF);
+        sColorNameMap.put("whitesmoke", 0xFFF5F5F5);
+        sColorNameMap.put("yellow", 0xFFFFFF00);
+        sColorNameMap.put("yellowgreen", 0xFF9ACD32);
+    }
 
     private String mSource;
     private XMLReader mReader;
@@ -456,6 +604,211 @@ class HtmlToSpannedConverter implements ContentHandler {
         mImageGetter = imageGetter;
         mTagHandler = tagHandler;
         mReader = parser;
+    }
+
+    private static void handleP(SpannableStringBuilder text) {
+        int len = text.length();
+
+        if (len >= 1 && text.charAt(len - 1) == '\n') {
+            if (len >= 2 && text.charAt(len - 2) == '\n') {
+                return;
+            }
+
+            text.append("\n");
+            return;
+        }
+
+        if (len != 0) {
+            text.append("\n\n");
+        }
+    }
+
+    private static void handleBr(SpannableStringBuilder text) {
+        text.append("\n");
+    }
+
+    private static Object getLast(Spanned text, Class kind) {
+        /*
+         * This knows that the last returned object from getSpans()
+         * will be the most recently added.
+         */
+        Object[] objs = text.getSpans(0, text.length(), kind);
+
+        if (objs.length == 0) {
+            return null;
+        } else {
+            return objs[objs.length - 1];
+        }
+    }
+
+    private static void start(SpannableStringBuilder text, Object mark) {
+        int len = text.length();
+        text.setSpan(mark, len, len, Spannable.SPAN_MARK_MARK);
+    }
+
+    private static void end(SpannableStringBuilder text, Class kind,
+                            Object repl) {
+        int len = text.length();
+        Object obj = getLast(text, kind);
+        int where = text.getSpanStart(obj);
+
+        text.removeSpan(obj);
+
+        if (where != len) {
+            text.setSpan(repl, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+    }
+
+    private static void startImg(SpannableStringBuilder text,
+                                 Attributes attributes, Html.ImageGetter img) {
+        String src = attributes.getValue("", "src");
+        Drawable d = null;
+
+        if (img != null) {
+            d = img.getDrawable(src);
+        }
+
+        if (d == null) {
+            d = Resources.getSystem().getDrawable(android.R.drawable.ic_menu_report_image);
+            d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+        }
+
+        int len = text.length();
+        text.append("\uFFFC");
+
+        text.setSpan(new ImageSpan(d, src), len, text.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    private static void startFont(SpannableStringBuilder text,
+                                  Attributes attributes) {
+        String color = attributes.getValue("", "color");
+        String face = attributes.getValue("", "face");
+
+        int len = text.length();
+        text.setSpan(new Font(color, face), len, len, Spannable.SPAN_MARK_MARK);
+    }
+
+    private static void endFont(SpannableStringBuilder text) {
+        int len = text.length();
+        Object obj = getLast(text, Font.class);
+        int where = text.getSpanStart(obj);
+
+        text.removeSpan(obj);
+
+        if (where != len) {
+            Font f = (Font) obj;
+
+            if (!TextUtils.isEmpty(f.mColor)) {
+                if (f.mColor.startsWith("@")) {
+                    Resources res = Resources.getSystem();
+                    String name = f.mColor.substring(1);
+                    int colorRes = res.getIdentifier(name, "color", "android");
+                    text.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(res.getColor(colorRes)), null),
+                            where, len,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else {
+                    int c = getHtmlColor(f.mColor);
+                    if (c != -1) {
+                        text.setSpan(new ForegroundColorSpan(c | 0xFF000000),
+                                where, len,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                }
+            }
+
+            if (f.mFace != null) {
+                text.setSpan(new TypefaceSpan(f.mFace), where, len,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+    }
+
+    private static void startA(SpannableStringBuilder text, Attributes attributes) {
+        String href = attributes.getValue("", "href");
+
+        int len = text.length();
+        text.setSpan(new Href(href), len, len, Spannable.SPAN_MARK_MARK);
+    }
+
+    private static void endA(SpannableStringBuilder text) {
+        int len = text.length();
+        Object obj = getLast(text, Href.class);
+        int where = text.getSpanStart(obj);
+
+        text.removeSpan(obj);
+
+        if (where != len) {
+            Href h = (Href) obj;
+
+            if (h.mHref != null) {
+                text.setSpan(new URLSpan(h.mHref), where, len,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+    }
+
+    private static void endHeader(SpannableStringBuilder text) {
+        int len = text.length();
+        Object obj = getLast(text, Header.class);
+
+        int where = text.getSpanStart(obj);
+
+        text.removeSpan(obj);
+
+        // Back off not to change only the text, not the blank line.
+        while (len > where && text.charAt(len - 1) == '\n') {
+            len--;
+        }
+
+        if (where != len) {
+            Header h = (Header) obj;
+
+            text.setSpan(new RelativeSizeSpan(HEADER_SIZES[h.mLevel]),
+                    where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setSpan(new StyleSpan(Typeface.BOLD),
+                    where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+    }
+
+    /**
+     * Parse the color string, and return the corresponding color-int.
+     * If the string cannot be parsed, throws an IllegalArgumentException
+     * exception. Supported formats are:
+     * #RRGGBB
+     * #AARRGGBB
+     * rgb(255, 255, 255)
+     * or color name
+     */
+    @ColorInt
+    public static int getHtmlColor(@NonNull String colorString) {
+        if (colorString.charAt(0) == '#') {
+            // Use a long to avoid rollovers on #ffXXXXXX
+            long color = Long.parseLong(colorString.substring(1), 16);
+            if (colorString.length() == 7) {
+                // Set the alpha value
+                color |= 0x00000000ff000000;
+            } else if (colorString.length() != 9) {
+                throw new IllegalArgumentException("Unknown color: " + colorString);
+            }
+            return (int) color;
+        } else if (colorString.startsWith("rgb(") && colorString.endsWith(")")) {
+            String str = colorString.substring(4, colorString.length() - 1);
+            String[] colors = str.split("[\\s]*,[\\s]*");
+            if (colors.length == 3) {
+                try {
+                    return Color.argb(0xff, Integer.valueOf(colors[0]), Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Unknown color: " + colorString);
+                }
+            }
+        } else {
+            Integer color = sColorNameMap.get(colorString.toLowerCase(Locale.ROOT));
+            if (color != null) {
+                return color;
+            }
+        }
+        throw new IllegalArgumentException("Unknown color: " + colorString);
     }
 
     public SpannableStringBuilder convert() {
@@ -611,171 +964,6 @@ class HtmlToSpannedConverter implements ContentHandler {
         }
     }
 
-    private static void handleP(SpannableStringBuilder text) {
-        int len = text.length();
-
-        if (len >= 1 && text.charAt(len - 1) == '\n') {
-            if (len >= 2 && text.charAt(len - 2) == '\n') {
-                return;
-            }
-
-            text.append("\n");
-            return;
-        }
-
-        if (len != 0) {
-            text.append("\n\n");
-        }
-    }
-
-    private static void handleBr(SpannableStringBuilder text) {
-        text.append("\n");
-    }
-
-    private static Object getLast(Spanned text, Class kind) {
-        /*
-         * This knows that the last returned object from getSpans()
-         * will be the most recently added.
-         */
-        Object[] objs = text.getSpans(0, text.length(), kind);
-
-        if (objs.length == 0) {
-            return null;
-        } else {
-            return objs[objs.length - 1];
-        }
-    }
-
-    private static void start(SpannableStringBuilder text, Object mark) {
-        int len = text.length();
-        text.setSpan(mark, len, len, Spannable.SPAN_MARK_MARK);
-    }
-
-    private static void end(SpannableStringBuilder text, Class kind,
-            Object repl) {
-        int len = text.length();
-        Object obj = getLast(text, kind);
-        int where = text.getSpanStart(obj);
-
-        text.removeSpan(obj);
-
-        if (where != len) {
-            text.setSpan(repl, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-    }
-
-    private static void startImg(SpannableStringBuilder text,
-            Attributes attributes, Html.ImageGetter img) {
-        String src = attributes.getValue("", "src");
-        Drawable d = null;
-
-        if (img != null) {
-            d = img.getDrawable(src);
-        }
-
-        if (d == null) {
-            d = Resources.getSystem().getDrawable(android.R.drawable.ic_menu_report_image);
-            d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
-        }
-
-        int len = text.length();
-        text.append("\uFFFC");
-
-        text.setSpan(new ImageSpan(d, src), len, text.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-    }
-
-    private static void startFont(SpannableStringBuilder text,
-            Attributes attributes) {
-        String color = attributes.getValue("", "color");
-        String face = attributes.getValue("", "face");
-
-        int len = text.length();
-        text.setSpan(new Font(color, face), len, len, Spannable.SPAN_MARK_MARK);
-    }
-
-    private static void endFont(SpannableStringBuilder text) {
-        int len = text.length();
-        Object obj = getLast(text, Font.class);
-        int where = text.getSpanStart(obj);
-
-        text.removeSpan(obj);
-
-        if (where != len) {
-            Font f = (Font) obj;
-
-            if (!TextUtils.isEmpty(f.mColor)) {
-                if (f.mColor.startsWith("@")) {
-                    Resources res = Resources.getSystem();
-                    String name = f.mColor.substring(1);
-                    int colorRes = res.getIdentifier(name, "color", "android");
-                    text.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(res.getColor(colorRes)), null),
-                            where, len,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } else {
-                    int c = getHtmlColor(f.mColor);
-                    if (c != -1) {
-                        text.setSpan(new ForegroundColorSpan(c | 0xFF000000),
-                                where, len,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
-                }
-            }
-
-            if (f.mFace != null) {
-                text.setSpan(new TypefaceSpan(f.mFace), where, len,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-    }
-
-    private static void startA(SpannableStringBuilder text, Attributes attributes) {
-        String href = attributes.getValue("", "href");
-
-        int len = text.length();
-        text.setSpan(new Href(href), len, len, Spannable.SPAN_MARK_MARK);
-    }
-
-    private static void endA(SpannableStringBuilder text) {
-        int len = text.length();
-        Object obj = getLast(text, Href.class);
-        int where = text.getSpanStart(obj);
-
-        text.removeSpan(obj);
-
-        if (where != len) {
-            Href h = (Href) obj;
-
-            if (h.mHref != null) {
-                text.setSpan(new URLSpan(h.mHref), where, len,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
-    }
-
-    private static void endHeader(SpannableStringBuilder text) {
-        int len = text.length();
-        Object obj = getLast(text, Header.class);
-
-        int where = text.getSpanStart(obj);
-
-        text.removeSpan(obj);
-
-        // Back off not to change only the text, not the blank line.
-        while (len > where && text.charAt(len - 1) == '\n') {
-            len--;
-        }
-
-        if (where != len) {
-            Header h = (Header) obj;
-
-            text.setSpan(new RelativeSizeSpan(HEADER_SIZES[h.mLevel]),
-                    where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            text.setSpan(new StyleSpan(Typeface.BOLD),
-                    where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-    }
-
     @Override
     public void setDocumentLocator(Locator locator) {
     }
@@ -858,16 +1046,35 @@ class HtmlToSpannedConverter implements ContentHandler {
     public void skippedEntity(String name) throws SAXException {
     }
 
-    private static class Bold { }
-    private static class Italic { }
-    private static class Underline { }
-    private static class Strike { }
-    private static class Big { }
-    private static class Small { }
-    private static class Monospace { }
-    private static class Blockquote { }
-    private static class Super { }
-    private static class Sub { }
+    private static class Bold {
+    }
+
+    private static class Italic {
+    }
+
+    private static class Underline {
+    }
+
+    private static class Strike {
+    }
+
+    private static class Big {
+    }
+
+    private static class Small {
+    }
+
+    private static class Monospace {
+    }
+
+    private static class Blockquote {
+    }
+
+    private static class Super {
+    }
+
+    private static class Sub {
+    }
 
     private static class Font {
         public String mColor;
@@ -893,191 +1100,5 @@ class HtmlToSpannedConverter implements ContentHandler {
         public Header(int level) {
             mLevel = level;
         }
-    }
-
-    /**
-     * Parse the color string, and return the corresponding color-int.
-     * If the string cannot be parsed, throws an IllegalArgumentException
-     * exception. Supported formats are:
-     * #RRGGBB
-     * #AARRGGBB
-     * rgb(255, 255, 255)
-     * or color name
-     */
-    @ColorInt
-    public static int getHtmlColor(@NonNull String colorString) {
-        if (colorString.charAt(0) == '#') {
-            // Use a long to avoid rollovers on #ffXXXXXX
-            long color = Long.parseLong(colorString.substring(1), 16);
-            if (colorString.length() == 7) {
-                // Set the alpha value
-                color |= 0x00000000ff000000;
-            } else if (colorString.length() != 9) {
-                throw new IllegalArgumentException("Unknown color: " + colorString);
-            }
-            return (int)color;
-        } else if (colorString.startsWith("rgb(") && colorString.endsWith(")")) {
-            String str = colorString.substring(4, colorString.length() - 1);
-            String[] colors = str.split("[\\s]*,[\\s]*");
-            if (colors.length == 3) {
-                try {
-                    return Color.argb(0xff, Integer.valueOf(colors[0]), Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Unknown color: " + colorString);
-                }
-            }
-        } else {
-            Integer color = sColorNameMap.get(colorString.toLowerCase(Locale.ROOT));
-            if (color != null) {
-                return color;
-            }
-        }
-        throw new IllegalArgumentException("Unknown color: " + colorString);
-    }
-
-    private static final HashMap<String, Integer> sColorNameMap;
-
-    static {
-        sColorNameMap = new HashMap<>();
-        sColorNameMap.put("aliceblue", 0xFFF0F8FF);
-        sColorNameMap.put("antiquewhite", 0xFFFAEBD7);
-        sColorNameMap.put("aqua", 0xFFFFFF);
-        sColorNameMap.put("aquamarine", 0xFF7FFFD4);
-        sColorNameMap.put("azure", 0xFFF0FFFF);
-        sColorNameMap.put("beige", 0xFFF5F5DC);
-        sColorNameMap.put("bisque", 0xFFFFE4C4);
-        sColorNameMap.put("black", 0xFF0);
-        sColorNameMap.put("blanchedalmond", 0xFFFFEBCD);
-        sColorNameMap.put("blue", 0xFFFF);
-        sColorNameMap.put("blueviolet", 0xFF8A2BE2);
-        sColorNameMap.put("brown", 0xFFA52A2A);
-        sColorNameMap.put("burlywood", 0xFFDEB887);
-        sColorNameMap.put("cadetblue", 0xFF5F9EA0);
-        sColorNameMap.put("chartreuse", 0xFF7FFF00);
-        sColorNameMap.put("chocolate", 0xFFD2691E);
-        sColorNameMap.put("coral", 0xFFFF7F50);
-        sColorNameMap.put("cornflowerblue", 0xFF6495ED);
-        sColorNameMap.put("cornsilk", 0xFFFFF8DC);
-        sColorNameMap.put("crimson", 0xFFDC143C);
-        sColorNameMap.put("cyan", 0xFFFFFF);
-        sColorNameMap.put("darkblue", 0xFF8B);
-        sColorNameMap.put("darkcyan", 0xFF8B8B);
-        sColorNameMap.put("darkgoldenrod", 0xFFB8860B);
-        sColorNameMap.put("darkgray", 0xFFA9A9A9);
-        sColorNameMap.put("darkgreen", 0xFF6400);
-        sColorNameMap.put("darkkhaki", 0xFFBDB76B);
-        sColorNameMap.put("darkmagenta", 0xFF8B008B);
-        sColorNameMap.put("darkolivegreen", 0xFF556B2F);
-        sColorNameMap.put("darkorange", 0xFFFF8C00);
-        sColorNameMap.put("darkorchid", 0xFF9932CC);
-        sColorNameMap.put("darkred", 0xFF8B0000);
-        sColorNameMap.put("darksalmon", 0xFFE9967A);
-        sColorNameMap.put("darkseagreen", 0xFF8FBC8F);
-        sColorNameMap.put("darkslateblue", 0xFF483D8B);
-        sColorNameMap.put("darkslategray", 0xFF2F4F4F);
-        sColorNameMap.put("darkturquoise", 0xFFCED1);
-        sColorNameMap.put("darkviolet", 0xFF9400D3);
-        sColorNameMap.put("deeppink", 0xFFFF1493);
-        sColorNameMap.put("deepskyblue", 0xFFBFFF);
-        sColorNameMap.put("dimgray", 0xFF696969);
-        sColorNameMap.put("dodgerblue", 0xFF1E90FF);
-        sColorNameMap.put("firebrick", 0xFFB22222);
-        sColorNameMap.put("floralwhite", 0xFFFFFAF0);
-        sColorNameMap.put("forestgreen", 0xFF228B22);
-        sColorNameMap.put("fuchsia", 0xFFFF00FF);
-        sColorNameMap.put("gainsboro", 0xFFDCDCDC);
-        sColorNameMap.put("ghostwhite", 0xFFF8F8FF);
-        sColorNameMap.put("gold", 0xFFFFD700);
-        sColorNameMap.put("goldenrod", 0xFFDAA520);
-        sColorNameMap.put("gray", 0xFF808080);
-        sColorNameMap.put("green", 0xFF8000);
-        sColorNameMap.put("greenyellow", 0xFFADFF2F);
-        sColorNameMap.put("honeydew", 0xFFF0FFF0);
-        sColorNameMap.put("hotpink", 0xFFFF69B4);
-        sColorNameMap.put("indianred", 0xFFCD5C5C);
-        sColorNameMap.put("indigo", 0xFF4B0082);
-        sColorNameMap.put("ivory", 0xFFFFFFF0);
-        sColorNameMap.put("khaki", 0xFFF0E68C);
-        sColorNameMap.put("lavender", 0xFFE6E6FA);
-        sColorNameMap.put("lavenderblush", 0xFFFFF0F5);
-        sColorNameMap.put("lawngreen", 0xFF7CFC00);
-        sColorNameMap.put("lemonchiffon", 0xFFFFFACD);
-        sColorNameMap.put("lightblue", 0xFFADD8E6);
-        sColorNameMap.put("lightcoral", 0xFFF08080);
-        sColorNameMap.put("lightcyan", 0xFFE0FFFF);
-        sColorNameMap.put("lightgoldenrodyellow", 0xFFFAFAD2);
-        sColorNameMap.put("lightgreen", 0xFF90EE90);
-        sColorNameMap.put("lightgrey", 0xFFD3D3D3);
-        sColorNameMap.put("lightpink", 0xFFFFB6C1);
-        sColorNameMap.put("lightsalmon", 0xFFFFA07A);
-        sColorNameMap.put("lightseagreen", 0xFF20B2AA);
-        sColorNameMap.put("lightskyblue", 0xFF87CEFA);
-        sColorNameMap.put("lightslategray", 0xFF778899);
-        sColorNameMap.put("lightsteelblue", 0xFFB0C4DE);
-        sColorNameMap.put("lightyellow", 0xFFFFFFE0);
-        sColorNameMap.put("lime", 0xFFFF00);
-        sColorNameMap.put("limegreen", 0xFF32CD32);
-        sColorNameMap.put("linen", 0xFFFAF0E6);
-        sColorNameMap.put("magenta", 0xFFFF00FF);
-        sColorNameMap.put("maroon", 0xFF800000);
-        sColorNameMap.put("mediumaquamarine", 0xFF66CDAA);
-        sColorNameMap.put("mediumblue", 0xFFCD);
-        sColorNameMap.put("mediumorchid", 0xFFBA55D3);
-        sColorNameMap.put("mediumpurple", 0xFF9370DB);
-        sColorNameMap.put("mediumseagreen", 0xFF3CB371);
-        sColorNameMap.put("mediumslateblue", 0xFF7B68EE);
-        sColorNameMap.put("mediumspringgreen", 0xFFFA9A);
-        sColorNameMap.put("mediumturquoise", 0xFF48D1CC);
-        sColorNameMap.put("mediumvioletred", 0xFFC71585);
-        sColorNameMap.put("midnightblue", 0xFF191970);
-        sColorNameMap.put("mintcream", 0xFFF5FFFA);
-        sColorNameMap.put("mistyrose", 0xFFFFE4E1);
-        sColorNameMap.put("moccasin", 0xFFFFE4B5);
-        sColorNameMap.put("navajowhite", 0xFFFFDEAD);
-        sColorNameMap.put("navy", 0xFF80);
-        sColorNameMap.put("oldlace", 0xFFFDF5E6);
-        sColorNameMap.put("olive", 0xFF808000);
-        sColorNameMap.put("olivedrab", 0xFF6B8E23);
-        sColorNameMap.put("orange", 0xFFFFA500);
-        sColorNameMap.put("orangered", 0xFFFF4500);
-        sColorNameMap.put("orchid", 0xFFDA70D6);
-        sColorNameMap.put("palegoldenrod", 0xFFEEE8AA);
-        sColorNameMap.put("palegreen", 0xFF98FB98);
-        sColorNameMap.put("paleturquoise", 0xFFAFEEEE);
-        sColorNameMap.put("palevioletred", 0xFFDB7093);
-        sColorNameMap.put("papayawhip", 0xFFFFEFD5);
-        sColorNameMap.put("peachpuff", 0xFFFFDAB9);
-        sColorNameMap.put("peru", 0xFFCD853F);
-        sColorNameMap.put("pink", 0xFFFFC0CB);
-        sColorNameMap.put("plum", 0xFFDDA0DD);
-        sColorNameMap.put("powderblue", 0xFFB0E0E6);
-        sColorNameMap.put("purple", 0xFF800080);
-        sColorNameMap.put("red", 0xFFFF0000);
-        sColorNameMap.put("rosybrown", 0xFFBC8F8F);
-        sColorNameMap.put("royalblue", 0xFF4169E1);
-        sColorNameMap.put("saddlebrown", 0xFF8B4513);
-        sColorNameMap.put("salmon", 0xFFFA8072);
-        sColorNameMap.put("sandybrown", 0xFFF4A460);
-        sColorNameMap.put("seagreen", 0xFF2E8B57);
-        sColorNameMap.put("seashell", 0xFFFFF5EE);
-        sColorNameMap.put("sienna", 0xFFA0522D);
-        sColorNameMap.put("silver", 0xFFC0C0C0);
-        sColorNameMap.put("skyblue", 0xFF87CEEB);
-        sColorNameMap.put("slateblue", 0xFF6A5ACD);
-        sColorNameMap.put("slategray", 0xFF708090);
-        sColorNameMap.put("snow", 0xFFFFFAFA);
-        sColorNameMap.put("springgreen", 0xFFFF7F);
-        sColorNameMap.put("steelblue", 0xFF4682B4);
-        sColorNameMap.put("tan", 0xFFD2B48C);
-        sColorNameMap.put("teal", 0xFF8080);
-        sColorNameMap.put("thistle", 0xFFD8BFD8);
-        sColorNameMap.put("tomato", 0xFFFF6347);
-        sColorNameMap.put("turquoise", 0xFF40E0D0);
-        sColorNameMap.put("violet", 0xFFEE82EE);
-        sColorNameMap.put("wheat", 0xFFF5DEB3);
-        sColorNameMap.put("white", 0xFFFFFFFF);
-        sColorNameMap.put("whitesmoke", 0xFFF5F5F5);
-        sColorNameMap.put("yellow", 0xFFFFFF00);
-        sColorNameMap.put("yellowgreen", 0xFF9ACD32);
     }
 }

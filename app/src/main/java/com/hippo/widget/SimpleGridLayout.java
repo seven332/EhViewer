@@ -30,7 +30,6 @@ import com.hippo.yorozuya.ViewUtils;
  * not scrollable
  *
  * @author Hippo
- *
  */
 public class SimpleGridLayout extends ViewGroup {
 

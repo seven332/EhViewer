@@ -82,7 +82,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
     public void addView(@NonNull View child, int index, ViewGroup.LayoutParams params) {
         if (!(child instanceof FloatingActionButton)) {
             throw new IllegalStateException("FloatingActionBarLayout should only " +
-                    "contain FloatingActionButton, but try to add "+ child.getClass().getName());
+                    "contain FloatingActionButton, but try to add " + child.getClass().getName());
         }
         super.addView(child, index, params);
     }
@@ -134,7 +134,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         int bottom = getMeasuredHeight() - getPaddingBottom();
         int count = getChildCount();
         int i = count;
-        while(--i >= 0) {
+        while (--i >= 0) {
             View child = getChildAt(i);
             if (child.getVisibility() == View.GONE) {
                 continue;
@@ -271,7 +271,7 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         } else {
             startRotation = 0.0f;
             endRotation = 0.0f;
-            startScale  = 1.0f;
+            startScale = 1.0f;
             endScale = 0.0f;
             interpolator = AnimationUtils.SLOW_FAST_INTERPOLATOR;
         }

@@ -56,7 +56,7 @@ public final class PackageUtils {
             md = MessageDigest.getInstance("SHA1");
             byte[] sha1 = md.digest(certRaw);
             int length = sha1.length;
-            for (int i = 0; i  < length; i++) {
+            for (int i = 0; i < length; i++) {
                 if (i != 0) {
                     sb.append(':');
                 }
@@ -69,8 +69,7 @@ public final class PackageUtils {
             }
 
             return sb.toString().toUpperCase();
-        }
-        catch (NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException ex) {
             Log.e(TAG, "Can't final Algorithm SHA1", ex);
             return null;
         }

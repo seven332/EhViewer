@@ -30,6 +30,16 @@ public class StatusCodeException extends Exception {
     private final int mResponseCode;
     private final String mMessage;
 
+    public StatusCodeException(int responseCode) {
+        mResponseCode = responseCode;
+        mMessage = ERROR_MESSAGE_ARRAY.get(responseCode, DEFAULT_ERROR_MESSAGE);
+    }
+
+    public StatusCodeException(int responseCode, String message) {
+        mResponseCode = responseCode;
+        mMessage = message;
+    }
+
     public static void initialize(Context context) {
         Resources resources = context.getApplicationContext().getResources();
 
@@ -58,16 +68,6 @@ public class StatusCodeException extends Exception {
         ERROR_MESSAGE_ARRAY.append(503, resources.getString(R.string.error_status_code_503));
         ERROR_MESSAGE_ARRAY.append(504, resources.getString(R.string.error_status_code_504));
         ERROR_MESSAGE_ARRAY.append(505, resources.getString(R.string.error_status_code_505));
-    }
-
-    public StatusCodeException(int responseCode) {
-        mResponseCode = responseCode;
-        mMessage = ERROR_MESSAGE_ARRAY.get(responseCode, DEFAULT_ERROR_MESSAGE);
-    }
-
-    public StatusCodeException(int responseCode, String message) {
-        mResponseCode = responseCode;
-        mMessage = message;
     }
 
     public int getResponseCode() {

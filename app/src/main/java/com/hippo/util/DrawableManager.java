@@ -35,7 +35,7 @@ public final class DrawableManager {
     }
 
     public static Drawable getVectorDrawable(@NonNull Resources res,
-            @DrawableRes int resId, @Nullable Resources.Theme theme) {
+                                             @DrawableRes int resId, @Nullable Resources.Theme theme) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return res.getDrawable(resId, theme);
         } else {

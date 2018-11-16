@@ -46,7 +46,7 @@ public class OffsetLayout extends FrameLayout {
     // TODO foreground not work fine
     @SuppressLint("RtlHardcoded")
     void layoutChildrenEx(int left, int top, int right, int bottom,
-            boolean forceLeftGravity) {
+                          boolean forceLeftGravity) {
         final int count = getChildCount();
 
         final int parentLeft = getPaddingLeft();

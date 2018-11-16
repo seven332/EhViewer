@@ -21,7 +21,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public final class Network {
-    private Network() {}
+    private Network() {
+    }
 
     public static int getActiveNetworkType(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

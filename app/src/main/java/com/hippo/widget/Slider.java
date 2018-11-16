@@ -52,18 +52,14 @@ public class Slider extends View {
 
     private static final int BUBBLE_WIDTH = 26;
     private static final int BUBBLE_HEIGHT = 32;
-
-    private Context mContext;
-
-    private Paint mPaint;
-    private Paint mBgPaint;
-
     private final RectF mLeftRectF = new RectF();
     private final RectF mRightRectF = new RectF();
-
+    private final int[] mTemp = new int[2];
+    private Context mContext;
+    private Paint mPaint;
+    private Paint mBgPaint;
     private PopupWindow mPopup;
     private BubbleView mBubble;
-
     private int mStart;
     private int mEnd;
     private int mProgress;
@@ -71,24 +67,17 @@ public class Slider extends View {
     private int mDrawProgress;
     private float mDrawPercent;
     private int mTargetProgress;
-
     private float mThickness;
     private float mRadius;
-
     private float mCharWidth;
     private float mCharHeight;
-
     private int mBubbleWidth;
     private int mBubbleHeight;
     private int mBubbleMinWidth;
     private int mBubbleMinHeight;
-
     private int mPopupX;
     private int mPopupY;
     private int mPopupWidth;
-
-    private final int[] mTemp = new int[2];
-
     private boolean mReverse = false;
 
     private boolean mShowBubble;
@@ -220,7 +209,7 @@ public class Slider extends View {
         mPopupX = (int) (mTemp[0] + mRadius - (mBubbleWidth / 2));
         mPopupY = (int) (mTemp[1] - popupHeight + paddingTop +
                 ((getHeight() - paddingTop - paddingBottom) / 2) -
-                mRadius -LayoutUtils.dp2pix(mContext, 2));
+                mRadius - LayoutUtils.dp2pix(mContext, 2));
 
         mPopup.update(mPopupX, mPopupY, mPopupWidth, popupHeight, false);
     }
@@ -301,6 +290,10 @@ public class Slider extends View {
         updateBubbleSize();
     }
 
+    public int getProgress() {
+        return mProgress;
+    }
+
     public void setProgress(int progress) {
         progress = MathUtils.clamp(progress, mStart, mEnd);
         int oldProgress = mProgress;
@@ -323,10 +316,6 @@ public class Slider extends View {
         if (mListener != null) {
             mListener.onSetProgress(this, progress, oldProgress, false, true);
         }
-    }
-
-    public int getProgress() {
-        return mProgress;
     }
 
     public void setReverse(boolean reverse) {
@@ -463,6 +452,15 @@ public class Slider extends View {
         return true;
     }
 
+    public interface OnSetProgressListener {
+
+        void onSetProgress(Slider slider, int newProgress, int oldProgress, boolean byUser, boolean confirm);
+
+        void onFingerDown();
+
+        void onFingerUp();
+    }
+
     @SuppressLint("ViewConstructor")
     private static class BubbleView extends AppCompatImageView {
 
@@ -471,10 +469,8 @@ public class Slider extends View {
         private final Drawable mDrawable;
 
         private final Paint mTextPaint;
-
-        private String mProgressStr = "";
-
         private final Rect mRect = new Rect();
+        private String mProgressStr = "";
 
         @SuppressWarnings("deprecation")
         public BubbleView(Context context, Paint paint) {
@@ -515,15 +511,6 @@ public class Slider extends View {
             int y = (int) ((height * TEXT_CENTER) + (mRect.height() / 2));
             canvas.drawText(mProgressStr, x, y, mTextPaint);
         }
-    }
-
-    public interface OnSetProgressListener {
-
-        void onSetProgress(Slider slider, int newProgress, int oldProgress, boolean byUser, boolean confirm);
-
-        void onFingerDown();
-
-        void onFingerUp();
     }
 
     private final class CheckForShowBubble implements Runnable {

@@ -50,7 +50,7 @@ public class SqlUtils {
         }
         cursor.close();
 
-        for(String tableName : tables) {
+        for (String tableName : tables) {
             dropTable(db, tableName);
         }
     }

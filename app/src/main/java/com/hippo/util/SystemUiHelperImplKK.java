@@ -25,7 +25,7 @@ import android.view.View;
 class SystemUiHelperImplKK extends SystemUiHelperImplJB {
 
     SystemUiHelperImplKK(Activity activity, int level, int flags,
-            SystemUiHelper.OnVisibilityChangeListener onVisibilityChangeListener) {
+                         SystemUiHelper.OnVisibilityChangeListener onVisibilityChangeListener) {
         super(activity, level, flags, onVisibilityChangeListener);
     }
 
@@ -40,8 +40,8 @@ class SystemUiHelperImplKK extends SystemUiHelperImplJB {
             // so we only do this on Android 4.4 and later (where IMMERSIVE is
             // present).
             flag |= ((mFlags & SystemUiHelper.FLAG_IMMERSIVE_STICKY) != 0)
-                            ? View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            : View.SYSTEM_UI_FLAG_IMMERSIVE;
+                    ? View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    : View.SYSTEM_UI_FLAG_IMMERSIVE;
         }
 
         return flag;

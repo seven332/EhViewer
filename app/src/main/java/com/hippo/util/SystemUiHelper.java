@@ -93,11 +93,11 @@ public final class SystemUiHelper {
      * Construct a new SystemUiHelper.
      *
      * @param activity The Activity who's system UI should be changed
-     * @param level The level of hiding. Should be either {@link #LEVEL_LOW_PROFILE},
-     *              {@link #LEVEL_HIDE_STATUS_BAR}, {@link #LEVEL_LEAN_BACK} or
-     *              {@link #LEVEL_IMMERSIVE}
-     * @param flags Additional options. See {@link #FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES} and
-     *              {@link #FLAG_IMMERSIVE_STICKY}
+     * @param level    The level of hiding. Should be either {@link #LEVEL_LOW_PROFILE},
+     *                 {@link #LEVEL_HIDE_STATUS_BAR}, {@link #LEVEL_LEAN_BACK} or
+     *                 {@link #LEVEL_IMMERSIVE}
+     * @param flags    Additional options. See {@link #FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES} and
+     *                 {@link #FLAG_IMMERSIVE_STICKY}
      */
     public SystemUiHelper(Activity activity, int level, int flags) {
         this(activity, level, flags, null);
@@ -107,15 +107,15 @@ public final class SystemUiHelper {
      * Construct a new SystemUiHelper.
      *
      * @param activity The Activity who's system UI should be changed
-     * @param level The level of hiding. Should be either {@link #LEVEL_LOW_PROFILE},
-     *              {@link #LEVEL_HIDE_STATUS_BAR}, {@link #LEVEL_LEAN_BACK} or
-     *              {@link #LEVEL_IMMERSIVE}
-     * @param flags Additional options. See {@link #FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES} and
-     *              {@link #FLAG_IMMERSIVE_STICKY}
+     * @param level    The level of hiding. Should be either {@link #LEVEL_LOW_PROFILE},
+     *                 {@link #LEVEL_HIDE_STATUS_BAR}, {@link #LEVEL_LEAN_BACK} or
+     *                 {@link #LEVEL_IMMERSIVE}
+     * @param flags    Additional options. See {@link #FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES} and
+     *                 {@link #FLAG_IMMERSIVE_STICKY}
      * @param listener A listener which is called when the system visibility is changed
      */
     public SystemUiHelper(Activity activity, int level, int flags,
-            OnVisibilityChangeListener listener) {
+                          OnVisibilityChangeListener listener) {
 
         mHandler = new Handler(Looper.getMainLooper());
         mHideRunnable = new HideRunnable();
@@ -136,7 +136,7 @@ public final class SystemUiHelper {
 
     /**
      * @return true if the system UI is currently showing. What this means depends on the mode this
-     *         {@link SystemUiHelper} was instantiated with.
+     * {@link SystemUiHelper} was instantiated with.
      */
     public boolean isShowing() {
         return mImpl.isShowing();
@@ -174,7 +174,7 @@ public final class SystemUiHelper {
      * <p>Any currently queued delayed hide requests will be removed.
      *
      * @param delayMillis The delay (in milliseconds) until the Runnable
-     *        will be executed.
+     *                    will be executed.
      */
     public void delayHide(long delayMillis) {
         // Ensure that any currently queued hide calls are removed
@@ -221,7 +221,7 @@ public final class SystemUiHelper {
         boolean mIsShowing = true;
 
         SystemUiHelperImpl(Activity activity, int level, int flags,
-                OnVisibilityChangeListener onVisibilityChangeListener) {
+                           OnVisibilityChangeListener onVisibilityChangeListener) {
             mActivity = activity;
             mLevel = level;
             mFlags = flags;
@@ -229,6 +229,7 @@ public final class SystemUiHelper {
         }
 
         abstract void show();
+
         abstract void hide();
 
         boolean isShowing() {
@@ -250,7 +251,7 @@ public final class SystemUiHelper {
     static class SystemUiHelperImplBase extends SystemUiHelperImpl {
 
         SystemUiHelperImplBase(Activity activity, int level, int flags,
-                OnVisibilityChangeListener onVisibilityChangeListener) {
+                               OnVisibilityChangeListener onVisibilityChangeListener) {
             super(activity, level, flags, onVisibilityChangeListener);
 
             if ((mFlags & SystemUiHelper.FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES) != 0) {

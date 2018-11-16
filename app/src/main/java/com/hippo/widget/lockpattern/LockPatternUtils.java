@@ -26,6 +26,7 @@ public class LockPatternUtils {
 
     /**
      * Deserialize a pattern.
+     *
      * @param string The pattern serialized with {@link #patternToString}
      * @return The pattern.
      */
@@ -42,6 +43,7 @@ public class LockPatternUtils {
 
     /**
      * Serialize a pattern.
+     *
      * @param pattern The pattern.
      * @return The pattern in string form.
      */

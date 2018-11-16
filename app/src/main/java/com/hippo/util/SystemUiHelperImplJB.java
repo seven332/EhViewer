@@ -26,7 +26,7 @@ import android.view.View;
 class SystemUiHelperImplJB extends SystemUiHelperImplICS {
 
     SystemUiHelperImplJB(Activity activity, int level, int flags,
-            SystemUiHelper.OnVisibilityChangeListener onVisibilityChangeListener) {
+                         SystemUiHelper.OnVisibilityChangeListener onVisibilityChangeListener) {
         super(activity, level, flags, onVisibilityChangeListener);
     }
 

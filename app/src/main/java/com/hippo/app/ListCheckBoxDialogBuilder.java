@@ -37,7 +37,7 @@ public class ListCheckBoxDialogBuilder extends AlertDialog.Builder {
 
     @SuppressLint("InflateParams")
     public ListCheckBoxDialogBuilder(Context context, CharSequence[] items,
-            final OnItemClickListener listener, String checkText, boolean checked) {
+                                     final OnItemClickListener listener, String checkText, boolean checked) {
         super(context);
         View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_list_checkbox_builder, null);
         setView(view);

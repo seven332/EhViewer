@@ -40,10 +40,22 @@ public class BatteryView extends TextView {
     private boolean mCharging = false;
 
     private BatteryDrawable mDrawable;
+    private final Runnable mCharger = new Runnable() {
 
+        private int level = 0;
+
+        @Override
+        public void run() {
+            level += 2;
+            if (level > 100) {
+                level = 0;
+            }
+            mDrawable.setElect(level, false);
+            getHandler().postDelayed(mCharger, 200);
+        }
+    };
     private boolean mAttached = false;
     private boolean mIsChargerWorking = false;
-
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
 
         @Override
@@ -72,21 +84,6 @@ public class BatteryView extends TextView {
                 }
                 setText(mLevel + "%");
             }
-        }
-    };
-
-    private final Runnable mCharger = new Runnable() {
-
-        private int level = 0;
-
-        @Override
-        public void run() {
-            level += 2;
-            if (level > 100) {
-                level = 0;
-            }
-            mDrawable.setElect(level, false);
-            getHandler().postDelayed(mCharger, 200);
         }
     };
 

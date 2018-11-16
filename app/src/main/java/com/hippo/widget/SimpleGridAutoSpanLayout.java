@@ -40,6 +40,21 @@ public class SimpleGridAutoSpanLayout extends SimpleGridLayout {
         super(context, attrs, defStyle);
     }
 
+    public static int getSpanCountForSuitableSize(int total, int single) {
+        int span = total / single;
+        if (span <= 0) {
+            return 1;
+        }
+        int span2 = span + 1;
+        float deviation = Math.abs(1 - (total / span / (float) single));
+        float deviation2 = Math.abs(1 - (total / span2 / (float) single));
+        return deviation < deviation2 ? span : span2;
+    }
+
+    public static int getSpanCountForMinSize(int total, int single) {
+        return Math.max(1, total / single);
+    }
+
     public void setColumnSize(int columnSize) {
         if (columnSize == mColumnSize) {
             return;
@@ -54,21 +69,6 @@ public class SimpleGridAutoSpanLayout extends SimpleGridLayout {
         }
         mStrategy = strategy;
         mColumnSizeChanged = true;
-    }
-
-    public static int getSpanCountForSuitableSize(int total, int single) {
-        int span = total / single;
-        if (span <= 0) {
-            return 1;
-        }
-        int span2 = span + 1;
-        float deviation = Math.abs(1 - (total / span / (float) single));
-        float deviation2 = Math.abs(1 - (total / span2 / (float) single));
-        return deviation < deviation2 ? span : span2;
-    }
-
-    public static int getSpanCountForMinSize(int total, int single) {
-        return Math.max(1, total / single);
     }
 
     @Override

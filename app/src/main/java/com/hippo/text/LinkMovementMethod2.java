@@ -39,8 +39,18 @@ public class LinkMovementMethod2 extends ScrollingMovementMethod {
     private static final int CLICK = 1;
     private static final int UP = 2;
     private static final int DOWN = 3;
+    private static final Object FROM_BELOW = new NoCopySpan.Concrete();
+    private static LinkMovementMethod2 sInstance;
 
-    private LinkMovementMethod2() {}
+    private LinkMovementMethod2() {
+    }
+
+    public static MovementMethod getInstance() {
+        if (sInstance == null)
+            sInstance = new LinkMovementMethod2();
+
+        return sInstance;
+    }
 
     @Override
     public boolean canSelectArbitrarily() {
@@ -49,7 +59,7 @@ public class LinkMovementMethod2 extends ScrollingMovementMethod {
 
     @Override
     protected boolean handleMovementKey(TextView widget, Spannable buffer, int keyCode,
-            int movementMetaState, KeyEvent event) {
+                                        int movementMetaState, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_CENTER:
             case KeyEvent.KEYCODE_ENTER:
@@ -199,7 +209,7 @@ public class LinkMovementMethod2 extends ScrollingMovementMethod {
 
     @Override
     public boolean onTouchEvent(TextView widget, Spannable buffer,
-            MotionEvent event) {
+                                MotionEvent event) {
         int action = event.getAction();
 
         if (action == MotionEvent.ACTION_UP ||
@@ -258,14 +268,4 @@ public class LinkMovementMethod2 extends ScrollingMovementMethod {
             text.removeSpan(FROM_BELOW);
         }
     }
-
-    public static MovementMethod getInstance() {
-        if (sInstance == null)
-            sInstance = new LinkMovementMethod2();
-
-        return sInstance;
-    }
-
-    private static LinkMovementMethod2 sInstance;
-    private static final Object FROM_BELOW = new NoCopySpan.Concrete();
 }

@@ -24,12 +24,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
 import com.hippo.ehviewer.R;
 import com.hippo.ripple.Ripple;
 import com.hippo.yorozuya.LayoutUtils;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -44,10 +46,8 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
 
     private static final File PARENT_DIR = null;
     private static final String PARENT_DIR_NAME = "..";
-
-    private File mCurrentFile;
     private final List<File> mFiles = new ArrayList<>();
-
+    private File mCurrentFile;
     private DirAdapter mAdapter;
 
     private OnChangeDirListener mOnChangeDirListener;
@@ -131,33 +131,9 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
         return true;
     }
 
-    private class DirHolder extends ViewHolder {
+    public interface OnChangeDirListener {
 
-        public TextView textView;
-
-        public DirHolder(View itemView) {
-            super(itemView);
-            textView = (TextView) itemView;
-        }
-    }
-
-    private class DirAdapter extends Adapter<DirHolder> {
-
-        @Override
-        public DirHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new DirHolder( LayoutInflater.from(getContext()).inflate(R.layout.item_dir_explorer, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(DirHolder holder, int position) {
-            File file = mFiles.get(position);
-            holder.textView.setText(file == PARENT_DIR ? PARENT_DIR_NAME : file.getName());
-        }
-
-        @Override
-        public int getItemCount() {
-            return mFiles.size();
-        }
+        void onChangeDir(File dir);
     }
 
     static class DirFilter implements FileFilter {
@@ -180,8 +156,32 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
         }
     }
 
-    public interface OnChangeDirListener {
+    private class DirHolder extends ViewHolder {
 
-        void onChangeDir(File dir);
+        public TextView textView;
+
+        public DirHolder(View itemView) {
+            super(itemView);
+            textView = (TextView) itemView;
+        }
+    }
+
+    private class DirAdapter extends Adapter<DirHolder> {
+
+        @Override
+        public DirHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new DirHolder(LayoutInflater.from(getContext()).inflate(R.layout.item_dir_explorer, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(DirHolder holder, int position) {
+            File file = mFiles.get(position);
+            holder.textView.setText(file == PARENT_DIR ? PARENT_DIR_NAME : file.getName());
+        }
+
+        @Override
+        public int getItemCount() {
+            return mFiles.size();
+        }
     }
 }

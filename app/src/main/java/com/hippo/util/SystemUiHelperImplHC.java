@@ -30,7 +30,7 @@ class SystemUiHelperImplHC extends SystemUiHelper.SystemUiHelperImpl
     final View mDecorView;
 
     SystemUiHelperImplHC(Activity activity, int level, int flags,
-            SystemUiHelper.OnVisibilityChangeListener onVisibilityChangeListener) {
+                         SystemUiHelper.OnVisibilityChangeListener onVisibilityChangeListener) {
         super(activity, level, flags, onVisibilityChangeListener);
 
         mDecorView = activity.getWindow().getDecorView();
@@ -80,7 +80,7 @@ class SystemUiHelperImplHC extends SystemUiHelper.SystemUiHelperImpl
     }
 
     protected int createShowFlags() {
-       return View.STATUS_BAR_VISIBLE;
+        return View.STATUS_BAR_VISIBLE;
     }
 
     protected int createHideFlags() {

@@ -27,7 +27,7 @@ public class DrawerView extends FrameLayout {
 
     private static final int DEFAULT_MAX_WIDTH = 280;
 
-    private static final int[] SIZE_ATTRS = new int[] {
+    private static final int[] SIZE_ATTRS = new int[]{
             android.R.attr.maxWidth
     };
 

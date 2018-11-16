@@ -29,7 +29,7 @@ import com.hippo.yorozuya.ViewUtils;
 
 public class RadioGridGroup extends SimpleGridLayout {
 
-    private static final int[] RADIO_ATTRS = new int[] {
+    private static final int[] RADIO_ATTRS = new int[]{
             android.R.attr.checkedButton
     };
 
@@ -114,7 +114,6 @@ public class RadioGridGroup extends SimpleGridLayout {
      * such an operation is equivalent to invoking {@link #clearCheck()}.</p>
      *
      * @param id the unique id of the radio button to select in this group
-     *
      * @see #getCheckedRadioButtonId()
      * @see #clearCheck()
      */
@@ -154,7 +153,6 @@ public class RadioGridGroup extends SimpleGridLayout {
      * Upon empty selection, the returned value is -1.</p>
      *
      * @return the unique id of the selected radio button in this group
-     *
      * @see #check(int)
      * @see #clearCheck()
      */
@@ -194,7 +192,7 @@ public class RadioGridGroup extends SimpleGridLayout {
          * <p>Called when the checked radio button has changed. When the
          * selection is cleared, checkedId is -1.</p>
          *
-         * @param group the group in which the checked radio button has changed
+         * @param group     the group in which the checked radio button has changed
          * @param checkedId the unique identifier of the newly checked radio button
          */
         void onCheckedChanged(RadioGridGroup group, @IdRes int checkedId);

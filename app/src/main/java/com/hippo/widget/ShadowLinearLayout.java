@@ -31,8 +31,8 @@ import com.hippo.yorozuya.LayoutUtils;
 
 public class ShadowLinearLayout extends LinearLayout {
 
-    private NinePatchDrawable mShadow;
     private final Rect mShadowPaddings = new Rect();
+    private NinePatchDrawable mShadow;
 
     public ShadowLinearLayout(Context context) {
         super(context);

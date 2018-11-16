@@ -27,82 +27,84 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
 import com.hippo.ehviewer.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PrettyPreferenceActivity extends AppCompatPreferenceActivity {
 
-  @Override
-  public void setListAdapter(ListAdapter adapter) {
-    int count = adapter.getCount();
-    List<PreferenceActivity.Header> headers = new ArrayList<>(count);
-    for (int i = 0; i < count; ++i) {
-      headers.add((PreferenceActivity.Header) adapter.getItem(i));
-    }
-
-    super.setListAdapter(new HeaderAdapter(this, headers, R.layout.item_preference_header, true));
-  }
-
-  private static class HeaderAdapter extends ArrayAdapter<PreferenceActivity.Header> {
-    private static class HeaderViewHolder {
-      ImageView icon;
-      TextView title;
-      TextView summary;
-    }
-
-    private LayoutInflater mInflater;
-    private int mLayoutResId;
-    private boolean mRemoveIconIfEmpty;
-
-    private HeaderAdapter(Context context, List<PreferenceActivity.Header> objects, int layoutResId,
-        boolean removeIconBehavior) {
-      super(context, 0, objects);
-      mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      mLayoutResId = layoutResId;
-      mRemoveIconIfEmpty = removeIconBehavior;
-    }
-
-    @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-      HeaderViewHolder holder;
-      View view;
-
-      if (convertView == null) {
-        view = mInflater.inflate(mLayoutResId, parent, false);
-        holder = new HeaderViewHolder();
-        holder.icon = view.findViewById(android.R.id.icon);
-        holder.title = view.findViewById(android.R.id.title);
-        holder.summary = view.findViewById(android.R.id.summary);
-        view.setTag(holder);
-      } else {
-        view = convertView;
-        holder = (HeaderViewHolder) view.getTag();
-      }
-
-      // All view fields must be updated every time, because the view may be recycled
-      PreferenceActivity.Header header = getItem(position);
-      if (mRemoveIconIfEmpty) {
-        if (header.iconRes == 0) {
-          holder.icon.setVisibility(View.GONE);
-        } else {
-          holder.icon.setVisibility(View.VISIBLE);
-          holder.icon.setImageResource(header.iconRes);
+    public void setListAdapter(ListAdapter adapter) {
+        int count = adapter.getCount();
+        List<PreferenceActivity.Header> headers = new ArrayList<>(count);
+        for (int i = 0; i < count; ++i) {
+            headers.add((PreferenceActivity.Header) adapter.getItem(i));
         }
-      } else {
-        holder.icon.setImageResource(header.iconRes);
-      }
-      holder.title.setText(header.getTitle(getContext().getResources()));
-      CharSequence summary = header.getSummary(getContext().getResources());
-      if (!TextUtils.isEmpty(summary)) {
-        holder.summary.setVisibility(View.VISIBLE);
-        holder.summary.setText(summary);
-      } else {
-        holder.summary.setVisibility(View.GONE);
-      }
 
-      return view;
+        super.setListAdapter(new HeaderAdapter(this, headers, R.layout.item_preference_header, true));
     }
-  }
+
+    private static class HeaderAdapter extends ArrayAdapter<PreferenceActivity.Header> {
+        private LayoutInflater mInflater;
+        private int mLayoutResId;
+        private boolean mRemoveIconIfEmpty;
+
+        private HeaderAdapter(Context context, List<PreferenceActivity.Header> objects, int layoutResId,
+                              boolean removeIconBehavior) {
+            super(context, 0, objects);
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mLayoutResId = layoutResId;
+            mRemoveIconIfEmpty = removeIconBehavior;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            HeaderViewHolder holder;
+            View view;
+
+            if (convertView == null) {
+                view = mInflater.inflate(mLayoutResId, parent, false);
+                holder = new HeaderViewHolder();
+                holder.icon = view.findViewById(android.R.id.icon);
+                holder.title = view.findViewById(android.R.id.title);
+                holder.summary = view.findViewById(android.R.id.summary);
+                view.setTag(holder);
+            } else {
+                view = convertView;
+                holder = (HeaderViewHolder) view.getTag();
+            }
+
+            // All view fields must be updated every time, because the view may be recycled
+            PreferenceActivity.Header header = getItem(position);
+            if (mRemoveIconIfEmpty) {
+                if (header.iconRes == 0) {
+                    holder.icon.setVisibility(View.GONE);
+                } else {
+                    holder.icon.setVisibility(View.VISIBLE);
+                    holder.icon.setImageResource(header.iconRes);
+                }
+            } else {
+                holder.icon.setImageResource(header.iconRes);
+            }
+            holder.title.setText(header.getTitle(getContext().getResources()));
+            CharSequence summary = header.getSummary(getContext().getResources());
+            if (!TextUtils.isEmpty(summary)) {
+                holder.summary.setVisibility(View.VISIBLE);
+                holder.summary.setText(summary);
+            } else {
+                holder.summary.setVisibility(View.GONE);
+            }
+
+            return view;
+        }
+
+        private static class HeaderViewHolder {
+            ImageView icon;
+            TextView title;
+            TextView summary;
+        }
+    }
 }

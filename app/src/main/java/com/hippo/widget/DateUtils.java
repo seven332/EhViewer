@@ -18,8 +18,8 @@ package com.hippo.widget;
 
 final class DateUtils {
 
-    public  static final char QUOTE = '\'';
-    public  static final char SECONDS = 's';
+    public static final char QUOTE = '\'';
+    public static final char SECONDS = 's';
 
     public static boolean hasSeconds(CharSequence inFormat) {
         return hasDesignator(inFormat, SECONDS);

@@ -33,29 +33,14 @@ import java.util.List;
  * A ViewGroup that can layout views in line and auto wrap
  *
  * @author Hippo
- *
  */
 public class AutoWrapLayout extends ViewGroup {
 
+    private static final Alignment[] sBaseLineArray = {Alignment.TOP,
+            Alignment.CENTER, Alignment.BOTTOM};
     private final List<Rect> rectList = new ArrayList<>();
-
     private Alignment mAlignment;
 
-    private static final Alignment[] sBaseLineArray = { Alignment.TOP,
-            Alignment.CENTER, Alignment.BOTTOM };
-
-
-    public enum Alignment {
-        TOP(0),
-        CENTER(1),
-        BOTTOM(2);
-
-        Alignment(int ni) {
-            nativeInt = ni;
-        }
-
-        final int nativeInt;
-    }
 
     public AutoWrapLayout(Context context) {
         super(context);
@@ -79,6 +64,10 @@ public class AutoWrapLayout extends ViewGroup {
         a.recycle();
     }
 
+    public Alignment getAlignment() {
+        return mAlignment;
+    }
+
     public void setAlignment(Alignment baseLine) {
         if (baseLine == null) {
             return;
@@ -92,10 +81,6 @@ public class AutoWrapLayout extends ViewGroup {
         }
     }
 
-    public Alignment getAlignment() {
-        return mAlignment;
-    }
-
     private void adjustBaseLine(int lineHeight, int startIndex, int endIndex) {
         if (mAlignment == Alignment.TOP)
             return;
@@ -103,21 +88,19 @@ public class AutoWrapLayout extends ViewGroup {
         for (int index = startIndex; index < endIndex; index++) {
             final View child = getChildAt(index);
             final MarginLayoutParams lp =
-                    (MarginLayoutParams)child.getLayoutParams();
+                    (MarginLayoutParams) child.getLayoutParams();
             Rect rect = rectList.get(index);
             int offsetRaw = lineHeight - rect.height() - lp.topMargin - lp.bottomMargin;
             if (mAlignment == Alignment.CENTER)
-                rect.offset(0, offsetRaw/2);
+                rect.offset(0, offsetRaw / 2);
             else if (mAlignment == Alignment.BOTTOM)
                 rect.offset(0, offsetRaw);
         }
     }
 
-
-    // TODO Take vertical mode
     /**
      * each row or line at least show one child
-     *
+     * <p>
      * horizontal only show child can show or partly show in parent
      */
     @SuppressLint("DrawAllocation")
@@ -165,7 +148,7 @@ public class AutoWrapLayout extends ViewGroup {
             if (child.getVisibility() == View.GONE)
                 continue;
             final MarginLayoutParams lp =
-                    (MarginLayoutParams)child.getLayoutParams();
+                    (MarginLayoutParams) child.getLayoutParams();
             childWidth = child.getMeasuredWidth();
             childHeight = child.getMeasuredHeight();
 
@@ -239,10 +222,13 @@ public class AutoWrapLayout extends ViewGroup {
         setMeasuredDimension(measuredWidth, measuredHeight);
     }
 
+
+    // TODO Take vertical mode
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int count = rectList.size();
-        for(int i = 0; i < count; i++){
+        for (int i = 0; i < count; i++) {
             final View child = this.getChildAt(i);
             if (child.getVisibility() == View.GONE)
                 continue;
@@ -264,5 +250,17 @@ public class AutoWrapLayout extends ViewGroup {
     @Override
     protected MarginLayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         return new MarginLayoutParams(p);
+    }
+
+    public enum Alignment {
+        TOP(0),
+        CENTER(1),
+        BOTTOM(2);
+
+        final int nativeInt;
+
+        Alignment(int ni) {
+            nativeInt = ni;
+        }
     }
 }

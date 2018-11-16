@@ -70,10 +70,10 @@ public class SensitiveCheckBox extends AppCompatCheckBox {
         /**
          * Called when the checked state of a compound button has changed.
          *
-         * @param view The sensitive check box view whose state has changed.
-         * @param isChecked  The new checked state of buttonView.
-         * @param fromUser True if the rating change was initiated by a user's
-         *            touch gesture.
+         * @param view      The sensitive check box view whose state has changed.
+         * @param isChecked The new checked state of buttonView.
+         * @param fromUser  True if the rating change was initiated by a user's
+         *                  touch gesture.
          */
         void onCheckedChanged(SensitiveCheckBox view, boolean isChecked, boolean fromUser);
     }

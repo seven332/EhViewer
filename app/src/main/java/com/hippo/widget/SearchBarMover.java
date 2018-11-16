@@ -29,16 +29,15 @@ import com.hippo.yorozuya.ViewUtils;
 public class SearchBarMover extends RecyclerView.OnScrollListener {
 
     private static final long ANIMATE_TIME = 300L;
-
-    private boolean mShow;
-    private ValueAnimator mSearchBarMoveAnimator;
     private final Helper mHelper;
     private final View mSearchBar;
+    private boolean mShow;
+    private ValueAnimator mSearchBarMoveAnimator;
 
     public SearchBarMover(Helper helper, View searchBar, RecyclerView... recyclerViews) {
         mHelper = helper;
         mSearchBar = searchBar;
-        for (RecyclerView recyclerView: recyclerViews) {
+        for (RecyclerView recyclerView : recyclerViews) {
             recyclerView.addOnScrollListener(this);
         }
     }
@@ -50,7 +49,7 @@ public class SearchBarMover extends RecyclerView.OnScrollListener {
     }
 
     @Override
-    public void onScrollStateChanged(RecyclerView recyclerView, int newState){
+    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         if (newState == RecyclerView.SCROLL_STATE_IDLE && mHelper.isValidView(recyclerView)) {
             returnSearchBarPosition();
         }
@@ -88,7 +87,7 @@ public class SearchBarMover extends RecyclerView.OnScrollListener {
             }
             if (!recyclerView.isShown()) {
                 show = true;
-            } else if (recyclerView.computeVerticalScrollOffset() < mSearchBar.getBottom()){
+            } else if (recyclerView.computeVerticalScrollOffset() < mSearchBar.getBottom()) {
                 show = true;
             } else {
                 show = (int) ViewUtils.getY2(mSearchBar) > (mSearchBar.getHeight()) / 2;
@@ -130,6 +129,7 @@ public class SearchBarMover extends RecyclerView.OnScrollListener {
             });
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 int lastValue;
+
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     int value = (Integer) animation.getAnimatedValue();
@@ -188,6 +188,7 @@ public class SearchBarMover extends RecyclerView.OnScrollListener {
             });
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 int lastValue;
+
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     int value = (Integer) animation.getAnimatedValue();

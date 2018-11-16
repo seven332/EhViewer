@@ -60,6 +60,7 @@ public class ObservedTextView extends TextView {
 
     public interface OnWindowAttachListener {
         void onAttachedToWindow();
+
         void onDetachedFromWindow();
     }
 }

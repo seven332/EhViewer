@@ -30,10 +30,9 @@ import com.hippo.ehviewer.R;
 
 public class IndicatingScrollView extends ScrollView {
 
-    private int mIndicatorHeight;
-
     private final Paint mPaint = new Paint();
     private final Rect mTemp = new Rect();
+    private int mIndicatorHeight;
 
     public IndicatingScrollView(Context context) {
         super(context);

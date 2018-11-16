@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
@@ -44,6 +45,7 @@ import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.collect.IntList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,8 +166,17 @@ public class ContentLayout extends FrameLayout {
 
     public abstract static class ContentHelper<E extends Parcelable> implements ViewTransition.OnShowViewListener {
 
+        public static final int TYPE_REFRESH = 0;
+        public static final int TYPE_PRE_PAGE = 1;
+        public static final int TYPE_PRE_PAGE_KEEP_POS = 2;
+        public static final int TYPE_NEXT_PAGE = 3;
+        public static final int TYPE_NEXT_PAGE_KEEP_POS = 4;
+        public static final int TYPE_SOMEWHERE = 5;
+        public static final int TYPE_REFRESH_PAGE = 6;
+        public static final int REFRESH_TYPE_HEADER = 0;
+        public static final int REFRESH_TYPE_FOOTER = 1;
+        public static final int REFRESH_TYPE_PROGRESS_VIEW = 2;
         private static final String TAG = ContentHelper.class.getSimpleName();
-
         private static final String KEY_SUPER = "super";
         private static final String KEY_SHOWN_VIEW = "shown_view";
         private static final String KEY_TIP = "tip";
@@ -175,81 +186,50 @@ public class ContentLayout extends FrameLayout {
         private static final String KEY_START_PAGE = "start_page";
         private static final String KEY_END_PAGE = "end_page";
         private static final String KEY_PAGES = "pages";
-
-        public static final int TYPE_REFRESH = 0;
-        public static final int TYPE_PRE_PAGE = 1;
-        public static final int TYPE_PRE_PAGE_KEEP_POS = 2;
-        public static final int TYPE_NEXT_PAGE = 3;
-        public static final int TYPE_NEXT_PAGE_KEEP_POS = 4;
-        public static final int TYPE_SOMEWHERE = 5;
-        public static final int TYPE_REFRESH_PAGE = 6;
-
-        public static final int REFRESH_TYPE_HEADER = 0;
-        public static final int REFRESH_TYPE_FOOTER = 1;
-        public static final int REFRESH_TYPE_PROGRESS_VIEW = 2;
-
-        private ProgressView mProgressView;
-        private TextView mTipView;
-        private ViewGroup mContentView;
-
-        private RefreshLayout mRefreshLayout;
-        private EasyRecyclerView mRecyclerView;
-
-        private ViewTransition mViewTransition;
-
-        /**
-         * Store data
-         */
-        private ArrayList<E> mData = new ArrayList<>();
-
         /**
          * Generate task id
          */
         private final IntIdGenerator mIdGenerator = new IntIdGenerator();
-
+        private final LayoutManagerUtils.OnScrollToPositionListener mOnScrollToPositionListener =
+                new LayoutManagerUtils.OnScrollToPositionListener() {
+                    @Override
+                    public void onScrollToPosition(int position) {
+                        ContentHelper.this.onScrollToPosition(position);
+                    }
+                };
+        private ProgressView mProgressView;
+        private TextView mTipView;
+        private ViewGroup mContentView;
+        private RefreshLayout mRefreshLayout;
+        private EasyRecyclerView mRecyclerView;
+        private ViewTransition mViewTransition;
+        /**
+         * Store data
+         */
+        private ArrayList<E> mData = new ArrayList<>();
         /**
          * Store the page divider index
-         *
+         * <p>
          * For example, the data contain page 3, page 4, page 5,
          * page 3 size is 7, page 4 size is 8, page 5 size is 9,
          * so <code>mPageDivider</code> contain 7, 15, 24.
          */
         private IntList mPageDivider = new IntList();
-
         /**
          * The first page in <code>mData</code>
          */
         private int mStartPage;
-
         /**
          * The last page + 1 in <code>mData</code>
          */
         private int mEndPage;
-
         /**
          * The available page count.
          */
         private int mPages;
-
         private int mCurrentTaskId;
         private int mCurrentTaskType;
         private int mCurrentTaskPage;
-
-        private int mNextPageScrollSize;
-
-        private String mEmptyString = "No hint";
-
-        private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (!mRefreshLayout.isRefreshing() && mRefreshLayout.isAlmostBottom() && mEndPage < mPages) {
-                    // Get next page
-                    mRefreshLayout.setFooterRefreshing(true);
-                    mOnRefreshListener.onFooterRefresh();
-                }
-            }
-        };
-
         private final RefreshLayout.OnRefreshListener mOnRefreshListener = new RefreshLayout.OnRefreshListener() {
             @Override
             public void onHeaderRefresh() {
@@ -282,14 +262,19 @@ public class ContentLayout extends FrameLayout {
                 }
             }
         };
-
-        private final LayoutManagerUtils.OnScrollToPositionListener mOnScrollToPositionListener =
-                new LayoutManagerUtils.OnScrollToPositionListener() {
-                    @Override
-                    public void onScrollToPosition(int position) {
-                        ContentHelper.this.onScrollToPosition(position);
-                    }
-                };
+        private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (!mRefreshLayout.isRefreshing() && mRefreshLayout.isAlmostBottom() && mEndPage < mPages) {
+                    // Get next page
+                    mRefreshLayout.setFooterRefreshing(true);
+                    mOnRefreshListener.onFooterRefresh();
+                }
+            }
+        };
+        private int mNextPageScrollSize;
+        private String mEmptyString = "No hint";
+        private int mSavedDataId = IntIdGenerator.INVALID_ID;
 
         private void init(ContentLayout contentLayout) {
             mNextPageScrollSize = LayoutUtils.dp2pix(contentLayout.getContext(), 48);
@@ -323,7 +308,7 @@ public class ContentLayout extends FrameLayout {
          * Call {@link #onGetPageData(int, List)} when get data
          *
          * @param taskId task id
-         * @param page the page to get
+         * @param page   the page to get
          */
         protected abstract void getPageData(int taskId, int type, int page);
 
@@ -335,10 +320,12 @@ public class ContentLayout extends FrameLayout {
 
         protected abstract void notifyItemRangeInserted(int positionStart, int itemCount);
 
-        protected void onScrollToPosition(int postion) {}
+        protected void onScrollToPosition(int postion) {
+        }
 
         @Override
-        public void onShowView(View hiddenView, View shownView) {}
+        public void onShowView(View hiddenView, View shownView) {
+        }
 
         public int getShownViewIndex() {
             return mViewTransition.getShownViewIndex();
@@ -361,8 +348,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         /**
-         * @throws IndexOutOfBoundsException
-         *                if {@code location < 0 || location >= size()}
+         * @throws IndexOutOfBoundsException if {@code location < 0 || location >= size()}
          */
         public E getDataAt(int location) {
             return mData.get(location);
@@ -854,8 +840,6 @@ public class ContentLayout extends FrameLayout {
                 getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
             }
         }
-
-        private int mSavedDataId = IntIdGenerator.INVALID_ID;
 
         private Parcelable saveInstanceState(Parcelable superState) {
             Bundle bundle = new Bundle();
