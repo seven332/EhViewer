@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -658,7 +657,7 @@
     <string name="settings_advanced_custom_hosts_title">hosts.txt personalisé</string>
     <string name="settings_advanced_custom_hosts_summary">Mapper l\'hôte à l\'adresse IP\nIls pouvent redéfinir l\'hosts.txt de l\'app</string>
     <string name="app_language_system">Langue du système (défaut)</string>
-   <string name="settings_eh_theme">Thème</string>
+    <string name="settings_eh_theme">Thème</string>
     <string name="settings_eh_theme_light">Blanc</string>
     <string name="settings_eh_theme_dark">Gris</string>
     <string name="settings_eh_theme_black">Noir</string>
@@ -670,7 +669,7 @@
     <string name="settings_about_donate_copied">Copiée</string>
     <string name="settings_eh_identity_cookies">Voir les cookies</string>
     <string name="settings_eh_identity_cookies_summary">Les cookies qui sont utilisés pour vous identifier</string>
-    <string name="settings_eh_identity_cookies_signed">Tout le monde peut utiliser les cookies de ce compte pour s'y connecter.&lt;br&gt;&lt;b&gt;GARDEZ-LES BIEN !&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_signed">Tout le monde peut utiliser les cookies de ce compte pour s\'y connecter.&lt;br&gt;&lt;b&gt;GARDEZ-LES BIEN !&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
     <string name="settings_eh_identity_cookies_tourist">Vous ne vous êtes pas connecté.</string>
     <string name="settings_eh_identity_cookies_copy">Copier</string>
 </resources>
