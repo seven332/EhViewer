@@ -239,7 +239,7 @@ public class FavoritesScene extends BaseScene implements
     public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_favorites, container, false);
-        ContentLayout contentLayout = (ContentLayout) view.findViewById(R.id.content_layout);
+        ContentLayout contentLayout = view.findViewById(R.id.content_layout);
         MainActivity activity = getActivity2();
         Assert.assertNotNull(activity);
         mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(activity, R.id.draw_view);
@@ -516,7 +516,7 @@ public class FavoritesScene extends BaseScene implements
             }
         });
 
-        EasyRecyclerView recyclerView = (EasyRecyclerView) view.findViewById(R.id.recycler_view_drawer);
+        EasyRecyclerView recyclerView = view.findViewById(R.id.recycler_view_drawer);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 

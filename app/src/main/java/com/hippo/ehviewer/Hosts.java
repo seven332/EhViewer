@@ -196,11 +196,7 @@ public class Hosts {
       }
     }
 
-    if (labelLength < 1 || labelLength > 63) {
-      return false;
-    }
-
-    return true;
+      return labelLength >= 1 && labelLength <= 63;
   }
 
   /**

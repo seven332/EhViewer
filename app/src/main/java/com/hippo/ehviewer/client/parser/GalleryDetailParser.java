@@ -350,7 +350,7 @@ public class GalleryDetailParser {
      * Parse tag groups with regular expressions
      */
     @NonNull
-    private static GalleryTagGroup[] parseTagGroups(String body) throws EhException {
+    private static GalleryTagGroup[] parseTagGroups(String body) {
         List<GalleryTagGroup> list = new LinkedList<>();
 
         Matcher m = PATTERN_TAG_GROUP.matcher(body);

@@ -208,7 +208,7 @@ public final class SystemUiHelper {
          *
          * @param visible True if the system UI is visible.
          */
-        public void onVisibilityChange(boolean visible);
+        void onVisibilityChange(boolean visible);
     }
 
     static abstract class SystemUiHelperImpl {

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,65 +14,63 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
         android:key="author"
-        android:title="@string/settings_about_author"/>
+        android:title="@string/settings_about_author" />
 
     <com.hippo.preference.UrlPreference
-      android:key="telegram"
-      android:title="@string/settings_about_telegram"
-      app:url="https://t.me/ehviewer"/>
+        android:key="telegram"
+        android:title="@string/settings_about_telegram"
+        app:url="https://t.me/ehviewer" />
 
     <com.hippo.preference.UrlPreference
         android:key="website"
         android:title="@string/settings_about_website"
-        app:url="http://www.ehviewer.com"/>
+        app:url="http://www.ehviewer.com" />
 
     <com.hippo.preference.UrlPreference
         android:key="source"
         android:title="@string/settings_about_source"
-        app:url="https://github.com/seven332/EhViewer"/>
+        app:url="https://github.com/seven332/EhViewer" />
 
     <com.hippo.preference.UrlPreference
         android:key="changelog"
         android:title="@string/settings_about_changelog"
-        app:url="http://www.ehviewer.com/changelog"/>
+        app:url="http://www.ehviewer.com/changelog" />
 
     <com.hippo.preference.UrlPreference
         android:key="help"
         android:title="@string/settings_about_help"
-        app:url="http://www.ehviewer.com/help"/>
+        app:url="http://www.ehviewer.com/help" />
 
     <com.hippo.preference.ActivityPreference
         android:key="license"
-        android:title="@string/settings_about_license"
         android:summary="@string/settings_about_license_summary"
-        app:activity="com.hippo.ehviewer.ui.LicenseActivity"/>
+        android:title="@string/settings_about_license"
+        app:activity="com.hippo.ehviewer.ui.LicenseActivity" />
 
-    <com.hippo.ehviewer.preference.VersionPreference
-        android:key="version"/>
+    <com.hippo.ehviewer.preference.VersionPreference android:key="version" />
 
     <Preference
         android:key="check_for_updates"
-        android:title="@string/settings_about_check_for_updates"/>
+        android:title="@string/settings_about_check_for_updates" />
 
     <com.hippo.preference.SwitchPreference
+        android:defaultValue="@bool/beta"
         android:key="beta_update_channel"
-        android:title="@string/settings_about_beta_update_channel"
         android:summary="@string/settings_about_beta_update_channel_summary"
-        android:defaultValue="@bool/beta"/>
+        android:title="@string/settings_about_beta_update_channel" />
 
     <com.hippo.preference.SwitchPreference
+        android:defaultValue="@bool/auto_check_update"
         android:key="auto_check_for_updates"
-        android:title="@string/settings_about_auto_check_for_updates"
-        android:defaultValue="@bool/auto_check_update"/>
+        android:title="@string/settings_about_auto_check_for_updates" />
 
     <Preference
         android:key="donate"
-        android:title="@string/settings_about_donate"/>
+        android:title="@string/settings_about_donate" />
 
 </PreferenceScreen>

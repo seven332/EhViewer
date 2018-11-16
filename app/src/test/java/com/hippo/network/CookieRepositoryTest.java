@@ -177,7 +177,7 @@ public class CookieRepositoryTest {
     repository.saveFromResponse(urlEh, Collections.singletonList(cookieEh2));
     Map<String, CookieSet> map = Reflect.on(repository).field("map").get();
     assertEquals(1, map.size());
-    equals(map.get("www.ehviewer.com"), Collections.<Cookie>emptyList());
+    equals(map.get("www.ehviewer.com"), Collections.emptyList());
     repository.close();
 
     repository = new CookieRepository(app, "cookie.db");

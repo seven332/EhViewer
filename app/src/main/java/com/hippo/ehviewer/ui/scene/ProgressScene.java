@@ -118,10 +118,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
             mGid = args.getLong(KEY_GID, -1);
             mPToken = args.getString(KEY_PTOKEN, null);
             mPage = args.getInt(KEY_PAGE, -1);
-            if (mGid == -1 || mPToken == null || mPage == -1) {
-                return false;
-            }
-            return true;
+            return mGid != -1 && mPToken != null && mPage != -1;
         }
 
         return false;

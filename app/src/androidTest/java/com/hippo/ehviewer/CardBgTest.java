@@ -141,7 +141,7 @@ public class CardBgTest extends TestCase {
 
     private void doGenCardBg(OutputStream os, int color, float radius, float base,
             float topAlpha, float topOffset, float topBlur,
-            float bottomAlpha, float bottomOffset, float bottomBlur) throws FileNotFoundException {
+            float bottomAlpha, float bottomOffset, float bottomBlur) {
 
         Path path = getPath(radius, base);
         path.offset(MAX_SIZE / 2, MAX_SIZE / 2);

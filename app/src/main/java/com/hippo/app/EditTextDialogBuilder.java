@@ -42,7 +42,7 @@ public class EditTextDialogBuilder extends AlertDialog.Builder implements EditTe
         View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_edittext_builder, null);
         setView(view);
         mTextInputLayout = (TextInputLayout) view;
-        mEditText = (EditText) view.findViewById(R.id.edit_text);
+        mEditText = view.findViewById(R.id.edit_text);
         mEditText.setText(text);
         mEditText.setSelection(mEditText.getText().length());
         mEditText.setOnEditorActionListener(this);

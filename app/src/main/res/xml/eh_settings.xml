@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,101 +14,100 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.hippo.ehviewer.preference.SignOutPreference
         android:key="sign_out"
-        android:title="@string/settings_eh_sign_out"
-        android:summary="@string/settings_eh_sign_out_summary"/>
+        android:summary="@string/settings_eh_sign_out_summary"
+        android:title="@string/settings_eh_sign_out" />
 
     <com.hippo.ehviewer.preference.IdentityCookiePreference
         android:key="identity_cookie"
-        android:title="@string/settings_eh_identity_cookies"
-        android:summary="@string/settings_eh_identity_cookies_summary"/>
+        android:summary="@string/settings_eh_identity_cookies_summary"
+        android:title="@string/settings_eh_identity_cookies" />
 
     <com.hippo.preference.ListPreference
+        android:defaultValue="1"
         android:key="gallery_site"
-        android:title="@string/settings_eh_gallery_site"
         android:summary="%s"
+        android:title="@string/settings_eh_gallery_site"
         app:entries="@array/gallery_site_entries"
-        app:entryValues="@array/gallery_site_entry_values"
-        android:defaultValue="1"/>
+        app:entryValues="@array/gallery_site_entry_values" />
 
     <com.hippo.preference.ActivityPreference
         android:key="u_config"
-        android:title="@string/settings_u_config"
         android:summary="@string/settings_u_config_summary"
-        app:activity="com.hippo.ehviewer.ui.UConfigActivity"/>
+        android:title="@string/settings_u_config"
+        app:activity="com.hippo.ehviewer.ui.UConfigActivity" />
 
     <com.hippo.preference.ListPreference
+        android:defaultValue="0"
         android:key="theme"
+        android:summary="%s"
         android:title="@string/settings_eh_theme"
-        android:summary="%s"
         app:entries="@array/theme_entries"
-        app:entryValues="@array/theme_entry_values"
-        android:defaultValue="0"/>
+        app:entryValues="@array/theme_entry_values" />
 
     <com.hippo.preference.ListPreference
+        android:defaultValue="0"
         android:key="list_mode"
+        android:summary="%s"
         android:title="@string/settings_eh_list_mode"
-        android:summary="%s"
         app:entries="@array/list_mode_entries"
-        app:entryValues="@array/list_mode_entry_values"
-        android:defaultValue="0"/>
+        app:entryValues="@array/list_mode_entry_values" />
 
     <com.hippo.preference.ListPreference
+        android:defaultValue="0"
         android:key="detail_size"
+        android:summary="%s"
         android:title="@string/settings_eh_detail_size"
-        android:summary="%s"
         app:entries="@array/detail_size_entries"
-        app:entryValues="@array/detail_size_entry_values"
-        android:defaultValue="0"/>
+        app:entryValues="@array/detail_size_entry_values" />
 
     <com.hippo.preference.ListPreference
+        android:defaultValue="1"
         android:key="thumb_size"
-        android:title="@string/settings_eh_thumb_size"
         android:summary="%s"
+        android:title="@string/settings_eh_thumb_size"
         app:entries="@array/thumb_size_entries"
-        app:entryValues="@array/thumb_size_entry_values"
-        android:defaultValue="1"/>
+        app:entryValues="@array/thumb_size_entry_values" />
 
     <com.hippo.preference.ListPreference
+        android:defaultValue="0"
         android:key="thumb_resolution"
-        android:title="@string/settings_eh_thumb_resolution"
         android:summary="@string/settings_eh_thumb_resolution_summary"
+        android:title="@string/settings_eh_thumb_resolution"
         app:entries="@array/thumb_resolution_entries"
-        app:entryValues="@array/thumb_resolution_entry_values"
-        android:defaultValue="0"/>
+        app:entryValues="@array/thumb_resolution_entry_values" />
 
     <com.hippo.preference.SwitchPreference
-      android:key="fix_thumb_url"
-      android:title="@string/settings_eh_fix_thumb_url"
-      android:defaultValue="false"/>
+        android:defaultValue="false"
+        android:key="fix_thumb_url"
+        android:title="@string/settings_eh_fix_thumb_url" />
 
     <com.hippo.preference.SwitchPreference
+        android:defaultValue="false"
         android:key="show_jpn_title"
         android:title="@string/settings_eh_show_jpn_title"
-        app:summaryOn="@string/settings_eh_show_jpn_title_summary_on"
         app:summaryOff="@string/settings_eh_show_jpn_title_summary_off"
-        android:defaultValue="false"/>
+        app:summaryOn="@string/settings_eh_show_jpn_title_summary_on" />
 
     <com.hippo.preference.SwitchPreference
+        android:defaultValue="false"
         android:key="show_gallery_pages"
-        android:title="@string/settings_eh_show_gallery_pages"
         android:summary="@string/settings_eh_show_gallery_pages_summary"
-        android:defaultValue="false"/>
+        android:title="@string/settings_eh_show_gallery_pages" />
 
     <com.hippo.preference.ActivityPreference
         android:key="filter"
-        android:title="@string/settings_eh_filter"
         android:summary="@string/settings_eh_filter_summary"
-        app:activity="com.hippo.ehviewer.ui.FilterActivity"/>
+        android:title="@string/settings_eh_filter"
+        app:activity="com.hippo.ehviewer.ui.FilterActivity" />
 
     <com.hippo.preference.SwitchPreference
+        android:defaultValue="false"
         android:key="cellular_network_warning"
-        android:title="@string/settings_eh_cellular_network_warning"
-        android:defaultValue="false"/>
+        android:title="@string/settings_eh_cellular_network_warning" />
 
 </PreferenceScreen>

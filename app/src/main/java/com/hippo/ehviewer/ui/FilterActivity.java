@@ -244,7 +244,7 @@ public class FilterActivity extends ToolbarActivity {
         public FilterHolder(View itemView) {
             super(itemView);
             text = (TextView) ViewUtils.$$(itemView, R.id.text);
-            icon = (ImageView) itemView.findViewById(R.id.icon);
+            icon = itemView.findViewById(R.id.icon);
 
             if (null != icon) {
                 icon.setOnClickListener(this);

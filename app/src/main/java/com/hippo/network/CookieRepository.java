@@ -71,13 +71,10 @@ public class CookieRepository implements CookieJar {
             return true; // As in 'example.com' matching 'example.com'.
         }
 
-        if (urlHost.endsWith(domain)
+        return urlHost.endsWith(domain)
                 && urlHost.charAt(urlHost.length() - domain.length() - 1) == '.'
-                && !verifyAsIpAddress(urlHost)) {
-            return true; // As in 'example.com' matching 'www.example.com'.
-        }
+                && !verifyAsIpAddress(urlHost);
 
-        return false;
     }
 
     public synchronized void addCookie(Cookie cookie) {

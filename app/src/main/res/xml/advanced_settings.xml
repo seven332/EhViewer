@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,69 +14,65 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.hippo.preference.SwitchPreference
+        android:defaultValue="@bool/beta"
         android:key="save_parse_error_body"
-        android:title="@string/settings_advanced_save_parse_error_body"
         android:summary="@string/settings_advanced_save_parse_error_body_summary"
-        android:defaultValue="@bool/beta"/>
+        android:title="@string/settings_advanced_save_parse_error_body" />
 
     <Preference
         android:key="dump_logcat"
-        android:title="@string/settings_advanced_dump_logcat"
-        android:summary="@string/settings_advanced_dump_logcat_summary"/>
+        android:summary="@string/settings_advanced_dump_logcat_summary"
+        android:title="@string/settings_advanced_dump_logcat" />
 
     <com.hippo.ehviewer.preference.ClearDownloadPathCachePreference
         android:key="clear_download_path_cache"
-        android:title="@string/settings_advanced_clear_download_path_cache"
-        android:summary="@string/settings_advanced_clear_download_path_cache_summary"/>
+        android:summary="@string/settings_advanced_clear_download_path_cache_summary"
+        android:title="@string/settings_advanced_clear_download_path_cache" />
 
     <Preference
         android:key="clear_memory_cache"
-        android:title="@string/settings_advanced_clear_memory_cache"
-        android:summary="@string/settings_advanced_clear_memory_cache_summary"/>
+        android:summary="@string/settings_advanced_clear_memory_cache_summary"
+        android:title="@string/settings_advanced_clear_memory_cache" />
 
-    <com.hippo.preference.ListPreference
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.hippo.preference.ListPreference xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:defaultValue="160"
         android:key="read_cache_size"
-        android:title="@string/settings_advanced_read_cache_size"
         android:summary="%s"
+        android:title="@string/settings_advanced_read_cache_size"
         app:entries="@array/read_cache_size_entries"
-        app:entryValues="@array/read_cache_size_entry_values"
-        android:defaultValue="160"/>
+        app:entryValues="@array/read_cache_size_entry_values" />
 
-    <com.hippo.preference.ListPreference
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      android:key="app_language"
-      android:title="@string/settings_advanced_app_language_title"
-      android:summary="%s"
-      app:entries="@array/app_language_entries"
-      app:entryValues="@array/app_language_entry_values"
-      android:defaultValue="system"/>
+    <com.hippo.preference.ListPreference xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:defaultValue="system"
+        android:key="app_language"
+        android:summary="%s"
+        android:title="@string/settings_advanced_app_language_title"
+        app:entries="@array/app_language_entries"
+        app:entryValues="@array/app_language_entry_values" />
 
     <com.hippo.preference.SwitchPreference
+        android:defaultValue="false"
         android:key="built_in_hosts"
-        android:title="@string/settings_advanced_built_in_hosts_title"
         android:summary="@string/settings_advanced_built_in_hosts_summary"
-        android:defaultValue="false"/>
+        android:title="@string/settings_advanced_built_in_hosts_title" />
 
-    <com.hippo.preference.ActivityPreference
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.hippo.preference.ActivityPreference xmlns:app="http://schemas.android.com/apk/res-auto"
         android:key="custom_hosts"
-        android:title="@string/settings_advanced_custom_hosts_title"
         android:summary="@string/settings_advanced_custom_hosts_summary"
-        app:activity="com.hippo.ehviewer.ui.HostsActivity"/>
+        android:title="@string/settings_advanced_custom_hosts_title"
+        app:activity="com.hippo.ehviewer.ui.HostsActivity" />
 
     <Preference
         android:key="export_data"
-        android:title="@string/settings_advanced_export_data"
-        android:summary="@string/settings_advanced_export_data_summary"/>
+        android:summary="@string/settings_advanced_export_data_summary"
+        android:title="@string/settings_advanced_export_data" />
 
     <Preference
         android:key="import_data"
-        android:title="@string/settings_advanced_import_data"
-        android:summary="@string/settings_advanced_import_data_summary"/>
+        android:summary="@string/settings_advanced_import_data_summary"
+        android:title="@string/settings_advanced_import_data" />
 
 </PreferenceScreen>

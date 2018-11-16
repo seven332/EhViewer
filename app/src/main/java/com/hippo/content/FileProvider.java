@@ -701,12 +701,12 @@ public class FileProvider extends ContentProvider {
         /**
          * Return a {@link Uri} that represents the given {@link File}.
          */
-        public Uri getUriForFile(File file);
+        Uri getUriForFile(File file);
 
         /**
          * Return a {@link File} that represents the given {@link Uri}.
          */
-        public File getFileForUri(Uri uri);
+        File getFileForUri(Uri uri);
     }
 
     /**

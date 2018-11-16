@@ -231,11 +231,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         if (q.advanceSearch != mAdvanceSearch) {
             return false;
         }
-        if (q.minRating != mMinRating) {
-            return false;
-        }
-
-        return true;
+        return q.minRating == mMinRating;
     }
 
     /**

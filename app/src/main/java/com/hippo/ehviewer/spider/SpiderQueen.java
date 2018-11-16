@@ -1472,7 +1472,7 @@ public final class SpiderQueen implements Runnable {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             mPipe.close();
             mPipe.release();
         }

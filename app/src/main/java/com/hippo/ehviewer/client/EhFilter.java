@@ -217,11 +217,7 @@ public final class EhFilter {
                 !tagNamespace.equals(filterNamespace)) {
             return false;
         }
-        if (!tagName.equals(filterName)) {
-            return false;
-        }
-
-        return true;
+        return tagName.equals(filterName);
     }
 
     public synchronized boolean filterTag(GalleryInfo info) {

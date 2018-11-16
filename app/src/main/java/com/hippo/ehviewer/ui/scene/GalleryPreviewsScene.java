@@ -250,8 +250,8 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         public GalleryPreviewHolder(View itemView) {
             super(itemView);
 
-            image = (LoadImageView) itemView.findViewById(R.id.image);
-            text = (TextView) itemView.findViewById(R.id.text);
+            image = itemView.findViewById(R.id.image);
+            text = itemView.findViewById(R.id.text);
         }
     }
 

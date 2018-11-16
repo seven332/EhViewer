@@ -84,12 +84,12 @@ public class UConfigActivity extends ToolbarActivity {
 
     setContentView(R.layout.activity_u_config);
     setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
-    webView = (WebView) findViewById(R.id.webview);
+    webView = findViewById(R.id.webview);
     webView.getSettings().setJavaScriptEnabled(true);
     webView.setWebViewClient(new UConfigWebViewClient());
     webView.setWebChromeClient(new UConfigWebChromeClient());
     webView.loadUrl(url);
-    progress = (ProgressView) findViewById(R.id.progress);
+    progress = findViewById(R.id.progress);
 
     Snackbar.make(webView, R.string.apply_tip, Snackbar.LENGTH_LONG).show();
   }
@@ -194,9 +194,9 @@ public class UConfigActivity extends ToolbarActivity {
 
       View promptView = UConfigActivity.this.getLayoutInflater()
           .inflate(R.layout.dialog_js_prompt, null, false);
-      TextView messageView = (TextView) promptView.findViewById(R.id.message);
+      TextView messageView = promptView.findViewById(R.id.message);
       messageView.setText(message);
-      final EditText valueView = (EditText) promptView.findViewById(R.id.value);
+      final EditText valueView = promptView.findViewById(R.id.value);
       valueView.setText(defaultValue);
 
       new AlertDialog.Builder(context)

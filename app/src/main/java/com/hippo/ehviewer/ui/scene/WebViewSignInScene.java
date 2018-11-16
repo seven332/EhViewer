@@ -114,7 +114,7 @@ public class WebViewSignInScene extends SolidScene {
                 cookies.add(cookie);
             }
 
-            return cookies != null ? cookies : Collections.<Cookie>emptyList();
+            return cookies != null ? cookies : Collections.emptyList();
         }
 
         private void addCookie(Context context, String domain, Cookie cookie) {

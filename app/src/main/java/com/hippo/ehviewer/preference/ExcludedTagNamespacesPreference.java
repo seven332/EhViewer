@@ -97,7 +97,7 @@ public class ExcludedTagNamespacesPreference extends DialogPreference {
 
     private void setExcludedTagNamespaces(View view, int value) {
         for (int i = 0; i < EXCLUDED_TAG_GROUP_RES_ID.length; i++) {
-            CheckBox cb = (CheckBox) view.findViewById(EXCLUDED_TAG_GROUP_RES_ID[i]);
+            CheckBox cb = view.findViewById(EXCLUDED_TAG_GROUP_RES_ID[i]);
             cb.setChecked(NumberUtils.int2boolean(value & EXCLUDED_TAG_GROUP_ID[i]));
         }
     }
@@ -105,7 +105,7 @@ public class ExcludedTagNamespacesPreference extends DialogPreference {
     private int getExcludedTagNamespaces(View view) {
         int newValue = 0;
         for (int i = 0; i < EXCLUDED_TAG_GROUP_RES_ID.length; i++) {
-            CheckBox cb = (CheckBox) view.findViewById(EXCLUDED_TAG_GROUP_RES_ID[i]);
+            CheckBox cb = view.findViewById(EXCLUDED_TAG_GROUP_RES_ID[i]);
             if (cb.isChecked()) {
                 newValue |= EXCLUDED_TAG_GROUP_ID[i];
             }

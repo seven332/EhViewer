@@ -45,22 +45,22 @@ public abstract class ToolbarActivity extends EhActivity {
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(R.layout.activity_toolbar);
-        getLayoutInflater().inflate(layoutResID, (ViewGroup) findViewById(R.id.content_panel), true);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getLayoutInflater().inflate(layoutResID, findViewById(R.id.content_panel), true);
+        setSupportActionBar(findViewById(R.id.toolbar));
     }
 
     @Override
     public void setContentView(View view) {
         super.setContentView(R.layout.activity_toolbar);
         ((ViewGroup) findViewById(R.id.content_panel)).addView(view);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
     }
 
     @Override
     public void setContentView(View view, ViewGroup.LayoutParams params) {
         super.setContentView(R.layout.activity_toolbar);
         ((ViewGroup) findViewById(R.id.content_panel)).addView(view, params);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
     }
 
     public void setNavigationIcon(@DrawableRes int resId) {

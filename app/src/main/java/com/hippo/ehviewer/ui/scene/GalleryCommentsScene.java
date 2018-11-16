@@ -605,9 +605,9 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         public CommentHolder(View itemView) {
             super(itemView);
-            user = (TextView) itemView.findViewById(R.id.user);
-            time = (TextView) itemView.findViewById(R.id.time);
-            comment = (LinkifyTextView) itemView.findViewById(R.id.comment);
+            user = itemView.findViewById(R.id.user);
+            time = itemView.findViewById(R.id.time);
+            comment = itemView.findViewById(R.id.comment);
         }
     }
 

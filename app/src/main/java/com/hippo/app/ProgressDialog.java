@@ -153,14 +153,14 @@ public class ProgressDialog extends AlertDialog {
                 }
             };
             View view = inflater.inflate(R.layout.alert_dialog_progress_material, null);
-            mProgress = (ProgressBar) view.findViewById(R.id.progress);
-            mProgressNumber = (TextView) view.findViewById(R.id.progress_number);
-            mProgressPercent = (TextView) view.findViewById(R.id.progress_percent);
+            mProgress = view.findViewById(R.id.progress);
+            mProgressNumber = view.findViewById(R.id.progress_number);
+            mProgressPercent = view.findViewById(R.id.progress_percent);
             setView(view);
         } else {
             View view = inflater.inflate(R.layout.progress_dialog_material, null);
-            mProgress = (ProgressBar) view.findViewById(R.id.progress);
-            mMessageView = (TextView) view.findViewById(R.id.message);
+            mProgress = view.findViewById(R.id.progress);
+            mMessageView = view.findViewById(R.id.message);
             setView(view);
         }
         if (mMax > 0) {
