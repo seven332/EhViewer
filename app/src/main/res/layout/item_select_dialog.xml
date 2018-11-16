@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +14,14 @@
   ~ limitations under the License.
   -->
 
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?attr/listPreferredItemHeightSmall"
-    android:textAppearance="?attr/textAppearanceListItemSmall"
-    android:textColor="?attr/textColorAlertDialogListItem"
+    android:ellipsize="marquee"
     android:gravity="center_vertical"
+    android:minHeight="?attr/listPreferredItemHeightSmall"
     android:paddingLeft="?attr/listPreferredItemPaddingLeft"
     android:paddingRight="?attr/listPreferredItemPaddingRight"
-    android:ellipsize="marquee"/>
+    android:textAppearance="?attr/textAppearanceListItemSmall"
+    android:textColor="?attr/textColorAlertDialogListItem" />

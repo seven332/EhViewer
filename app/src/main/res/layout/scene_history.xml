@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -28,7 +26,7 @@
         <com.hippo.easyrecyclerview.EasyRecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <com.hippo.easyrecyclerview.FastScroller
             android:id="@+id/fast_scroller"
@@ -36,20 +34,20 @@
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:paddingLeft="20dp"
-            android:paddingRight="4dp"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp"/>
+            android:paddingRight="4dp"
+            android:paddingBottom="8dp" />
 
     </FrameLayout>
 
     <TextView
         android:id="@+id/tip"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="228dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center_horizontal"
         android:drawablePadding="16dp"
-        android:text="@string/no_history"
-        style="@style/TextAppearance.AppCompat.Medium"/>
+        android:gravity="center_horizontal"
+        android:text="@string/no_history" />
 
 </FrameLayout>

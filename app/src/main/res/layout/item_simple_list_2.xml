@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +14,14 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:paddingLeft="?attr/listPreferredItemPaddingLeft"
-    android:paddingRight="?attr/listPreferredItemPaddingRight"
     android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:orientation="vertical">
+    android:paddingRight="?attr/listPreferredItemPaddingRight"
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@android:id/text1"
@@ -32,7 +30,7 @@
         android:layout_marginBottom="4dp"
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="@dimen/text_little_small"/>
+        android:textSize="@dimen/text_little_small" />
 
     <TextView
         android:id="@android:id/text2"
@@ -40,6 +38,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:textColor="?android:attr/textColorSecondary"
-        android:textSize="@dimen/text_small"/>
+        android:textSize="@dimen/text_small" />
 
 </LinearLayout>

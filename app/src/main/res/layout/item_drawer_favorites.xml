@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,31 +14,30 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:background="?android:attr/selectableItemBackground"
     android:minHeight="?attr/listPreferredItemHeightSmall"
-    android:background="?android:attr/selectableItemBackground">
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/key"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textAppearance="?attr/textAppearanceListItemSmall"
         android:gravity="center_vertical"
-        android:paddingLeft="?attr/listPreferredItemPaddingLeft"/>
+        android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+        android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:textColor="?android:attr/textColorPrimary" />
 
     <TextView
         android:id="@+id/value"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textAppearance="?attr/textAppearanceListItemSmall"
         android:gravity="center_vertical"
-        android:paddingRight="?attr/listPreferredItemPaddingRight"/>
+        android:paddingRight="?attr/listPreferredItemPaddingRight"
+        android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:textColor="?android:attr/textColorPrimary" />
 
 </LinearLayout>

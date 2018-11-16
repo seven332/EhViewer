@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2015 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +13,13 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/comments"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:divider="@drawable/spacer_keyline"
     android:orientation="vertical"
     android:padding="@dimen/keyline_margin"
-    android:divider="@drawable/spacer_keyline"
     android:showDividers="middle">
 
     <TextView
@@ -29,6 +27,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textColor="?attr/textColorThemeAccent"/>
+        android:textColor="?attr/textColorThemeAccent" />
 
 </LinearLayout>

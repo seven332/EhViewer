@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<com.hippo.widget.IndicatingScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.hippo.widget.IndicatingScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Indicating"
     android:layout_width="match_parent"
@@ -33,7 +31,7 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <CheckBox
                 android:id="@+id/tag_group_reclass"
@@ -41,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="reclass"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText" />
 
             <CheckBox
                 android:id="@+id/tag_group_language"
@@ -49,13 +47,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="language"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText" />
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <CheckBox
                 android:id="@+id/tag_group_parody"
@@ -63,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="parody"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText" />
 
             <CheckBox
                 android:id="@+id/tag_group_character"
@@ -71,13 +69,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="character"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText" />
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <CheckBox
                 android:id="@+id/tag_group_group"
@@ -85,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="group"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText" />
 
             <CheckBox
                 android:id="@+id/tag_group_artist"
@@ -93,13 +91,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="artist"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText" />
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <CheckBox
                 android:id="@+id/tag_group_male"
@@ -107,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="male"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText" />
 
             <CheckBox
                 android:id="@+id/tag_group_female"
@@ -115,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="female"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText" />
 
         </TableRow>
     </TableLayout>

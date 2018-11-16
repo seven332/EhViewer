@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,43 +14,41 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/keyline_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/keyline_margin">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:padding="@dimen/keyline_margin"
-        app:srcCompat="@drawable/v_chart_accent_x48"/>
+        app:srcCompat="@drawable/v_chart_accent_x48" />
 
-    <com.hippo.widget.MaxSizeContainer
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.hippo.widget.MaxSizeContainer xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
         app:maxWidth="@dimen/single_max_width">
 
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
             android:paddingTop="@dimen/keyline_margin"
-            android:paddingBottom="@dimen/keyline_margin"
-            android:clipToPadding="false">
+            android:paddingBottom="@dimen/keyline_margin">
 
             <TextView
                 android:id="@+id/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:lineSpacingExtra="8dp"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="@dimen/text_little_small"
-                android:lineSpacingExtra="8dp"/>
+                android:textSize="@dimen/text_little_small" />
 
         </ScrollView>
 
@@ -59,15 +56,15 @@
 
     <LinearLayout
         android:id="@+id/buttonPanel"
+        style="?attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="bottom"
         android:orientation="horizontal"
         android:paddingLeft="12dp"
-        android:paddingRight="12dp"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:gravity="bottom"
-        style="?attr/buttonBarStyle">
+        android:paddingRight="12dp"
+        android:paddingBottom="4dp">
 
         <Button
             android:id="@+id/reject"
@@ -75,9 +72,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:text="@string/reject"
             android:textColor="?attr/colorAccent"
-            android:textStyle="bold"
-            android:text="@string/reject"/>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/accept"
@@ -85,9 +82,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:text="@string/accept"
             android:textColor="?attr/colorPrimary"
-            android:textStyle="bold"
-            android:text="@string/accept"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
 </LinearLayout>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +14,12 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/gallery_detail_header"/>
+    <include layout="@layout/gallery_detail_header" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -32,30 +29,24 @@
             android:id="@+id/below_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:divider="?attr/galleryDetailDivider"
-            android:showDividers="middle"
-            android:dividerPadding="@dimen/keyline_margin">
+            android:dividerPadding="@dimen/keyline_margin"
+            android:orientation="vertical"
+            android:showDividers="middle">
 
-            <include
-                layout="@layout/gallery_detail_info"/>
+            <include layout="@layout/gallery_detail_info" />
 
-            <include
-                layout="@layout/gallery_detail_actions"/>
+            <include layout="@layout/gallery_detail_actions" />
 
-            <include
-                layout="@layout/gallery_detail_tags"/>
+            <include layout="@layout/gallery_detail_tags" />
 
-            <include
-                layout="@layout/gallery_detail_comments"/>
+            <include layout="@layout/gallery_detail_comments" />
 
-            <include
-                layout="@layout/gallery_detail_previews"/>
+            <include layout="@layout/gallery_detail_previews" />
 
         </LinearLayout>
 
-        <include
-            layout="@layout/gallery_detail_progress"/>
+        <include layout="@layout/gallery_detail_progress" />
 
     </FrameLayout>
 </LinearLayout>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,34 +14,33 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="@dimen/keyline_margin"
-    android:paddingRight="@dimen/keyline_margin"
     android:paddingTop="8dp"
-    android:paddingBottom="8dp" >
+    android:paddingRight="@dimen/keyline_margin"
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/user"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
     <com.hippo.widget.LinkifyTextView
         android:id="@+id/comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/user"
         android:layout_below="@id/user"
+        android:layout_alignLeft="@id/user"
         android:layout_marginTop="8.0dp"
         android:ellipsize="end"
-        android:textColor="?android:attr/textColorPrimary"/>
+        android:textColor="?android:attr/textColorPrimary" />
 
 </RelativeLayout>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -26,8 +24,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/keyline_margin"
-        android:paddingRight="@dimen/keyline_margin"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:paddingRight="@dimen/keyline_margin">
 
         <TextView
             android:id="@+id/cancel"
@@ -36,14 +34,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@android:string/cancel"/>
+            android:text="@android:string/cancel" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="?attr/dividerColor"/>
+            android:background="?attr/dividerColor" />
 
         <TextView
             android:id="@+id/ok"
@@ -52,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@android:string/ok"/>
+            android:text="@android:string/ok" />
 
     </LinearLayout>
 
@@ -61,8 +59,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/keyline_margin"
-        android:paddingRight="@dimen/keyline_margin"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:paddingRight="@dimen/keyline_margin">
 
         <TextView
             android:id="@+id/select_all"
@@ -71,14 +69,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/select_all"/>
+            android:text="@string/select_all" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="?attr/dividerColor"/>
+            android:background="?attr/dividerColor" />
 
         <TextView
             android:id="@+id/deselect_all"
@@ -87,14 +85,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/deselect_all"/>
+            android:text="@string/deselect_all" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="?attr/dividerColor"/>
+            android:background="?attr/dividerColor" />
 
         <TextView
             android:id="@+id/invert_selection"
@@ -103,43 +101,42 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/invert_selection"/>
+            android:text="@string/invert_selection" />
 
     </LinearLayout>
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/keyline_margin"
-        android:paddingRight="@dimen/keyline_margin"
         android:paddingTop="8dp"
+        android:paddingRight="@dimen/keyline_margin"
         android:paddingBottom="8dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/language"/>
+            android:text="@string/language" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/original"/>
+            android:text="@string/original" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/translated"/>
+            android:text="@string/translated" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/rewrite"/>
+            android:text="@string/rewrite" />
 
     </LinearLayout>
 
@@ -148,7 +145,7 @@
         android:layout_height="1dp"
         android:layout_marginLeft="@dimen/keyline_margin"
         android:layout_marginRight="@dimen/keyline_margin"
-        android:background="?attr/dividerColor"/>
+        android:background="?attr/dividerColor" />
 
     <com.hippo.easyrecyclerview.EasyRecyclerView
         android:id="@+id/recycler_view"
@@ -157,6 +154,6 @@
         android:layout_weight="1"
         android:paddingLeft="@dimen/keyline_margin"
         android:paddingRight="@dimen/keyline_margin"
-        android:paddingBottom="8dp"/>
+        android:paddingBottom="8dp" />
 
 </LinearLayout>

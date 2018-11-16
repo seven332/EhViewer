@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,21 +14,19 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar"
-        android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/toolbarColor"
         android:saveEnabled="false"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="?attr/toolbarPopupTheme"/>
+        app:popupTheme="?attr/toolbarPopupTheme" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -39,19 +36,19 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="8dp"
-            android:background="@drawable/shadow_bottom"/>
+            android:background="@drawable/shadow_bottom" />
 
         <TextView
             android:id="@+id/tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <com.hippo.easyrecyclerview.EasyRecyclerView
             android:id="@+id/recycler_view_drawer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 </LinearLayout>

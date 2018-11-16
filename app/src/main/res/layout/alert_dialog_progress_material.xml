@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright (C) 2014 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,22 +21,25 @@
     android:paddingTop="@dimen/dialog_padding_top_material"
     android:paddingRight="?attr/dialogPreferredPadding"
     android:paddingBottom="@dimen/dialog_padding_top_material">
+
     <ProgressBar
         android:id="@+id/progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true" />
+
     <TextView
         android:id="@+id/progress_percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/progress" />
+        android:layout_below="@id/progress"
+        android:layout_alignParentLeft="true" />
+
     <TextView
         android:id="@+id/progress_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/progress" />
+        android:layout_below="@id/progress"
+        android:layout_alignParentRight="true" />
 </RelativeLayout>

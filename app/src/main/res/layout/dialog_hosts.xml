@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,40 +14,39 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:paddingLeft="?attr/dialogPreferredPadding"
-  android:paddingTop="@dimen/abc_dialog_padding_top_material"
-  android:paddingRight="?attr/dialogPreferredPadding">
-
-  <android.support.design.widget.TextInputLayout
-    android:id="@+id/host_input_layout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="?attr/dialogPreferredPadding"
+    android:paddingTop="@dimen/abc_dialog_padding_top_material"
+    android:paddingRight="?attr/dialogPreferredPadding">
 
-    <android.support.design.widget.TextInputEditText
-      android:id="@+id/host"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:hint="@string/hosts_host"
-      android:inputType="text"/>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/host_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-  </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/host"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hosts_host"
+            android:inputType="text" />
 
-  <android.support.design.widget.TextInputLayout
-    android:id="@+id/ip_input_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputEditText
-      android:id="@+id/ip"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:hint="@string/hosts_ip"
-      android:inputType="text"/>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/ip_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-  </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hosts_ip"
+            android:inputType="text" />
+
+    </android.support.design.widget.TextInputLayout>
 </LinearLayout>

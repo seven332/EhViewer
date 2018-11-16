@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,19 +14,17 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.hippo.widget.MaxSizeContainer
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.hippo.widget.MaxSizeContainer xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="32dp"
-        app:maxWidth="320dp"
-        app:maxHeight="360dp">
+        app:maxHeight="360dp"
+        app:maxWidth="320dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -37,14 +34,14 @@
             <com.hippo.widget.lockpattern.LockPatternView
                 android:id="@+id/pattern_view"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <ImageView
                 android:id="@+id/fingerprint_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_fp_40px"
                 android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_fp_40px"
                 android:visibility="gone" />
 
         </LinearLayout>

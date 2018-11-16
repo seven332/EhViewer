@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2015 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,133 +13,137 @@
   ~ limitations under the License.
   -->
 
-<merge
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TableRow>
+
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginBottom="@dimen/category_table_item_margin"
             android:layout_marginRight="@dimen/category_table_item_margin"
+            android:layout_marginBottom="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/doujinshi"
-            android:textColor="@android:color/white"
-            android:text="@string/doujinshi" />
+            android:text="@string/doujinshi"
+            android:textColor="@android:color/white" />
 
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginBottom="@dimen/category_table_item_margin"
             android:layout_marginLeft="@dimen/category_table_item_margin"
+            android:layout_marginBottom="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/manga"
-            android:textColor="@android:color/white"
-            android:text="@string/manga" />
+            android:text="@string/manga"
+            android:textColor="@android:color/white" />
     </TableRow>
 
     <TableRow>
+
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginTop="@dimen/category_table_item_margin"
-            android:layout_marginBottom="@dimen/category_table_item_margin"
             android:layout_marginRight="@dimen/category_table_item_margin"
+            android:layout_marginBottom="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/artist_cg"
-            android:textColor="@android:color/white"
-            android:text="@string/artist_cg" />
+            android:text="@string/artist_cg"
+            android:textColor="@android:color/white" />
 
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/category_table_item_margin"
             android:layout_marginTop="@dimen/category_table_item_margin"
             android:layout_marginBottom="@dimen/category_table_item_margin"
-            android:layout_marginLeft="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/game_cg"
-            android:textColor="@android:color/white"
-            android:text="@string/game_cg" />
+            android:text="@string/game_cg"
+            android:textColor="@android:color/white" />
     </TableRow>
 
     <TableRow>
+
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginTop="@dimen/category_table_item_margin"
-            android:layout_marginBottom="@dimen/category_table_item_margin"
             android:layout_marginRight="@dimen/category_table_item_margin"
+            android:layout_marginBottom="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/western"
-            android:textColor="@android:color/white"
-            android:text="@string/western" />
+            android:text="@string/western"
+            android:textColor="@android:color/white" />
 
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/category_table_item_margin"
             android:layout_marginTop="@dimen/category_table_item_margin"
             android:layout_marginBottom="@dimen/category_table_item_margin"
-            android:layout_marginLeft="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/non_h"
-            android:textColor="@android:color/white"
-            android:text="@string/non_h" />
+            android:text="@string/non_h"
+            android:textColor="@android:color/white" />
     </TableRow>
 
     <TableRow>
+
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginTop="@dimen/category_table_item_margin"
-            android:layout_marginBottom="@dimen/category_table_item_margin"
             android:layout_marginRight="@dimen/category_table_item_margin"
+            android:layout_marginBottom="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/image_set"
-            android:textColor="@android:color/white"
-            android:text="@string/image_set" />
+            android:text="@string/image_set"
+            android:textColor="@android:color/white" />
 
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/category_table_item_margin"
             android:layout_marginTop="@dimen/category_table_item_margin"
             android:layout_marginBottom="@dimen/category_table_item_margin"
-            android:layout_marginLeft="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/cosplay"
-            android:textColor="@android:color/white"
-            android:text="@string/cosplay" />
+            android:text="@string/cosplay"
+            android:textColor="@android:color/white" />
     </TableRow>
 
     <TableRow>
-        <com.hippo.widget.CheckTextView
-            style="@style/CategoryText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="@dimen/category_table_item_margin"
-            android:layout_marginRight="@dimen/category_table_item_margin"
-            android:background="@color/asian_porn"
-            android:textColor="@android:color/white"
-            android:text="@string/asian_porn" />
 
         <com.hippo.widget.CheckTextView
             style="@style/CategoryText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginTop="@dimen/category_table_item_margin"
+            android:layout_marginRight="@dimen/category_table_item_margin"
+            android:layout_weight="1"
+            android:background="@color/asian_porn"
+            android:text="@string/asian_porn"
+            android:textColor="@android:color/white" />
+
+        <com.hippo.widget.CheckTextView
+            style="@style/CategoryText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/category_table_item_margin"
+            android:layout_marginTop="@dimen/category_table_item_margin"
+            android:layout_weight="1"
             android:background="@color/misc"
-            android:textColor="@android:color/white"
-            android:text="@string/misc" />
+            android:text="@string/misc"
+            android:textColor="@android:color/white" />
     </TableRow>
 
 </merge>

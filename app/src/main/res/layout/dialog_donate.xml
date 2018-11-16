@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,87 +14,86 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:orientation="vertical"
-  android:padding="@dimen/keyline_margin">
-
-  <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:text="@string/settings_about_donate_message"/>
-
-  <Space
-    android:layout_width="wrap_content"
-    android:layout_height="@dimen/keyline_margin"/>
-
-  <TextView
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:text="@string/settings_about_donate_alipay"
-    android:textColor="?attr/textColorThemePrimary"
-    android:textStyle="bold"
-    android:textSize="@dimen/text_little_small"/>
+    android:orientation="vertical"
+    android:padding="@dimen/keyline_margin">
 
-  <TextView
-    android:id="@+id/alipay_text"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"/>
-
-  <Button
-    android:id="@+id/alipay_copy"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:text="@string/settings_about_donate_copy"
-    style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
-
-  <Space
-    android:layout_width="wrap_content"
-    android:layout_height="@dimen/keyline_margin"/>
-
-  <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:text="@string/settings_about_donate_paypal"
-    android:textColor="?attr/textColorThemePrimary"
-    android:textStyle="bold"
-    android:textSize="@dimen/text_little_small"/>
-
-  <TextView
-    android:id="@+id/paypal_text"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"/>
-
-  <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <Button
-      android:id="@+id/paypal_open"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/settings_about_donate_open"
-      style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/settings_about_donate_message" />
 
     <Space
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"/>
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/keyline_margin" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/settings_about_donate_alipay"
+        android:textColor="?attr/textColorThemePrimary"
+        android:textSize="@dimen/text_little_small"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/alipay_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
 
     <Button
-      android:id="@+id/paypal_copy"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/settings_about_donate_copy"
-      style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+        android:id="@+id/alipay_copy"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/settings_about_donate_copy" />
 
-  </LinearLayout>
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/keyline_margin" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/settings_about_donate_paypal"
+        android:textColor="?attr/textColorThemePrimary"
+        android:textSize="@dimen/text_little_small"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/paypal_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/paypal_open"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_about_donate_open" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/paypal_copy"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_about_donate_copy" />
+
+    </LinearLayout>
 </LinearLayout>

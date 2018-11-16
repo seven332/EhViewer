@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +14,11 @@
   ~ limitations under the License.
   -->
 
-<com.hippo.widget.SafeCoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.hippo.widget.SafeCoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.hippo.ehviewer.widget.EhDrawerLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.hippo.ehviewer.widget.EhDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/draw_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -30,16 +27,15 @@
         <com.hippo.ehviewer.widget.EhStageLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
-        <com.hippo.ehviewer.widget.EhNavigationView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.hippo.ehviewer.widget.EhNavigationView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="left"
+            android:background="?android:attr/windowBackground"
             android:maxWidth="@dimen/drawer_max_width"
-            android:orientation="vertical"
-            android:background="?android:attr/windowBackground">
+            android:orientation="vertical">
 
             <android.support.design.widget.NavigationView
                 android:id="@+id/nav_view"
@@ -48,14 +44,14 @@
                 android:layout_weight="1"
                 android:background="@null"
                 app:headerLayout="@layout/nav_header_main"
-                app:menu="@menu/nav_drawer_main"/>
+                app:menu="@menu/nav_drawer_main" />
 
             <Button
                 android:id="@+id/change_theme"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+                android:layout_gravity="center" />
 
         </com.hippo.ehviewer.widget.EhNavigationView>
 
@@ -64,9 +60,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:maxWidth="@dimen/drawer_max_width"
             android:background="?android:attr/windowBackground"
-            android:clickable="true"/>
+            android:clickable="true"
+            android:focusable="true"
+            android:maxWidth="@dimen/drawer_max_width" />
 
     </com.hippo.ehviewer.widget.EhDrawerLayout>
 </com.hippo.widget.SafeCoordinatorLayout>

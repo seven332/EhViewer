@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,24 +14,22 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.hippo.widget.LoadImageView
-        xmlns:auto="http://schemas.android.com/apk/res-auto"
+    <com.hippo.widget.LoadImageView xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         auto:aspect="0.667"
-        auto:retryType="longClick"/>
+        auto:retryType="longClick" />
 
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"/>
+        android:gravity="center" />
 
 </LinearLayout>

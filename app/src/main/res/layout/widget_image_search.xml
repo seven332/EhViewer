@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,71 +14,72 @@
   ~ limitations under the License.
   -->
 
-<merge
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.hippo.widget.FixedAspectImageView
         android:id="@+id/preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:adjustViewBounds="true"
         android:maxWidth="@dimen/image_search_max_size"
         android:maxHeight="@dimen/image_search_max_size"
-        android:adjustViewBounds="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/select_image"
+        style="?attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="@string/select_image"
-        style="?attr/buttonBarButtonStyle"/>
+        android:text="@string/select_image" />
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TableRow>
+
             <CheckBox
                 android:id="@+id/search_uss"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginBottom="@dimen/advance_search_table_item_margin"
                 android:layout_marginRight="@dimen/advance_search_table_item_margin"
+                android:layout_marginBottom="@dimen/advance_search_table_item_margin"
+                android:layout_weight="1"
                 android:checked="true"
-                android:text="@string/search_uss"/>
+                android:text="@string/search_uss" />
 
             <CheckBox
                 android:id="@+id/search_osc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginBottom="@dimen/advance_search_table_item_margin"
                 android:layout_marginLeft="@dimen/advance_search_table_item_margin"
+                android:layout_marginBottom="@dimen/advance_search_table_item_margin"
+                android:layout_weight="1"
                 android:checked="false"
-                android:text="@string/search_osc"/>
+                android:text="@string/search_osc" />
         </TableRow>
 
         <TableRow>
+
             <CheckBox
                 android:id="@+id/search_se"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginTop="@dimen/advance_search_table_item_margin"
                 android:layout_marginRight="@dimen/advance_search_table_item_margin"
+                android:layout_weight="1"
                 android:checked="false"
-                android:text="@string/search_se"/>
+                android:text="@string/search_se" />
 
             <Space
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginTop="@dimen/advance_search_table_item_margin"
                 android:layout_marginLeft="@dimen/advance_search_table_item_margin"
-                android:checked="false"/>
+                android:layout_marginTop="@dimen/advance_search_table_item_margin"
+                android:layout_weight="1"
+                android:checked="false" />
 
         </TableRow>
     </TableLayout>

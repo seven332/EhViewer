@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
@@ -50,6 +51,7 @@ public class SeekBarPanel extends LinearLayout {
         mSeekBar = (SeekBar) ViewUtils.$$(this, R.id.seek_bar);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         if (mSeekBar == null) {

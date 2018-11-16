@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,27 +14,25 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <com.hippo.widget.IndicatingListView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.hippo.widget.IndicatingListView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/list_view"
+        style="@style/Indicating"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:cacheColorHint="@null"
+        android:clipToPadding="false"
         android:divider="?attr/listDividerAlertDialog"
-        android:scrollbars="vertical"
-        android:overScrollMode="ifContentScrolls"
         android:fadingEdge="none"
+        android:overScrollMode="ifContentScrolls"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:clipToPadding="false"
-        style="@style/Indicating"/>
+        android:scrollbars="vertical" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/checkbox"
@@ -43,6 +40,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="?attr/dialogPreferredPadding"
         android:layout_marginRight="?attr/dialogPreferredPadding"
-        android:layout_marginBottom="@dimen/abc_dialog_padding_top_material"/>
+        android:layout_marginBottom="@dimen/abc_dialog_padding_top_material" />
 
 </LinearLayout>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +14,12 @@
   ~ limitations under the License.
   -->
 
-<Button
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/get_it"
-    android:textStyle="bold"
     android:background="@null"
-    android:textSize="@dimen/text_little_small"
+    android:text="@string/get_it"
     android:textAllCaps="true"
-    android:textColor="@android:color/white"/>
+    android:textColor="@android:color/white"
+    android:textSize="@dimen/text_little_small"
+    android:textStyle="bold" />

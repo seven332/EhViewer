@@ -597,6 +597,7 @@ public class LockPatternView extends View {
         return super.onHoverEvent(event);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         if (!mInputEnabled || !isEnabled()) {

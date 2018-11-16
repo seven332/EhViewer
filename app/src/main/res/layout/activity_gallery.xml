@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,7 +22,7 @@
     <com.hippo.glview.view.GLRootView
         android:id="@+id/gl_root_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <com.hippo.widget.TextClock
         android:id="@+id/clock"
@@ -33,7 +31,7 @@
         android:layout_gravity="right"
         android:layout_marginTop="@dimen/gallery_widget_margin_v"
         android:layout_marginRight="@dimen/gallery_widget_margin_h"
-        android:textColor="?android:attr/textColorSecondary"/>
+        android:textColor="?android:attr/textColorSecondary" />
 
     <TextView
         android:id="@+id/progress"
@@ -41,30 +39,29 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/gallery_widget_margin_v"
-        android:textColor="?android:attr/textColorSecondary"/>
+        android:textColor="?android:attr/textColorSecondary" />
 
-    <com.hippo.widget.BatteryView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.hippo.widget.BatteryView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/battery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:layout_marginTop="@dimen/gallery_widget_margin_v"
         android:layout_marginLeft="@dimen/gallery_widget_margin_h"
+        android:layout_marginTop="@dimen/gallery_widget_margin_v"
         android:drawablePadding="4dp"
         app:color="?android:attr/textColorSecondary"
-        app:warningColor="@color/red_500"/>
+        app:warningColor="@color/red_500" />
 
     <com.hippo.ehviewer.widget.SeekBarPanel
         android:id="@+id/seek_bar_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:orientation="horizontal"
         android:background="?attr/gallerySliderBackgroundColor"
         android:fitsSystemWindows="true"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:visibility="invisible">
 
         <TextView
@@ -72,7 +69,7 @@
             android:layout_width="32dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal" />
 
         <FrameLayout
             android:layout_width="0dp"
@@ -83,7 +80,7 @@
                 android:id="@+id/seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical" />
 
         </FrameLayout>
 
@@ -92,7 +89,7 @@
             android:layout_width="32dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal" />
 
     </com.hippo.ehviewer.widget.SeekBarPanel>
 
@@ -101,4 +98,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</FrameLayout>
+</merge>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,32 +14,31 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:background="?android:attr/activatedBackgroundIndicator"
     android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
     android:paddingLeft="@dimen/preference_item_padding_side"
-    android:paddingRight="?android:attr/scrollbarSize"
-    android:background="?android:attr/activatedBackgroundIndicator">
+    android:paddingRight="?android:attr/scrollbarSize">
 
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:paddingRight="@dimen/preference_item_padding_inner"
         android:paddingTop="6dip"
+        android:paddingRight="@dimen/preference_item_padding_inner"
         android:paddingBottom="6dip">
 
         <TextView
             android:id="@android:id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:ellipsize="marquee"
-            android:fadingEdge="horizontal"/>
+            android:fadingEdge="horizontal"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@android:id/summary"
@@ -48,9 +46,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@android:id/title"
             android:layout_alignLeft="@android:id/title"
+            android:maxLines="10"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary"
-            android:maxLines="10"/>
+            android:textColor="?android:attr/textColorSecondary" />
 
         <!-- Preference should place its actual preference widget here. -->
         <LinearLayout
@@ -59,17 +57,17 @@
             android:layout_height="match_parent"
             android:layout_below="@android:id/summary"
             android:layout_alignLeft="@android:id/title"
-            android:minWidth="@dimen/preference_widget_width"
             android:gravity="center"
-            android:orientation="vertical"/>
+            android:minWidth="@dimen/preference_widget_width"
+            android:orientation="vertical" />
 
         <SeekBar
             android:id="@+id/seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@android:id/summary"
-            android:layout_toRightOf="@android:id/widget_frame"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@android:id/widget_frame" />
 
     </RelativeLayout>
 </LinearLayout>

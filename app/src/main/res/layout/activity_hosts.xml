@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,42 +14,40 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
-
-  <com.hippo.easyrecyclerview.EasyRecyclerView
-    android:id="@+id/recycler_view"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"/>
+    android:orientation="vertical">
 
-  <TextView
-    android:id="@+id/tip"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:gravity="center"
-    android:textSize="@dimen/text_super_large"
-    android:text="@string/hosts_tip"/>
+    <com.hippo.easyrecyclerview.EasyRecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false" />
 
-  <com.hippo.widget.FabLayout
-    android:id="@+id/fab_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingRight="@dimen/corner_fab_margin"
-    android:paddingBottom="@dimen/corner_fab_margin">
+    <TextView
+        android:id="@+id/tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/hosts_tip"
+        android:textSize="@dimen/text_super_large" />
 
-    <android.support.design.widget.FloatingActionButton
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      android:id="@+id/fab"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      app:srcCompat="@drawable/v_plus_dark_x24"
-      app:backgroundTint="?attr/widgetColorThemePrimary"
-      style="@style/Widget.Design.FloatingActionButton"/>
+    <com.hippo.widget.FabLayout
+        android:id="@+id/fab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/corner_fab_margin"
+        android:paddingBottom="@dimen/corner_fab_margin">
 
-  </com.hippo.widget.FabLayout>
-</FrameLayout>
+        <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/fab"
+            style="@style/Widget.Design.FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="?attr/widgetColorThemePrimary"
+            app:srcCompat="@drawable/v_plus_dark_x24" />
+
+    </com.hippo.widget.FabLayout>
+</merge>

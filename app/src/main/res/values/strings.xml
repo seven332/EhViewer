@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -217,7 +216,7 @@
     <string name="duplicate_quick_search">A duplicate quick search exists. The name is \"%s\".</string>
     <string name="duplicate_name">A duplicate name exists</string>
 
-    <string name="go_to_hint">Page %1$d, total %2$d pages</string>
+    <string name="go_to_hint">Page \"%s\, total \"%s\ pages</string>
 
     <!-- search_min_rating -->
     <string name="star_2">2 stars</string>

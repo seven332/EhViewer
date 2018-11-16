@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +14,10 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="?attr/dialogPreferredPadding"
     android:paddingTop="@dimen/abc_dialog_padding_top_material"
     android:paddingRight="?attr/dialogPreferredPadding">
@@ -28,7 +26,7 @@
         android:id="@+id/enable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/enable"/>
+        android:text="@string/enable" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/ip_input_layout"
@@ -40,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/ip"
-            android:inputType="text"/>
+            android:inputType="text" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -54,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/port"
-            android:inputType="numberDecimal"/>
+            android:inputType="numberDecimal" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -68,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/Passkey"
-            android:inputType="text"/>
+            android:inputType="text" />
 
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

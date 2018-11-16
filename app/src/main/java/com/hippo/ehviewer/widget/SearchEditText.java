@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatEditText;
@@ -71,6 +72,7 @@ public class SearchEditText extends AppCompatEditText {
         return super.onKeyPreIme(keyCode, event);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP && mListener != null) {
@@ -81,6 +83,7 @@ public class SearchEditText extends AppCompatEditText {
 
     public interface SearchEditTextListener {
         void onClick();
+
         void onBackPressed();
     }
 }

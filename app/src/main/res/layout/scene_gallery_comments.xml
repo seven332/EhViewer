@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,68 +14,69 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.hippo.easyrecyclerview.EasyRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false" />
 
     <TextView
         android:id="@+id/tip"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="228dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center_horizontal"
         android:drawablePadding="16dp"
-        android:text="@string/no_one_comments_gallery"
-        style="@style/TextAppearance.AppCompat.Medium"/>
+        android:gravity="center_horizontal"
+        android:text="@string/no_one_comments_gallery" />
 
     <com.hippo.reveal.RevealLinearLayout
         android:id="@+id/edit_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="bottom"
+        android:orientation="vertical"
         android:visibility="invisible">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:background="@drawable/shadow_top"/>
+            android:background="@drawable/shadow_top" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="?attr/contentColorThemePrimary">
+            android:background="?attr/contentColorThemePrimary"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/edit_text"
-                android:theme="@style/CommentEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:minHeight="56dp"
-                android:maxHeight="112dp"
-                android:gravity="left|center_vertical"
                 android:background="@null"
+                android:gravity="left|center_vertical"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
+                android:maxHeight="112dp"
+                android:minHeight="56dp"
                 android:padding="@dimen/keyline_margin"
-                android:inputType="textMultiLine"/>
+                android:theme="@style/CommentEditText" />
 
             <ImageView
                 android:id="@+id/send"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_gravity="bottom"
+                android:contentDescription="The send button"
                 android:padding="16dp"
-                app:srcCompat="@drawable/v_send_dark_x24"/>
+                app:srcCompat="@drawable/v_send_dark_x24" />
 
         </LinearLayout>
     </com.hippo.reveal.RevealLinearLayout>
@@ -88,14 +88,13 @@
         android:paddingRight="@dimen/corner_fab_margin"
         android:paddingBottom="@dimen/corner_fab_margin">
 
-        <android.support.design.widget.FloatingActionButton
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <android.support.design.widget.FloatingActionButton xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/fab"
+            style="@style/Widget.Design.FloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/v_reply_dark_x24"
             app:backgroundTint="?attr/widgetColorThemePrimary"
-            style="@style/Widget.Design.FloatingActionButton"/>
+            app:srcCompat="@drawable/v_reply_dark_x24" />
 
     </com.hippo.widget.FabLayout>
 </FrameLayout>

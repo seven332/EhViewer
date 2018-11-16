@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,28 +14,27 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/keyline_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/keyline_margin">
 
     <TextView
         android:id="@+id/path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:singleLine="true"
         android:ellipsize="start"
+        android:singleLine="true"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="@dimen/text_little_small"/>
+        android:textSize="@dimen/text_little_small" />
 
     <com.hippo.widget.DirExplorer
         android:id="@+id/dir_explorer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/ok"
@@ -45,6 +43,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:text="@android:string/ok"
-        android:textColor="?attr/colorPrimary"/>
+        android:textColor="?attr/colorPrimary" />
 
 </LinearLayout>

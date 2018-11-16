@@ -385,6 +385,7 @@ public class Slider extends View {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
         int action = event.getAction();
