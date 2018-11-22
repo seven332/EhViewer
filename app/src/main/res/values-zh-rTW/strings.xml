@@ -92,8 +92,8 @@
     <string name="error_invalid_number">無效的數字</string>
 
     <string name="app_waring">本應用程式中內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用程式的作者不會對由其所造成的任何影響負責。</string>
-    <string name="error_username_cannot_empty">使用者名稱不能是空的</string>
-    <string name="error_password_cannot_empty">密碼不能是空的</string>
+    <string name="error_username_cannot_empty">使用者名稱欄位不能是空的</string>
+    <string name="error_password_cannot_empty">密碼欄位不能是空的</string>
     <string name="skip_signing_in">略過登入</string>
     <string name="sign_in_failed">登入失敗</string>
     <string name="sign_in_failed_plain">這可能是網站更新造成的，也有可能是哪裡出錯了。您可以選擇在登入按鈕下方透過網頁登入或者輸入 cookie，也可以略過登入。略過登入可能導致無法正常使用應用程式。如果你已經在 0.6.x 版登入過了，請先試試“透過 Cookie 登入”。</string>
@@ -224,8 +224,8 @@
     <string name="filter_added">已經新增篩選條件</string>
 
     <!-- Rating -->
-    <string name="rating10">根本把持不住</string>
-    <string name="rating9">太神啦</string>
+    <string name="rating10">太神啦!</string>
+    <string name="rating9">根本把持不住</string>
     <string name="rating8">很棒</string>
     <string name="rating7">不錯</string>
     <string name="rating6">還好</string>
@@ -355,23 +355,23 @@
     <string name="filter_tip">標題篩選：排除標題含有該關鍵字的圖庫。\n\n上傳者篩選：排除該上傳者上傳的圖庫。\n\n標籤篩選：排除包含該標籤的圖庫，這會使獲取圖庫列表花費更多時間。\n\n標籤命名空間篩選：排除包含該標籤命名空間（標籤標題）的圖庫，這會使獲取圖庫列表花費更多時間。</string>
 
     <!-- Set Security -->
-    <string name="set_pattern_protection">設定繪圖解鎖</string>
+    <string name="set_pattern_protection">設定圖型解鎖</string>
     <string name="set_pattern_protection_tip">繪製圖案來設定繪圖解鎖\n留白以取消圖案保護</string>
     <string name="set">設定</string>
-    <string name="enable_fingerprint">允許使用指紋解鎖</string>
+    <string name="enable_fingerprint">啟用指紋解鎖</string>
 
     <!-- UConfig Activity -->
     <string name="u_config">EHentai 設定</string>
-    <string name="apply">應用</string>
-    <string name="apply_tip">點選右上角的對勾來儲存設定</string>
+    <string name="apply">套用</string>
+    <string name="apply_tip">點選右上角的勾勾以儲存設定</string>
 
     <!-- Hosts Activity -->
-    <string name="hosts">自定義 hosts.txt</string>
+    <string name="hosts">自訂hosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
     <string name="hosts_host">Host</string>
     <string name="hosts_ip">IP</string>
-    <string name="add_host">添加 host</string>
-    <string name="add_host_add">添加</string>
+    <string name="add_host">加入 host</string>
+    <string name="add_host_add">加入</string>
     <string name="edit_host">編輯 host</string>
     <string name="edit_host_confirm">確認</string>
     <string name="edit_host_delete">刪除</string>
@@ -395,9 +395,9 @@
     <string name="settings_eh_sign_out_warning">天哪，老兄，你真的要登出嗎？我是說，你真的要登出嗎？</string>
     <string name="settings_eh_sign_out_yes">沒錯，我是說，對</string>
     <string name="settings_eh_sign_out_tip">已登出，重新啟動程式以再次登入</string>
-    <string name="settings_eh_identity_cookies">身份 Cookie</string>
+    <string name="settings_eh_identity_cookies">身份識別 Cookie</string>
     <string name="settings_eh_identity_cookies_summary">可用於登入</string>
-    <string name="settings_eh_identity_cookies_signed">身份 Cookie 可用於登入該賬號。&lt;br&gt;&lt;b&gt;注意資料安全&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_signed">身份 Cookie 可用於登入該帳號。&lt;br&gt;&lt;b&gt;請注意資料安全&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
     <string name="settings_eh_identity_cookies_tourist">未登入</string>
     <string name="settings_eh_identity_cookies_copy">複製</string>
     <string name="settings_u_config">EHentai 設定</string>
@@ -460,7 +460,7 @@
     <string name="settings_read_start_position_bottom_left">左下角</string>
     <string name="settings_read_start_position_bottom_right">右下角</string>
     <string name="settings_read_start_position_center">中間</string>
-    <string name="settings_read_keep_screen_on">讓螢幕開著</string>
+    <string name="settings_read_keep_screen_on">保持螢幕開啟</string>
     <string name="settings_read_show_clock">顯示時鐘</string>
     <string name="settings_read_show_progress">顯示進度</string>
     <string name="settings_read_show_battery">顯示電量</string>
@@ -539,7 +539,7 @@
     <string name="settings_about_license">授權</string>
     <string name="settings_about_license_summary">EhViewer 的誕生離不開許多開源專案</string>
     <string name="settings_about_donate">贊助</string>
-    <string name="settings_about_donate_message">你的贊助不能為你帶來特權，但能幫助我繼續維護這個應用。</string>
+    <string name="settings_about_donate_message">你的贊助不會為你帶來特權，但能夠幫助我繼續維護這個程式。</string>
     <string name="settings_about_donate_alipay">支付寶</string>
     <string name="settings_about_donate_paypal">PayPal</string>
     <string name="settings_about_donate_open">開啟</string>
@@ -549,8 +549,8 @@
     <string name="settings_privacy_about_analytics">關於資料統計</string>
     <string name="settings_about_version">版本號碼</string>
     <string name="settings_about_check_for_updates">檢查更新</string>
-    <string name="settings_about_beta_update_channel">更新測試版</string>
-    <string name="settings_about_beta_update_channel_summary">測試版可能在你的裝置上可能出現不可預測的錯誤</string>
+    <string name="settings_about_beta_update_channel">安裝測試更新版</string>
+    <string name="settings_about_beta_update_channel_summary">測試更新版可能在你的可能會使裝置出現不可預期的錯誤</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">排除語言</string>
@@ -558,7 +558,7 @@
     <string name="deselect_all">全取消</string>
     <string name="invert_selection">反轉選取</string>
     <string name="language">語言</string>
-    <string name="original">原史作品</string>
+    <string name="original">原始作品</string>
     <string name="translated">翻譯版</string>
     <string name="rewrite">改寫</string>
     <string name="language_japanese">日語</string>
@@ -613,7 +613,7 @@
     <string name="delete_favorites_dialog_message">將 %d 項收藏移除？</string>
     <string name="move_favorites_dialog_title">移動收藏</string>
     <string name="default_favorites_collection">預設收藏夾</string>
-    <string name="let_me_select">讓我選擇</string>
+    <string name="let_me_select">讓我每次都選擇</string>
     <string name="favorites_info">收藏資訊</string>
     <string name="collections">收藏夾</string>
     <string name="count">數量</string>
@@ -671,8 +671,8 @@
     <string name="archive">壓縮檔</string>
     <string name="download_archive_failure_no_hath">下載壓縮檔需要 H@H 客戶端</string>
     <string name="settings_privacy">隱私</string>
-    <string name="settings_privacy_secure">不允許螢幕抓取</string>
-    <string name="settings_privacy_secure_summary">啟用後，將不能截取該應用的螢幕截圖，同時，將不會在系統任務切換器中顯示該應用的內容預覽\n\n重新啟動應用以生效此更改</string>
+    <string name="settings_privacy_secure">不允許螢幕擷取</string>
+    <string name="settings_privacy_secure_summary">啟用後，將無法對本程式進行螢幕擷取，同時，將不會在系統任務切換器中顯示該程式的預覽內容\n\n重新啟動本程式以套用此變更</string>
     <string name="favorite_name">收藏畫廊</string>
 
 </resources>
