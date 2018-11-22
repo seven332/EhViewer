@@ -355,7 +355,7 @@
     <string name="filter_tip">標題篩選：排除標題含有該關鍵字的圖庫。\n\n上傳者篩選：排除該上傳者上傳的圖庫。\n\n標籤篩選：排除包含該標籤的圖庫，這會使獲取圖庫列表花費更多時間。\n\n標籤命名空間篩選：排除包含該標籤命名空間（標籤標題）的圖庫，這會使獲取圖庫列表花費更多時間。</string>
 
     <!-- Set Security -->
-    <string name="set_pattern_protection">設定圖型解鎖</string>
+    <string name="set_pattern_protection">設定圖形解鎖</string>
     <string name="set_pattern_protection_tip">繪製圖案來設定繪圖解鎖\n留白以取消圖案保護</string>
     <string name="set">設定</string>
     <string name="enable_fingerprint">啟用指紋解鎖</string>
@@ -539,7 +539,7 @@
     <string name="settings_about_license">授權</string>
     <string name="settings_about_license_summary">EhViewer 的誕生離不開許多開源專案</string>
     <string name="settings_about_donate">贊助</string>
-    <string name="settings_about_donate_message">你的贊助不會為你帶來特權，但能夠幫助我繼續維護這個程式。</string>
+    <string name="settings_about_donate_message">您的贊助將不會替您產生任何特權，但能夠幫助我能夠繼續維護這個程式。</string>
     <string name="settings_about_donate_alipay">支付寶</string>
     <string name="settings_about_donate_paypal">PayPal</string>
     <string name="settings_about_donate_open">開啟</string>
@@ -550,7 +550,7 @@
     <string name="settings_about_version">版本號碼</string>
     <string name="settings_about_check_for_updates">檢查更新</string>
     <string name="settings_about_beta_update_channel">安裝測試更新版</string>
-    <string name="settings_about_beta_update_channel_summary">測試更新版可能在你的可能會使裝置出現不可預期的錯誤</string>
+    <string name="settings_about_beta_update_channel_summary">測試更新版可能會使裝置出現不可預期的錯誤</string>
 
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">排除語言</string>
