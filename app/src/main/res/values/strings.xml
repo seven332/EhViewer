@@ -51,7 +51,7 @@
     <string name="password">Password</string>
     <string name="recaptcha">Recaptcha (Not required)</string>
 
-    <string name="recaptcha_none">Click me</string>
+    <string name="recaptcha_none">Tap here</string>
     <string name="recaptcha_loading">Loading…</string>
     <string name="recaptcha_failure">Failed</string>
 
@@ -66,7 +66,7 @@
 
     <string name="default_display_name">Little Hippo</string>
 
-    <string name="cookie_explain">A cookie is a small piece of data stored in web browser. Search it if you don\'t know what it is or how to get it.\n\nPlease enter special cookies to sign in.</string>
+    <string name="cookie_explain">A cookie is a small piece of data stored in web browser. Google it if you don\'t know what it is or how to get it.\n\nPlease enter special cookies to sign in.</string>
     <string name="text_is_empty">Text is empty</string>
     <string name="waring">Warning</string>
     <string name="wrong_cookie_warning">It seems that the cookies you entered are wrong. You\'d better check them.</string>
@@ -129,18 +129,18 @@
     <string name="error_invalid_url">Invalid url</string>
     <string name="error_get_ptoken_error">Get pToken error</string>
     <string name="error_invalid_specify_gallery">Keyword should looks like \"618395 0439fa3666\" for specify gallery</string>
-    <string name="error_cant_create_temp_file">Can\'t create temp file</string>
+    <string name="error_cant_create_temp_file">Couldn\'t create temp file</string>
     <string name="error_cant_save_image">Can\'t save image</string>
     <string name="error_invalid_number">Invalid number</string>
 
     <string name="app_waring">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them.</string>
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
     <string name="error_password_cannot_empty">Password cannot be an empty string</string>
-    <string name="skip_signing_in">Skip signing in</string>
+    <string name="skip_signing_in">Continue without signing in</string>
     <string name="sign_in_failed">Sign in failed</string>
     <string name="sign_in_failed_plain">Perhaps it is a mistake due to website update or something wrong happened. You may try sign in via WebView or enter cookie or skip signing in under sign in button. But you may be a "Sad Panda" after skipping signing in. Try "Sign in via cookies" first if you had signed in on 0.6.x version.</string>
     <string name="press_twice_exit">Press twice to exit</string>
-    <string name="content_layout_restore_tip">Click to retry</string>
+    <string name="content_layout_restore_tip">Tap to retry</string>
     <string name="write_rationale">EhViewer will request WRITE_EXTERNAL_STORAGE permission for downloading gallery. Do you want to grant the permission?</string>
     <string name="you_rejected_me">It hurts</string>
     <string name="analytics_explain">Would you mind if the developer collected your device information and your usage? It will help the developer a lot.&lt;br&gt;&lt;br&gt;Data analysis service is provided by Google Analytics. Its privacy policy can be found at &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;.&lt;br&gt;&lt;br&gt;If you agree to join data analysis, your device information and your usage will be collected, including but not limited to Android API version, equipment model, language residence, the application version, conversion time, function times. The developer promise that these information will NOT be collected, including phone number, e-mail address, IMEI.&lt;br&gt;&lt;br&gt;Your information will not be collected until you agree to join data analysis.&lt;br&gt;&lt;br&gt;The collected information will be analyzed by Google Analytics. The analysis report can only be viewed by the developer of this application.</string>
@@ -152,17 +152,17 @@
 
     <!-- Crash -->
     <string name="send">Send</string>
-    <string name="crash_explain">This application crashed last time. Would you mind to send logcat to the developer for a better user experience in future ? (via e-mail)</string>
+    <string name="crash_explain">The application crashed last time. Would you like to send logcat (via e-mail) to the developer for a better user experience in future?</string>
 
     <!-- Select scene -->
-    <string name="select_scene">Which gallery site do you want to select?</string>
-    <string name="select_scene_explain">e-hentai: available for anyone\nexhentai: available for who signed in</string>
+    <string name="select_scene">Which gallery site do you want to visit?</string>
+    <string name="select_scene_explain">e-hentai: available for anyone\nexhentai: available for who has signed in</string>
     <string name="no_select">Please select one site</string>
 
     <!-- Update -->
     <string name="update">Update</string>
     <string name="update_plain">Version: %1$s\nSize: %2$s\n\n%3$s</string>
-    <string name="update_to_date">You are using the latest version of EhViewer</string>
+    <string name="update_to_date">You are using the latest version of EhViewer.</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint_exhentai">Search ExHentai</string>
@@ -183,7 +183,7 @@
     <string name="search_specify_gallery">Specify gallery</string>
     <string name="search_enable_advance">Enable advance options</string>
 
-    <string name="search_tip">Normal search: Just search.\n\nSpecify uploader: List galleries which uploaded by the uploader. Other options will be ignored.\n\nSpecify tag: List galleries which contains the tag. Only one tag accepted. Other options will be ignored.\n\nSpecify gallery: Go to the gallery. The keyword should be \"gid token\".</string>
+    <string name="search_tip">Normal search: Simply search.\n\nSpecify uploader: Search for galleries uploaded by the specified uploader. All other options will be ignored.\n\nSpecify tag: Search for galleries that contain the specified tag. Only one tag accepted. Other options will be ignored.\n\nSpecify gallery: Access the specified gallery directly. The keyword should be \"gid token\".</string>
 
     <string name="search_sname">Search Gallery</string>
     <string name="search_stags">Search Gallery Tags</string>
@@ -204,18 +204,18 @@
     <string name="add_to_favourites">Add to favourites</string>
 
     <string name="quick_search">Quick search</string>
-    <string name="quick_search_tip">Click \"+\" to add Quick Search</string>
+    <string name="quick_search_tip">Tap \"+\" to add Quick Search</string>
     <string name="add_quick_search_dialog_title">Add Quick Search</string>
     <string name="name_is_empty">Name is empty</string>
     <string name="delete">Delete</string>
     <string name="delete_quick_search_title">Delete Quick Search</string>
     <string name="delete_quick_search_message">Delete \"%s\"?</string>
     <string name="no_quick_search">Quick search will be shown here</string>
-    <string name="add_quick_search_tip">The state of gallery list will be saved as quick search. Apply search first if you want to save the state of search panel.</string>
+    <string name="add_quick_search_tip">The state of gallery list will be saved as quick search. Perform a search first to save the state of search panel.</string>
     <string name="readme">README</string>
     <string name="image_search_not_quick_search">Can\'t add image search as quick search</string>
     <string name="duplicate_quick_search">A duplicate quick search exists. The name is \"%s\".</string>
-    <string name="duplicate_name">A duplicate name exists</string>
+    <string name="duplicate_name">This name is already in use.</string>
 
     <string name="go_to_hint">Page %1$d, total %2$d pages</string>
 
@@ -226,7 +226,7 @@
     <string name="star_5">5 stars</string>
 
     <!-- Gallery detail -->
-    <string name="error_cannot_find_gallery">Can\'t find the gallery</string>
+    <string name="error_cannot_find_gallery">Couldn\'t find the gallery</string>
     <string name="download">Download</string>
     <string name="read">Read</string>
     <string name="more_information">More information</string>
@@ -250,7 +250,7 @@
     <string name="no_more_previews">No more previews</string>
     <string name="more_previews">More previews</string>
     <string name="refresh">Refresh</string>
-    <string name="open_in_other_app">Open in other app</string>
+    <string name="open_in_other_app">Open with other app</string>
     <string name="rate_successfully">Rate successfully</string>
     <string name="rate_failed">Rate failed</string>
     <string name="no_torrents">No torrents</string>
@@ -308,20 +308,20 @@
 
     <!-- Gallery Comments -->
     <string name="gallery_comments">Gallery Comments</string>
-    <string name="no_one_comments_gallery">No one comments on this gallery</string>
-    <string name="comment_successfully">Comment successfully</string>
-    <string name="comment_failed">Comment failed</string>
+    <string name="no_one_comments_gallery">No comment.</string>
+    <string name="comment_successfully">Comment post successfully</string>
+    <string name="comment_failed">Failed to post the comment</string>
     <string name="copy_comment_text">Copy comment text</string>
     <string name="vote_up">Vote up</string>
     <string name="cancel_vote_up">Cancel up-vote</string>
     <string name="vote_down">Vote down</string>
     <string name="cancel_vote_down">Cancel down-vote</string>
-    <string name="vote_up_successfully">Vote up successfully</string>
+    <string name="vote_up_successfully">Voted up successfully</string>
     <string name="cancel_vote_up_successfully">Cancel up-vote successfully</string>
-    <string name="vote_down_successfully">Vote down successfully</string>
-    <string name="cancel_vote_down_successfully">Cancel down-vote successfully</string>
+    <string name="vote_down_successfully">Voted down successfully</string>
+    <string name="cancel_vote_down_successfully">Down-vote cancelled successfully</string>
     <string name="vote_failed">Vote failed</string>
-    <string name="check_vote_status">Check vote status</string>
+    <string name="check_vote_status">View vote details</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">Gallery Previews</string>
@@ -338,7 +338,7 @@
     <string name="download_state_failed_2">%d incomplete</string>
     <string name="download_state_finish">Done</string>
     <string name="stat_509_alert_title">509 Alert</string>
-    <string name="stat_509_alert_text">Image limit is reached. Please stop download and have a relax.</string>
+    <string name="stat_509_alert_text">Image limit has been reached. Please stop download and have a relax.</string>
     <string name="stat_download_done_title">Download Finished</string>
     <string name="stat_download_done_text_succeeded">%d succeeded</string>
     <string name="stat_download_done_text_failed">%d failed</string>
@@ -349,7 +349,7 @@
     <string name="download_remove_dialog_message">Remove %s from download list ?</string>
     <string name="download_remove_dialog_message_2">Remove %d items from download list ?</string>
     <string name="download_remove_dialog_check_text">Delete image files</string>
-    <string name="stat_download_action_stop_all">Stop All</string>
+    <string name="stat_download_action_stop_all">Stop all</string>
     <string name="drawer_download_label_title">Label</string>
     <string name="default_download_label_name">Default</string>
     <string name="download_move_dialog_title">Move</string>
@@ -402,12 +402,12 @@
     <string name="set_pattern_protection">Set pattern protection</string>
     <string name="set_pattern_protection_tip">Draw a pattern to set pattern protection\nLeave blank to clear pattern protection</string>
     <string name="set">Set</string>
-    <string name="enable_fingerprint">Also allow unlock with fingerprint</string>
+    <string name="enable_fingerprint">Also allow fingerprint unlock</string>
 
     <!-- UConfig Activity -->
     <string name="u_config">EHentai settings</string>
     <string name="apply">Apply</string>
-    <string name="apply_tip">Click the check mark to save the settings</string>
+    <string name="apply_tip">Tap the check mark to save the settings</string>
 
     <!-- Hosts Activity -->
     <string name="hosts">Custom hosts.txt</string>
@@ -438,9 +438,9 @@
     <string name="settings_eh_sign_out_summary">Restart the application to sign in</string>
     <string name="settings_eh_sign_out_warning">Do you really want to sign out?</string>
     <string name="settings_eh_sign_out_yes">@android:string/ok</string>
-    <string name="settings_eh_sign_out_tip">Signed out, restart the application to sign in</string>
+    <string name="settings_eh_sign_out_tip">You have signed out. Restart the application to sign in again</string>
     <string name="settings_eh_identity_cookies">Identity cookies</string>
-    <string name="settings_eh_identity_cookies_summary">It can be used to sign in</string>
+    <string name="settings_eh_identity_cookies_summary">Cookies can be used to sign in</string>
     <string name="settings_eh_identity_cookies_signed">Identity cookies can be used to sign in to this account.&lt;br&gt;&lt;b&gt;KEEP IT SAFE&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
     <string name="settings_eh_identity_cookies_tourist">Not signed in.</string>
     <string name="settings_eh_identity_cookies_copy">Copy</string>
@@ -462,7 +462,7 @@
     <string name="settings_eh_thumb_size_middle">Middle</string>
     <string name="settings_eh_thumb_size_small">Small</string>
     <string name="settings_eh_thumb_resolution">Thumb resolution</string>
-    <string name="settings_eh_thumb_resolution_summary">%s, special resolutions might cause getting thumb failed</string>
+    <string name="settings_eh_thumb_resolution_summary">Currently %s. Certain resolutions might cause getting thumb failed</string>
     <string name="settings_eh_thumb_resolution_auto">Auto</string>
     <string name="settings_eh_fix_thumb_url">Fix thumb url</string>
     <string name="settings_eh_default_categories">Categories on Homepage</string>
@@ -475,10 +475,10 @@
     <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
     <string name="settings_eh_hath_proxy_summary_2">None</string>
     <string name="settings_eh_show_jpn_title">Show Japanese title</string>
-    <string name="settings_eh_show_jpn_title_summary_on">Try to show Japanese title. It takes more time to get gallery list</string>
-    <string name="settings_eh_show_jpn_title_summary_off">Show default title. It is usually English title</string>
+    <string name="settings_eh_show_jpn_title_summary_on">Attempt to show Japanese title. It takes more time to get gallery list</string>
+    <string name="settings_eh_show_jpn_title_summary_off">Show default titles, which are usually in English.</string>
     <string name="settings_eh_show_gallery_pages">Show gallery pages</string>
-    <string name="settings_eh_show_gallery_pages_summary">Display the number of pages in the gallery list. It takes more time to get gallery list</string>
+    <string name="settings_eh_show_gallery_pages_summary">Display the number of pages in the gallery list. It takes more time to load the gallery list</string>
     <string name="settings_eh_filter">Filter</string>
     <string name="settings_eh_filter_summary">Filter by title, uploader, tag and tag namespace</string>
     <string name="settings_eh_cellular_network_warning">Cellular network warning</string>
@@ -518,19 +518,19 @@
     <string name="settings_download_download_location">Download location</string>
     <string name="settings_download_invalid_download_location">Invalid download location</string>
     <string name="settings_download_cant_get_download_location">Can\'t get download location</string>
-    <string name="settings_download_pick_dir_kk">You can\'t write any kind of data on your external SD card in Android 4.4+ unless you have hacked it. But &lt;SD card&gt;/Android/data/com.hippo.ehviewer is a special, it is writable.</string>
-    <string name="settings_download_pick_dir_l">Android 5.0+ provides new API to write on external SD card. Click the \"DOCUMENT\" button if you want to set download location to SD card</string>
+    <string name="settings_download_pick_dir_kk">On Android 4.4+, apps can\'t write any data on your external SD card, unless you root the system and apply a patch. But &lt;SD card&gt;/Android/data/com.hippo.ehviewer is an exception. It is writable for this app.</string>
+    <string name="settings_download_pick_dir_l">Android 5.0+ provides new API to write on external SD card. Tap the \"DOCUMENT\" if you want to set SD card as download location.</string>
     <string name="settings_download_document">Document</string>
     <string name="settings_download_continue">Continue</string>
     <string name="settings_download_media_scan">Allow media scan</string>
-    <string name="settings_download_media_scan_summary_on">Please keep your gallery apps away from other people</string>
-    <string name="settings_download_media_scan_summary_off">Most gallery apps will ignore pictures in download path</string>
-    <string name="settings_download_multi_thread_download">Multi thread download</string>
+    <string name="settings_download_media_scan_summary_on">Please hide your gallery apps away from other people</string>
+    <string name="settings_download_media_scan_summary_off">Most gallery apps will ignore pictures in the download path</string>
+    <string name="settings_download_multi_thread_download">Multi-threaded download</string>
     <string name="settings_download_multi_thread_download_summary">Up to %s images</string>
     <string name="settings_download_preload_image">Preload image</string>
     <string name="settings_download_preload_image_summary">Preload next %s image</string>
     <string name="settings_download_image_resolution">Image resolution</string>
-    <string name="settings_download_image_resolution_summary">%s, resolutions above 1280x may not work</string>
+    <string name="settings_download_image_resolution_summary">Currently %s. Resolutions above 1280x may not work</string>
     <string name="settings_download_image_resolution_auto">Auto</string>
     <string name="settings_download_download_origin_image">Download original image</string>
     <string name="settings_download_download_origin_image_summary">It is dangerous! You may get 509 error</string>
@@ -551,28 +551,28 @@
     <string name="settings_advanced_dump_logcat">Dump logcat</string>
     <string name="settings_advanced_dump_logcat_summary">Save logcat to external storage</string>
     <string name="settings_advanced_dump_logcat_failed">Dump logcat failed</string>
-    <string name="settings_advanced_dump_logcat_to">Saved logcat to %s</string>
+    <string name="settings_advanced_dump_logcat_to">Logcat dumped to %s</string>
     <string name="settings_advanced_clear_download_path_cache">Clear download path cache</string>
-    <string name="settings_advanced_clear_download_path_cache_summary">Gallery download path might be wrong and it need to be redownload. Clearing download path cache might solve the problem.</string>
+    <string name="settings_advanced_clear_download_path_cache_summary">Gallery download path might be wrong and it need to be redownloaded. Clearing download path cache might solve the problem.</string>
     <string name="settings_advanced_clear_download_path_cache_message">Clear download path cache?</string>
     <string name="settings_advanced_clear_memory_cache">Clear memory cache</string>
     <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
     <string name="settings_advanced_read_cache_size">Read cache size</string>
     <string name="settings_advanced_app_language_title">App language</string>
     <string name="settings_advanced_built_in_hosts_title">Built-in hosts.txt</string>
-    <string name="settings_advanced_built_in_hosts_summary">The host-to-IP mapping provided by the app\nIt can be overridden by custom hosts.txt</string>
+    <string name="settings_advanced_built_in_hosts_summary">Apply the built-in host-to-IP mapping provided by the app.\nIt can be overridden by custom hosts.txt.</string>
     <string name="settings_advanced_custom_hosts_title">Custom hosts.txt</string>
-    <string name="settings_advanced_custom_hosts_summary">Map hostnames to IP addresses\nIt can override built-in hosts.txt</string>
+    <string name="settings_advanced_custom_hosts_summary">Map hostnames to IP addresses.\nIt can override built-in hosts.txt.</string>
     <string name="settings_privacy_pattern_protection_title">Pattern protection</string>
     <string name="settings_privacy_pattern_protection_not_set">Pattern protection has not been set</string>
     <string name="settings_privacy_pattern_protection_set">Pattern protection has been set</string>
     <string name="settings_advanced_export_data">Export data</string>
-    <string name="settings_advanced_export_data_summary">Save data to external storage, such as download list, quick search list</string>
+    <string name="settings_advanced_export_data_summary">Save data like download list, quick search list, to external storage</string>
     <string name="settings_advanced_export_data_to">Exported data to %s</string>
-    <string name="settings_advanced_export_data_failed">Export data failed</string>
+    <string name="settings_advanced_export_data_failed">Failed to export data</string>
     <string name="settings_advanced_import_data">Import data</string>
-    <string name="settings_advanced_import_data_summary">Load data which saved before</string>
-    <string name="settings_advanced_import_data_successfully">Import data successfully</string>
+    <string name="settings_advanced_import_data_summary">Load data which were previously saved</string>
+    <string name="settings_advanced_import_data_successfully">Data imported successfully</string>
 
     <string name="settings_about">About</string>
     <string name="settings_about_author">Author</string>
@@ -583,7 +583,7 @@
     <string name="settings_about_changelog">Changelog</string>
     <string name="settings_about_help">Help</string>
     <string name="settings_about_license">License</string>
-    <string name="settings_about_license_summary">EhViewer is made possible by many open source projects</string>
+    <string name="settings_about_license_summary">EhViewer is made possible thanks to many open source projects</string>
     <string name="settings_about_donate">Donate</string>
     <string name="settings_about_donate_message">Your donation can not bring you any privileges. But it helps me maintain this app.</string>
     <string name="settings_about_donate_alipay">Alipay</string>
@@ -595,9 +595,9 @@
     <string name="settings_privacy_about_analytics">About analytics</string>
     <string name="settings_about_version">Build version</string>
     <string name="settings_about_check_for_updates">Check for updates</string>
-    <string name="settings_about_auto_check_for_updates">Auto check for updates</string>
+    <string name="settings_about_auto_check_for_updates">Auto. check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
-    <string name="settings_about_beta_update_channel_summary">Beta release might be broken on your devices</string>
+    <string name="settings_about_beta_update_channel_summary">Beta versions may contain unsolved bugs.</string>
 
     <string name="enable">Enable</string>
     <string name="enabled">Enabled</string>
@@ -680,13 +680,13 @@
 
     <!-- Guide -->
     <string name="guide_quick_search_title">Quick Search</string>
-    <string name="guide_quick_search_text">Swipe right to open quick search panel</string>
+    <string name="guide_quick_search_text">Swipe to right to open quick search panel</string>
     <string name="guide_collections_title">Collections</string>
-    <string name="guide_collections_text">Swipe right to select collections</string>
+    <string name="guide_collections_text">Swipe to right to select collections</string>
     <string name="guide_download_labels_title">Download Labels</string>
     <string name="guide_download_labels_text">Swipe right to open download labels panel</string>
     <string name="guide_download_thumb_title">Gallery Detail</string>
-    <string name="guide_download_thumb_text">Click thumb to view gallery detail</string>
+    <string name="guide_download_thumb_text">Tap the thumbnail to view gallery detail</string>
     <string name="guide_gallery_left">Turn Page</string>
     <string name="guide_gallery_right">Turn Page</string>
     <string name="guide_gallery_menu">Menu</string>
@@ -734,7 +734,7 @@
     <string name="download_archive_failure_no_hath">Need H@H client for archive download</string>
     <string name="settings_privacy">Privacy</string>
     <string name="settings_privacy_secure">Prevent screenshots</string>
-    <string name="settings_privacy_secure_summary">If enabled, you cannot take screenshots of the app, and the system will not display app contents in the task switcher\n\nYou need to restart the app for the changes to take effect</string>
+    <string name="settings_privacy_secure_summary">Prevent the content of the app from being taken or shown in the \"Recent Apps\" list.</string>
 
     <string name="download_service">Download Service</string>
     <string name="favorite_name">Favorite</string>
