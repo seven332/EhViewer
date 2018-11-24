@@ -274,7 +274,7 @@
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">ギャラリープレビュー</string>
-    <string name="go_to">ジャンプ</string>
+    <string name="go_to">ページに移動</string>
 
     <!-- Download -->
     <string name="scene_download_title">ダウンロード - %s</string>
