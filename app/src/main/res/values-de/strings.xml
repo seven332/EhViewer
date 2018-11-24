@@ -22,14 +22,14 @@
     <string name="display_name_is_empty">Spitzname wird nicht eingegeben</string>
     <string name="sign_in_first">Melde dich zunächst an</string>
     <string name="default_display_name">Kleines Nilpferd</string>
-    <string name="cookie_explain">Die Cookies speichern in Browser deine Informationen. Falls du nicht wisst, was die Cookie sind, suche im Internet darüber.</string>
+    <string name="cookie_explain">Die Cookies speichern in Browser deine Informationen. Falls du nicht wisst, was die Cookie sind, suche online darüber.</string>
     <string name="text_is_empty">Der Text wird nicht eingegeben</string>
     <string name="waring">Achtung</string>
     <string name="wrong_cookie_warning">Die eingegebenen Cookies sehen korrekt nicht aus. Überprüfe sie.</string>
     <string name="i_will_check_it">In Ordnung!</string>
     <string name="i_dont_think_so">Sie sind absolut korrekt!</string>
     <string name="found_cookies">Cookies werden gefunden</string>
-    <string name="invalid_download_location">Der Downloadpfad ist nicht verfügbar. Geh zu die Einstellungen und stelle einen neue Pfad fest,</string>
+    <string name="invalid_download_location">Der Downloadpfad ist nicht verfügbar. Geh zu die Einstellungen und stelle einen neue Pfad fest.</string>
     <string name="cellular_network_warning">Zu den mobilen Daten verbunden.</string>
     <string name="error_bad_status_code">Inkorrekter Statuscode: %d</string>
     <string name="error_timeout">Timeout</string>
@@ -201,7 +201,7 @@
     <string name="vote_failed">Stimmung gescheitert</string>
     <string name="check_vote_status">Details der Stimmungen anzeigen</string>
     <string name="gallery_previews">Vorschauen der Galerie</string>
-    <string name="go_to">Gehen zu</string>
+    <string name="go_to">Gehe zu</string>
     <string name="scene_download_title">Download - %s</string>
     <string name="no_download_info">Downloads werden hier angezeigt</string>
     <string name="download_state_none">Pausiert</string>
