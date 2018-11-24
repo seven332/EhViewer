@@ -20,7 +20,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -44,6 +47,9 @@ public class AdvancedFragment extends PreferenceFragment
     private static final String KEY_APP_LANGUAGE = "app_language";
     private static final String KEY_EXPORT_DATA = "export_data";
     private static final String KEY_IMPORT_DATA = "import_data";
+
+    private static final int READ_REQUEST_CODE = 42;
+    private static final int WRITE_REQUEST_CODE = 43;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,26 +97,99 @@ public class AdvancedFragment extends PreferenceFragment
             ((EhApplication) getActivity().getApplication()).clearMemoryCache();
             Runtime.getRuntime().gc();
         } else if (KEY_EXPORT_DATA.equals(key)) {
-            File dir = AppConfig.getExternalDataDir();
-            if (dir != null) {
-                File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db");
-                if (EhDB.exportDB(getActivity(), file)) {
-                    Toast.makeText(getActivity(),
-                            getString(R.string.settings_advanced_export_data_to, file.getPath()), Toast.LENGTH_SHORT).show();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+                showExportDialog();
+                return true;
+
+            } else if (defaultExportData()){
                     return true;
-                }
             }
             Toast.makeText(getActivity(),R.string.settings_advanced_export_data_failed, Toast.LENGTH_SHORT).show();
             return true;
         } else if (KEY_IMPORT_DATA.equals(key)) {
-            importData(getActivity());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+                showImportDialog();
+            } else {
+                defaulfImportData();
+            }
+
             getActivity().setResult(Activity.RESULT_OK);
             return true;
         }
         return false;
     }
 
-    private static void importData(final Context context) {
+    private void showExportDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.settings_advanced_export_data_location));
+        final CharSequence[] items = new CharSequence[]{
+                getString(R.string.settings_advanced_data_device_storage),
+                getString(R.string.settings_advanced_data_document_storage)
+        };
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i){
+                    case 0:
+                        defaultExportData();
+                        break;
+                    case 1:
+                        customExportData();
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private boolean defaultExportData(){
+        File dir = AppConfig.getExternalDataDir();
+        if (dir != null) {
+            File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db");
+            if (EhDB.exportDB(getActivity(), file)) {
+                Toast.makeText(getActivity(),
+                        getString(R.string.settings_advanced_export_data_to, file.getPath()), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void customExportData(){
+        String filename = ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db";
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_TITLE, filename);
+        startActivityForResult(intent, WRITE_REQUEST_CODE);
+
+    }
+
+    private void showImportDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.settings_advanced_import_data_location));
+        final CharSequence[] items = new CharSequence[]{
+                getString(R.string.settings_advanced_data_device_storage),
+                getString(R.string.settings_advanced_data_document_storage)
+        };
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i){
+                    case 0:
+                        defaulfImportData();
+                        break;
+                    case 1:
+                        customImportData();
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void defaulfImportData(){
+        Context context = getActivity();
         final File dir = AppConfig.getExternalDataDir();
         if (null == dir) {
             Toast.makeText(context, R.string.cant_get_data_dir, Toast.LENGTH_SHORT).show();
@@ -133,6 +212,40 @@ public class AdvancedFragment extends PreferenceFragment
                 Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
             }
         }).show();
+    }
+
+    private void customImportData(){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        startActivityForResult(intent, READ_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+
+        if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                if (EhDB.exportDB(getActivity(), uri)) {
+                    Toast.makeText(getActivity(),
+                            getString(R.string.settings_advanced_export_data_to, uri.toString()), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                String error = EhDB.importDB(getActivity(), uri);
+                if (null == error) {
+                    error = getString(R.string.settings_advanced_import_data_successfully);
+                }
+                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override

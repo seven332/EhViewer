@@ -383,7 +383,7 @@
     <string name="page_menu_refresh">@string/refresh</string>
     <string name="page_menu_share">@string/share</string>
     <string name="page_menu_save">保存</string>
-    <string name="page_menu_save_to">保存到...</string>
+    <string name="page_menu_save_to">保存到&#8230;</string>
     <string name="page_menu_add_bookmark">添加书签</string>
     <string name="gallery_menu_title">菜单</string>
     <string name="share_image">分享图片</string>
@@ -527,9 +527,13 @@
     <string name="settings_advanced_export_data_summary">保存数据至外置存储器，例如下载列表，快速搜索列表</string>
     <string name="settings_advanced_export_data_to">已导出数据至 %s</string>
     <string name="settings_advanced_export_data_failed">导出数据失败</string>
+    <string name="settings_advanced_export_data_location">导出数据到&#8230;</string>
     <string name="settings_advanced_import_data">导入数据</string>
     <string name="settings_advanced_import_data_summary">从外置存储器导入数据</string>
     <string name="settings_advanced_import_data_successfully">导入数据成功</string>
+    <string name="settings_advanced_import_data_location">导入数据位置</string>
+    <string name="settings_advanced_data_device_storage">设备存储器</string>
+    <string name="settings_advanced_data_document_storage">文件存储</string>
 
     <string name="settings_about">关于</string>
     <string name="settings_about_author">作者</string>
