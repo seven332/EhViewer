@@ -220,8 +220,8 @@
     <string name="stat_download_done_line_succeeded">Abgeschlossen: %s</string>
     <string name="stat_download_done_line_failed">Gescheitert: %s</string>
     <string name="download_remove_dialog_title">Download entfernen</string>
-    <string name="download_remove_dialog_message">%s von der Downloadliste entfernen?</string>
-    <string name="download_remove_dialog_message_2">%d Downloads von der Downloadliste entfernen?</string>
+    <string name="download_remove_dialog_message">%s aus der Downloadliste entfernen?</string>
+    <string name="download_remove_dialog_message_2">%d Downloads aus der Downloadliste entfernen?</string>
     <string name="download_remove_dialog_check_text">Bilddateien löschen</string>
     <string name="stat_download_action_stop_all">Alle stopppen</string>
     <string name="drawer_download_label_title">Etikette</string>
@@ -263,7 +263,7 @@
     <string name="show_definition">Definition anzeigen</string>
     <string name="filter_text">Filtertext</string>
     <string name="clipboard_gallery_url_dialog_title">Link der Galerie erkennt</string>
-    <string name="clipboard_gallery_url_dialog_message">Ein Link der Galerie wird von deiner Zwischenablage erkennt. Möchtest du es zugreifen?</string>
+    <string name="clipboard_gallery_url_dialog_message">Ein Galerie-Link wird in deiner Zwischenablage erkennt. Möchtest du es nutzen?</string>
     <string name="search_tip">Normale Suche: Nur durchsuchen.\n\nUploader spezifizieren: Die Galerie, die vom Uploader hochgeladen ist, auflisten. Andere Optionen werden ignoriert.\n\nEtikett spezifizieren: Die Galerie, die das Etikett hat, auflisten. Nur ein Etikett kann eingegeben werden. Andere Optionen werden ignoriert.\n\nGalerie spezifizieren: Zur Galerie gehen. Andere Optionen werden ignoriert.</string>
     <string name="filter_tip">Titelfilter: die Galerie, deren Titel das Wort enthalten, ausschließen.\n\nUploaderfilter: Die vom Uploader hochgeladen Galerie ausschließen.\n\nEtikettfilter: Die Galerie, die die Etikett haben, ausschließen. Es wird länger dauern, Galerieliste zu laden.\n\nEtikettnamensraumfilter: Die Galerie, die den Etikettnamensraum haben, ausschließen. Es wird länger dauern, Galerieliste zu laden.</string>
     <string name="set_pattern_protection">Sperrmuster festlegen</string>
@@ -321,9 +321,9 @@
     <string name="settings_eh_excluded_languages">Ausgeschlossene Sprachen</string>
     <string name="settings_advanced_app_language_title">Sprache der App (Language)</string>
     <string name="torrent_count">Torrent (%d)</string>
-    <string name="settings_eh_excluded_languages_summary">Galerie von die ausgeschlossenen Sprachen werden in der Galerieliste und der Suchen versteckt</string>
+    <string name="settings_eh_excluded_languages_summary">Galerie von den ausgeschlossenen Sprachen werden in der Galerieliste und der Suchen versteckt</string>
     <string name="settings_eh_excluded_tag_namespaces">Ausgeschlossene Namensraum-Etiketten</string>
-    <string name="settings_eh_excluded_tag_namespaces_summary">Galerie in der ausgeschlossenen Namensraum werden von die Standard-Etikett-Suchen versteckt</string>
+    <string name="settings_eh_excluded_tag_namespaces_summary">Galerie in der ausgeschlossenen Namensraum werden vom Standard-Etikett-Suchen versteckt</string>
     <string name="settings_eh_hath_proxy">H@H Proxy</string>
     <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
     <string name="settings_eh_hath_proxy_summary_2">Nicht festgelegt</string>
@@ -371,7 +371,7 @@
     <string name="settings_download_document">Dokument</string>
     <string name="settings_download_continue">Weiter</string>
     <string name="settings_download_media_scan">Medienscan erlauben</string>
-    <string name="settings_download_media_scan_summary_on">Du solltest deine Galerie von anderen verstecken</string>
+    <string name="settings_download_media_scan_summary_on">Du solltest deine Galerie-Apps verstecken</string>
     <string name="settings_download_media_scan_summary_off">Meisten Galerie-Apps ignorieren die Bilder im Downloadpfad</string>
     <string name="settings_download_multi_thread_download">Multi-Thread-Download</string>
     <string name="settings_download_multi_thread_download_summary">Bis zu %s Bild(er)</string>
@@ -408,8 +408,8 @@
     <string name="favorites_search_bar_hint">%s durchsuchen</string>
     <string name="favorites_title">%s</string>
     <string name="favorites_title_2">%1$s - %2$s</string>
-    <string name="delete_favorites_dialog_title">Von Favoriten löschen</string>
-    <string name="delete_favorites_dialog_message">%d Elemente von Favoriten löschen?</string>
+    <string name="delete_favorites_dialog_title">Aus Favoriten löschen</string>
+    <string name="delete_favorites_dialog_message">%d Elemente aus Favoriten löschen?</string>
     <string name="move_favorites_dialog_title">Favoriten verschieben</string>
     <string name="default_favorites_collection">Standard-Favoriten</string>
     <string name="let_me_select">Manuell auswählen</string>
@@ -505,7 +505,7 @@
     <string name="settings_advanced_custom_hosts_title">Angepasstes hosts.txt</string>
     <string name="settings_advanced_custom_hosts_summary">Hostname auf die angepassten IP umstellen\nDie Regeln können die von der App festgelegt überschreiben</string>
     <string name="download_reset_reading_progress">Lesefortschritte zurücksetzen</string>
-    <string name="reset_reading_progress_message">Lesefortschritte von allen heruntergeladenen Galerie zurücksetzen?</string>
+    <string name="reset_reading_progress_message">Lesefortschritte aus allen heruntergeladenen Galerie zurücksetzen?</string>
     <string name="settings_eh_theme">Thema</string>
     <string name="settings_eh_theme_light">Weiß</string>
     <string name="settings_eh_theme_dark">Dunkel</string>
