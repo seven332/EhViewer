@@ -668,4 +668,6 @@
     <string name="settings_eh_identity_cookies_signed">下記の情報を持つ誰でもこのアカウントにログインできますので&lt;br&gt;&lt;b&gt;絶対に他人に渡さないように！&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
     <string name="settings_eh_identity_cookies_tourist">まだログインしていません</string>
     <string name="settings_eh_identity_cookies_copy">コピー</string>
+    <string name="settings_eh_show_gallery_pages">ギャラリーページ数を表示</string>
+    <string name="settings_eh_show_gallery_pages_summary">ギャラリーリストにページの数量を表示します。リストをロードするのにもっと時間がかかることがあります。</string>
 </resources>
