@@ -734,7 +734,7 @@
     <string name="download_archive_failure_no_hath">Need H@H client for archive download</string>
     <string name="settings_privacy">Privacy</string>
     <string name="settings_privacy_secure">Prevent screenshots</string>
-    <string name="settings_privacy_secure_summary">Prevent the content of the app from being taken or shown in the \"Recent Apps\" list.</string>
+    <string name="settings_privacy_secure_summary">Prevent the content of the app from being taken screenshots of or shown in the \"Recent Apps\" list.</string>
 
     <string name="download_service">Download Service</string>
     <string name="favorite_name">Favorite</string>
