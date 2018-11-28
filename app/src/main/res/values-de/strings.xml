@@ -521,4 +521,6 @@
     <string name="settings_eh_identity_cookies_signed">Wenn jemand die folgende Informationen hat, kann er sich als du anmelden. &lt;br&gt;&lt;b&gt;ALSO GEHEIM HALTEN!&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
     <string name="settings_eh_identity_cookies_tourist">Du hast dich noch nicht angemeldet.</string>
     <string name="settings_eh_identity_cookies_copy">Kopieren</string>
+    <string name="settings_eh_show_gallery_pages">Galerieseitenzahl anzeigen</string>
+    <string name="settings_eh_show_gallery_pages_summary">Die Galerieseitenzahle in der Galerieliste anzeigen. Es wird länger dauern, um Galerieliste zu laden.</string>
 </resources>
