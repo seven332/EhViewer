@@ -672,4 +672,7 @@
     <string name="settings_eh_identity_cookies_signed">Tout le monde peut utiliser les cookies de ce compte pour s\'y connecter.&lt;br&gt;&lt;b&gt;GARDEZ-LES BIEN !&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
     <string name="settings_eh_identity_cookies_tourist">Vous ne vous êtes pas connecté.</string>
     <string name="settings_eh_identity_cookies_copy">Copier</string>
+    <string name="settings_eh_show_gallery_pages">Montrer les nombres des pages des galeries</string>
+    <string name="settings_eh_show_gallery_pages_summary">Montrer le nombre des pages des galerie dans la liste des galeries. Il vas prendre plus de temps pour charger la liste.</string>
+
 </resources>
