@@ -29,16 +29,25 @@ import java.util.regex.Pattern;
  */
 public final class GalleryDetailUrlParser {
 
-    public static final Pattern URL_PATTERN = Pattern.compile("https?://(?:" +
-            EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_E + "|" + EhUrl.DOMAIN_LOFI + ")/(?:g|mpv)/(\\d+)/(\\w+)");
+    private static final Pattern URL_STRICT_PATTERN = Pattern.compile(
+            "https?://(?:" + EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_E + "|" + EhUrl.DOMAIN_LOFI + ")/(?:g|mpv)/(\\d+)/([0-9a-f]{10})");
+
+    private static final Pattern URL_PATTERN = Pattern.compile(
+            "(\\d+)/([0-9a-f]{10})");
 
     @Nullable
     public static Result parse(String url) {
+        return parse(url, true);
+    }
+
+    @Nullable
+    public static Result parse(String url, boolean strict) {
         if (url == null) {
             return null;
         }
 
-        Matcher m = URL_PATTERN.matcher(url);
+        Pattern pattern = strict ? URL_STRICT_PATTERN : URL_PATTERN;
+        Matcher m = pattern.matcher(url);
         if (m.find()) {
             Result result = new Result();
             result.gid = Long.parseLong(m.group(1));
