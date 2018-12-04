@@ -36,7 +36,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,10 +49,11 @@ import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
-import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
+import com.hippo.ehviewer.client.parser.GalleryDetailUrlParser;
+import com.hippo.ehviewer.client.parser.GalleryPageUrlParser;
 import com.hippo.ehviewer.ui.scene.AnalyticsScene;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.CookieSignInScene;
@@ -121,8 +121,6 @@ public final class MainActivity extends StageActivity
     private Button mChangeTheme;
 
     private int mNavCheckedItem = 0;
-
-    private int mClipTextHashCode = 0;
 
     static {
         registerLaunchMode(SecurityScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
@@ -426,20 +424,16 @@ public final class MainActivity extends StageActivity
         // Check permission
         PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getString(R.string.write_rationale), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-
-        mClipTextHashCode = Settings.getClipboardTextHashCode();
     }
 
     private void onRestore(Bundle savedInstanceState) {
         mNavCheckedItem = savedInstanceState.getInt(KEY_NAV_CHECKED_ITEM);
-        mClipTextHashCode = savedInstanceState.getInt(KEY_CLIP_TEXT_HASH_CODE);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putInt(KEY_NAV_CHECKED_ITEM, mNavCheckedItem);
-        outState.putInt(KEY_CLIP_TEXT_HASH_CODE, mClipTextHashCode);
     }
 
     @Override
@@ -493,34 +487,49 @@ public final class MainActivity extends StageActivity
         return null;
     }
 
+    @Nullable
+    private Announcer createAnnouncerFromClipboardUrl(String url) {
+        GalleryDetailUrlParser.Result result1 = GalleryDetailUrlParser.parse(url, false);
+        if (result1 != null) {
+            Bundle args = new Bundle();
+            args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GID_TOKEN);
+            args.putLong(GalleryDetailScene.KEY_GID, result1.gid);
+            args.putString(GalleryDetailScene.KEY_TOKEN, result1.token);
+            return new Announcer(GalleryDetailScene.class).setArgs(args);
+        }
+
+        GalleryPageUrlParser.Result result2 = GalleryPageUrlParser.parse(url, false);
+        if (result2 != null) {
+            Bundle args = new Bundle();
+            args.putString(ProgressScene.KEY_ACTION, ProgressScene.ACTION_GALLERY_TOKEN);
+            args.putLong(ProgressScene.KEY_GID, result2.gid);
+            args.putString(ProgressScene.KEY_PTOKEN, result2.pToken);
+            args.putInt(ProgressScene.KEY_PAGE, result2.page);
+            return new Announcer(ProgressScene.class).setArgs(args);
+        }
+
+        return null;
+    }
+
     private void checkClipboardUrlInternal() {
         String text = getTextFromClipboard();
         int hashCode = text != null ? text.hashCode() : 0;
 
-        if (text != null && hashCode != 0 && mClipTextHashCode != hashCode && Settings.getClipboardTextHashCode() != hashCode) {
-            Pair<Long, String> pair = EhUrl.parseGalleryDetailUrl(text);
-            if (pair != null) {
-                long gid = pair.first;
-                String token = pair.second;
+        if (text != null && hashCode != 0 && Settings.getClipboardTextHashCode() != hashCode) {
+            Announcer announcer = createAnnouncerFromClipboardUrl(text);
+            if (announcer != null) {
                 new AlertDialog.Builder(this)
-                        .setTitle(R.string.clipboard_gallery_url_dialog_title)
-                        .setMessage(R.string.clipboard_gallery_url_dialog_message)
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                            Bundle args = new Bundle();
-                            args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GID_TOKEN);
-                            args.putLong(GalleryDetailScene.KEY_GID, gid);
-                            args.putString(GalleryDetailScene.KEY_TOKEN, token);
-                            startScene(new Announcer(GalleryDetailScene.class).setArgs(args));
-                        })
-                        .show();
+                    .setTitle(R.string.clipboard_gallery_url_dialog_title)
+                    .setMessage(R.string.clipboard_gallery_url_dialog_message)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        startScene(announcer);
+                    })
+                    .show();
             }
         }
 
-        if (mClipTextHashCode != hashCode) {
-            mClipTextHashCode = hashCode;
-            Settings.putClipboardTextHashCode(hashCode);
-        }
+        Settings.putClipboardTextHashCode(hashCode);
     }
 
     @Override
