@@ -20,23 +20,22 @@ import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.glgallery.GalleryPageView;
 import com.hippo.image.Image;
+import com.hippo.unifile.FilenameFilter;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.NaturalComparator;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.thread.PriorityThread;
-
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -173,7 +172,7 @@ public class DirGalleryProvider extends GalleryProvider2 implements Runnable {
     @Override
     public void run() {
         // It may take a long time, so run it in new thread
-        UniFile[] files = mDir.listFiles();
+        UniFile[] files = mDir.listFiles(imageFilter);
 
         if (files == null) {
             mSize = STATE_ERROR;
@@ -187,7 +186,7 @@ public class DirGalleryProvider extends GalleryProvider2 implements Runnable {
         }
 
         // Sort it
-        Arrays.sort(files);
+        Arrays.sort(files, naturalComparator);
 
         // Put file list
         mFileList.lazySet(files);
@@ -244,11 +243,14 @@ public class DirGalleryProvider extends GalleryProvider2 implements Runnable {
         Log.i(TAG, "ImageDecoder end");
     }
 
-    private static class ImageFilter implements FilenameFilter {
+    private static FilenameFilter imageFilter =
+        (dir, name) -> StringUtils.endsWith(name.toLowerCase(), SUPPORT_IMAGE_EXTENSIONS);
 
+    private static Comparator<UniFile> naturalComparator = new Comparator<UniFile>() {
+        private NaturalComparator comparator = new NaturalComparator();
         @Override
-        public boolean accept(File dir, String filename) {
-            return StringUtils.endsWith(filename.toLowerCase(), SUPPORT_IMAGE_EXTENSIONS);
+        public int compare(UniFile o1, UniFile o2) {
+            return comparator.compare(o1.getName(), o2.getName());
         }
-    }
+    };
 }
