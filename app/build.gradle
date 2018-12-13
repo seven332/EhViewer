@@ -65,7 +65,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportLibrary"
     implementation "com.android.support:cardview-v7:$supportLibrary"
     implementation "com.android.support:design:$supportLibrary"
-    implementation 'com.google.firebase:firebase-core:16.0.4'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
     implementation 'com.github.amlcurran.showcaseview:library:5.4.3'
     implementation 'com.github.seven332:android-recaptcha:2bbb3459a8'
     implementation 'com.github.seven332:android-resource:0.1.0'
