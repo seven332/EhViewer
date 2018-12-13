@@ -71,7 +71,7 @@ dependencies {
     implementation 'com.github.seven332:android-resource:0.1.0'
     implementation 'com.github.seven332:animator:0.1.0'
     implementation 'com.github.seven332:beerbelly:0.1.4'
-    implementation 'com.github.seven332.commons-compress:android-lite:e4218388f6'
+    implementation 'com.github.seven332.commons-compress:android-lite:464e96d3b4'
     implementation 'com.github.seven332:conaco:0.1.5-eh'
     implementation 'com.github.seven332:drawerlayout:0.2.1'
     implementation 'com.github.seven332:easyrecyclerview:0.1.1'

@@ -38,7 +38,9 @@ public class SevenZArchive extends Archive {
     List<ArchiveEntry> result = new ArrayList<>();
 
     for (org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry archive : file.getEntries()) {
-      if (isSupportedFilename(archive.getName().toLowerCase())) {
+      if (archive.getSize() != 0
+          && !archive.isDirectory()
+          && isSupportedFilename(archive.getName().toLowerCase())) {
         result.add(new SevenZArchiveEntry(file, archive));
       }
     }
@@ -54,6 +56,16 @@ public class SevenZArchive extends Archive {
   public static Archive create(UniRandomAccessFile file) throws IOException {
     Store store = new UniRandomAccessFileStore(file);
     SevenZFile sevenZFile = new SevenZFile(store);
+
+    // Check whether the archive is solid
+    for (org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry entry : sevenZFile.getEntries()) {
+      if (entry.getSize() != 0
+          && !entry.isDirectory()
+          && !entry.isFirstInFolder()) {
+        throw new IOException("Solid archive is not supported");
+      }
+    }
+
     return new SevenZArchive(sevenZFile);
   }
 

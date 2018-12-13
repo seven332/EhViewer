@@ -58,6 +58,9 @@ public class RarArchive extends Archive {
     com.github.junrar.Archive archive;
     try {
       archive = new com.github.junrar.Archive(volumeManager);
+      if (archive.getMainHeader().isSolid()) {
+        throw new IOException("Solid archive is not supported");
+      }
     } catch (RarException e) {
       throw new IOException("Invalid rar archive", e);
     }
