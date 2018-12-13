@@ -54,6 +54,7 @@ import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.gallery.ArchiveGalleryProvider;
 import com.hippo.ehviewer.gallery.DirGalleryProvider;
 import com.hippo.ehviewer.gallery.EhGalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProvider2;
@@ -214,7 +215,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         } else if (Intent.ACTION_VIEW.equals(mAction)) {
             if (mUri != null) {
                 // Only support zip now
-                mGalleryProvider = new ZipGalleryProvider(new File(mUri.getPath()));
+                mGalleryProvider = new ArchiveGalleryProvider(this, mUri);
             }
         }
     }

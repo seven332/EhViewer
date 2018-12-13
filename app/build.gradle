@@ -71,6 +71,7 @@ dependencies {
     implementation 'com.github.seven332:android-resource:0.1.0'
     implementation 'com.github.seven332:animator:0.1.0'
     implementation 'com.github.seven332:beerbelly:0.1.4'
+    implementation 'com.github.seven332.commons-compress:android-lite:e4218388f6'
     implementation 'com.github.seven332:conaco:0.1.5-eh'
     implementation 'com.github.seven332:drawerlayout:0.2.1'
     implementation 'com.github.seven332:easyrecyclerview:0.1.1'
@@ -79,12 +80,13 @@ dependencies {
     implementation 'com.github.seven332:glview-image:0.1.0'
     implementation 'com.github.seven332:hotspot:0.1.0'
     implementation 'com.github.seven332:image:0.1.12'
+    implementation 'com.github.seven332.junrar:android-lite:46ecc9630a'
     implementation 'com.github.seven332:okhttp:3.5.0'
     implementation 'com.github.seven332:refreshlayout:0.1.0'
     implementation 'com.github.seven332:ripple:0.1.2'
     implementation 'com.github.seven332:streampipe:0.1.0'
     implementation 'com.github.seven332:tuxiang:0.1.2'
-    implementation 'com.github.seven332:unifile:b59c14e47b'
+    implementation 'com.github.seven332:unifile:2de815c5ed'
     implementation 'com.github.seven332:yorozuya:0.1.2'
     implementation 'com.github.seven332:yorozuya-thread:0.1.1'
     implementation 'com.github.seven332:yorozuya-collect:0.1.4'
@@ -105,5 +107,6 @@ configurations.all {
         force 'com.github.seven332:image:bbf0bbb0a0'
 
         exclude group: 'com.github.seven332', module: 'okhttp'
+        exclude group: 'com.squareup.okio', module: 'okio'
     }
 }

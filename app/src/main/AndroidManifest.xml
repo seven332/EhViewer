@@ -85,17 +85,41 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="file"/>
+                <data android:scheme="content"/>
                 <data android:host="*"/>
+                <data android:mimeType="application/octet-stream"/>
+                <data android:mimeType="application/7z"/>
+                <data android:mimeType="application/rar"/>
+                <data android:mimeType="application/zip"/>
+                <data android:mimeType="application/x-7z-compressed"/>
+                <data android:mimeType="application/x-rar-compressed"/>
+                <data android:mimeType="application/x-zip-compressed"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*\\.7z"/>
+                <data android:pathPattern=".*\\.rar"/>
                 <data android:pathPattern=".*\\.zip"/>
             </intent-filter>
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="file"/>
+                <data android:scheme="content"/>
                 <data android:host="*"/>
                 <data android:mimeType="*/*"/>
+                <data android:pathPattern=".*\\.7z"/>
+                <data android:pathPattern=".*\\.rar"/>
                 <data android:pathPattern=".*\\.zip"/>
             </intent-filter>
         </activity>
