@@ -58,7 +58,6 @@ import com.hippo.ehviewer.gallery.ArchiveGalleryProvider;
 import com.hippo.ehviewer.gallery.DirGalleryProvider;
 import com.hippo.ehviewer.gallery.EhGalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProvider2;
-import com.hippo.ehviewer.gallery.ZipGalleryProvider;
 import com.hippo.ehviewer.widget.GalleryGuideView;
 import com.hippo.ehviewer.widget.ReversibleSeekBar;
 import com.hippo.glgallery.GalleryPageView;
@@ -87,7 +86,6 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         GalleryView.Listener {
 
     public static final String ACTION_DIR = "dir";
-    public static final String ACTION_ZIP = "zip";
     public static final String ACTION_EH = "eh";
 
     public static final String KEY_ACTION = "action";
@@ -203,10 +201,6 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         if (ACTION_DIR.equals(mAction)) {
             if (mFilename != null) {
                 mGalleryProvider = new DirGalleryProvider(UniFile.fromFile(new File(mFilename)));
-            }
-        } else if (ACTION_ZIP.equals(mAction)) {
-            if (mFilename != null) {
-                mGalleryProvider = new ZipGalleryProvider(new File(mFilename));
             }
         } else if (ACTION_EH.equals(mAction)) {
             if (mGalleryInfo != null) {

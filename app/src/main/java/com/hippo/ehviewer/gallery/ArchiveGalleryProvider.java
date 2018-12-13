@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ArchiveGalleryProvider extends GalleryProvider2 implements Runnable {
 
-  private static final String TAG = ZipGalleryProvider.class.getSimpleName();
+  private static final String TAG = ArchiveGalleryProvider.class.getSimpleName();
   private static final AtomicInteger sIdGenerator = new AtomicInteger();
 
   private final UniFile file;
@@ -154,7 +154,7 @@ public class ArchiveGalleryProvider extends GalleryProvider2 implements Runnable
     }
     if (archive == null) {
       size = STATE_ERROR;
-      error = GetText.getString(R.string.error_invalid_zip_file);
+      error = GetText.getString(R.string.error_invalid_archive);
       notifyDataChanged();
       return;
     }

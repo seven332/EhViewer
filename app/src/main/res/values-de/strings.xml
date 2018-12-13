@@ -44,7 +44,6 @@
     <string name="error_decoding_failed">Dekodierung fehlgeschlagen</string>
     <string name="error_not_found">Nicht gefunden</string>
     <string name="error_empty">Leer</string>
-    <string name="error_invalid_zip_file">Die ZIP Datei wurde nicht gefunden</string>
     <string name="error_reading_failed">Lesefehler</string>
     <string name="error_out_of_range">Außer Reichweite</string>
     <string name="error_write_failed">Schreibfehler</string>

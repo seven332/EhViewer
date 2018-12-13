@@ -71,7 +71,6 @@
     <string name="error_decoding_failed">Échec de décodage</string>
     <string name="error_not_found">Introuvable</string>
     <string name="error_empty">Vide</string>
-    <string name="error_invalid_zip_file">Fiche ZIP invalide</string>
     <string name="error_reading_failed">Échec de lecture</string>
     <string name="error_out_of_range">Hors de portée</string>
     <string name="error_write_failed">Échec d\'écriture</string>

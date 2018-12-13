@@ -120,7 +120,7 @@
     <string name="error_decoding_failed">Decoding failed</string>
     <string name="error_not_found">Not found</string>
     <string name="error_empty">Empty</string>
-    <string name="error_invalid_zip_file">Invalid zip file</string>
+    <string name="error_invalid_archive">Invalid archive</string>
     <string name="error_reading_failed">Reading Failed</string>
     <string name="error_out_of_range">Out of range</string>
     <string name="error_write_failed">Write failed</string>

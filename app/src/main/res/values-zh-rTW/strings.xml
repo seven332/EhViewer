@@ -78,7 +78,7 @@
     <string name="error_decoding_failed">解碼失敗</string>
     <string name="error_not_found">沒能找到</string>
     <string name="error_empty">空</string>
-    <string name="error_invalid_zip_file">無效的 zip 檔案</string>
+    <string name="error_invalid_archive">無效的壓縮包</string>
     <string name="error_reading_failed">讀取失敗</string>
     <string name="error_out_of_range">超出範圍</string>
     <string name="error_write_failed">寫入失敗</string>

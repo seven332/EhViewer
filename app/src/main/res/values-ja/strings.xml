@@ -70,7 +70,6 @@
     <string name="error_decoding_failed">デコードに失敗しました。</string>
     <string name="error_not_found">見つかりませんでした。</string>
     <string name="error_empty">空</string>
-    <string name="error_invalid_zip_file">無効なzipファイルです。</string>
     <string name="error_reading_failed">読み込めませんでした。</string>
     <string name="error_out_of_range">範囲外です。</string>
     <string name="error_write_failed">書き込めませんでした</string>

@@ -70,7 +70,6 @@
     <string name="error_decoding_failed">디코딩 실패</string>
     <string name="error_not_found">찾을 수 없음</string>
     <string name="error_empty">비어 있음</string>
-    <string name="error_invalid_zip_file">잘못된 압축 파일</string>
     <string name="error_reading_failed">읽기 실패</string>
     <string name="error_out_of_range">범위 초과</string>
     <string name="error_write_failed">쓰기 실패</string>

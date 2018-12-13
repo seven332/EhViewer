@@ -67,7 +67,6 @@
     <string name="error_decoding_failed">Decodificacion fallida</string>
     <string name="error_not_found">No encontrado</string>
     <string name="error_empty">Vacio</string>
-    <string name="error_invalid_zip_file">Archivo ZIP invalido</string>
     <string name="error_reading_failed">Lectura Fallida</string>
     <string name="error_out_of_range">Fuera de rango</string>
     <string name="error_write_failed">Falla en la escritura</string>
