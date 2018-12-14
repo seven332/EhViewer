@@ -77,6 +77,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private TextView mTitleTextView;
     private ImageView mActionButton;
     private SearchEditText mEditText;
+    private ListView mListView;
     private View mListContainer;
     private View mListHeader;
 
@@ -118,7 +119,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mActionButton = (ImageView) ViewUtils.$$(this, R.id.search_action);
         mEditText = (SearchEditText) ViewUtils.$$(this, R.id.search_edit_text);
         mListContainer = ViewUtils.$$(this, R.id.list_container);
-        ListView list = (ListView) ViewUtils.$$(mListContainer, R.id.search_bar_list);
+        mListView = (ListView) ViewUtils.$$(mListContainer, R.id.search_bar_list);
         mListHeader = ViewUtils.$$(mListContainer, R.id.list_header);
 
         mViewTransition = new ViewTransition(mTitleTextView, mEditText);
@@ -136,8 +137,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
         mSuggestionList = new ArrayList<>();
         mSuggestionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_simple_list, mSuggestionList);
-        list.setAdapter(mSuggestionAdapter);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setAdapter(mSuggestionAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String suggestion = mSuggestionList.get(MathUtils.clamp(position, 0, mSuggestionList.size() - 1));
@@ -145,7 +146,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 mEditText.setSelection(mEditText.getText().length());
             }
         });
-        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String suggestion = mSuggestionList.get(MathUtils.clamp(position, 0, mSuggestionList.size() - 1));
@@ -175,6 +176,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
             addListHeader();
         }
         mSuggestionAdapter.notifyDataSetChanged();
+        mListView.setSelection(0);
     }
 
     public void setAllowEmptySearch(boolean allowEmptySearch) {
