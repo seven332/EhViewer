@@ -636,8 +636,6 @@
     <string name="settings_privacy">Confidentialité</string>
     <string name="settings_privacy_secure">Empêcher les captures d\'ecran</string>
     <string name="settings_privacy_secure_summary">Quand cette option est activée, vous ne pouvez prendre aucune capture d\'écran de l\'application, et le systéme n\'affiche pas le contenu d\'écran dans le sélecteur de tâches.\n\nRedémarrage de l\'application est nécessaire pour appliquer le changement</string>
-    <string name="clipboard_gallery_url_dialog_title">Lien de galerie detecté</string>
-    <string name="clipboard_gallery_url_dialog_message">Voulez-vous accéder la galerie dans vos presse-papiers ?</string>
     <string name="hosts">Personnalisé hosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
     <string name="hosts_host">Hôte</string>

@@ -78,8 +78,8 @@
 
     <string name="cellular_network_warning">Connected to cellular networks</string>
 
-    <string name="clipboard_gallery_url_dialog_title">Gallery Detected</string>
-    <string name="clipboard_gallery_url_dialog_message">A gallery url was found in your clipboard. Check it now?</string>
+    <string name="clipboard_gallery_url_snack_message">There is a gallery url in the clipboard</string>
+    <string name="clipboard_gallery_url_snack_action">View</string>
 
     <string name="error_status_code_400" translatable="false">Bad Request</string>
     <string name="error_status_code_401" translatable="false">Unauthorized</string>

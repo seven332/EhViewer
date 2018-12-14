@@ -517,15 +517,10 @@ public final class MainActivity extends StageActivity
 
         if (text != null && hashCode != 0 && Settings.getClipboardTextHashCode() != hashCode) {
             Announcer announcer = createAnnouncerFromClipboardUrl(text);
-            if (announcer != null) {
-                new AlertDialog.Builder(this)
-                    .setTitle(R.string.clipboard_gallery_url_dialog_title)
-                    .setMessage(R.string.clipboard_gallery_url_dialog_message)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        startScene(announcer);
-                    })
-                    .show();
+            if (announcer != null && mDrawerLayout != null) {
+                Snackbar snackbar = Snackbar.make(mDrawerLayout, R.string.clipboard_gallery_url_snack_message, Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction(R.string.clipboard_gallery_url_snack_action, v -> startScene(announcer));
+                snackbar.show();
             }
         }
 

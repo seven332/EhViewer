@@ -62,8 +62,8 @@
 
     <string name="cellular_network_warning">正在使用移動網絡</string>
 
-    <string name="clipboard_gallery_url_dialog_title">發現畫廊</string>
-    <string name="clipboard_gallery_url_dialog_message">剪切板裏有畫廊鏈接，要不要看看？</string>
+    <string name="clipboard_gallery_url_snack_message">剪切板裏有畫廊鏈接</string>
+    <string name="clipboard_gallery_url_snack_action">查看</string>
 
     <string name="error_bad_status_code">錯誤狀態碼：%d</string>
     <string name="error_timeout">超時</string>

@@ -622,8 +622,6 @@
     <string name="settings_privacy">Privacidad</string>
     <string name="settings_privacy_secure">Impedir capturas de pantalla</string>
     <string name="settings_privacy_secure_summary">Si habilitas esta opción no podrás hacer captura de pantalla y el sistema no mostrará una previsualización en el multitareas.\n\nDeberás reiniciar la aplicación para activar esta función.</string>
-    <string name="clipboard_gallery_url_dialog_title">Galería detectada</string>
-    <string name="clipboard_gallery_url_dialog_message">Se ha detectado un vínculo de galería en el portapapeles. ¿Quieres entrarlo?</string>
     <string name="page_menu_save_to">Guardar a...</string>
     <string name="enable_fingerprint">Usar huellas digitales para desbloquear</string>
     <string name="u_config">Ajustes EHentai</string>

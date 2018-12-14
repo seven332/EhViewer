@@ -626,8 +626,6 @@
     <string name="settings_download_media_scan_summary_off">ほとんどのギャラリーアプリはダウンロードパスの内容を表示しません</string>
     <string name="settings_download_download_origin_image_summary">有効にすると、ダウンロード制限にもっとはやく達する恐れがあります</string>
     <string name="settings_advanced_clear_download_path_cache_summary">ギャラリー ダウンロード パスは無効なようで、もう一度ダウンロードする必要があると表示されている場合は、ダウンロードパスのキャッシュをクリアしてみてください。</string>
-    <string name="clipboard_gallery_url_dialog_title">ギャラリーリンクが発見されました</string>
-    <string name="clipboard_gallery_url_dialog_message">クリップボードにあるギャラリーにアクセスしますか？</string>
     <string name="page_menu_save_to">名前を付けて保存</string>
     <string name="settings_advanced_app_language_title">アプリ言語（Language）</string>
     <string name="hosts">カスタムhosts.txt</string>

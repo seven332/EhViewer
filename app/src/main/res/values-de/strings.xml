@@ -261,8 +261,6 @@
     <string name="add_filter">Filter erstellen</string>
     <string name="show_definition">Definition anzeigen</string>
     <string name="filter_text">Filtertext</string>
-    <string name="clipboard_gallery_url_dialog_title">Link der Galerie erkennt</string>
-    <string name="clipboard_gallery_url_dialog_message">Ein Galerie-Link wird in deiner Zwischenablage erkennt. Möchtest du es nutzen?</string>
     <string name="search_tip">Normale Suche: Nur durchsuchen.\n\nUploader spezifizieren: Die Galerie, die vom Uploader hochgeladen ist, auflisten. Andere Optionen werden ignoriert.\n\nEtikett spezifizieren: Die Galerie, die das Etikett hat, auflisten. Nur ein Etikett kann eingegeben werden. Andere Optionen werden ignoriert.\n\nGalerie spezifizieren: Zur Galerie gehen. Andere Optionen werden ignoriert.</string>
     <string name="filter_tip">Titelfilter: die Galerie, deren Titel das Wort enthalten, ausschließen.\n\nUploaderfilter: Die vom Uploader hochgeladen Galerie ausschließen.\n\nEtikettfilter: Die Galerie, die die Etikett haben, ausschließen. Es wird länger dauern, Galerieliste zu laden.\n\nEtikettnamensraumfilter: Die Galerie, die den Etikettnamensraum haben, ausschließen. Es wird länger dauern, Galerieliste zu laden.</string>
     <string name="set_pattern_protection">Sperrmuster festlegen</string>
