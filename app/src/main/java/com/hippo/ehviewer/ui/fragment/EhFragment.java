@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui.fragment;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -33,22 +34,31 @@ public class EhFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.eh_settings);
 
         Preference theme = findPreference(Settings.KEY_THEME);
+        Preference applyNavBarThemeColor = findPreference(Settings.KEY_APPLY_NAV_BAR_THEME_COLOR);
         Preference gallerySite = findPreference(Settings.KEY_GALLERY_SITE);
         Preference listMode = findPreference(Settings.KEY_LIST_MODE);
         Preference detailSize = findPreference(Settings.KEY_DETAIL_SIZE);
         Preference thumbSize = findPreference(Settings.KEY_THUMB_SIZE);
 
         theme.setOnPreferenceChangeListener(this);
+        applyNavBarThemeColor.setOnPreferenceChangeListener(this);
         gallerySite.setOnPreferenceChangeListener(this);
         listMode.setOnPreferenceChangeListener(this);
         detailSize.setOnPreferenceChangeListener(this);
         thumbSize.setOnPreferenceChangeListener(this);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            getPreferenceScreen().removePreference(applyNavBarThemeColor);
+        }
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String key = preference.getKey();
         if (Settings.KEY_THEME.equals(key)) {
+            ((EhApplication) getActivity().getApplication()).recreate();
+            return true;
+        } else if (Settings.KEY_APPLY_NAV_BAR_THEME_COLOR.equals(key)) {
             ((EhApplication) getActivity().getApplication()).recreate();
             return true;
         } else if (Settings.KEY_GALLERY_SITE.equals(key)) {

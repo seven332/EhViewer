@@ -407,6 +407,7 @@
     <string name="settings_eh_theme_light">亮色</string>
     <string name="settings_eh_theme_dark">暗色</string>
     <string name="settings_eh_theme_black">黑色</string>
+    <string name="settings_eh_apply_nav_bar_theme_color">導航欄應用主題配色</string>
     <string name="settings_eh_gallery_site">畫廊站點</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">詳情</string>

@@ -18,14 +18,17 @@ package com.hippo.ehviewer.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.view.WindowManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.hippo.android.resource.AttrResources;
 import com.hippo.app.PrettyPreferenceActivity;
 import com.hippo.content.ContextLocalWrapper;
 import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import java.util.Locale;
 
@@ -44,6 +47,10 @@ public abstract class EhPreferenceActivity extends PrettyPreferenceActivity {
 
         if (Settings.getEnableAnalytics()) {
             FirebaseAnalytics.getInstance(this);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Settings.getApplyNavBarThemeColor()) {
+            getWindow().setNavigationBarColor(AttrResources.getAttrColor(this, R.attr.colorPrimaryDark));
         }
     }
 

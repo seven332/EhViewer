@@ -51,6 +51,11 @@
         app:entryValues="@array/theme_entry_values"
         android:defaultValue="0"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="apply_nav_bar_theme_color"
+        android:title="@string/settings_eh_apply_nav_bar_theme_color"
+        android:defaultValue="false"/>
+
     <com.hippo.preference.ListPreference
         android:key="list_mode"
         android:title="@string/settings_eh_list_mode"
