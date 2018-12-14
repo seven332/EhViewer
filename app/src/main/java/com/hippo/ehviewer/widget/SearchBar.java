@@ -162,6 +162,10 @@ public class SearchBar extends CardView implements View.OnClickListener,
     }
 
     private void updateSuggestions() {
+        updateSuggestions(true);
+    }
+
+    private void updateSuggestions(boolean scrollToTop) {
         mSuggestionList.clear();
 
         String text = mEditText.getText().toString();
@@ -184,7 +188,10 @@ public class SearchBar extends CardView implements View.OnClickListener,
             addListHeader();
         }
         mSuggestionAdapter.notifyDataSetChanged();
-        mListView.setSelection(0);
+
+        if (scrollToTop) {
+            mListView.setSelection(0);
+        }
     }
 
     public void setAllowEmptySearch(boolean allowEmptySearch) {
@@ -575,7 +582,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
         @Override
         public void onLongClick() {
             mSearchDatabase.deleteQuery(mKeyword);
-            updateSuggestions();
+            updateSuggestions(false);
         }
     }
 }
