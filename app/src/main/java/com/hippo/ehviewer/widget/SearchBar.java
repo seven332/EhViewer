@@ -166,7 +166,7 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
     private void updateSuggestions() {
         String prefix = mEditText.getText().toString();
-        String[] suggestions = mSearchDatabase.getSuggestions(prefix);
+        String[] suggestions = mSearchDatabase.getSuggestions(prefix, 128);
         mSuggestionList.clear();
         Collections.addAll(mSuggestionList, suggestions);
         if (mSuggestionList.size() == 0) {

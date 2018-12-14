@@ -57,10 +57,10 @@ public final class SearchDatabase {
         mDatabase = databaseHelper.getWritableDatabase();
     }
 
-    public String[] getSuggestions(String prefix) {
+    public String[] getSuggestions(String prefix, int limit) {
         List<String> queryList = new LinkedList<>();
+        limit = Math.max(0, limit);
 
-        // TODO add limit
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT * FROM ").append(TABLE_SUGGESTIONS);
         if (!TextUtils.isEmpty(prefix)) {
@@ -68,7 +68,7 @@ public final class SearchDatabase {
                     .append(SqlUtils.sqlEscapeString(prefix)).append("%'");
         }
         sb.append(" ORDER BY ").append(COLUMN_DATE).append(" DESC")
-                .append(" LIMIT 5");
+            .append(" LIMIT ").append(limit);
         Cursor cursor = mDatabase.rawQuery(sb.toString(), null);
         int queryIndex = cursor.getColumnIndex(COLUMN_QUERY);
         if (cursor.moveToFirst()) {
