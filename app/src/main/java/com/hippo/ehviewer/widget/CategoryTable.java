@@ -21,15 +21,15 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
-
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.widget.CheckTextView;
 import com.hippo.yorozuya.NumberUtils;
 
-public class CategoryTable extends TableLayout {
+public class CategoryTable extends TableLayout implements View.OnLongClickListener {
 
     private static final String STATE_KEY_SUPER = "super";
     private static final String STATE_KEY_CATEGORY = "category";
@@ -44,6 +44,8 @@ public class CategoryTable extends TableLayout {
     private CheckTextView mCosplay;
     private CheckTextView mAsianPorn;
     private CheckTextView mMisc;
+
+    private CheckTextView[] mOptions;
 
     public CategoryTable(Context context) {
         super(context);
@@ -78,6 +80,29 @@ public class CategoryTable extends TableLayout {
         ViewGroup row4 = (ViewGroup) getChildAt(4);
         mAsianPorn = (CheckTextView) row4.getChildAt(0);
         mMisc = (CheckTextView) row4.getChildAt(1);
+
+        mOptions = new CheckTextView[] {
+            mDoujinshi, mManga, mArtistCG, mGameCG, mWestern,
+            mNonH, mImageSets, mCosplay, mAsianPorn, mMisc
+        };
+
+        for (CheckTextView option : mOptions) {
+            option.setOnLongClickListener(this);
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (v instanceof CheckTextView) {
+            boolean checked = ((CheckTextView) v).isChecked();
+            for (CheckTextView option : mOptions) {
+                if (option != v) {
+                    option.setChecked(!checked, false);
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
