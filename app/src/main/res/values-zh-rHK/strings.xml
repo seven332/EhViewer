@@ -125,6 +125,7 @@
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint_exhentai">搜索 ExHentai</string>
     <string name="gallery_list_search_bar_hint_e_hentai">搜索 E-Hentai</string>
+    <string name="gallery_list_search_bar_open_gallery">打開畫廊</string>
     <string name="gallery_list_empty_hit">什麼都沒有找到</string>
 
     <string name="search">搜索</string>

@@ -38,7 +38,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,7 +49,6 @@ import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SearchBar extends CardView implements View.OnClickListener,
@@ -84,11 +83,12 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private ViewTransition mViewTransition;
 
     private SearchDatabase mSearchDatabase;
-    private List<String> mSuggestionList;
-    private ArrayAdapter mSuggestionAdapter;
+    private List<Suggestion> mSuggestionList;
+    private SuggestionAdapter mSuggestionAdapter;
 
     private Helper mHelper;
     private OnStateChangeListener mOnStateChangeListener;
+    private SuggestionProvider mSuggestionProvider;
 
     private boolean mAllowEmptySearch = true;
 
@@ -136,22 +136,18 @@ public class SearchBar extends CardView implements View.OnClickListener,
         mBaseHeight = getMeasuredHeight();
 
         mSuggestionList = new ArrayList<>();
-        mSuggestionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_simple_list, mSuggestionList);
+        mSuggestionAdapter = new SuggestionAdapter(LayoutInflater.from(getContext()));
         mListView.setAdapter(mSuggestionAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String suggestion = mSuggestionList.get(MathUtils.clamp(position, 0, mSuggestionList.size() - 1));
-                mEditText.setText(suggestion);
-                mEditText.setSelection(mEditText.getText().length());
+                mSuggestionList.get(position).onClick();
             }
         });
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                String suggestion = mSuggestionList.get(MathUtils.clamp(position, 0, mSuggestionList.size() - 1));
-                mSearchDatabase.deleteQuery(suggestion);
-                updateSuggestions();
+                mSuggestionList.get(position).onLongClick();
                 return true;
             }
         });
@@ -166,10 +162,22 @@ public class SearchBar extends CardView implements View.OnClickListener,
     }
 
     private void updateSuggestions() {
-        String prefix = mEditText.getText().toString();
-        String[] suggestions = mSearchDatabase.getSuggestions(prefix, 128);
         mSuggestionList.clear();
-        Collections.addAll(mSuggestionList, suggestions);
+
+        String text = mEditText.getText().toString();
+
+        if (mSuggestionProvider != null) {
+            List<Suggestion> suggestions = mSuggestionProvider.providerSuggestions(text);
+            if (suggestions != null && !suggestions.isEmpty()) {
+                mSuggestionList.addAll(suggestions);
+            }
+        }
+
+        String[] keywords = mSearchDatabase.getSuggestions(text, 128);
+        for (String keyword : keywords) {
+            mSuggestionList.add(new KeywordSuggestion(keyword));
+        }
+
         if (mSuggestionList.size() == 0) {
             removeListHeader();
         } else {
@@ -197,6 +205,10 @@ public class SearchBar extends CardView implements View.OnClickListener,
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
         mOnStateChangeListener = listener;
+    }
+
+    public void setSuggestionProvider(SuggestionProvider suggestionProvider) {
+        mSuggestionProvider = suggestionProvider;
     }
 
     public void setText(String text) {
@@ -487,5 +499,83 @@ public class SearchBar extends CardView implements View.OnClickListener,
     public interface OnStateChangeListener {
 
         void onStateChange(SearchBar searchBar, int newState, int oldState, boolean animation);
+    }
+
+    public interface SuggestionProvider {
+
+        List<Suggestion> providerSuggestions(String text);
+    }
+
+    private class SuggestionAdapter extends BaseAdapter {
+
+        private LayoutInflater mInflater;
+
+        private SuggestionAdapter(LayoutInflater inflater) {
+            mInflater = inflater;
+        }
+
+        @Override
+        public int getCount() {
+            return mSuggestionList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mSuggestionList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView textView;
+            if (convertView == null) {
+                textView = (TextView) mInflater.inflate(R.layout.item_simple_list, parent, false);
+            } else {
+                textView = (TextView) convertView;
+            }
+
+            textView.setText(mSuggestionList.get(position).getText(textView.getTextSize()));
+
+            return textView;
+        }
+    }
+
+    public abstract static class Suggestion {
+
+        public abstract CharSequence getText(float textSize);
+
+        public abstract void onClick();
+
+        public abstract void onLongClick();
+    }
+
+    public class KeywordSuggestion extends Suggestion {
+
+        private String mKeyword;
+
+        private KeywordSuggestion(String keyword) {
+            mKeyword = keyword;
+        }
+
+        @Override
+        public CharSequence getText(float textSize) {
+            return mKeyword;
+        }
+
+        @Override
+        public void onClick() {
+            mEditText.setText(mKeyword);
+            mEditText.setSelection(mEditText.getText().length());
+        }
+
+        @Override
+        public void onLongClick() {
+            mSearchDatabase.deleteQuery(mKeyword);
+            updateSuggestions();
+        }
     }
 }

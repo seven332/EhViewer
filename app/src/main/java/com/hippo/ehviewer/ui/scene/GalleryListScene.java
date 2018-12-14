@@ -70,7 +70,9 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.exception.EhException;
+import com.hippo.ehviewer.client.parser.GalleryDetailUrlParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
+import com.hippo.ehviewer.client.parser.GalleryPageUrlParser;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.MainActivity;
@@ -95,6 +97,7 @@ import com.hippo.yorozuya.ViewUtils;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Collections;
 import java.util.List;
 import junit.framework.Assert;
 
@@ -315,6 +318,92 @@ public final class GalleryListScene extends BaseScene
         searchBar.setEditTextHint(ssb);
     }
 
+    private void setSearchBarSuggestionProvider(SearchBar searchBar) {
+        searchBar.setSuggestionProvider(text -> {
+            GalleryDetailUrlParser.Result result1 = GalleryDetailUrlParser.parse(text, false);
+            if (result1 != null) {
+                return Collections.singletonList(new GalleryDetailUrlSuggestion(result1.gid, result1.token));
+            }
+            GalleryPageUrlParser.Result result2 = GalleryPageUrlParser.parse(text, false);
+            if (result2 != null) {
+                return Collections.singletonList(new GalleryPageUrlSuggestion(result2.gid, result2.pToken, result2.page));
+            }
+            return null;
+        });
+    }
+
+    private abstract class UrlSuggestion extends SearchBar.Suggestion {
+        @Override
+        public CharSequence getText(float textSize) {
+            Drawable bookImage = DrawableManager.getDrawable(getContext2(), R.drawable.v_book_open_x24);
+            SpannableStringBuilder ssb = new SpannableStringBuilder("    ");
+            ssb.append(getResources2().getString(R.string.gallery_list_search_bar_open_gallery));
+            int imageSize = (int) (textSize * 1.25);
+            if (bookImage != null) {
+                bookImage.setBounds(0, 0, imageSize, imageSize);
+                ssb.setSpan(new ImageSpan(bookImage), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            return ssb;
+        }
+
+        @Override
+        public void onClick() {
+            startScene(createAnnouncer());
+
+            if (mState == STATE_SIMPLE_SEARCH) {
+                setState(STATE_NORMAL);
+            } else if (mState == STATE_SEARCH_SHOW_LIST) {
+                setState(STATE_SEARCH);
+            }
+        }
+
+        public abstract Announcer createAnnouncer();
+
+        @Override
+        public void onLongClick() { }
+    }
+
+    private class GalleryDetailUrlSuggestion extends UrlSuggestion {
+        private long mGid;
+        private String mToken;
+
+        private GalleryDetailUrlSuggestion(long gid, String token) {
+            mGid = gid;
+            mToken = token;
+        }
+
+        @Override
+        public Announcer createAnnouncer() {
+            Bundle args = new Bundle();
+            args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GID_TOKEN);
+            args.putLong(GalleryDetailScene.KEY_GID, mGid);
+            args.putString(GalleryDetailScene.KEY_TOKEN, mToken);
+            return new Announcer(GalleryDetailScene.class).setArgs(args);
+        }
+    }
+
+    private class GalleryPageUrlSuggestion extends UrlSuggestion {
+        private long mGid;
+        private String mPToken;
+        private int mPage;
+
+        private GalleryPageUrlSuggestion(long gid, String pToken, int page) {
+            mGid = gid;
+            mPToken = pToken;
+            mPage = page;
+        }
+
+        @Override
+        public Announcer createAnnouncer() {
+            Bundle args = new Bundle();
+            args.putString(ProgressScene.KEY_ACTION, ProgressScene.ACTION_GALLERY_TOKEN);
+            args.putLong(ProgressScene.KEY_GID, mGid);
+            args.putString(ProgressScene.KEY_PTOKEN, mPToken);
+            args.putInt(ProgressScene.KEY_PAGE, mPage);
+            return new Announcer(ProgressScene.class).setArgs(args);
+        }
+    }
+
     @Nullable
     private static String getSuitableTitleForUrlBuilder(
             Resources resources, ListUrlBuilder urlBuilder, boolean appName) {
@@ -432,6 +521,7 @@ public final class GalleryListScene extends BaseScene
         mSearchBar.setHelper(this);
         mSearchBar.setOnStateChangeListener(this);
         setSearchBarHint(context, mSearchBar);
+        setSearchBarSuggestionProvider(mSearchBar);
 
         mSearchLayout.setHelper(this);
         mSearchLayout.setPadding(mSearchLayout.getPaddingLeft(), mSearchLayout.getPaddingTop() + paddingTopSB,
