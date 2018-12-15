@@ -78,7 +78,6 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">URL invalide</string>
     <string name="error_get_ptoken_error">Échec d\'obtention de pToken</string>
-    <string name="error_invalid_specify_gallery">Le mot-clé doit réssembler à \"618395 0439fa3666\" pour spécifier une galerie</string>
     <string name="error_cant_create_temp_file">Impossible de créer un fiche temporaire</string>
     <string name="error_cant_save_image">Impossible d\'enregistrer l\'image</string>
     <string name="error_invalid_number">Nombre invalide</string>
@@ -130,10 +129,9 @@
     <string name="search_normal_search">Chercher</string>
     <string name="search_specify_uploader">Spécifier un uploader</string>
     <string name="search_specify_tag">Spécifier un tag</string>
-    <string name="search_specify_gallery">Spécifier une galerie</string>
     <string name="search_enable_advance">Activer options avancées</string>
 
-    <string name="search_tip">Recherche normale : faire recherche.\n\nSpécifer un uploader : faire la liste des galeries mises en ligne par l\'uploader spécifié. Autres options sont ignorées.\n\nSpécifier un tag : faire la liste des galeries qui contiennent le tag spécifié. Vous ne pouvez spécifier qu\'un tag. Autres options sont ignorées.\n\nSpécifier une galerie : Aller à la galerie. Le mot-clé doit être \"gid token\".</string>
+    <string name="search_tip">Recherche normale : faire recherche.\n\nSpécifer un uploader : faire la liste des galeries mises en ligne par l\'uploader spécifié. Autres options sont ignorées.\n\nSpécifier un tag : faire la liste des galeries qui contiennent le tag spécifié. Vous ne pouvez spécifier qu\'un tag. Autres options sont ignorées.</string>
 
     <string name="search_sname">Chercher une galerie</string>
     <string name="search_stags">Chercher tags galerie</string>

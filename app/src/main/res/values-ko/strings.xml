@@ -77,7 +77,6 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">잘못된 URL</string>
     <string name="error_get_ptoken_error">pToken 획득 오류</string>
-    <string name="error_invalid_specify_gallery">갤러리를 지정하려면 키워드를 \"618395 0439fa3666\" 형식으로 입력해야 합니다.</string>
     <string name="error_cant_create_temp_file">임시 파일을 만들 수 없음</string>
     <string name="error_cant_save_image">이미지를 저장할 수 없음</string>
     <string name="error_invalid_number">잘못된 번호</string>
@@ -129,10 +128,9 @@
     <string name="search_normal_search">일반 검색</string>
     <string name="search_specify_uploader">업로더 지정</string>
     <string name="search_specify_tag">태그 지정</string>
-    <string name="search_specify_gallery">갤러리 지정</string>
     <string name="search_enable_advance">고급 옵션 사용</string>
 
-    <string name="search_tip">일반 검색: 그냥 검색합니다.\n\n업로더 지정: 해당 업로더가 업로드한 갤러리를 나열합니다. 다른 옵션은 무시됩니다.\n\n태그 지정: 해당 태그를 포함한 갤러리를 나열합니다. 하나의 태그만 지정할 수 있습니다. 다른 옵션은 무시됩니다.\n\n갤러리 지정: 해당 갤러리로 이동합니다. 키워드는 \"GID 토큰\" 형식으로 입력해야 합니다.</string>
+    <string name="search_tip">일반 검색: 그냥 검색합니다.\n\n업로더 지정: 해당 업로더가 업로드한 갤러리를 나열합니다. 다른 옵션은 무시됩니다.\n\n태그 지정: 해당 태그를 포함한 갤러리를 나열합니다. 하나의 태그만 지정할 수 있습니다. 다른 옵션은 무시됩니다.</string>
 
     <string name="search_sname">갤러리 검색</string>
     <string name="search_stags">갤러래 태그 검색</string>

@@ -1193,36 +1193,11 @@ public final class GalleryListScene extends BaseScene
         }
 
         if (mState == STATE_SEARCH || mState == STATE_SEARCH_SHOW_LIST) {
-            if (mSearchLayout.isSpecifyGallery()) {
-                int index = query.indexOf(' ');
-                if (index <= 0 || index >= query.length() - 1) {
-                    showTip(R.string.error_invalid_specify_gallery, LENGTH_LONG);
-                    return;
-                }
-
-                long gid;
-                String token;
-                try {
-                    gid = Long.parseLong(query.substring(0, index));
-                } catch (NumberFormatException e) {
-                    showTip(R.string.error_invalid_specify_gallery, LENGTH_LONG);
-                    return;
-                }
-                token = query.substring(index + 1);
-
-                Bundle args = new Bundle();
-                args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GID_TOKEN);
-                args.putLong(GalleryDetailScene.KEY_GID, gid);
-                args.putString(GalleryDetailScene.KEY_TOKEN, token);
-                startScene(new Announcer(GalleryDetailScene.class).setArgs(args));
+            try {
+                mSearchLayout.formatListUrlBuilder(mUrlBuilder, query);
+            } catch (EhException e) {
+                showTip(e.getMessage(), LENGTH_LONG);
                 return;
-            } else {
-                try {
-                    mSearchLayout.formatListUrlBuilder(mUrlBuilder, query);
-                } catch (EhException e) {
-                    showTip(e.getMessage(), LENGTH_LONG);
-                    return;
-                }
             }
         } else {
             mUrlBuilder.reset();

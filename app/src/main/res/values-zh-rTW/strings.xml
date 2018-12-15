@@ -86,7 +86,6 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">不正確的連結</string>
     <string name="error_get_ptoken_error">取得 pToken 時發生錯誤</string>
-    <string name="error_invalid_specify_gallery">指定的圖庫關鍵字應該看起來像 “618395 0439fa3666”</string>
     <string name="error_cant_create_temp_file">無法建立暫存檔案</string>
     <string name="error_cant_save_image">無法儲存圖片</string>
     <string name="error_invalid_number">無效的數字</string>
@@ -139,10 +138,9 @@
     <string name="search_normal_search">一般搜尋</string>
     <string name="search_specify_uploader">指定上傳者</string>
     <string name="search_specify_tag">指定標籤</string>
-    <string name="search_specify_gallery">指定圖庫</string>
     <string name="search_enable_advance">啟用進階選項</string>
 
-    <string name="search_tip">一般搜尋：就是搜尋。\n\n指定上傳者：列出該上傳者上傳的圖庫。其他選項會被忽略。\n\n指定標籤：列出含有該標籤的圖庫。其他選項會被忽略。\n\n指定圖庫：直接前往圖庫。關鍵字應為“gid token”。</string>
+    <string name="search_tip">一般搜尋：就是搜尋。\n\n指定上傳者：列出該上傳者上傳的圖庫。其他選項會被忽略。\n\n指定標籤：列出含有該標籤的圖庫。其他選項會被忽略。</string>
 
     <string name="search_sname">搜尋圖庫</string>
     <string name="search_stags">搜尋圖庫的標籤</string>

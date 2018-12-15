@@ -51,7 +51,6 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">URL ungültig</string>
     <string name="error_get_ptoken_error">Fehler beim Erhalten pTokens</string>
-    <string name="error_invalid_specify_gallery">Das Schlüsselwort müsste wie 618395 0439fa3666 aussehen, um eine Galerie zu specifieren</string>
     <string name="error_cant_create_temp_file">Die Temporäre Datei konnte erstellt nicht werden</string>
     <string name="error_cant_save_image">Das Bild konnte nicht gespeichert werden</string>
     <string name="error_invalid_number">Nummer ungültig</string>
@@ -80,7 +79,6 @@
     <string name="search_normal_search">Normale Suche</string>
     <string name="search_specify_uploader">Einen Uploader spezifizieren</string>
     <string name="search_specify_tag">Ein Etikett spezifizieren</string>
-    <string name="search_specify_gallery">Eine Galerie spezifizieren</string>
     <string name="search_enable_advance">Erweitere Optionen aktivieren</string>
     <string name="search_sname">Nach Galerie suchen</string>
     <string name="search_stags">Nach Galerie-Etikett suchen</string>
@@ -261,7 +259,7 @@
     <string name="add_filter">Filter erstellen</string>
     <string name="show_definition">Definition anzeigen</string>
     <string name="filter_text">Filtertext</string>
-    <string name="search_tip">Normale Suche: Nur durchsuchen.\n\nUploader spezifizieren: Die Galerie, die vom Uploader hochgeladen ist, auflisten. Andere Optionen werden ignoriert.\n\nEtikett spezifizieren: Die Galerie, die das Etikett hat, auflisten. Nur ein Etikett kann eingegeben werden. Andere Optionen werden ignoriert.\n\nGalerie spezifizieren: Zur Galerie gehen. Andere Optionen werden ignoriert.</string>
+    <string name="search_tip">Normale Suche: Nur durchsuchen.\n\nUploader spezifizieren: Die Galerie, die vom Uploader hochgeladen ist, auflisten. Andere Optionen werden ignoriert.\n\nEtikett spezifizieren: Die Galerie, die das Etikett hat, auflisten. Nur ein Etikett kann eingegeben werden. Andere Optionen werden ignoriert.</string>
     <string name="filter_tip">Titelfilter: die Galerie, deren Titel das Wort enthalten, ausschließen.\n\nUploaderfilter: Die vom Uploader hochgeladen Galerie ausschließen.\n\nEtikettfilter: Die Galerie, die die Etikett haben, ausschließen. Es wird länger dauern, Galerieliste zu laden.\n\nEtikettnamensraumfilter: Die Galerie, die den Etikettnamensraum haben, ausschließen. Es wird länger dauern, Galerieliste zu laden.</string>
     <string name="set_pattern_protection">Sperrmuster festlegen</string>
     <string name="set_pattern_protection_tip">Zeichne ein Muster, um es als Sperrmuster festzulegen.\nLasse frei, um das Sperrmuster zu entfernen.</string>

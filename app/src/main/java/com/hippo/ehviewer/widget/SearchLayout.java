@@ -232,10 +232,6 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         }
     }
 
-    public boolean isSpecifyGallery() {
-        return R.id.search_specify_gallery == mNormalSearchMode.getCheckedRadioButtonId();
-    }
-
     public void formatListUrlBuilder(ListUrlBuilder urlBuilder, String query) throws EhException {
         urlBuilder.reset();
 

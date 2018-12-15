@@ -86,7 +86,6 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">无效链接</string>
     <string name="error_get_ptoken_error">获取 pToken 错误</string>
-    <string name="error_invalid_specify_gallery">指定画廊的关键字应该看起来像 “618395 0439fa3666”</string>
     <string name="error_cant_create_temp_file">无法创建临时文件</string>
     <string name="error_cant_save_image">无法保存图片</string>
     <string name="error_invalid_number">非法数字</string>
@@ -139,10 +138,9 @@
     <string name="search_normal_search">一般搜索</string>
     <string name="search_specify_uploader">指定上传者</string>
     <string name="search_specify_tag">指定标签</string>
-    <string name="search_specify_gallery">指定画廊</string>
     <string name="search_enable_advance">启用高级选项</string>
 
-    <string name="search_tip">一般搜索：就是搜索。\n\n指定上传者：列出该上传者上传的画廊。其他选项会被忽略。\n\n指定标签：列出含有该标签的画廊。其他选项会被忽略。\n\n指定画廊：跳转至该画廊。关键字应为“gid token”。</string>
+    <string name="search_tip">一般搜索：就是搜索。\n\n指定上传者：列出该上传者上传的画廊。其他选项会被忽略。\n\n指定标签：列出含有该标签的画廊。其他选项会被忽略。</string>
 
     <string name="search_sname">搜索画廊</string>
     <string name="search_stags">搜索画廊标签</string>

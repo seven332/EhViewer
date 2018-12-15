@@ -128,7 +128,6 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">Invalid url</string>
     <string name="error_get_ptoken_error">Get pToken error</string>
-    <string name="error_invalid_specify_gallery">Keyword should looks like \"618395 0439fa3666\" for specify gallery</string>
     <string name="error_cant_create_temp_file">Couldn\'t create temp file</string>
     <string name="error_cant_save_image">Can\'t save image</string>
     <string name="error_invalid_number">Invalid number</string>
@@ -181,10 +180,9 @@
     <string name="search_normal_search">Normal search</string>
     <string name="search_specify_uploader">Specify uploader</string>
     <string name="search_specify_tag">Specify tag</string>
-    <string name="search_specify_gallery">Specify gallery</string>
     <string name="search_enable_advance">Enable advance options</string>
 
-    <string name="search_tip">Normal search: Simply search.\n\nSpecify uploader: Search for galleries uploaded by the specified uploader. All other options will be ignored.\n\nSpecify tag: Search for galleries that contain the specified tag. Only one tag accepted. Other options will be ignored.\n\nSpecify gallery: Access the specified gallery directly. The keyword should be \"gid token\".</string>
+    <string name="search_tip">Normal search: Simply search.\n\nSpecify uploader: Search for galleries uploaded by the specified uploader. All other options will be ignored.\n\nSpecify tag: Search for galleries that contain the specified tag. Only one tag accepted. Other options will be ignored.</string>
 
     <string name="search_sname">Search Gallery</string>
     <string name="search_stags">Search Gallery Tags</string>

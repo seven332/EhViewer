@@ -54,12 +54,6 @@
             android:layout_height="wrap_content"
             android:text="@string/search_specify_tag"/>
 
-        <android.support.v7.widget.AppCompatRadioButton
-            android:id="@+id/search_specify_gallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/search_specify_gallery"/>
-
     </com.hippo.widget.RadioGridGroup>
 
     <LinearLayout

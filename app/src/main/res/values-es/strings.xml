@@ -74,7 +74,6 @@
     <string name="error_509">509</string>
     <string name="error_invalid_url">Url invalida</string>
     <string name="error_get_ptoken_error">Error al obtener token</string>
-    <string name="error_invalid_specify_gallery">Keyword should looks like \"618395 0439fa3666\" for specify gallery</string>
     <string name="error_cant_create_temp_file">Imposible crear archivo temporal</string>
     <string name="error_cant_save_image">Imposible guardar la imagen</string>
     <string name="error_invalid_number">Número invalido</string>
@@ -122,10 +121,9 @@
     <string name="search_normal_search">Búsqueda general</string>
     <string name="search_specify_uploader">Uploader específicos</string>
     <string name="search_specify_tag">Etiquetas específicas</string>
-    <string name="search_specify_gallery">Galerías específicas</string>
     <string name="search_enable_advance">Habilitar opciones avanzadas</string>
 
-    <string name="search_tip">Búsqueda normal: Solo busca.\n\nUploader especifico: Listar de galerías subidas por el uploader. Otras opciones serán ignoradas.\n\nEtiquetas específicas: Listar las galerías que contienen la etiqueta. Solo se acepta una etiqueta. Otras opciones serán ignoradas.\n\nGalería especifica: Ir a la Galería. La palabra clave debe ser \"gid token\".</string>
+    <string name="search_tip">Búsqueda normal: Solo busca.\n\nUploader especifico: Listar de galerías subidas por el uploader. Otras opciones serán ignoradas.\n\nEtiquetas específicas: Listar las galerías que contienen la etiqueta. Solo se acepta una etiqueta. Otras opciones serán ignoradas.</string>
 
     <string name="search_sname">Buscar galerías</string>
     <string name="search_stags">Buscar etiquetas de galería</string>
