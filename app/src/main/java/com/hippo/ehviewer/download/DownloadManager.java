@@ -566,6 +566,9 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         for (DownloadInfoListener l: mDownloadInfoListeners) {
             l.onReload();
         }
+
+        // Ensure download
+        ensureDownload();
     }
 
     @SuppressLint("StaticFieldLeak")
