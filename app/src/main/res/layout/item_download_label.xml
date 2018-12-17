@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2016 Hippo Seven
+  ~ Copyright 2018 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,33 +21,6 @@
     android:layout_height="wrap_content"
     android:clipChildren="false">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/text_little_small"
-            android:textColor="@color/red_500"
-            android:text="@string/delete"/>
-
-        <ImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/delete"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            app:srcCompat="@drawable/v_delete_red_x24"/>
-
-    </LinearLayout>
-
     <com.hippo.widget.ShadowLinearLayout
         android:id="@+id/swipe_handler"
         android:layout_width="match_parent"
@@ -59,6 +32,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <ImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/delete"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
+                app:srcCompat="@drawable/v_delete_x24"/>
 
             <TextView
                 android:id="@+id/label"
