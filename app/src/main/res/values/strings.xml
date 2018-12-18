@@ -571,6 +571,8 @@
     <string name="settings_advanced_import_data_successfully">Data imported successfully</string>
 
     <string name="settings_about">About</string>
+    <string name="settings_about_declaration" translatable="false">EhViewer</string>
+    <string name="settings_about_declaration_summary">EhViewer is not affiliated with E-Hentai.org in any way</string>
     <string name="settings_about_author">Author</string>
     <string name="settings_about_author_summary" translatable="false">Hippo &lt;ehviewersu$gmail.com&gt;</string>
     <string name="settings_about_telegram">Telegram</string>

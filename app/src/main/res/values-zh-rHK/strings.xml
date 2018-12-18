@@ -527,6 +527,7 @@
     <string name="settings_advanced_import_data_successfully">導入數據成功</string>
 
     <string name="settings_about">關於</string>
+    <string name="settings_about_declaration_summary">EhViewer 與 E-Hentai.org 無任何聯繫</string>
     <string name="settings_about_author">作者</string>
     <string name="settings_about_website">網站</string>
     <string name="settings_about_source">源碼</string>
