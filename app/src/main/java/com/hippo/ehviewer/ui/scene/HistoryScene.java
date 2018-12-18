@@ -104,7 +104,7 @@ public class HistoryScene extends ToolbarScene
         AssertUtils.assertNotNull(context);
         Resources resources = context.getResources();
 
-        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_history);
+        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_history);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 

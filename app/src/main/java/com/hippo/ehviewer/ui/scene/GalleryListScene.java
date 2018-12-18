@@ -172,7 +172,7 @@ public final class GalleryListScene extends BaseScene
         @Override
         public void onAnimationEnd(Animator animation) {
             if (null != mFabLayout) {
-                mFabLayout.getPrimaryFab().setVisibility(View.INVISIBLE);
+                ((View) mFabLayout.getPrimaryFab()).setVisibility(View.INVISIBLE);
             }
         }
     };
@@ -305,7 +305,7 @@ public final class GalleryListScene extends BaseScene
 
     private void setSearchBarHint(Context context, SearchBar searchBar) {
         Resources resources = context.getResources();
-        Drawable searchImage = DrawableManager.getDrawable(context, R.drawable.v_magnify_x24);
+        Drawable searchImage = DrawableManager.getVectorDrawable(context, R.drawable.v_magnify_x24);
         SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
         ssb.append(resources.getString(EhUrl.SITE_EX == Settings.getGallerySite() ?
                 R.string.gallery_list_search_bar_hint_exhentai :
@@ -335,7 +335,7 @@ public final class GalleryListScene extends BaseScene
     private abstract class UrlSuggestion extends SearchBar.Suggestion {
         @Override
         public CharSequence getText(float textSize) {
-            Drawable bookImage = DrawableManager.getDrawable(getContext2(), R.drawable.v_book_open_x24);
+            Drawable bookImage = DrawableManager.getVectorDrawable(getContext2(), R.drawable.v_book_open_x24);
             SpannableStringBuilder ssb = new SpannableStringBuilder("    ");
             ssb.append(getResources2().getString(R.string.gallery_list_search_bar_open_gallery));
             int imageSize = (int) (textSize * 1.25);

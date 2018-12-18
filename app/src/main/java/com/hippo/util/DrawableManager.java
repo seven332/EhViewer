@@ -24,14 +24,11 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v7.widget.AppCompatDrawableManager;
 
 public final class DrawableManager {
 
-    private static final AppCompatDrawableManager sManager = AppCompatDrawableManager.get();
-
-    public static Drawable getDrawable(@NonNull Context context, @DrawableRes int resId) {
-        return sManager.getDrawable(context, resId);
+    public static Drawable getVectorDrawable(@NonNull Context context, @DrawableRes int resId) {
+        return getVectorDrawable(context.getResources(), resId, context.getTheme());
     }
 
     public static Drawable getVectorDrawable(@NonNull Resources res,

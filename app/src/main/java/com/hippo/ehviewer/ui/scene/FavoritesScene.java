@@ -273,7 +273,7 @@ public class FavoritesScene extends BaseScene implements
 
         mLeftDrawable = new DrawerArrowDrawable(context, AttrResources.getAttrColor(context, R.attr.drawableColorPrimary));
         mSearchBar.setLeftDrawable(mLeftDrawable);
-        mSearchBar.setRightDrawable(DrawableManager.getDrawable(context, R.drawable.v_magnify_x24));
+        mSearchBar.setRightDrawable(DrawableManager.getVectorDrawable(context, R.drawable.v_magnify_x24));
         mSearchBar.setHelper(this);
         mSearchBar.setAllowEmptySearch(false);
         updateSearchBar();
@@ -362,7 +362,7 @@ public class FavoritesScene extends BaseScene implements
 
         // Update hint
         if (!ObjectUtils.equal(favCatName, mOldFavCat)) {
-            Drawable searchImage = DrawableManager.getDrawable(context, R.drawable.v_magnify_x24);
+            Drawable searchImage = DrawableManager.getVectorDrawable(context, R.drawable.v_magnify_x24);
             SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
             ssb.append(getString(R.string.favorites_search_bar_hint, favCatName));
             int textSize = (int) (mSearchBar.getEditTextTextSize() * 1.25);

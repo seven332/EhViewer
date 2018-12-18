@@ -308,7 +308,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
     public void onFailure() {
         mFailed = true;
         clearDrawable();
-        setImageDrawable(DrawableManager.getDrawable(getContext(), R.drawable.image_failed));
+        setImageDrawable(DrawableManager.getVectorDrawable(getContext(), R.drawable.image_failed));
         if (mRetryType == RETRY_TYPE_CLICK) {
             setOnClickListener(this);
         } else if (mRetryType == RETRY_TYPE_LONG_CLICK) {

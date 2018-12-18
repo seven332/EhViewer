@@ -93,7 +93,7 @@ public class DownloadLabelsScene extends ToolbarScene {
 
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
-        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_label);
+        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_label);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
         tip.setText(R.string.no_download_label);

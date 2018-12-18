@@ -17,10 +17,10 @@
 package com.hippo.widget;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
-public class ObservedTextView extends TextView {
+public class ObservedTextView extends AppCompatTextView {
 
     private OnWindowAttachListener mOnWindowAttachListener;
 

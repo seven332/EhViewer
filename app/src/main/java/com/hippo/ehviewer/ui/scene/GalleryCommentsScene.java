@@ -194,7 +194,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         Resources resources = context.getResources();
         int paddingBottomFab = resources.getDimensionPixelOffset(R.dimen.gallery_padding_bottom_fab);
 
-        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_weird_face);
+        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_weird_face);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 
@@ -458,7 +458,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                     return;
                 }
 
-                mFab.setVisibility(View.INVISIBLE);
+                ((View) mFab).setVisibility(View.INVISIBLE);
                 mEditPanel.setVisibility(View.VISIBLE);
                 int halfW = mEditPanel.getWidth() / 2;
                 int halfH = mEditPanel.getHeight() / 2;
@@ -483,7 +483,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                 return;
             }
 
-            mFab.setVisibility(View.INVISIBLE);
+            ((View) mFab).setVisibility(View.INVISIBLE);
             mEditPanel.setVisibility(View.VISIBLE);
         }
     }
@@ -506,7 +506,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                 }
 
                 mEditPanel.setVisibility(View.GONE);
-                mFab.setVisibility(View.VISIBLE);
+                ((View) mFab).setVisibility(View.VISIBLE);
                 int fabStartX = mEditPanel.getLeft() + (mEditPanel.getWidth() / 2) - (mFab.getWidth() / 2);
                 int fabStartY = mEditPanel.getTop() + (mEditPanel.getHeight() / 2) - (mFab.getHeight() / 2);
                 mFab.setX(fabStartX);
@@ -535,7 +535,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                 return;
             }
 
-            mFab.setVisibility(View.VISIBLE);
+            ((View) mFab).setVisibility(View.VISIBLE);
             mEditPanel.setVisibility(View.INVISIBLE);
         }
     }

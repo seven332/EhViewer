@@ -68,7 +68,7 @@ public class FilterActivity extends ToolbarActivity {
         TextView tip = (TextView) ViewUtils.$$(this, R.id.tip);
         mViewTransition = new ViewTransition(mRecyclerView, tip);
 
-        Drawable drawable = DrawableManager.getDrawable(this, R.drawable.big_filter);
+        Drawable drawable = DrawableManager.getVectorDrawable(this, R.drawable.big_filter);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 
@@ -309,7 +309,7 @@ public class FilterActivity extends ToolbarActivity {
 
             if (R.layout.item_filter == layoutId) {
                 holder.icon.setImageDrawable(
-                        DrawableManager.getDrawable(FilterActivity.this, R.drawable.v_delete_x24));
+                        DrawableManager.getVectorDrawable(FilterActivity.this, R.drawable.v_delete_x24));
             }
 
             return holder;

@@ -287,7 +287,7 @@ public class DownloadsScene extends ToolbarScene
         AssertUtils.assertNotNull(content);
         Resources resources = context.getResources();
 
-        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_download);
+        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_download);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 

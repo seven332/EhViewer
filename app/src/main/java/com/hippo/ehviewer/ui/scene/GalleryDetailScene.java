@@ -424,7 +424,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
 
-        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_weird_face);
+        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_weird_face);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         mTip.setCompoundDrawables(null, drawable, null, null);
         mTip.setOnClickListener(this);
@@ -652,21 +652,21 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     private void ensureActionDrawable(Context context) {
-        Drawable heart = DrawableManager.getDrawable(context, R.drawable.v_heart_primary_x48);
+        Drawable heart = DrawableManager.getVectorDrawable(context, R.drawable.v_heart_primary_x48);
         setActionDrawable(mHeart, heart);
-        Drawable heartOutline = DrawableManager.getDrawable(context, R.drawable.v_heart_outline_primary_x48);
+        Drawable heartOutline = DrawableManager.getVectorDrawable(context, R.drawable.v_heart_outline_primary_x48);
         setActionDrawable(mHeartOutline, heartOutline);
-        Drawable torrent = DrawableManager.getDrawable(context, R.drawable.v_utorrent_primary_x48);
+        Drawable torrent = DrawableManager.getVectorDrawable(context, R.drawable.v_utorrent_primary_x48);
         setActionDrawable(mTorrent, torrent);
-        Drawable archive = DrawableManager.getDrawable(context, R.drawable.v_archive_primary_x48);
+        Drawable archive = DrawableManager.getVectorDrawable(context, R.drawable.v_archive_primary_x48);
         setActionDrawable(mArchive, archive);
-        Drawable share = DrawableManager.getDrawable(context, R.drawable.v_share_primary_x48);
+        Drawable share = DrawableManager.getVectorDrawable(context, R.drawable.v_share_primary_x48);
         setActionDrawable(mShare, share);
-        Drawable rate = DrawableManager.getDrawable(context, R.drawable.v_thumb_up_primary_x48);
+        Drawable rate = DrawableManager.getVectorDrawable(context, R.drawable.v_thumb_up_primary_x48);
         setActionDrawable(mRate, rate);
-        Drawable similar = DrawableManager.getDrawable(context, R.drawable.v_similar_primary_x48);
+        Drawable similar = DrawableManager.getVectorDrawable(context, R.drawable.v_similar_primary_x48);
         setActionDrawable(mSimilar, similar);
-        Drawable searchCover = DrawableManager.getDrawable(context, R.drawable.v_file_find_primary_x48);
+        Drawable searchCover = DrawableManager.getVectorDrawable(context, R.drawable.v_file_find_primary_x48);
         setActionDrawable(mSearchCover, searchCover);
     }
 

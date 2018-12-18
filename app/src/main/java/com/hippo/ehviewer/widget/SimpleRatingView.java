@@ -58,9 +58,9 @@ public class SimpleRatingView extends View {
 
     private void init(Context context) {
         Resources resources = context.getResources();
-        mStarDrawable = DrawableManager.getDrawable(context, R.drawable.v_star_x16);
-        mStarHalfDrawable = DrawableManager.getDrawable(context, R.drawable.v_star_half_x16);
-        mStarOutlineDrawable = DrawableManager.getDrawable(context, R.drawable.v_star_outline_x16);
+        mStarDrawable = DrawableManager.getVectorDrawable(context, R.drawable.v_star_x16);
+        mStarHalfDrawable = DrawableManager.getVectorDrawable(context, R.drawable.v_star_half_x16);
+        mStarOutlineDrawable = DrawableManager.getVectorDrawable(context, R.drawable.v_star_outline_x16);
         mRatingSize = resources.getDimensionPixelOffset(R.dimen.rating_size);
         mRatingInterval = resources.getDimensionPixelOffset(R.dimen.rating_interval);
 

@@ -90,7 +90,7 @@ public final class QuickSearchScene extends ToolbarScene {
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
 
-        Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_search);
+        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_search);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
         tip.setText(R.string.no_quick_search);

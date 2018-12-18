@@ -18,11 +18,10 @@ package com.hippo.widget;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.support.v7.widget.AppCompatSpinner;
-import android.support.v7.widget.TintTypedArray;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
-
 import com.hippo.ehviewer.R;
 
 public class CuteSpinner extends AppCompatSpinner {
@@ -58,7 +57,7 @@ public class CuteSpinner extends AppCompatSpinner {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-        TintTypedArray a = TintTypedArray.obtainStyledAttributes(context, attrs,
+        TypedArray a = context.obtainStyledAttributes(attrs,
                 android.support.v7.appcompat.R.styleable.Spinner, defStyleAttr, 0);
         final CharSequence[] entries = a.getTextArray(R.styleable.Spinner_android_entries);
         if (entries != null) {
