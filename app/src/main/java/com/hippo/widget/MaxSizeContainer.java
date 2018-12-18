@@ -21,10 +21,8 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.hippo.ehviewer.R;
-
-import junit.framework.Assert;
+import com.hippo.yorozuya.AssertUtils;
 
 public class MaxSizeContainer extends ViewGroup {
 
@@ -70,7 +68,7 @@ public class MaxSizeContainer extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Assert.assertEquals("getChildCount() must be 1", 1, getChildCount());
+        AssertUtils.assertEquals("getChildCount() must be 1", 1, getChildCount());
 
         View child = getChildAt(0);
         if (child.getVisibility() != GONE) {
@@ -84,7 +82,7 @@ public class MaxSizeContainer extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Assert.assertEquals("getChildCount() must be 1", 1, getChildCount());
+        AssertUtils.assertEquals("getChildCount() must be 1", 1, getChildCount());
 
         View child = getChildAt(0);
         if (child.getVisibility() != GONE) {

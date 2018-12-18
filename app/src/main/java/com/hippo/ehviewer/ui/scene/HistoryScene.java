@@ -64,9 +64,9 @@ import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
 import de.greenrobot.dao.query.LazyList;
-import junit.framework.Assert;
 
 public class HistoryScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
@@ -101,7 +101,7 @@ public class HistoryScene extends ToolbarScene
         mViewTransition = new ViewTransition(content, tip);
 
         Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
         Resources resources = context.getResources();
 
         Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_history);

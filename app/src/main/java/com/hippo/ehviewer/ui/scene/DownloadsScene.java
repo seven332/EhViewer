@@ -88,6 +88,7 @@ import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ObjectUtils;
@@ -99,7 +100,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import junit.framework.Assert;
 
 public class DownloadsScene extends ToolbarScene
         implements DownloadManager.DownloadInfoListener,
@@ -191,7 +191,7 @@ public class DownloadsScene extends ToolbarScene
         super.onCreate(savedInstanceState);
 
         Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
         mDownloadManager = EhApplication.getDownloadManager(context);
         mDownloadManager.addDownloadInfoListener(this);
 
@@ -284,7 +284,7 @@ public class DownloadsScene extends ToolbarScene
         mViewTransition = new ViewTransition(content, tip);
 
         Context context = getContext2();
-        Assert.assertNotNull(content);
+        AssertUtils.assertNotNull(content);
         Resources resources = context.getResources();
 
         Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_download);
@@ -517,7 +517,7 @@ public class DownloadsScene extends ToolbarScene
         View view = inflater.inflate(R.layout.drawer_list, container, false);
 
         final Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.download_labels);
@@ -1136,7 +1136,7 @@ public class DownloadsScene extends ToolbarScene
 
         public DownloadAdapter() {
             mInflater = getLayoutInflater2();
-            Assert.assertNotNull(mInflater);
+            AssertUtils.assertNotNull(mInflater);
 
             View calculator = mInflater.inflate(R.layout.item_gallery_list_thumb_height, null);
             ViewUtils.measureView(calculator, 1024, ViewGroup.LayoutParams.WRAP_CONTENT);

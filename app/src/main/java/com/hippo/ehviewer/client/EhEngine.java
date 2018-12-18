@@ -20,7 +20,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
-
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
@@ -48,21 +47,12 @@ import com.hippo.ehviewer.client.parser.TorrentParser;
 import com.hippo.ehviewer.client.parser.VoteCommentParser;
 import com.hippo.ehviewer.client.parser.WhatsHotParser;
 import com.hippo.network.StatusCodeException;
-
-import junit.framework.Assert;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
+import com.hippo.yorozuya.AssertUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -72,6 +62,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 public class EhEngine {
 
@@ -543,7 +538,7 @@ public class EhEngine {
 
     public static Void addFavoritesRange(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             long[] gidArray, String[] tokenArray, int dstCat) throws Exception {
-        Assert.assertEquals(gidArray.length, tokenArray.length);
+        AssertUtils.assertEquals(gidArray.length, tokenArray.length);
         for (int i = 0, n = gidArray.length; i < n; i++) {
             addFavorites(task, okHttpClient, gidArray[i], tokenArray[i], dstCat, null);
         }

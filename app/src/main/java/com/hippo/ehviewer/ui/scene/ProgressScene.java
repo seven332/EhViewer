@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhClient;
@@ -36,9 +35,8 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.view.ViewTransition;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.ViewUtils;
-
-import junit.framework.Assert;
 
 /**
  * Only show a progress with jobs in background
@@ -170,7 +168,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
         mTip = (TextView) ViewUtils.$$(view, R.id.tip);
 
         Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
 
         Drawable drawable = DrawableManager.getDrawable(context, R.drawable.big_weird_face);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());

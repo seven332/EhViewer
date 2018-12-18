@@ -77,6 +77,7 @@ import com.hippo.widget.FabLayout;
 import com.hippo.widget.LinkifyTextView;
 import com.hippo.widget.ObservedTextView;
 import com.hippo.yorozuya.AnimationUtils;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
@@ -85,7 +86,6 @@ import com.hippo.yorozuya.ViewUtils;
 import com.hippo.yorozuya.collect.IntList;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
 
 public final class GalleryCommentsScene extends ToolbarScene
         implements EasyRecyclerView.OnItemClickListener,
@@ -190,7 +190,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         mFab = (FloatingActionButton) ViewUtils.$$(view, R.id.fab);
 
         Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
         Resources resources = context.getResources();
         int paddingBottomFab = resources.getDimensionPixelOffset(R.dimen.gallery_padding_bottom_fab);
 
@@ -617,7 +617,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         public CommentAdapter() {
             mInflater = getLayoutInflater2();
-            Assert.assertNotNull(mInflater);
+            AssertUtils.assertNotNull(mInflater);
         }
 
         @Override

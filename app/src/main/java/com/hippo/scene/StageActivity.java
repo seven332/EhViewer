@@ -25,13 +25,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
-
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.ui.EhActivity;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.IntIdGenerator;
-
-import junit.framework.Assert;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -334,7 +331,7 @@ public abstract class StageActivity extends EhActivity {
             String tag = mSceneTagList.get(mSceneTagList.size() - 1);
             Fragment fragment = fragmentManager.findFragmentByTag(tag);
             if (fragment != null) {
-                Assert.assertTrue(SceneFragment.class.isInstance(fragment));
+                AssertUtils.assertTrue(SceneFragment.class.isInstance(fragment));
                 currentScene = (SceneFragment) fragment;
             }
         }

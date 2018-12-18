@@ -32,10 +32,10 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.EhCookieStore;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.yorozuya.AssertUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import junit.framework.Assert;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
@@ -59,7 +59,7 @@ public class WebViewSignInScene extends SolidScene {
     public View onCreateView2(LayoutInflater inflater,
             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
 
         EhUtils.signOut(context);
 

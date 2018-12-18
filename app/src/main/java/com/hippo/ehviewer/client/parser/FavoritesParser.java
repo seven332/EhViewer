@@ -22,15 +22,12 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.JsoupUtils;
-
-import junit.framework.Assert;
-
+import com.hippo.yorozuya.AssertUtils;
+import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.util.List;
 
 public class FavoritesParser {
 
@@ -54,7 +51,7 @@ public class FavoritesParser {
             //noinspection ConstantConditions
             Elements fps = ido.getElementsByClass("fp");
             // Last one is "fp fps"
-            Assert.assertEquals(11, fps.size());
+            AssertUtils.assertEquals(11, fps.size());
 
             for (int i = 0; i < 10; i++) {
                 Element fp = fps.get(i);

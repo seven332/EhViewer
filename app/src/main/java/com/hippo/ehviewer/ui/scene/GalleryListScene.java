@@ -90,6 +90,7 @@ import com.hippo.widget.ContentLayout;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.SearchBarMover;
 import com.hippo.yorozuya.AnimationUtils;
+import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.StringUtils;
@@ -99,7 +100,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Collections;
 import java.util.List;
-import junit.framework.Assert;
 
 public final class GalleryListScene extends BaseScene
         implements EasyRecyclerView.OnItemClickListener, EasyRecyclerView.OnItemLongClickListener,
@@ -258,7 +258,7 @@ public final class GalleryListScene extends BaseScene
         super.onCreate(savedInstanceState);
 
         Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
         mClient = EhApplication.getEhClient(context);
 
         if (savedInstanceState == null) {
@@ -473,7 +473,7 @@ public final class GalleryListScene extends BaseScene
         View view = inflater.inflate(R.layout.scene_gallery_list, container, false);
 
         Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
         Resources resources = context.getResources();
 
         mHideActionFabSlop = ViewConfiguration.get(context).getScaledTouchSlop();
@@ -719,7 +719,7 @@ public final class GalleryListScene extends BaseScene
         final ListView listView = (ListView) ViewUtils.$$(view, R.id.list_view);
 
         Context context = getContext2();
-        Assert.assertNotNull(context);
+        AssertUtils.assertNotNull(context);
 
         final List<QuickSearch> list = EhDB.getAllQuickSearch();
         final ArrayAdapter<QuickSearch> adapter = new ArrayAdapter<>(context, R.layout.item_simple_list, list);
