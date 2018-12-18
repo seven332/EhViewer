@@ -491,7 +491,7 @@
     <string name="settings_download_restoring">回復中</string>
     <string name="settings_download_restore_not_found">未尋獲可回復的已下載檔案</string>
     <string name="settings_download_restore_failed">回復失敗</string>
-    <string name="settings_download_restore_successfully">成功回復 %s 項</string>
+    <string name="settings_download_restore_successfully">成功回復 %d 項</string>
     <string name="settings_download_clean_redundancy">清除冗餘的檔案</string>
     <string name="settings_download_clean_redundancy_summary">清除已下載但不在下載列表中的圖檔</string>
     <string name="settings_download_clean_redundancy_no_redundancy">未發現冗餘檔案</string>
