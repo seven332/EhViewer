@@ -21,5 +21,6 @@
     <drawable name="grey_900">@color/grey_900</drawable>
     <drawable name="transparent">@android:color/transparent</drawable>
     <drawable name="tile_background_activated">#7f9c27b0</drawable>
+    <drawable name="sadpanda_low_poly">@color/colorPrimary</drawable>
 
 </resources>
