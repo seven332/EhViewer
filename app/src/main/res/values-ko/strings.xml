@@ -91,7 +91,7 @@
     <string name="content_layout_restore_tip">다시 시도하려면 누르기</string>
     <string name="write_rationale">앱이 갤러리를 다운로드하려면 WRITE_EXTERNAL_STORAGE 권한이 필요합니다. 권한을 허용하시겠습니까?</string>
     <string name="you_rejected_me">안돼요</string>
-    <string name="analytics_explain">앱 개발자에게 기기 및 사용 정보를 보내시겠습니까? 앱 개발에 굉장한 도움이 됩니다. &lt;br&gt;&lt;br&gt;데이터 분석 서비스는 Google Analytics를 사용하며, 개인 정보 보호 정책은 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 에서 확인하실 수 있습니다.&lt;br&gt;&lt;br&gt;데이터 분석을 허용하면 사용자의 기기 및 앱 사용 정보가 수집됩니다. 전화번호나 이메일 주소, IMEI와 같은 개인 정보는 수집하지 않습니다.&lt;br&gt;&lt;br&gt;데이터 분석을 허용하기 전까지는 정보를 수집하지 않습니다.&lt;br&gt;&lt;br&gt;수집한 정보는 Google Analytics에 의해 분석됩니다. 분석된 정보는 이 애플리케이션의 개발자만 볼 수 있습니다.</string>
+    <string name="analytics_explain">앱 개발자에게 기기 및 사용 정보를 보내시겠습니까? 앱 개발에 굉장한 도움이 됩니다. &lt;br&gt;&lt;br&gt;데이터 분석 서비스는 Google Analytics for Firebase를 사용하며, 개인 정보 보호 정책은 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 에서 확인하실 수 있습니다.&lt;br&gt;&lt;br&gt;데이터 분석을 허용하면 사용자의 기기 및 앱 사용 정보가 수집됩니다. 전화번호나 이메일 주소, IMEI와 같은 개인 정보는 수집하지 않습니다.&lt;br&gt;&lt;br&gt;데이터 분석을 허용하기 전까지는 정보를 수집하지 않습니다.&lt;br&gt;&lt;br&gt;수집한 정보는 Google Analytics for Firebase에 의해 분석됩니다. 분석된 정보는 이 애플리케이션의 개발자만 볼 수 있습니다.</string>
     <string name="get_it">알겠습니다</string>
     <string name="accept">동의</string>
     <string name="reject">거부</string>

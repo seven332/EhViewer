@@ -100,7 +100,7 @@
     <string name="content_layout_restore_tip">點擊重試</string>
     <string name="write_rationale">EhViewer 將申請設備存儲空間訪問權限以便下載畫廊。您願意授權嗎？</string>
     <string name="you_rejected_me">好痛</string>
-    <string name="analytics_explain">您同意讓開發者收集您的設備信息與使用情況嗎？這將對開發有很大幫助。&lt;br&gt;&lt;br&gt;數據統計服務由 Google Analytics 提供，其隱私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 查看。&lt;br&gt;&lt;br&gt;若您同意參與數據統計，您的設備信息與應用使用情況將會被記錄，其包括但不限於：Android API 版本、設備型號、語言所在地、本應用版本號、會話時長、應用功能使用次數。開發者承諾以下信息並不會被記錄：電話號碼、電子郵件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意參與數據統計之前，您的信息不會被記錄。&lt;br&gt;&lt;br&gt;被記錄的數據會由 Google Analytics 進行分析，分析報表僅可被本應用開發者訪問。</string>
+    <string name="analytics_explain">您同意讓開發者收集您的設備信息與使用情況嗎？這將對開發有很大幫助。&lt;br&gt;&lt;br&gt;數據統計服務由 Google Analytics for Firebase 提供，其隱私政策可在 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt; 查看。&lt;br&gt;&lt;br&gt;若您同意參與數據統計，您的設備信息與應用使用情況將會被記錄，其包括但不限於：Android API 版本、設備型號、語言所在地、本應用版本號、會話時長、應用功能使用次數。開發者承諾以下信息並不會被記錄：電話號碼、電子郵件地址、IMEI。&lt;br&gt;&lt;br&gt;在您同意參與數據統計之前，您的信息不會被記錄。&lt;br&gt;&lt;br&gt;被記錄的數據會由 Google Analytics for Firebase 進行分析，分析報表僅可被本應用開發者訪問。</string>
     <string name="get_it">知道了</string>
     <string name="accept">接受</string>
     <string name="reject">拒絕</string>
