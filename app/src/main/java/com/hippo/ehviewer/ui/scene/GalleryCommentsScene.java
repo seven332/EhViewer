@@ -194,7 +194,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         Resources resources = context.getResources();
         int paddingBottomFab = resources.getDimensionPixelOffset(R.dimen.gallery_padding_bottom_fab);
 
-        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_weird_face);
+        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_sad_pandroid);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
 

@@ -301,7 +301,7 @@ public class ContentLayout extends FrameLayout {
             mRefreshLayout = contentLayout.mRefreshLayout;
             mRecyclerView = contentLayout.mRecyclerView;
 
-            Drawable drawable = DrawableManager.getVectorDrawable(getContext(), R.drawable.big_weird_face);
+            Drawable drawable = DrawableManager.getVectorDrawable(getContext(), R.drawable.big_sad_pandroid);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             mTipView.setCompoundDrawables(null, drawable, null, null);
 

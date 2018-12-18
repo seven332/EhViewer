@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:drawablePadding="16dp"
+        android:drawablePadding="8dp"
         android:text="@string/no_one_comments_gallery"
         style="@style/TextAppearance.AppCompat.Medium"/>
 

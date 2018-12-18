@@ -170,7 +170,7 @@ public final class ProgressScene extends BaseScene implements View.OnClickListen
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
 
-        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_weird_face);
+        Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_sad_pandroid);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         mTip.setCompoundDrawables(null, drawable, null, null);
         mTip.setOnClickListener(this);
