@@ -56,7 +56,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 
-public class EhApplication extends RecordingApplication implements Thread.UncaughtExceptionHandler {
+public class EhApplication extends RecordingApplication {
 
     private static final String TAG = EhApplication.class.getSimpleName();
 
@@ -67,8 +67,6 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
     private static final boolean DEBUG_PRINT_NATIVE_MEMORY = false;
     private static final boolean DEBUG_PRINT_IMAGE_COUNT = false;
     private static final long DEBUG_PRINT_INTERVAL = 3000L;
-
-    private Thread.UncaughtExceptionHandler mDefaultHandler;
 
     private final IntIdGenerator mIdGenerator = new IntIdGenerator();
     private final HashMap<Integer, Object> mGlobalStuffMap = new HashMap<>();
@@ -86,10 +84,6 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
 
     @Override
     public void onCreate() {
-        // Prepare to catch crash
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(this);
-
         super.onCreate();
 
         GetText.initialize(this);
@@ -315,34 +309,6 @@ public class EhApplication extends RecordingApplication implements Thread.Uncaug
             application.mHosts = new Hosts(application, "hosts.db");
         }
         return application.mHosts;
-    }
-
-    private boolean handleException(Throwable ex) {
-        if (ex == null) {
-            return false;
-        }
-        try {
-            ex.printStackTrace();
-            Crash.saveCrashInfo2File(this, ex);
-            return true;
-        } catch (Throwable tr) {
-            return false;
-        }
-    }
-
-    @Override
-    public void uncaughtException(Thread thread, Throwable ex) {
-        if (!handleException(ex) && mDefaultHandler != null) {
-            mDefaultHandler.uncaughtException(thread, ex);
-        }
-
-        Activity activity = getTopActivity();
-        if (activity != null) {
-            activity.finish();
-        }
-
-        android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(1);
     }
 
     @NonNull

@@ -149,10 +149,6 @@
 
     <string name="help_route">Settings->About->Help</string>
 
-    <!-- Crash -->
-    <string name="send">Send</string>
-    <string name="crash_explain">The application crashed last time. Would you like to send logcat (via e-mail) to the developer for a better user experience in future?</string>
-
     <!-- Select scene -->
     <string name="select_scene">Which gallery site do you want to visit?</string>
     <string name="select_scene_explain">e-hentai: available for anyone\nexhentai: available for who has signed in</string>

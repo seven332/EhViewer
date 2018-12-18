@@ -98,10 +98,6 @@
 
     <string name="help_route">設定->このアプリについて->ヘルプ</string>
 
-    <!-- Crash -->
-    <string name="send">送信</string>
-    <string name="crash_explain">アプリはクラッシュしました。エラーログを開発者に送信して、今後のユーザー体験を向上させるようお手伝いしてもらえますか？（Eメール送信）</string>
-
     <!-- Select scene -->
     <string name="select_scene">ギャラリーサイトを選択してください</string>
     <string name="select_scene_explain">e-hentai：誰にも公開です\nexhentai：ログインしないとアクセスできません</string>

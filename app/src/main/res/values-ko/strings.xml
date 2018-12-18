@@ -98,10 +98,6 @@
 
     <string name="help_route">설정 -> 정보 -> 도움말</string>
 
-    <!-- Crash -->
-    <string name="send">보내기</string>
-    <string name="crash_explain">지난번 실행 시 이 애플리케이션이 충돌로 인해 종료되었습니다. 이메일을 통해 앱 개발자에게 로그를 보내시겠습니까?</string>
-
     <!-- Select scene -->
     <string name="select_scene">어느 갤러리 사이트를 사용하시겠습니까?</string>
     <string name="select_scene_explain">e-hentai: 모든 사람들이 사용할 수 있음\nexhentai: 로그인한 사람만 사용할 수 있음</string>

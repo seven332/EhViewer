@@ -18,8 +18,6 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.os.Bundle;
 import android.util.Log;
-
-import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.scene.Announcer;
@@ -34,9 +32,8 @@ public class SolidScene extends BaseScene {
     public static final int CHECK_STEP_SECURITY = 0;
     public static final int CHECK_STEP_WARNING = 1;
     public static final int CHECK_STEP_ANALYTICS = 2;
-    public static final int CHECK_STEP_CRASH = 3;
-    public static final int CHECK_STEP_SIGN_IN = 4;
-    public static final int CHECK_STEP_SELECT_SITE = 5;
+    public static final int CHECK_STEP_SIGN_IN = 3;
+    public static final int CHECK_STEP_SELECT_SITE = 4;
 
     public static final String KEY_TARGET_SCENE = "target_scene";
     public static final String KEY_TARGET_ARGS = "target_args";
@@ -54,11 +51,6 @@ public class SolidScene extends BaseScene {
                     break;
                 }
             case CHECK_STEP_ANALYTICS:
-                if (Crash.hasCrashFile()) {
-                    startScene(new Announcer(CrashScene.class).setArgs(args));
-                    break;
-                }
-            case CHECK_STEP_CRASH:
                 if (EhUtils.needSignedIn(getContext2())) {
                     startScene(new Announcer(SignInScene.class).setArgs(args));
                     break;

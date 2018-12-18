@@ -92,10 +92,6 @@
     <string name="accept">Aceptar</string>
     <string name="reject">Rechazar</string>
 
-    <!-- Crash -->
-    <string name="send">Enviar</string>
-    <string name="crash_explain">Esta aplicación se cerró inesperadamente la ultima vez. ¿Desea enviarle un logcat (registro) al desarrollador para una mejor experiencia en el futuro? (vía e-mail)</string>
-
     <!-- Select scene -->
     <string name="select_scene">¿Qué galería deseas seleccionar?</string>
     <string name="select_scene_explain">e-hentai: Disponible para cualquiera .\nexhentai: Solo para usuarios que han iniciado sesión</string>

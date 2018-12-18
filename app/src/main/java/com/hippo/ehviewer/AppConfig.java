@@ -37,7 +37,6 @@ public class AppConfig {
     private static final String DOWNLOAD = "download";
     private static final String TEMP = "temp";
     private static final String IMAGE = "image";
-    private static final String CRASH = "crash";
     private static final String PARSE_ERROR = "parse_error";
     private static final String LOGCAT = "logcat";
     private static final String DATA = "data";
@@ -93,11 +92,6 @@ public class AppConfig {
     @Nullable
     public static File getExternalImageDir() {
         return getDirInExternalAppDir(IMAGE);
-    }
-
-    @Nullable
-    public static File getExternalCrashDir() {
-        return getDirInExternalAppDir(CRASH);
     }
 
     @Nullable

@@ -107,10 +107,6 @@
 
     <string name="help_route">設置->關於->幫助</string>
 
-    <!-- Crash -->
-    <string name="send">發送</string>
-    <string name="crash_explain">上次應用崩潰了。你願意把錯誤日誌發送給開發者以便以後得到更好的用户體驗？（以電子郵件的形式發送）</string>
-
     <!-- Select scene -->
     <string name="select_scene">你想選擇哪個畫廊站點？</string>
     <string name="select_scene_explain">e-hentai：對任何人開放\nexhentai：僅對登錄用户開放</string>

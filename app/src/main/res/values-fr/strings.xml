@@ -99,10 +99,6 @@
 
     <string name="help_route">Paramètres->À propos de l\'application->Aide</string>
 
-    <!-- Crash -->
-    <string name="send">Envoyer</string>
-    <string name="crash_explain">Cette application a cessé de fonctionner de manière inattendue la dernière fois. Voulez-vous envoyer le journal logcat à le développeur via E-mail pour l\'aider à améliorer cette application ?</string>
-
     <!-- Select scene -->
     <string name="select_scene">Sélectionnez un site galerie.</string>
     <string name="select_scene_explain">e-hentai : disponible pour tout le monde\nexhentai : disponible pour ce qui s\'est connecté(e)</string>

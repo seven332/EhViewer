@@ -59,8 +59,6 @@
     <string name="accept">Akzeptieren</string>
     <string name="reject">Ablehnen</string>
     <string name="help_route">Einstellungen->Über die App->Hilfe</string>
-    <string name="send">Senden</string>
-    <string name="crash_explain">Die App ist abgestürzt letztes Mal. Möchtest du das Fehlerprotokoll an den Entwickler per E-Mail senden, um ihm dabei zu helfen, die App zu verbessern?</string>
     <string name="select_scene">Wähle eine Galerie-Webseite aus.</string>
     <string name="select_scene_explain">e-hentai: für jeden verfügbar\nexhentai: nur für diejenigen verfügbar, die sich angemeldet haben</string>
     <string name="no_select">Wähle eine Webseite aus.</string>

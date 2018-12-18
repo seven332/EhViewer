@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -25,7 +24,6 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.FavListUrlBuilder;
@@ -35,10 +33,8 @@ import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.NumberUtils;
-
-import junit.framework.Assert;
-
 import java.io.File;
+import junit.framework.Assert;
 
 public class Settings {
 
@@ -991,21 +987,6 @@ public class Settings {
 
     public static boolean getAutoCheckUpdateEnable() {
         return getBoolean(KEY_AUTO_CHECK_FOR_UPDATES, DEFAULT_AUTO_CHECK_FOR_UPDATES);
-    }
-
-    /********************
-     ****** Crash
-     ********************/
-    private static final String KEY_CRASH_FILENAME = "crash_filename";
-    private static final String DEFAULT_CRASH_FILENAME = null;
-
-    public static String getCrashFilename() {
-        return getString(KEY_CRASH_FILENAME, DEFAULT_CRASH_FILENAME);
-    }
-
-    @SuppressLint("CommitPrefEdits")
-    public static void putCrashFilename(String value) {
-        sSettingsPre.edit().putString(KEY_CRASH_FILENAME, value).commit();
     }
 
     /********************
