@@ -106,7 +106,7 @@ configurations.all {
     resolutionStrategy {
         force 'com.github.seven332:glgallery:c56b14c6fa'
         force 'com.github.seven332:glview-image:4c744db'
-        force 'com.github.seven332:image:bbf0bbb0a0'
+        force 'com.github.seven332:image:29266a3c7b'
 
         exclude group: 'com.github.seven332', module: 'okhttp'
         exclude group: 'com.squareup.okio', module: 'okio'

@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+import com.facebook.soloader.SoLoader;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.content.RecordingApplication;
@@ -49,6 +50,7 @@ import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,6 +87,12 @@ public class EhApplication extends RecordingApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        try {
+            SoLoader.init(this, 0);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not initialize SoLoader", e);
+        }
 
         GetText.initialize(this);
         StatusCodeException.initialize(this);
