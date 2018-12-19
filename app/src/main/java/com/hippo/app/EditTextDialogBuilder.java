@@ -46,7 +46,7 @@ public class EditTextDialogBuilder extends AlertDialog.Builder implements EditTe
         mEditText.setText(text);
         mEditText.setSelection(mEditText.getText().length());
         mEditText.setOnEditorActionListener(this);
-        mEditText.setHint(hint);
+        mTextInputLayout.setHint(hint);
     }
 
     public EditText getEditText() {
