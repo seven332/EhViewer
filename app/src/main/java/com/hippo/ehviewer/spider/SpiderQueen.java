@@ -1197,6 +1197,7 @@ public final class SpiderQueen implements Runnable {
                     updatePageState(index, STATE_FINISHED);
                     return true;
                 } catch (IOException e) {
+                    e.printStackTrace();
                     error = GetText.getString(R.string.error_socket);
                 } finally {
                     IOUtils.closeQuietly(is);
