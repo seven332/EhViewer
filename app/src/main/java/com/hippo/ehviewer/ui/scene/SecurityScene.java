@@ -127,7 +127,7 @@ public class SecurityScene extends SolidScene implements
                         @Override
                         public void onAuthenticationSucceeded(
                                 FingerprintManager.AuthenticationResult result) {
-                            mFingerprintIcon.setImageResource(R.drawable.ic_fingerprint_success);
+                            mFingerprintIcon.setImageResource(R.drawable.fingerprint_success);
                             mFingerprintIcon.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -248,7 +248,7 @@ public class SecurityScene extends SolidScene implements
 
     private void fingerprintError(boolean unrecoverable) {
         // Do not decrease mRetryTimes here since Android system will handle it :)
-        mFingerprintIcon.setImageResource(R.drawable.ic_fingerprint_error);
+        mFingerprintIcon.setImageResource(R.drawable.fingerprint_error);
         mFingerprintIcon.removeCallbacks(mResetFingerprintRunnable);
         if (unrecoverable) {
             mFingerprintIcon.postDelayed(new Runnable() {
