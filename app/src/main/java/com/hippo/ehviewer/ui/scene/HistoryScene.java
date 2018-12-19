@@ -391,6 +391,9 @@ public class HistoryScene extends ToolbarScene
         }
 
         @Override
+        public void onSwipeItemStarted(HistoryHolder holder, int position) { }
+
+        @Override
         public void onSetSwipeBackground(HistoryHolder holder, int position, int type) {}
 
         @Override

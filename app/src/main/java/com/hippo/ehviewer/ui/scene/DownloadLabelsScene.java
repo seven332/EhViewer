@@ -391,5 +391,11 @@ public class DownloadLabelsScene extends ToolbarScene {
         public boolean onCheckCanDrop(int draggingPosition, int dropPosition) {
             return true;
         }
+
+        @Override
+        public void onItemDragStarted(int position) { }
+
+        @Override
+        public void onItemDragFinished(int fromPosition, int toPosition, boolean result) { }
     }
 }
