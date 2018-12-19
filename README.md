@@ -1,4 +1,4 @@
-[![Telegram](https://img.shields.io/badge/chat-Telegram-blue.svg)](https://t.me/ehviewer) [![G+](https://img.shields.io/badge/chat-G%2B-red.svg)](https://plus.google.com/communities/103823982034655188459)
+[![Telegram](https://img.shields.io/badge/chat-Telegram-blue.svg)](https://t.me/ehviewer)
 
 # EhViewer
 
