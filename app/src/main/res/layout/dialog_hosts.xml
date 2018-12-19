@@ -29,7 +29,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputEditText
+    <com.hippo.widget.HackyTextInputEditText
       android:id="@+id/host"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputEditText
+    <com.hippo.widget.HackyTextInputEditText
       android:id="@+id/ip"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

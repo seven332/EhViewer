@@ -48,7 +48,7 @@
                 android:layout_gravity="center_horizontal"
                 android:minWidth="@dimen/single_max_width">
 
-                <android.support.design.widget.TextInputEditText
+                <com.hippo.widget.HackyTextInputEditText
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
                 android:minWidth="@dimen/single_max_width"
                 app:passwordToggleEnabled="true">
 
-                <android.support.design.widget.TextInputEditText
+                <com.hippo.widget.HackyTextInputEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
               android:layout_gravity="center_horizontal"
               android:minWidth="@dimen/single_max_width">
 
-                <android.support.design.widget.TextInputEditText
+                <com.hippo.widget.HackyTextInputEditText
                   android:id="@+id/recaptcha"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
