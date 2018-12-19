@@ -62,7 +62,7 @@ public class SetSecurityActivity extends ToolbarActivity implements View.OnClick
             FingerprintManager fingerprintManager = getSystemService(FingerprintManager.class);
             // The line below prevents the false positive inspection from Android Studio
             // noinspection ResourceType
-            if (fingerprintManager.hasEnrolledFingerprints()) {
+            if (fingerprintManager != null && fingerprintManager.hasEnrolledFingerprints()) {
                 mFingerprint.setVisibility(View.VISIBLE);
                 mFingerprint.setChecked(Settings.getEnableFingerprint());
             }

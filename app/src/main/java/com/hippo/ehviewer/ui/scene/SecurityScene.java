@@ -55,6 +55,7 @@ public class SecurityScene extends SolidScene implements
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
+    @Nullable
     private FingerprintManager mFingerprintManager;
 
     private CancellationSignal mFingerprintCancellationSignal;
