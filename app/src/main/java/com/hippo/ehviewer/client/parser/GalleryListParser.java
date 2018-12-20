@@ -19,24 +19,22 @@ package com.hippo.ehviewer.client.parser;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.JsoupUtils;
 import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.StringUtils;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class GalleryListParser {
 
@@ -54,7 +52,8 @@ public class GalleryListParser {
         try {
             Elements es = d.getElementsByClass("ptt").first().child(0).child(0).children();
             return Integer.parseInt(es.get(es.size() - 2).text().trim());
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             throw new ParseException("Can't parse gallery list pages", body);
         }
     }
@@ -265,7 +264,8 @@ public class GalleryListParser {
                 }
             }
             result.galleryInfoList = list;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             throw new ParseException("Can't parse gallery list", body);
         }
 
@@ -281,7 +281,8 @@ public class GalleryListParser {
                     }
                 }
                 result.galleryInfoList = list;
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 throw new ParseException("Can't parse gallery list", body);
             }
         }

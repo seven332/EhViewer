@@ -19,15 +19,14 @@ package com.hippo.ehviewer.client.parser;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.JsoupUtils;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class WhatsHotParser {
 
@@ -54,7 +53,8 @@ public class WhatsHotParser {
                 galleryInfoList.add(galleryInfo);
             }
             return galleryInfoList;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             throw new ParseException("Parse whats hot error", body);
         }
     }

@@ -23,7 +23,6 @@ import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.Toast;
-
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -34,14 +33,13 @@ import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.spider.SpiderInfo;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import okhttp3.OkHttpClient;
 
 public class RestoreDownloadPreference extends TaskPreference {
@@ -133,7 +131,8 @@ public class RestoreDownloadPreference extends TaskPreference {
 
             try {
                 return EhEngine.fillGalleryListByApi(null, mHttpClient, new ArrayList<GalleryInfo>(restoreItemList));
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 e.printStackTrace();
                 return null;
             }

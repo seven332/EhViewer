@@ -40,7 +40,8 @@ public final class PackageUtils {
             } else {
                 Log.e(TAG, "Can't find signature in package " + packageName);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             Log.e(TAG, "Can't find package " + packageName, e);
         }
         return null;

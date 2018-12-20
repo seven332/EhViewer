@@ -18,7 +18,7 @@ package com.hippo.ehviewer.client.parser;
 
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.exception.ParseException;
-
+import com.hippo.util.ExceptionUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,7 +31,8 @@ public class ForumsParser {
             Element userlinks = d.getElementById("userlinks");
             Element child = userlinks.child(0).child(0).child(0);
             return child.attr("href");
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             throw new ParseException("Parse forums error", body);
         }
     }

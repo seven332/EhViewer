@@ -19,7 +19,6 @@ package com.hippo.ehviewer.client.parser;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
@@ -33,15 +32,10 @@ import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.exception.OffensiveException;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.exception.PiningException;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.JsoupUtils;
 import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.StringUtils;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +46,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class GalleryDetailParser {
 
@@ -142,7 +140,8 @@ public class GalleryDetailParser {
             Element gd1 = gm.getElementById("gd1");
             try {
                 gd.thumb = parseCoverStyle(StringUtils.trim(gd1.child(0).attr("style")));
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 gd.thumb = "";
             }
 
@@ -168,7 +167,8 @@ public class GalleryDetailParser {
                 String href = gdc.child(0).attr("href");
                 String category = href.substring(href.lastIndexOf('/') + 1);
                 gd.category = EhUtils.getCategory(category);
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 gd.category = EhUtils.UNKNOWN;
             }
 
@@ -193,7 +193,8 @@ public class GalleryDetailParser {
                 for (int i = 0, n = es.size(); i < n; i++) {
                     parseDetailInfo(gd, es.get(i), body);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 // Ignore
             }
 
@@ -235,7 +236,8 @@ public class GalleryDetailParser {
                     gd.favoriteName = StringUtils.trim(gdf.text());
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             throw new ParseException("Can't parse gallery detail", body);
         }
     }
@@ -317,7 +319,8 @@ public class GalleryDetailParser {
             }
 
             return group.size() > 0 ? group : null;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             e.printStackTrace();
             return null;
         }
@@ -340,7 +343,8 @@ public class GalleryDetailParser {
                 }
             }
             return list.toArray(new GalleryTagGroup[list.size()]);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             e.printStackTrace();
             return EMPTY_GALLERY_TAG_GROUP_ARRAY;
         }
@@ -412,7 +416,8 @@ public class GalleryDetailParser {
             // comment
             comment.comment = JsoupUtils.getElementByClass(element, "c6").html();
             return comment;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             e.printStackTrace();
             return null;
         }
@@ -435,7 +440,8 @@ public class GalleryDetailParser {
                 }
             }
             return list.toArray(new GalleryComment[list.size()]);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             e.printStackTrace();
             return EMPTY_GALLERY_COMMENT_ARRAY;
         }
@@ -474,7 +480,8 @@ public class GalleryDetailParser {
         try {
             Elements elements = document.getElementsByClass("ptt").first().child(0).child(0).children();
             return Integer.parseInt(elements.get(elements.size() - 2).text());
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             e.printStackTrace();
             throw new ParseException("Can't parse preview pages", body);
         }
@@ -549,7 +556,8 @@ public class GalleryDetailParser {
                 largePreviewSet.addItem(index, imageUrl, pageUrl);
             }
             return largePreviewSet;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             e.printStackTrace();
             throw new ParseException("Can't parse large preview", body);
         }

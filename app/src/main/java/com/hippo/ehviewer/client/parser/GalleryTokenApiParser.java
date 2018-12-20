@@ -17,7 +17,7 @@
 package com.hippo.ehviewer.client.parser;
 
 import com.hippo.ehviewer.client.exception.EhException;
-
+import com.hippo.util.ExceptionUtils;
 import org.json.JSONObject;
 
 public class GalleryTokenApiParser {
@@ -36,7 +36,8 @@ public class GalleryTokenApiParser {
         JSONObject jo = new JSONObject(body).getJSONArray("tokenlist").getJSONObject(0);
         try {
             return jo.getString("token");
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             throw new EhException(jo.getString("error"));
         }
     }

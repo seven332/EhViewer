@@ -43,6 +43,7 @@ import com.hippo.ehviewer.dao.LocalFavoritesDao;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.dao.QuickSearchDao;
 import com.hippo.ehviewer.download.DownloadManager;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.SqlUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
@@ -156,7 +157,8 @@ public class EhDB {
         SQLiteDatabase oldDB;
         try {
             oldDB = oldDBHelper.getReadableDatabase();
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             return;
         }
 
@@ -178,7 +180,8 @@ public class EhDB {
                         try {
                             // In 0.6.x version, NaN is stored
                             gi.rating = cursor.getFloat(7);
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
+                            ExceptionUtils.throwIfFatal(e);
                             gi.rating = -1.0f;
                         }
 
@@ -189,7 +192,8 @@ public class EhDB {
                 }
                 cursor.close();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             // Ignore
         }
 
@@ -219,7 +223,8 @@ public class EhDB {
                 }
                 cursor.close();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             // Ignore
         }
 
@@ -255,7 +260,8 @@ public class EhDB {
                 }
                 cursor.close();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             // Ignore
         }
 
@@ -296,7 +302,8 @@ public class EhDB {
                 }
                 cursor.close();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             // Ignore
         }
 
@@ -325,13 +332,15 @@ public class EhDB {
                 }
                 cursor.close();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             // Ignore
         }
 
         try {
             oldDBHelper.close();
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             // Ignore
         }
     }
@@ -726,7 +735,8 @@ public class EhDB {
             }
 
             return null;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             // Ignore
             return context.getString(R.string.cant_read_the_file);
         }

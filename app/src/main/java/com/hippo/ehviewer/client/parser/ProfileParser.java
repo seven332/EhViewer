@@ -18,10 +18,9 @@ package com.hippo.ehviewer.client.parser;
 
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.exception.ParseException;
-
+import com.hippo.util.ExceptionUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,11 +42,13 @@ public class ProfileParser {
                 } else if (!result.avatar.startsWith("http")) {
                     result.avatar = EhUrl.URL_FORUMS + result.avatar;
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 Log.i(TAG, "No avatar");
             }
             return result;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             throw new ParseException("Parse forums error", body);
         }
     }

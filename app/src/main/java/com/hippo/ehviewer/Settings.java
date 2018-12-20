@@ -30,6 +30,7 @@ import com.hippo.ehviewer.client.data.FavListUrlBuilder;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.glgallery.GalleryView;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.AssertUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.MathUtils;
@@ -633,7 +634,8 @@ public class Settings {
             builder.encodedQuery(getString(KEY_DOWNLOAD_SAVE_QUERY, null));
             builder.encodedFragment(getString(KEY_DOWNLOAD_SAVE_FRAGMENT, null));
             dir = UniFile.fromUri(sContext, builder.build());
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             // Ignore
         }
         return dir != null ? dir : UniFile.fromFile(AppConfig.getDefaultDownloadDir());

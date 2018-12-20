@@ -21,6 +21,7 @@ import android.os.Build;
 import android.support.design.widget.TextInputEditText;
 import android.util.AttributeSet;
 import android.widget.TextView;
+import com.hippo.util.ExceptionUtils;
 import java.lang.reflect.Field;
 
 // Avoid crash on some Meizu devices
@@ -40,7 +41,8 @@ public class HackyTextInputEditText extends TextInputEditText {
     if (isMeizu && isPreP) {
       try {
         return getSuperHint();
-      } catch (Exception e) {
+      } catch (Throwable e) {
+        ExceptionUtils.throwIfFatal(e);
         return super.getHint();
       }
     } else {

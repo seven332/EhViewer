@@ -749,7 +749,8 @@ public final class SpiderQueen implements Runnable {
             spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
             readPreviews(body, 0, spiderInfo);
             return spiderInfo;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             return null;
         }
     }
@@ -791,7 +792,8 @@ public final class SpiderQueen implements Runnable {
                 pToken = spiderInfo.pTokenMap.get(index);
             }
             return pToken;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             return null;
         }
     }
@@ -803,7 +805,8 @@ public final class SpiderQueen implements Runnable {
             UniFile file = downloadDir.createFile(SPIDER_INFO_FILENAME);
             try {
                 spiderInfo.write(file.openOutputStream());
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 // Ignore
             }
         }
@@ -1034,7 +1037,7 @@ public final class SpiderQueen implements Runnable {
             return pageUrl;
         }
 
-        private GalleryPageParser.Result getImageUrl(int index, String pageUrl) throws Exception {
+        private GalleryPageParser.Result getImageUrl(int index, String pageUrl) throws Throwable {
             GalleryPageParser.Result result = EhEngine.getGalleryPage(null, mHttpClient, pageUrl);
             if (StringUtils.endsWith(result.imageUrl, URL_509_SUFFIX_ARRAY)) {
                 // Get 509
@@ -1071,7 +1074,8 @@ public final class SpiderQueen implements Runnable {
                     result = getImageUrl(index, pageUrl);
                 } catch (Image509Exception e) {
                     error = GetText.getString(R.string.error_509);
-                } catch (Exception e) {
+                } catch (Throwable e) {
+                    ExceptionUtils.throwIfFatal(e);
                     error = ExceptionUtils.getReadableString(e);
                 }
                 if (result == null) {

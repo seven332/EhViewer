@@ -18,13 +18,12 @@ package com.hippo.ehviewer.client;
 
 import android.content.Context;
 import android.os.AsyncTask;
-
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.CancelledException;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.thread.PriorityThreadFactory;
-
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -34,7 +33,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 
@@ -193,7 +191,8 @@ public class EhClient {
                     default:
                         return new IllegalStateException("Can't detect method " + mMethod);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 return e;
             }
         }
