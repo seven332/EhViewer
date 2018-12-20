@@ -80,6 +80,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -1121,17 +1122,26 @@ public final class SpiderQueen implements Runnable {
 
                     Call call = mHttpClient.newCall(new EhRequestBuilder(imageUrl).build());
                     Response response = call.execute();
+                    ResponseBody responseBody = response.body();
+
                     if (response.code() >= 400) {
                         // Maybe 404
-                        response.body().close();
+                        response.close();
                         error = "Bad code: " + response.code();
                         continue;
                     }
-                    ResponseBody responseBody = response.body();
+
+                    if (responseBody == null) {
+                        error = "Empty response body";
+                        continue;
+                    }
 
                     // Get extension
-                    String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(
-                            responseBody.contentType().toString());
+                    String extension = null;
+                    MediaType mediaType = responseBody.contentType();
+                    if (mediaType != null) {
+                        extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mediaType.toString());
+                    }
                     // Ensure extension
                     if (!Utilities.contain(GalleryProvider2.SUPPORT_IMAGE_EXTENSIONS, extension)) {
                         extension = GalleryProvider2.SUPPORT_IMAGE_EXTENSIONS[0];
@@ -1142,7 +1152,7 @@ public final class SpiderQueen implements Runnable {
                     if (null == pipe) {
                         // Can't get pipe
                         error = GetText.getString(R.string.error_write_failed);
-                        response.body().close();
+                        response.close();
                         break;
                     }
 
@@ -1157,7 +1167,7 @@ public final class SpiderQueen implements Runnable {
                     while (!Thread.currentThread().isInterrupted()) {
                         int bytesRead = is.read(data);
                         if (bytesRead == -1) {
-                            response.body().close();
+                            response.close();
                             break;
                         }
                         os.write(data, 0, bytesRead);
