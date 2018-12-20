@@ -26,6 +26,7 @@ import android.view.WindowManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hippo.android.resource.AttrResources;
 import com.hippo.content.ContextLocalWrapper;
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
@@ -44,7 +45,7 @@ public abstract class EhActivity extends AppCompatActivity {
 
         ((EhApplication) getApplication()).registerActivity(this);
 
-        if (Settings.getEnableAnalytics()) {
+        if (Analytics.isEnabled()) {
             FirebaseAnalytics.getInstance(this);
         }
 

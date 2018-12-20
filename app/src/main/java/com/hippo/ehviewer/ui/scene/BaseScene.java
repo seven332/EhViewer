@@ -33,6 +33,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
 import com.hippo.util.AppHelper;
@@ -259,6 +260,12 @@ public abstract class BaseScene extends SceneFragment {
         if (null != activity && null != view) {
             AppHelper.showSoftInput(activity, view);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Analytics.onSceneView(this);
     }
 
     @Override
