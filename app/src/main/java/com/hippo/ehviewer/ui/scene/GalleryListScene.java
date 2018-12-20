@@ -832,7 +832,11 @@ public final class GalleryListScene extends BaseScene
             return false;
         }
 
-        GalleryInfo gi = mHelper.getDataAt(position);
+        GalleryInfo gi = mHelper.getDataAtEx(position);
+        if (gi == null) {
+            return true;
+        }
+
         Bundle args = new Bundle();
         args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
         args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
@@ -946,7 +950,11 @@ public final class GalleryListScene extends BaseScene
             return false;
         }
 
-        final GalleryInfo gi = mHelper.getDataAt(position);
+        final GalleryInfo gi = mHelper.getDataAtEx(position);
+        if (gi == null) {
+            return true;
+        }
+
         new AlertDialog.Builder(context)
                 .setTitle(EhUtils.getSuitableTitle(gi))
                 .setItems(R.array.gallery_list_menu_entries, new DialogInterface.OnClickListener() {
@@ -1340,7 +1348,7 @@ public final class GalleryListScene extends BaseScene
         @Nullable
         @Override
         public GalleryInfo getDataAt(int position) {
-            return null != mHelper ? mHelper.getDataAt(position) : null;
+            return null != mHelper ? mHelper.getDataAtEx(position) : null;
         }
     }
 

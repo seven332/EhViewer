@@ -605,7 +605,10 @@ public class FavoritesScene extends BaseScene implements
             if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
                 mRecyclerView.toggleItemChecked(position);
             } else if (mHelper != null) {
-                GalleryInfo gi = mHelper.getDataAt(position);
+                GalleryInfo gi = mHelper.getDataAtEx(position);
+                if (gi == null) {
+                    return true;
+                }
                 Bundle args = new Bundle();
                 args.putString(GalleryDetailScene.KEY_ACTION, GalleryDetailScene.ACTION_GALLERY_INFO);
                 args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
@@ -751,7 +754,10 @@ public class FavoritesScene extends BaseScene implements
         SparseBooleanArray stateArray = mRecyclerView.getCheckedItemPositions();
         for (int i = 0, n = stateArray.size(); i < n; i++) {
             if (stateArray.valueAt(i)) {
-                mModifyGiList.add(mHelper.getDataAt(stateArray.keyAt(i)));
+                GalleryInfo gi = mHelper.getDataAtEx(stateArray.keyAt(i));
+                if (gi != null) {
+                    mModifyGiList.add(gi);
+                }
             }
         }
 
@@ -1002,7 +1008,7 @@ public class FavoritesScene extends BaseScene implements
         @Nullable
         @Override
         public GalleryInfo getDataAt(int position) {
-            return null != mHelper ? mHelper.getDataAt(position) : null;
+            return null != mHelper ? mHelper.getDataAtEx(position) : null;
         }
     }
 

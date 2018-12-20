@@ -21,6 +21,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -366,6 +367,15 @@ public class ContentLayout extends FrameLayout {
          */
         public E getDataAt(int location) {
             return mData.get(location);
+        }
+
+        @Nullable
+        public E getDataAtEx(int location) {
+            if (location >= 0 && location < mData.size()) {
+                return mData.get(location);
+            } else {
+                return null;
+            }
         }
 
         public int size() {

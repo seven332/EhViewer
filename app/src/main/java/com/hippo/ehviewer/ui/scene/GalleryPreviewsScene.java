@@ -231,12 +231,14 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         Context context = getContext2();
         if (null != context && null != mHelper && null != mGalleryInfo) {
-            GalleryPreview p = mHelper.getDataAt(position);
-            Intent intent = new Intent(context, GalleryActivity.class);
-            intent.setAction(GalleryActivity.ACTION_EH);
-            intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, mGalleryInfo);
-            intent.putExtra(GalleryActivity.KEY_PAGE, p.getPosition());
-            startActivity(intent);
+            GalleryPreview p = mHelper.getDataAtEx(position);
+            if (p != null) {
+                Intent intent = new Intent(context, GalleryActivity.class);
+                intent.setAction(GalleryActivity.ACTION_EH);
+                intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, mGalleryInfo);
+                intent.putExtra(GalleryActivity.KEY_PAGE, p.getPosition());
+                startActivity(intent);
+            }
         }
         return true;
     }
@@ -272,9 +274,11 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
         @SuppressLint("SetTextI18n")
         public void onBindViewHolder(GalleryPreviewHolder holder, int position) {
             if (null != mHelper) {
-                GalleryPreview preview = mHelper.getDataAt(position);
-                preview.load(holder.image);
-                holder.text.setText(Integer.toString(preview.getPosition() + 1));
+                GalleryPreview preview = mHelper.getDataAtEx(position);
+                if (preview != null) {
+                    preview.load(holder.image);
+                    holder.text.setText(Integer.toString(preview.getPosition() + 1));
+                }
             }
         }
 
