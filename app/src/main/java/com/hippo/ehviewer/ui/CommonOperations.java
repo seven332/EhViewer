@@ -101,17 +101,13 @@ public final class CommonOperations {
         }
 
         private void showUpToDateDialog() {
-            if (!mFeedback) {
-                return;
-            }
-
             new AlertDialog.Builder(mActivity)
                     .setMessage(R.string.update_to_date)
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
         }
 
-        private void showUpdateDialog(String versionName, String size, CharSequence info, final String url) {
+        private void showUpdateDialog(String versionName, int versionCode, String size, CharSequence info, final String url) {
             new AlertDialog.Builder(mActivity)
                     .setTitle(R.string.update)
                     .setMessage(mActivity.getString(R.string.update_plain, versionName, size, info))
@@ -120,9 +116,14 @@ public final class CommonOperations {
                         public void onClick(DialogInterface dialog, int which) {
                             UrlOpener.openUrl(mActivity, url, false);
                         }
+                    })
+                    .setNegativeButton(R.string.update_ignore, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Settings.putSkipUpdateVersion(versionCode);
+                        }
                     }).show();
         }
-
 
         private void handleResult(JSONObject jo) {
             if (null == jo || mActivity.isFinishing()) {
@@ -130,6 +131,7 @@ public final class CommonOperations {
             }
 
             String versionName;
+            int versionCode;
             String size;
             CharSequence info;
             String url;
@@ -138,10 +140,12 @@ public final class CommonOperations {
                 PackageManager pm = mActivity.getPackageManager();
                 PackageInfo pi = pm.getPackageInfo(mActivity.getPackageName(), PackageManager.GET_ACTIVITIES);
                 int currentVersionCode = pi.versionCode;
-                int newVersionCode = jo.getInt("version_code");
-                if (currentVersionCode >= newVersionCode) {
+                versionCode = jo.getInt("version_code");
+                if (currentVersionCode >= versionCode) {
                     // Update to date
-                    showUpToDateDialog();
+                    if (mFeedback) {
+                        showUpToDateDialog();
+                    }
                     return;
                 }
 
@@ -153,7 +157,9 @@ public final class CommonOperations {
                 return;
             }
 
-            showUpdateDialog(versionName, size, info, url);
+            if (mFeedback || versionCode != Settings.getSkipUpdateVersion()) {
+                showUpdateDialog(versionName, versionCode, size, info, url);
+            }
         }
 
         @Override

@@ -638,7 +638,6 @@
     <string name="settings_about_changelog">変更履歴</string>
     <string name="app_language_system">システム言語（既定）</string>
     <string name="settings_about_telegram">Telegram</string>
-    <string name="settings_about_auto_check_for_updates">更新を自動で確認</string>
     <string name="download_service">ダウンロードサービス</string>
     <string name="settings_advanced_built_in_hosts_summary">ホストをアプリ既定のIPにマッピング\nカスタムhosts.txtに上書きされます。</string>
     <string name="settings_advanced_custom_hosts_title">カスタムhosts.txt</string>

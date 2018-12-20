@@ -19,5 +19,5 @@
 
     <bool name="beta">false</bool>
     <bool name="dad_spin_bars">true</bool>
-    <bool name="auto_check_update">true</bool>
+
 </resources>

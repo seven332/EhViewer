@@ -350,9 +350,7 @@ public final class MainActivity extends StageActivity
 
         if (savedInstanceState == null) {
             onInit();
-            if (Settings.getAutoCheckUpdateEnable()) {
-                CommonOperations.checkUpdate(this, false);
-            }
+            CommonOperations.checkUpdate(this, false);
             checkDownloadLocation();
             if (Settings.getCellularNetworkWarning()) {
                 checkCellularNetwork();

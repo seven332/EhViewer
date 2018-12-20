@@ -158,6 +158,7 @@
     <string name="update">Update</string>
     <string name="update_plain">Version: %1$s\nSize: %2$s\n\n%3$s</string>
     <string name="update_to_date">You are using the latest version of EhViewer.</string>
+    <string name="update_ignore">Ignore</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint_exhentai">Search ExHentai</string>
@@ -593,7 +594,6 @@
     <string name="settings_privacy_about_analytics">About analytics</string>
     <string name="settings_about_version">Build version</string>
     <string name="settings_about_check_for_updates">Check for updates</string>
-    <string name="settings_about_auto_check_for_updates">Auto. check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
     <string name="settings_about_beta_update_channel_summary">Beta versions may contain unsolved bugs.</string>
 

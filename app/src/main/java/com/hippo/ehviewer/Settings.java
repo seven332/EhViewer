@@ -976,8 +976,8 @@ public class Settings {
      ********************/
     private static final String KEY_BETA_UPDATE_CHANNEL = "beta_update_channel";
     private static final boolean DEFAULT_BETA_UPDATE_CHANNEL = EhApplication.BETA;
-    private static final String KEY_AUTO_CHECK_FOR_UPDATES = "auto_check_for_updates";
-    private static final boolean DEFAULT_AUTO_CHECK_FOR_UPDATES = EhApplication.AUTO_UPDATE;
+    private static final String KEY_SKIP_UPDATE_VERSION = "skip_update_version";
+    private static final int DEFAULT_SKIP_UPDATE_VERSION = 0;
 
     public static boolean getBetaUpdateChannel() {
         return getBoolean(KEY_BETA_UPDATE_CHANNEL, DEFAULT_BETA_UPDATE_CHANNEL);
@@ -987,8 +987,12 @@ public class Settings {
         putBoolean(KEY_BETA_UPDATE_CHANNEL, value);
     }
 
-    public static boolean getAutoCheckUpdateEnable() {
-        return getBoolean(KEY_AUTO_CHECK_FOR_UPDATES, DEFAULT_AUTO_CHECK_FOR_UPDATES);
+    public static int getSkipUpdateVersion() {
+        return getInt(KEY_SKIP_UPDATE_VERSION, DEFAULT_SKIP_UPDATE_VERSION);
+    }
+
+    public static void putSkipUpdateVersion(int value) {
+        putInt(KEY_SKIP_UPDATE_VERSION, value);
     }
 
     /********************

@@ -465,7 +465,6 @@
     <string name="settings_privacy_about_analytics">Über die Analyse</string>
     <string name="settings_about_version">Versionnummer</string>
     <string name="settings_about_check_for_updates">Auf Update überprüfen</string>
-    <string name="settings_about_auto_check_for_updates">Auf Updates automatisch überprüfen</string>
     <string name="settings_about_beta_update_channel">Beta-Version testen</string>
     <string name="settings_about_beta_update_channel_summary">Beta-Version kann funktionieren möglicherweise nicht</string>
     <string name="enable">Aktivieren</string>
