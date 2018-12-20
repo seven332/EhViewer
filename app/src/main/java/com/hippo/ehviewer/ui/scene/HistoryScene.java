@@ -290,6 +290,7 @@ public class HistoryScene extends ToolbarScene
 
     private class HistoryHolder extends AbstractSwipeableItemViewHolder {
 
+        public final View card;
         public final LoadImageView thumb;
         public final TextView title;
         public final TextView uploader;
@@ -301,6 +302,7 @@ public class HistoryScene extends ToolbarScene
         public HistoryHolder(View itemView) {
             super(itemView);
 
+            card = itemView.findViewById(R.id.card);
             thumb = (LoadImageView) itemView.findViewById(R.id.thumb);
             title = (TextView) itemView.findViewById(R.id.title);
             uploader = (TextView) itemView.findViewById(R.id.uploader);
@@ -312,7 +314,7 @@ public class HistoryScene extends ToolbarScene
 
         @Override
         public View getSwipeableContainerView() {
-            return itemView;
+            return card;
         }
     }
 
@@ -343,7 +345,7 @@ public class HistoryScene extends ToolbarScene
 
         @Override
         public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            HistoryHolder holder = new HistoryHolder(mInflater.inflate(R.layout.item_gallery_list, parent, false));
+            HistoryHolder holder = new HistoryHolder(mInflater.inflate(R.layout.item_history, parent, false));
 
             ViewGroup.LayoutParams lp = holder.thumb.getLayoutParams();
             lp.width = mListThumbWidth;
