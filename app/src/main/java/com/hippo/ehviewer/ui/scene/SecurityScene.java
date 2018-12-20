@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.ui.MainActivity;
+import com.hippo.ehviewer.ui.SetSecurityActivity;
 import com.hippo.hardware.ShakeDetector;
 import com.hippo.widget.lockpattern.LockPatternUtils;
 import com.hippo.widget.lockpattern.LockPatternView;
@@ -235,8 +236,7 @@ public class SecurityScene extends SolidScene implements
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && Settings.getEnableFingerprint()
                 && mFingerprintManager != null
-                && mFingerprintManager.isHardwareDetected()
-                && mFingerprintManager.hasEnrolledFingerprints();
+                && SetSecurityActivity.hasEnrolledFingerprints(mFingerprintManager);
     }
 
     private Runnable mResetFingerprintRunnable = new Runnable() {
