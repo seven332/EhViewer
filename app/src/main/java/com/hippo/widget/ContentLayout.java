@@ -898,12 +898,13 @@ public class ContentLayout extends FrameLayout {
                 mTipView.setText(bundle.getString(KEY_TIP));
 
                 mSavedDataId = bundle.getInt(KEY_DATA);
+                ArrayList<E> newData = null;
                 EhApplication app = (EhApplication) getContext().getApplicationContext();
                 if (mSavedDataId != IntIdGenerator.INVALID_ID) {
-                    ArrayList<E> data = (ArrayList<E>) app.removeGlobalStuff(mSavedDataId);
+                    newData = (ArrayList<E>) app.removeGlobalStuff(mSavedDataId);
                     mSavedDataId = IntIdGenerator.INVALID_ID;
-                    if (data != null) {
-                        mData = data;
+                    if (newData != null) {
+                        mData = newData;
                     }
                 }
 
@@ -912,6 +913,15 @@ public class ContentLayout extends FrameLayout {
                 mStartPage = bundle.getInt(KEY_START_PAGE);
                 mEndPage = bundle.getInt(KEY_END_PAGE);
                 mPages = bundle.getInt(KEY_PAGES);
+
+                if (newData == null) {
+                    mPageDivider.clear();
+                    mStartPage = 0;
+                    mEndPage = 0;
+                    mPages = 0;
+                    firstRefresh();
+                }
+
                 return bundle.getParcelable(KEY_SUPER);
             } else {
                 return state;
