@@ -429,7 +429,7 @@ public class HistoryScene extends ToolbarScene
             HistoryInfo info = mLazyList.get(mPosition);
             EhDB.deleteHistoryInfo(info);
             updateLazyList();
-            mAdapter.notifyItemRemoved(mPosition);
+            mAdapter.notifyDataSetChanged();
             updateView(true);
         }
     }
