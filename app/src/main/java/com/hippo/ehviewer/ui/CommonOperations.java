@@ -41,6 +41,7 @@ import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 
@@ -80,23 +81,39 @@ public final class CommonOperations {
             mFeedback = feedback;
         }
 
+        private JSONObject fetchUpdateInfo(String url) throws IOException, JSONException {
+            Log.d(TAG, url);
+            Request request = new Request.Builder().url(url).build();
+            Response response = mHttpClient.newCall(request).execute();
+            return new JSONObject(response.body().string());
+        }
+
         @Override
         protected JSONObject doInBackground(Void... params) {
+            String url;
+            if (Settings.getBetaUpdateChannel()) {
+                url = "http://www.ehviewer.com/update_beta.json";
+            } else {
+                url = "http://www.ehviewer.com/update.json";
+            }
+
             try {
-                String url;
+                return fetchUpdateInfo(url);
+            } catch (Throwable e1) {
+                ExceptionUtils.throwIfFatal(e1);
+
                 if (Settings.getBetaUpdateChannel()) {
-                    url = "http://www.ehviewer.com/update_beta.json";
+                    url = "https://raw.githubusercontent.com/seven332/EhViewer/api/update_beta.json";
                 } else {
-                    url = "http://www.ehviewer.com/update.json";
+                    url = "https://raw.githubusercontent.com/seven332/EhViewer/api/update.json";
                 }
-                Log.d(TAG, url);
-                Request request = new Request.Builder().url(url).build();
-                Response response = mHttpClient.newCall(request).execute();
-                return new JSONObject(response.body().string());
-            } catch (IOException e) {
-                return null;
-            } catch (JSONException e) {
-                return null;
+
+                try {
+                    return fetchUpdateInfo(url);
+                } catch (Throwable e2) {
+                    ExceptionUtils.throwIfFatal(e2);
+                    return null;
+                }
             }
         }
 
@@ -153,7 +170,8 @@ public final class CommonOperations {
                 size = FileUtils.humanReadableByteCount(jo.getLong("size"), false);
                 info = Html.fromHtml(jo.getString("info"));
                 url = jo.getString("url");
-            } catch (PackageManager.NameNotFoundException | JSONException e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 return;
             }
 
