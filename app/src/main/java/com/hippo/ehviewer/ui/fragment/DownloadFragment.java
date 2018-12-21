@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui.fragment;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,12 +27,12 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
-
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.DirPickerActivity;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.ExceptionUtils;
 
 public class DownloadFragment extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener,
@@ -145,7 +144,8 @@ public class DownloadFragment extends PreferenceFragment implements
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             try {
                 startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE_DIR_L);
-            } catch (ActivityNotFoundException e) {
+            } catch (Throwable e) {
+                ExceptionUtils.throwIfFatal(e);
                 Toast.makeText(getActivity(), R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
             }
         }

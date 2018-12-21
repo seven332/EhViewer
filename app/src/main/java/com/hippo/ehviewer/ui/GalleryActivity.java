@@ -947,7 +947,12 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_TITLE, filename);
-        startActivityForResult(intent, WRITE_REQUEST_CODE);
+        try {
+            startActivityForResult(intent, WRITE_REQUEST_CODE);
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
+            Toast.makeText(this, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
