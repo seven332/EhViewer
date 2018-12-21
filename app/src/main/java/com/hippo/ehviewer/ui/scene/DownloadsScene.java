@@ -929,7 +929,9 @@ public class DownloadsScene extends ToolbarScene
             @Override
             protected Void doInBackground(UniFile... params) {
                 for (UniFile file: params) {
-                    file.delete();
+                    if (file != null) {
+                        file.delete();
+                    }
                 }
                 return null;
             }
