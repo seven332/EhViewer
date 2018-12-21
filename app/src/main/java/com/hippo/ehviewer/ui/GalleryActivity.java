@@ -66,6 +66,7 @@ import com.hippo.glgallery.GalleryView;
 import com.hippo.glgallery.SimpleAdapter;
 import com.hippo.glview.view.GLRootView;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.SystemUiHelper;
 import com.hippo.widget.ColorView;
 import com.hippo.yorozuya.AnimationUtils;
@@ -895,7 +896,13 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         intent.setAction(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.setType(mimeType);
-        startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
+
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.share_image)));
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
+            Toast.makeText(this, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void saveImage(int page) {

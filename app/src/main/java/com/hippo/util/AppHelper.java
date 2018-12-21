@@ -19,7 +19,6 @@ package com.hippo.util;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Service;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,7 +27,6 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-
 import com.hippo.ehviewer.R;
 
 public class AppHelper {
@@ -47,7 +45,8 @@ public class AppHelper {
         try {
             from.startActivity(i);
             return true;
-        } catch (ActivityNotFoundException e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             Toast.makeText(from, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -63,7 +62,8 @@ public class AppHelper {
         try {
             from.startActivity(chooser);
             return true;
-        } catch (ActivityNotFoundException e) {
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             Toast.makeText(from, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
             return false;
         }

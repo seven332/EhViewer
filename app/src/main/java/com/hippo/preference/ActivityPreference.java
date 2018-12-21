@@ -22,8 +22,9 @@ import android.content.res.TypedArray;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.util.Log;
-
+import android.widget.Toast;
 import com.hippo.ehviewer.R;
+import com.hippo.util.ExceptionUtils;
 
 public class ActivityPreference extends Preference {
 
@@ -68,6 +69,11 @@ public class ActivityPreference extends Preference {
         Context context = getContext();
         Intent intent = new Intent(context, mActivityClazz);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+        try {
+            context.startActivity(intent);
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
+            Toast.makeText(context, R.string.error_cant_find_activity, Toast.LENGTH_SHORT).show();
+        }
     }
 }
