@@ -88,7 +88,7 @@ dependencies {
     implementation 'com.github.seven332:ripple:0.1.2'
     implementation 'com.github.seven332:streampipe:0.1.0'
     implementation 'com.github.seven332:tuxiang:0.1.2'
-    implementation 'com.github.seven332:unifile:a3571536be'
+    implementation 'com.github.seven332:unifile:9ec57bcd8f'
     implementation 'com.github.seven332:yorozuya:0.1.2'
     implementation 'com.github.seven332:yorozuya-thread:0.1.1'
     implementation 'com.github.seven332:yorozuya-collect:0.1.4'
