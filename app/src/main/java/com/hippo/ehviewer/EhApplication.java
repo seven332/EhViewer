@@ -59,6 +59,7 @@ import okhttp3.OkHttpClient;
 public class EhApplication extends RecordingApplication {
 
     private static final String TAG = EhApplication.class.getSimpleName();
+    private static final String KEY_GLOBAL_STUFF_NEXT_ID = "global_stuff_next_id";
 
     public static final boolean BETA = false;
 
@@ -128,6 +129,8 @@ public class EhApplication extends RecordingApplication {
             // Ignore
         }
 
+        mIdGenerator.setNextId(Settings.getInt(KEY_GLOBAL_STUFF_NEXT_ID, 0));
+
         if (DEBUG_PRINT_NATIVE_MEMORY || DEBUG_PRINT_IMAGE_COUNT) {
             debugPrint();
         }
@@ -191,6 +194,7 @@ public class EhApplication extends RecordingApplication {
     public int putGlobalStuff(@NonNull Object o) {
         int id = mIdGenerator.nextId();
         mGlobalStuffMap.put(id, o);
+        Settings.putInt(KEY_GLOBAL_STUFF_NEXT_ID, mIdGenerator.nextId());
         return id;
     }
 
