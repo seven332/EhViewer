@@ -781,6 +781,10 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
+            if (mGalleryView == null) {
+                return;
+            }
+
             int screenRotation = mScreenRotation.getSelectedItemPosition();
             int layoutMode = GalleryView.sanitizeLayoutMode(mReadingDirection.getSelectedItemPosition());
             int scaleMode = GalleryView.sanitizeScaleMode(mScaleMode.getSelectedItemPosition());
@@ -825,11 +829,9 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                     break;
             }
             setRequestedOrientation(orientation);
-            if (mGalleryView != null) {
-                mGalleryView.setLayoutMode(layoutMode);
-                mGalleryView.setScaleMode(scaleMode);
-                mGalleryView.setStartPosition(startPosition);
-            }
+            mGalleryView.setLayoutMode(layoutMode);
+            mGalleryView.setScaleMode(scaleMode);
+            mGalleryView.setStartPosition(startPosition);
             if (keepScreenOn) {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
