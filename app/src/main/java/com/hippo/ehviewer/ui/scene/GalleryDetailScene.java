@@ -1811,7 +1811,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 r.allowScanningByMediaScanner();
                 r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                dm.enqueue(r);
+                if (dm != null) {
+                    try {
+                        dm.enqueue(r);
+                    } catch (Throwable e) {
+                        ExceptionUtils.throwIfFatal(e);
+                    }
+                }
             }
 
             if (mDialog != null) {
