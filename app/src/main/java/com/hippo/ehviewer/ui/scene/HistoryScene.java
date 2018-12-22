@@ -164,6 +164,9 @@ public class HistoryScene extends ToolbarScene
         if (null != mLazyList) {
             mLazyList.close();
             mLazyList = null;
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
         if (null != mRecyclerView) {
             mRecyclerView.stopScroll();
