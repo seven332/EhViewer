@@ -27,6 +27,7 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -502,6 +503,13 @@ public final class GalleryCommentsScene extends ToolbarScene
             @Override
             public void onAnimationEnd(Animator a) {
                 if (null == mFab || null == mEditPanel) {
+                    return;
+                }
+
+                if (Looper.myLooper() != Looper.getMainLooper()) {
+                    // Some devices may run this block in non-UI thread.
+                    // It might be a bug of Android OS.
+                    // Check it here to avoid crash.
                     return;
                 }
 
