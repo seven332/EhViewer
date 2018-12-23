@@ -16,11 +16,13 @@
 
 package com.hippo.ehviewer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,6 +45,7 @@ import com.hippo.network.StatusCodeException;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.BitmapUtils;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntIdGenerator;
@@ -82,6 +85,7 @@ public class EhApplication extends RecordingApplication {
 
     private final List<Activity> mActivityList = new ArrayList<>();
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public void onCreate() {
         super.onCreate();
@@ -106,17 +110,32 @@ public class EhApplication extends RecordingApplication {
             Analytics.start(this);
         }
 
-        // Disable no media file checker for now. Some devices stuck here.
-//        // Check no media file
-//        UniFile downloadLocation = Settings.getDownloadLocation();
-//        if (Settings.getMediaScan()) {
-//            CommonOperations.removeNoMediaFile(downloadLocation);
-//        } else {
-//            CommonOperations.ensureNoMediaFile(downloadLocation);
-//        }
+        // Do io tasks in new thread
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                // Check no media file
+                try {
+                    UniFile downloadLocation = Settings.getDownloadLocation();
+                    if (Settings.getMediaScan()) {
+                        CommonOperations.removeNoMediaFile(downloadLocation);
+                    } else {
+                        CommonOperations.ensureNoMediaFile(downloadLocation);
+                    }
+                } catch (Throwable t) {
+                    ExceptionUtils.throwIfFatal(t);
+                }
 
-        // Clear temp dir
-        clearTempDir();
+                // Clear temp files
+                try {
+                    clearTempDir();
+                } catch (Throwable t) {
+                    ExceptionUtils.throwIfFatal(t);
+                }
+
+                return null;
+            }
+        }.doInBackground();
 
         // Check app update
         update();
