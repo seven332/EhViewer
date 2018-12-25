@@ -107,7 +107,7 @@ configurations.all {
         force 'com.github.seven332:glgallery:c56b14c6fa'
         force 'com.github.seven332:glview:edd4d91678'
         force 'com.github.seven332:glview-image:f495a3625d'
-        force 'com.github.seven332:image:c56f357682'
+        force 'com.github.seven332:image:09b43c0c68'
 
         exclude group: 'com.github.seven332', module: 'okhttp'
         exclude group: 'com.squareup.okio', module: 'okio'
