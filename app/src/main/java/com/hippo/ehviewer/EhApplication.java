@@ -28,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+import com.hippo.app.SilentContextWrapper;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.content.RecordingApplication;
@@ -88,6 +89,8 @@ public class EhApplication extends RecordingApplication {
     @SuppressLint("StaticFieldLeak")
     @Override
     public void onCreate() {
+        SilentContextWrapper.attach(this);
+
         super.onCreate();
 
         GetText.initialize(this);
