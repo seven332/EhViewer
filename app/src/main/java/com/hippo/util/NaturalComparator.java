@@ -56,10 +56,7 @@ public class NaturalComparator implements Comparator<String> {
 
       int result;
       if (isDigit(data1) && isDigit(data2)) {
-        result = Long.compare(Long.valueOf(data1), Long.valueOf(data2));
-        if (result == 0) {
-          result = -Integer.compare(data1.length(), data2.length());
-        }
+        result = compareNumberString(data1, data2);
       } else {
         result = data1.compareToIgnoreCase(data2);
       }
@@ -110,5 +107,46 @@ public class NaturalComparator implements Comparator<String> {
       }
     }
     return index;
+  }
+
+  private static String removeLeadingZero(String s) {
+    if (s.length() < 1) {
+      return s;
+    }
+
+    // At least keep the last number
+    for (int i = 0, n = s.length() - 1; i < n; i++) {
+      if (s.charAt(i) != '0') {
+        return s.substring(i);
+      }
+    }
+
+    return s.substring(s.length() - 1);
+  }
+
+  private static int compareNumberString(String s1, String s2) {
+    String p1 = removeLeadingZero(s1);
+    String p2 = removeLeadingZero(s2);
+
+    int l1 = p1.length();
+    int l2 = p2.length();
+
+    if (l1 > l2) {
+      return 1;
+    } else if (l1 < l2) {
+      return -1;
+    } else {
+      for (int i = 0; i < l1; i++) {
+        char c1 = p1.charAt(i);
+        char c2 = p2.charAt(i);
+        if (c1 > c2) {
+          return 1;
+        } else if (c1 < c2) {
+          return -1;
+        }
+      }
+    }
+
+    return -Integer.compare(s1.length(), s2.length());
   }
 }

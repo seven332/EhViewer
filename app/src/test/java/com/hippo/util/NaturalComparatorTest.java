@@ -54,6 +54,19 @@ public class NaturalComparatorTest {
     assertOrder(null, "1");
   }
 
+  @Test
+  public void testBigNumber() {
+    assertOrder("1", "22222222222222222222222222222222222222222222222222222222222222222222222");
+  }
+
+  @Test
+  public void testLeadingZero() {
+    assertOrder("000000000000000001", "1");
+    assertOrder("000000000000000001", "0001");
+    assertOrder("00000000000000000", "0");
+    assertOrder("00000000000000000", "000");
+  }
+
   private void assertOrder(String s1, String s2) {
     NaturalComparator comparator = new NaturalComparator();
     assertTrue(comparator.compare(s1, s2) < 0);
