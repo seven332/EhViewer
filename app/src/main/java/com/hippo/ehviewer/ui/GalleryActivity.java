@@ -430,13 +430,15 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
-        if (hasFocus && mSystemUiHelper != null) {
-            if (mShowSystemUi) {
-                mSystemUiHelper.show();
-            } else {
-                mSystemUiHelper.hide();
+        SimpleHandler.getInstance().postDelayed(() -> {
+            if (hasFocus && mSystemUiHelper != null) {
+                if (mShowSystemUi) {
+                    mSystemUiHelper.show();
+                } else {
+                    mSystemUiHelper.hide();
+                }
             }
-        }
+        }, 300);
     }
 
     @Override
