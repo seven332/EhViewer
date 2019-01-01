@@ -118,6 +118,10 @@ public class RestoreDownloadPreference extends TaskPreference {
             List<RestoreItem> restoreItemList = new ArrayList<>();
 
             UniFile[] files = dir.listFiles();
+            if (files == null) {
+                return null;
+            }
+
             for (UniFile file: files) {
                 RestoreItem restoreItem = getRestoreItem(file);
                 if (null != restoreItem) {
