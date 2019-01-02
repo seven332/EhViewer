@@ -44,18 +44,28 @@ public class PermissionRequester {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(activity,
-                                    new String[]{permission},
-                                    requestCode);
+                            requestPermissions(activity, new String[]{permission}, requestCode);
                         }
                     }).setNegativeButton(android.R.string.cancel, null)
                     .show();
         } else {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{permission},
-                    requestCode);
+            return requestPermissions(activity, new String[]{permission}, requestCode);
         }
 
         return false;
+    }
+
+    private static boolean requestPermissions(
+        final Activity activity,
+        final String[] permissions,
+        int requestCode
+    ) {
+        try {
+            ActivityCompat.requestPermissions(activity, permissions, requestCode);
+            return true;
+        } catch (Throwable t) {
+            ExceptionUtils.throwIfFatal(t);
+            return false;
+        }
     }
 }
