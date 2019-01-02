@@ -914,6 +914,8 @@ public class ContentLayout extends FrameLayout {
                 mEndPage = bundle.getInt(KEY_END_PAGE);
                 mPages = bundle.getInt(KEY_PAGES);
 
+                notifyDataSetChanged();
+
                 if (newData == null) {
                     mPageDivider.clear();
                     mStartPage = 0;
