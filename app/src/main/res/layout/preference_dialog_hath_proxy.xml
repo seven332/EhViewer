@@ -33,13 +33,13 @@
     <android.support.design.widget.TextInputLayout
         android:id="@+id/ip_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:hint="@string/ip">
 
         <com.hippo.widget.HackyTextInputEditText
             android:id="@+id/ip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/ip"
             android:inputType="text"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -47,13 +47,13 @@
     <android.support.design.widget.TextInputLayout
         android:id="@+id/port_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:hint="@string/port">
 
         <com.hippo.widget.HackyTextInputEditText
             android:id="@+id/port"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/port"
             android:inputType="numberDecimal"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -61,13 +61,13 @@
     <android.support.design.widget.TextInputLayout
         android:id="@+id/passkey_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:hint="@string/Passkey">
 
         <com.hippo.widget.HackyTextInputEditText
             android:id="@+id/passkey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/Passkey"
             android:inputType="text"/>
 
     </android.support.design.widget.TextInputLayout>

@@ -46,13 +46,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:minWidth="@dimen/single_max_width">
+                android:minWidth="@dimen/single_max_width"
+                android:hint="@string/username">
 
                 <com.hippo.widget.HackyTextInputEditText
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/username"
                     android:imeOptions="actionNext"
                     android:inputType="text"
                     android:maxLines="1"
@@ -66,13 +66,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:minWidth="@dimen/single_max_width"
+                android:hint="@string/password"
                 app:passwordToggleEnabled="true">
 
                 <com.hippo.widget.HackyTextInputEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/password"
                     android:imeOptions="actionNext"
                     android:inputType="textPassword"
                     android:maxLines="1"
@@ -81,31 +81,31 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-              android:id="@+id/recaptcha_layout"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center_horizontal"
-              android:minWidth="@dimen/single_max_width">
+                android:id="@+id/recaptcha_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:minWidth="@dimen/single_max_width"
+                android:hint="@string/recaptcha">
 
                 <com.hippo.widget.HackyTextInputEditText
-                  android:id="@+id/recaptcha"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:hint="@string/recaptcha"
-                  android:imeOptions="actionDone"
-                  android:inputType="text"
-                  android:maxLines="1"
-                  android:singleLine="true"/>
+                    android:id="@+id/recaptcha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <com.hippo.ehviewer.widget.RecaptchaView
-              android:id="@+id/recaptcha_image"
-              android:layout_width="wrap_content"
-              android:layout_height="48dp"
-              android:layout_gravity="center_horizontal"
-              android:minWidth="@dimen/single_max_width"
-              android:scaleType="fitCenter"/>
+                android:id="@+id/recaptcha_image"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:minWidth="@dimen/single_max_width"
+                android:scaleType="fitCenter"/>
 
             <android.support.v4.widget.Space
                 android:layout_width="wrap_content"

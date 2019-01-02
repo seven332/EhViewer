@@ -65,13 +65,13 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/keyline_margin"
-                    android:minWidth="@dimen/single_max_width">
+                    android:minWidth="@dimen/single_max_width"
+                    android:hint="ipb_member_id">
 
                     <com.hippo.widget.HackyTextInputEditText
                         android:id="@+id/ipb_member_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="ipb_member_id"
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
@@ -85,13 +85,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:minWidth="@dimen/single_max_width">
+                    android:minWidth="@dimen/single_max_width"
+                    android:hint="ipb_pass_hash">
 
                     <com.hippo.widget.HackyTextInputEditText
                         android:id="@+id/ipb_pass_hash"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="ipb_pass_hash"
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
@@ -105,13 +105,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:minWidth="@dimen/single_max_width">
+                    android:minWidth="@dimen/single_max_width"
+                    android:hint="igneous">
 
                     <com.hippo.widget.HackyTextInputEditText
                         android:id="@+id/igneous"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="igneous"
                         android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLines="1"
