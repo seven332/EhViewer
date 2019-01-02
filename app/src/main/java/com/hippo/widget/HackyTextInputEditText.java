@@ -17,18 +17,48 @@
 package com.hippo.widget;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.os.Build;
 import android.support.design.widget.TextInputEditText;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import com.hippo.util.ExceptionUtils;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 // Avoid crash on some Meizu devices
 // https://github.com/android-in-china/Compatibility/issues/11
 // https://stackoverflow.com/questions/51891415/nullpointerexception-on-meizu-devices-in-editor-updatecursorpositionmz/52001305
 public class HackyTextInputEditText extends TextInputEditText {
+
+  private static final boolean HAS_METHOD_UPDATE_CURSOR_POSITION_MZ;
+  private static final Field FIELD_M_HINT;
+
+  static {
+    boolean hasMethodUpdateCursorPositionMz = false;
+    try {
+      Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("android.widget.Editor");
+      Method[] methods = clazz.getDeclaredMethods();
+      for (Method method : methods) {
+        if ("updateCursorPositionMz".equals(method.getName())) {
+          hasMethodUpdateCursorPositionMz = true;
+        }
+      }
+    } catch (Throwable e) {
+      ExceptionUtils.throwIfFatal(e);
+    }
+
+    Field fieldMHint = null;
+    if (hasMethodUpdateCursorPositionMz) {
+      try {
+        fieldMHint = TextView.class.getDeclaredField("mHint");
+        fieldMHint.setAccessible(true);
+      } catch (Throwable e) {
+        ExceptionUtils.throwIfFatal(e);
+      }
+    }
+
+    HAS_METHOD_UPDATE_CURSOR_POSITION_MZ = hasMethodUpdateCursorPositionMz;
+    FIELD_M_HINT = fieldMHint;
+  }
 
   public HackyTextInputEditText(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -36,10 +66,7 @@ public class HackyTextInputEditText extends TextInputEditText {
 
   @Override
   public CharSequence getHint() {
-    boolean isMeizu = Build.MANUFACTURER.toLowerCase().contains("meizu");
-    boolean isPreP = Build.VERSION.SDK_INT < Build.VERSION_CODES.P;
-
-    if (isMeizu && isPreP) {
+    if (HAS_METHOD_UPDATE_CURSOR_POSITION_MZ && FIELD_M_HINT != null) {
       try {
         return getSuperHint();
       } catch (Throwable e) {
@@ -51,19 +78,7 @@ public class HackyTextInputEditText extends TextInputEditText {
     }
   }
 
-  public CharSequence getSuperHint() throws NoSuchFieldException, IllegalAccessException {
-    Field field = TextView.class.getDeclaredField("mHint");
-    field.setAccessible(true);
-    return (CharSequence) field.get(this);
-  }
-
-  // Some devices still crash
-  @Override
-  protected void onDraw(Canvas canvas) {
-    try {
-      super.onDraw(canvas);
-    } catch (Throwable t) {
-      ExceptionUtils.throwIfFatal(t);
-    }
+  private CharSequence getSuperHint() throws IllegalAccessException {
+    return (CharSequence) FIELD_M_HINT.get(this);
   }
 }
