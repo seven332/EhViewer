@@ -19,7 +19,9 @@ package com.hippo.ehviewer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentCallbacks2;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -28,7 +30,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
-import com.hippo.app.SilentContextWrapper;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.content.RecordingApplication;
@@ -89,8 +90,6 @@ public class EhApplication extends RecordingApplication {
     @SuppressLint("StaticFieldLeak")
     @Override
     public void onCreate() {
-        SilentContextWrapper.attach(this);
-
         super.onCreate();
 
         GetText.initialize(this);
@@ -355,6 +354,16 @@ public class EhApplication extends RecordingApplication {
         if (!mActivityList.isEmpty()) {
             return mActivityList.get(mActivityList.size() - 1);
         } else {
+            return null;
+        }
+    }
+
+    @Override
+    public ComponentName startService(Intent service) {
+        try {
+            return super.startService(service);
+        } catch (Throwable t) {
+            ExceptionUtils.throwIfFatal(t);
             return null;
         }
     }
