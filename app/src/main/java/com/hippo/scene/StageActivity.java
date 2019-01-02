@@ -161,8 +161,10 @@ public abstract class StageActivity extends EhActivity {
         if (savedInstanceState != null) {
             mStageId = savedInstanceState.getInt(KEY_STAGE_ID, IntIdGenerator.INVALID_ID);
             ArrayList<String> list = savedInstanceState.getStringArrayList(KEY_SCENE_TAG_LIST);
-            mSceneTagList.addAll(list);
-            mDelaySceneTagList.addAll(list);
+            if (list != null) {
+                mSceneTagList.addAll(list);
+                mDelaySceneTagList.addAll(list);
+            }
             mIdGenerator.lazySet(savedInstanceState.getInt(KEY_NEXT_ID));
         }
 
