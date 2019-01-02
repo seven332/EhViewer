@@ -251,7 +251,11 @@ public final class MainActivity extends StageActivity
 
         String action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(action)) {
-            Announcer announcer = EhUrlOpener.parseUrl(intent.getData().toString());
+            Uri uri = intent.getData();
+            if (uri == null) {
+                return false;
+            }
+            Announcer announcer = EhUrlOpener.parseUrl(uri.toString());
             if (announcer != null) {
                 startScene(processAnnouncer(announcer));
                 return true;
