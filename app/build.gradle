@@ -15,6 +15,9 @@ android {
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW",
                 "es", "ja", "ko", "fr", "de"
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
     }
 
     compileOptions {
@@ -104,9 +107,9 @@ dependencies {
 
 configurations.all {
     resolutionStrategy {
-        force 'com.github.seven332:glgallery:c56b14c6fa'
-        force 'com.github.seven332:glview:edd4d91678'
-        force 'com.github.seven332:glview-image:f495a3625d'
+        force 'com.github.seven332:glgallery:bb2a43fdd5'
+        force 'com.github.seven332:glview:c6e21b925b'
+        force 'com.github.seven332:glview-image:69930e924e'
         force 'com.github.seven332:image:09b43c0c68'
 
         exclude group: 'com.github.seven332', module: 'okhttp'
