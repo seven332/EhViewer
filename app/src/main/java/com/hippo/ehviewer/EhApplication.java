@@ -22,6 +22,7 @@ import android.content.ComponentCallbacks2;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -358,6 +359,7 @@ public class EhApplication extends RecordingApplication {
         }
     }
 
+    // Avoid crash on some "energy saving" devices
     @Override
     public ComponentName startService(Intent service) {
         try {
@@ -365,6 +367,17 @@ public class EhApplication extends RecordingApplication {
         } catch (Throwable t) {
             ExceptionUtils.throwIfFatal(t);
             return null;
+        }
+    }
+
+    // Avoid crash on some "energy saving" devices
+    @Override
+    public boolean bindService(Intent service, ServiceConnection conn, int flags) {
+        try {
+            return super.bindService(service, conn, flags);
+        } catch (Throwable t) {
+            ExceptionUtils.throwIfFatal(t);
+            return false;
         }
     }
 }
