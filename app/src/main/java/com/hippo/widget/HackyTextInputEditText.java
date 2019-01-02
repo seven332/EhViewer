@@ -17,6 +17,7 @@
 package com.hippo.widget;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.os.Build;
 import android.support.design.widget.TextInputEditText;
 import android.util.AttributeSet;
@@ -54,5 +55,15 @@ public class HackyTextInputEditText extends TextInputEditText {
     Field field = TextView.class.getDeclaredField("mHint");
     field.setAccessible(true);
     return (CharSequence) field.get(this);
+  }
+
+  // Some devices still crash
+  @Override
+  protected void onDraw(Canvas canvas) {
+    try {
+      super.onDraw(canvas);
+    } catch (Throwable t) {
+      ExceptionUtils.throwIfFatal(t);
+    }
   }
 }
