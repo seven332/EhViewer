@@ -35,6 +35,11 @@ public abstract class PrettyPreferenceActivity extends AppCompatPreferenceActivi
 
   @Override
   public void setListAdapter(ListAdapter adapter) {
+    if (adapter == null) {
+      super.setListAdapter(null);
+      return;
+    }
+
     int count = adapter.getCount();
     List<PreferenceActivity.Header> headers = new ArrayList<>(count);
     for (int i = 0; i < count; ++i) {
