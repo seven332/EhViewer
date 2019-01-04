@@ -52,7 +52,7 @@ public class EhUrl {
     public static final String UCONFIG_E = HOST_E + "uconfig.php";
     public static final String UCONFIG_EX = HOST_EX + "uconfig.php";
 
-    private static final String URL_PREFIX_THUMB_E = "https://ehgt.org/t/";
+    private static final String URL_PREFIX_THUMB_E = "https://ul.ehgt.org/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
     public static String getGalleryDetailUrl(long gid, String token) {
