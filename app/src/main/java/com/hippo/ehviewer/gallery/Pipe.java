@@ -88,6 +88,7 @@ class Pipe {
     public void close() {
       synchronized (Pipe.this) {
         inClosed = true;
+        Pipe.this.notifyAll();
       }
     }
   };
@@ -141,6 +142,7 @@ class Pipe {
     public void close() {
       synchronized (Pipe.this) {
         outClosed = true;
+        Pipe.this.notifyAll();
       }
     }
   };
