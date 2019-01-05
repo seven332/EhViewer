@@ -39,6 +39,8 @@
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config">
 
+        <meta-data android:name="android.max_aspect" android:value="2.1"/>
+
         <activity
             android:name="com.hippo.ehviewer.ui.MainActivity"
             android:configChanges="screenSize|uiMode"
