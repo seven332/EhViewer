@@ -60,18 +60,17 @@ public class GalleryListParser {
 
     private static String parseRating(String ratingStyle) {
         Matcher m = PATTERN_RATING.matcher(ratingStyle);
-        int num1;
-        int num2;
+        int num1 = Integer.MIN_VALUE;
+        int num2 = Integer.MIN_VALUE;
         int rate = 5;
         String re;
         if (m.find()) {
-            num1 = ParserUtils.parseInt(m.group().replace("px", ""));
-        } else {
-            return null;
+            num1 = ParserUtils.parseInt(m.group().replace("px", ""), Integer.MIN_VALUE);
         }
         if (m.find()) {
-            num2 = ParserUtils.parseInt(m.group().replace("px", ""));
-        } else {
+            num2 = ParserUtils.parseInt(m.group().replace("px", ""), Integer.MIN_VALUE);
+        }
+        if (num1 == Integer.MIN_VALUE || num2 == Integer.MIN_VALUE) {
             return null;
         }
         rate = rate - num1 / 16;

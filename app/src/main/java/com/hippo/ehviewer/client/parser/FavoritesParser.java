@@ -56,7 +56,7 @@ public class FavoritesParser {
 
             for (int i = 0; i < 10; i++) {
                 Element fp = fps.get(i);
-                countArray[i] = ParserUtils.parseInt(fp.child(0).text());
+                countArray[i] = ParserUtils.parseInt(fp.child(0).text(), 0);
                 catArray[i] = ParserUtils.trim(fp.child(2).text());
             }
         } catch (Throwable e) {

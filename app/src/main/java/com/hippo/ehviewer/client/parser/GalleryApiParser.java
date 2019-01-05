@@ -19,6 +19,7 @@ package com.hippo.ehviewer.client.parser;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 
+import com.hippo.yorozuya.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,8 +44,8 @@ public class GalleryApiParser {
             gi.category = EhUtils.getCategory(g.getString("category"));
             gi.thumb = EhUtils.handleThumbUrlResolution(g.getString("thumb"));
             gi.uploader = g.getString("uploader");
-            gi.posted = ParserUtils.formatDate(ParserUtils.parseLong(g.getString("posted")) * 1000);
-            gi.rating = Float.parseFloat(g.getString("rating"));
+            gi.posted = ParserUtils.formatDate(ParserUtils.parseLong(g.getString("posted"), 0) * 1000);
+            gi.rating = NumberUtils.parseFloatSafely(g.getString("rating"), 0.0f);
             // tags
             JSONArray tagJa = g.getJSONArray("tags");
             int tagLength = tagJa.length();
@@ -53,7 +54,7 @@ public class GalleryApiParser {
                 tags[j] = tagJa.getString(j);
             }
             gi.simpleTags = tags;
-            gi.pages = Integer.parseInt(g.getString("filecount"));
+            gi.pages = NumberUtils.parseIntSafely(g.getString("filecount"), 0);
             gi.generateSLang();
         }
     }

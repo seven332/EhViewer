@@ -18,6 +18,7 @@ package com.hippo.ehviewer.client.parser;
 
 import android.support.annotation.Nullable;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.yorozuya.NumberUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,9 +48,12 @@ public final class GalleryPageUrlParser {
         Matcher m = pattern.matcher(url);
         if (m.find()) {
             Result result = new Result();
-            result.gid = Long.parseLong(m.group(2));
+            result.gid = NumberUtils.parseLongSafely(m.group(2), -1L);
             result.pToken = m.group(1);
-            result.page = Integer.parseInt(m.group(3)) - 1;
+            result.page = NumberUtils.parseIntSafely(m.group(3), 0) - 1;
+            if (result.gid < 0 || result.page < 0) {
+                return null;
+            }
             return result;
         } else {
             return null;

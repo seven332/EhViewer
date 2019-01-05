@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.client.parser;
 
+import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.StringUtils;
 
 import java.text.DateFormat;
@@ -39,11 +40,15 @@ public class ParserUtils {
         return StringUtils.unescapeXml(str).trim();
     }
 
-    public static int parseInt(String str) {
-        return Integer.parseInt(trim(str).replace(",", ""));
+    public static int parseInt(String str, int defValue) {
+        return NumberUtils.parseIntSafely(trim(str).replace(",", ""), defValue);
     }
 
-    public static long parseLong(String str) {
-        return Long.parseLong(trim(str).replace(",", ""));
+    public static long parseLong(String str, long defValue) {
+        return NumberUtils.parseLongSafely(trim(str).replace(",", ""), defValue);
+    }
+
+    public static float parseFloat(String str, float defValue) {
+        return NumberUtils.parseFloatSafely(trim(str).replace(",", ""), defValue);
     }
 }
