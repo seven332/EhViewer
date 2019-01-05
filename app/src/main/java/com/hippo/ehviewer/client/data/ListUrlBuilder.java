@@ -308,7 +308,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
             } else if ("f_search".equals(key)) {
                 try {
                     keyword = URLDecoder.decode(value, "utf-8");
-                } catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException | IllegalArgumentException e) {
                     // Ignore
                 }
             } else if ("advsearch".equals(key)) {
