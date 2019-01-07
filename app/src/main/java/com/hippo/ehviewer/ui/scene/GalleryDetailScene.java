@@ -44,8 +44,10 @@ import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -56,6 +58,7 @@ import android.widget.TextView;
 import com.hippo.android.resource.AttrResources;
 import com.hippo.beerbelly.BeerBelly;
 import com.hippo.drawable.RoundSideRectDrawable;
+import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
@@ -356,11 +359,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     }
 
     @Override
-    public boolean needShowLeftDrawer() {
-        return false;
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -428,6 +426,35 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
+
+        View actionsScrollView = ViewUtils.$$(view, R.id.actions_scroll_view);
+        setDrawerGestureBlocker(new DrawerLayout.GestureBlocker() {
+            private void transformPointToViewLocal(int[] point, View child) {
+                ViewParent viewParent = child.getParent();
+
+                while (viewParent instanceof View) {
+                    View view = (View) viewParent;
+                    point[0] += view.getScrollX() - child.getLeft();
+                    point[1] += view.getScrollY() - child.getTop();
+
+                    if (view instanceof DrawerLayout) {
+                        break;
+                    }
+
+                    child = view;
+                    viewParent = child.getParent();
+                }
+            }
+
+            @Override
+            public boolean shouldBlockGesture(MotionEvent ev) {
+                int[] point = new int[] {(int) ev.getX(), (int) ev.getY()};
+                transformPointToViewLocal(point, actionsScrollView);
+                return !isDrawersVisible()
+                    && point[0] > 0 && point[0] < actionsScrollView.getWidth()
+                    && point[1] > 0 && point[1] < actionsScrollView.getHeight();
+            }
+        });
 
         Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_sad_pandroid);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -549,6 +576,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
         EhApplication.getDownloadManager(context).removeDownloadInfoListener(this);
+
+        setDrawerGestureBlocker(null);
 
         mTip = null;
         mViewTransition = null;

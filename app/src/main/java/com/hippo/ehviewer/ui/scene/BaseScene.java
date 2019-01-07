@@ -26,13 +26,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.DrawerLayout;
 import android.util.SparseArray;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.scene.SceneFragment;
@@ -108,6 +108,22 @@ public abstract class BaseScene extends SceneFragment {
         FragmentActivity activity = getActivity();
         if (activity instanceof MainActivity) {
             ((MainActivity) activity).toggleDrawer(drawerGravity);
+        }
+    }
+
+    public void setDrawerGestureBlocker(DrawerLayout.GestureBlocker gestureBlocker) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).setDrawerGestureBlocker(gestureBlocker);
+        }
+    }
+
+    public boolean isDrawersVisible() {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            return ((MainActivity) activity).isDrawersVisible();
+        } else {
+            return false;
         }
     }
 

@@ -626,6 +626,20 @@ public final class MainActivity extends StageActivity
         }
     }
 
+    public void setDrawerGestureBlocker(DrawerLayout.GestureBlocker gestureBlocker) {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.setGestureBlocker(gestureBlocker);
+        }
+    }
+
+    public boolean isDrawersVisible() {
+        if (mDrawerLayout != null) {
+            return mDrawerLayout.isDrawersVisible();
+        } else {
+            return false;
+        }
+    }
+
     public void setNavCheckedItem(@IdRes int resId) {
         mNavCheckedItem = resId;
         if (mNavView != null) {
