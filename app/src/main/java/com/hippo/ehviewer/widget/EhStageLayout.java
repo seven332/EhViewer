@@ -24,7 +24,8 @@ import com.hippo.scene.StageLayout;
 
 public class EhStageLayout extends StageLayout implements DrawerLayoutChild {
 
-    private int mFitPaddingTop;
+    private int mWindowPaddingTop;
+    private int mWindowPaddingBottom;
 
     public EhStageLayout(Context context) {
         super(context);
@@ -39,17 +40,18 @@ public class EhStageLayout extends StageLayout implements DrawerLayoutChild {
     }
 
     @Override
-    public void setFitPadding(int top, int bottom) {
-        mFitPaddingTop = top;
+    public void onGetWindowPadding(int top, int bottom) {
+        mWindowPaddingTop = top;
+        mWindowPaddingBottom = bottom;
     }
 
     @Override
-    public int getLayoutPaddingTop() {
-        return mFitPaddingTop;
+    public int getAdditionalTopMargin() {
+        return mWindowPaddingTop;
     }
 
     @Override
-    public int getLayoutPaddingBottom() {
-        return 0;
+    public int getAdditionalBottomMargin() {
+        return mWindowPaddingBottom;
     }
 }
