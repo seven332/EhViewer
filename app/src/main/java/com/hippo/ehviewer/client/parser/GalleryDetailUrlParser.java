@@ -34,7 +34,7 @@ public final class GalleryDetailUrlParser {
             "https?://(?:" + EhUrl.DOMAIN_EX + "|" + EhUrl.DOMAIN_E + "|" + EhUrl.DOMAIN_LOFI + ")/(?:g|mpv)/(\\d+)/([0-9a-f]{10})");
 
     private static final Pattern URL_PATTERN = Pattern.compile(
-            "(\\d+)/([0-9a-f]{10})");
+            "(\\d+)/([0-9a-f]{10})(?:[^0-9a-f]|$)");
 
     @Nullable
     public static Result parse(String url) {

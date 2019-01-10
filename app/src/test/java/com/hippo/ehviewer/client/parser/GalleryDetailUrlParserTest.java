@@ -43,6 +43,7 @@ public class GalleryDetailUrlParserTest {
         { "530350/8b3c7e4a21", false, false, 530350, "8b3c7e4a21" },
         { "g/530350/8b3c7e4a21", false, false, 530350, "8b3c7e4a21" },
         { "530350b/8b3c7e4a21", false, true, 0, null },
+        { "530350/8b3c7e4a211", false, true, 0, null },
     });
   }
 
