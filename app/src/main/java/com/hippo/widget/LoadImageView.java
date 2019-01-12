@@ -239,11 +239,13 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
 
     public void load(Drawable drawable) {
         unload();
+        onPreSetImageDrawable(drawable, true);
         setImageDrawable(drawable);
     }
 
     public void load(@DrawableRes int id) {
         unload();
+        onPreSetImageResource(id, true);
         setImageResource(id);
     }
 
@@ -290,6 +292,7 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
             drawable = new PreciselyClipDrawable(drawable, mOffsetX, mOffsetY, mClipWidth, mClipHeight);
         }
 
+        onPreSetImageDrawable(drawable, true);
         if ((source == Conaco.SOURCE_DISK || source == Conaco.SOURCE_NETWORK) && isShown()) {
             Drawable[] layers = new Drawable[2];
             layers[0] = new ColorDrawable(Color.TRANSPARENT);
@@ -308,7 +311,9 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
     public void onFailure() {
         mFailed = true;
         clearDrawable();
-        setImageDrawable(DrawableManager.getVectorDrawable(getContext(), R.drawable.image_failed));
+        Drawable drawable = DrawableManager.getVectorDrawable(getContext(), R.drawable.image_failed);
+        onPreSetImageDrawable(drawable, true);
+        setImageDrawable(drawable);
         if (mRetryType == RETRY_TYPE_CLICK) {
             setOnClickListener(this);
         } else if (mRetryType == RETRY_TYPE_LONG_CLICK) {
@@ -362,4 +367,8 @@ public class LoadImageView extends FixedAspectImageView implements Unikery<Image
         load(mKey, mUrl, mContainer, true);
         return true;
     }
+
+    public void onPreSetImageDrawable(Drawable drawable, boolean isTarget) { }
+
+    public void onPreSetImageResource(int resId, boolean isTarget) { }
 }

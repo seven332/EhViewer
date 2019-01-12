@@ -26,11 +26,13 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
-        <com.hippo.widget.LoadImageView
+        <com.hippo.ehviewer.widget.FixedThumb
           android:id="@+id/thumb"
           android:layout_width="@dimen/gallery_list_thumb_width"
           android:layout_height="@dimen/gallery_list_thumb_height"
-          app:retryType="click"/>
+          app:retryType="click"
+          app:minAspect="0.3"
+          app:maxAspect="2.0"/>
 
         <TextView
           android:id="@+id/title"

@@ -21,13 +21,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.hippo.widget.LoadImageView
+    <com.hippo.ehviewer.widget.FixedThumb
         xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         auto:aspect="0.667"
-        auto:retryType="longClick"/>
+        auto:retryType="longClick"
+        auto:minAspect="0.5"
+        auto:maxAspect="0.8"/>
 
     <TextView
         android:id="@+id/text"
