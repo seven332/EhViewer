@@ -31,7 +31,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+import com.getkeepsafe.relinker.ReLinker;
 import com.hippo.a7zip.A7Zip;
+import com.hippo.a7zip.A7ZipExtractLite;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.Conaco;
 import com.hippo.content.RecordingApplication;
@@ -105,7 +107,7 @@ public class EhApplication extends RecordingApplication {
         EhEngine.initialize();
         BitmapUtils.initialize(this);
         Image.initialize(this);
-        A7Zip.initialize(this);
+        A7Zip.loadLibrary(A7ZipExtractLite.LIBRARY, libname -> ReLinker.loadLibrary(EhApplication.this, libname));
 
         if (EhDB.needMerge()) {
             EhDB.mergeOldDB(this);

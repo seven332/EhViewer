@@ -72,7 +72,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.6'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
     implementation 'com.github.amlcurran.showcaseview:library:5.4.3'
-    implementation 'com.github.seven332:a7zip:96076610fc'
+    implementation 'com.github.seven332.a7zip:extract-lite:d4ddec5793'
     implementation 'com.github.seven332:android-recaptcha:2bbb3459a8'
     implementation 'com.github.seven332:android-resource:0.1.0'
     implementation 'com.github.seven332:animator:0.1.0'

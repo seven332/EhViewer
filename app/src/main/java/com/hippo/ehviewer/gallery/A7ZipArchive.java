@@ -18,15 +18,16 @@ package com.hippo.ehviewer.gallery;
 
 import com.hippo.a7zip.ArchiveException;
 import com.hippo.a7zip.InArchive;
+import com.hippo.a7zip.InStream;
 import com.hippo.a7zip.PropID;
 import com.hippo.a7zip.PropType;
+import com.hippo.a7zip.SequentialOutStream;
 import com.hippo.unifile.UniRandomAccessFile;
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import okio.Store;
-import okio.UniRandomAccessFileStore;
 
 class A7ZipArchive implements Closeable {
 
@@ -69,8 +70,8 @@ class A7ZipArchive implements Closeable {
   }
 
   static A7ZipArchive create(UniRandomAccessFile file) throws ArchiveException {
-    Store store = new UniRandomAccessFileStore(file);
-    InArchive archive = InArchive.create(store);
+    InStream store = new UniRandomAccessFileInStream(file);
+    InArchive archive = InArchive.open(store);
     if ((archive.getArchivePropertyType(PropID.ENCRYPTED) == PropType.BOOL && archive.getArchiveBooleanProperty(PropID.ENCRYPTED))
         || (archive.getArchivePropertyType(PropID.SOLID) == PropType.BOOL && archive.getArchiveBooleanProperty(PropID.SOLID))
         || (archive.getArchivePropertyType(PropID.IS_VOLUME) == PropType.BOOL && archive.getArchiveBooleanProperty(PropID.IS_VOLUME))) {
@@ -96,7 +97,60 @@ class A7ZipArchive implements Closeable {
     }
 
     void extract(OutputStream os) throws ArchiveException {
-      archive.extractEntry(index, os);
+      archive.extractEntry(index, new OutputStreamSequentialOutStream(os));
+    }
+  }
+
+  private static class UniRandomAccessFileInStream implements InStream {
+
+    private UniRandomAccessFile file;
+
+    public UniRandomAccessFileInStream(UniRandomAccessFile file) {
+      this.file = file;
+    }
+
+    @Override
+    public void seek(long pos) throws IOException {
+      file.seek(pos);
+    }
+
+    @Override
+    public long tell() throws IOException {
+      return file.getFilePointer();
+    }
+
+    @Override
+    public long size() throws IOException {
+      return file.length();
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+      return file.read(b, off, len);
+    }
+
+    @Override
+    public void close() throws IOException {
+      file.close();
+    }
+  }
+
+  private static class OutputStreamSequentialOutStream implements SequentialOutStream {
+
+    private OutputStream stream;
+
+    public OutputStreamSequentialOutStream(OutputStream stream) {
+      this.stream = stream;
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+      stream.write(b, off, len);
+    }
+
+    @Override
+    public void close() throws IOException {
+      stream.close();
     }
   }
 }
