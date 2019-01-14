@@ -107,7 +107,7 @@ dependencies {
 configurations.all {
     resolutionStrategy {
         force 'com.github.seven332:glgallery:bb2a43fdd5'
-        force 'com.github.seven332:glview:cc3f18d1b2'
+        force 'com.github.seven332:glview:0b2bbb8032'
         force 'com.github.seven332:glview-image:69930e924e'
         force 'com.github.seven332:image:09b43c0c68'
 
