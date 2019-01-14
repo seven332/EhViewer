@@ -32,8 +32,8 @@
           android:layout_width="@dimen/gallery_list_thumb_width"
           android:layout_height="@dimen/gallery_list_thumb_height"
           app:retryType="longClick"
-          app:minAspect="0.3"
-          app:maxAspect="2.0"/>
+          app:minAspect="0.333"
+          app:maxAspect="1.333"/>
 
         <TextView
           android:id="@+id/title"
