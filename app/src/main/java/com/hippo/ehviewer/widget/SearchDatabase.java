@@ -19,6 +19,7 @@ package com.hippo.ehviewer.widget;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
@@ -69,19 +70,24 @@ public final class SearchDatabase {
         }
         sb.append(" ORDER BY ").append(COLUMN_DATE).append(" DESC")
             .append(" LIMIT ").append(limit);
-        Cursor cursor = mDatabase.rawQuery(sb.toString(), null);
-        int queryIndex = cursor.getColumnIndex(COLUMN_QUERY);
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                String suggestion = cursor.getString(queryIndex);
-                if (!prefix.equals(suggestion)) {
-                    queryList.add(suggestion);
+
+        try {
+            Cursor cursor = mDatabase.rawQuery(sb.toString(), null);
+            int queryIndex = cursor.getColumnIndex(COLUMN_QUERY);
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String suggestion = cursor.getString(queryIndex);
+                    if (!prefix.equals(suggestion)) {
+                        queryList.add(suggestion);
+                    }
+                    cursor.moveToNext();
                 }
-                cursor.moveToNext();
             }
+            cursor.close();
+            return queryList.toArray(new String[queryList.size()]);
+        } catch (SQLException e) {
+            return new String[0];
         }
-        cursor.close();
-        return queryList.toArray(new String[queryList.size()]);
     }
 
     public void addQuery(final String query) {
