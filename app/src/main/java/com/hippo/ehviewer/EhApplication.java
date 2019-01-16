@@ -384,4 +384,14 @@ public class EhApplication extends RecordingApplication {
             return false;
         }
     }
+
+    // Avoid crash on some "energy saving" devices
+    @Override
+    public void unbindService(ServiceConnection conn) {
+        try {
+            super.unbindService(conn);
+        } catch (Throwable t) {
+            ExceptionUtils.throwIfFatal(t);
+        }
+    }
 }
