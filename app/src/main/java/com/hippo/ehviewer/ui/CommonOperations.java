@@ -45,6 +45,9 @@ import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 
+import com.hippo.yorozuya.collect.LongList;
+import java.util.ArrayList;
+import java.util.Collections;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -281,11 +284,37 @@ public final class CommonOperations {
         }
     }
 
-    // TODO Add context if activity and context are different style
     public static void startDownload(final MainActivity activity, final GalleryInfo galleryInfo, boolean forceDefault) {
+        startDownload(activity, Collections.singletonList(galleryInfo), forceDefault);
+    }
+
+    // TODO Add context if activity and context are different style
+    public static void startDownload(final MainActivity activity, final List<GalleryInfo> galleryInfos, boolean forceDefault) {
         final DownloadManager dm = EhApplication.getDownloadManager(activity);
 
-        boolean justStart = forceDefault || dm.containDownloadInfo(galleryInfo.gid);
+        LongList toStart = new LongList();
+        List<GalleryInfo> toAdd = new ArrayList<>();
+        for (GalleryInfo gi : galleryInfos) {
+            if (dm.containDownloadInfo(gi.gid)) {
+                toStart.add(gi.gid);
+            } else {
+                toAdd.add(gi);
+            }
+        }
+
+        if (!toStart.isEmpty()) {
+            Intent intent = new Intent(activity, DownloadService.class);
+            intent.setAction(DownloadService.ACTION_START_RANGE);
+            intent.putExtra(DownloadService.KEY_GID_LIST, toStart);
+            activity.startService(intent);
+        }
+
+        if (toAdd.isEmpty()) {
+            activity.showTip(R.string.added_to_download_list, BaseScene.LENGTH_SHORT);
+            return;
+        }
+
+        boolean justStart = forceDefault;
         String label = null;
         // Get default download label
         if (!justStart && Settings.getHasDefaultDownloadLabel()) {
@@ -299,12 +328,14 @@ public final class CommonOperations {
         }
 
         if (justStart) {
-            // Already in download list or get default label
-            Intent intent = new Intent(activity, DownloadService.class);
-            intent.setAction(DownloadService.ACTION_START);
-            intent.putExtra(DownloadService.KEY_LABEL, label);
-            intent.putExtra(DownloadService.KEY_GALLERY_INFO, galleryInfo);
-            activity.startService(intent);
+            // Got default label
+            for (GalleryInfo gi : toAdd) {
+                Intent intent = new Intent(activity, DownloadService.class);
+                intent.setAction(DownloadService.ACTION_START);
+                intent.putExtra(DownloadService.KEY_LABEL, label);
+                intent.putExtra(DownloadService.KEY_GALLERY_INFO, gi);
+                activity.startService(intent);
+            }
             // Notify
             activity.showTip(R.string.added_to_download_list, BaseScene.LENGTH_SHORT);
         } else {
@@ -330,11 +361,13 @@ public final class CommonOperations {
                                 }
                             }
                             // Start download
-                            Intent intent = new Intent(activity, DownloadService.class);
-                            intent.setAction(DownloadService.ACTION_START);
-                            intent.putExtra(DownloadService.KEY_LABEL, label);
-                            intent.putExtra(DownloadService.KEY_GALLERY_INFO, galleryInfo);
-                            activity.startService(intent);
+                            for (GalleryInfo gi : toAdd) {
+                                Intent intent = new Intent(activity, DownloadService.class);
+                                intent.setAction(DownloadService.ACTION_START);
+                                intent.putExtra(DownloadService.KEY_LABEL, label);
+                                intent.putExtra(DownloadService.KEY_GALLERY_INFO, gi);
+                                activity.startService(intent);
+                            }
                             // Save settings
                             if (builder.isChecked()) {
                                 Settings.putHasDefaultDownloadLabel(true);

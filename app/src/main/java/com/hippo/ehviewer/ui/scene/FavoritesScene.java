@@ -63,6 +63,7 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.FavListUrlBuilder;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.parser.FavoritesParser;
+import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.ui.annotation.DrawerLifeCircle;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
@@ -762,7 +763,18 @@ public class FavoritesScene extends BaseScene implements
         }
 
         switch (position) {
-            case 0: { // Delete
+            case 0: { // Download
+                Activity activity = getActivity2();
+                if (activity != null) {
+                    CommonOperations.startDownload(getActivity2(), mModifyGiList, false);
+                }
+                mModifyGiList.clear();
+                if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
+                    mRecyclerView.outOfCustomChoiceMode();
+                }
+                break;
+            }
+            case 1: { // Delete
                 DeleteDialogHelper helper = new DeleteDialogHelper();
                 new AlertDialog.Builder(context)
                         .setTitle(R.string.delete_favorites_dialog_title)
@@ -772,7 +784,7 @@ public class FavoritesScene extends BaseScene implements
                         .show();
                 break;
             }
-            case 1: { // Move
+            case 2: { // Move
                 MoveDialogHelper helper = new MoveDialogHelper();
                 // First is local favorite, the other 10 is cloud favorite
                 String[] array = new String[11];
