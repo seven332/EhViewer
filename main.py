@@ -8,6 +8,7 @@ import json
 import collections
 import struct
 import base64
+import hashlib
 
 def parseMarkdownFile(path, prefix):
     f = open(path, 'r', encoding='utf-8')
@@ -28,6 +29,16 @@ def parseMarkdownFile(path, prefix):
 
     return result
 
+def sha1(path):
+    sha1 = hashlib.sha1()
+    with open(path, 'rb') as f:
+        while True:
+            data = f.read(64 * 1024)
+            if not data:
+                break
+            sha1.update(data)
+    return sha1.hexdigest()
+
 def saveTags(path, tags):
     tags = sorted(tags)
     with open(path, 'wb') as f:
@@ -45,6 +56,10 @@ def saveTags(path, tags):
         # write tags size
         f.seek(0, 0)
         f.write(struct.pack('>i', size - 4))
+
+    # Save sha1
+    with open(path + ".sha1", 'w') as f:
+        f.write(sha1(path))
 
 def downloadMarkdownFiles():
     if os.system('git clone https://github.com/Mapaler/EhTagTranslator.wiki.git --depth=1'):
