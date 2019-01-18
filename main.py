@@ -5,8 +5,11 @@ import re
 import os
 import stat
 import json
+import collections
+import struct
+import base64
 
-def parseMarkdownFile(path):
+def parseMarkdownFile(path, prefix):
     f = open(path, 'r', encoding='utf-8')
     html = markdown.markdown(f.read(), extensions=['markdown.extensions.tables'])
 
@@ -18,7 +21,30 @@ def parseMarkdownFile(path):
     if bad:
         raise ValueError('Bad tags', str(bad))
 
+    # Add prefix
+    if prefix:
+        p = prefix + ':'
+        result = [(p + x[0], x[1]) for x in result]
+
     return result
+
+def saveTags(path, tags):
+    tags = sorted(tags)
+    with open(path, 'wb') as f:
+        # write size placeholder
+        f.write(struct.pack('>i', 0))
+        # write tags
+        for x, y in tags:
+            f.write(x.encode())
+            f.write(struct.pack('b', ord('\r')))
+            f.write(base64.b64encode(y.encode()))
+            f.write(struct.pack('b', ord('\n')))
+        # get file size
+        f.seek(0, 2)
+        size = f.tell()
+        # write tags size
+        f.seek(0, 0)
+        f.write(struct.pack('>i', size - 4))
 
 def downloadMarkdownFiles():
     if os.system('git clone https://github.com/Mapaler/EhTagTranslator.wiki.git --depth=1'):
@@ -42,11 +68,18 @@ if __name__ == "__main__":
         removeMarkdownFiles()
     downloadMarkdownFiles()
 
-    files = ('artist.md', 'character.md', 'female.md', 'group.md', 'language.md', 'male.md', 'misc.md', 'parody.md')
-    tags = [x for f in files for x in parseMarkdownFile(os.path.join('EhTagTranslator.wiki', 'database', f))]
-
-    result = {'type': 'tags', 'lang': 'zh-rCN', 'content': tags}
-    with open('json/tags-zh-rCN.json', 'w', encoding='utf-8') as f:
-        f.write(json.dumps(result))
+    files = (
+        ('artist.md', 'a'),
+        ('character.md', 'c'),
+        ('female.md', 'f'),
+        ('group.md', 'g'),
+        ('language.md', 'l'),
+        ('male.md', 'm'),
+        ('misc.md', None),
+        ('parody.md', 'p'),
+        ('reclass.md', 'r')
+    )
+    tags = [x for f, p in files for x in parseMarkdownFile(os.path.join('EhTagTranslator.wiki', 'database', f), p)]
+    saveTags('tags/tags-zh-rCN', tags)
 
     removeMarkdownFiles()
