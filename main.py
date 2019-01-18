@@ -95,6 +95,6 @@ if __name__ == "__main__":
         ('reclass.md', 'r')
     )
     tags = [x for f, p in files for x in parseMarkdownFile(os.path.join('EhTagTranslator.wiki', 'database', f), p)]
-    saveTags('tags/tags-zh-rCN', tags)
+    saveTags('tag-translations/tag-translations-zh-rCN', tags)
 
     removeMarkdownFiles()
