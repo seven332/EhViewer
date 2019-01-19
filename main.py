@@ -95,6 +95,7 @@ if __name__ == "__main__":
     downloadMarkdownFiles()
 
     files = (
+        ('rows.md', 'n'),
         ('artist.md', 'a'),
         ('character.md', 'c'),
         ('female.md', 'f'),
