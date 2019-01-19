@@ -11,8 +11,8 @@ import base64
 import hashlib
 from bs4 import BeautifulSoup
 
-def isEmpty(x):
-    return x == None or len(x) == 0
+def removeEmojis(x):
+    return ''.join(c for c in x if c <= '\uFFFF')
 
 def parseMarkdownFile(path, prefix):
     f = open(path, 'r', encoding='utf-8')
@@ -25,7 +25,8 @@ def parseMarkdownFile(path, prefix):
         if len(tds) == 4:
             x = ''.join(tds[0].strings).strip()
             y = ''.join(tds[1].strings).strip()
-            if not isEmpty(x) and not isEmpty(y):
+            y = removeEmojis(y)
+            if len(x) != 0 and len(y) != 0:
                 result.append((x, y))
 
     # Check result
