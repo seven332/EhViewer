@@ -340,6 +340,13 @@ public class Settings {
         return getBoolean(KEY_SHOW_GALLERY_PAGES, DEFAULT_SHOW_GALLERY_PAGES);
     }
 
+    public static final String KEY_SHOW_TAG_TRANSLATIONS = "show_tag_translations";
+    private static final boolean DEFAULT_SHOW_TAG_TRANSLATIONS = false;
+
+    public static boolean getShowTagTranslations() {
+        return getBoolean(KEY_SHOW_TAG_TRANSLATIONS, DEFAULT_SHOW_TAG_TRANSLATIONS);
+    }
+
     public static final String KEY_DEFAULT_CATEGORIES = "default_categories";
     public static final int DEFAULT_DEFAULT_CATEGORIES = EhUtils.ALL_CATEGORY;
 

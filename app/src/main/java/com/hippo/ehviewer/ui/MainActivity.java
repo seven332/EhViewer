@@ -48,6 +48,7 @@ import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.EhTagDatabase;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
@@ -362,6 +363,8 @@ public final class MainActivity extends StageActivity
         } else {
             onRestore(savedInstanceState);
         }
+
+        EhTagDatabase.update();
     }
 
     private String getThemeText() {

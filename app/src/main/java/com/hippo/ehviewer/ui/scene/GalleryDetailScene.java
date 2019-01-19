@@ -69,6 +69,7 @@ import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhFilter;
 import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.EhTagDatabase;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryComment;
@@ -868,6 +869,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             mNoTags.setVisibility(View.GONE);
         }
 
+        EhTagDatabase ehTags = Settings.getShowTagTranslations() ? EhTagDatabase.getInstance() : null;
         int colorTag = AttrResources.getAttrColor(context, R.attr.tagBackgroundColor);
         int colorName = AttrResources.getAttrColor(context, R.attr.tagGroupBackgroundColor);
         for (GalleryTagGroup tg : tagGroups) {
@@ -875,10 +877,20 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             ll.setOrientation(LinearLayout.HORIZONTAL);
             mTags.addView(ll);
 
+            String readableTagName = null;
+            if (ehTags != null) {
+                readableTagName = ehTags.getTranslation("n:" + tg.groupName);
+            }
+
             TextView tgName = (TextView) inflater.inflate(R.layout.item_gallery_tag, ll, false);
             ll.addView(tgName);
-            tgName.setText(tg.groupName);
+            tgName.setText(readableTagName != null ? readableTagName : tg.groupName);
             tgName.setBackgroundDrawable(new RoundSideRectDrawable(colorName));
+
+            String prefix = EhTagDatabase.namespaceToPrefix(tg.groupName);
+            if (prefix == null) {
+                prefix = "";
+            }
 
             AutoWrapLayout awl = new AutoWrapLayout(context);
             ll.addView(awl, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -886,7 +898,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 TextView tag = (TextView) inflater.inflate(R.layout.item_gallery_tag, awl, false);
                 awl.addView(tag);
                 String tagStr = tg.getTagAt(j);
-                tag.setText(tagStr);
+
+                String readableTag = null;
+                if (ehTags != null) {
+                    readableTag = ehTags.getTranslation(prefix + tagStr);
+                }
+
+                tag.setText(readableTag != null ? readableTag : tagStr);
                 tag.setBackgroundDrawable(new RoundSideRectDrawable(colorTag));
                 tag.setTag(R.id.tag, tg.groupName + ":" + tagStr);
                 tag.setOnClickListener(this);

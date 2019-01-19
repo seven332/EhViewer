@@ -106,6 +106,12 @@
         android:summary="@string/settings_eh_show_gallery_pages_summary"
         android:defaultValue="false"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="show_tag_translations"
+        android:title="@string/settings_eh_show_tag_translations"
+        android:summary="@string/settings_eh_show_tag_translations_summary"
+        android:defaultValue="false"/>
+
     <com.hippo.preference.ActivityPreference
         android:key="filter"
         android:title="@string/settings_eh_filter"

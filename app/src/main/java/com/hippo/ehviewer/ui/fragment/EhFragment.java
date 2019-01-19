@@ -24,6 +24,7 @@ import android.preference.PreferenceFragment;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.EhTagDatabase;
 
 public class EhFragment extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener {
@@ -39,6 +40,7 @@ public class EhFragment extends PreferenceFragment
         Preference listMode = findPreference(Settings.KEY_LIST_MODE);
         Preference detailSize = findPreference(Settings.KEY_DETAIL_SIZE);
         Preference thumbSize = findPreference(Settings.KEY_THUMB_SIZE);
+        Preference showTagTranslations = findPreference(Settings.KEY_SHOW_TAG_TRANSLATIONS);
 
         theme.setOnPreferenceChangeListener(this);
         applyNavBarThemeColor.setOnPreferenceChangeListener(this);
@@ -46,9 +48,14 @@ public class EhFragment extends PreferenceFragment
         listMode.setOnPreferenceChangeListener(this);
         detailSize.setOnPreferenceChangeListener(this);
         thumbSize.setOnPreferenceChangeListener(this);
+        showTagTranslations.setOnPreferenceChangeListener(this);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             getPreferenceScreen().removePreference(applyNavBarThemeColor);
+        }
+
+        if (!EhTagDatabase.isPossible()) {
+            getPreferenceScreen().removePreference(showTagTranslations);
         }
     }
 
@@ -71,6 +78,10 @@ public class EhFragment extends PreferenceFragment
             getActivity().setResult(Activity.RESULT_OK);
         } else if (Settings.KEY_THUMB_SIZE.equals(key)) {
             getActivity().setResult(Activity.RESULT_OK);
+        } else if (Settings.KEY_SHOW_TAG_TRANSLATIONS.equals(key)) {
+            if (Boolean.TRUE.equals(newValue)) {
+                EhTagDatabase.update();
+            }
         }
         return true;
     }

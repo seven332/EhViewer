@@ -156,4 +156,19 @@ public class AppConfig {
             IOUtils.closeQuietly(os);
         }
     }
+
+    @Nullable
+    public static File getFilesDir(String name) {
+        File dir = sContext.getFilesDir();
+        if (dir == null) {
+            return null;
+        }
+
+        dir = new File(dir, name);
+        if (dir.isDirectory() || dir.mkdirs()) {
+            return dir;
+        } else {
+            return null;
+        }
+    }
 }

@@ -78,6 +78,8 @@ public class EhApplication extends RecordingApplication {
     private static final boolean DEBUG_PRINT_IMAGE_COUNT = false;
     private static final long DEBUG_PRINT_INTERVAL = 3000L;
 
+    private static EhApplication instance;
+
     private final IntIdGenerator mIdGenerator = new IntIdGenerator();
     private final HashMap<Integer, Object> mGlobalStuffMap = new HashMap<>();
     private EhCookieStore mEhCookieStore;
@@ -92,9 +94,15 @@ public class EhApplication extends RecordingApplication {
 
     private final List<Activity> mActivityList = new ArrayList<>();
 
+    public static EhApplication getInstance() {
+        return instance;
+    }
+
     @SuppressLint("StaticFieldLeak")
     @Override
     public void onCreate() {
+        instance = this;
+
         super.onCreate();
 
         GetText.initialize(this);
