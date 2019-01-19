@@ -37,7 +37,7 @@ def sha1(path):
             if not data:
                 break
             sha1.update(data)
-    return sha1.hexdigest()
+    return sha1.digest()
 
 def saveTags(path, tags):
     tags = sorted(tags)
@@ -58,7 +58,7 @@ def saveTags(path, tags):
         f.write(struct.pack('>i', size - 4))
 
     # Save sha1
-    with open(path + ".sha1", 'w') as f:
+    with open(path + ".sha1", 'wb') as f:
         f.write(sha1(path))
 
 def downloadMarkdownFiles():
