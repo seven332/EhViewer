@@ -53,6 +53,7 @@ import com.hippo.streampipe.InputStreamPipe;
 import com.hippo.streampipe.OutputStreamPipe;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.OSUtils;
@@ -669,7 +670,7 @@ public final class SpiderQueen implements Runnable {
                     writeSpiderInfoToLocal(spiderInfo);
                     return null;
                 }
-            }.execute();
+            }.executeOnExecutor(IoThreadPoolExecutor.getInstance());
         }
     }
 

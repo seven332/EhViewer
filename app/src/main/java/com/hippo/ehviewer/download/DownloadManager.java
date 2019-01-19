@@ -32,6 +32,7 @@ import com.hippo.ehviewer.spider.SpiderInfo;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.image.Image;
 import com.hippo.unifile.UniFile;
+import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.yorozuya.ConcurrentPool;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ObjectUtils;
@@ -611,7 +612,7 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
                 }
                 return null;
             }
-        }.execute();
+        }.executeOnExecutor(IoThreadPoolExecutor.getInstance());
     }
 
     // Update in DB

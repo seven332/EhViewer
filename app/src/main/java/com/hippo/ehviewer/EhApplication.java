@@ -52,6 +52,7 @@ import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.BitmapUtils;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IntIdGenerator;
@@ -142,7 +143,7 @@ public class EhApplication extends RecordingApplication {
 
                 return null;
             }
-        }.doInBackground();
+        }.executeOnExecutor(IoThreadPoolExecutor.getInstance());
 
         // Check app update
         update();

@@ -42,6 +42,7 @@ import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.text.Html;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 
@@ -68,7 +69,7 @@ public final class CommonOperations {
     public static void checkUpdate(Activity activity, boolean feedback) {
         if (!UPDATING) {
             UPDATING = true;
-            new UpdateTask(activity, feedback).execute();
+            new UpdateTask(activity, feedback).executeOnExecutor(IoThreadPoolExecutor.getInstance());
         }
     }
 

@@ -84,6 +84,7 @@ import com.hippo.streampipe.InputStreamPipe;
 import com.hippo.unifile.UniFile;
 import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
+import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.FabLayout;
 import com.hippo.widget.LoadImageView;
@@ -935,7 +936,7 @@ public class DownloadsScene extends ToolbarScene
                 }
                 return null;
             }
-        }.execute(files);
+        }.executeOnExecutor(IoThreadPoolExecutor.getInstance(), files);
     }
 
     private class DeleteDialogHelper implements DialogInterface.OnClickListener {

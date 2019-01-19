@@ -30,6 +30,7 @@ import android.util.AttributeSet;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.preference.DialogPreference;
+import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.yorozuya.IntIdGenerator;
 
 public abstract class TaskPreference extends DialogPreference {
@@ -62,7 +63,7 @@ public abstract class TaskPreference extends DialogPreference {
             mTask = onCreateTask();
             mTask.setPreference(this);
             mTaskId = ((EhApplication) getContext().getApplicationContext()).putGlobalStuff(mTask);
-            mTask.execute();
+            mTask.executeOnExecutor(IoThreadPoolExecutor.getInstance());
         }
     }
 

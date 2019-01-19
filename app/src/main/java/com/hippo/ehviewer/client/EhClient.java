@@ -22,15 +22,11 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.util.ExceptionUtils;
+import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.yorozuya.SimpleHandler;
-import com.hippo.yorozuya.thread.PriorityThreadFactory;
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import okhttp3.Call;
@@ -64,12 +60,7 @@ public class EhClient {
     private final OkHttpClient mOkHttpClient;
 
     public EhClient(Context context) {
-        int poolSize = 3;
-        BlockingQueue<Runnable> requestWorkQueue = new LinkedBlockingQueue<>();
-        ThreadFactory threadFactory = new PriorityThreadFactory(TAG,
-                android.os.Process.THREAD_PRIORITY_BACKGROUND);
-        mRequestThreadPool = new ThreadPoolExecutor(poolSize, poolSize,
-                1L, TimeUnit.SECONDS, requestWorkQueue, threadFactory);
+        mRequestThreadPool = IoThreadPoolExecutor.getInstance();
         mOkHttpClient = EhApplication.getOkHttpClient(context);
     }
 
