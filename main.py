@@ -9,13 +9,24 @@ import collections
 import struct
 import base64
 import hashlib
+from bs4 import BeautifulSoup
+
+def isEmpty(x):
+    return x == None or len(x) == 0
 
 def parseMarkdownFile(path, prefix):
     f = open(path, 'r', encoding='utf-8')
     html = markdown.markdown(f.read(), extensions=['markdown.extensions.tables'])
 
-    pattern = r'<tr>\n<td>([^<]+)</td>\n<td>([^<]+)</td>\n<td>.*?</td>\n<td>.*?</td>\n</tr>'
-    result = [(x.group(1), x.group(2)) for x in re.finditer(pattern, html, re.MULTILINE)]
+    result = []
+    soup = BeautifulSoup(html, 'html.parser')
+    for tr in soup.find_all('tr'):
+        tds = [x for x in tr.find_all('td')]
+        if len(tds) == 4:
+            x = ''.join(tds[0].strings).strip()
+            y = ''.join(tds[1].strings).strip()
+            if not isEmpty(x) and not isEmpty(y):
+                result.append((x, y))
 
     # Check result
     bad = [x[0] for x in result if not re.fullmatch(r'[a-z0-9.\-\u0020]+', x[0])]
