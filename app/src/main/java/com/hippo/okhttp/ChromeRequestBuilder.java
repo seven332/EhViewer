@@ -23,11 +23,20 @@ import okhttp3.Request;
 
 public class ChromeRequestBuilder extends Request.Builder {
 
-    private static final String CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.103 Safari/537.36";
+    private static final String CHROME_USER_AGENT =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
+
+    private static final String CHROME_ACCEPT =
+            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+
+    private static final String CHROME_ACCEPT_LANGUAGE =
+            "en-US,en;q=0.5";
 
     public ChromeRequestBuilder(String url) throws MalformedURLException {
         url(new URL(url));
         addHeader("User-Agent", CHROME_USER_AGENT);
+        addHeader("Accept", CHROME_ACCEPT);
+        addHeader("Accept-Language", CHROME_ACCEPT_LANGUAGE);
     }
 }
