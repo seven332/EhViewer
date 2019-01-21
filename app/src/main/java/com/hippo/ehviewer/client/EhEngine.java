@@ -209,7 +209,22 @@ public class EhEngine {
             }
         }
 
-        if (list.size() > 0 && (TextUtils.isEmpty(list.get(0).uploader) || Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
+        boolean anyRated = false;
+        for (GalleryInfo info : list) {
+            if (info.rated) {
+                anyRated = true;
+                break;
+            }
+        }
+
+        boolean needFillByApi = list.size() > 0
+                && (TextUtils.isEmpty(list.get(0).uploader)
+                        || anyRated
+                        || Settings.getShowJpnTitle()
+                        || Settings.getShowGalleryPages()
+                        || sEhFilter.needCallApi());
+
+        if (needFillByApi) {
             // Fill by api
             fillGalleryListByApi(task, okHttpClient, list);
 

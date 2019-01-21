@@ -162,6 +162,8 @@ public class GalleryListParser {
         Element it4r = JsoupUtils.getElementByClass(e, "it4r");
         if (null != it4r) {
             gi.rating = NumberUtils.parseFloatSafely(parseRating(it4r.attr("style")), -1.0f);
+            // TODO The gallery may be rated even if it has one of these classes
+            gi.rated = it4r.hasClass("irr") || it4r.hasClass("irg") || it4r.hasClass("irb");
         } else {
             Log.w(TAG, "Can't parse gallery info rating");
             gi.rating = -1.0f;

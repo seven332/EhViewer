@@ -121,6 +121,8 @@ public class GalleryInfo implements Parcelable {
      */
     public String simpleLanguage;
 
+    public boolean rated;
+
     public final void generateSLang() {
         if (simpleTags != null) {
             generateSLangFromTags();
