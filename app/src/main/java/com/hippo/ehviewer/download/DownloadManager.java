@@ -296,6 +296,9 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
             }
             // Make sure download is running
             ensureDownload();
+
+            // Add it to history
+            EhDB.putHistoryInfo(info);
         }
     }
 
