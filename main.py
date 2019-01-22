@@ -11,8 +11,18 @@ import base64
 import hashlib
 from bs4 import BeautifulSoup
 
+TRANSLATION_PATCH = {
+    'l:chinese': '汉语'
+}
+
 def removeEmojis(x):
     return ''.join(c for c in x if c <= '\uFFFF')
+
+def fixTranslation(x, y):
+    if x in TRANSLATION_PATCH:
+        return x, TRANSLATION_PATCH[x]
+    else:
+        return x, y
 
 def parseMarkdownFile(path, prefix):
     f = open(path, 'r', encoding='utf-8')
@@ -37,7 +47,7 @@ def parseMarkdownFile(path, prefix):
     # Add prefix
     if prefix:
         p = prefix + ':'
-        result = [(p + x[0], x[1]) for x in result]
+        result = [fixTranslation(p + x[0], x[1]) for x in result]
 
     return result
 
