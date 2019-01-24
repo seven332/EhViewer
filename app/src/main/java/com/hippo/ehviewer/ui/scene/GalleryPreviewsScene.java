@@ -433,7 +433,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
                     mDialog = null;
                 }
             } else {
-                showTip(R.string.error_out_of_range, LENGTH_SHORT);
+                showTip(R.string.error_out_of_range, LENGTH_LONG);
             }
         }
 

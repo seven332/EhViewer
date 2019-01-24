@@ -664,7 +664,7 @@ public final class MainActivity extends StageActivity
     public void showTip(CharSequence message, int length) {
         if (null != mDrawerLayout) {
             Snackbar.make(mDrawerLayout, message,
-                    length == BaseScene.LENGTH_LONG ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT).show();
+                    length == BaseScene.LENGTH_LONG ? 5000 : 3000).show();
         } else {
             Toast.makeText(this, message,
                     length == BaseScene.LENGTH_LONG ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();

@@ -450,7 +450,7 @@ public class HistoryScene extends ToolbarScene
 
         @Override
         public void onFailure(Exception e) {
-            showTip(R.string.add_to_favorite_failure, LENGTH_SHORT);
+            showTip(R.string.add_to_favorite_failure, LENGTH_LONG);
         }
 
         @Override

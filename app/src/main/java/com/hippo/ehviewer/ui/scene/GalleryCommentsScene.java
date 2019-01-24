@@ -744,7 +744,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         @Override
         public void onFailure(Exception e) {
-            showTip(getContent().getString(R.string.comment_failed) + "\n" + ExceptionUtils.getReadableString(e), LENGTH_SHORT);
+            showTip(getContent().getString(R.string.comment_failed) + "\n" + ExceptionUtils.getReadableString(e), LENGTH_LONG);
         }
 
         @Override
@@ -778,7 +778,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         @Override
         public void onFailure(Exception e) {
-            showTip(R.string.vote_failed, LENGTH_SHORT);
+            showTip(R.string.vote_failed, LENGTH_LONG);
         }
 
         @Override

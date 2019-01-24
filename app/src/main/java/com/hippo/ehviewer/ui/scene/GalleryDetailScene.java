@@ -1241,7 +1241,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 return;
             }
             if (mGalleryDetail.apiUid < 0) {
-                showTip(R.string.sign_in_first, LENGTH_SHORT);
+                showTip(R.string.sign_in_first, LENGTH_LONG);
                 return;
             }
             ArchiveListDialogHelper helper = new ArchiveListDialogHelper();
@@ -1256,7 +1256,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 return;
             }
             if (mGalleryDetail.apiUid < 0) {
-                showTip(R.string.sign_in_first, LENGTH_SHORT);
+                showTip(R.string.sign_in_first, LENGTH_LONG);
                 return;
             }
             RateDialogHelper helper = new RateDialogHelper();
@@ -1627,7 +1627,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         @Override
         public void onFailure(Exception e) {
             showTip(mAddOrRemove ? R.string.remove_from_favorite_failure :
-                    R.string.add_to_favorite_failure, LENGTH_SHORT);
+                    R.string.add_to_favorite_failure, LENGTH_LONG);
             GalleryDetailScene scene = getScene();
             if (scene != null) {
                 scene.onModifyFavoritesFailure(mAddOrRemove);
@@ -1662,9 +1662,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         @Override
         public void onFailure(Exception e) {
             if (e instanceof NoHAtHClientException) {
-                showTip(R.string.download_archive_failure_no_hath, LENGTH_SHORT);
+                showTip(R.string.download_archive_failure_no_hath, LENGTH_LONG);
             } else {
-                showTip(R.string.download_archive_failure, LENGTH_SHORT);
+                showTip(R.string.download_archive_failure, LENGTH_LONG);
             }
         }
 
@@ -2031,7 +2031,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         @Override
         public void onFailure(Exception e) {
             e.printStackTrace();
-            showTip(R.string.rate_failed, LENGTH_SHORT);
+            showTip(R.string.rate_failed, LENGTH_LONG);
         }
 
         @Override

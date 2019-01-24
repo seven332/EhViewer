@@ -655,14 +655,14 @@ public final class GalleryListScene extends BaseScene
 
         // Can't add image search as quick search
         if (ListUrlBuilder.MODE_IMAGE_SEARCH == urlBuilder.getMode()) {
-            showTip(R.string.image_search_not_quick_search, LENGTH_SHORT);
+            showTip(R.string.image_search_not_quick_search, LENGTH_LONG);
             return;
         }
 
         // Check duplicate
         for (QuickSearch q: list) {
             if (urlBuilder.equalsQuickSearch(q)) {
-                showTip(getString(R.string.duplicate_quick_search, q.name), LENGTH_SHORT);
+                showTip(getString(R.string.duplicate_quick_search, q.name), LENGTH_LONG);
                 return;
             }
         }
@@ -1545,7 +1545,7 @@ public final class GalleryListScene extends BaseScene
 
         @Override
         public void onFailure(Exception e) {
-            showTip(R.string.add_to_favorite_failure, LENGTH_SHORT);
+            showTip(R.string.add_to_favorite_failure, LENGTH_LONG);
         }
 
         @Override
