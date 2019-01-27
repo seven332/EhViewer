@@ -145,8 +145,13 @@ public class EhTagDatabase {
   private static Lock lock = new ReentrantLock();
 
   @Nullable
-  public static EhTagDatabase getInstance() {
-    return instance;
+  public static EhTagDatabase getInstance(Context context) {
+    if (isPossible(context)) {
+      return instance;
+    } else {
+      instance = null;
+      return null;
+    }
   }
 
   @Nullable
