@@ -364,7 +364,7 @@ public final class MainActivity extends StageActivity
             onRestore(savedInstanceState);
         }
 
-        EhTagDatabase.update();
+        EhTagDatabase.update(this);
     }
 
     private String getThemeText() {

@@ -54,7 +54,7 @@ public class EhFragment extends PreferenceFragment
             getPreferenceScreen().removePreference(applyNavBarThemeColor);
         }
 
-        if (!EhTagDatabase.isPossible()) {
+        if (!EhTagDatabase.isPossible(getActivity())) {
             getPreferenceScreen().removePreference(showTagTranslations);
         }
     }
@@ -80,7 +80,7 @@ public class EhFragment extends PreferenceFragment
             getActivity().setResult(Activity.RESULT_OK);
         } else if (Settings.KEY_SHOW_TAG_TRANSLATIONS.equals(key)) {
             if (Boolean.TRUE.equals(newValue)) {
-                EhTagDatabase.update();
+                EhTagDatabase.update(getActivity());
             }
         }
         return true;

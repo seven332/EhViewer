@@ -255,4 +255,8 @@
         <item>zh-TW</item>
     </string-array>
 
+    <string-array name="tag_translation_metadata">
+        <item>@null</item>
+    </string-array>
+
 </resources>
