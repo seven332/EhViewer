@@ -41,6 +41,7 @@ public class EhFragment extends PreferenceFragment
         Preference detailSize = findPreference(Settings.KEY_DETAIL_SIZE);
         Preference thumbSize = findPreference(Settings.KEY_THUMB_SIZE);
         Preference showTagTranslations = findPreference(Settings.KEY_SHOW_TAG_TRANSLATIONS);
+        Preference tagTranslationsSource = findPreference("tag_translations_source");
 
         theme.setOnPreferenceChangeListener(this);
         applyNavBarThemeColor.setOnPreferenceChangeListener(this);
@@ -56,6 +57,7 @@ public class EhFragment extends PreferenceFragment
 
         if (!EhTagDatabase.isPossible(getActivity())) {
             getPreferenceScreen().removePreference(showTagTranslations);
+            getPreferenceScreen().removePreference(tagTranslationsSource);
         }
     }
 

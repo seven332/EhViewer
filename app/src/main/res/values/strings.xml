@@ -478,6 +478,8 @@
     <string name="settings_eh_show_gallery_pages_summary">Display the number of pages in the gallery list. It takes more time to load the gallery list</string>
     <string name="settings_eh_show_tag_translations">Show tag translations</string>
     <string name="settings_eh_show_tag_translations_summary">Show tag translations instead of the original text (It takes time to download the data file)</string>
+    <string name="settings_eh_tag_translations_source">Placeholder</string>
+    <string name="settings_eh_tag_translations_source_url">https://placeholder</string>
     <string name="settings_eh_filter">Filter</string>
     <string name="settings_eh_filter_summary">Filter by title, uploader, tag and tag namespace</string>
     <string name="settings_eh_cellular_network_warning">Cellular network warning</string>
