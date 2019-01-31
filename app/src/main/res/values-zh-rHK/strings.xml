@@ -434,6 +434,8 @@
     <string name="settings_eh_show_gallery_pages_summary">在畫廊列表中顯示頁數。這會使獲取畫廊列表花費更多時間</string>
     <string name="settings_eh_show_tag_translations">顯示標籤翻譯</string>
     <string name="settings_eh_show_tag_translations_summary">顯示翻譯後的標籤而非原始文字（需花費時間來下載數據文件）</string>
+    <string name="settings_eh_tag_translations_source">標籤翻譯由 EhTagTranslator 提供</string>
+    <string name="settings_eh_tag_translations_source_url">https://github.com/Mapaler/EhTagTranslator</string>
     <string name="settings_eh_filter">過濾</string>
     <string name="settings_eh_filter_summary">過濾標題，上傳者，標籤和標籤組</string>
     <string name="settings_eh_cellular_network_warning">移動網絡警告</string>
