@@ -16,9 +16,6 @@
 
 package com.hippo.okhttp;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import okhttp3.Request;
 
 public class ChromeRequestBuilder extends Request.Builder {
@@ -33,8 +30,8 @@ public class ChromeRequestBuilder extends Request.Builder {
     private static final String CHROME_ACCEPT_LANGUAGE =
             "en-US,en;q=0.5";
 
-    public ChromeRequestBuilder(String url) throws MalformedURLException {
-        url(new URL(url));
+    public ChromeRequestBuilder(String url) {
+        url(url);
         addHeader("User-Agent", CHROME_USER_AGENT);
         addHeader("Accept", CHROME_ACCEPT);
         addHeader("Accept-Language", CHROME_ACCEPT_LANGUAGE);
