@@ -20,64 +20,71 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
-
+import android.widget.Spinner;
+import com.hippo.ehviewer.EhApplication;
+import com.hippo.ehviewer.EhProxySelector;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.network.InetValidator;
 import com.hippo.preference.DialogPreference;
+import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.ViewUtils;
 
-public class HatHProxyPreference extends DialogPreference implements View.OnClickListener {
+public class ProxyPreference extends DialogPreference implements View.OnClickListener {
 
-    @Nullable
-    private SwitchCompat mEnable;
-    @Nullable
+    private Spinner mType;
     private TextInputLayout mIpInputLayout;
-    @Nullable
     private EditText mIp;
-    @Nullable
     private TextInputLayout mPortInputLayout;
-    @Nullable
     private EditText mPort;
-    @Nullable
-    private TextInputLayout mPasskeyInputLayout;
-    @Nullable
-    private EditText mPasskey;
 
-    public HatHProxyPreference(Context context) {
+    public ProxyPreference(Context context) {
         super(context);
         init();
     }
 
-    public HatHProxyPreference(Context context, AttributeSet attrs) {
+    public ProxyPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public HatHProxyPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ProxyPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        setDialogLayoutResource(R.layout.preference_dialog_hath_proxy);
-        updateSummary(Settings.getHathProxy(), Settings.getHathIp(), Settings.getHathPort());
+        setDialogLayoutResource(R.layout.preference_dialog_proxy);
+        updateSummary(Settings.getProxyType(), Settings.getProxyIp(), Settings.getProxyPort());
     }
 
-    private void updateSummary(boolean hathProxy, String hathIp, int hathPort) {
-        if (InetValidator.isValidInet4Address(hathIp) && InetValidator.isValidInetPort(hathPort)) {
+    private String getProxyTypeText(Context context, int type) {
+        String[] array = context.getResources().getStringArray(R.array.proxy_types);
+        return array[MathUtils.clamp(type, 0, array.length - 1)];
+    }
+
+    private void updateSummary(int type, String ip, int port) {
+        if ((type == EhProxySelector.TYPE_HTTP || type == EhProxySelector.TYPE_SOCKS)
+                && (TextUtils.isEmpty(ip) || !InetValidator.isValidInetPort(port)) ) {
+            type = EhProxySelector.TYPE_SYSTEM;
+        }
+
+        if (type == EhProxySelector.TYPE_HTTP || type == EhProxySelector.TYPE_SOCKS) {
             Context context = getContext();
-            setSummary(context.getString(R.string.settings_eh_hath_proxy_summary_1,
-                    context.getString(hathProxy ? R.string.enabled : R.string.disabled), hathIp, hathPort));
+            setSummary(context.getString(R.string.settings_advanced_proxy_summary_1,
+                getProxyTypeText(context, type),
+                ip,
+                port));
         } else {
-            setSummary(R.string.settings_eh_hath_proxy_summary_2);
+            Context context = getContext();
+            setSummary(context.getString(R.string.settings_advanced_proxy_summary_2,
+                getProxyTypeText(context, type)));
         }
     }
 
@@ -94,73 +101,63 @@ public class HatHProxyPreference extends DialogPreference implements View.OnClic
 
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(this);
 
-        mEnable = (SwitchCompat) ViewUtils.$$(dialog, R.id.enable);
+        mType = (Spinner) ViewUtils.$$(dialog, R.id.type);
         mIpInputLayout = (TextInputLayout) ViewUtils.$$(dialog, R.id.ip_input_layout);
         mIp = (EditText) ViewUtils.$$(dialog, R.id.ip);
         mPortInputLayout = (TextInputLayout) ViewUtils.$$(dialog, R.id.port_input_layout);
         mPort = (EditText) ViewUtils.$$(dialog, R.id.port);
-        mPasskeyInputLayout = (TextInputLayout) ViewUtils.$$(dialog, R.id.passkey_input_layout);
-        mPasskey = (EditText) ViewUtils.$$(dialog, R.id.passkey);
 
-        mEnable.setChecked(Settings.getHathProxy());
-        String ip = Settings.getHathIp();
-        if (!InetValidator.isValidInet4Address(ip)) {
-            ip = null;
-        }
+        int type = Settings.getProxyType();
+        String[] array = getContext().getResources().getStringArray(R.array.proxy_types);
+        mType.setSelection(MathUtils.clamp(type, 0, array.length));
+
+        mIp.setText(Settings.getProxyIp());
+
         String portString;
-        int port = Settings.getHathPort();
+        int port = Settings.getProxyPort();
         if (!InetValidator.isValidInetPort(port)) {
             portString = null;
         } else {
-            portString = Integer.toString(Settings.getHathPort());
+            portString = Integer.toString(port);
         }
-        mIp.setText(ip);
         mPort.setText(portString);
-        mPasskey.setText(Settings.getHathPasskey());
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
-        mEnable = null;
+        mType = null;
         mIpInputLayout = null;
         mIp = null;
         mPortInputLayout = null;
         mPort = null;
-        mPasskeyInputLayout = null;
-        mPasskey = null;
     }
 
     @Override
     public void onClick(View v) {
         Dialog dialog = getDialog();
         Context context = getContext();
-        if (null == dialog || null == context || null == mEnable ||
+        if (null == dialog || null == context || null == mType ||
                 null == mIpInputLayout || null == mIp ||
-                null == mPortInputLayout || null == mPort ||
-                null == mPasskeyInputLayout || null == mPasskey) {
+                null == mPortInputLayout || null == mPort) {
             return;
         }
 
-        boolean enable = mEnable.isChecked();
+        int type = mType.getSelectedItemPosition();
 
         String ip = mIp.getText().toString().trim();
         if (ip.isEmpty()) {
-            if (enable) {
+            if (type == EhProxySelector.TYPE_HTTP || type == EhProxySelector.TYPE_SOCKS) {
                 mIpInputLayout.setError(context.getString(R.string.text_is_empty));
                 return;
             }
-        } else if (!InetValidator.isValidInet4Address(ip)) {
-            mIpInputLayout.setError(context.getString(R.string.domain_not_supported));
-            return;
-        } else {
-            mIpInputLayout.setError(null);
         }
+        mIpInputLayout.setError(null);
 
         int port;
         String portString = mPort.getText().toString().trim();
         if (portString.isEmpty()) {
-            if (enable) {
+            if (type == EhProxySelector.TYPE_HTTP || type == EhProxySelector.TYPE_SOCKS) {
                 mPortInputLayout.setError(context.getString(R.string.text_is_empty));
                 return;
             } else {
@@ -173,19 +170,19 @@ public class HatHProxyPreference extends DialogPreference implements View.OnClic
                 port = -1;
             }
             if (!InetValidator.isValidInetPort(port)) {
-                mPortInputLayout.setError(context.getString(R.string.invalid_port));
+                mPortInputLayout.setError(context.getString(R.string.proxy_invalid_port));
                 return;
             }
         }
+        mPortInputLayout.setError(null);
 
-        String passkey = mPasskey.getText().toString();
+        Settings.putProxyType(type);
+        Settings.putProxyIp(ip);
+        Settings.putProxyPort(port);
 
-        Settings.putHathProxy(enable);
-        Settings.putHathIp(ip);
-        Settings.putHathPort(port);
-        Settings.putHathPasskey(passkey);
+        updateSummary(type, ip, port);
 
-        updateSummary(enable, ip, port);
+        EhApplication.getEhProxySelector(getContext()).updateProxy();
 
         dialog.dismiss();
     }

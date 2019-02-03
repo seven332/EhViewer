@@ -366,9 +366,6 @@
     <string name="settings_eh_excluded_languages_summary">Ocultar galerías en ciertos idiomas de la lista de galerías y búsquedas</string>
     <string name="settings_eh_excluded_tag_namespaces">Excluir etiquetas espacios de nombres</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">Excluir ciertos espacios de nombres de una búsqueda de etiquetas por defecto</string>
-    <string name="settings_eh_hath_proxy">H@H proxy</string>
-    <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_eh_hath_proxy_summary_2">Sin establecer</string>
     <string name="settings_eh_show_jpn_title">Mostrar títulos en japonés</string>
     <string name="settings_eh_show_jpn_title_summary_on">Intentar mostrar títulos en japonés. Tomará más tiempo en cargar la lista de galerías</string>
     <string name="settings_eh_show_jpn_title_summary_off">Mostrar títulos por defecto, usualmente es en inglés</string>
@@ -453,6 +450,9 @@
     <string name="settings_advanced_clear_memory_cache_summary">Borrar vistas previas, galerías, información y caché de memoria</string>
     <string name="settings_advanced_read_cache_size">Tamaño del caché (archivos temporales)</string>
 	<string name="settings_advanced_app_language_title">Idioma de la aplicación</string>
+    <string name="settings_advanced_proxy">Proxy</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_privacy_pattern_protection_title">Protección por patrón</string>
     <string name="settings_privacy_pattern_protection_not_set">No se ha configurado la protección por patrón</string>
     <string name="settings_privacy_pattern_protection_set">La protección por patrón ha sido configurado</string>
@@ -480,13 +480,11 @@
     <string name="settings_about_beta_update_channel">Canal de versiones de prueba</string>
     <string name="settings_about_beta_update_channel_summary">Las versiones de prueba podrían tener errores</string>
 
-    <string name="enable">Habilitar</string>
-    <string name="enabled">Habilitado</string>
-    <string name="ip">IP</string>
-    <string name="port">Puerto</string>
-    <string name="Passkey">Clave Maestra</string>
-    <string name="domain_not_supported">Dominio no soportado</string>
-    <string name="invalid_port">Puerto Invalido</string>
+    <string name="proxy_enable">Habilitar</string>
+    <string name="proxy_enabled">Habilitado</string>
+    <string name="proxy_port">Puerto</string>
+    <string name="proxy_domain_not_supported">Dominio no soportado</string>
+    <string name="proxy_invalid_port">Puerto Invalido</string>
 
     <string name="cant_get_data_dir">No se puede obtener el directorio de datos</string>
     <string name="cant_find_any_data">No se pueden encuentran datos</string>
@@ -606,7 +604,6 @@
     <string name="delete">Eliminar</string>
     <string name="dir_picker">Seleccionar directorio</string>
     <string name="directory_not_writable">No se puede escribir en el directorio</string>
-    <string name="disabled">Deshabilitado</string>
     <string name="download_state_failed">Descarga fallida</string>
     <string name="download_state_none">Descarga en pausa</string>
     <string name="error_password_cannot_empty">La contraseña no puede estar vacía</string>

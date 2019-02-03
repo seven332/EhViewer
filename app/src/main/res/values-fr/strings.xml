@@ -391,9 +391,6 @@
     <string name="settings_eh_excluded_languages_summary">Ne pas afficher les galerie des langues spécifiées sur la liste de galerie et le résultat de recherche</string>
     <string name="settings_eh_excluded_tag_namespaces">Espaces de nom de tag exclues</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">Exclure espaces de nom spécifiées de une recherche de tag par défaut</string>
-    <string name="settings_eh_hath_proxy">H@H proxy</string>
-    <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_eh_hath_proxy_summary_2">Rien</string>
     <string name="settings_eh_show_jpn_title">Montrer les titres japonais</string>
     <string name="settings_eh_show_jpn_title_summary_on">Essayer de charger les titres japonais. Il prend plus de temps pour charger la liste des galeries.</string>
     <string name="settings_eh_show_jpn_title_summary_off">Montrer les titres par défaut. Ils sont souvent en anglais.</string>
@@ -476,6 +473,9 @@
     <string name="settings_advanced_clear_memory_cache">Vider le cache du stockage</string>
     <string name="settings_advanced_clear_memory_cache_summary">Effacer le cache des miniatures et des informations galeries</string>
     <string name="settings_advanced_read_cache_size">Taille du cache pour la lecture</string>
+    <string name="settings_advanced_proxy">Proxy</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_privacy_pattern_protection_title">Modéle de déverrouillage</string>
     <string name="settings_privacy_pattern_protection_not_set">Aucun modéle de déverrouillage</string>
     <string name="settings_privacy_pattern_protection_set">Modéle de déverrouillage défini</string>
@@ -504,14 +504,12 @@
     <string name="settings_about_beta_update_channel">Chaîne de mises à jour beta</string>
     <string name="settings_about_beta_update_channel_summary">Versions beta riquent de ne pas fonctionner correctement sur votre appareil</string>
 
-    <string name="enable">Activer</string>
-    <string name="enabled">Activé</string>
-    <string name="disabled">Non activé</string>
-    <string name="ip">IP</string>
-    <string name="port">Port</string>
-    <string name="Passkey">Clé de passe</string>
-    <string name="domain_not_supported">Le domaine n\'est pas compatible</string>
-    <string name="invalid_port">Port invalide</string>
+    <string name="proxy_enable">Activer</string>
+    <string name="proxy_enabled">Activé</string>
+    <string name="proxy_disabled">Non activé</string>
+    <string name="proxy_port">Port</string>
+    <string name="proxy_domain_not_supported">Le domaine n\'est pas compatible</string>
+    <string name="proxy_invalid_port">Port invalide</string>
 
     <string name="cant_get_data_dir">Échec d\'obtention du répertoire données</string>
     <string name="cant_find_any_data">Aucune donnée trouvée</string>

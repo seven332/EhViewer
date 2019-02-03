@@ -84,6 +84,7 @@ public class EhApplication extends RecordingApplication {
     private final HashMap<Integer, Object> mGlobalStuffMap = new HashMap<>();
     private EhCookieStore mEhCookieStore;
     private EhClient mEhClient;
+    private EhProxySelector mEhProxySelector;
     private OkHttpClient mOkHttpClient;
     private ImageBitmapHelper mImageBitmapHelper;
     private Conaco<ImageBitmap> mConaco;
@@ -267,6 +268,15 @@ public class EhApplication extends RecordingApplication {
     }
 
     @NonNull
+    public static EhProxySelector getEhProxySelector(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mEhProxySelector == null) {
+            application.mEhProxySelector = new EhProxySelector();
+        }
+        return application.mEhProxySelector;
+    }
+
+    @NonNull
     public static OkHttpClient getOkHttpClient(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mOkHttpClient == null) {
@@ -276,6 +286,7 @@ public class EhApplication extends RecordingApplication {
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .cookieJar(getEhCookieStore(application))
                     .dns(new EhDns(application))
+                    .proxySelector(getEhProxySelector(application))
                     .build();
         }
         return application.mOkHttpClient;

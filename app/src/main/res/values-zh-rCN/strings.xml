@@ -425,9 +425,6 @@
     <string name="settings_eh_excluded_tag_namespaces_summary">在默认搜索中排除指定标签组</string>
     <string name="settings_eh_excluded_languages">排除语言</string>
     <string name="settings_eh_excluded_languages_summary">在主页与搜索中隐藏指定语言的画廊</string>
-    <string name="settings_eh_hath_proxy">H@H </string>
-    <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_eh_hath_proxy_summary_2">未设置</string>
     <string name="settings_eh_show_jpn_title">显示日文标题</string>
     <string name="settings_eh_show_jpn_title_summary_on">尝试显示日文标题。这会使获取画廊列表花费更多时间</string>
     <string name="settings_eh_show_jpn_title_summary_off">显示默认标题。一般是英文标题</string>
@@ -517,6 +514,9 @@
     <string name="settings_advanced_clear_memory_cache_summary">清理缩略图、画廊信息的内存缓存</string>
     <string name="settings_advanced_read_cache_size">阅读缓存大小</string>
     <string name="settings_advanced_app_language_title">App 界面语言</string>
+    <string name="settings_advanced_proxy">代理</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_advanced_built_in_hosts_title">内置 hosts.txt</string>
     <string name="settings_advanced_built_in_hosts_summary">应用提供的主机到IP的映射\n可被自定义 hosts.txt 覆盖</string>
     <string name="settings_advanced_custom_hosts_title">自定义 hosts.txt</string>
@@ -584,14 +584,15 @@
 
     <string name="please_wait">请稍候</string>
 
-    <string name="enable">启用</string>
-    <string name="enabled">已启用</string>
-    <string name="disabled">未启用</string>
-    <string name="ip">IP</string>
-    <string name="port">端口</string>
-    <string name="Passkey">密钥</string>
-    <string name="domain_not_supported">不支持域名</string>
-    <string name="invalid_port">无效的端口</string>
+    <string name="proxy_enable">启用</string>
+    <string name="proxy_enabled">已启用</string>
+    <string name="proxy_disabled">未启用</string>
+    <string name="proxy_direct">直接连接</string>
+    <string name="proxy_system">系统代理</string>
+    <string name="proxy_host_or_ip">主机或 IP</string>
+    <string name="proxy_port">端口</string>
+    <string name="proxy_domain_not_supported">不支持域名</string>
+    <string name="proxy_invalid_port">无效的端口</string>
 
     <string name="cant_get_data_dir">无法获取数据文件夹</string>
     <string name="cant_find_any_data">找不到任何数据</string>

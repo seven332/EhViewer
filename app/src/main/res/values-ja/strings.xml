@@ -389,9 +389,6 @@
     <string name="settings_eh_excluded_tag_namespaces_summary">指定したタグセットをデフォルト検索から除外</string>
     <string name="settings_eh_excluded_languages">言語を除外</string>
     <string name="settings_eh_excluded_languages_summary">指定した言語のギャラリーをホームページと検索から隠す</string>
-    <string name="settings_eh_hath_proxy">H@H プロキシ</string>
-    <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_eh_hath_proxy_summary_2">未設定</string>
     <string name="settings_eh_show_jpn_title">日本語タイトルを表示</string>
     <string name="settings_eh_show_jpn_title_summary_on">日本語タイトルを表示しようとします。有効にすると、ギャラリーリストを取得するのにもっと時間がかかることがあります</string>
     <string name="settings_eh_show_jpn_title_summary_off">デフォルトのタイトルを表示します。多くの場合は英語のタイトルです。</string>
@@ -470,6 +467,9 @@
     <string name="settings_advanced_clear_memory_cache">メモリキャッシュをクリア</string>
     <string name="settings_advanced_clear_memory_cache_summary">サムネイルとギャラリー情報のメモリキャッシュをクリア</string>
     <string name="settings_advanced_read_cache_size">閲覧キャッシュのサイズ</string>
+    <string name="settings_advanced_proxy">プロキシ</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_privacy_pattern_protection_title">パターン保護</string>
     <string name="settings_privacy_pattern_protection_not_set">パターン保護は設定されていません</string>
     <string name="settings_privacy_pattern_protection_set">パターン保護は設定されています</string>
@@ -525,14 +525,12 @@
 
     <string name="please_wait">お待ちください</string>
 
-    <string name="enable">有効化</string>
-    <string name="enabled">有効化済み</string>
-    <string name="disabled">無効</string>
-    <string name="ip">IP</string>
-    <string name="port">ポート</string>
-    <string name="Passkey">パスキー</string>
-    <string name="domain_not_supported">ドメイン名には対応していません</string>
-    <string name="invalid_port">無効なポート</string>
+    <string name="proxy_enable">有効化</string>
+    <string name="proxy_enabled">有効化済み</string>
+    <string name="proxy_disabled">無効</string>
+    <string name="proxy_port">ポート</string>
+    <string name="proxy_domain_not_supported">ドメイン名には対応していません</string>
+    <string name="proxy_invalid_port">無効なポート</string>
 
     <string name="cant_get_data_dir">データフォルダを取得できませんでした</string>
     <string name="cant_find_any_data">データが見つかりません</string>

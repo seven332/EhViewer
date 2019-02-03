@@ -383,9 +383,6 @@
     <string name="settings_eh_excluded_languages_summary">갤러리 목록과 검색에서 특정 언어 숨기기</string>
     <string name="settings_eh_excluded_tag_namespaces">제외할 태그 네임스페이스</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">기본 태그 검색에서 특정 네임스페이스 제외</string>
-    <string name="settings_eh_hath_proxy">H@H 프록시</string>
-    <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_eh_hath_proxy_summary_2">없음</string>
     <string name="settings_eh_show_jpn_title">일본어 제목 표시</string>
     <string name="settings_eh_show_jpn_title_summary_on">가능하면 일본어 제목을 표시합니다. 갤러리 목록을 불러오는 데 시간이 좀 더 걸립니다.</string>
     <string name="settings_eh_show_jpn_title_summary_off">기본 제목을 표시합니다. 대부분 영어로 표시됩니다.</string>
@@ -469,6 +466,9 @@
     <string name="settings_advanced_clear_memory_cache_summary">섬네일, 갤러리 정보 메모리 캐시 삭제</string>
     <string name="settings_advanced_read_cache_size">읽기 캐시 크기</string>
     <string name="settings_advanced_app_language_title">앱 언어 (Language)</string>
+    <string name="settings_advanced_proxy">프록시</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_advanced_built_in_hosts_title">앱 내장 hosts.txt</string>
     <string name="settings_advanced_built_in_hosts_summary">앱에 내장된 호스트-IP 지정 규칙을 사용합니다.\n대신 사용자 지정 hosts.txt 파일을 사용할 수도 있습니다.</string>
     <string name="settings_advanced_custom_hosts_title">사용자 지정 hosts.txt</string>
@@ -500,14 +500,12 @@
     <string name="settings_about_beta_update_channel">베타 업데이트 채널</string>
     <string name="settings_about_beta_update_channel_summary">베타 버전은 사용자의 기기에서 정상적으로 작동하지 않을 수 있습니다.</string>
 
-    <string name="enable">사용</string>
-    <string name="enabled">사용함</string>
-    <string name="disabled">사용 안 함</string>
-    <string name="ip">IP</string>
-    <string name="port">포트</string>
-    <string name="Passkey">암호</string>
-    <string name="domain_not_supported">지원하지 않는 도메인입니다.</string>
-    <string name="invalid_port">잘못된 포트입니다.</string>
+    <string name="proxy_enable">사용</string>
+    <string name="proxy_enabled">사용함</string>
+    <string name="proxy_disabled">사용 안 함</string>
+    <string name="proxy_port">포트</string>
+    <string name="proxy_domain_not_supported">지원하지 않는 도메인입니다.</string>
+    <string name="proxy_invalid_port">잘못된 포트입니다.</string>
 
     <string name="cant_get_data_dir">데이터 디렉터리를 찾을 수 없습니다.</string>
     <string name="cant_find_any_data">데이터를 가져올 수 없습니다.</string>

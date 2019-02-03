@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string-array name="theme_entries" translatable="false">
         <item>@string/settings_eh_theme_light</item>
@@ -255,8 +255,15 @@
         <item>zh-TW</item>
     </string-array>
 
-    <string-array name="tag_translation_metadata">
+    <string-array name="tag_translation_metadata" tools:ignore="InconsistentArrays">
         <item>@null</item>
+    </string-array>
+
+    <string-array name="proxy_types">
+        <item>@string/proxy_direct</item>
+        <item>@string/proxy_system</item>
+        <item>HTTP</item>
+        <item>SOCKS</item>
     </string-array>
 
 </resources>

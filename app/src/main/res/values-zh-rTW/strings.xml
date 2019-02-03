@@ -424,9 +424,6 @@
     <string name="settings_eh_excluded_tag_namespaces_summary">在預設標籤搜尋中排除特定的標籤命名空間</string>
     <string name="settings_eh_excluded_languages">排除語言</string>
     <string name="settings_eh_excluded_languages_summary">在首頁與搜尋中隱藏指定語言的圖庫</string>
-    <string name="settings_eh_hath_proxy">H@H </string>
-    <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_eh_hath_proxy_summary_2">無</string>
     <string name="settings_eh_show_jpn_title">顯示日文標題</string>
     <string name="settings_eh_show_jpn_title_summary_on">嘗試顯示日文標題。這會使取得圖庫列表時間增加</string>
     <string name="settings_eh_show_jpn_title_summary_off">顯示預設的標題。通常是英文的</string>
@@ -516,6 +513,9 @@
     <string name="settings_advanced_clear_memory_cache_summary">清除縮圖、圖庫詳細資料的記憶體快取</string>
     <string name="settings_advanced_read_cache_size">閱讀快取大小</string>
     <string name="settings_advanced_app_language_title">App 介面語言</string>
+    <string name="settings_advanced_proxy">代理</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_advanced_built_in_hosts_title">內建 hosts.txt</string>
     <string name="settings_advanced_built_in_hosts_summary">應用提供的主機到IP的對映\n可被自定義 hosts.txt 覆蓋</string>
     <string name="settings_advanced_custom_hosts_title">自定義 hosts.txt</string>
@@ -583,14 +583,15 @@
 
     <string name="please_wait">請稍候</string>
 
-    <string name="enable">啟用</string>
-    <string name="enabled">已啟用</string>
-    <string name="disabled">未啟用</string>
-    <string name="ip">IP</string>
-    <string name="port">通訊埠</string>
-    <string name="Passkey">金鑰</string>
-    <string name="domain_not_supported">不支援的域名</string>
-    <string name="invalid_port">無效的通訊埠</string>
+    <string name="proxy_enable">啟用</string>
+    <string name="proxy_enabled">已啟用</string>
+    <string name="proxy_disabled">未啟用</string>
+    <string name="proxy_direct">直接連線</string>
+    <string name="proxy_system">系統代理</string>
+    <string name="proxy_host_or_ip">主機或 IP</string>
+    <string name="proxy_port">通訊埠</string>
+    <string name="proxy_domain_not_supported">不支援的域名</string>
+    <string name="proxy_invalid_port">無效的通訊埠</string>
 
     <string name="cant_get_data_dir">無法取得檔案資料夾</string>
     <string name="cant_find_any_data">找不到任何資料</string>

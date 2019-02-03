@@ -21,20 +21,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="?attr/dialogPreferredPadding"
-    android:paddingTop="@dimen/abc_dialog_padding_top_material"
+    android:paddingTop="18dp"
     android:paddingRight="?attr/dialogPreferredPadding">
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/enable"
+    <com.hippo.widget.CuteSpinner
+        android:id="@+id/type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/enable"/>
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:entries="@array/proxy_types"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/ip_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/ip">
+        android:hint="@string/proxy_host_or_ip">
 
         <com.hippo.widget.HackyTextInputEditText
             android:id="@+id/ip"
@@ -48,27 +50,13 @@
         android:id="@+id/port_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/port">
+        android:hint="@string/proxy_port">
 
         <com.hippo.widget.HackyTextInputEditText
             android:id="@+id/port"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"/>
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/passkey_input_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/Passkey">
-
-        <com.hippo.widget.HackyTextInputEditText
-            android:id="@+id/passkey"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"/>
 
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

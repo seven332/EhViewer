@@ -468,9 +468,6 @@
     <string name="settings_eh_excluded_languages_summary">Hide galleries in certain languages from the gallery list and searches</string>
     <string name="settings_eh_excluded_tag_namespaces">Excluded tag namespaces</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">Exclude certain namespaces from a default tag search</string>
-    <string name="settings_eh_hath_proxy">H@H proxy</string>
-    <string name="settings_eh_hath_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_eh_hath_proxy_summary_2">None</string>
     <string name="settings_eh_show_jpn_title">Show Japanese title</string>
     <string name="settings_eh_show_jpn_title_summary_on">Attempt to show Japanese title. It takes more time to get gallery list</string>
     <string name="settings_eh_show_jpn_title_summary_off">Show default titles, which are usually in English.</string>
@@ -560,6 +557,9 @@
     <string name="settings_advanced_clear_memory_cache_summary">Clear thumb, gallery info memory cache</string>
     <string name="settings_advanced_read_cache_size">Read cache size</string>
     <string name="settings_advanced_app_language_title">App language</string>
+    <string name="settings_advanced_proxy">Proxy</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_advanced_built_in_hosts_title">Built-in hosts.txt</string>
     <string name="settings_advanced_built_in_hosts_summary">Apply the built-in host-to-IP mapping provided by the app.\nIt can be overridden by custom hosts.txt.</string>
     <string name="settings_advanced_custom_hosts_title">Custom hosts.txt</string>
@@ -601,14 +601,15 @@
     <string name="settings_about_beta_update_channel">Beta update channel</string>
     <string name="settings_about_beta_update_channel_summary">Beta versions may contain unsolved bugs.</string>
 
-    <string name="enable">Enable</string>
-    <string name="enabled">Enabled</string>
-    <string name="disabled">Disabled</string>
-    <string name="ip">IP</string>
-    <string name="port">Port</string>
-    <string name="Passkey">Passkey</string>
-    <string name="domain_not_supported">Domain is not supported</string>
-    <string name="invalid_port">Invalid port</string>
+    <string name="proxy_enable">Enable</string>
+    <string name="proxy_enabled">Enabled</string>
+    <string name="proxy_disabled">Disabled</string>
+    <string name="proxy_direct">Direct</string>
+    <string name="proxy_system">System Proxy</string>
+    <string name="proxy_host_or_ip">Host or IP</string>
+    <string name="proxy_port">Port</string>
+    <string name="proxy_domain_not_supported">Domain is not supported</string>
+    <string name="proxy_invalid_port">Invalid port</string>
 
     <string name="cant_get_data_dir">Can\'t get data dir</string>
     <string name="cant_find_any_data">Can\'t find any data</string>
