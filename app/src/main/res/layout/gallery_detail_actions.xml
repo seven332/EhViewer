@@ -122,7 +122,7 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <androidx.appcompat.widget.AppCompatRadioButton
+    <androidx.appcompat.widget.AppCompatRatingBar
         android:id="@+id/rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
