@@ -16,12 +16,10 @@
 
 package com.hippo.io;
 
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import com.hippo.streampipe.OutputStreamPipe;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -44,8 +42,9 @@ public class UniFileOutputStreamPipe implements OutputStreamPipe {
         // Empty
     }
 
+    @NonNull
     @Override
-    public @NonNull OutputStream open() throws IOException {
+    public OutputStream open() throws IOException {
         if (mOs != null) {
             throw new IllegalStateException("Please close it first");
         }

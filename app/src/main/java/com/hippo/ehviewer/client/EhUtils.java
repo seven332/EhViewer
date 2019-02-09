@@ -18,13 +18,11 @@ package com.hippo.ehviewer.client;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
-
+import androidx.annotation.Nullable;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.data.GalleryInfo;
-
 import java.util.regex.Pattern;
 
 public class EhUtils {

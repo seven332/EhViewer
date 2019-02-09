@@ -122,56 +122,56 @@
 
         </LinearLayout>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/keep_screen_on"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_read_keep_screen_on"
             android:textColor="?android:attr/textColorPrimary"/>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/show_clock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_read_show_clock"
             android:textColor="?android:attr/textColorPrimary"/>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/show_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_read_show_progress"
             android:textColor="?android:attr/textColorPrimary"/>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/show_battery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_read_show_battery"
             android:textColor="?android:attr/textColorPrimary"/>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
           android:id="@+id/show_page_interval"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:text="@string/settings_read_show_page_interval"
           android:textColor="?android:attr/textColorPrimary"/>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/volume_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_read_volume_page"
             android:textColor="?android:attr/textColorPrimary"/>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/reading_fullscreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_read_reading_fullscreen"
             android:textColor="?android:attr/textColorPrimary"/>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/custom_screen_lightness"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

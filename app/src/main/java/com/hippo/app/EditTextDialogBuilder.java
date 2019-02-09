@@ -19,15 +19,14 @@ package com.hippo.app;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.textfield.TextInputLayout;
 import com.hippo.ehviewer.R;
 
 public class EditTextDialogBuilder extends AlertDialog.Builder implements EditText.OnEditorActionListener {

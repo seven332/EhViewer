@@ -17,12 +17,12 @@
 package com.hippo.widget;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.Layout;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import androidx.annotation.NonNull;
 
 public class LinkifyTextView extends ObservedTextView {
 

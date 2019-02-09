@@ -18,14 +18,13 @@ package com.hippo.app;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
-
+import androidx.appcompat.app.AlertDialog;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.ViewUtils;
 

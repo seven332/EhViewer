@@ -17,7 +17,6 @@
 package com.hippo.ehviewer.ui.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -25,14 +24,13 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AlertDialog;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.util.LogCat;
 import com.hippo.util.ReadableTime;
-
 import java.io.File;
 import java.util.Arrays;
 

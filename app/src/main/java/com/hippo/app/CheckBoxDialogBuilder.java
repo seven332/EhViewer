@@ -18,12 +18,11 @@ package com.hippo.app;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
+import androidx.appcompat.app.AlertDialog;
 import com.hippo.ehviewer.R;
 
 public class CheckBoxDialogBuilder extends AlertDialog.Builder {

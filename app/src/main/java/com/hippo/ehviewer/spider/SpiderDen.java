@@ -18,9 +18,8 @@ package com.hippo.ehviewer.spider;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
-
+import androidx.annotation.Nullable;
 import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.Settings;
@@ -38,7 +37,6 @@ import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.Utilities;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;

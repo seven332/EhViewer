@@ -16,7 +16,7 @@
 
 package com.hippo.ehviewer.client;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.hippo.ehviewer.Settings;
 import com.hippo.network.UrlBuilder;
 import java.util.List;

@@ -18,13 +18,12 @@ package com.hippo.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.IdRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
-
+import androidx.annotation.IdRes;
 import com.hippo.yorozuya.ViewUtils;
 
 public class RadioGridGroup extends SimpleGridLayout {

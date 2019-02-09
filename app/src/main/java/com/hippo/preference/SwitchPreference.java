@@ -19,15 +19,13 @@ package com.hippo.preference;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.TwoStatePreference;
-import android.support.annotation.StringRes;
-import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Checkable;
 import android.widget.CompoundButton;
-
+import androidx.annotation.StringRes;
+import androidx.appcompat.widget.SwitchCompat;
 import com.hippo.ehviewer.R;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

@@ -18,12 +18,11 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-
+import androidx.annotation.NonNull;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.ViewUtils;
 

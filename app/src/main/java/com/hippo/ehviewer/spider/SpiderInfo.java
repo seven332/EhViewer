@@ -16,16 +16,14 @@
 
 package com.hippo.ehviewer.spider;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.NumberUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

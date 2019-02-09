@@ -16,6 +16,9 @@
 
 package com.hippo.content;
 
+import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
+import static org.xmlpull.v1.XmlPullParser.START_TAG;
+
 import android.content.ClipData;
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -31,20 +34,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
-
-import org.xmlpull.v1.XmlPullParserException;
-
+import androidx.core.content.ContextCompat;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
-import static org.xmlpull.v1.XmlPullParser.START_TAG;
+import org.xmlpull.v1.XmlPullParserException;
 
 /**
  * FileProvider is a special subclass of {@link ContentProvider} that facilitates secure sharing
@@ -331,7 +329,7 @@ public class FileProvider extends ContentProvider {
     };
 
     private static final String
-            META_DATA_FILE_PROVIDER_PATHS = "android.support.FILE_PROVIDER_PATHS";
+            META_DATA_FILE_PROVIDER_PATHS = "com.hippo.content.FILE_PROVIDER_PATHS";
 
     private static final String TAG_ROOT_PATH = "root-path";
     private static final String TAG_FILES_PATH = "files-path";

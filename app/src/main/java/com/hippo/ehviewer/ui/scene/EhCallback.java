@@ -17,9 +17,8 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
-import android.support.annotation.StringRes;
 import android.widget.Toast;
-
+import androidx.annotation.StringRes;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.ui.MainActivity;

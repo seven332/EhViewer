@@ -32,7 +32,7 @@
         android:paddingBottom="8dp"
         android:entries="@array/proxy_types"/>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/ip_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,9 +44,9 @@
             android:layout_height="wrap_content"
             android:inputType="text"/>
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/port_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,5 +58,5 @@
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"/>
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

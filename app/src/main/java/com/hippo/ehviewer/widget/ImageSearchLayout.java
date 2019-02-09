@@ -22,7 +22,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.AbsSavedState;
@@ -31,7 +30,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
+import androidx.annotation.Nullable;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
@@ -41,7 +40,6 @@ import com.hippo.unifile.UniFile;
 import com.hippo.util.BitmapUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ViewUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

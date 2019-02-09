@@ -195,7 +195,7 @@
             android:exported="false">
 
             <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:name="com.hippo.content.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths"/>
 
         </provider>

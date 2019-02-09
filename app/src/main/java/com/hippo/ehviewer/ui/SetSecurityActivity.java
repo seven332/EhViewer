@@ -19,13 +19,12 @@ package com.hippo.ehviewer.ui;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
-
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.widget.lockpattern.LockPatternUtils;

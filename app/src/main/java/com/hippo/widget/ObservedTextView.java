@@ -17,8 +17,8 @@
 package com.hippo.widget;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+import androidx.appcompat.widget.AppCompatTextView;
 
 public class ObservedTextView extends AppCompatTextView {
 

@@ -41,7 +41,7 @@
                 android:padding="@dimen/keyline_margin"
                 android:src="@mipmap/ic_launcher"/>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/username_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -58,9 +58,9 @@
                     android:maxLines="1"
                     android:singleLine="true"/>
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/password_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,9 +78,9 @@
                     android:maxLines="1"
                     android:singleLine="true"/>
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/recaptcha_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
                     android:maxLines="1"
                     android:singleLine="true"/>
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.hippo.ehviewer.widget.RecaptchaView
                 android:id="@+id/recaptcha_image"
@@ -107,7 +107,7 @@
                 android:minWidth="@dimen/single_max_width"
                 android:scaleType="fitCenter"/>
 
-            <android.support.v4.widget.Space
+            <Space
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"/>

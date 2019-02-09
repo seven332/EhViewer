@@ -121,7 +121,7 @@
 
         </RelativeLayout>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/action_card"
             android:layout_width="match_parent"
@@ -161,6 +161,6 @@
                     android:text="@string/read"/>
 
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 </FrameLayout>

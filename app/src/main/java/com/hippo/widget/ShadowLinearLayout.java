@@ -21,11 +21,10 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.ViewOutlineProvider;
 import android.widget.LinearLayout;
-
+import androidx.annotation.NonNull;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.LayoutUtils;
 

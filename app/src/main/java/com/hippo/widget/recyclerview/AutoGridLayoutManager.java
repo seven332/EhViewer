@@ -17,9 +17,8 @@
 package com.hippo.widget.recyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class AutoGridLayoutManager extends GridLayoutManager {
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         if (mColumnSizeChanged && mColumnSize > 0) {
             int totalSpace;
-            if (getOrientation() == VERTICAL) {
+            if (getOrientation() == RecyclerView.VERTICAL) {
                 totalSpace = getWidth() - getPaddingRight() - getPaddingLeft();
             } else {
                 totalSpace = getHeight() - getPaddingTop() - getPaddingBottom();

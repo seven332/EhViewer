@@ -18,7 +18,6 @@ package com.hippo.app;
 
 import android.content.Context;
 import android.preference.PreferenceActivity;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import com.hippo.ehviewer.R;
 import java.util.ArrayList;
 import java.util.List;

@@ -19,10 +19,9 @@ package com.hippo.ehviewer.download;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadInfo;
@@ -40,7 +39,6 @@ import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.collect.LongList;
 import com.hippo.yorozuya.collect.SparseIJArray;
 import com.hippo.yorozuya.collect.SparseJLArray;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;

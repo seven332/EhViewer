@@ -69,9 +69,9 @@ clean {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:$supportLibrary"
-    implementation "com.android.support:cardview-v7:$supportLibrary"
-    implementation "com.android.support:design:$supportLibrary"
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
     implementation 'com.github.amlcurran.showcaseview:library:5.4.3'

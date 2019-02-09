@@ -25,18 +25,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.animation.PathInterpolatorCompat;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.ViewUtils;
-
 import java.util.ArrayList;
 
 // Base on android.graphics.drawable.MaterialProgressDrawable in L preview

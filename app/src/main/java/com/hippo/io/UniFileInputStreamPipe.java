@@ -16,12 +16,10 @@
 
 package com.hippo.io;
 
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import com.hippo.streampipe.InputStreamPipe;
 import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 

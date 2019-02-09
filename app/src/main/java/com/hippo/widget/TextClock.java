@@ -27,10 +27,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.v7.widget.AppCompatTextView;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.ViewDebug.ExportedProperty;
+import androidx.appcompat.widget.AppCompatTextView;
 import java.util.Calendar;
 import java.util.TimeZone;
 

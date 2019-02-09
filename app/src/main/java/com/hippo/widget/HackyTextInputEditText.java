@@ -17,9 +17,9 @@
 package com.hippo.widget;
 
 import android.content.Context;
-import android.support.design.widget.TextInputEditText;
 import android.util.AttributeSet;
 import android.widget.TextView;
+import com.google.android.material.textfield.TextInputEditText;
 import com.hippo.util.ExceptionUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

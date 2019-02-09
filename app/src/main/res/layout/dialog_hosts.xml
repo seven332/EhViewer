@@ -24,7 +24,7 @@
   android:paddingTop="@dimen/abc_dialog_padding_top_material"
   android:paddingRight="?attr/dialogPreferredPadding">
 
-  <android.support.design.widget.TextInputLayout
+  <com.google.android.material.textfield.TextInputLayout
     android:id="@+id/host_input_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -36,9 +36,9 @@
       android:layout_height="wrap_content"
       android:inputType="text"/>
 
-  </android.support.design.widget.TextInputLayout>
+  </com.google.android.material.textfield.TextInputLayout>
 
-  <android.support.design.widget.TextInputLayout
+  <com.google.android.material.textfield.TextInputLayout
     android:id="@+id/ip_input_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -50,5 +50,5 @@
       android:layout_height="wrap_content"
       android:inputType="text"/>
 
-  </android.support.design.widget.TextInputLayout>
+  </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

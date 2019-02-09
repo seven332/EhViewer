@@ -17,10 +17,9 @@
 package com.hippo.ehviewer.preference;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;

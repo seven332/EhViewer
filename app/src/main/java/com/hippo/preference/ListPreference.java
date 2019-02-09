@@ -21,11 +21,10 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.ArrayRes;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-
+import androidx.annotation.ArrayRes;
+import androidx.appcompat.app.AlertDialog;
 import com.hippo.ehviewer.R;
 
 public class ListPreference extends DialogPreference {

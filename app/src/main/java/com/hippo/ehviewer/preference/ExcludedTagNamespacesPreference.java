@@ -17,11 +17,10 @@
 package com.hippo.ehviewer.preference;
 
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CheckBox;
-
+import androidx.appcompat.app.AlertDialog;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.preference.DialogPreference;

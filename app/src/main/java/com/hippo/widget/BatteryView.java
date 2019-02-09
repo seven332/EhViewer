@@ -24,9 +24,8 @@ import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.BatteryManager;
-import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-
+import androidx.appcompat.widget.AppCompatTextView;
 import com.hippo.drawable.BatteryDrawable;
 import com.hippo.ehviewer.R;
 

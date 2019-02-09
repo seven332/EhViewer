@@ -18,10 +18,9 @@ package com.hippo.widget;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import com.hippo.yorozuya.MathUtils;
 import com.hippo.yorozuya.SimpleAnimatorListener;
 import com.hippo.yorozuya.ViewUtils;

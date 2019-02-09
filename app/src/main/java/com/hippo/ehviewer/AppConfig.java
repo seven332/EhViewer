@@ -18,13 +18,11 @@ package com.hippo.ehviewer;
 
 import android.content.Context;
 import android.os.Environment;
-import android.support.annotation.Nullable;
-
+import androidx.annotation.Nullable;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.ReadableTime;
 import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

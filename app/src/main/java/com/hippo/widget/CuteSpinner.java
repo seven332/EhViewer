@@ -19,26 +19,26 @@ package com.hippo.widget;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.support.v7.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
+import androidx.appcompat.widget.AppCompatSpinner;
 import com.hippo.ehviewer.R;
 
 public class CuteSpinner extends AppCompatSpinner {
 
     public CuteSpinner(Context context) {
         super(context);
-        init(context, null, android.support.v7.appcompat.R.attr.spinnerStyle);
+        init(context, null, androidx.appcompat.R.attr.spinnerStyle);
     }
 
     public CuteSpinner(Context context, int mode) {
         super(context, mode);
-        init(context, null, android.support.v7.appcompat.R.attr.spinnerStyle);
+        init(context, null, androidx.appcompat.R.attr.spinnerStyle);
     }
 
     public CuteSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, android.support.v7.appcompat.R.attr.spinnerStyle);
+        init(context, attrs, androidx.appcompat.R.attr.spinnerStyle);
     }
 
     public CuteSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -58,7 +58,7 @@ public class CuteSpinner extends AppCompatSpinner {
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray a = context.obtainStyledAttributes(attrs,
-                android.support.v7.appcompat.R.styleable.Spinner, defStyleAttr, 0);
+                androidx.appcompat.R.styleable.Spinner, defStyleAttr, 0);
         final CharSequence[] entries = a.getTextArray(R.styleable.Spinner_android_entries);
         if (entries != null) {
             final ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(context,

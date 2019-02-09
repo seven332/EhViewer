@@ -20,9 +20,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+import androidx.annotation.NonNull;
 import com.hippo.drawerlayout.DrawerLayoutChild;
 
 public class EhNavigationView extends LinearLayout implements DrawerLayoutChild {

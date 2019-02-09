@@ -18,12 +18,11 @@ package com.hippo.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.app.AlertDialog;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
-
+import androidx.appcompat.app.AlertDialog;
 import com.hippo.ehviewer.R;
 import com.hippo.text.Html;
 

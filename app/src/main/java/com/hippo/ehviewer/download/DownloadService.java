@@ -27,11 +27,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUtils;
@@ -46,7 +45,6 @@ import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.collect.LongList;
 import com.hippo.yorozuya.collect.SparseJBArray;
 import com.hippo.yorozuya.collect.SparseJLArray;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

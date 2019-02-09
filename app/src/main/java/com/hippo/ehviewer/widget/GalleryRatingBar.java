@@ -18,9 +18,9 @@ package com.hippo.ehviewer.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.v7.widget.AppCompatRatingBar;
 import android.util.AttributeSet;
 import android.widget.RatingBar;
+import androidx.appcompat.widget.AppCompatRatingBar;
 
 public class GalleryRatingBar extends AppCompatRatingBar
         implements RatingBar.OnRatingBarChangeListener {

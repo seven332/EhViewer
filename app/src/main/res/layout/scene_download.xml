@@ -60,42 +60,42 @@
         android:paddingRight="@dimen/corner_fab_margin"
         android:paddingBottom="@dimen/corner_fab_margin">
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_check_all_dark_x24"
             app:backgroundTint="?attr/widgetColorThemeAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_play_dark_x24"
             app:backgroundTint="?attr/widgetColorThemeAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_pause_dark_x24"
             app:backgroundTint="?attr/widgetColorThemeAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_delete_dark_x24"
             app:backgroundTint="?attr/widgetColorThemeAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_folder_move_dark_x24"
             app:backgroundTint="?attr/widgetColorThemeAccent"
             style="@style/Widget.Design.FloatingActionButton.Mini"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/v_close_dark_x24"

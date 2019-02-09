@@ -16,8 +16,7 @@
 
 package com.hippo.util;
 
-
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.exception.EhException;

@@ -19,10 +19,9 @@ package com.hippo.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.View;
-
+import androidx.appcompat.widget.AppCompatImageView;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.MathUtils;
 

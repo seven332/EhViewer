@@ -16,7 +16,7 @@
 
 package com.hippo.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.hippo.yorozuya.thread.PriorityThreadFactory;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

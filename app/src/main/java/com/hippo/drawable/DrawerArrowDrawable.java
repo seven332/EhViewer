@@ -27,8 +27,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.MathUtils;
 

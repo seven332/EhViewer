@@ -17,8 +17,8 @@
 package com.hippo.ehviewer.client;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.Base64;
+import androidx.annotation.Nullable;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;

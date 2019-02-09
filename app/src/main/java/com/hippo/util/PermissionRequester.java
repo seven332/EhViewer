@@ -19,14 +19,14 @@ package com.hippo.util;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 
 public class PermissionRequester {
 
     /**
      * @return true for there no need to request, do your work it now.
-     * false for do in {@link android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback#onRequestPermissionsResult(int, String[], int[])}
+     * false for do in {@link androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback#onRequestPermissionsResult(int, String[], int[])}
      */
     public static boolean request(final Activity activity, final String permission, String rationale, final int requestCode) {
         if (!(activity instanceof ActivityCompat.OnRequestPermissionsResultCallback)) {

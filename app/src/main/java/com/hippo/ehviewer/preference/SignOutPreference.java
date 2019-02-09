@@ -17,10 +17,9 @@
 package com.hippo.ehviewer.preference;
 
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AlertDialog;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.preference.MessagePreference;

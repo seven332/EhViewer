@@ -17,11 +17,11 @@
 package com.hippo.ehviewer.widget;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
 import com.hippo.util.ExceptionUtils;
 
 public class SearchEditText extends AppCompatEditText {

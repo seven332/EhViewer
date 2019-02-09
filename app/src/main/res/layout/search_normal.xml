@@ -36,19 +36,19 @@
         android:checkedButton="@+id/search_normal_search"
         app:columnCount="2">
 
-        <android.support.v7.widget.AppCompatRadioButton
+        <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/search_normal_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/search_normal_search"/>
 
-        <android.support.v7.widget.AppCompatRadioButton
+        <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/search_specify_uploader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/search_specify_uploader"/>
 
-        <android.support.v7.widget.AppCompatRadioButton
+        <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/search_specify_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/search_enable_advance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

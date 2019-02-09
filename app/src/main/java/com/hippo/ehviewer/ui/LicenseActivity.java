@@ -17,10 +17,9 @@
 package com.hippo.ehviewer.ui;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.webkit.WebView;
-
+import androidx.annotation.Nullable;
 import com.hippo.ehviewer.R;
 
 public class LicenseActivity extends ToolbarActivity {

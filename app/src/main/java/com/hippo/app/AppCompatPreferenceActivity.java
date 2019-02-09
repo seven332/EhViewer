@@ -16,37 +16,68 @@
 
 package com.hippo.app;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.support.annotation.CallSuper;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatCallback;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import androidx.annotation.CallSuper;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatCallback;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.VectorEnabledTintResources;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
 
 public abstract class AppCompatPreferenceActivity extends PreferenceActivity implements AppCompatCallback,
-        TaskStackBuilder.SupportParentable, ActionBarDrawerToggle.DelegateProvider {
+    TaskStackBuilder.SupportParentable, ActionBarDrawerToggle.DelegateProvider {
 
     private AppCompatDelegate mDelegate;
+    private int mThemeId = 0;
+    private Resources mResources;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        getDelegate().installViewFactory();
-        getDelegate().onCreate(savedInstanceState);
+        final AppCompatDelegate delegate = getDelegate();
+        delegate.installViewFactory();
+        delegate.onCreate(savedInstanceState);
+        if (delegate.applyDayNight() && mThemeId != 0) {
+            // If DayNight has been applied, we need to re-apply the theme for
+            // the changes to take effect. On API 23+, we should bypass
+            // setTheme(), which will no-op if the theme ID is identical to the
+            // current theme ID.
+            if (Build.VERSION.SDK_INT >= 23) {
+                onApplyThemeResource(getTheme(), mThemeId, false);
+            } else {
+                setTheme(mThemeId);
+            }
+        }
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void setTheme(@StyleRes final int resid) {
+        super.setTheme(resid);
+        // Keep hold of the theme id so that we can re-set it later if needed
+        mThemeId = resid;
     }
 
     @Override
@@ -68,26 +99,25 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
     }
 
     /**
-     * Set a {@link android.widget.Toolbar Toolbar} to act as the {@link android.support.v7.app.ActionBar} for this
-     * Activity window.
+     * Set a {@link android.widget.Toolbar Toolbar} to act as the
+     * {@link androidx.appcompat.app.ActionBar} for this Activity window.
      *
      * <p>When set to a non-null value the {@link #getActionBar()} method will return
-     * an {@link android.support.v7.app.ActionBar} object that can be used to control the given toolbar as if it were
-     * a traditional window decor action bar. The toolbar's menu will be populated with the
-     * Activity's options menu and the navigation button will be wired through the standard
-     * {@link android.R.id#home home} menu select action.</p>
+     * an {@link androidx.appcompat.app.ActionBar} object that can be used to control the given
+     * toolbar as if it were a traditional window decor action bar. The toolbar's menu will be
+     * populated with the Activity's options menu and the navigation button will be wired through
+     * the standard {@link android.R.id#home home} menu select action.</p>
      *
      * <p>In order to use a Toolbar within the Activity's window content the application
      * must not request the window feature
      * {@link android.view.Window#FEATURE_ACTION_BAR FEATURE_SUPPORT_ACTION_BAR}.</p>
      *
-     * @param toolbar Toolbar to set as the Activity's action bar
+     * @param toolbar Toolbar to set as the Activity's action bar, or {@code null} to clear it
      */
     public void setSupportActionBar(@Nullable Toolbar toolbar) {
         getDelegate().setSupportActionBar(toolbar);
     }
 
-    @NonNull
     @Override
     public MenuInflater getMenuInflater() {
         return getDelegate().getMenuInflater();
@@ -117,6 +147,24 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         getDelegate().onConfigurationChanged(newConfig);
+        if (mResources != null) {
+            // The real (and thus managed) resources object was already updated
+            // by ResourcesManager, so pull the current metrics from there.
+            final DisplayMetrics newMetrics = super.getResources().getDisplayMetrics();
+            mResources.updateConfiguration(newConfig, newMetrics);
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        getDelegate().onPostResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getDelegate().onStart();
     }
 
     @Override
@@ -125,10 +173,10 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
         getDelegate().onStop();
     }
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        getDelegate().onPostResume();
+    public <T extends View> T findViewById(@IdRes int id) {
+        return getDelegate().findViewById(id);
     }
 
     @Override
@@ -139,7 +187,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
 
         final ActionBar ab = getSupportActionBar();
         if (item.getItemId() == android.R.id.home && ab != null &&
-                (ab.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0) {
+            (ab.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0) {
             return onSupportNavigateUp();
         }
         return false;
@@ -165,7 +213,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      * </p>
      *
      * @param featureId The desired feature as defined in
-     * {@link android.view.Window} or {@link android.support.v4.view.WindowCompat}.
+     * {@link android.view.Window} or {@link androidx.core.view.WindowCompat}.
      * @return Returns true if the requested feature is supported and now enabled.
      *
      * @see android.app.Activity#requestWindowFeature
@@ -192,7 +240,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      */
     @Override
     @CallSuper
-    public void onSupportActionModeStarted(ActionMode mode) {
+    public void onSupportActionModeStarted(@NonNull ActionMode mode) {
     }
 
     /**
@@ -203,7 +251,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      */
     @Override
     @CallSuper
-    public void onSupportActionModeFinished(ActionMode mode) {
+    public void onSupportActionModeFinished(@NonNull ActionMode mode) {
     }
 
     /**
@@ -217,12 +265,47 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      */
     @Nullable
     @Override
-    public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
+    public ActionMode onWindowStartingSupportActionMode(@NonNull ActionMode.Callback callback) {
         return null;
     }
 
-    public ActionMode startSupportActionMode(ActionMode.Callback callback) {
+    /**
+     * Start an action mode.
+     *
+     * @param callback Callback that will manage lifecycle events for this context mode
+     * @return The ContextMode that was started, or null if it was canceled
+     */
+    @Nullable
+    public ActionMode startSupportActionMode(@NonNull ActionMode.Callback callback) {
         return getDelegate().startSupportActionMode(callback);
+    }
+
+    /**
+     * @deprecated Progress bars are no longer provided in AppCompat.
+     */
+    @Deprecated
+    public void setSupportProgressBarVisibility(boolean visible) {
+    }
+
+    /**
+     * @deprecated Progress bars are no longer provided in AppCompat.
+     */
+    @Deprecated
+    public void setSupportProgressBarIndeterminateVisibility(boolean visible) {
+    }
+
+    /**
+     * @deprecated Progress bars are no longer provided in AppCompat.
+     */
+    @Deprecated
+    public void setSupportProgressBarIndeterminate(boolean indeterminate) {
+    }
+
+    /**
+     * @deprecated Progress bars are no longer provided in AppCompat.
+     */
+    @Deprecated
+    public void setSupportProgress(int progress) {
     }
 
     /**
@@ -233,7 +316,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      * a different task.
      *
      * <p>The default implementation of this method adds the parent chain of this activity
-     * as specified in the manifest to the supplied {@link android.support.v4.app.TaskStackBuilder}. Applications
+     * as specified in the manifest to the supplied {@link androidx.core.app.TaskStackBuilder}. Applications
      * may choose to override this method to construct the desired task stack in a different
      * way.</p>
      *
@@ -243,12 +326,12 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      *
      * <p>Applications that wish to supply extra Intent parameters to the parent stack defined
      * by the manifest should override
-     * {@link #onPrepareSupportNavigateUpTaskStack(android.support.v4.app.TaskStackBuilder)}.</p>
+     * {@link #onPrepareSupportNavigateUpTaskStack(androidx.core.app.TaskStackBuilder)}.</p>
      *
      * @param builder An empty TaskStackBuilder - the application should add intents representing
      *                the desired task stack
      */
-    public void onCreateSupportNavigateUpTaskStack(TaskStackBuilder builder) {
+    public void onCreateSupportNavigateUpTaskStack(@NonNull TaskStackBuilder builder) {
         builder.addParentStack(this);
     }
 
@@ -259,15 +342,15 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      * Prepare the synthetic task stack that will be generated during Up navigation
      * from a different task.
      *
-     * <p>This method receives the {@link android.support.v4.app.TaskStackBuilder} with the constructed series of
-     * Intents as generated by {@link #onCreateSupportNavigateUpTaskStack(android.support.v4.app.TaskStackBuilder)}.
+     * <p>This method receives the {@link androidx.core.app.TaskStackBuilder} with the constructed series of
+     * Intents as generated by {@link #onCreateSupportNavigateUpTaskStack(androidx.core.app.TaskStackBuilder)}.
      * If any extra data should be added to these intents before launching the new task,
      * the application should override this method and add that data here.</p>
      *
      * @param builder A TaskStackBuilder that has been populated with Intents by
      *                onCreateNavigateUpTaskStack.
      */
-    public void onPrepareSupportNavigateUpTaskStack(TaskStackBuilder builder) {
+    public void onPrepareSupportNavigateUpTaskStack(@NonNull TaskStackBuilder builder) {
     }
 
     /**
@@ -278,7 +361,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      * default Up navigation will be handled automatically. See
      * {@link #getSupportParentActivityIntent()} for how to specify the parent. If any activity
      * along the parent chain requires extra Intent arguments, the Activity subclass
-     * should override the method {@link #onPrepareSupportNavigateUpTaskStack(android.support.v4.app.TaskStackBuilder)}
+     * should override the method {@link #onPrepareSupportNavigateUpTaskStack(androidx.core.app.TaskStackBuilder)}
      * to supply those arguments.</p>
      *
      * <p>See <a href="{@docRoot}guide/topics/fundamentals/tasks-and-back-stack.html">Tasks and
@@ -286,7 +369,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      * <a href="{@docRoot}design/patterns/navigation.html">Navigation</a> from the design guide
      * for more information about navigating within your app.</p>
      *
-     * <p>See the {@link android.support.v4.app.TaskStackBuilder} class and the Activity methods
+     * <p>See the {@link androidx.core.app.TaskStackBuilder} class and the Activity methods
      * {@link #getSupportParentActivityIntent()}, {@link #supportShouldUpRecreateTask(android.content.Intent)}, and
      * {@link #supportNavigateUpTo(android.content.Intent)} for help implementing custom Up navigation.</p>
      *
@@ -322,15 +405,15 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
 
     /**
      * Obtain an {@link android.content.Intent} that will launch an explicit target activity
-     * specified by sourceActivity's {@link android.support.v4.app.NavUtils#PARENT_ACTIVITY} &lt;meta-data&gt;
+     * specified by sourceActivity's {@link androidx.core.app.NavUtils#PARENT_ACTIVITY} &lt;meta-data&gt;
      * element in the application's manifest. If the device is running
      * Jellybean or newer, the android:parentActivityName attribute will be preferred
      * if it is present.
      *
      * @return a new Intent targeting the defined parent activity of sourceActivity
      */
-    @Override
     @Nullable
+    @Override
     public Intent getSupportParentActivityIntent() {
         return NavUtils.getParentActivityIntent(this);
     }
@@ -342,13 +425,13 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      * <p>If this method returns false the app can trivially call
      * {@link #supportNavigateUpTo(android.content.Intent)} using the same parameters to correctly perform
      * up navigation. If this method returns false, the app should synthesize a new task stack
-     * by using {@link android.support.v4.app.TaskStackBuilder} or another similar mechanism to perform up navigation.</p>
+     * by using {@link androidx.core.app.TaskStackBuilder} or another similar mechanism to perform up navigation.</p>
      *
      * @param targetIntent An intent representing the target destination for up navigation
      * @return true if navigating up should recreate a new task stack, false if the same task
      *         should be used for the destination
      */
-    public boolean supportShouldUpRecreateTask(Intent targetIntent) {
+    public boolean supportShouldUpRecreateTask(@NonNull Intent targetIntent) {
         return NavUtils.shouldUpRecreateTask(this, targetIntent);
     }
 
@@ -364,7 +447,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
      *
      * @param upIntent An intent representing the target destination for up navigation
      */
-    public void supportNavigateUpTo(Intent upIntent) {
+    public void supportNavigateUpTo(@NonNull Intent upIntent) {
         NavUtils.navigateUpTo(this, upIntent);
     }
 
@@ -375,12 +458,113 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity imp
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * <p>Please note: AppCompat uses its own feature id for the action bar:
+     * {@link AppCompatDelegate#FEATURE_SUPPORT_ACTION_BAR FEATURE_SUPPORT_ACTION_BAR}.</p>
+     */
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return super.onMenuOpened(featureId, menu);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Please note: AppCompat uses its own feature id for the action bar:
+     * {@link AppCompatDelegate#FEATURE_SUPPORT_ACTION_BAR FEATURE_SUPPORT_ACTION_BAR}.</p>
+     */
+    @Override
+    public void onPanelClosed(int featureId, Menu menu) {
+        super.onPanelClosed(featureId, menu);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getDelegate().onSaveInstanceState(outState);
+    }
+
+    /**
      * @return The {@link AppCompatDelegate} being used by this Activity.
      */
+    @NonNull
     public AppCompatDelegate getDelegate() {
         if (mDelegate == null) {
             mDelegate = AppCompatDelegate.create(this, this);
         }
         return mDelegate;
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        // Let support action bars open menus in response to the menu key prioritized over
+        // the window handling it
+        final int keyCode = event.getKeyCode();
+        final ActionBar actionBar = getSupportActionBar();
+        if (keyCode == KeyEvent.KEYCODE_MENU
+            && actionBar != null && actionBar.onMenuKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public Resources getResources() {
+        if (mResources == null && VectorEnabledTintResources.shouldBeUsed()) {
+            mResources = new VectorEnabledTintResources(this, super.getResources());
+        }
+        return mResources == null ? super.getResources() : mResources;
+    }
+
+    /**
+     * KeyEvents with non-default modifiers are not dispatched to menu's performShortcut in API 25
+     * or lower. Here, we check if the keypress corresponds to a menuitem's shortcut combination
+     * and perform the corresponding action.
+     */
+    private boolean performMenuItemShortcut(int keycode, KeyEvent event) {
+        if (!(Build.VERSION.SDK_INT >= 26) && !event.isCtrlPressed()
+            && !KeyEvent.metaStateHasNoModifiers(event.getMetaState())
+            && event.getRepeatCount() == 0
+            && !KeyEvent.isModifierKey(event.getKeyCode())) {
+            final Window currentWindow = getWindow();
+            if (currentWindow != null && currentWindow.getDecorView() != null) {
+                final View decorView = currentWindow.getDecorView();
+                if (decorView.dispatchKeyShortcutEvent(event)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (performMenuItemShortcut(keyCode, event)) {
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public void openOptionsMenu() {
+        ActionBar actionBar = getSupportActionBar();
+        if (getWindow().hasFeature(Window.FEATURE_OPTIONS_PANEL)
+            && (actionBar == null || !actionBar.openOptionsMenu())) {
+            super.openOptionsMenu();
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public void closeOptionsMenu() {
+        ActionBar actionBar = getSupportActionBar();
+        if (getWindow().hasFeature(Window.FEATURE_OPTIONS_PANEL)
+            && (actionBar == null || !actionBar.closeOptionsMenu())) {
+            super.closeOptionsMenu();
+        }
     }
 }
