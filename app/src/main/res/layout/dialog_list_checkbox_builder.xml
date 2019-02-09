@@ -37,7 +37,7 @@
         android:clipToPadding="false"
         style="@style/Indicating"/>
 
-    <androidx.appcompat.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
