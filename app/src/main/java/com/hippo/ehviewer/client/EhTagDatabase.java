@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
+import com.hippo.util.ExceptionUtils;
 import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.util.TextUrl;
 import com.hippo.yorozuya.FileUtils;
@@ -252,7 +253,8 @@ public class EhTagDatabase {
       }
 
       return true;
-    } catch (IOException e) {
+    } catch (Throwable t) {
+      ExceptionUtils.throwIfFatal(t);
       return false;
     }
   }
