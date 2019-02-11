@@ -1023,6 +1023,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
 
                 switch (which) {
                     case 0: // Refresh
+                        mGalleryProvider.removeCache(page);
                         mGalleryProvider.forceRequest(page);
                         break;
                     case 1: // Share
