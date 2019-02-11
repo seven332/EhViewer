@@ -24,6 +24,12 @@
         android:summary="@string/settings_advanced_save_parse_error_body_summary"
         android:defaultValue="@bool/beta"/>
 
+    <com.hippo.preference.SwitchPreference
+        android:key="save_crash_log"
+        android:title="@string/settings_advanced_save_crash_log"
+        android:summary="@string/settings_advanced_save_crash_log_summary"
+        android:defaultValue="false"/>
+
     <Preference
         android:key="dump_logcat"
         android:title="@string/settings_advanced_dump_logcat"

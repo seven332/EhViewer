@@ -546,6 +546,8 @@
     <string name="settings_advanced">Advanced</string>
     <string name="settings_advanced_save_parse_error_body">Save html content when parsing error</string>
     <string name="settings_advanced_save_parse_error_body_summary">Html content may be privacy-sensitive</string>
+    <string name="settings_advanced_save_crash_log">Save crash log when app crashes</string>
+    <string name="settings_advanced_save_crash_log_summary">Crash logs help developers fix bugs</string>
     <string name="settings_advanced_dump_logcat">Dump logcat</string>
     <string name="settings_advanced_dump_logcat_summary">Save logcat to external storage</string>
     <string name="settings_advanced_dump_logcat_failed">Dump logcat failed</string>

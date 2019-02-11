@@ -104,6 +104,19 @@ public class EhApplication extends RecordingApplication {
     public void onCreate() {
         instance = this;
 
+        Thread.UncaughtExceptionHandler handler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            try {
+                if (Settings.getSaveCrashLog()) {
+                    Crash.saveCrashLog(instance, e);
+                }
+            } catch (Throwable ignored) { }
+
+            if (handler != null) {
+                handler.uncaughtException(t, e);
+            }
+        });
+
         super.onCreate();
 
         GetText.initialize(this);

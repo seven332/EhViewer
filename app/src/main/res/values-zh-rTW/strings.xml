@@ -502,6 +502,8 @@
     <string name="settings_advanced">進階</string>
     <string name="settings_advanced_save_parse_error_body">解析失敗時儲存網頁的內容</string>
     <string name="settings_advanced_save_parse_error_body_summary">網頁內容可能含有敏感的隱私資料</string>
+    <string name="settings_advanced_save_crash_log">應用崩潰時儲存錯誤日誌</string>
+    <string name="settings_advanced_save_crash_log_summary">錯誤日誌可以幫助開發者修正問題</string>
     <string name="settings_advanced_dump_logcat">傾印log</string>
     <string name="settings_advanced_dump_logcat_summary">儲存log紀錄至外接儲存裝置中</string>
     <string name="settings_advanced_dump_logcat_failed">無法傾印log紀錄</string>

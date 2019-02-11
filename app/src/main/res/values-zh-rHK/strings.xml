@@ -502,6 +502,8 @@
     <string name="settings_advanced">高級</string>
     <string name="settings_advanced_save_parse_error_body">解析失敗時保存頁面內容</string>
     <string name="settings_advanced_save_parse_error_body_summary">頁面內容可能含有隱私敏感信息</string>
+    <string name="settings_advanced_save_crash_log">應用崩潰時保存錯誤日誌</string>
+    <string name="settings_advanced_save_crash_log_summary">錯誤日誌可以幫助開發者修正問題</string>
     <string name="settings_advanced_dump_logcat">導出日誌</string>
     <string name="settings_advanced_dump_logcat_summary">保存日誌至外置存儲器</string>
     <string name="settings_advanced_dump_logcat_failed">導出日誌失敗</string>

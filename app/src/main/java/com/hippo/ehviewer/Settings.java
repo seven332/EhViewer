@@ -950,6 +950,13 @@ public class Settings {
         putBoolean(KEY_SAVE_PARSE_ERROR_BODY, value);
     }
 
+    private static final String KEY_SAVE_CRASH_LOG = "save_crash_log";
+    private static final boolean DEFAULT_SAVE_CRASH_LOG = false;
+
+    public static boolean getSaveCrashLog() {
+        return getBoolean(KEY_SAVE_CRASH_LOG, DEFAULT_SAVE_CRASH_LOG);
+    }
+
     public static final String KEY_SECURITY = "security";
     public static final String DEFAULT_SECURITY = "";
 
