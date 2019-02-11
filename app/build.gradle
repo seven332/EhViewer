@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-chinese-string'
 
-if (new File('google-services.json').exists()) {
+if (file('google-services.json').exists()) {
     apply plugin: 'com.google.gms.google-services'
     apply plugin: 'io.fabric'
 }
