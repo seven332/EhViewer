@@ -91,7 +91,7 @@ dependencies {
     implementation 'com.github.seven332:refreshlayout:0.1.0'
     implementation 'com.github.seven332:ripple:0.1.2'
     implementation 'com.github.seven332:streampipe:0.1.0'
-    implementation 'com.github.seven332:tuxiang:0.1.2'
+    implementation 'com.github.seven332:tuxiang:0.1.6'
     implementation 'com.github.seven332:unifile:9ec57bcd8f'
     implementation 'com.github.seven332:yorozuya:0.1.2'
     implementation 'com.github.seven332:yorozuya-thread:0.1.1'
@@ -108,9 +108,9 @@ dependencies {
 
 configurations.all {
     resolutionStrategy {
-        force 'com.github.seven332:glgallery:bb2a43fdd5'
-        force 'com.github.seven332:glview:0b2bbb8032'
-        force 'com.github.seven332:glview-image:69930e924e'
+        force 'com.github.seven332:glgallery:59acb75236'
+        force 'com.github.seven332:glview:ba6aee61d7'
+        force 'com.github.seven332:glview-image:68d94b0fc2'
         force 'com.github.seven332:image:09b43c0c68'
 
         exclude group: 'com.github.seven332', module: 'okhttp'
