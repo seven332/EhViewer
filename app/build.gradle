@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-chinese-string'
 
 if (file('google-services.json').exists()) {
     apply plugin: 'com.google.gms.google-services'
