@@ -25,6 +25,11 @@ public class ParseException extends EhException {
         mBody = body;
     }
 
+    public ParseException(String detailMessage, String body, Throwable cause) {
+        super(detailMessage, cause);
+        mBody = body;
+    }
+
     public String getBody() {
         return mBody;
     }

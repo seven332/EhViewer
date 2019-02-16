@@ -21,4 +21,8 @@ public class EhException extends Exception {
     public EhException(String detailMessage) {
         super(detailMessage);
     }
+
+    public EhException(String detailMessage, Throwable cause) {
+        super(detailMessage, cause);
+    }
 }
