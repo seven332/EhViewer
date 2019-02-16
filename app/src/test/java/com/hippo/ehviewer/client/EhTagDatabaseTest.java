@@ -35,7 +35,6 @@ public class EhTagDatabaseTest {
   @Test
   public void readTheList() throws IOException {
     InputStream resource = EhTagDatabaseTest.class.getResourceAsStream("EhTagDatabaseTest");
-    if (resource == null) return;
 
     EhTagDatabase db;
     try (BufferedSource source = Okio.buffer(Okio.source(resource))) {
