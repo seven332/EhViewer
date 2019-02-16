@@ -17,10 +17,8 @@
 package com.hippo.ehviewer.client.parser;
 
 import android.text.TextUtils;
-
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.yorozuya.StringUtils;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +27,8 @@ public class GalleryPageParser {
     private static final Pattern PATTERN_IMAGE_URL = Pattern.compile("<img[^>]*src=\"([^\"]+)\" style");
     private static final Pattern PATTERN_SKIP_HATH_KEY = Pattern.compile("onclick=\"return nl\\('([^\\)]+)'\\)");
     private static final Pattern PATTERN_ORIGIN_IMAGE_URL = Pattern.compile("<a href=\"([^\"]+)fullimg.php([^\"]+)\">");
+    // TODO Not sure about the size of show keys
+    private static final Pattern PATTERN_SHOW_KEY = Pattern.compile("var showkey=\"([0-9a-z]+)\";");
 
     public static Result parse(String body) throws ParseException {
         Matcher m;
@@ -45,11 +45,15 @@ public class GalleryPageParser {
         if (m.find()) {
             result.originImageUrl = StringUtils.unescapeXml(m.group(1)) + "fullimg.php" + StringUtils.unescapeXml(m.group(2));
         }
+        m = PATTERN_SHOW_KEY.matcher(body);
+        if (m.find()) {
+            result.showKey = m.group(1);
+        }
 
-        if (!TextUtils.isEmpty(result.imageUrl)) {
+        if (!TextUtils.isEmpty(result.imageUrl) && !TextUtils.isEmpty(result.showKey)) {
             return result;
         } else {
-            throw new ParseException("Parse image url and skip hath key error", body);
+            throw new ParseException("Parse image url and show error", body);
         }
     }
 
@@ -57,5 +61,6 @@ public class GalleryPageParser {
         public String imageUrl;
         public String skipHathKey;
         public String originImageUrl;
+        public String showKey;
     }
 }
