@@ -38,6 +38,7 @@ import com.hippo.ehviewer.client.parser.ForumsParser;
 import com.hippo.ehviewer.client.parser.GalleryApiParser;
 import com.hippo.ehviewer.client.parser.GalleryDetailParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
+import com.hippo.ehviewer.client.parser.GalleryPageApiParser;
 import com.hippo.ehviewer.client.parser.GalleryPageParser;
 import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
 import com.hippo.ehviewer.client.parser.ProfileParser;
@@ -982,6 +983,43 @@ public class EhEngine {
             headers = response.headers();
             body = response.body().string();
             return GalleryPageParser.parse(body);
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+    }
+
+    public static GalleryPageApiParser.Result getGalleryPageApi(@Nullable EhClient.Task task,
+            OkHttpClient okHttpClient, long gid, int index, String pToken, String showKey) throws Throwable {
+        final JSONObject json = new JSONObject();
+        json.put("method", "showpage");
+        json.put("gid", gid);
+        json.put("page", index + 1);
+        json.put("imgkey", pToken);
+        json.put("showkey", showKey);
+        final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
+        String url = EhUrl.getApiUrl();
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+            .post(requestBody)
+            .build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        if (null != task) {
+            task.setCall(call);
+        }
+
+        String body = null;
+        Headers headers = null;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            return GalleryPageApiParser.parse(body);
         } catch (Throwable e) {
             ExceptionUtils.throwIfFatal(e);
             throwException(call, code, headers, body, e);
