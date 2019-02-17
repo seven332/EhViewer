@@ -1704,7 +1704,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     mErrorText.setVisibility(View.GONE);
                     mListView.setVisibility(View.GONE);
                     mRequest = new EhRequest().setMethod(EhClient.METHOD_ARCHIVE_LIST)
-                            .setArgs(url)
+                            .setArgs(url, mGid, mToken)
                             .setCallback(this);
                     EhApplication.getEhClient(context).execute(mRequest);
                 } else {
@@ -1819,7 +1819,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     mErrorText.setVisibility(View.GONE);
                     mListView.setVisibility(View.GONE);
                     mRequest = new EhRequest().setMethod(EhClient.METHOD_GET_TORRENT_LIST)
-                            .setArgs(url)
+                            .setArgs(url, mGid, mToken)
                             .setCallback(this);
                     EhApplication.getEhClient(context).execute(mRequest);
                 } else {

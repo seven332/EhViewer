@@ -19,13 +19,11 @@ package com.hippo.ehviewer.client;
 import android.content.Context;
 import android.os.AsyncTask;
 import com.hippo.ehviewer.EhApplication;
-import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.CancelledException;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.IoThreadPoolExecutor;
 import com.hippo.yorozuya.SimpleHandler;
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,7 +36,6 @@ public class EhClient {
 
     public static final int METHOD_SIGN_IN = 0;
     public static final int METHOD_GET_GALLERY_LIST = 1;
-    public static final int METHOD_FILL_GALLERY_LIST_BY_API = 2;
     public static final int METHOD_GET_GALLERY_DETAIL = 3;
     public static final int METHOD_GET_PREVIEW_SET = 4;
     public static final int METHOD_GET_RATE_GALLERY = 5;
@@ -145,8 +142,6 @@ public class EhClient {
                         return EhEngine.signIn(this, mOkHttpClient, (String) params[0], (String) params[1], (String) params[2], (String) params[3]);
                     case METHOD_GET_GALLERY_LIST:
                         return EhEngine.getGalleryList(this, mOkHttpClient, (String) params[0]);
-                    case METHOD_FILL_GALLERY_LIST_BY_API:
-                        return EhEngine.fillGalleryListByApi(this, mOkHttpClient, (List<GalleryInfo>) params[0]);
                     case METHOD_GET_GALLERY_DETAIL:
                         return EhEngine.getGalleryDetail(this, mOkHttpClient, (String) params[0]);
                     case METHOD_GET_PREVIEW_SET:
@@ -166,7 +161,7 @@ public class EhClient {
                     case METHOD_MODIFY_FAVORITES:
                         return EhEngine.modifyFavorites(this, mOkHttpClient, (String) params[0], (long[]) params[1], (Integer) params[2], (Boolean) params[3]);
                     case METHOD_GET_TORRENT_LIST:
-                        return EhEngine.getTorrentList(this, mOkHttpClient, (String) params[0]);
+                        return EhEngine.getTorrentList(this, mOkHttpClient, (String) params[0], (Long) params[1], (String) params[2]);
                     case METHOD_GET_WHATS_HOT:
                         return EhEngine.getWhatsHot(this, mOkHttpClient);
                     case METHOD_GET_PROFILE:
@@ -176,7 +171,7 @@ public class EhClient {
                     case METHOD_IMAGE_SEARCH:
                         return EhEngine.imageSearch(this, mOkHttpClient, (File) params[0], (Boolean) params[1], (Boolean) params[2], (Boolean) params[3]);
                     case METHOD_ARCHIVE_LIST:
-                        return EhEngine.getArchiveList(this, mOkHttpClient, (String) params[0]);
+                        return EhEngine.getArchiveList(this, mOkHttpClient, (String) params[0], (Long) params[1], (String) params[2]);
                     case METHOD_DOWNLOAD_ARCHIVE:
                         return EhEngine.downloadArchive(this, mOkHttpClient, (Long) params[0], (String) params[1], (String) params[2], (String) params[3]);
                     default:

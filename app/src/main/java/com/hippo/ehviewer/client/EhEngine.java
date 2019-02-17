@@ -145,8 +145,10 @@ public class EhEngine {
             builder.add("recaptcha_response_field", recaptchaResponse);
         }
         String url = EhUrl.API_SIGN_IN;
+        String referer = "https://forums.e-hentai.org/index.php?act=Login&CODE=00";
+        String origin = "https://forums.e-hentai.org";
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, referer, origin)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -174,8 +176,9 @@ public class EhEngine {
 
     public static GalleryListParser.Result getGalleryList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Throwable {
+        String referer = EhUrl.getReferer();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, referer).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -227,7 +230,7 @@ public class EhEngine {
 
         if (needFillByApi) {
             // Fill by api
-            fillGalleryListByApi(task, okHttpClient, list);
+            fillGalleryListByApi(task, okHttpClient, list, url);
 
             // Filter tag
             for (int i = 0, n = list.size(); i < n; i++) {
@@ -249,14 +252,14 @@ public class EhEngine {
 
     // At least, GalleryInfo contain valid gid and token
     public static List<GalleryInfo> fillGalleryListByApi(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
-            List<GalleryInfo> galleryInfoList) throws Throwable {
+            List<GalleryInfo> galleryInfoList, String referer) throws Throwable {
         // We can only request 25 items one time at most
         final int MAX_REQUEST_SIZE = 25;
         List<GalleryInfo> requestItems = new ArrayList<>(MAX_REQUEST_SIZE);
         for (int i = 0, size = galleryInfoList.size(); i < size; i++) {
             requestItems.add(galleryInfoList.get(i));
             if (requestItems.size() == MAX_REQUEST_SIZE || i == size - 1) {
-                doFillGalleryListByApi(task, okHttpClient, requestItems);
+                doFillGalleryListByApi(task, okHttpClient, requestItems, referer);
                 requestItems.clear();
             }
         }
@@ -264,7 +267,7 @@ public class EhEngine {
     }
 
     private static void doFillGalleryListByApi(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
-            List<GalleryInfo> galleryInfoList) throws Throwable {
+            List<GalleryInfo> galleryInfoList, String referer) throws Throwable {
         JSONObject json = new JSONObject();
         json.put("method", "gdata");
         JSONArray ja = new JSONArray();
@@ -278,8 +281,9 @@ public class EhEngine {
         json.put("gidlist", ja);
         json.put("namespace", 1);
         String url = EhUrl.getApiUrl();
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, referer, origin)
                 .post(RequestBody.create(MEDIA_TYPE_JSON, json.toString()))
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -307,8 +311,9 @@ public class EhEngine {
 
     public static GalleryDetail getGalleryDetail(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Throwable {
+        String referer = EhUrl.getReferer();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, referer).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -335,8 +340,9 @@ public class EhEngine {
 
     public static Pair<PreviewSet, Integer> getPreviewSet(
             @Nullable EhClient.Task task, OkHttpClient okHttpClient, String url) throws Throwable {
+        String referer = EhUrl.getReferer();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, referer).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -373,8 +379,10 @@ public class EhEngine {
         json.put("rating", (int) Math.ceil(rating * 2));
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
+        String referer = EhUrl.getGalleryDetailUrl(gid, token);
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, referer, origin)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -404,8 +412,9 @@ public class EhEngine {
             OkHttpClient okHttpClient, String url, String comment) throws Throwable {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("commenttext_new", comment);
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, url, origin)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -446,8 +455,10 @@ public class EhEngine {
                         new JSONArray().put(gid).put(gtoken).put(page + 1)));
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
+        String referer = EhUrl.getReferer();
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, referer, origin)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -475,8 +486,9 @@ public class EhEngine {
 
     public static FavoritesParser.Result getFavorites(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url, boolean callApi) throws Throwable {
+        String referer = EhUrl.getReferer();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, referer).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -503,7 +515,7 @@ public class EhEngine {
         List<GalleryInfo> list = result.galleryInfoList;
 
         if (list.size() > 0 && (TextUtils.isEmpty(list.get(0).uploader) || Settings.getShowJpnTitle() || Settings.getShowGalleryPages())) {
-            fillGalleryListByApi(task, okHttpClient, list);
+            fillGalleryListByApi(task, okHttpClient, list, url);
         }
 
         for (GalleryInfo info : list) {
@@ -534,8 +546,9 @@ public class EhEngine {
         builder.add("submit", "Apply Changes");
         builder.add("update", "1");
         String url = EhUrl.getAddFavorites(gid, token);
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, url, origin)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -588,8 +601,9 @@ public class EhEngine {
             builder.add("modifygids[]", Long.toString(gid));
         }
         builder.add("apply", "Apply");
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, url, origin)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -617,7 +631,7 @@ public class EhEngine {
 
         List<GalleryInfo> list = result.galleryInfoList;
         if (list.size() > 0 && (TextUtils.isEmpty(list.get(0).uploader) || Settings.getShowJpnTitle() || Settings.getShowGalleryPages())) {
-            fillGalleryListByApi(task, okHttpClient, list);
+            fillGalleryListByApi(task, okHttpClient, list, url);
         }
 
         for (GalleryInfo info : list) {
@@ -628,9 +642,10 @@ public class EhEngine {
     }
 
     public static Pair<String, String>[] getTorrentList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
-            String url) throws Throwable {
+            String url, long gid, String token) throws Throwable {
+        String referer = EhUrl.getGalleryDetailUrl(gid, token);
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, referer).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -658,9 +673,10 @@ public class EhEngine {
     }
 
     public static Pair<String, Pair<String, String>[]> getArchiveList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
-            String url) throws Throwable {
+            String url, long gid, String token) throws Throwable {
+        String referer = EhUrl.getGalleryDetailUrl(gid, token);
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, referer).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -698,8 +714,10 @@ public class EhEngine {
         FormBody.Builder builder = new FormBody.Builder();
         builder.add("hathdl_xres", res);
         String url = EhUrl.getDownloadArchive(gid, token, or);
+        String referer = EhUrl.getGalleryDetailUrl(gid, token);
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, referer, origin)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -736,7 +754,7 @@ public class EhEngine {
             OkHttpClient okHttpClient) throws Throwable {
         String url = EhUrl.HOST_E;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, null).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -762,7 +780,7 @@ public class EhEngine {
 
         if (list.size() > 0) {
             // Fill by api
-            fillGalleryListByApi(task, okHttpClient, list);
+            fillGalleryListByApi(task, okHttpClient, list, url);
         }
 
         for (GalleryInfo info : list) {
@@ -773,9 +791,9 @@ public class EhEngine {
     }
 
     private static ProfileParser.Result getProfileInternal(@Nullable EhClient.Task task,
-            OkHttpClient okHttpClient, String url) throws Throwable {
+            OkHttpClient okHttpClient, String url, String referer) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, referer).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -803,7 +821,7 @@ public class EhEngine {
             OkHttpClient okHttpClient) throws Throwable {
         String url = EhUrl.URL_FORUMS;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, null).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -819,7 +837,7 @@ public class EhEngine {
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            return getProfileInternal(task, okHttpClient, ForumsParser.parse(body));
+            return getProfileInternal(task, okHttpClient, ForumsParser.parse(body), url);
         } catch (Throwable e) {
             ExceptionUtils.throwIfFatal(e);
             throwException(call, code, headers, body, e);
@@ -839,8 +857,10 @@ public class EhEngine {
         json.put("comment_vote", commentVote);
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
+        String referer = EhUrl.getReferer();
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, referer, origin)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -900,8 +920,10 @@ public class EhEngine {
                 RequestBody.create(null, "File Search")
         );
         String url = EhUrl.getImageSearchUrl();
+        String referer = EhUrl.getReferer();
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, referer, origin)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -943,7 +965,7 @@ public class EhEngine {
 
         if (list.size() > 0 && (TextUtils.isEmpty(list.get(0).uploader) || Settings.getShowJpnTitle() || Settings.getShowGalleryPages() || sEhFilter.needCallApi())) {
             // Fill by api
-            fillGalleryListByApi(task, okHttpClient, list);
+            fillGalleryListByApi(task, okHttpClient, list, url);
 
             // Filter tag
             for (int i = 0, n = list.size(); i < n; i++) {
@@ -964,9 +986,10 @@ public class EhEngine {
     }
 
     public static GalleryPageParser.Result getGalleryPage(@Nullable EhClient.Task task,
-            OkHttpClient okHttpClient, String url) throws Throwable {
+            OkHttpClient okHttpClient, String url, long gid, String token) throws Throwable {
+        String referer = EhUrl.getGalleryDetailUrl(gid, token);
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url).build();
+        Request request = new EhRequestBuilder(url, referer).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -991,7 +1014,7 @@ public class EhEngine {
     }
 
     public static GalleryPageApiParser.Result getGalleryPageApi(@Nullable EhClient.Task task,
-            OkHttpClient okHttpClient, long gid, int index, String pToken, String showKey) throws Throwable {
+            OkHttpClient okHttpClient, long gid, int index, String pToken, String showKey, String previousPToken) throws Throwable {
         final JSONObject json = new JSONObject();
         json.put("method", "showpage");
         json.put("gid", gid);
@@ -1000,8 +1023,13 @@ public class EhEngine {
         json.put("showkey", showKey);
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
+        String referer = null;
+        if (index > 0 && previousPToken != null) {
+            referer = EhUrl.getPageUrl(gid, index - 1, previousPToken);
+        }
+        String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url)
+        Request request = new EhRequestBuilder(url, referer, origin)
             .post(requestBody)
             .build();
         Call call = okHttpClient.newCall(request);

@@ -20,7 +20,17 @@ import com.hippo.okhttp.ChromeRequestBuilder;
 
 public class EhRequestBuilder extends ChromeRequestBuilder {
 
-    public EhRequestBuilder(String url) {
+    public EhRequestBuilder(String url, String referer) {
+        this(url, referer, null);
+    }
+
+    public EhRequestBuilder(String url, String referer, String origin) {
         super(url);
+        if (referer != null) {
+            addHeader("Referer", referer);
+        }
+        if (origin != null) {
+            addHeader("Origin", origin);
+        }
     }
 }

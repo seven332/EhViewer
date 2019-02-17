@@ -49,6 +49,12 @@ public class EhUrl {
     public static final String URL_FAVORITES_EX = HOST_EX + "favorites.php";
     public static final String URL_FORUMS = "https://forums.e-hentai.org/";
 
+    public static final String REFERER_EX = "https://" + DOMAIN_EX;
+    public static final String REFERER_E = "https://" + DOMAIN_E;
+
+    public static final String ORIGIN_EX = REFERER_EX;
+    public static final String ORIGIN_E = REFERER_E;
+
     public static final String UCONFIG_E = HOST_E + "uconfig.php";
     public static final String UCONFIG_EX = HOST_EX + "uconfig.php";
 
@@ -86,6 +92,26 @@ public class EhUrl {
                 return API_E;
             case SITE_EX:
                 return API_EX;
+        }
+    }
+
+    public static String getReferer() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_E:
+                return REFERER_E;
+            case SITE_EX:
+                return REFERER_EX;
+        }
+    }
+
+    public static String getOrigin() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_E:
+                return ORIGIN_E;
+            case SITE_EX:
+                return ORIGIN_EX;
         }
     }
 
