@@ -146,7 +146,7 @@ public class EhEngine {
         }
         String url = EhUrl.API_SIGN_IN;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -175,7 +175,7 @@ public class EhEngine {
     public static GalleryListParser.Result getGalleryList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -308,7 +308,7 @@ public class EhEngine {
     public static GalleryDetail getGalleryDetail(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -336,7 +336,7 @@ public class EhEngine {
     public static Pair<PreviewSet, Integer> getPreviewSet(
             @Nullable EhClient.Task task, OkHttpClient okHttpClient, String url) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -374,7 +374,7 @@ public class EhEngine {
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -405,7 +405,7 @@ public class EhEngine {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("commenttext_new", comment);
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -447,7 +447,7 @@ public class EhEngine {
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -476,7 +476,7 @@ public class EhEngine {
     public static FavoritesParser.Result getFavorites(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url, boolean callApi) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -535,7 +535,7 @@ public class EhEngine {
         builder.add("update", "1");
         String url = EhUrl.getAddFavorites(gid, token);
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -589,7 +589,7 @@ public class EhEngine {
         }
         builder.add("apply", "Apply");
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -630,7 +630,7 @@ public class EhEngine {
     public static Pair<String, String>[] getTorrentList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -660,7 +660,7 @@ public class EhEngine {
     public static Pair<String, Pair<String, String>[]> getArchiveList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -699,7 +699,7 @@ public class EhEngine {
         builder.add("hathdl_xres", res);
         String url = EhUrl.getDownloadArchive(gid, token, or);
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -736,7 +736,7 @@ public class EhEngine {
             OkHttpClient okHttpClient) throws Throwable {
         String url = EhUrl.HOST_E;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -775,7 +775,7 @@ public class EhEngine {
     private static ProfileParser.Result getProfileInternal(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, String url) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -803,7 +803,7 @@ public class EhEngine {
             OkHttpClient okHttpClient) throws Throwable {
         String url = EhUrl.URL_FORUMS;
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -840,7 +840,7 @@ public class EhEngine {
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -901,7 +901,7 @@ public class EhEngine {
         );
         String url = EhUrl.getImageSearchUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
                 .post(builder.build())
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -966,7 +966,7 @@ public class EhEngine {
     public static GalleryPageParser.Result getGalleryPage(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, String url) throws Throwable {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -1001,7 +1001,7 @@ public class EhEngine {
         final RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, json.toString());
         String url = EhUrl.getApiUrl();
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig())
+        Request request = new EhRequestBuilder(url)
             .post(requestBody)
             .build();
         Call call = okHttpClient.newCall(request);

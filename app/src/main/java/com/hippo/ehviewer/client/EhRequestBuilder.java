@@ -16,17 +16,11 @@
 
 package com.hippo.ehviewer.client;
 
-import com.hippo.ehviewer.Settings;
 import com.hippo.okhttp.ChromeRequestBuilder;
 
 public class EhRequestBuilder extends ChromeRequestBuilder {
 
     public EhRequestBuilder(String url) {
-        this(url, Settings.getEhConfig());
-    }
-
-    public EhRequestBuilder(String url, EhConfig ehConfig) {
         super(url);
-        tag(ehConfig);
     }
 }

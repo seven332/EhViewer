@@ -33,7 +33,6 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
-import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.EhRequestBuilder;
 import com.hippo.ehviewer.client.EhUrl;
@@ -736,14 +735,14 @@ public final class SpiderQueen implements Runnable {
         }
     }
 
-    private SpiderInfo readSpiderInfoFromInternet(EhConfig config) {
+    private SpiderInfo readSpiderInfoFromInternet() {
         try {
             SpiderInfo spiderInfo = new SpiderInfo();
             spiderInfo.gid = mGalleryInfo.gid;
             spiderInfo.token = mGalleryInfo.token;
 
             Request request = new EhRequestBuilder(EhUrl.getGalleryDetailUrl(
-                    mGalleryInfo.gid, mGalleryInfo.token, 0, false), config).build();
+                    mGalleryInfo.gid, mGalleryInfo.token, 0, false)).build();
             Response response = mHttpClient.newCall(request).execute();
             String body = response.body().string();
 
@@ -757,7 +756,7 @@ public final class SpiderQueen implements Runnable {
         }
     }
 
-    private String getPTokenFromInternet(int index, EhConfig config) {
+    private String getPTokenFromInternet(int index) {
         SpiderInfo spiderInfo = mSpiderInfo.get();
         if (spiderInfo == null) {
             return null;
@@ -781,7 +780,7 @@ public final class SpiderQueen implements Runnable {
                 Log.d(TAG, "index " + index + ", previewIndex " + previewIndex +
                         ", previewPerPage " + spiderInfo.previewPerPage+ ", url " + url);
             }
-            Request request = new EhRequestBuilder(url, config).build();
+            Request request = new EhRequestBuilder(url).build();
             Response response = mHttpClient.newCall(request).execute();
             String body = response.body().string();
             readPreviews(body, previewIndex, spiderInfo);
@@ -827,11 +826,6 @@ public final class SpiderQueen implements Runnable {
     }
 
     private void runInternal() {
-        // Get EhConfig
-        EhConfig config = Settings.getEhConfig().clone();
-        config.previewSize = EhConfig.PREVIEW_SIZE_NORMAL;
-        config.setDirty();
-
         // Read spider info
         SpiderInfo spiderInfo = readSpiderInfoFromLocal();
 
@@ -842,7 +836,7 @@ public final class SpiderQueen implements Runnable {
 
         // Spider info from internet
         if (spiderInfo == null) {
-            spiderInfo = readSpiderInfoFromInternet(config);
+            spiderInfo = readSpiderInfoFromInternet();
         }
 
         // Error! Can't get spiderInfo
@@ -913,10 +907,10 @@ public final class SpiderQueen implements Runnable {
             }
 
             // Get pToken from internet
-            pToken = getPTokenFromInternet(index, config);
+            pToken = getPTokenFromInternet(index);
             if (null == pToken) {
                 // Preview size may changed, so try to get pToken twice
-                pToken = getPTokenFromInternet(index, config);
+                pToken = getPTokenFromInternet(index);
             }
 
             if (null == pToken) {
