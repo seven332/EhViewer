@@ -59,6 +59,7 @@ import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.drawerlayout.DrawerLayout;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -1369,6 +1370,7 @@ public final class GalleryListScene extends BaseScene
                         activity.getStageId(), getTag(), taskId));
                 request.setArgs();
                 mClient.execute(request);
+                Analytics.viewWhatsHot();
             } else if (ListUrlBuilder.MODE_IMAGE_SEARCH == mUrlBuilder.getMode()) {
                 EhRequest request = new EhRequest();
                 request.setMethod(EhClient.METHOD_IMAGE_SEARCH);
@@ -1378,6 +1380,7 @@ public final class GalleryListScene extends BaseScene
                         mUrlBuilder.isUseSimilarityScan(),
                         mUrlBuilder.isOnlySearchCovers(), mUrlBuilder.isShowExpunged());
                 mClient.execute(request);
+                Analytics.imageSearch();
             } else {
                 String url = mUrlBuilder.build();
                 EhRequest request = new EhRequest();
@@ -1386,6 +1389,7 @@ public final class GalleryListScene extends BaseScene
                         activity.getStageId(), getTag(), taskId));
                 request.setArgs(url);
                 mClient.execute(request);
+                Analytics.viewGalleryList();
             }
         }
 

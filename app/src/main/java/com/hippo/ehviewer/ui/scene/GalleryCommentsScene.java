@@ -55,6 +55,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hippo.android.resource.AttrResources;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.LinearDividerItemDecoration;
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.UrlOpener;
@@ -281,6 +282,8 @@ public final class GalleryCommentsScene extends ToolbarScene
                 .setCallback(new VoteCommentListener(context,
                         activity.getStageId(), getTag()));
         EhApplication.getEhClient(context).execute(request);
+
+        Analytics.voteComment(mGid, mToken);
     }
 
     private class InfoHolder extends RecyclerView.ViewHolder {
@@ -589,6 +592,8 @@ public final class GalleryCommentsScene extends ToolbarScene
                 EhApplication.getEhClient(context).execute(request);
                 hideSoftInput();
                 hideEditPanel(true);
+
+                Analytics.commentGallery(mGid, mToken);
             }
         }
     }

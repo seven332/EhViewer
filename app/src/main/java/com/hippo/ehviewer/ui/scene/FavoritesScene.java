@@ -53,6 +53,7 @@ import com.hippo.annotation.Implemented;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -299,6 +300,8 @@ public class FavoritesScene extends BaseScene implements
         }
 
         guideCollections();
+
+        Analytics.viewFavourite();
 
         return view;
     }

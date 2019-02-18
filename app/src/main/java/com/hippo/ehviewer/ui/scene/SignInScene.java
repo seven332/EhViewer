@@ -29,6 +29,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.textfield.TextInputLayout;
+import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
@@ -295,6 +296,7 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
                 .setArgs(username, password, challenge, response)
                 .setCallback(callback);
         EhApplication.getEhClient(context).execute(request);
+        Analytics.signIn();
 
         mSigningIn = true;
     }

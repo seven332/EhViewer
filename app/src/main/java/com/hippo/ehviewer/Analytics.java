@@ -20,17 +20,24 @@ import android.content.Context;
 import android.os.Bundle;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hippo.scene.SceneFragment;
-
+import com.hippo.util.ExceptionUtils;
+import com.hippo.util.IoThreadPoolExecutor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public final class Analytics {
 
     private static FirebaseAnalytics analytics;
+    private static String userId;
+    private static OkHttpClient client;
 
     private Analytics() {}
 
     public static void start(Context context) {
         analytics = FirebaseAnalytics.getInstance(context);
-        analytics.setUserId(Settings.getUserID());
+        userId = Settings.getUserID();
+        analytics.setUserId(userId);
+        client = EhApplication.getOkHttpClient(context);
     }
 
     public static boolean isEnabled() {
@@ -43,6 +50,91 @@ public final class Analytics {
             bundle.putString("scene_simple_class", scene.getClass().getSimpleName());
             bundle.putString("scene_class", scene.getClass().getName());
             analytics.logEvent("scene_view", bundle);
+        }
+    }
+
+    public static void signIn() {
+        addRecord("sign_in", null, null, null);
+    }
+
+    public static void viewGalleryList() {
+        addRecord("view_gallery_list", null, null, null);
+    }
+
+    public static void imageSearch() {
+        addRecord("image_search", null, null, null);
+    }
+
+    public static void viewWhatsHot() {
+        addRecord("view_whats_hot", null, null, null);
+    }
+
+    public static void viewHistory() {
+        addRecord("view_history", null, null, null);
+    }
+
+    public static void viewFavourite() {
+        addRecord("view_favourite", null, null, null);
+    }
+
+    public static void viewGallery(long gid, String token) {
+        addRecord("view_gallery", gid, token, null);
+    }
+
+    public static void readGallery(long gid, String token) {
+        addRecord("read_gallery", gid, token, null);
+    }
+
+    public static void downloadGallery(long gid, String token) {
+        addRecord("download_gallery", gid, token, null);
+    }
+
+    public static void rateGallery(long gid, String token) {
+        addRecord("rate_gallery", gid, token, null);
+    }
+
+    public static void commentGallery(long gid, String token) {
+        addRecord("comment_gallery", gid, token, null);
+    }
+
+    public static void voteComment(long gid, String token) {
+        addRecord("vote_comment", gid, token, null);
+    }
+
+    public static void addGalleryToFavourite(long gid, String token) {
+        addRecord("add_gallery_to_favourite", gid, token, null);
+    }
+
+    public static void downloadArchive(long gid, String token) {
+        addRecord("download_archive", gid, token, null);
+    }
+
+    private static void addRecord(String action, Long gid, String token, Integer page) {
+        if (isEnabled()) {
+            IoThreadPoolExecutor.getInstance().execute(() -> {
+                try {
+                    StringBuilder sb = new StringBuilder(150)
+                            .append("http://155.138.199.206:8080/addRecord?userId=")
+                            .append(userId)
+                            .append("&action=")
+                            .append(action);
+                    if (gid != null) {
+                        sb.append("&gid=").append(gid);
+                    }
+                    if (token != null) {
+                        sb.append("&token=").append(token);
+                    }
+                    if (page != null) {
+                        sb.append("&page=").append(page);
+                    }
+                    String url = sb.toString();
+
+                    Request request = new Request.Builder().url(url).build();
+                    client.newCall(request).execute().close();
+                } catch (Throwable t) {
+                    ExceptionUtils.throwIfFatal(t);
+                }
+            });
         }
     }
 }
