@@ -1078,7 +1078,6 @@ public final class SpiderQueen implements Runnable {
                     localShowKey = showKey.get();
                     if (localShowKey == null || forceHtml) {
                         if (leakSkipHathKey) {
-                            error = "No more new SkipHathKey";
                             break;
                         }
 
