@@ -19,6 +19,7 @@ package com.hippo.ehviewer.client.parser;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -196,6 +197,8 @@ public class GalleryListParser {
         if (gi.favoriteSlot == -2) {
             gi.favoriteSlot = EhDB.containLocalFavorites(gi.gid) ? -1 : -2;
         }
+        // Downloaded
+        gi.downloaded = EhApplication.getDownloadManager().containDownloadInfo(gi.gid);
 
         gi.generateSLang();
 
@@ -275,6 +278,9 @@ public class GalleryListParser {
         if (gi.favoriteSlot == -2) {
             gi.favoriteSlot = EhDB.containLocalFavorites(gi.gid) ? -1 : -2;
         }
+
+        // Downloaded
+        gi.downloaded = EhApplication.getDownloadManager().containDownloadInfo(gi.gid);
 
         gi.generateSLang();
 

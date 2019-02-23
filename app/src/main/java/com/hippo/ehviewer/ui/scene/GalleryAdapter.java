@@ -210,13 +210,8 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                     holder.simpleLanguage.setText(gi.simpleLanguage);
                     holder.simpleLanguage.setVisibility(View.VISIBLE);
                 }
-                if (gi.favoriteSlot < -1 || gi.favoriteSlot > 10) {
-                    holder.favouriteSlot.setImageDrawable(null);
-                    holder.favouriteSlot.setVisibility(View.GONE);
-                } else {
-                    holder.favouriteSlot.setImageResource(R.drawable.v_heart_x16);
-                    holder.favouriteSlot.setVisibility(View.VISIBLE);
-                }
+                holder.favourited.setVisibility((gi.favoriteSlot >= -1 && gi.favoriteSlot <= 10) ? View.VISIBLE : View.GONE);
+                holder.downloaded.setVisibility(gi.downloaded ? View.VISIBLE : View.GONE);
                 break;
             }
             case TYPE_GRID: {

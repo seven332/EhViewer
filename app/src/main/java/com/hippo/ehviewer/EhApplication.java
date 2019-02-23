@@ -357,6 +357,11 @@ public class EhApplication extends RecordingApplication {
     }
 
     @NonNull
+    public static DownloadManager getDownloadManager() {
+        return getDownloadManager(instance);
+    }
+
+    @NonNull
     public static DownloadManager getDownloadManager(@NonNull Context context) {
         EhApplication application = ((EhApplication) context.getApplicationContext());
         if (application.mDownloadManager == null) {

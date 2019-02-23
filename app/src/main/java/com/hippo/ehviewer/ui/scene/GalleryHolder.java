@@ -17,8 +17,8 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.widget.SimpleRatingView;
@@ -34,7 +34,8 @@ class GalleryHolder extends RecyclerView.ViewHolder {
     public final TextView posted;
     public final TextView pages;
     public final TextView simpleLanguage;
-    public final AppCompatImageView favouriteSlot;
+    public final ImageView favourited;
+    public final ImageView downloaded;
 
     public GalleryHolder(View itemView) {
         super(itemView);
@@ -47,6 +48,7 @@ class GalleryHolder extends RecyclerView.ViewHolder {
         posted = itemView.findViewById(R.id.posted);
         pages = itemView.findViewById(R.id.pages);
         simpleLanguage = itemView.findViewById(R.id.simple_language);
-        favouriteSlot = itemView.findViewById(R.id.favourite_slot);
+        favourited = itemView.findViewById(R.id.favourited);
+        downloaded = itemView.findViewById(R.id.downloaded);
     }
 }
