@@ -19,10 +19,10 @@ package com.hippo.ehviewer.ui.scene;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -191,23 +191,32 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                 holder.rating.setRating(gi.rating);
                 TextView category = holder.category;
                 String newCategoryText = EhUtils.getCategory(gi.category);
-                if (!newCategoryText.equals(category.getText())) {
+                if (!newCategoryText.equals(category.getText().toString())) {
                     category.setText(newCategoryText);
                     category.setBackgroundColor(EhUtils.getCategoryColor(gi.category));
                 }
                 holder.posted.setText(gi.posted);
                 if (gi.pages == 0 || !Settings.getShowGalleryPages()) {
                     holder.pages.setText(null);
-                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.simpleLanguage.getLayoutParams();
-                    lp.addRule(RelativeLayout.LEFT_OF, 0);
-                    lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    holder.pages.setVisibility(View.GONE);
                 } else {
                     holder.pages.setText(Integer.toString(gi.pages) + "P");
-                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) holder.simpleLanguage.getLayoutParams();
-                    lp.addRule(RelativeLayout.LEFT_OF, R.id.pages);
-                    lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
+                    holder.pages.setVisibility(View.VISIBLE);
                 }
-                holder.simpleLanguage.setText(gi.simpleLanguage);
+                if (TextUtils.isEmpty(gi.simpleLanguage)) {
+                    holder.simpleLanguage.setText(null);
+                    holder.simpleLanguage.setVisibility(View.GONE);
+                } else {
+                    holder.simpleLanguage.setText(gi.simpleLanguage);
+                    holder.simpleLanguage.setVisibility(View.VISIBLE);
+                }
+                if (gi.favoriteSlot < -1 || gi.favoriteSlot > 10) {
+                    holder.favouriteSlot.setImageDrawable(null);
+                    holder.favouriteSlot.setVisibility(View.GONE);
+                } else {
+                    holder.favouriteSlot.setImageResource(R.drawable.v_heart_x16);
+                    holder.favouriteSlot.setVisibility(View.VISIBLE);
+                }
                 break;
             }
             case TYPE_GRID: {

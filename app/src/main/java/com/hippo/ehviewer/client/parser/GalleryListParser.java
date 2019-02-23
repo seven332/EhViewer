@@ -19,6 +19,7 @@ package com.hippo.ehviewer.client.parser;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
@@ -42,6 +43,7 @@ public class GalleryListParser {
 
     private static final Pattern PATTERN_RATING = Pattern.compile("\\d+px");
     private static final Pattern PATTERN_THUMB_SIZE = Pattern.compile("height:(\\d+)px; width:(\\d+)px");
+    private static final Pattern PATTERN_FAVORITE_SLOT = Pattern.compile("background-position:0px -(\\d+)px;");
 
     public static class Result {
         public int pages;
@@ -176,6 +178,24 @@ public class GalleryListParser {
             Log.w(TAG, "Can't parse gallery info uploader");
             gi.uploader = "";
         }
+        // Favourite
+        Element it3 = JsoupUtils.getElementByClass(e, "it3");
+        if (it3 != null) {
+            for (Element element : it3.children()) {
+                if (!"i".equals(element.className())) {
+                    continue;
+                }
+                Matcher m = PATTERN_FAVORITE_SLOT.matcher(element.attr("style"));
+                if (m.find()) {
+                    gi.favoriteSlot = (NumberUtils.parseIntSafely(m.group(1), -36) - 2) / 19;
+                    gi.favoriteName = element.attr("title");
+                    break;
+                }
+            }
+        }
+        if (gi.favoriteSlot == -2) {
+            gi.favoriteSlot = EhDB.containLocalFavorites(gi.gid) ? -1 : -2;
+        }
 
         gi.generateSLang();
 
@@ -231,6 +251,29 @@ public class GalleryListParser {
             gi.rating = NumberUtils.parseFloatSafely(parseRating(id43.attr("style")), -1.0f);
         } else {
             gi.rating = -1.0f;
+        }
+
+        // Rating
+        Element id44 = JsoupUtils.getElementByClass(e, "id44");
+        if (id44 != null) {
+            Elements elements = id44.children();
+            if (elements.size() > 0) {
+                Element first = elements.first();
+                for (Element element : first.children()) {
+                    if (!"i".equals(element.className())) {
+                        continue;
+                    }
+                    Matcher m = PATTERN_FAVORITE_SLOT.matcher(element.attr("style"));
+                    if (m.find()) {
+                        gi.favoriteSlot = (NumberUtils.parseIntSafely(m.group(1), -36) - 2) / 19;
+                        gi.favoriteName = element.attr("title");
+                        break;
+                    }
+                }
+            }
+        }
+        if (gi.favoriteSlot == -2) {
+            gi.favoriteSlot = EhDB.containLocalFavorites(gi.gid) ? -1 : -2;
         }
 
         gi.generateSLang();

@@ -104,6 +104,7 @@ public class GalleryInfo implements Parcelable {
     public String posted;
     public String uploader;
     public float rating;
+    public boolean rated;
     @Nullable
     public String[] simpleTags;
     public int pages;
@@ -120,7 +121,8 @@ public class GalleryInfo implements Parcelable {
      */
     public String simpleLanguage;
 
-    public boolean rated;
+    public int favoriteSlot = -2;
+    public String favoriteName;
 
     public final void generateSLang() {
         if (simpleTags != null) {
@@ -168,6 +170,7 @@ public class GalleryInfo implements Parcelable {
         dest.writeString(this.posted);
         dest.writeString(this.uploader);
         dest.writeFloat(this.rating);
+        dest.writeByte(this.rated ? (byte) 1 : (byte) 0);
         dest.writeString(this.simpleLanguage);
         dest.writeStringArray(this.simpleTags);
         dest.writeInt(this.thumbWidth);
@@ -175,6 +178,8 @@ public class GalleryInfo implements Parcelable {
         dest.writeInt(this.spanSize);
         dest.writeInt(this.spanIndex);
         dest.writeInt(this.spanGroupIndex);
+        dest.writeInt(this.favoriteSlot);
+        dest.writeString(this.favoriteName);
     }
 
     public GalleryInfo() {}
@@ -189,6 +194,7 @@ public class GalleryInfo implements Parcelable {
         this.posted = in.readString();
         this.uploader = in.readString();
         this.rating = in.readFloat();
+        this.rated = in.readByte() != 0;
         this.simpleLanguage = in.readString();
         this.simpleTags = in.createStringArray();
         this.thumbWidth = in.readInt();
@@ -196,6 +202,8 @@ public class GalleryInfo implements Parcelable {
         this.spanSize = in.readInt();
         this.spanIndex = in.readInt();
         this.spanGroupIndex = in.readInt();
+        this.favoriteSlot = in.readInt();
+        this.favoriteName = in.readString();
     }
 
     public static final Parcelable.Creator<GalleryInfo> CREATOR = new Parcelable.Creator<GalleryInfo>() {

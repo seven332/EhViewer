@@ -40,7 +40,6 @@ public class GalleryDetail extends GalleryInfo {
     public GalleryComment[] comments;
     public int previewPages;
     public PreviewSet previewSet;
-    public String favoriteName;
 
     @Override
     public int describeContents() {
@@ -65,7 +64,6 @@ public class GalleryDetail extends GalleryInfo {
         dest.writeParcelableArray(this.comments, 0);
         dest.writeInt(this.previewPages);
         dest.writeParcelable(previewSet, flags);
-        dest.writeString(this.favoriteName);
     }
 
     public GalleryDetail() {
@@ -98,7 +96,6 @@ public class GalleryDetail extends GalleryInfo {
         }
         this.previewPages = in.readInt();
         this.previewSet = in.readParcelable(PreviewSet.class.getClassLoader());
-        this.favoriteName = in.readString();
     }
 
     public static final Creator<GalleryDetail> CREATOR = new Creator<GalleryDetail>() {
