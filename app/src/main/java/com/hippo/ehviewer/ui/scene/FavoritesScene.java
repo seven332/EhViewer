@@ -75,7 +75,6 @@ import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.ripple.Ripple;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.FabLayout;
@@ -618,7 +617,7 @@ public class FavoritesScene extends BaseScene implements
                 args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, gi);
                 Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
                 View thumb;
-                if (ApiHelper.SUPPORT_TRANSITION && null != (thumb = view.findViewById(R.id.thumb))) {
+                if (null != (thumb = view.findViewById(R.id.thumb))) {
                     announcer.setTranHelper(new EnterGalleryDetailTransaction(thumb));
                 }
                 startScene(announcer);

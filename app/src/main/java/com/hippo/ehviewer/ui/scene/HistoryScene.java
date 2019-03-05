@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
@@ -60,7 +61,6 @@ import com.hippo.ehviewer.widget.SimpleRatingView;
 import com.hippo.ripple.Ripple;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
-import com.hippo.util.ApiHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.view.ViewTransition;
 import com.hippo.widget.LoadImageView;
@@ -258,7 +258,7 @@ public class HistoryScene extends ToolbarScene
         args.putParcelable(GalleryDetailScene.KEY_GALLERY_INFO, mLazyList.get(position));
         Announcer announcer = new Announcer(GalleryDetailScene.class).setArgs(args);
         View thumb;
-        if (ApiHelper.SUPPORT_TRANSITION && null != (thumb = view.findViewById(R.id.thumb))) {
+        if (null != (thumb = view.findViewById(R.id.thumb))) {
             announcer.setTranHelper(new EnterGalleryDetailTransaction(thumb));
         }
         startScene(announcer);
@@ -384,7 +384,7 @@ public class HistoryScene extends ToolbarScene
             // Update transition name
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 long gid = gi.gid;
-                holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
+                ViewCompat.setTransitionName(holder.thumb, TransitionNameFactory.getThumbTransitionName(gid));
             }
         }
 

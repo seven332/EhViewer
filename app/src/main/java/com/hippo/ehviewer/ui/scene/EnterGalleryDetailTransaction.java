@@ -17,11 +17,11 @@
 package com.hippo.ehviewer.ui.scene;
 
 import android.content.Context;
-import android.os.Build;
-import android.transition.TransitionInflater;
 import android.view.View;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.transition.TransitionInflater;
 import com.hippo.ehviewer.R;
 import com.hippo.scene.TransitionHelper;
 
@@ -40,16 +40,17 @@ class EnterGalleryDetailTransaction implements TransitionHelper {
             return false;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        String transitionName = ViewCompat.getTransitionName(mThumb);
+        if (transitionName != null) {
             exit.setSharedElementReturnTransition(
                     TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
             exit.setExitTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+                    TransitionInflater.from(context).inflateTransition(R.transition.trans_fade));
             enter.setSharedElementEnterTransition(
                     TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
             enter.setEnterTransition(
-                    TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-            transaction.addSharedElement(mThumb, mThumb.getTransitionName());
+                    TransitionInflater.from(context).inflateTransition(R.transition.trans_fade));
+            transaction.addSharedElement(mThumb, transitionName);
         }
         return true;
     }

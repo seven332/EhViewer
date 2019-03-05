@@ -26,12 +26,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.transition.TransitionInflater;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -55,6 +53,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.transition.TransitionInflater;
 import com.hippo.android.resource.AttrResources;
 import com.hippo.beerbelly.BeerBelly;
 import com.hippo.drawable.RoundSideRectDrawable;
@@ -95,7 +94,6 @@ import com.hippo.scene.SceneFragment;
 import com.hippo.scene.TransitionHelper;
 import com.hippo.text.Html;
 import com.hippo.text.URLImageGetter;
-import com.hippo.util.ApiHelper;
 import com.hippo.util.AppHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.util.ExceptionUtils;
@@ -1033,13 +1031,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private void setTransitionName() {
         long gid = getGid();
 
-        if (gid != -1 && ApiHelper.SUPPORT_TRANSITION && mThumb != null &&
-                mTitle != null && mUploader != null && mCategory != null &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mThumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
-            mTitle.setTransitionName(TransitionNameFactory.getTitleTransitionName(gid));
-            mUploader.setTransitionName(TransitionNameFactory.getUploaderTransitionName(gid));
-            mCategory.setTransitionName(TransitionNameFactory.getCategoryTransitionName(gid));
+        if (gid != -1 && mThumb != null &&
+                mTitle != null && mUploader != null && mCategory != null) {
+            ViewCompat.setTransitionName(mThumb, TransitionNameFactory.getThumbTransitionName(gid));
+            ViewCompat.setTransitionName(mTitle, TransitionNameFactory.getTitleTransitionName(gid));
+            ViewCompat.setTransitionName(mUploader, TransitionNameFactory.getUploaderTransitionName(gid));
+            ViewCompat.setTransitionName(mCategory, TransitionNameFactory.getCategoryTransitionName(gid));
         }
     }
 
@@ -1419,7 +1416,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
     @Override
     public void onBackPressed() {
-        if (ApiHelper.SUPPORT_TRANSITION && mViewTransition != null && mThumb != null &&
+        if (mViewTransition != null && mThumb != null &&
                 mViewTransition.getShownViewIndex() == 0 && mThumb.isShown()) {
             int[] location = new int[2];
             mThumb.getLocationInWindow(location);
@@ -1550,16 +1547,17 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 return false;
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String transitionName = ViewCompat.getTransitionName(mThumb);
+            if (transitionName != null) {
                 exit.setSharedElementReturnTransition(
                         TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
                 exit.setExitTransition(
-                        TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
+                        TransitionInflater.from(context).inflateTransition(R.transition.trans_fade));
                 enter.setSharedElementEnterTransition(
                         TransitionInflater.from(context).inflateTransition(R.transition.trans_move));
                 enter.setEnterTransition(
-                        TransitionInflater.from(context).inflateTransition(android.R.transition.fade));
-                transaction.addSharedElement(mThumb, mThumb.getTransitionName());
+                        TransitionInflater.from(context).inflateTransition(R.transition.trans_fade));
+                transaction.addSharedElement(mThumb, transitionName);
             }
             return true;
         }

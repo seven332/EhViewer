@@ -18,7 +18,6 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +26,7 @@ import android.widget.TextView;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.hippo.drawable.TriangleDrawable;
@@ -232,9 +232,6 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
         }
 
         // Update transition name
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            long gid = gi.gid;
-            holder.thumb.setTransitionName(TransitionNameFactory.getThumbTransitionName(gid));
-        }
+        ViewCompat.setTransitionName(holder.thumb, TransitionNameFactory.getThumbTransitionName(gi.gid));
     }
 }
