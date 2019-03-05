@@ -720,8 +720,19 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         int w = mColorBg.getWidth();
         int h = mColorBg.getHeight();
         if (ViewCompat.isAttachedToWindow(mColorBg) && w != 0 && h != 0) {
-            ViewAnimationUtils.createCircularReveal(mColorBg, w / 2, h / 2, 0,
-                    (float) Math.hypot(w / 2, h / 2)).setDuration(300).start();
+            Resources resources = getContext2().getResources();
+            int keylineMargin = resources.getDimensionPixelSize(R.dimen.keyline_margin);
+            int thumbWidth = resources.getDimensionPixelSize(R.dimen.gallery_detail_thumb_width);
+            int thumbHeight = resources.getDimensionPixelSize(R.dimen.gallery_detail_thumb_height);
+
+            int x = thumbWidth / 2 + keylineMargin;
+            int y = thumbHeight / 2 + keylineMargin;
+
+            int radiusX = Math.max(Math.abs(x), Math.abs(w - x));
+            int radiusY = Math.max(Math.abs(y), Math.abs(h - y));
+            float radius = (float) Math.hypot(radiusX, radiusY);
+
+            ViewAnimationUtils.createCircularReveal(mColorBg, x, y, 0, radius).setDuration(300).start();
             return true;
         } else {
             return false;
@@ -767,12 +778,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         if ((oldState == STATE_INIT || oldState == STATE_FAILED || oldState == STATE_REFRESH) &&
                 (state == STATE_NORMAL || state == STATE_REFRESH_HEADER) && AttrResources.getAttrBoolean(getContext2(), R.attr.isLightTheme)) {
             if (!createCircularReveal()) {
-                SimpleHandler.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        createCircularReveal();
-                    }
-                });
+                SimpleHandler.getInstance().post(this::createCircularReveal);
             }
         }
     }
