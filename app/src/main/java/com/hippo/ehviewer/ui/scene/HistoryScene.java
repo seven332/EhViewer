@@ -19,6 +19,8 @@ package com.hippo.ehviewer.ui.scene;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -125,7 +127,7 @@ public class HistoryScene extends ToolbarScene
         layoutManager.setColumnSize(resources.getDimensionPixelOffset(Settings.getDetailSizeResId()));
         layoutManager.setStrategy(AutoStaggeredGridLayoutManager.STRATEGY_MIN_SIZE);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme), new ColorDrawable(Color.TRANSPARENT)));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);

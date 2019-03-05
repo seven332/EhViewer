@@ -21,7 +21,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -258,7 +260,7 @@ public class FavoritesScene extends BaseScene implements
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
         mAdapter = new FavoritesAdapter(inflater, resources, mRecyclerView, Settings.getListMode());
-        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme), new ColorDrawable(Color.TRANSPARENT)));
         mRecyclerView.setDrawSelectorOnTop(true);
         mRecyclerView.hasFixedSize();
         mRecyclerView.setClipToPadding(false);

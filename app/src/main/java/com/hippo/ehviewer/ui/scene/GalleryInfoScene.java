@@ -20,6 +20,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -169,7 +171,7 @@ public final class GalleryInfoScene extends ToolbarScene implements EasyRecycler
                 LayoutUtils.dp2pix(context, 1));
         decoration.setPadding(context.getResources().getDimensionPixelOffset(R.dimen.keyline_margin));
         mRecyclerView.addItemDecoration(decoration);
-        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
+        mRecyclerView.setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme), new ColorDrawable(Color.TRANSPARENT)));
         mRecyclerView.setClipToPadding(false);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setOnItemClickListener(this);

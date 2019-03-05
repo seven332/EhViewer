@@ -17,6 +17,8 @@
 package com.hippo.widget;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -76,7 +78,7 @@ public class DirExplorer extends EasyRecyclerView implements EasyRecyclerView.On
                 LayoutUtils.dp2pix(context, 1));
         decoration.setShowLastDivider(true);
         addItemDecoration(decoration);
-        setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme)));
+        setSelector(Ripple.generateRippleDrawable(context, !AttrResources.getAttrBoolean(context, R.attr.isLightTheme), new ColorDrawable(Color.TRANSPARENT)));
         setOnItemClickListener(this);
 
         mCurrentFile = Environment.getExternalStorageDirectory();

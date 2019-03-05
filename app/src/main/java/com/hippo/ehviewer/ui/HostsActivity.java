@@ -22,6 +22,8 @@ package com.hippo.ehviewer.ui;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -86,7 +88,7 @@ public class HostsActivity extends ToolbarActivity
         LayoutUtils.dp2pix(this, 1));
     decoration.setShowLastDivider(true);
     recyclerView.addItemDecoration(decoration);
-    recyclerView.setSelector(Ripple.generateRippleDrawable(this, !AttrResources.getAttrBoolean(this, R.attr.isLightTheme)));
+    recyclerView.setSelector(Ripple.generateRippleDrawable(this, !AttrResources.getAttrBoolean(this, R.attr.isLightTheme), new ColorDrawable(Color.TRANSPARENT)));
     recyclerView.setHasFixedSize(true);
     recyclerView.setOnItemClickListener(this);
     recyclerView.setPadding(
