@@ -685,11 +685,11 @@
 
     <!-- Guide -->
     <string name="guide_quick_search_title">Quick Search</string>
-    <string name="guide_quick_search_text">Swipe to right to open quick search panel</string>
+    <string name="guide_quick_search_text">Swipe left to open quick search panel</string>
     <string name="guide_collections_title">Collections</string>
-    <string name="guide_collections_text">Swipe to right to select collections</string>
+    <string name="guide_collections_text">Swipe left to select collections</string>
     <string name="guide_download_labels_title">Download Labels</string>
-    <string name="guide_download_labels_text">Swipe right to open download labels panel</string>
+    <string name="guide_download_labels_text">Swipe left to open download labels panel</string>
     <string name="guide_download_thumb_title">Gallery Detail</string>
     <string name="guide_download_thumb_text">Tap the thumbnail to view gallery detail</string>
     <string name="guide_gallery_left">Turn Page</string>
