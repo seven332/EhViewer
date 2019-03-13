@@ -19,25 +19,10 @@
 
     <string name="app_name">EhViewer</string>
 
-    <string name="site_e" translatable="false">e-hentai</string>
-    <string name="site_ex" translatable="false">exhentai</string>
-
     <!-- Theme -->
     <string name="theme_light">ธีมสีสว่าง</string>
     <string name="theme_dark">ธีมสีมืด</string>
     <string name="theme_black">ธีมสีดำ</string>
-
-    <!-- Category -->
-    <string name="doujinshi" translatable="false">DOUJINSHI</string>
-    <string name="manga" translatable="false">MANGA</string>
-    <string name="artist_cg" translatable="false">ARTIST CG</string>
-    <string name="game_cg" translatable="false">GAME CG</string>
-    <string name="western" translatable="false">WESTERN</string>
-    <string name="non_h" translatable="false">NON-H</string>
-    <string name="image_set" translatable="false">IMAGE SET</string>
-    <string name="cosplay" translatable="false">COSPLAY</string>
-    <string name="asian_porn" translatable="false">ASIAN PORN</string>
-    <string name="misc" translatable="false">MISC</string>
 
     <string name="homepage">หน้าหลัก</string>
     <string name="whats_hot">เรื่องที่กำลังมาแรงมากๆ</string>
@@ -45,7 +30,6 @@
     <string name="history">ประวัติเข้าชม</string>
     <string name="downloads">ดาวน์โหลด</string>
     <string name="settings">การตั้งค่า</string>
-    <string name="stub" translatable="false">Stub</string>
 
     <string name="username">ชื่อผู้ใช้</string>
     <string name="password">รหัสผ่าน</string>
@@ -80,32 +64,6 @@
 
     <string name="clipboard_gallery_url_snack_message">มีลิงค์ของเว็บแกลเลอรี่อยู่ในคลิปบอร์ด</string>
     <string name="clipboard_gallery_url_snack_action">ดู</string>
-
-    <string name="error_status_code_400" translatable="false">Bad Request</string>
-    <string name="error_status_code_401" translatable="false">Unauthorized</string>
-    <string name="error_status_code_402" translatable="false">Payment Required</string>
-    <string name="error_status_code_403" translatable="false">Forbidden</string>
-    <string name="error_status_code_404" translatable="false">Not Found</string>
-    <string name="error_status_code_405" translatable="false">Method Not Allowed</string>
-    <string name="error_status_code_406" translatable="false">Not Acceptable</string>
-    <string name="error_status_code_407" translatable="false">Proxy Authentication Required</string>
-    <string name="error_status_code_408" translatable="false">Request Timeout</string>
-    <string name="error_status_code_409" translatable="false">Conflict</string>
-    <string name="error_status_code_410" translatable="false">Gone</string>
-    <string name="error_status_code_411" translatable="false">Length Required</string>
-    <string name="error_status_code_412" translatable="false">Precondition Failed</string>
-    <string name="error_status_code_413" translatable="false">Request Entity Too Large</string>
-    <string name="error_status_code_414" translatable="false">Request-URI Too Long</string>
-    <string name="error_status_code_415" translatable="false">Unsupported Media Type</string>
-    <string name="error_status_code_416" translatable="false">Requested Range Not Satisfiable</string>
-    <string name="error_status_code_417" translatable="false">Expectation Failed</string>
-
-    <string name="error_status_code_500" translatable="false">Internal Server Error</string>
-    <string name="error_status_code_501" translatable="false">Not Implemented</string>
-    <string name="error_status_code_502" translatable="false">Bad Gateway</string>
-    <string name="error_status_code_503" translatable="false">Service Unavailable</string>
-    <string name="error_status_code_504" translatable="false">Gateway Timeout</string>
-    <string name="error_status_code_505" translatable="false">HTTP Version Not Supported</string>
 
     <string name="error_bad_status_code">รหัสข้อผิดพลาด: %d</string>
     <string name="error_timeout">หมดเวลา</string>
@@ -142,7 +100,7 @@
     <string name="content_layout_restore_tip">แตะเพื่อลองอีกครั้ง</string>
     <string name="write_rationale">EhViewer จะขอสิทธิ์การเขียนข้อมูลพื้นที่จัดเก็บภายนอก (WRITE_EXTERNAL_STORAGE) เพื่อการดาวน์โหลดแกลเลอรี่ คุณจะอนุญาตหรือไม่?</string>
     <string name="you_rejected_me">เอื้อออออ เจ็บจัง</string>
-    <string name="analytics_explain">จะว่าอะไรไหมถ้านักพัฒนาจะขออนุญาตรวบรวมข้อมูลอุปกรณ์และประวัติการใช้งานแอปนี้ของคุณ? มันจะช่วยนักพัฒนาอย่างมากเลยนะ&lt;br&gt;&lt;br&gt;บริการวิเคราะห์ข้อมูลที่เราใช้นั้นเป็นบริการของ Google Analytics สำหรับ Firebase ในส่วนของนโยบายความเป็นส่วนตัวเราใช้ตามที่อยู่ในลิงค์ &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;&lt;br&gt;&lt;br&gt;ถ้าคุณยินยอมการส่งข้อมูลวิเคราะห์นี้ ทั้งข้อมูลอุปกรณ์และประวัติการใช้งานแอปนี้ของคุณจะถูกจัดเก็บ รวมไปถึงแต่ไม่จำกัดเพียงแค่เวอร์ชั่น API ของ Android, แบบจำลองอุปกรณ์, ภาษาของผู้ใช้, เวอร์ชั่นของแอปพลิเคชั่น, เวลาในการใช้งาน, และจำนวนฟังก์ชั่นที่ใช้ นักพัฒนาขอให้คำมั่นสัญญาว่าเราจะไม่เก็บข้อมูลส่วนตัวของผู้ใช้ไม่ว่าจะเบอร์มือถือ, อีเมล, และหมายเลข IMEI&lt;br&gt;&lt;br&gt;ข้อมูลของคุณจะไม่ถูกจัดเก็บจนกว่าจะกดปุ่ม \'ยินยอม\ 'ให้จัดเก็บเพื่อนำมาวิเคราะห์ข้อมูล&lt;br&gt;&lt;br&gt;การจัดเก็บข้อมูลจะถูกวิเคราะห์โดยบริการ Google Analytics สำหรับ Firebase รายงานการวิเคราะห์ข้อมูลจะสามารถดูได้เพียงนักพัฒนาของแอปนี้เพียงคนเดียวเท่านั้น</string>
+    <string name="analytics_explain">จะว่าอะไรไหมถ้านักพัฒนาจะขออนุญาตรวบรวมข้อมูลอุปกรณ์และประวัติการใช้งานแอปนี้ของคุณ? มันจะช่วยนักพัฒนาอย่างมากเลยนะ&lt;br&gt;&lt;br&gt;บริการวิเคราะห์ข้อมูลที่เราใช้นั้นเป็นบริการของ Google Analytics สำหรับ Firebase ในส่วนของนโยบายความเป็นส่วนตัวเราใช้ตามที่อยู่ในลิงค์ &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;&lt;br&gt;&lt;br&gt;ถ้าคุณยินยอมการส่งข้อมูลวิเคราะห์นี้ ทั้งข้อมูลอุปกรณ์และประวัติการใช้งานแอปนี้ของคุณจะถูกจัดเก็บ รวมไปถึงแต่ไม่จำกัดเพียงแค่เวอร์ชั่น API ของ Android, แบบจำลองอุปกรณ์, ภาษาของผู้ใช้, เวอร์ชั่นของแอปพลิเคชั่น, เวลาในการใช้งาน, และจำนวนฟังก์ชั่นที่ใช้ นักพัฒนาขอให้คำมั่นสัญญาว่าเราจะไม่เก็บข้อมูลส่วนตัวของผู้ใช้ไม่ว่าจะเบอร์มือถือ, อีเมล, และหมายเลข IMEI&lt;br&gt;&lt;br&gt;ข้อมูลของคุณจะไม่ถูกจัดเก็บจนกว่าจะกดปุ่ม \'ยินยอม\' ให้จัดเก็บเพื่อนำมาวิเคราะห์ข้อมูล&lt;br&gt;&lt;br&gt;การจัดเก็บข้อมูลจะถูกวิเคราะห์โดยบริการ Google Analytics สำหรับ Firebase รายงานการวิเคราะห์ข้อมูลจะสามารถดูได้เพียงนักพัฒนาของแอปนี้เพียงคนเดียวเท่านั้น</string>
     <string name="get_it">เข้าใจแล้ว ไม่ต้องแสดงอีก</string>
     <string name="accept">ยินยอม</string>
     <string name="reject">ไม่ยินยอม</string>
@@ -273,7 +231,6 @@
     <string name="rating2">โอ๊ยยย~</string>
     <string name="rating1">ไม่ไหวแล้วนะ!</string>
     <string name="rating0">พังพินาศสุดๆไปเลย!</string>
-    <string name="rating_none" translatable="false">(´_ゝ`)</string>
 
     <!-- Gallery Info -->
     <string name="gallery_info">ข้อมูลแกลเลอรี่</string>
@@ -445,8 +402,7 @@
     <string name="settings_eh_theme_light">สว่าง</string>
     <string name="settings_eh_theme_dark">มืด</string>
     <string name="settings_eh_theme_black">ดำ</string>
-    <string name="settings_eh_apply_nav_bar_theme_color">ใช้สีของธีมบนแถบนำท
-	างด้วย</string>
+    <string name="settings_eh_apply_nav_bar_theme_color">ใช้สีของธีมบนแถบนำทางด้วย</string>
     <string name="settings_eh_gallery_site">เว็บไซต์หลักของแกลเลอรี่</string>
     <string name="settings_eh_list_mode">มุมองแบบรายการ</string>
     <string name="settings_eh_list_mode_detail">แสดงรายละเอียด</string>
