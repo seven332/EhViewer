@@ -621,7 +621,7 @@
     <string name="app_language_de">Deutsch</string>
     <string name="app_language_en" translatable="false">English</string>
     <string name="app_language_es" translatable="false">Español</string>
-    <string name="app_language_fr">français (France)</string>
+    <string name="app_language_fr" translatable="false">Français</string>
     <string name="app_language_ja" translatable="false">日本語</string>
     <string name="app_language_ko" translatable="false">한국어</string>
     <string name="app_language_th" translatable="false">ไทย</string>
