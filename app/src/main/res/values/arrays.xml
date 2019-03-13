@@ -237,6 +237,7 @@
         <item>@string/app_language_fr</item>
         <item>@string/app_language_ja</item>
         <item>@string/app_language_ko</item>
+        <item>@string/app_language_th</item>
         <item>@string/app_language_zh_cn</item>
         <item>@string/app_language_zh_hk</item>
         <item>@string/app_language_zh_tw</item>
@@ -250,6 +251,7 @@
         <item>fr</item>
         <item>ja</item>
         <item>ko</item>
+        <item>th</item>
         <item>zh-CN</item>
         <item>zh-HK</item>
         <item>zh-TW</item>

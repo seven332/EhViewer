@@ -16,7 +16,7 @@ android {
         versionName "1.4.2"
         vectorDrawables.useSupportLibrary = true
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW",
-                "es", "ja", "ko", "fr", "de"
+                "es", "ja", "ko", "fr", "de", "th"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
