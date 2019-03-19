@@ -167,9 +167,11 @@ public class GalleryDetailParser {
             // Category
             Element gdc = gm.getElementById("gdc");
             try {
-                String href = gdc.child(0).attr("href");
-                String category = href.substring(href.lastIndexOf('/') + 1);
-                gd.category = EhUtils.getCategory(category);
+                Element ce = JsoupUtils.getElementByClass(gdc, "cn");
+                if (ce == null) {
+                    ce = JsoupUtils.getElementByClass(gdc, "cs");
+                }
+                gd.category = EhUtils.getCategory(ce.text());
             } catch (Throwable e) {
                 ExceptionUtils.throwIfFatal(e);
                 gd.category = EhUtils.UNKNOWN;
