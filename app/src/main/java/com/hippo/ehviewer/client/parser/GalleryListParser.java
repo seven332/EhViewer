@@ -18,11 +18,10 @@ package com.hippo.ehviewer.client.parser;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.JsoupUtils;
@@ -43,8 +42,24 @@ public class GalleryListParser {
     private static final String TAG = GalleryListParser.class.getSimpleName();
 
     private static final Pattern PATTERN_RATING = Pattern.compile("\\d+px");
-    private static final Pattern PATTERN_THUMB_SIZE = Pattern.compile("height:(\\d+)px; width:(\\d+)px");
-    private static final Pattern PATTERN_FAVORITE_SLOT = Pattern.compile("background-position:0px -(\\d+)px;");
+    private static final Pattern PATTERN_THUMB_SIZE = Pattern.compile("height:(\\d+)px;width:(\\d+)px");
+    private static final Pattern PATTERN_FAVORITE_SLOT = Pattern.compile("background-color:rgba\\((\\d+),(\\d+),(\\d+),");
+    private static final Pattern PATTERN_PAGES = Pattern.compile("(\\d+) page");
+
+    private static final String[][] FAVORITE_SLOT_RGB = new String[][] {
+        new String[] { "0", "0", "0"},
+        new String[] { "240", "0", "0"},
+        new String[] { "240", "160", "0"},
+        new String[] { "208", "208", "0"},
+        new String[] { "0", "128", "0"},
+        new String[] { "144", "240", "64"},
+        new String[] { "64", "176", "240"},
+        new String[] { "0", "0", "240"},
+        new String[] { "80", "0", "128"},
+        new String[] { "224", "128", "224"},
+    };
+
+
 
     public static class Result {
         public int pages;
@@ -86,30 +101,69 @@ public class GalleryListParser {
         return re;
     }
 
-    @Nullable
-    private static GalleryInfo parseGalleryInfo(Element e) {
+    private static int parseFavoriteSlot(String style) {
+        Matcher m = PATTERN_FAVORITE_SLOT.matcher(style);
+        if (m.find()) {
+            String r = m.group(1);
+            String g = m.group(2);
+            String b = m.group(3);
+            int slot = 0;
+            for (String[] rgb : FAVORITE_SLOT_RGB) {
+                if (r.equals(rgb[0]) && g.equals(rgb[1]) && b.equals(rgb[2])) {
+                    return slot;
+                }
+                slot++;
+            }
+        }
+        return -2;
+    }
+
+    private static GalleryInfo parseGalleryInfoMinimal(Element e) {
         GalleryInfo gi = new GalleryInfo();
-        // Get category
-        Element ic = JsoupUtils.getElementByClass(e, "ic");
-        if (null != ic) {
-            gi.category = EhUtils.getCategory(ic.attr("alt").trim());
-        } else {
-            Log.w(TAG, "Can't parse gallery info category");
-            gi.category = EhUtils.UNKNOWN;
+
+        // Title, gid, token (required), tags
+        Element glname = JsoupUtils.getElementByClass(e, "glname");
+        if (glname != null) {
+            Element a = JsoupUtils.getElementByTag(glname, "a");
+            if (a != null) {
+                GalleryDetailUrlParser.Result result = GalleryDetailUrlParser.parse(a.attr("href"));
+                if (result != null) {
+                    gi.gid = result.gid;
+                    gi.token = result.token;
+                    gi.title = a.text().trim();
+                }
+            }
+            Element tbody = JsoupUtils.getElementByTag(glname, "tbody");
+            if (tbody != null) {
+                ArrayList<String> tags = new ArrayList<>();
+                GalleryTagGroup[] groups = GalleryDetailParser.parseTagGroups(tbody.children());
+                for (GalleryTagGroup group : groups) {
+                    for (int j = 0; j < group.size(); j++) {
+                        tags.add(group.groupName + ":" + group.getTagAt(j));
+                    }
+                }
+                gi.simpleTags = tags.toArray(new String[tags.size()]);
+            }
         }
-        // Posted
-        Element itd = JsoupUtils.getElementByClass(e, "itd");
-        if (null != itd) {
-            gi.posted = itd.text().trim();
-        } else {
-            Log.w(TAG, "Can't parse gallery info posted");
-            gi.posted = "";
+        if (gi.title == null) {
+            return null;
         }
+
+        // Category
+        gi.category = EhUtils.UNKNOWN;
+        Element ce = JsoupUtils.getElementByClass(e, "cn");
+        if (ce == null) {
+            ce = JsoupUtils.getElementByClass(e, "cs");
+        }
+        if (ce != null) {
+            gi.category = EhUtils.getCategory(ce.text());
+        }
+
         // Thumb
-        Element it2 = JsoupUtils.getElementByClass(e, "it2");
-        if (null != it2) {
+        Element glthumb = JsoupUtils.getElementByClass(e, "glthumb");
+        if (glthumb != null) {
             // Thumb size
-            Matcher m = PATTERN_THUMB_SIZE.matcher(it2.attr("style"));
+            Matcher m = PATTERN_THUMB_SIZE.matcher(glthumb.attr("style"));
             if (m.find()) {
                 gi.thumbWidth = NumberUtils.parseIntSafely(m.group(2), 0);
                 gi.thumbHeight = NumberUtils.parseIntSafely(m.group(1), 0);
@@ -118,171 +172,85 @@ public class GalleryListParser {
                 gi.thumbWidth = 0;
                 gi.thumbHeight = 0;
             }
-
             // Thumb url
-            Elements es = it2.children();
-            if (null != es && es.size() >= 1) {
-                gi.thumb = EhUtils.handleThumbUrlResolution(es.get(0).attr("src"));
+            Element img = glthumb.children().first();
+            if (img != null) {
+                gi.thumb = EhUtils.handleThumbUrlResolution(img.attr("src"));
             } else {
-                String html = it2.html();
+                String html = glthumb.html();
                 int index1 = html.indexOf('~');
                 int index2 = StringUtils.ordinalIndexOf(html, '~', 2);
                 if (index1 < index2) {
                     gi.thumb = EhUtils.handleThumbUrlResolution(
-                            "http://" +StringUtils.replace(html.substring(index1 + 1, index2), "~", "/"));
-                } else {
-                    Log.w(TAG, "Can't parse gallery info thumb url");
-                    gi.thumb = "";
-                }
-            }
-        } else {
-            Log.w(TAG, "Can't parse gallery info thumb");
-            gi.thumbWidth = 0;
-            gi.thumbHeight = 0;
-            gi.thumb = "";
-        }
-        // Title (required)
-        Element it5 = JsoupUtils.getElementByClass(e, "it5");
-        if (null == it5) {
-            Log.e(TAG, "Can't parse gallery info title, step 1");
-            return null;
-        }
-        Elements es = it5.children();
-        if (null == es || es.size() <= 0) {
-            Log.e(TAG, "Can't parse gallery info title, step 2");
-            return null;
-        }
-        Element a = es.get(0);
-        GalleryDetailUrlParser.Result result = GalleryDetailUrlParser.parse(a.attr("href"));
-        if (null == result) {
-            Log.e(TAG, "Can't parse gallery info title, step 3");
-            return null;
-        }
-        gi.gid = result.gid;
-        gi.token = result.token;
-        gi.title = a.text().trim();
-        // Rating
-        Element it4r = JsoupUtils.getElementByClass(e, "it4r");
-        if (null != it4r) {
-            gi.rating = NumberUtils.parseFloatSafely(parseRating(it4r.attr("style")), -1.0f);
-            // TODO The gallery may be rated even if it has one of these classes
-            gi.rated = it4r.hasClass("irr") || it4r.hasClass("irg") || it4r.hasClass("irb");
-        } else {
-            Log.w(TAG, "Can't parse gallery info rating");
-            gi.rating = -1.0f;
-        }
-        // Uploader
-        Element itu = JsoupUtils.getElementByClass(e, "itu");
-        if (null != itu) {
-            gi.uploader = itu.text().trim();
-        } else {
-            Log.w(TAG, "Can't parse gallery info uploader");
-            gi.uploader = "";
-        }
-        // Favourite
-        Element it3 = JsoupUtils.getElementByClass(e, "it3");
-        if (it3 != null) {
-            for (Element element : it3.children()) {
-                if (!"i".equals(element.className())) {
-                    continue;
-                }
-                Matcher m = PATTERN_FAVORITE_SLOT.matcher(element.attr("style"));
-                if (m.find()) {
-                    gi.favoriteSlot = (NumberUtils.parseIntSafely(m.group(1), -36) - 2) / 19;
-                    gi.favoriteName = element.attr("title");
-                    break;
+                        "https://" +StringUtils.replace(html.substring(index1 + 1, index2), "~", "/"));
                 }
             }
         }
-        if (gi.favoriteSlot == -2) {
-            gi.favoriteSlot = EhDB.containLocalFavorites(gi.gid) ? -1 : -2;
-        }
-        // Downloaded
-        gi.downloaded = EhApplication.getDownloadManager().containDownloadInfo(gi.gid);
-
-        gi.generateSLang();
-
-        return gi;
-    }
-
-    @Nullable
-    private static GalleryInfo parseGalleryInfoThumbVersion(Element e) {
-        GalleryInfo gi = new GalleryInfo();
-
-        // Title (required)
-        Element id2 = JsoupUtils.getElementByClass(e, "id2");
-        if (id2 == null) {
-            return null;
-        }
-        gi.title = id2.text().trim();
-
-        // gid, token (required)
-        Element a = id2.children().first();
-        if (a == null) {
-            return null;
-        }
-        GalleryDetailUrlParser.Result result = GalleryDetailUrlParser.parse(a.attr("href"));
-        if (result == null) {
-            return null;
-        }
-        gi.gid = result.gid;
-        gi.token = result.token;
-
-        // Thumbnail
-        Element id3 = JsoupUtils.getElementByClass(e, "id3");
-        if (id3 != null) {
-            a = id3.children().first();
-            if (a != null) {
-                Element img = a.children().first();
+        // Try extended and thumbnail version
+        if (gi.thumb == null) {
+            Element gl = JsoupUtils.getElementByClass(e, "gl1e");
+            if (gl == null) {
+                gl = JsoupUtils.getElementByClass(e, "gl3t");
+            }
+            if (gl != null) {
+                Element img = JsoupUtils.getElementByTag(gl, "img");
                 if (img != null) {
+                    // Thumb size
+                    Matcher m = PATTERN_THUMB_SIZE.matcher(img.attr("style"));
+                    if (m.find()) {
+                        gi.thumbWidth = NumberUtils.parseIntSafely(m.group(2), 0);
+                        gi.thumbHeight = NumberUtils.parseIntSafely(m.group(1), 0);
+                    } else {
+                        Log.w(TAG, "Can't parse gallery info thumb size");
+                        gi.thumbWidth = 0;
+                        gi.thumbHeight = 0;
+                    }
                     gi.thumb = EhUtils.handleThumbUrlResolution(img.attr("src"));
                 }
             }
         }
 
-        // Category
-        Element id41 = JsoupUtils.getElementByClass(e, "id41");
-        if (id41 != null) {
-            gi.category = EhUtils.getCategory(id41.attr("title").trim());
-        } else {
-            gi.category = EhUtils.UNKNOWN;
-        }
-
-        // Rating
-        Element id43 = JsoupUtils.getElementByClass(e, "id43");
-        if (id43 != null) {
-            gi.rating = NumberUtils.parseFloatSafely(parseRating(id43.attr("style")), -1.0f);
-        } else {
-            gi.rating = -1.0f;
-        }
-
-        // Rating
-        Element id44 = JsoupUtils.getElementByClass(e, "id44");
-        if (id44 != null) {
-            Elements elements = id44.children();
-            if (elements.size() > 0) {
-                Element first = elements.first();
-                for (Element element : first.children()) {
-                    if (!"i".equals(element.className())) {
-                        continue;
-                    }
-                    Matcher m = PATTERN_FAVORITE_SLOT.matcher(element.attr("style"));
-                    if (m.find()) {
-                        gi.favoriteSlot = (NumberUtils.parseIntSafely(m.group(1), -36) - 2) / 19;
-                        gi.favoriteName = element.attr("title");
-                        break;
-                    }
-                }
-            }
+        // Posted
+        gi.favoriteSlot = -2;
+        Element posted = e.getElementById("posted_" + gi.gid);
+        if (posted != null) {
+            gi.posted = posted.text().trim();
+            gi.favoriteSlot = parseFavoriteSlot(posted.attr("style"));
         }
         if (gi.favoriteSlot == -2) {
             gi.favoriteSlot = EhDB.containLocalFavorites(gi.gid) ? -1 : -2;
         }
 
-        // Downloaded
-        gi.downloaded = EhApplication.getDownloadManager().containDownloadInfo(gi.gid);
+        // Rating
+        Element ir = JsoupUtils.getElementByClass(e, "ir");
+        if (ir != null) {
+            gi.rating = NumberUtils.parseFloatSafely(parseRating(ir.attr("style")), -1.0f);
+        }
 
-        gi.generateSLang();
+        // Uploader and pages
+        Element gl = JsoupUtils.getElementByClass(e, "glhide");
+        int uploaderIndex = 0;
+        int pagesIndex = 1;
+        if (gl == null) {
+            gl = JsoupUtils.getElementByClass(e, "gl3e");
+            uploaderIndex = 3;
+            pagesIndex = 4;
+        }
+        if (gl != null) {
+            Elements children = gl.children();
+            if (children.size() > uploaderIndex) {
+                Element a = children.get(uploaderIndex).children().first();
+                if (a != null) {
+                    gi.uploader = a.text().trim();
+                }
+            }
+            if (children.size() > pagesIndex) {
+                Matcher matcher = PATTERN_PAGES.matcher(children.get(pagesIndex).text());
+                if (matcher.find()) {
+                    gi.pages = NumberUtils.parseIntSafely(matcher.group(1), 0);
+                }
+            }
+        }
 
         return gi;
     }
@@ -305,10 +273,17 @@ public class GalleryListParser {
         }
 
         try {
-            Elements es = d.getElementsByClass("itg").first().child(0).children();
-            List<GalleryInfo> list = new ArrayList<>(es.size() - 1);
-            for (int i = 1; i < es.size(); i++) { // First one is table header, skip it
-                GalleryInfo gi = parseGalleryInfo(es.get(i));
+            Element itg = d.getElementsByClass("itg").first();
+            Elements es;
+            if ("table".equalsIgnoreCase(itg.tagName())) {
+                es = itg.child(0).children();
+            } else {
+                es = itg.children();
+            }
+            List<GalleryInfo> list = new ArrayList<>(es.size());
+            // First one is table header, skip it
+            for (int i = 0; i < es.size(); i++) {
+                GalleryInfo gi = parseGalleryInfoMinimal(es.get(i));
                 if (null != gi) {
                     list.add(gi);
                 }
@@ -316,25 +291,8 @@ public class GalleryListParser {
             result.galleryInfoList = list;
         } catch (Throwable e) {
             ExceptionUtils.throwIfFatal(e);
+            e.printStackTrace();
             throw new ParseException("Can't parse gallery list", body);
-        }
-
-        // Maybe it's thumbnail version
-        if (result.galleryInfoList.isEmpty()) {
-            try {
-                Elements es = d.getElementsByClass("itg").first().children();
-                List<GalleryInfo> list = new ArrayList<>(es.size() - 1);
-                for (int i = 0; i < es.size(); i++) {
-                    GalleryInfo gi = parseGalleryInfoThumbVersion(es.get(i));
-                    if (null != gi) {
-                        list.add(gi);
-                    }
-                }
-                result.galleryInfoList = list;
-            } catch (Throwable e) {
-                ExceptionUtils.throwIfFatal(e);
-                throw new ParseException("Can't parse gallery list", body);
-            }
         }
 
         return result;

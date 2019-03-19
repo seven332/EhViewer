@@ -337,10 +337,20 @@ public class GalleryDetailParser {
         try {
             Element taglist = document.getElementById("taglist");
             Elements tagGroups = taglist.child(0).child(0).children();
+            return parseTagGroups(tagGroups);
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
+            e.printStackTrace();
+            return EMPTY_GALLERY_TAG_GROUP_ARRAY;
+        }
+    }
 
-            List<GalleryTagGroup> list = new ArrayList<>(tagGroups.size());
-            for (int i = 0, n = tagGroups.size(); i < n; i++) {
-                GalleryTagGroup group = parseTagGroup(tagGroups.get(i));
+    @NonNull
+    public static GalleryTagGroup[] parseTagGroups(Elements trs) {
+        try {
+            List<GalleryTagGroup> list = new ArrayList<>(trs.size());
+            for (int i = 0, n = trs.size(); i < n; i++) {
+                GalleryTagGroup group = parseTagGroup(trs.get(i));
                 if (null != group) {
                     list.add(group);
                 }
