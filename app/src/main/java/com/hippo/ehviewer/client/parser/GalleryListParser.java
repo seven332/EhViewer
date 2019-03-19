@@ -252,6 +252,8 @@ public class GalleryListParser {
             }
         }
 
+        gi.generateSLang();
+
         return gi;
     }
 
