@@ -18,6 +18,7 @@ package com.hippo.ehviewer.client.parser;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -58,8 +59,6 @@ public class GalleryListParser {
         new String[] { "80", "0", "128"},
         new String[] { "224", "128", "224"},
     };
-
-
 
     public static class Result {
         public int pages;
@@ -225,6 +224,8 @@ public class GalleryListParser {
         Element ir = JsoupUtils.getElementByClass(e, "ir");
         if (ir != null) {
             gi.rating = NumberUtils.parseFloatSafely(parseRating(ir.attr("style")), -1.0f);
+            // TODO The gallery may be rated even if it doesn't has one of these classes
+            gi.rated = ir.hasClass("irr") || ir.hasClass("irg") || ir.hasClass("irb");
         }
 
         // Uploader and pages
@@ -252,6 +253,9 @@ public class GalleryListParser {
             }
         }
 
+        // Downloaded
+        gi.downloaded = EhApplication.getDownloadManager().containDownloadInfo(gi.gid);
+
         gi.generateSLang();
 
         return gi;
@@ -262,8 +266,11 @@ public class GalleryListParser {
         Document d = Jsoup.parse(body);
 
         try {
-            result.pages = parsePages(d, body);
-        } catch (ParseException e) {
+            Element ptt = d.getElementsByClass("ptt").first();
+            Elements es = ptt.child(0).child(0).children();
+            result.pages = Integer.parseInt(es.get(es.size() - 2).text().trim());
+        } catch (Throwable e) {
+            ExceptionUtils.throwIfFatal(e);
             if (body.contains("No hits found</p>")) {
                 result.pages = 0;
                 //noinspection unchecked
