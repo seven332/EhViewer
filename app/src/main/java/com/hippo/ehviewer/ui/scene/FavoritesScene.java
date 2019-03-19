@@ -1013,7 +1013,7 @@ public class FavoritesScene extends BaseScene implements
 
         public FavoritesAdapter(@NonNull LayoutInflater inflater, @NonNull Resources resources,
                 @NonNull RecyclerView recyclerView, int type) {
-            super(inflater, resources, recyclerView, type);
+            super(inflater, resources, recyclerView, type, false);
         }
 
         @Override

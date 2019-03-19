@@ -1339,7 +1339,7 @@ public final class GalleryListScene extends BaseScene
 
         public GalleryListAdapter(@NonNull LayoutInflater inflater,
                 @NonNull Resources resources, @NonNull RecyclerView recyclerView, int type) {
-            super(inflater, resources, recyclerView, type);
+            super(inflater, resources, recyclerView, type, true);
         }
 
         @Override

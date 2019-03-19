@@ -62,14 +62,16 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
     private final int mListThumbWidth;
     private final int mListThumbHeight;
     private int mType = TYPE_INVALID;
+    private boolean mShowFavourited;
 
     public GalleryAdapter(@NonNull LayoutInflater inflater, @NonNull Resources resources,
-            @NonNull RecyclerView recyclerView, int type) {
+            @NonNull RecyclerView recyclerView, int type, boolean showFavourited) {
         mInflater = inflater;
         mResources = resources;
         mRecyclerView = recyclerView;
         mLayoutManager = new AutoStaggeredGridLayoutManager(0, StaggeredGridLayoutManager.VERTICAL);
         mPaddingTopSB = resources.getDimensionPixelOffset(R.dimen.gallery_padding_top_search_bar);
+        mShowFavourited = showFavourited;
 
         mRecyclerView.setAdapter(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -210,7 +212,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                     holder.simpleLanguage.setText(gi.simpleLanguage);
                     holder.simpleLanguage.setVisibility(View.VISIBLE);
                 }
-                holder.favourited.setVisibility((gi.favoriteSlot >= -1 && gi.favoriteSlot <= 10) ? View.VISIBLE : View.GONE);
+                holder.favourited.setVisibility((mShowFavourited && gi.favoriteSlot >= -1 && gi.favoriteSlot <= 10) ? View.VISIBLE : View.GONE);
                 holder.downloaded.setVisibility(gi.downloaded ? View.VISIBLE : View.GONE);
                 break;
             }
