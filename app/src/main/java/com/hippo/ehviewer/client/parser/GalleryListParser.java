@@ -118,7 +118,7 @@ public class GalleryListParser {
         return -2;
     }
 
-    private static GalleryInfo parseGalleryInfoMinimal(Element e) {
+    private static GalleryInfo parseGalleryInfo(Element e) {
         GalleryInfo gi = new GalleryInfo();
 
         // Title, gid, token (required), tags
@@ -267,8 +267,10 @@ public class GalleryListParser {
                 //noinspection unchecked
                 result.galleryInfoList = Collections.EMPTY_LIST;
                 return result;
+            } else if (body.contains("Currently Popular Recent Galleries")) {
+                result.pages = 1;
             } else {
-                throw e;
+                result.pages = Integer.MAX_VALUE;
             }
         }
 
@@ -283,7 +285,7 @@ public class GalleryListParser {
             List<GalleryInfo> list = new ArrayList<>(es.size());
             // First one is table header, skip it
             for (int i = 0; i < es.size(); i++) {
-                GalleryInfo gi = parseGalleryInfoMinimal(es.get(i));
+                GalleryInfo gi = parseGalleryInfo(es.get(i));
                 if (null != gi) {
                     list.add(gi);
                 }

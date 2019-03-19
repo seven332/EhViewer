@@ -462,6 +462,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 }
                 return sb.toString();
             }
+            case MODE_WHATS_HOT:
+                return EhUrl.getPopularUrl();
             case MODE_IMAGE_SEARCH:
                 return EhUrl.getImageSearchUrl();
         }

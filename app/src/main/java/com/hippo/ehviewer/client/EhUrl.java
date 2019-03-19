@@ -40,6 +40,9 @@ public class EhUrl {
     public static final String API_E = HOST_E + "api.php";
     public static final String API_EX = HOST_EX + "api.php";
 
+    public static final String URL_POPULAR_E = "https://e-hentai.org/popular";
+    public static final String URL_POPULAR_EX = "https://exhentai.org/popular";
+
     public static final String URL_IMAGE_SEARCH_E = "https://upload.e-hentai.org/image_lookup.php";
     public static final String URL_IMAGE_SEARCH_EX = "https://exhentai.org/upload/image_lookup.php";
 
@@ -150,6 +153,17 @@ public class EhUrl {
 
     public static String getTagDefinitionUrl(String tag) {
         return "https://ehwiki.org/wiki/" + tag.replace(' ', '_');
+    }
+
+    @NonNull
+    public static String getPopularUrl() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_E:
+                return URL_POPULAR_E;
+            case SITE_EX:
+                return URL_POPULAR_EX;
+        }
     }
 
     @NonNull

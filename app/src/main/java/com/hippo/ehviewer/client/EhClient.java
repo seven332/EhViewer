@@ -46,7 +46,6 @@ public class EhClient {
     public static final int METHOD_ADD_FAVORITES_RANGE = 10;
     public static final int METHOD_MODIFY_FAVORITES = 11;
     public static final int METHOD_GET_TORRENT_LIST = 12;
-    public static final int METHOD_GET_WHATS_HOT = 13;
     public static final int METHOD_GET_PROFILE = 14;
     public static final int METHOD_VOTE_COMMENT = 15;
     public static final int METHOD_IMAGE_SEARCH = 16;
@@ -162,8 +161,6 @@ public class EhClient {
                         return EhEngine.modifyFavorites(this, mOkHttpClient, (String) params[0], (long[]) params[1], (Integer) params[2], (Boolean) params[3]);
                     case METHOD_GET_TORRENT_LIST:
                         return EhEngine.getTorrentList(this, mOkHttpClient, (String) params[0], (Long) params[1], (String) params[2]);
-                    case METHOD_GET_WHATS_HOT:
-                        return EhEngine.getWhatsHot(this, mOkHttpClient);
                     case METHOD_GET_PROFILE:
                         return EhEngine.getProfile(this, mOkHttpClient);
                     case METHOD_VOTE_COMMENT:

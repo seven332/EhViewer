@@ -46,7 +46,6 @@ import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
 import com.hippo.ehviewer.client.parser.TorrentParser;
 import com.hippo.ehviewer.client.parser.VoteCommentParser;
-import com.hippo.ehviewer.client.parser.WhatsHotParser;
 import com.hippo.network.StatusCodeException;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.AssertUtils;
@@ -748,46 +747,6 @@ public class EhEngine {
         }
 
         return null;
-    }
-
-    public static List<GalleryInfo> getWhatsHot(@Nullable EhClient.Task task,
-            OkHttpClient okHttpClient) throws Throwable {
-        String url = EhUrl.HOST_E;
-        Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null).build();
-        Call call = okHttpClient.newCall(request);
-
-        // Put call
-        if (null != task) {
-            task.setCall(call);
-        }
-
-        String body = null;
-        Headers headers = null;
-        List<GalleryInfo> list;
-        int code = -1;
-        try {
-            Response response = call.execute();
-            code = response.code();
-            headers = response.headers();
-            body = response.body().string();
-            list = WhatsHotParser.parse(body);
-        } catch (Throwable e) {
-            ExceptionUtils.throwIfFatal(e);
-            throwException(call, code, headers, body, e);
-            throw e;
-        }
-
-        if (list.size() > 0) {
-            // Fill by api
-            fillGalleryListByApi(task, okHttpClient, list, url);
-        }
-
-        for (GalleryInfo info : list) {
-            info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
-        }
-
-        return list;
     }
 
     private static ProfileParser.Result getProfileInternal(@Nullable EhClient.Task task,
