@@ -289,6 +289,7 @@ public class EhConfig implements Cloneable {
     public static final int ASIAN_PORN = 0x80;
     public static final int NON_H = 0x100;
     public static final int WESTERN = 0x200;
+    public static final int ALL_CATEGORY = 0x3ff;
 
     public static final int NAMESPACES_RECLASS = 0x1;
     public static final int NAMESPACES_LANGUAGE = 0x2;
