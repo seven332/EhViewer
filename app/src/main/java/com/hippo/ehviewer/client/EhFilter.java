@@ -144,7 +144,7 @@ public final class EhFilter {
         }
     }
 
-    public synchronized boolean needCallApi() {
+    public synchronized boolean needTags() {
         return 0 != mTagFilterList.size() || 0 != mTagNamespaceFilterList.size();
     }
 
