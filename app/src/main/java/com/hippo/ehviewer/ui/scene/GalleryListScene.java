@@ -1426,6 +1426,11 @@ public final class GalleryListScene extends BaseScene
         }
 
         @Override
+        protected boolean isDuplicate(GalleryInfo d1, GalleryInfo d2) {
+            return d1.gid == d2.gid;
+        }
+
+        @Override
         protected void onScrollToPosition(int postion) {
             if (0 == postion) {
                 if (null != mSearchBarMover) {

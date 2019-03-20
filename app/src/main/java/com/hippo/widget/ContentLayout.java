@@ -46,6 +46,7 @@ import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.collect.IntList;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ContentLayout extends FrameLayout {
@@ -166,6 +167,8 @@ public class ContentLayout extends FrameLayout {
     public abstract static class ContentHelper<E extends Parcelable> implements ViewTransition.OnShowViewListener {
 
         private static final String TAG = ContentHelper.class.getSimpleName();
+
+        private static final int CHECK_DUPLICATE_RANGE = 50;
 
         private static final String KEY_SUPER = "super";
         private static final String KEY_SHOWN_VIEW = "shown_view";
@@ -423,6 +426,22 @@ public class ContentLayout extends FrameLayout {
             notifyItemRangeRemoved(index, 1);
         }
 
+        protected abstract boolean isDuplicate(E d1, E d2);
+
+        private void removeDuplicateData(List<E> data, int start, int end) {
+            start = Math.max(0, start);
+            end = Math.min(mData.size(), end);
+            for (Iterator<E> iterator = data.iterator(); iterator.hasNext();) {
+                E d = iterator.next();
+                for (int i = start; i < end; i++) {
+                    if (isDuplicate(d, mData.get(i))) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
         public void onGetPageData(int taskId, List<E> data) {
             if (mCurrentTaskId == taskId) {
                 int dataSize;
@@ -475,6 +494,7 @@ public class ContentLayout extends FrameLayout {
                         break;
                     case TYPE_PRE_PAGE:
                     case TYPE_PRE_PAGE_KEEP_POS:
+                        removeDuplicateData(data, 0, CHECK_DUPLICATE_RANGE);
                         dataSize = data.size();
                         for (int i = 0, n = mPageDivider.size(); i < n; i++) {
                             mPageDivider.set(i, mPageDivider.get(i) + dataSize);
@@ -537,6 +557,7 @@ public class ContentLayout extends FrameLayout {
                         break;
                     case TYPE_NEXT_PAGE:
                     case TYPE_NEXT_PAGE_KEEP_POS:
+                        removeDuplicateData(data, mData.size() - CHECK_DUPLICATE_RANGE, mData.size());
                         dataSize = data.size();
                         int oldDataSize = mData.size();
                         mPageDivider.add(oldDataSize + dataSize);
@@ -647,6 +668,7 @@ public class ContentLayout extends FrameLayout {
                         int oldIndexStart = mCurrentTaskPage == mStartPage ? 0 : mPageDivider.get(mCurrentTaskPage - mStartPage - 1);
                         int oldIndexEnd = mPageDivider.get(mCurrentTaskPage - mStartPage);
                         mData.subList(oldIndexStart, oldIndexEnd).clear();
+                        removeDuplicateData(data, oldIndexStart - CHECK_DUPLICATE_RANGE, oldIndexStart + CHECK_DUPLICATE_RANGE);
                         int newIndexStart = oldIndexStart;
                         int newIndexEnd = newIndexStart + data.size();
                         mData.addAll(oldIndexStart, data);

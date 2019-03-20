@@ -330,6 +330,11 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
                 mAdapter.notifyItemRangeInserted(positionStart, itemCount);
             }
         }
+
+        @Override
+        protected boolean isDuplicate(GalleryPreview d1, GalleryPreview d2) {
+            return false;
+        }
     }
 
     private void onGetPreviewSetSuccess(Pair<PreviewSet, Integer> result, int taskId) {
