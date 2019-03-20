@@ -318,8 +318,6 @@
     <string name="settings_eh_excluded_tag_namespaces">Ausgeschlossene Namensraum-Etiketten</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">Galerie in der ausgeschlossenen Namensraum werden vom Standard-Etikett-Suchen versteckt</string>
     <string name="settings_eh_show_jpn_title">Japanische Titel anzeigen</string>
-    <string name="settings_eh_show_jpn_title_summary_on">Versuchen, japanische Titel anzuzeigen. Es wird länger dauern, Galerieliste zu laden.</string>
-    <string name="settings_eh_show_jpn_title_summary_off">Standardtitel anzeigen. Sie sind oft in Englisch.</string>
     <string name="settings_eh_filter">Filter</string>
     <string name="settings_eh_filter_summary">Nach Titel, Hochlader, Etikett und Etikett-Namensraum filtern</string>
     <string name="settings_eh_cellular_network_warning">Achtung auf mobile Daten anzeigen</string>
@@ -512,5 +510,5 @@
     <string name="settings_eh_identity_cookies_tourist">Du hast dich noch nicht angemeldet.</string>
     <string name="settings_eh_identity_cookies_copy">Kopieren</string>
     <string name="settings_eh_show_gallery_pages">Galerieseitenzahl anzeigen</string>
-    <string name="settings_eh_show_gallery_pages_summary">Die Galerieseitenzahle in der Galerieliste anzeigen. Es wird länger dauern, um Galerieliste zu laden.</string>
+    <string name="settings_eh_show_gallery_pages_summary">Die Galerieseitenzahle in der Galerieliste anzeigen</string>
 </resources>

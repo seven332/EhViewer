@@ -425,10 +425,8 @@
     <string name="settings_eh_excluded_tag_namespaces">แท็กเนมสเปซที่ยกเว้น</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">แยกเนมสเปซที่ตั้งไว้ออกจากที่ค้นหาแท็กที่เป็นค่าเริ่มต้น</string>
     <string name="settings_eh_show_jpn_title">แสดงชื่อเรื่องญี่ปุ่น</string>
-    <string name="settings_eh_show_jpn_title_summary_on">พยายามแสดงแสดงชื่อเรื่องภาษาญี่ปุ่น อาจใช้เวลามากขึ้นในการแสดงรายการแกลเลอรี่</string>
-    <string name="settings_eh_show_jpn_title_summary_off">แสดงค่าเริ่มต้นของชื่อเรื่อง ซึ่งส่วนมากแล้วจะใช้ภาษาอังกฤษ</string>
     <string name="settings_eh_show_gallery_pages">แสดงจำนวนหน้าของแกลเลอรี่</string>
-    <string name="settings_eh_show_gallery_pages_summary">แสดงจำนวนหน้าที่มีอยู่ในแต่ละแกลเลอรี่ อาจใช้เวลามากขึ้นในการดึงรายการแกลเลอรี่</string>
+    <string name="settings_eh_show_gallery_pages_summary">แสดงจำนวนหน้าที่มีอยู่ในแต่ละแกลเลอรี่</string>
     <string name="settings_eh_show_tag_translations">แสดงแท็กการแปลภาษา</string>
     <string name="settings_eh_show_tag_translations_summary">แสดงแท็กการแปลภาษาแทนที่ข้อความต้นฉบับ (อาจใช้เวลามากขึ้นเพื่อดาวน์โหลดไฟล์ข้อมูล)</string>
     <string name="settings_eh_tag_translations_source">Placeholder</string>

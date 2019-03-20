@@ -407,10 +407,8 @@
     <string name="settings_eh_excluded_tag_namespaces">제외할 태그 네임스페이스</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">기본 태그 검색에서 특정 네임스페이스 제외</string>
     <string name="settings_eh_show_jpn_title">일본어 제목 표시</string>
-    <string name="settings_eh_show_jpn_title_summary_on">가능하면 일본어 제목을 표시합니다. 갤러리 목록을 불러오는 데 시간이 좀 더 걸립니다.</string>
-    <string name="settings_eh_show_jpn_title_summary_off">기본 제목을 표시합니다. 대부분 영어로 표시됩니다.</string>
     <string name="settings_eh_show_gallery_pages">갤러리 페이지 수 표시</string>
-    <string name="settings_eh_show_gallery_pages_summary">갤러리 목록에 해당 갤러리의 페이지 수를 표시합니다. 갤러리 목록을 불러오는 데 시간이 좀 더 걸립니다.</string>
+    <string name="settings_eh_show_gallery_pages_summary">갤러리 목록에 해당 갤러리의 페이지 수를 표시합니다</string>
     <string name="settings_eh_show_tag_translations">번역된 태그 표시</string>
     <string name="settings_eh_show_tag_translations_summary">영어 태그 대신 번역된 태그를 표시합니다. 데이터 파일을 다운로드하는데 시간이 걸립 수 있습니다.</string>
     <string name="settings_eh_tag_translations_source">Placeholder</string>

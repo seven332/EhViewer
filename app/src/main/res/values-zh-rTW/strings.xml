@@ -425,10 +425,9 @@
     <string name="settings_eh_excluded_languages">排除語言</string>
     <string name="settings_eh_excluded_languages_summary">在首頁與搜尋中隱藏指定語言的圖庫</string>
     <string name="settings_eh_show_jpn_title">顯示日文標題</string>
-    <string name="settings_eh_show_jpn_title_summary_on">嘗試顯示日文標題。這會使取得圖庫列表時間增加</string>
-    <string name="settings_eh_show_jpn_title_summary_off">顯示預設的標題。通常是英文的</string>
+    <string name="settings_eh_show_jpn_title_summary">需同時在 EHentai 網站設定中啟用 Japanese Title</string>
     <string name="settings_eh_show_gallery_pages">顯示圖庫頁數</string>
-    <string name="settings_eh_show_gallery_pages_summary">在圖庫列表中顯示頁數。這會使取得圖庫列表時間增加</string>
+    <string name="settings_eh_show_gallery_pages_summary">在圖庫列表中顯示頁數</string>
     <string name="settings_eh_show_tag_translations">顯示標籤翻譯</string>
     <string name="settings_eh_show_tag_translations_summary">顯示翻譯後的標籤而非原始文字（需花費時間來下載資料檔案）</string>
     <string name="settings_eh_tag_translations_source">補充翻譯（由 EhTagTranslator 提供）</string>

@@ -390,8 +390,6 @@
     <string name="settings_eh_excluded_languages">言語を除外</string>
     <string name="settings_eh_excluded_languages_summary">指定した言語のギャラリーをホームページと検索から隠す</string>
     <string name="settings_eh_show_jpn_title">日本語タイトルを表示</string>
-    <string name="settings_eh_show_jpn_title_summary_on">日本語タイトルを表示しようとします。有効にすると、ギャラリーリストを取得するのにもっと時間がかかることがあります</string>
-    <string name="settings_eh_show_jpn_title_summary_off">デフォルトのタイトルを表示します。多くの場合は英語のタイトルです。</string>
     <string name="settings_eh_filter">フィルター</string>
     <string name="settings_eh_filter_summary">タイトル、アップローダ、タグとタグセットをフィルター</string>
     <string name="settings_eh_cellular_network_warning">モバイルネットワーク警告</string>
@@ -657,5 +655,5 @@
     <string name="settings_eh_identity_cookies_tourist">まだログインしていません</string>
     <string name="settings_eh_identity_cookies_copy">コピー</string>
     <string name="settings_eh_show_gallery_pages">ギャラリーページ数を表示</string>
-    <string name="settings_eh_show_gallery_pages_summary">リストにギャラリーのページの数量を表示します。リストをロードするのにもっと時間がかかることがあります。</string>
+    <string name="settings_eh_show_gallery_pages_summary">リストにギャラリーのページの数量を表示します</string>
 </resources>

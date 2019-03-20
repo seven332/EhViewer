@@ -367,10 +367,8 @@
     <string name="settings_eh_excluded_tag_namespaces">Excluir etiquetas espacios de nombres</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">Excluir ciertos espacios de nombres de una búsqueda de etiquetas por defecto</string>
     <string name="settings_eh_show_jpn_title">Mostrar títulos en japonés</string>
-    <string name="settings_eh_show_jpn_title_summary_on">Intentar mostrar títulos en japonés. Tomará más tiempo en cargar la lista de galerías</string>
-    <string name="settings_eh_show_jpn_title_summary_off">Mostrar títulos por defecto, usualmente es en inglés</string>
-	<string name="settings_eh_show_gallery_pages">Mostrar número de páginas de la galería</string>
-    <string name="settings_eh_show_gallery_pages_summary">Se verá cuántas páginas tiene una galería. Tomará más tiempo en cargar la lista de galerías</string>
+    <string name="settings_eh_show_gallery_pages">Mostrar número de páginas de la galería</string>
+    <string name="settings_eh_show_gallery_pages_summary">Se verá cuántas páginas tiene una galería</string>
     <string name="settings_eh_filter">Filtros</string>
     <string name="settings_eh_filter_summary">Filtrar por titulo, uploader, etiqueta y etiquetas variables</string>
     <string name="settings_eh_cellular_network_warning">Advertencia de redes moviles</string>

@@ -96,8 +96,7 @@
     <com.hippo.preference.SwitchPreference
         android:key="show_jpn_title"
         android:title="@string/settings_eh_show_jpn_title"
-        app:summaryOn="@string/settings_eh_show_jpn_title_summary_on"
-        app:summaryOff="@string/settings_eh_show_jpn_title_summary_off"
+        android:summary="@string/settings_eh_show_jpn_title_summary"
         android:defaultValue="false"/>
 
     <com.hippo.preference.SwitchPreference
