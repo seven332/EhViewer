@@ -46,6 +46,7 @@ import com.hippo.yorozuya.IntIdGenerator;
 import com.hippo.yorozuya.LayoutUtils;
 import com.hippo.yorozuya.collect.IntList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -235,6 +236,8 @@ public class ContentLayout extends FrameLayout {
          */
         private int mPages;
 
+        private int mNextPage;
+
         private int mCurrentTaskId;
         private int mCurrentTaskType;
         private int mCurrentTaskPage;
@@ -271,6 +274,13 @@ public class ContentLayout extends FrameLayout {
             public void onFooterRefresh() {
                 if (mEndPage < mPages) {
                     // Get next page
+                    // Fill pages before NextPage with empty list
+                    while (mNextPage > mEndPage) {
+                        mCurrentTaskId = mIdGenerator.nextId();
+                        mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
+                        mCurrentTaskPage = mEndPage;
+                        onGetPageData(mCurrentTaskId, mNextPage, Collections.emptyList());
+                    }
                     mCurrentTaskId = mIdGenerator.nextId();
                     mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
                     mCurrentTaskPage = mEndPage;
@@ -324,7 +334,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         /**
-         * Call {@link #onGetPageData(int, List)} when get data
+         * Call {@link #onGetPageData(int, int, List)} when get data
          *
          * @param taskId task id
          * @param page the page to get
@@ -442,7 +452,7 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
-        public void onGetPageData(int taskId, List<E> data) {
+        public void onGetPageData(int taskId, int nextPage, List<E> data) {
             if (mCurrentTaskId == taskId) {
                 int dataSize;
 
@@ -450,6 +460,7 @@ public class ContentLayout extends FrameLayout {
                     case TYPE_REFRESH:
                         mStartPage = 0;
                         mEndPage = 1;
+                        mNextPage = nextPage;
                         mPageDivider.clear();
                         mPageDivider.add(data.size());
 
@@ -562,6 +573,7 @@ public class ContentLayout extends FrameLayout {
                         int oldDataSize = mData.size();
                         mPageDivider.add(oldDataSize + dataSize);
                         mEndPage++;
+                        mNextPage = nextPage;
 
                         if (data.isEmpty()) {
                             if (true || mEndPage >= mPages) { // OK, that's all
@@ -616,6 +628,7 @@ public class ContentLayout extends FrameLayout {
                     case TYPE_SOMEWHERE:
                         mStartPage = mCurrentTaskPage;
                         mEndPage = mCurrentTaskPage + 1;
+                        mNextPage = nextPage;
                         mPageDivider.clear();
                         mPageDivider.add(data.size());
 
@@ -663,6 +676,10 @@ public class ContentLayout extends FrameLayout {
                             Log.e(TAG, "TYPE_REFRESH_PAGE, but mCurrentTaskPage = " + mCurrentTaskPage +
                                     ", mStartPage = " + mStartPage + ", mEndPage = " + mEndPage);
                             break;
+                        }
+
+                        if (mCurrentTaskPage == mEndPage - 1) {
+                            mNextPage = nextPage;
                         }
 
                         int oldIndexStart = mCurrentTaskPage == mStartPage ? 0 : mPageDivider.get(mCurrentTaskPage - mStartPage - 1);

@@ -347,7 +347,7 @@ public class GalleryPreviewsScene extends ToolbarScene implements EasyRecyclerVi
             }
 
             mHelper.setPages(taskId, result.second);
-            mHelper.onGetPageData(taskId, list);
+            mHelper.onGetPageData(taskId, 0, list);
         }
     }
 

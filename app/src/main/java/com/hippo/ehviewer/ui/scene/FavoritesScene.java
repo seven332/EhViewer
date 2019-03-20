@@ -879,7 +879,7 @@ public class FavoritesScene extends BaseScene implements
 
             updateSearchBar();
             mHelper.setPages(taskId, result.pages);
-            mHelper.onGetPageData(taskId, result.galleryInfoList);
+            mHelper.onGetPageData(taskId, result.nextPage, result.galleryInfoList);
 
             if (mDrawerAdapter != null) {
                 mDrawerAdapter.notifyDataSetChanged();
@@ -906,10 +906,10 @@ public class FavoritesScene extends BaseScene implements
 
             if (list.size() == 0) {
                 mHelper.setPages(taskId, 0);
-                mHelper.onGetPageData(taskId, Collections.EMPTY_LIST);
+                mHelper.onGetPageData(taskId, 0, Collections.EMPTY_LIST);
             } else {
                 mHelper.setPages(taskId, 1);
-                mHelper.onGetPageData(taskId, list);
+                mHelper.onGetPageData(taskId, 0, list);
             }
 
             if (TextUtils.isEmpty(keyword)) {

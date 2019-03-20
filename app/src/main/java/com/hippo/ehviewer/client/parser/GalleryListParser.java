@@ -46,6 +46,7 @@ public class GalleryListParser {
     private static final Pattern PATTERN_THUMB_SIZE = Pattern.compile("height:(\\d+)px;width:(\\d+)px");
     private static final Pattern PATTERN_FAVORITE_SLOT = Pattern.compile("background-color:rgba\\((\\d+),(\\d+),(\\d+),");
     private static final Pattern PATTERN_PAGES = Pattern.compile("(\\d+) page");
+    private static final Pattern PATTERN_NEXT_PAGE = Pattern.compile("page=(\\d+)");
 
     private static final String[][] FAVORITE_SLOT_RGB = new String[][] {
         new String[] { "0", "0", "0"},
@@ -62,6 +63,7 @@ public class GalleryListParser {
 
     public static class Result {
         public int pages;
+        public int nextPage;
         public List<GalleryInfo> galleryInfoList;
     }
 
@@ -269,6 +271,15 @@ public class GalleryListParser {
             Element ptt = d.getElementsByClass("ptt").first();
             Elements es = ptt.child(0).child(0).children();
             result.pages = Integer.parseInt(es.get(es.size() - 2).text().trim());
+
+            Element e = es.get(es.size() - 1);
+            if (e != null) {
+                String href = e.child(0).attr("href");
+                Matcher matcher = PATTERN_NEXT_PAGE.matcher(href);
+                if (matcher.find()) {
+                    result.nextPage = Integer.parseInt(matcher.group(1));
+                }
+            }
         } catch (Throwable e) {
             ExceptionUtils.throwIfFatal(e);
             if (body.contains("No hits found</p>")) {
