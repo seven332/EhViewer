@@ -282,113 +282,139 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         boolean enablePage = false;
         int pageFrom = -1;
         int pageTo = -1;
-        for (int i = 0, size = querys.length; i < size; i++) {
-            String str = querys[i];
+        for (String str : querys) {
             int index = str.indexOf('=');
             if (index < 0) {
                 continue;
             }
             String key = str.substring(0, index);
             String value = str.substring(index + 1);
-            if ("f_cats".equals(key)) {
-                int cats = NumberUtils.parseIntSafely(value, EhConfig.ALL_CATEGORY);
-                category |= (~cats) & EhConfig.ALL_CATEGORY;
-            } else if ("f_doujinshi".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.DOUJINSHI;
-                }
-            } else if ("f_manga".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.MANGA;
-                }
-            } else if ("f_artistcg".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.ARTIST_CG;
-                }
-            } else if ("f_gamecg".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.GAME_CG;
-                }
-            } else if ("f_western".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.WESTERN;
-                }
-            } else if ("f_non-h".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.NON_H;
-                }
-            } else if ("f_imageset".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.IMAGE_SET;
-                }
-            } else if ("f_cosplay".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.COSPLAY;
-                }
-            } else if ("f_asianporn".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.ASIAN_PORN;
-                }
-            } else if ("f_misc".equals(key)) {
-                if ("1".equals(value)) {
-                    category |= EhConfig.MISC;
-                }
-            } else if ("f_search".equals(key)) {
-                try {
-                    keyword = URLDecoder.decode(value, "utf-8");
-                } catch (UnsupportedEncodingException | IllegalArgumentException e) {
-                    // Ignore
-                }
-            } else if ("advsearch".equals(key)) {
-                if ("1".equals(value)) {
-                    enableAdvanceSearch = true;
-                }
-            } else if ("f_sname".equals(key)) {
-                if ("on".equals(value)) {
-                    advanceSearch |= AdvanceSearchTable.SNAME;
-                }
-            } else if ("f_stags".equals(key)) {
-                if ("on".equals(value)) {
-                    advanceSearch |= AdvanceSearchTable.STAGS;
-                }
-            } else if ("f_sdesc".equals(key)) {
-                if ("on".equals(value)) {
-                    advanceSearch |= AdvanceSearchTable.SDESC;
-                }
-            } else if ("f_storr".equals(key)) {
-                if ("on".equals(value)) {
-                    advanceSearch |= AdvanceSearchTable.STORR;
-                }
-            } else if ("f_sto".equals(key)) {
-                if ("on".equals(value)) {
-                    advanceSearch |= AdvanceSearchTable.STO;
-                }
-            } else if ("f_sdt1".equals(key)) {
-                if ("on".equals(value)) {
-                    advanceSearch |= AdvanceSearchTable.SDT1;
-                }
-            } else if ("f_sdt2".equals(key)) {
-                if ("on".equals(value)) {
-                    advanceSearch |= AdvanceSearchTable.SDT2;
-                }
-            } else if ("f_sh".equals(key)) {
-                if ("on".equals(value)) {
-                    advanceSearch |= AdvanceSearchTable.SH;
-                }
-            } else if ("f_sr".equals(key)) {
-                if ("on".equals(value)) {
-                    enableMinRating = true;
-                }
-            } else if ("f_srdd".equals(key)) {
-                minRating = NumberUtils.parseIntSafely(value, -1);
-            } else if ("f_sp".equals(key)) {
-                if ("on".equals(value)) {
-                    enablePage = true;
-                }
-            } else if ("f_spf".equals(key)) {
-                pageFrom = NumberUtils.parseIntSafely(value, -1);
-            } else if ("f_spt".equals(key)) {
-                pageTo = NumberUtils.parseIntSafely(value, -1);
+            switch (key) {
+                case "f_cats":
+                    int cats = NumberUtils.parseIntSafely(value, EhConfig.ALL_CATEGORY);
+                    category |= (~cats) & EhConfig.ALL_CATEGORY;
+                    break;
+                case "f_doujinshi":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.DOUJINSHI;
+                    }
+                    break;
+                case "f_manga":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.MANGA;
+                    }
+                    break;
+                case "f_artistcg":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.ARTIST_CG;
+                    }
+                    break;
+                case "f_gamecg":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.GAME_CG;
+                    }
+                    break;
+                case "f_western":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.WESTERN;
+                    }
+                    break;
+                case "f_non-h":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.NON_H;
+                    }
+                    break;
+                case "f_imageset":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.IMAGE_SET;
+                    }
+                    break;
+                case "f_cosplay":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.COSPLAY;
+                    }
+                    break;
+                case "f_asianporn":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.ASIAN_PORN;
+                    }
+                    break;
+                case "f_misc":
+                    if ("1".equals(value)) {
+                        category |= EhConfig.MISC;
+                    }
+                    break;
+                case "f_search":
+                    try {
+                        keyword = URLDecoder.decode(value, "utf-8");
+                    } catch (UnsupportedEncodingException | IllegalArgumentException e) {
+                        // Ignore
+                    }
+                    break;
+                case "advsearch":
+                    if ("1".equals(value)) {
+                        enableAdvanceSearch = true;
+                    }
+                    break;
+                case "f_sname":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.SNAME;
+                    }
+                    break;
+                case "f_stags":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.STAGS;
+                    }
+                    break;
+                case "f_sdesc":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.SDESC;
+                    }
+                    break;
+                case "f_storr":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.STORR;
+                    }
+                    break;
+                case "f_sto":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.STO;
+                    }
+                    break;
+                case "f_sdt1":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.SDT1;
+                    }
+                    break;
+                case "f_sdt2":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.SDT2;
+                    }
+                    break;
+                case "f_sh":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.SH;
+                    }
+                    break;
+                case "f_sr":
+                    if ("on".equals(value)) {
+                        enableMinRating = true;
+                    }
+                    break;
+                case "f_srdd":
+                    minRating = NumberUtils.parseIntSafely(value, -1);
+                    break;
+                case "f_sp":
+                    if ("on".equals(value)) {
+                        enablePage = true;
+                    }
+                    break;
+                case "f_spf":
+                    pageFrom = NumberUtils.parseIntSafely(value, -1);
+                    break;
+                case "f_spt":
+                    pageTo = NumberUtils.parseIntSafely(value, -1);
+                    break;
             }
         }
 
