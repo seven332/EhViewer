@@ -27,6 +27,7 @@ import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.widget.AdvanceSearchTable;
 import com.hippo.network.UrlBuilder;
+import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Retention;
@@ -272,13 +273,15 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         }
 
         String[] querys = StringUtils.split(query, '&');
-        boolean apply = false;
         int category = 0;
         String keyword = null;
         boolean enableAdvanceSearch = false;
         int advanceSearch = 0;
         boolean enableMinRating = false;
-        int minRating = 0;
+        int minRating = -1;
+        boolean enablePage = false;
+        int pageFrom = -1;
+        int pageTo = -1;
         for (int i = 0, size = querys.length; i < size; i++) {
             String str = querys[i];
             int index = str.indexOf('=');
@@ -287,7 +290,10 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
             }
             String key = str.substring(0, index);
             String value = str.substring(index + 1);
-            if ("f_doujinshi".equals(key)) {
+            if ("f_cats".equals(key)) {
+                int cats = NumberUtils.parseIntSafely(value, EhConfig.ALL_CATEGORY);
+                category |= (~cats) & EhConfig.ALL_CATEGORY;
+            } else if ("f_doujinshi".equals(key)) {
                 if ("1".equals(value)) {
                     category |= EhConfig.DOUJINSHI;
                 }
@@ -374,20 +380,16 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                     enableMinRating = true;
                 }
             } else if ("f_srdd".equals(key)) {
-                try {
-                    minRating = Integer.parseInt(value);
-                } catch (NumberFormatException e) {
-                    // Ignore
+                minRating = NumberUtils.parseIntSafely(value, -1);
+            } else if ("f_sp".equals(key)) {
+                if ("on".equals(value)) {
+                    enablePage = true;
                 }
-            } else if ("f_apply".equals(key)) {
-                if ("Apply+Filter".equals(value)) {
-                    apply = true;
-                }
+            } else if ("f_spf".equals(key)) {
+                pageFrom = NumberUtils.parseIntSafely(value, -1);
+            } else if ("f_spt".equals(key)) {
+                pageTo = NumberUtils.parseIntSafely(value, -1);
             }
-        }
-
-        if (!apply) {
-            return;
         }
 
         mCategory = category;
@@ -398,6 +400,13 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 mMinRating = minRating;
             } else {
                 mMinRating = -1;
+            }
+            if (enablePage) {
+                mPageFrom = pageFrom;
+                mPageTo = pageTo;
+            } else {
+                mPageFrom = -1;
+                mPageTo = -1;
             }
         } else {
             mAdvanceSearch = -1;
