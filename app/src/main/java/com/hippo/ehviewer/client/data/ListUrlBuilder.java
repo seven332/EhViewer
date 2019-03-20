@@ -60,6 +60,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
 
     private int mAdvanceSearch = -1;
     private int mMinRating = -1;
+    private int mPageFrom = -1;
+    private int mPageTo = -1;
 
     private String mImagePath;
     private boolean mUseSimilarityScan;
@@ -76,6 +78,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mKeyword = null;
         mAdvanceSearch = -1;
         mMinRating = -1;
+        mPageFrom = -1;
+        mPageTo = -1;
         mImagePath = null;
         mUseSimilarityScan = false;
         mOnlySearchCovers = false;
@@ -140,6 +144,14 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mMinRating = minRating;
     }
 
+    public void setPageFrom(int pageFrom) {
+        mPageFrom = pageFrom;
+    }
+
+    public void setPageTo(int pageTo) {
+        mPageTo = pageTo;
+    }
+
     @Nullable
     public String getImagePath() {
         return mImagePath;
@@ -184,6 +196,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mKeyword = lub.mKeyword;
         mAdvanceSearch = lub.mAdvanceSearch;
         mMinRating = lub.mMinRating;
+        mPageFrom = lub.mPageFrom;
+        mPageTo = lub.mPageTo;
         mImagePath = lub.mImagePath;
         mUseSimilarityScan = lub.mUseSimilarityScan;
         mOnlySearchCovers = lub.mOnlySearchCovers;
@@ -196,6 +210,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mKeyword = q.keyword;
         mAdvanceSearch = q.advanceSearch;
         mMinRating = q.minRating;
+        mPageFrom = q.pageFrom;
+        mPageTo = q.pageTo;
         mImagePath = null;
         mUseSimilarityScan = false;
         mOnlySearchCovers = false;
@@ -209,6 +225,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         q.keyword = mKeyword;
         q.advanceSearch = mAdvanceSearch;
         q.minRating = mMinRating;
+        q.pageFrom = mPageFrom;
+        q.pageTo = mPageTo;
         return q;
     }
 
@@ -230,6 +248,12 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
             return false;
         }
         if (q.minRating != mMinRating) {
+            return false;
+        }
+        if (q.pageFrom != mPageFrom) {
+            return false;
+        }
+        if (q.pageTo != mPageTo) {
             return false;
         }
 
@@ -419,6 +443,12 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                         ub.addQuery("f_sr", "on");
                         ub.addQuery("f_srdd", mMinRating);
                     }
+                    // Pages
+                    if (mPageFrom != -1 || mPageTo != -1) {
+                        ub.addQuery("f_sp", "on");
+                        ub.addQuery("f_spf", mPageFrom != -1 ? Integer.toString(mPageFrom) : "");
+                        ub.addQuery("f_spt", mPageTo != -1 ? Integer.toString(mPageTo) : "");
+                    }
                 }
                 return ub.build();
             }
@@ -468,6 +498,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         dest.writeString(this.mKeyword);
         dest.writeInt(this.mAdvanceSearch);
         dest.writeInt(this.mMinRating);
+        dest.writeInt(this.mPageFrom);
+        dest.writeInt(this.mPageTo);
         dest.writeString(this.mImagePath);
         dest.writeByte(mUseSimilarityScan ? (byte) 1 : (byte) 0);
         dest.writeByte(mOnlySearchCovers ? (byte) 1 : (byte) 0);
@@ -485,6 +517,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         this.mKeyword = in.readString();
         this.mAdvanceSearch = in.readInt();
         this.mMinRating = in.readInt();
+        this.mPageFrom = in.readInt();
+        this.mPageTo = in.readInt();
         this.mImagePath = in.readString();
         this.mUseSimilarityScan = in.readByte() != 0;
         this.mOnlySearchCovers = in.readByte() != 0;

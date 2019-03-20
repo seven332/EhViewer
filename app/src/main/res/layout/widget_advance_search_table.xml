@@ -114,4 +114,38 @@
             android:entries="@array/search_min_rating"/>
     </TableRow>
 
+    <TableRow>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/advance_search_table_item_margin"
+            android:layout_marginRight="@dimen/advance_search_table_item_margin"
+            android:text="@string/search_sp"/>
+
+        <EditText
+            android:id="@+id/spf"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/advance_search_table_item_margin"
+            android:layout_marginRight="@dimen/advance_search_table_item_margin"
+            android:inputType="number"
+            android:maxLines="1"
+            android:imeOptions="actionNext"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/advance_search_table_item_margin"
+            android:layout_marginRight="@dimen/advance_search_table_item_margin"
+            android:text="@string/search_sp_to"/>
+
+        <EditText
+            android:id="@+id/spt"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/advance_search_table_item_margin"
+            android:inputType="number"
+            android:maxLines="1"
+            android:imeOptions="actionNone"/>
+    </TableRow>
 </merge>

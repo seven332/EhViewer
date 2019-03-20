@@ -190,6 +190,8 @@
     <string name="search_sdt2">Search Downvoted Tags</string>
     <string name="search_sh">Show Expunged Galleries</string>
     <string name="search_sr">Minimum Rating:</string>
+    <string name="search_sp">Pages:</string>
+    <string name="search_sp_to">to</string>
 
     <string name="select_image">Select image</string>
     <string name="search_uss">Use similarity scan</string>

@@ -89,10 +89,9 @@ public class EhDB {
 
     private static void upgradeDB(SQLiteDatabase db, int oldVersion) {
         switch (oldVersion) {
-            case 1: // 1 to 2
+            case 1: // 1 to 2, add FILTER
                 FilterDao.createTable(db, true);
-                break;
-            case 2: // add ENABLE column to table FILTER
+            case 2: // 2 to 3, add ENABLE column to table FILTER
                 db.execSQL("CREATE TABLE " + "\"FILTER2\" (" +
                     "\"_id\" INTEGER PRIMARY KEY ," +
                     "\"MODE\" INTEGER NOT NULL ," +
@@ -102,8 +101,24 @@ public class EhDB {
                         "_id, MODE, TEXT, ENABLE)" +
                         "SELECT _id, MODE, TEXT, 1 FROM FILTER;");
                 db.execSQL("DROP TABLE FILTER");
-                db.execSQL("ALTER TABLE FILTER2 RENAME TO  FILTER");
-                break;
+                db.execSQL("ALTER TABLE FILTER2 RENAME TO FILTER");
+            case 3: // 3 to 4, add PAGE_FROM and PAGE_TO column to QUICK_SEARCH
+                db.execSQL("CREATE TABLE " + "\"QUICK_SEARCH2\" (" +
+                    "\"_id\" INTEGER PRIMARY KEY ," +
+                    "\"NAME\" TEXT," +
+                    "\"MODE\" INTEGER NOT NULL ," +
+                    "\"CATEGORY\" INTEGER NOT NULL ," +
+                    "\"KEYWORD\" TEXT," +
+                    "\"ADVANCE_SEARCH\" INTEGER NOT NULL ," +
+                    "\"MIN_RATING\" INTEGER NOT NULL ," +
+                    "\"PAGE_FROM\" INTEGER NOT NULL ," +
+                    "\"PAGE_TO\" INTEGER NOT NULL ," +
+                    "\"TIME\" INTEGER NOT NULL );");
+                db.execSQL("INSERT INTO \"QUICK_SEARCH2\" (" +
+                    "_id, NAME, MODE, CATEGORY, KEYWORD, ADVANCE_SEARCH, MIN_RATING, PAGE_FROM, PAGE_TO, TIME)" +
+                    "SELECT _id, NAME, MODE, CATEGORY, KEYWORD, ADVANCE_SEARCH, MIN_RATING, -1, -1, TIME FROM QUICK_SEARCH;");
+                db.execSQL("DROP TABLE QUICK_SEARCH");
+                db.execSQL("ALTER TABLE QUICK_SEARCH2 RENAME TO QUICK_SEARCH");
         }
     }
 

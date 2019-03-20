@@ -21,11 +21,12 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableLayout;
-
 import com.hippo.ehviewer.R;
 import com.hippo.yorozuya.NumberUtils;
 
@@ -34,6 +35,8 @@ public class AdvanceSearchTable extends TableLayout {
     private static final String STATE_KEY_SUPER = "super";
     private static final String STATE_KEY_ADVANCE_SEARCH = "advance_search";
     private static final String STATE_KEY_MIN_RATING = "min_rating";
+    private static final String STATE_KEY_PAGE_FROM = "page_from";
+    private static final String STATE_KEY_PAGE_TO = "page_to";
 
     public static final int SNAME = 0x1;
     public static final int STAGS = 0x2;
@@ -54,6 +57,9 @@ public class AdvanceSearchTable extends TableLayout {
     private CheckBox mSh;
     private CheckBox mSr;
     private Spinner mMinRating;
+    private CheckBox mSp;
+    private EditText mSpf;
+    private EditText mSpt;
 
     public AdvanceSearchTable(Context context) {
         super(context);
@@ -88,6 +94,20 @@ public class AdvanceSearchTable extends TableLayout {
         ViewGroup row4 = (ViewGroup) getChildAt(4);
         mSr = (CheckBox) row4.getChildAt(0);
         mMinRating = (Spinner) row4.getChildAt(1);
+
+        ViewGroup row5 = (ViewGroup) getChildAt(5);
+        mSp = (CheckBox) row5.getChildAt(0);
+        mSpf = (EditText) row5.getChildAt(1);
+        mSpt = (EditText) row5.getChildAt(3);
+
+        // Avoid java.lang.IllegalStateException: focus search returned a view that wasn't able to take focus!
+        mSpt.setOnEditorActionListener((v, actionId, event) -> {
+            View nextView = v.focusSearch(View.FOCUS_DOWN);
+            if (nextView != null) {
+                nextView.requestFocus(View.FOCUS_DOWN);
+            }
+            return true;
+        });
     }
 
     public int getAdvanceSearch() {
@@ -112,6 +132,20 @@ public class AdvanceSearchTable extends TableLayout {
         }
     }
 
+    public int getPageFrom() {
+        if (mSp.isChecked()) {
+            return NumberUtils.parseIntSafely(mSpf.getText().toString(), -1);
+        }
+        return -1;
+    }
+
+    public int getPageTo() {
+        if (mSp.isChecked()) {
+            return NumberUtils.parseIntSafely(mSpt.getText().toString(), -1);
+        }
+        return -1;
+    }
+
     public void setAdvanceSearch(int advanceSearch) {
         mSname.setChecked(NumberUtils.int2boolean(advanceSearch & SNAME));
         mStags.setChecked(NumberUtils.int2boolean(advanceSearch & STAGS));
@@ -132,12 +166,34 @@ public class AdvanceSearchTable extends TableLayout {
         }
     }
 
+    public void setPageFrom(int pageFrom) {
+        if (pageFrom > 0) {
+            mSpf.setText(Integer.toString(pageFrom));
+            mSp.setChecked(true);
+        } else {
+            mSp.setChecked(false);
+            mSpf.setText(null);
+        }
+    }
+
+    public void setPageTo(int pageTo) {
+        if (pageTo > 0) {
+            mSpt.setText(Integer.toString(pageTo));
+            mSp.setChecked(true);
+        } else {
+            mSp.setChecked(false);
+            mSpt.setText(null);
+        }
+    }
+
     @Override
     public Parcelable onSaveInstanceState() {
         final Bundle state = new Bundle();
         state.putParcelable(STATE_KEY_SUPER, super.onSaveInstanceState());
         state.putInt(STATE_KEY_ADVANCE_SEARCH, getAdvanceSearch());
         state.putInt(STATE_KEY_MIN_RATING, getMinRating());
+        state.putInt(STATE_KEY_PAGE_FROM, getPageFrom());
+        state.putInt(STATE_KEY_PAGE_TO, getPageTo());
         return state;
     }
 
@@ -148,6 +204,8 @@ public class AdvanceSearchTable extends TableLayout {
             super.onRestoreInstanceState(savedState.getParcelable(STATE_KEY_SUPER));
             setAdvanceSearch(savedState.getInt(STATE_KEY_ADVANCE_SEARCH));
             setMinRating(savedState.getInt(STATE_KEY_MIN_RATING));
+            setPageFrom(savedState.getInt(STATE_KEY_PAGE_FROM));
+            setPageTo(savedState.getInt(STATE_KEY_PAGE_TO));
         }
     }
 }

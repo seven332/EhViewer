@@ -255,6 +255,8 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
                 if (mEnableAdvance) {
                     urlBuilder.setAdvanceSearch(mTableAdvanceSearch.getAdvanceSearch());
                     urlBuilder.setMinRating(mTableAdvanceSearch.getMinRating());
+                    urlBuilder.setPageFrom(mTableAdvanceSearch.getPageFrom());
+                    urlBuilder.setPageTo(mTableAdvanceSearch.getPageTo());
                 }
                 break;
             case SEARCH_MODE_IMAGE:
