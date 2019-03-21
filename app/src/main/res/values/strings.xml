@@ -132,6 +132,7 @@
     <string name="error_cant_create_temp_file">Couldn\'t create temp file</string>
     <string name="error_cant_save_image">Can\'t save image</string>
     <string name="error_invalid_number">Invalid number</string>
+    <string name="error_please_login_first">Please login first</string>
 
     <string name="app_waring">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them.</string>
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
