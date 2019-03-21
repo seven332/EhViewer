@@ -756,7 +756,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         public void showText(CharSequence text) {
-            mTipView.setText(text + "\n\n" + getContext().getString(R.string.help_route));
+            mTipView.setText(text);
             mViewTransition.showView(2);
         }
 
