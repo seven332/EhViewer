@@ -37,7 +37,7 @@ import java.net.URLEncoder;
 
 public class ListUrlBuilder implements Cloneable, Parcelable {
 
-    @IntDef({MODE_NORMAL, MODE_UPLOADER, MODE_TAG, MODE_WHATS_HOT, MODE_IMAGE_SEARCH})
+    @IntDef({MODE_NORMAL, MODE_UPLOADER, MODE_TAG, MODE_WHATS_HOT, MODE_IMAGE_SEARCH, MODE_SUBSCRIPTION})
     @Retention(RetentionPolicy.SOURCE)
     private @interface Mode {}
 
@@ -47,6 +47,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
     public static final int MODE_TAG = 0x2;
     public static final int MODE_WHATS_HOT = 0x3;
     public static final int MODE_IMAGE_SEARCH = 0x4;
+    public static final int MODE_SUBSCRIPTION = 0x5;
 
     public static final int DEFAULT_ADVANCE = AdvanceSearchTable.SNAME | AdvanceSearchTable.STAGS;
     public static final int DEFAULT_MIN_RATING = 2;
@@ -442,8 +443,16 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
     public String build() {
         switch (mMode) {
             default:
-            case MODE_NORMAL: {
-                UrlBuilder ub = new UrlBuilder(EhUrl.getHost());
+            case MODE_NORMAL:
+            case MODE_SUBSCRIPTION: {
+                String url;
+                if (mMode == MODE_NORMAL) {
+                    url = EhUrl.getHost();
+                } else {
+                    url = EhUrl.getWatchedUrl();
+                }
+
+                UrlBuilder ub = new UrlBuilder(url);
                 if (mCategory != EhUtils.NONE) {
                     ub.addQuery("f_cats", (~mCategory) & EhConfig.ALL_CATEGORY);
                 }

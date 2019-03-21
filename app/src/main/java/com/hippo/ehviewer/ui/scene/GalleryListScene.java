@@ -119,6 +119,7 @@ public final class GalleryListScene extends BaseScene
 
     public final static String KEY_ACTION = "action";
     public final static String ACTION_HOMEPAGE = "action_homepage";
+    public final static String ACTION_SUBSCRIPTION = "action_subscription";
     public final static String ACTION_WHATS_HOT = "action_whats_hot";
     public final static String ACTION_LIST_URL_BUILDER = "action_list_url_builder";
 
@@ -232,7 +233,11 @@ public final class GalleryListScene extends BaseScene
         String action = args.getString(KEY_ACTION);
         if (ACTION_HOMEPAGE.equals(action)) {
             mUrlBuilder.reset();
+        } else if (ACTION_SUBSCRIPTION.equals(action)) {
+            mUrlBuilder.reset();
+            mUrlBuilder.setMode(ListUrlBuilder.MODE_SUBSCRIPTION);
         } else if (ACTION_WHATS_HOT.equals(action)) {
+            mUrlBuilder.reset();
             mUrlBuilder.setMode(ListUrlBuilder.MODE_WHATS_HOT);
         } else if (ACTION_LIST_URL_BUILDER.equals(action)) {
             ListUrlBuilder builder = args.getParcelable(KEY_LIST_URL_BUILDER);
@@ -416,6 +421,8 @@ public final class GalleryListScene extends BaseScene
                 EhUtils.NONE == category &&
                 TextUtils.isEmpty(keyword)) {
             return resources.getString(appName ? R.string.app_name : R.string.homepage);
+        } else if (ListUrlBuilder.MODE_SUBSCRIPTION == urlBuilder.getMode()) {
+            return resources.getString(R.string.subscription);
         } else if (ListUrlBuilder.MODE_WHATS_HOT == urlBuilder.getMode()) {
             return resources.getString(R.string.whats_hot);
         } else if (!TextUtils.isEmpty(keyword)) {
@@ -459,6 +466,8 @@ public final class GalleryListScene extends BaseScene
                 EhUtils.NONE == category &&
                 TextUtils.isEmpty(keyword)) {
             checkedItemId = R.id.nav_homepage;
+        } else if (ListUrlBuilder.MODE_SUBSCRIPTION == builder.getMode()) {
+            checkedItemId = R.id.nav_subscription;
         } else if (ListUrlBuilder.MODE_WHATS_HOT == builder.getMode()) {
             checkedItemId = R.id.nav_whats_hot;
         } else {

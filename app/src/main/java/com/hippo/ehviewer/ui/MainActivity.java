@@ -695,6 +695,11 @@ public final class MainActivity extends StageActivity
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
             startSceneFirstly(new Announcer(GalleryListScene.class)
                     .setArgs(args));
+        } else if (id == R.id.nav_subscription) {
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_SUBSCRIPTION);
+            startSceneFirstly(new Announcer(GalleryListScene.class)
+                    .setArgs(args));
         } else if (id == R.id.nav_whats_hot) {
             Bundle args = new Bundle();
             args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_WHATS_HOT);

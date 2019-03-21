@@ -24,6 +24,11 @@
             android:icon="@drawable/v_homepage_black_x24"/>
 
         <item
+            android:id="@+id/nav_subscription"
+            android:title="@string/subscription"
+            android:icon="@drawable/v_eh_subscription_black_x24"/>
+
+        <item
             android:id="@+id/nav_whats_hot"
             android:title="@string/whats_hot"
             android:icon="@drawable/v_fire_black_x24"/>

@@ -40,6 +40,7 @@
     <string name="misc" translatable="false">MISC</string>
 
     <string name="homepage">Homepage</string>
+    <string name="subscription">Subscription</string>
     <string name="whats_hot">What\'s hot</string>
     <string name="favourite">Favourite</string>
     <string name="history">History</string>

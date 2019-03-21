@@ -64,6 +64,9 @@ public class EhUrl {
     public static final String MY_TAGS_E = HOST_E + "mytags";
     public static final String MY_TAGS_EX = HOST_EX + "mytags";
 
+    public static final String WATCHED_E = HOST_E + "watched";
+    public static final String WATCHED_EX = HOST_EX + "watched";
+
     private static final String URL_PREFIX_THUMB_E = "https://ul.ehgt.org/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
@@ -187,6 +190,17 @@ public class EhUrl {
                 return URL_IMAGE_SEARCH_E;
             case SITE_EX:
                 return URL_IMAGE_SEARCH_EX;
+        }
+    }
+
+    @NonNull
+    public static String getWatchedUrl() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_E:
+                return WATCHED_E;
+            case SITE_EX:
+                return WATCHED_EX;
         }
     }
 
