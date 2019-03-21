@@ -135,11 +135,12 @@
     <string name="search_advance">高級選項</string>
     <string name="search_image">圖片搜索</string>
     <string name="search_normal_search">一般搜索</string>
+    <string name="search_subscription_search">訂閲搜索</string>
     <string name="search_specify_uploader">指定上傳者</string>
     <string name="search_specify_tag">指定標籤</string>
     <string name="search_enable_advance">啟用高級選項</string>
 
-    <string name="search_tip">一般搜索：就是搜索。\n\n指定上傳者：列出該上傳者上傳的畫廊。其他選項會被忽略。\n\n指定標籤：列出含有該標籤的畫廊。其他選項會被忽略。</string>
+    <string name="search_tip">一般搜索：就是搜索。\n\n訂閲搜素：在訂閲中搜索。\n\n指定上傳者：列出該上傳者上傳的畫廊。其他選項會被忽略。\n\n指定標籤：列出含有該標籤的畫廊。其他選項會被忽略。</string>
 
     <string name="search_sname">搜索畫廊</string>
     <string name="search_stags">搜索畫廊標籤</string>

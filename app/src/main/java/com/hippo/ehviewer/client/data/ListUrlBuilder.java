@@ -146,8 +146,16 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
         mMinRating = minRating;
     }
 
+    public int getPageFrom() {
+        return mPageFrom;
+    }
+
     public void setPageFrom(int pageFrom) {
         mPageFrom = pageFrom;
+    }
+
+    public int getPageTo() {
+        return mPageTo;
     }
 
     public void setPageTo(int pageTo) {

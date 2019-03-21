@@ -243,6 +243,9 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
                     case R.id.search_normal_search:
                         urlBuilder.setMode(ListUrlBuilder.MODE_NORMAL);
                         break;
+                    case R.id.search_subscription_search:
+                        urlBuilder.setMode(ListUrlBuilder.MODE_SUBSCRIPTION);
+                        break;
                     case R.id.search_specify_uploader:
                         urlBuilder.setMode(ListUrlBuilder.MODE_UPLOADER);
                         break;

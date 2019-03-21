@@ -177,11 +177,12 @@
     <string name="search_advance">Advance Options</string>
     <string name="search_image">Image Search</string>
     <string name="search_normal_search">Normal search</string>
+    <string name="search_subscription_search">Subscription search</string>
     <string name="search_specify_uploader">Specify uploader</string>
     <string name="search_specify_tag">Specify tag</string>
     <string name="search_enable_advance">Enable advance options</string>
 
-    <string name="search_tip">Normal search: Simply search.\n\nSpecify uploader: Search for galleries uploaded by the specified uploader. All other options will be ignored.\n\nSpecify tag: Search for galleries that contain the specified tag. Only one tag accepted. Other options will be ignored.</string>
+    <string name="search_tip">Normal search: Simply search.\n\nSubscription search: Search in subscriptions.\n\nSpecify uploader: Search for galleries uploaded by the specified uploader. All other options will be ignored.\n\nSpecify tag: Search for galleries that contain the specified tag. Only one tag accepted. Other options will be ignored.</string>
 
     <string name="search_sname">Search Gallery</string>
     <string name="search_stags">Search Gallery Tags</string>

@@ -43,6 +43,12 @@
             android:text="@string/search_normal_search"/>
 
         <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/search_subscription_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_subscription_search"/>
+
+        <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/search_specify_uploader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

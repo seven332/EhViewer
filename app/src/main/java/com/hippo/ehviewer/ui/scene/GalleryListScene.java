@@ -419,9 +419,19 @@ public final class GalleryListScene extends BaseScene
 
         if (ListUrlBuilder.MODE_NORMAL == urlBuilder.getMode() &&
                 EhUtils.NONE == category &&
-                TextUtils.isEmpty(keyword)) {
+                TextUtils.isEmpty(keyword) &&
+                urlBuilder.getAdvanceSearch() == -1 &&
+                urlBuilder.getMinRating() == -1 &&
+                urlBuilder.getPageFrom() == -1 &&
+                urlBuilder.getPageTo() == -1) {
             return resources.getString(appName ? R.string.app_name : R.string.homepage);
-        } else if (ListUrlBuilder.MODE_SUBSCRIPTION == urlBuilder.getMode()) {
+        } else if (ListUrlBuilder.MODE_SUBSCRIPTION == urlBuilder.getMode() &&
+            EhUtils.NONE == category &&
+            TextUtils.isEmpty(keyword) &&
+            urlBuilder.getAdvanceSearch() == -1 &&
+            urlBuilder.getMinRating() == -1 &&
+            urlBuilder.getPageFrom() == -1 &&
+            urlBuilder.getPageTo() == -1) {
             return resources.getString(R.string.subscription);
         } else if (ListUrlBuilder.MODE_WHATS_HOT == urlBuilder.getMode()) {
             return resources.getString(R.string.whats_hot);
