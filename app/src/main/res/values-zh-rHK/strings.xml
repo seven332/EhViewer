@@ -363,6 +363,9 @@
     <string name="apply">應用</string>
     <string name="apply_tip">點擊右上角的對勾來保存設置</string>
 
+    <!-- My Tags Activity -->
+    <string name="my_tags">我的標籤</string>
+
     <!-- Hosts Activity -->
     <string name="hosts">自定義 hosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
@@ -400,6 +403,8 @@
     <string name="settings_eh_identity_cookies_copy">複製</string>
     <string name="settings_u_config">EHentai 設置</string>
     <string name="settings_u_config_summary">EHentai 網站上的設置</string>
+    <string name="settings_my_tags">我的標籤</string>
+    <string name="settings_my_tags_summary">EHentai 網站上的我的標籤</string>
     <string name="settings_eh_theme">主題</string>
     <string name="settings_eh_theme_light">亮色</string>
     <string name="settings_eh_theme_dark">暗色</string>

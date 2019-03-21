@@ -61,6 +61,9 @@ public class EhUrl {
     public static final String UCONFIG_E = HOST_E + "uconfig.php";
     public static final String UCONFIG_EX = HOST_EX + "uconfig.php";
 
+    public static final String MY_TAGS_E = HOST_E + "mytags";
+    public static final String MY_TAGS_EX = HOST_EX + "mytags";
+
     private static final String URL_PREFIX_THUMB_E = "https://ul.ehgt.org/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
@@ -125,6 +128,16 @@ public class EhUrl {
                 return UCONFIG_E;
             case SITE_EX:
                 return UCONFIG_EX;
+        }
+    }
+
+    public static String getMyTagsUrl() {
+        switch (Settings.getGallerySite()) {
+            default:
+            case SITE_E:
+                return MY_TAGS_E;
+            case SITE_EX:
+                return MY_TAGS_EX;
         }
     }
 

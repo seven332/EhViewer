@@ -171,6 +171,12 @@
             android:label="@string/u_config"/>
 
         <activity
+            android:name="com.hippo.ehviewer.ui.MyTagsActivity"
+            android:configChanges="screenSize|uiMode"
+            android:theme="@style/AppTheme.Toolbar"
+            android:label="@string/my_tags"/>
+
+        <activity
           android:name="com.hippo.ehviewer.ui.HostsActivity"
           android:configChanges="screenSize|uiMode"
           android:theme="@style/AppTheme.Toolbar"

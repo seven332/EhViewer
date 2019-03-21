@@ -407,6 +407,9 @@
     <string name="apply">Apply</string>
     <string name="apply_tip">Tap the check mark to save the settings</string>
 
+    <!-- My Tags Activity -->
+    <string name="my_tags">My tags</string>
+
     <!-- Hosts Activity -->
     <string name="hosts">Custom hosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
@@ -444,6 +447,8 @@
     <string name="settings_eh_identity_cookies_copy">Copy</string>
     <string name="settings_u_config">EHentai settings</string>
     <string name="settings_u_config_summary">Settings on EHentai website</string>
+    <string name="settings_my_tags">My tags</string>
+    <string name="settings_my_tags_summary">My tags on EHentai website</string>
     <string name="settings_eh_theme">Theme</string>
     <string name="settings_eh_theme_light">Light</string>
     <string name="settings_eh_theme_dark">Dark</string>

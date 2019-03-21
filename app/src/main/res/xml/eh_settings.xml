@@ -43,6 +43,12 @@
         android:summary="@string/settings_u_config_summary"
         app:activity="com.hippo.ehviewer.ui.UConfigActivity"/>
 
+    <com.hippo.preference.ActivityPreference
+        android:key="my_tags"
+        android:title="@string/settings_my_tags"
+        android:summary="@string/settings_my_tags_summary"
+        app:activity="com.hippo.ehviewer.ui.MyTagsActivity"/>
+
     <com.hippo.preference.ListPreference
         android:key="theme"
         android:title="@string/settings_eh_theme"
