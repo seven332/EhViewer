@@ -33,7 +33,6 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
-import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.download.DownloadManager;
@@ -219,17 +218,13 @@ public final class CommonOperations {
         System.arraycopy(favCat, 0, items, 1, 10);
         if (slot >= -1 && slot <= 9) {
             String newFavoriteName = slot >= 0 ? items[slot + 1] : null;
-            doAddToFavorites(activity, galleryInfo, slot, galleryInfo instanceof GalleryDetail
-                    ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, newFavoriteName)
-                    : listener);
+            doAddToFavorites(activity, galleryInfo, slot, new DelegateFavoriteCallback(listener, galleryInfo, newFavoriteName, slot));
         } else {
             new ListCheckBoxDialogBuilder(activity, items,
                     (builder, dialog, position) -> {
                         int slot1 = position - 1;
                         String newFavoriteName = (slot1 >= 0 && slot1 <= 9) ? items[slot1+1] : null;
-                        doAddToFavorites(activity, galleryInfo, slot1, galleryInfo instanceof GalleryDetail
-                                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, newFavoriteName)
-                                : listener);
+                        doAddToFavorites(activity, galleryInfo, slot1, new DelegateFavoriteCallback(listener, galleryInfo, newFavoriteName, slot1));
                         if (builder.isChecked()) {
                             Settings.putDefaultFavSlot(slot1);
                         } else {
@@ -248,29 +243,31 @@ public final class CommonOperations {
         EhRequest request = new EhRequest();
         request.setMethod(EhClient.METHOD_ADD_FAVORITES);
         request.setArgs(galleryInfo.gid, galleryInfo.token, -1, "");
-        request.setCallback(galleryInfo instanceof GalleryDetail
-                ? new UpdateFavoriteNameCallback(listener, (GalleryDetail) galleryInfo, null)
-                : listener);
+        request.setCallback(new DelegateFavoriteCallback(listener, galleryInfo, null, -2));
         client.execute(request);
     }
 
-    private static class UpdateFavoriteNameCallback implements EhClient.Callback<Void> {
+    private static class DelegateFavoriteCallback implements EhClient.Callback<Void> {
 
         private final EhClient.Callback<Void> delegate;
-        private final GalleryDetail detail;
+        private final GalleryInfo info;
         private final String newFavoriteName;
+        private final int slot;
 
-        UpdateFavoriteNameCallback(EhClient.Callback<Void> delegate, GalleryDetail detail,
-                String newFavoriteName) {
+        DelegateFavoriteCallback(EhClient.Callback<Void> delegate, GalleryInfo info,
+                String newFavoriteName, int slot) {
             this.delegate = delegate;
-            this.detail = detail;
+            this.info = info;
             this.newFavoriteName = newFavoriteName;
+            this.slot = slot;
         }
 
         @Override
         public void onSuccess(Void result) {
-            detail.favoriteName = newFavoriteName;
+            info.favoriteName = newFavoriteName;
+            info.favoriteSlot = slot;
             delegate.onSuccess(result);
+            EhApplication.getFavouriteStatusRouter().modifyFavourites(info.gid, slot);
         }
 
         @Override

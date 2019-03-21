@@ -92,6 +92,7 @@ public class EhApplication extends RecordingApplication {
     private SimpleDiskCache mSpiderInfoCache;
     private DownloadManager mDownloadManager;
     private Hosts mHosts;
+    private FavouriteStatusRouter mFavouriteStatusRouter;
 
     private final List<Activity> mActivityList = new ArrayList<>();
 
@@ -342,6 +343,12 @@ public class EhApplication extends RecordingApplication {
         if (application.mGalleryDetailCache == null) {
             // Max size 25, 3 min timeout
             application.mGalleryDetailCache = new LruCache<>(25);
+            application.mFavouriteStatusRouter.addListener((gid, slot) -> {
+                GalleryDetail gd = application.mGalleryDetailCache.get(gid);
+                if (gd != null) {
+                    gd.favoriteSlot = slot;
+                }
+            });
         }
         return application.mGalleryDetailCache;
     }
@@ -377,6 +384,20 @@ public class EhApplication extends RecordingApplication {
             application.mHosts = new Hosts(application, "hosts.db");
         }
         return application.mHosts;
+    }
+
+    @NonNull
+    public static FavouriteStatusRouter getFavouriteStatusRouter() {
+        return getFavouriteStatusRouter(getInstance());
+    }
+
+    @NonNull
+    public static FavouriteStatusRouter getFavouriteStatusRouter(@NonNull Context context) {
+        EhApplication application = ((EhApplication) context.getApplicationContext());
+        if (application.mFavouriteStatusRouter == null) {
+            application.mFavouriteStatusRouter = new FavouriteStatusRouter();
+        }
+        return application.mFavouriteStatusRouter;
     }
 
     @NonNull

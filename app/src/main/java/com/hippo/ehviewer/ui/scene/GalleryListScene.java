@@ -309,6 +309,12 @@ public final class GalleryListScene extends BaseScene
             public void onUpdateLabels() { }
         });
 
+        EhApplication.getFavouriteStatusRouter(context).addListener((gid, slot) -> {
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
         if (savedInstanceState == null) {
             onInit();
         } else {
