@@ -98,7 +98,10 @@ public abstract class GalleryInfoContentHelper extends ContentLayout.ContentHelp
     int id = bundle.getInt(KEY_DATA_MAP, IntIdGenerator.INVALID_ID);
     if (id != IntIdGenerator.INVALID_ID) {
       FavouriteStatusRouter router = EhApplication.getFavouriteStatusRouter();
-      map = router.restoreDataMap(id);
+      Map<Long, GalleryInfo> map = router.restoreDataMap(id);
+      if (map != null) {
+        this.map = map;
+      }
     }
 
     return super.restoreInstanceState(state);
