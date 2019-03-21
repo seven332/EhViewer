@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -75,6 +76,17 @@ public class MyTagsActivity extends ToolbarActivity {
     webView.setWebChromeClient(new DialogWebChromeClient(this));
     webView.loadUrl(url);
     progress = findViewById(R.id.progress);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        finish();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
   }
 
   private class MyTagsWebViewClient extends WebViewClient {
