@@ -78,6 +78,7 @@ import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.client.parser.GalleryPageUrlParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.dao.QuickSearch;
+import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
@@ -222,6 +223,8 @@ public final class GalleryListScene extends BaseScene
 
     private ShowcaseView mShowcaseView;
 
+    private DownloadManager mDownloadManager;
+
     @Override
     public int getNavCheckedItem() {
         return mNavCheckedId;
@@ -269,6 +272,42 @@ public final class GalleryListScene extends BaseScene
         Context context = getContext2();
         AssertUtils.assertNotNull(context);
         mClient = EhApplication.getEhClient(context);
+        mDownloadManager = EhApplication.getDownloadManager(context);
+
+        mDownloadManager.addDownloadInfoListener(new DownloadManager.DownloadInfoListener() {
+            @Override
+            public void onAdd(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onUpdate(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list) { }
+            @Override
+            public void onUpdateAll() { }
+            @Override
+            public void onReload() {
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onChange() {
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onRenameLabel(String from, String to) { }
+            @Override
+            public void onRemove(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onUpdateLabels() { }
+        });
 
         if (savedInstanceState == null) {
             onInit();
@@ -984,7 +1023,7 @@ public final class GalleryListScene extends BaseScene
         }
 
         boolean download;
-        switch (EhApplication.getDownloadManager(context).getDownloadState(gi.gid)) {
+        switch (mDownloadManager.getDownloadState(gi.gid)) {
             default:
             case DownloadInfo.STATE_INVALID:
                 download = true;
@@ -1027,7 +1066,7 @@ public final class GalleryListScene extends BaseScene
                             if (download) {
                                 CommonOperations.startDownload(activity, gi, false);
                             } else {
-                                EhApplication.getDownloadManager().stopDownload(gi.gid);
+                                mDownloadManager.stopDownload(gi.gid);
                             }
                             break;
                         case 2: // Favorites

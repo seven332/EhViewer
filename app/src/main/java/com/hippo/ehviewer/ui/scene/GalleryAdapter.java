@@ -31,11 +31,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.hippo.drawable.TriangleDrawable;
 import com.hippo.easyrecyclerview.MarginItemDecoration;
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.widget.TileThumb;
 import com.hippo.widget.recyclerview.AutoStaggeredGridLayoutManager;
 import com.hippo.yorozuya.ViewUtils;
@@ -64,6 +66,8 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
     private int mType = TYPE_INVALID;
     private boolean mShowFavourited;
 
+    private DownloadManager mDownloadManager;
+
     public GalleryAdapter(@NonNull LayoutInflater inflater, @NonNull Resources resources,
             @NonNull RecyclerView recyclerView, int type, boolean showFavourited) {
         mInflater = inflater;
@@ -82,6 +86,8 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
         mListThumbWidth = mListThumbHeight * 2 / 3;
 
         setType(type);
+
+        mDownloadManager = EhApplication.getDownloadManager(inflater.getContext());
     }
 
     private void adjustPaddings() {
@@ -213,7 +219,7 @@ abstract class GalleryAdapter extends RecyclerView.Adapter<GalleryHolder> {
                     holder.simpleLanguage.setVisibility(View.VISIBLE);
                 }
                 holder.favourited.setVisibility((mShowFavourited && gi.favoriteSlot >= -1 && gi.favoriteSlot <= 10) ? View.VISIBLE : View.GONE);
-                holder.downloaded.setVisibility(gi.downloaded ? View.VISIBLE : View.GONE);
+                holder.downloaded.setVisibility(mDownloadManager.containDownloadInfo(gi.gid) ? View.VISIBLE : View.GONE);
                 break;
             }
             case TYPE_GRID: {

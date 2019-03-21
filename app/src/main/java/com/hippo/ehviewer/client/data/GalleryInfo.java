@@ -124,8 +124,6 @@ public class GalleryInfo implements Parcelable {
     public int favoriteSlot = -2;
     public String favoriteName;
 
-    public boolean downloaded;
-
     public final void generateSLang() {
         if (simpleTags != null) {
             generateSLangFromTags();
@@ -182,7 +180,6 @@ public class GalleryInfo implements Parcelable {
         dest.writeInt(this.spanGroupIndex);
         dest.writeInt(this.favoriteSlot);
         dest.writeString(this.favoriteName);
-        dest.writeByte(this.downloaded ? (byte) 1 : (byte) 0);
     }
 
     public GalleryInfo() {}
@@ -207,7 +204,6 @@ public class GalleryInfo implements Parcelable {
         this.spanGroupIndex = in.readInt();
         this.favoriteSlot = in.readInt();
         this.favoriteName = in.readString();
-        this.downloaded = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator<GalleryInfo> CREATOR = new Parcelable.Creator<GalleryInfo>() {
