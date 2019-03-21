@@ -391,7 +391,6 @@
     <string name="settings_eh_excluded_languages_summary">指定した言語のギャラリーをホームページと検索から隠す</string>
     <string name="settings_eh_show_jpn_title">日本語タイトルを表示</string>
     <string name="settings_eh_filter">フィルター</string>
-    <string name="settings_eh_filter_summary">タイトル、アップローダ、タグとタグセットをフィルター</string>
     <string name="settings_eh_cellular_network_warning">モバイルネットワーク警告</string>
 
     <string name="settings_read">閲覧</string>

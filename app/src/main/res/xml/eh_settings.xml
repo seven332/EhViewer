@@ -133,8 +133,7 @@
     <com.hippo.preference.ActivityPreference
         android:key="filter"
         android:title="@string/settings_eh_filter"
-        android:summary="@string/settings_eh_filter_summary"
-        app:activity="com.hippo.ehviewer.ui.FilterActivity"/>
+        android:summary="@string/settings_eh_filter_summary"/>
 
     <com.hippo.preference.SwitchPreference
         android:key="cellular_network_warning"

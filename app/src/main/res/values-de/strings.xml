@@ -319,7 +319,6 @@
     <string name="settings_eh_excluded_tag_namespaces_summary">Galerie in der ausgeschlossenen Namensraum werden vom Standard-Etikett-Suchen versteckt</string>
     <string name="settings_eh_show_jpn_title">Japanische Titel anzeigen</string>
     <string name="settings_eh_filter">Filter</string>
-    <string name="settings_eh_filter_summary">Nach Titel, Hochlader, Etikett und Etikett-Namensraum filtern</string>
     <string name="settings_eh_cellular_network_warning">Achtung auf mobile Daten anzeigen</string>
     <string name="settings_read">Lesen</string>
     <string name="settings_read_screen_rotation">Richtung des Bildschirms</string>

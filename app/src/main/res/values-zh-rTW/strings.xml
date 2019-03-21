@@ -449,7 +449,7 @@
     <string name="settings_eh_tag_translations_source">補充翻譯（由 EhTagTranslator 提供）</string>
     <string name="settings_eh_tag_translations_source_url">https://github.com/Mapaler/EhTagTranslator/wiki</string>
     <string name="settings_eh_filter">篩選</string>
-    <string name="settings_eh_filter_summary">篩選標題，上傳者，標籤和標籤命名空間</string>
+    <string name="settings_eh_filter_summary">請使用 EHentai 網站提供的過濾系統。檢視 EHentai 設定 與 我的標籤</string>
     <string name="settings_eh_cellular_network_warning">行動數據警告</string>
 
     <string name="settings_read">閱讀</string>

@@ -393,7 +393,6 @@
     <string name="settings_eh_excluded_tag_namespaces_summary">Exclure espaces de nom spécifiées de une recherche de tag par défaut</string>
     <string name="settings_eh_show_jpn_title">Montrer les titres japonais</string>
     <string name="settings_eh_filter">Filtre</string>
-    <string name="settings_eh_filter_summary">Filtrer par le titre, l\'uploader, le tag et l\'espace de nom</string>
     <string name="settings_eh_cellular_network_warning">Avertissement de données mobiles</string>
 
     <string name="settings_read">Lecture</string>

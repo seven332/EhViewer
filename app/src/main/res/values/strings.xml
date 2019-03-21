@@ -493,7 +493,7 @@
     <string name="settings_eh_tag_translations_source">Placeholder</string>
     <string name="settings_eh_tag_translations_source_url">https://placeholder</string>
     <string name="settings_eh_filter">Filter</string>
-    <string name="settings_eh_filter_summary">Filter by title, uploader, tag and tag namespace</string>
+    <string name="settings_eh_filter_summary">Please use the filter system provided by EHentai website. Check EHentai settings and My tags</string>
     <string name="settings_eh_cellular_network_warning">Cellular network warning</string>
 
     <string name="settings_read">Read</string>

@@ -370,7 +370,6 @@
     <string name="settings_eh_show_gallery_pages">Mostrar número de páginas de la galería</string>
     <string name="settings_eh_show_gallery_pages_summary">Se verá cuántas páginas tiene una galería</string>
     <string name="settings_eh_filter">Filtros</string>
-    <string name="settings_eh_filter_summary">Filtrar por titulo, uploader, etiqueta y etiquetas variables</string>
     <string name="settings_eh_cellular_network_warning">Advertencia de redes moviles</string>
 
     <string name="settings_read">Lectura</string>

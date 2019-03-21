@@ -432,7 +432,6 @@
     <string name="settings_eh_tag_translations_source">Placeholder</string>
     <string name="settings_eh_tag_translations_source_url">https://placeholder</string>
     <string name="settings_eh_filter">ตัวกรอง</string>
-    <string name="settings_eh_filter_summary">กรองโดยชื่อเรื่อง, ผู้อัพโหลด, แท็ก และแท็กเนมสเปซ</string>
     <string name="settings_eh_cellular_network_warning">เตือนการใช้เครือข่ายมือถือ</string>
 
     <string name="settings_read">การอ่าน</string>

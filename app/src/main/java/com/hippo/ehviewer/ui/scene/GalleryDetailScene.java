@@ -67,7 +67,6 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
-import com.hippo.ehviewer.client.EhFilter;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhTagDatabase;
 import com.hippo.ehviewer.client.EhUrl;
@@ -81,7 +80,6 @@ import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.NoHAtHClientException;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
-import com.hippo.ehviewer.dao.Filter;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
@@ -481,8 +479,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mDownload.setOnClickListener(this);
         mDownload.setOnLongClickListener(this);
         mRead.setOnClickListener(this);
-
-        mUploader.setOnLongClickListener(this);
 
         mBelowHeader = mainView.findViewById(R.id.below_header);
         View belowHeader = mBelowHeader;
@@ -1327,43 +1323,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
-    private void showBlockUploaderDialog() {
-        Context context = getContext2();
-        if (null == context) {
-            return;
-        }
-        final String uploader = getUploader();
-        if (null == uploader) {
-            return;
-        }
-
-        new AlertDialog.Builder(context)
-                .setMessage(getString(R.string.block_the_uploader, uploader))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (DialogInterface.BUTTON_POSITIVE != which) {
-                            return;
-                        }
-
-                        Filter filter = new Filter();
-                        filter.mode = EhFilter.MODE_UPLOADER;
-                        filter.text = uploader;
-                        EhFilter.getInstance().addFilter(filter);
-
-                        showTip(R.string.filter_added, LENGTH_SHORT);
-                    }
-                }).show();
-    }
-
-    private void addTagFilter(String tag) {
-        Filter filter = new Filter();
-        filter.mode = EhFilter.MODE_TAG;
-        filter.text = tag;
-        EhFilter.getInstance().addFilter(filter);
-        showTip(R.string.filter_added, LENGTH_SHORT);
-    }
-
     private void showTagDialog(final String tag) {
         final Context context = getContext2();
         if (null == context) {
@@ -1387,9 +1346,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                             case 0:
                                 UrlOpener.openUrl(context, EhUrl.getTagDefinitionUrl(tag2), false);
                                 break;
-                            case 1:
-                                addTagFilter(tag);
-                                break;
                         }
                     }
                 }).show();
@@ -1402,9 +1358,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             return false;
         }
 
-        if (mUploader == v) {
-            showBlockUploaderDialog();
-        } else if (mDownload == v) {
+        if (mDownload == v) {
             GalleryInfo galleryInfo = getGalleryInfo();
             if (galleryInfo != null) {
                 CommonOperations.startDownload(activity, galleryInfo, true);

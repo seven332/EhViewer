@@ -414,7 +414,6 @@
     <string name="settings_eh_tag_translations_source">Placeholder</string>
     <string name="settings_eh_tag_translations_source_url">https://placeholder</string>
     <string name="settings_eh_filter">필터</string>
-    <string name="settings_eh_filter_summary">제목, 업로더, 태그 및 태그 네임스페이스를 기반으로 필터링</string>
     <string name="settings_eh_cellular_network_warning">모바일 데이터 경고</string>
 
     <string name="settings_read">읽기</string>

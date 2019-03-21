@@ -450,7 +450,7 @@
     <string name="settings_eh_tag_translations_source">补充翻译（由 EhTagTranslator 提供）</string>
     <string name="settings_eh_tag_translations_source_url">https://github.com/Mapaler/EhTagTranslator/wiki</string>
     <string name="settings_eh_filter">过滤</string>
-    <string name="settings_eh_filter_summary">过滤标题，上传者，标签和标签组</string>
+    <string name="settings_eh_filter_summary">请使用 EHentai 网站提供的过滤系统。查看 EHentai 设置 与 我的标签</string>
     <string name="settings_eh_cellular_network_warning">移动网络警告</string>
 
     <string name="settings_read">阅读</string>
