@@ -64,6 +64,7 @@ import com.hippo.easyrecyclerview.FastScroller;
 import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
+import com.hippo.ehviewer.FavouriteStatusRouter;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhClient;
@@ -224,6 +225,9 @@ public final class GalleryListScene extends BaseScene
     private ShowcaseView mShowcaseView;
 
     private DownloadManager mDownloadManager;
+    private DownloadManager.DownloadInfoListener mDownloadInfoListener;
+    private FavouriteStatusRouter mFavouriteStatusRouter;
+    private FavouriteStatusRouter.Listener mFavouriteStatusRouterListener;
 
     @Override
     public int getNavCheckedItem() {
@@ -273,8 +277,9 @@ public final class GalleryListScene extends BaseScene
         AssertUtils.assertNotNull(context);
         mClient = EhApplication.getEhClient(context);
         mDownloadManager = EhApplication.getDownloadManager(context);
+        mFavouriteStatusRouter = EhApplication.getFavouriteStatusRouter(context);
 
-        mDownloadManager.addDownloadInfoListener(new DownloadManager.DownloadInfoListener() {
+        mDownloadInfoListener = new DownloadManager.DownloadInfoListener() {
             @Override
             public void onAdd(@NonNull DownloadInfo info, @NonNull List<DownloadInfo> list, int position) {
                 if (mAdapter != null) {
@@ -307,13 +312,15 @@ public final class GalleryListScene extends BaseScene
             }
             @Override
             public void onUpdateLabels() { }
-        });
+        };
+        mDownloadManager.addDownloadInfoListener(mDownloadInfoListener);
 
-        EhApplication.getFavouriteStatusRouter(context).addListener((gid, slot) -> {
+        mFavouriteStatusRouterListener = (gid, slot) -> {
             if (mAdapter != null) {
                 mAdapter.notifyDataSetChanged();
             }
-        });
+        };
+        mFavouriteStatusRouter.addListener(mFavouriteStatusRouterListener);
 
         if (savedInstanceState == null) {
             onInit();
@@ -355,6 +362,8 @@ public final class GalleryListScene extends BaseScene
 
         mClient = null;
         mUrlBuilder = null;
+        mDownloadManager.removeDownloadInfoListener(mDownloadInfoListener);
+        mFavouriteStatusRouter.removeListener(mFavouriteStatusRouterListener);
     }
 
     private void setSearchBarHint(Context context, SearchBar searchBar) {
