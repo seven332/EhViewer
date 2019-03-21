@@ -76,8 +76,10 @@ import com.hippo.ehviewer.client.exception.EhException;
 import com.hippo.ehviewer.client.parser.GalleryDetailUrlParser;
 import com.hippo.ehviewer.client.parser.GalleryListParser;
 import com.hippo.ehviewer.client.parser.GalleryPageUrlParser;
+import com.hippo.ehviewer.dao.DownloadInfo;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.ui.CommonOperations;
+import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
@@ -981,21 +983,60 @@ public final class GalleryListScene extends BaseScene
             return true;
         }
 
+        boolean download;
+        switch (EhApplication.getDownloadManager(context).getDownloadState(gi.gid)) {
+            default:
+            case DownloadInfo.STATE_INVALID:
+                download = true;
+                break;
+            case DownloadInfo.STATE_NONE:
+                download = true;
+                break;
+            case DownloadInfo.STATE_WAIT:
+                download = false;
+                break;
+            case DownloadInfo.STATE_DOWNLOAD:
+                download = false;
+                break;
+            case DownloadInfo.STATE_FINISH:
+                download = true;
+                break;
+            case DownloadInfo.STATE_FAILED:
+                download = true;
+                break;
+        }
+        boolean favourite = gi.favoriteSlot == -2;
+
+        CharSequence[] items = new CharSequence[] {
+            context.getString(R.string.read),
+            context.getString(download ? R.string.download : R.string.stop_downloading),
+            context.getString(favourite ? R.string.add_to_favourites : R.string.remove_from_favourites),
+        };
+
         new AlertDialog.Builder(context)
                 .setTitle(EhUtils.getSuitableTitle(gi))
-                .setItems(R.array.gallery_list_menu_entries, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0: // Download
+                .setItems(items, (dialog, which) -> {
+                    switch (which) {
+                        case 0: // Read
+                            Intent intent = new Intent(activity, GalleryActivity.class);
+                            intent.setAction(GalleryActivity.ACTION_EH);
+                            intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, gi);
+                            startActivity(intent);
+                            break;
+                        case 1: // Download
+                            if (download) {
                                 CommonOperations.startDownload(activity, gi, false);
-                                break;
-                            case 1: // Favorites
-                                CommonOperations.addToFavorites(activity, gi,
-                                        new addToFavoriteListener(context,
-                                                activity.getStageId(), getTag()));
-                                break;
-                        }
+                            } else {
+                                EhApplication.getDownloadManager().stopDownload(gi.gid);
+                            }
+                            break;
+                        case 2: // Favorites
+                            if (favourite) {
+                                CommonOperations.addToFavorites(activity, gi, new AddToFavoriteListener(context, activity.getStageId(), getTag()));
+                            } else {
+                                CommonOperations.removeFromFavorites(activity, gi, new RemoveFromFavoriteListener(context, activity.getStageId(), getTag()));
+                            }
+                            break;
                     }
                 }).show();
         return true;
@@ -1518,9 +1559,9 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
-    private static class addToFavoriteListener extends EhCallback<GalleryListScene, Void> {
+    private static class AddToFavoriteListener extends EhCallback<GalleryListScene, Void> {
 
-        public addToFavoriteListener(Context context, int stageId, String sceneTag) {
+        public AddToFavoriteListener(Context context, int stageId, String sceneTag) {
             super(context, stageId, sceneTag);
         }
 
@@ -1532,6 +1573,31 @@ public final class GalleryListScene extends BaseScene
         @Override
         public void onFailure(Exception e) {
             showTip(R.string.add_to_favorite_failure, LENGTH_LONG);
+        }
+
+        @Override
+        public void onCancel() {}
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryListScene;
+        }
+    }
+
+    private static class RemoveFromFavoriteListener extends EhCallback<GalleryListScene, Void> {
+
+        public RemoveFromFavoriteListener(Context context, int stageId, String sceneTag) {
+            super(context, stageId, sceneTag);
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            showTip(R.string.remove_from_favorite_success, LENGTH_SHORT);
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            showTip(R.string.remove_from_favorite_failure, LENGTH_LONG);
         }
 
         @Override

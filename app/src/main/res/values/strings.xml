@@ -208,6 +208,9 @@
     <string name="select_image_first">Please select image first</string>
 
     <string name="add_to_favourites">Add to favourites</string>
+    <string name="remove_from_favourites">Remove from favourites</string>
+
+    <string name="stop_downloading">Stop downloading</string>
 
     <string name="quick_search">Quick search</string>
     <string name="quick_search_tip">Tap \"+\" to add Quick Search</string>

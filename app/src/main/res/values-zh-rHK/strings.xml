@@ -166,6 +166,9 @@
     <string name="select_image_first">請先選擇圖片</string>
 
     <string name="add_to_favourites">收藏</string>
+    <string name="remove_from_favourites">移除收藏</string>
+
+    <string name="stop_downloading">停止下載</string>
 
     <string name="quick_search">快速搜索</string>
     <string name="quick_search_tip">點擊“+”來添加快速搜索</string>
