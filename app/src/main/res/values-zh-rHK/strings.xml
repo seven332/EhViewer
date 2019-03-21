@@ -154,6 +154,10 @@
     <string name="search_sr">最低評分：</string>
     <string name="search_sp">頁數：</string>
     <string name="search_sp_to">到</string>
+    <string name="search_sf">禁用排除項：</string>
+    <string name="search_sfl">語言</string>
+    <string name="search_sfu">上傳者</string>
+    <string name="search_sft">標籤</string>
 
     <string name="select_image">選擇圖片</string>
     <string name="search_uss">使用相似搜索</string>

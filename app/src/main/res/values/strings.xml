@@ -196,6 +196,10 @@
     <string name="search_sr">Minimum Rating:</string>
     <string name="search_sp">Pages:</string>
     <string name="search_sp_to">to</string>
+    <string name="search_sf">Disable default filters for:</string>
+    <string name="search_sfl">Language</string>
+    <string name="search_sfu">Uploader</string>
+    <string name="search_sft">Tags</string>
 
     <string name="select_image">Select image</string>
     <string name="search_uss">Use similarity scan</string>

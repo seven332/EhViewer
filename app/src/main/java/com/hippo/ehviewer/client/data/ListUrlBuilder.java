@@ -405,6 +405,21 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                         advanceSearch |= AdvanceSearchTable.SH;
                     }
                     break;
+                case "f_sfl":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.SFL;
+                    }
+                    break;
+                case "f_sfu":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.SFU;
+                    }
+                    break;
+                case "f_sft":
+                    if ("on".equals(value)) {
+                        advanceSearch |= AdvanceSearchTable.SFT;
+                    }
+                    break;
                 case "f_sr":
                     if ("on".equals(value)) {
                         enableMinRating = true;
@@ -490,6 +505,9 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                     if((mAdvanceSearch & AdvanceSearchTable.SDT1) != 0) ub.addQuery("f_sdt1", "on");
                     if((mAdvanceSearch & AdvanceSearchTable.SDT2) != 0) ub.addQuery("f_sdt2", "on");
                     if((mAdvanceSearch & AdvanceSearchTable.SH) != 0) ub.addQuery("f_sh", "on");
+                    if((mAdvanceSearch & AdvanceSearchTable.SFL) != 0) ub.addQuery("f_sfl", "on");
+                    if((mAdvanceSearch & AdvanceSearchTable.SFU) != 0) ub.addQuery("f_sfu", "on");
+                    if((mAdvanceSearch & AdvanceSearchTable.SFT) != 0) ub.addQuery("f_sft", "on");
                     // Set min star
                     if (mMinRating != -1) {
                         ub.addQuery("f_sr", "on");
