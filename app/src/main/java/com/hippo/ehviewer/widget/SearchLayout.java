@@ -168,6 +168,10 @@ public class SearchLayout extends EasyRecyclerView implements CompoundButton.OnC
         mImageView.setImageUri(imageUri);
     }
 
+    public void setNormalSearchMode(int id) {
+        mNormalSearchMode.check(id);
+    }
+
     @Override
     public void onSelectImage() {
         if (mHelper != null) {

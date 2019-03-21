@@ -455,6 +455,11 @@ public final class GalleryListScene extends BaseScene
         String keyword = builder.getKeyword();
         int category = builder.getCategory();
 
+        // Update normal search mode
+        mSearchLayout.setNormalSearchMode(builder.getMode() == ListUrlBuilder.MODE_SUBSCRIPTION
+                ? R.id.search_subscription_search
+                : R.id.search_normal_search);
+
         // Update search edit text
         if (!TextUtils.isEmpty(keyword) && null != mSearchBar) {
             mSearchBar.setText(keyword);
