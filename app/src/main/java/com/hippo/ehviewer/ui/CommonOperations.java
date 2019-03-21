@@ -239,6 +239,7 @@ public final class CommonOperations {
 
     public static void removeFromFavorites(Activity activity, GalleryInfo galleryInfo,
             final EhClient.Callback<Void> listener) {
+        EhDB.removeLocalFavorites(galleryInfo.gid);
         EhClient client = EhApplication.getEhClient(activity);
         EhRequest request = new EhRequest();
         request.setMethod(EhClient.METHOD_ADD_FAVORITES);

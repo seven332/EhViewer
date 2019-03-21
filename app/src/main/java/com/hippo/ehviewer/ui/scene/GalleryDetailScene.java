@@ -1209,11 +1209,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         } else if (mHeartGroup == v) {
             if (mGalleryDetail != null && !mModifingFavorites) {
                 boolean remove = false;
-                if (EhDB.containLocalFavorites(mGalleryDetail.gid)) {
-                    EhDB.removeLocalFavorites(mGalleryDetail.gid);
-                    remove = true;
-                }
-                if (mGalleryDetail.isFavorited) {
+                if (EhDB.containLocalFavorites(mGalleryDetail.gid) || mGalleryDetail.isFavorited) {
                     mModifingFavorites = true;
                     CommonOperations.removeFromFavorites(activity, mGalleryDetail,
                             new ModifyFavoritesListener(context,
