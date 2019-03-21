@@ -64,6 +64,7 @@ public class GalleryListParser {
     public static class Result {
         public int pages;
         public int nextPage;
+        public boolean noWatchedTags;
         public List<GalleryInfo> galleryInfoList;
     }
 
@@ -282,6 +283,7 @@ public class GalleryListParser {
             }
         } catch (Throwable e) {
             ExceptionUtils.throwIfFatal(e);
+            result.noWatchedTags = body.contains("<p>You do not have any watched tags");
             if (body.contains("No hits found</p>")) {
                 result.pages = 0;
                 //noinspection unchecked
