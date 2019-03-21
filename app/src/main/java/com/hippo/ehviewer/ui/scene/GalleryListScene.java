@@ -83,6 +83,7 @@ import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
+import com.hippo.ehviewer.widget.GalleryInfoContentHelper;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
 import com.hippo.refreshlayout.RefreshLayout;
@@ -683,6 +684,7 @@ public final class GalleryListScene extends BaseScene
             mSearchBarMover = null;
         }
         if (null != mHelper) {
+            mHelper.destroy();
             if (1 == mHelper.getShownViewIndex()) {
                 mHasFirstRefresh = false;
             }
@@ -1473,7 +1475,7 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
-    private class GalleryListHelper extends ContentLayout.ContentHelper<GalleryInfo> {
+    private class GalleryListHelper extends GalleryInfoContentHelper {
 
         @Override
         protected void getPageData(int taskId, int type, int page) {

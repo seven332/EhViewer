@@ -72,6 +72,7 @@ import com.hippo.ehviewer.ui.annotation.DrawerLifeCircle;
 import com.hippo.ehviewer.ui.annotation.ViewLifeCircle;
 import com.hippo.ehviewer.ui.annotation.WholeLifeCircle;
 import com.hippo.ehviewer.widget.EhDrawerLayout;
+import com.hippo.ehviewer.widget.GalleryInfoContentHelper;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.ripple.Ripple;
@@ -395,6 +396,7 @@ public class FavoritesScene extends BaseScene implements
         }
 
         if (null != mHelper) {
+            mHelper.destroy();
             if (1 == mHelper.getShownViewIndex()) {
                 mHasFirstRefresh = false;
             }
@@ -1028,7 +1030,7 @@ public class FavoritesScene extends BaseScene implements
         }
     }
 
-    private class FavoritesHelper extends ContentLayout.ContentHelper<GalleryInfo> {
+    private class FavoritesHelper extends GalleryInfoContentHelper {
 
         @Override
         protected void getPageData(final int taskId, int type, int page) {

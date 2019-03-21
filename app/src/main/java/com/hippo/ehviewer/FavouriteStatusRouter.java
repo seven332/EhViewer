@@ -16,14 +16,43 @@
 
 package com.hippo.ehviewer;
 
+import android.annotation.SuppressLint;
+import com.hippo.ehviewer.client.data.GalleryInfo;
+import com.hippo.yorozuya.IntIdGenerator;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FavouriteStatusRouter {
 
+  private static final String KEY_DATA_MAP_NEXT_ID = "data_map_next_id";
+
+  private final IntIdGenerator idGenerator = new IntIdGenerator(Settings.getInt(KEY_DATA_MAP_NEXT_ID, 0));
+  @SuppressLint("UseSparseArrays")
+  private final HashMap<Integer, Map<Long, GalleryInfo>> maps = new HashMap<>();
+
   private List<Listener> listeners = new ArrayList<>();
 
+  public int saveDataMap(Map<Long, GalleryInfo> map) {
+    int id = idGenerator.nextId();
+    maps.put(id, map);
+    Settings.putInt(KEY_DATA_MAP_NEXT_ID, idGenerator.nextId());
+    return id;
+  }
+
+  public Map<Long, GalleryInfo> restoreDataMap(int id) {
+    return maps.remove(id);
+  }
+
   public void modifyFavourites(long gid, int slot) {
+    for (Map<Long, GalleryInfo> map : maps.values()) {
+      GalleryInfo info = map.get(gid);
+      if (info != null) {
+        info.favoriteSlot = slot;
+      }
+    }
+
     for (Listener listener : listeners) {
       listener.onModifyFavourites(gid, slot);
     }

@@ -412,6 +412,7 @@ public class ContentLayout extends FrameLayout {
 
         public void addAt(int index, E data) {
             mData.add(index, data);
+            onAddData(data);
 
             for (int i = 0, n = mPageDivider.size(); i < n; i++) {
                 int divider = mPageDivider.get(i);
@@ -424,7 +425,8 @@ public class ContentLayout extends FrameLayout {
         }
 
         public void removeAt(int index) {
-            mData.remove(index);
+            E data = mData.remove(index);
+            onRemoveData(data);
 
             for (int i = 0, n = mPageDivider.size(); i < n; i++) {
                 int divider = mPageDivider.get(i);
@@ -452,6 +454,16 @@ public class ContentLayout extends FrameLayout {
             }
         }
 
+        protected void onAddData(E data) { }
+
+        protected void onAddData(List<E> data) { }
+
+        protected void onRemoveData(E data) { }
+
+        protected void onRemoveData(List<E> data) { }
+
+        protected void onClearData() { }
+
         public void onGetPageData(int taskId, int nextPage, List<E> data) {
             if (mCurrentTaskId == taskId) {
                 int dataSize;
@@ -466,6 +478,7 @@ public class ContentLayout extends FrameLayout {
 
                         if (data.isEmpty()) {
                             mData.clear();
+                            onClearData();
                             notifyDataSetChanged();
 
                             if (true || mEndPage >= mPages) { // Not found
@@ -487,7 +500,9 @@ public class ContentLayout extends FrameLayout {
                             }
                         } else {
                             mData.clear();
+                            onClearData();
                             mData.addAll(data);
+                            onAddData(data);
                             notifyDataSetChanged();
 
                             // Ui change, show content
@@ -545,6 +560,7 @@ public class ContentLayout extends FrameLayout {
                             }
                         } else {
                             mData.addAll(0, data);
+                            onAddData(data);
                             notifyItemRangeInserted(0, data.size());
 
                             // Ui change, show content
@@ -606,6 +622,7 @@ public class ContentLayout extends FrameLayout {
                             }
                         } else {
                             mData.addAll(data);
+                            onAddData(data);
                             notifyItemRangeInserted(oldDataSize, dataSize);
 
                             // Ui change, show content
@@ -634,6 +651,7 @@ public class ContentLayout extends FrameLayout {
 
                         if (data.isEmpty()) {
                             mData.clear();
+                            onClearData();
                             notifyDataSetChanged();
 
                             if (true || mEndPage >= mPages) { // Not found
@@ -655,7 +673,9 @@ public class ContentLayout extends FrameLayout {
                             }
                         } else {
                             mData.clear();
+                            onClearData();
                             mData.addAll(data);
+                            onAddData(data);
                             notifyDataSetChanged();
 
                             // Ui change, show content
@@ -684,11 +704,14 @@ public class ContentLayout extends FrameLayout {
 
                         int oldIndexStart = mCurrentTaskPage == mStartPage ? 0 : mPageDivider.get(mCurrentTaskPage - mStartPage - 1);
                         int oldIndexEnd = mPageDivider.get(mCurrentTaskPage - mStartPage);
-                        mData.subList(oldIndexStart, oldIndexEnd).clear();
+                        List<E> toRemove = mData.subList(oldIndexStart, oldIndexEnd);
+                        onRemoveData(toRemove);
+                        toRemove.clear();
                         removeDuplicateData(data, oldIndexStart - CHECK_DUPLICATE_RANGE, oldIndexStart + CHECK_DUPLICATE_RANGE);
                         int newIndexStart = oldIndexStart;
                         int newIndexEnd = newIndexStart + data.size();
                         mData.addAll(oldIndexStart, data);
+                        onAddData(data);
                         notifyDataSetChanged();
 
                         for (int i = mCurrentTaskPage - mStartPage, n = mPageDivider.size(); i < n; i++) {
@@ -906,7 +929,7 @@ public class ContentLayout extends FrameLayout {
 
         private int mSavedDataId = IntIdGenerator.INVALID_ID;
 
-        private Parcelable saveInstanceState(Parcelable superState) {
+        protected Parcelable saveInstanceState(Parcelable superState) {
             Bundle bundle = new Bundle();
             bundle.putParcelable(KEY_SUPER, superState);
             int shownView = mViewTransition.getShownViewIndex();
@@ -930,7 +953,7 @@ public class ContentLayout extends FrameLayout {
             return bundle;
         }
 
-        private Parcelable restoreInstanceState(Parcelable state) {
+        protected Parcelable restoreInstanceState(Parcelable state) {
             if (state instanceof Bundle) {
                 Bundle bundle = (Bundle) state;
                 mViewTransition.showView(bundle.getInt(KEY_SHOWN_VIEW), false);
