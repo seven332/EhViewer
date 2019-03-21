@@ -69,11 +69,18 @@ public class FavListUrlBuilder implements Parcelable {
         UrlBuilder ub = new UrlBuilder(EhUrl.getFavoritesUrl());
         if (isValidFavCat(mFavCat)) {
             ub.addQuery("favcat", Integer.toString(mFavCat));
+        } else if (mFavCat == FAV_CAT_ALL) {
+            ub.addQuery("favcat", "all");
         }
         if (!TextUtils.isEmpty(mKeyword)) {
             try {
                 ub.addQuery("f_search", URLEncoder.encode(mKeyword, "UTF-8"));
-                ub.addQuery("f_apply", "Search+Favorites");
+                // Name
+                ub.addQuery("sn", "on");
+                // Tags
+                ub.addQuery("st", "on");
+                // Note
+                ub.addQuery("sf", "on");
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, "Can't URLEncoder.encode " + mKeyword);
             }
