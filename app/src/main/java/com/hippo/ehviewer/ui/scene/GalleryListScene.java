@@ -506,7 +506,6 @@ public final class GalleryListScene extends BaseScene
         mViewTransition = new ViewTransition(contentLayout, mSearchLayout);
 
         mHelper = new GalleryListHelper();
-        mHelper.setEmptyString(resources.getString(R.string.gallery_list_empty_hit));
         contentLayout.setHelper(mHelper);
         contentLayout.getFastScroller().setOnDragHandlerListener(this);
 
@@ -1454,6 +1453,11 @@ public final class GalleryListScene extends BaseScene
     private void onGetGalleryListSuccess(GalleryListParser.Result result, int taskId) {
         if (mHelper != null && mSearchBarMover != null &&
                 mHelper.isCurrentTask(taskId)) {
+            // TODO tell the difference between no result and subscribed tags
+            String emptyString = getResources2().getString(mUrlBuilder.getMode() == ListUrlBuilder.MODE_SUBSCRIPTION
+                    ? R.string.gallery_list_empty_hit_subscription
+                    : R.string.gallery_list_empty_hit);
+            mHelper.setEmptyString(emptyString);
             mHelper.setPages(taskId, result.pages);
             mHelper.onGetPageData(taskId, result.nextPage, result.galleryInfoList);
         }

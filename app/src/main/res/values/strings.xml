@@ -166,6 +166,7 @@
     <string name="gallery_list_search_bar_hint_e_hentai">Search E-Hentai</string>
     <string name="gallery_list_search_bar_open_gallery">Open the gallery</string>
     <string name="gallery_list_empty_hit">The World is Big and the panda sit alone</string>
+    <string name="gallery_list_empty_hit_subscription">Subscribe to tags in Settings->EH->My tags</string>
 
     <string name="search">Search</string>
 
