@@ -81,7 +81,7 @@ public class SolidScene extends BaseScene {
                     startScene(new Announcer(clazz).setArgs(targetArgs));
                 } else {
                     Bundle newArgs = new Bundle();
-                    newArgs.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+                    newArgs.putString(GalleryListScene.KEY_ACTION, Settings.getLaunchPageGalleryListSceneAction());
                     startScene(new Announcer(GalleryListScene.class).setArgs(newArgs));
                 }
                 break;

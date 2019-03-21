@@ -63,6 +63,14 @@
         android:defaultValue="false"/>
 
     <com.hippo.preference.ListPreference
+        android:key="launch_page"
+        android:title="@string/settings_eh_launch_page"
+        android:summary="%s"
+        app:entries="@array/launch_page_entries"
+        app:entryValues="@array/launch_page_entry_values"
+        android:defaultValue="0"/>
+
+    <com.hippo.preference.ListPreference
         android:key="list_mode"
         android:title="@string/settings_eh_list_mode"
         android:summary="%s"

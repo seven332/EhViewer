@@ -413,6 +413,7 @@
     <string name="settings_eh_theme_black">黑色</string>
     <string name="settings_eh_apply_nav_bar_theme_color">導航欄應用主題配色</string>
     <string name="settings_eh_gallery_site">圖庫站台</string>
+    <string name="settings_eh_launch_page">啟動頁</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">詳細資料</string>
     <string name="settings_eh_list_mode_thumb">縮圖</string>

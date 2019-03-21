@@ -414,6 +414,7 @@
     <string name="settings_eh_theme_black">黑色</string>
     <string name="settings_eh_apply_nav_bar_theme_color">导航栏应用主题配色</string>
     <string name="settings_eh_gallery_site">画廊站点</string>
+    <string name="settings_eh_launch_page">启动页</string>
     <string name="settings_eh_list_mode">列表模式</string>
     <string name="settings_eh_list_mode_detail">详情</string>
     <string name="settings_eh_list_mode_thumb">缩略图</string>
