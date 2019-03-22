@@ -293,6 +293,7 @@ public class ContentLayout extends FrameLayout {
                     getPageData(mCurrentTaskId, mCurrentTaskType, mCurrentTaskPage);
                 } else {
                     Log.e(TAG, "Try to footer refresh, but mEndPage = " + mEndPage + ", mPages = " + mPages);
+                    mRefreshLayout.setFooterRefreshing(false);
                 }
             }
         };
