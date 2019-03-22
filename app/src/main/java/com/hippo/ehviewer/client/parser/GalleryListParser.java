@@ -271,10 +271,13 @@ public class GalleryListParser {
 
             Element e = es.get(es.size() - 1);
             if (e != null) {
-                String href = e.child(0).attr("href");
-                Matcher matcher = PATTERN_NEXT_PAGE.matcher(href);
-                if (matcher.find()) {
-                    result.nextPage = Integer.parseInt(matcher.group(1));
+                e = e.children().first();
+                if (e != null) {
+                    String href = e.attr("href");
+                    Matcher matcher = PATTERN_NEXT_PAGE.matcher(href);
+                    if (matcher.find()) {
+                        result.nextPage = NumberUtils.parseIntSafely(matcher.group(1), 0);
+                    }
                 }
             }
         } catch (Throwable e) {
