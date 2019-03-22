@@ -522,7 +522,7 @@ public class ContentLayout extends FrameLayout {
                         }
                         mPageDivider.add(0, dataSize);
                         mStartPage--;
-                        mPages = Math.max(mPages, pages);
+                        mPages = Math.max(mEndPage, pages);
                         // assert mStartPage >= 0
 
                         if (data.isEmpty()) {
@@ -586,7 +586,7 @@ public class ContentLayout extends FrameLayout {
                         mPageDivider.add(oldDataSize + dataSize);
                         mEndPage++;
                         mNextPage = nextPage;
-                        mPages = Math.max(mPages, pages);
+                        mPages = Math.max(mEndPage, pages);
 
                         if (data.isEmpty()) {
                             if (true || mEndPage >= mPages) { // OK, that's all
@@ -700,7 +700,7 @@ public class ContentLayout extends FrameLayout {
                             mNextPage = nextPage;
                         }
 
-                        mPages = Math.max(mPages, pages);
+                        mPages = Math.max(mEndPage, pages);
 
                         int oldIndexStart = mCurrentTaskPage == mStartPage ? 0 : mPageDivider.get(mCurrentTaskPage - mStartPage - 1);
                         int oldIndexEnd = mPageDivider.get(mCurrentTaskPage - mStartPage);
