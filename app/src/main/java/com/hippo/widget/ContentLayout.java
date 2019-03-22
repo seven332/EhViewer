@@ -279,7 +279,7 @@ public class ContentLayout extends FrameLayout {
                         mCurrentTaskId = mIdGenerator.nextId();
                         mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
                         mCurrentTaskPage = mEndPage;
-                        onGetPageData(mCurrentTaskId, mNextPage, Collections.emptyList());
+                        onGetPageData(mCurrentTaskId, mPages, mNextPage, Collections.emptyList());
                     }
                     mCurrentTaskId = mIdGenerator.nextId();
                     mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
@@ -335,7 +335,7 @@ public class ContentLayout extends FrameLayout {
         }
 
         /**
-         * Call {@link #onGetPageData(int, int, List)} when get data
+         * Call {@link #onGetPageData(int, int, int, List)} when get data
          *
          * @param taskId task id
          * @param page the page to get
@@ -400,13 +400,6 @@ public class ContentLayout extends FrameLayout {
             return mCurrentTaskId == taskId;
         }
 
-        public void setPages(int taskId, int pages) {
-            // TODO what it pages > mEndPage
-            if (mCurrentTaskId == taskId) {
-                mPages = pages;
-            }
-        }
-
         public int getPages() {
             return mPages;
         }
@@ -465,7 +458,7 @@ public class ContentLayout extends FrameLayout {
 
         protected void onClearData() { }
 
-        public void onGetPageData(int taskId, int nextPage, List<E> data) {
+        public void onGetPageData(int taskId, int pages, int nextPage, List<E> data) {
             if (mCurrentTaskId == taskId) {
                 int dataSize;
 
@@ -473,6 +466,7 @@ public class ContentLayout extends FrameLayout {
                     case TYPE_REFRESH:
                         mStartPage = 0;
                         mEndPage = 1;
+                        mPages = pages;
                         mNextPage = nextPage;
                         mPageDivider.clear();
                         mPageDivider.add(data.size());
@@ -528,6 +522,7 @@ public class ContentLayout extends FrameLayout {
                         }
                         mPageDivider.add(0, dataSize);
                         mStartPage--;
+                        mPages = Math.max(mPages, pages);
                         // assert mStartPage >= 0
 
                         if (data.isEmpty()) {
@@ -591,6 +586,7 @@ public class ContentLayout extends FrameLayout {
                         mPageDivider.add(oldDataSize + dataSize);
                         mEndPage++;
                         mNextPage = nextPage;
+                        mPages = Math.max(mPages, pages);
 
                         if (data.isEmpty()) {
                             if (true || mEndPage >= mPages) { // OK, that's all
@@ -647,6 +643,7 @@ public class ContentLayout extends FrameLayout {
                         mStartPage = mCurrentTaskPage;
                         mEndPage = mCurrentTaskPage + 1;
                         mNextPage = nextPage;
+                        mPages = pages;
                         mPageDivider.clear();
                         mPageDivider.add(data.size());
 
@@ -702,6 +699,8 @@ public class ContentLayout extends FrameLayout {
                         if (mCurrentTaskPage == mEndPage - 1) {
                             mNextPage = nextPage;
                         }
+
+                        mPages = Math.max(mPages, pages);
 
                         int oldIndexStart = mCurrentTaskPage == mStartPage ? 0 : mPageDivider.get(mCurrentTaskPage - mStartPage - 1);
                         int oldIndexEnd = mPageDivider.get(mCurrentTaskPage - mStartPage);

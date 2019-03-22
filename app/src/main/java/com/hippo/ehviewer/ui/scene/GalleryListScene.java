@@ -1569,8 +1569,7 @@ public final class GalleryListScene extends BaseScene
                     ? R.string.gallery_list_empty_hit_subscription
                     : R.string.gallery_list_empty_hit);
             mHelper.setEmptyString(emptyString);
-            mHelper.setPages(taskId, result.pages);
-            mHelper.onGetPageData(taskId, result.nextPage, result.galleryInfoList);
+            mHelper.onGetPageData(taskId, result.pages, result.nextPage, result.galleryInfoList);
         }
     }
 

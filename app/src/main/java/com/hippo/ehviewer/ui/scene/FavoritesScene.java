@@ -880,8 +880,7 @@ public class FavoritesScene extends BaseScene implements
             }
 
             updateSearchBar();
-            mHelper.setPages(taskId, result.pages);
-            mHelper.onGetPageData(taskId, result.nextPage, result.galleryInfoList);
+            mHelper.onGetPageData(taskId, result.pages, result.nextPage, result.galleryInfoList);
 
             if (mDrawerAdapter != null) {
                 mDrawerAdapter.notifyDataSetChanged();
@@ -907,11 +906,9 @@ public class FavoritesScene extends BaseScene implements
             }
 
             if (list.size() == 0) {
-                mHelper.setPages(taskId, 0);
-                mHelper.onGetPageData(taskId, 0, Collections.EMPTY_LIST);
+                mHelper.onGetPageData(taskId, 0, 0, Collections.EMPTY_LIST);
             } else {
-                mHelper.setPages(taskId, 1);
-                mHelper.onGetPageData(taskId, 0, list);
+                mHelper.onGetPageData(taskId, 1, 0, list);
             }
 
             if (TextUtils.isEmpty(keyword)) {
