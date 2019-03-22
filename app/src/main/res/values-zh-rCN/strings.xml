@@ -452,7 +452,7 @@
     <string name="settings_eh_show_tag_translations_summary">显示翻译后的标签而非原始文字（需花费时间来下载数据文件）</string>
     <string name="settings_eh_tag_translations_source">补充翻译（由 EhTagTranslator 提供）</string>
     <string name="settings_eh_tag_translations_source_url">https://github.com/Mapaler/EhTagTranslator/wiki</string>
-    <string name="settings_eh_filter">过滤</string>
+    <string name="settings_eh_filter">过滤（已失效）</string>
     <string name="settings_eh_filter_summary">请使用 EHentai 网站提供的过滤系统。查看 EHentai 设置 与 我的标签</string>
     <string name="settings_eh_cellular_network_warning">移动网络警告</string>
 
