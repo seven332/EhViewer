@@ -275,7 +275,7 @@ public class ContentLayout extends FrameLayout {
                 if (mEndPage < mPages) {
                     // Get next page
                     // Fill pages before NextPage with empty list
-                    while (mNextPage > mEndPage) {
+                    while (mNextPage > mEndPage && mEndPage < mPages) {
                         mCurrentTaskId = mIdGenerator.nextId();
                         mCurrentTaskType = TYPE_NEXT_PAGE_KEEP_POS;
                         mCurrentTaskPage = mEndPage;
