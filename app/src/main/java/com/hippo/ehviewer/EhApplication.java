@@ -343,7 +343,7 @@ public class EhApplication extends RecordingApplication {
         if (application.mGalleryDetailCache == null) {
             // Max size 25, 3 min timeout
             application.mGalleryDetailCache = new LruCache<>(25);
-            application.mFavouriteStatusRouter.addListener((gid, slot) -> {
+            getFavouriteStatusRouter().addListener((gid, slot) -> {
                 GalleryDetail gd = application.mGalleryDetailCache.get(gid);
                 if (gd != null) {
                     gd.favoriteSlot = slot;
