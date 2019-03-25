@@ -195,8 +195,6 @@
     <string name="remove_from_favorite_success">Eliminado de favoritos</string>
     <string name="add_to_favorite_failure">No se ha podido agregar a favoritos</string>
     <string name="remove_from_favorite_failure">Error al borrar de favoritos</string>
-    <string name="block_the_uploader">¿Añadir el uploader \"%s\" a la lista de filtros?</string>
-    <string name="filter_added">Filtro añadido</string>
 
     <!-- Rating -->
     <string name="rating10">OBRA MAESTRA</string>
@@ -306,21 +304,12 @@
     <string name="clear_all_history">¿Limpiar historial?</string>
 
     <!-- Filter -->
-    <string name="filter">Filtros</string>
-    <string name="no_filter">Los filtros se muestran acá</string>
     <string name="filter_title">Título</string>
     <string name="filter_uploader">Uploader</string>
     <string name="filter_tag">Etiqueta</string>
     <string name="filter_tag_namespace">Etiqueta de espacio de nombres</string>
-    <string name="delete_title_filter">¿Eliminar filtro de título \"%s\"?</string>
-    <string name="delete_uploader_filter">¿Eliminar filtro de uploader \"%s\"?</string>
-    <string name="delete_tag_filter">¿Eliminar filtro de etiquetas \"%s\"?</string>
-    <string name="delete_filter">¿Eliminar filtro \"%s\"?</string>
     <string name="tip">Sugerencia</string>
-    <string name="add_filter">Añadir filtro</string>
     <string name="show_definition">Mostrar definición</string>
-    <string name="filter_text">Filtro de texto</string>
-    <string name="filter_tip">Filtro de título: excluye la galería cuyo título contiene la palabra.\n\nFiltro de uploader: excluye las galerías subidas por el uploader.\n\nFiltro de etiquetas: excluye la galería que contiene la etiqueta, toma más tiempo para cargar la lista de galerías.\n\nFiltro de etiqueta de nombre de espacio: excluye la galería que contiene el espacio de nombres de la etiqueta, toma más tiempo para cargar la lista de galerías.</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">Establecer protección por patrón</string>
@@ -369,7 +358,6 @@
     <string name="settings_eh_show_jpn_title">Mostrar títulos en japonés</string>
     <string name="settings_eh_show_gallery_pages">Mostrar número de páginas de la galería</string>
     <string name="settings_eh_show_gallery_pages_summary">Se verá cuántas páginas tiene una galería</string>
-    <string name="settings_eh_filter">Filtros</string>
     <string name="settings_eh_cellular_network_warning">Advertencia de redes moviles</string>
 
     <string name="settings_read">Lectura</string>

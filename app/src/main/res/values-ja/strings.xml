@@ -206,8 +206,6 @@
     <string name="remove_from_favorite_success">お気に入りから削除しました。</string>
     <string name="add_to_favorite_failure">お気に入りに追加失敗しました。</string>
     <string name="remove_from_favorite_failure">お気に入りからの削除に失敗しました。</string>
-    <string name="block_the_uploader">アップローダフィルター「%s」を追加しますか？</string>
-    <string name="filter_added">フィルターが追加されました。</string>
 
     <!-- Rating -->
     <string name="rating10">良すぎてたまらない</string>
@@ -323,20 +321,12 @@
     <string name="clear_all_history">閲覧履歴をすべて削除しますか？</string>
 
     <!-- Filter -->
-    <string name="filter">フィルター</string>
     <string name="filter_title">タイトル</string>
     <string name="filter_uploader">アップローダ</string>
     <string name="filter_tag">タグ</string>
     <string name="filter_tag_namespace">タグの名前空間</string>
-    <string name="delete_title_filter">タイトル フィルター「%s」を削除しますか？</string>
-    <string name="delete_uploader_filter">アップローダ フィルター「%s」を削除しますか？</string>
-    <string name="delete_tag_filter">タグ フィルター「%s」を削除しますか？</string>
-    <string name="delete_filter">フィルター「%s」を削除しますか？</string>
     <string name="tip">ヒント</string>
-    <string name="add_filter">フィルターを追加</string>
     <string name="show_definition">ヘルプを表示</string>
-    <string name="filter_text">フィルターテキスト</string>
-    <string name="filter_tip">タイトルフィルター：タイトルにキーワードがあるギャラリーを除外します。\n\nアップローダ：このアップローダがアップロードしたギャラリーを除外します。\n\nタグフィルター：このタグを含むギャラリーを除外します。ギャラリーリストを取得するのにもっと時間がかかります。\n\nタグセットフィルター：このタグセットを含むギャラリーを除外します。ギャラリーリストを取得するのにもっと時間がかかります。</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">パターン保護を設定</string>
@@ -390,7 +380,6 @@
     <string name="settings_eh_excluded_languages">言語を除外</string>
     <string name="settings_eh_excluded_languages_summary">指定した言語のギャラリーをホームページと検索から隠す</string>
     <string name="settings_eh_show_jpn_title">日本語タイトルを表示</string>
-    <string name="settings_eh_filter">フィルター</string>
     <string name="settings_eh_cellular_network_warning">モバイルネットワーク警告</string>
 
     <string name="settings_read">閲覧</string>

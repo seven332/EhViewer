@@ -141,7 +141,7 @@
     <string name="search_specify_tag">指定標籤</string>
     <string name="search_enable_advance">啟用進階選項</string>
 
-    <string name="search_tip">一般搜尋：就是搜尋。\n\n訂閱搜素：在訂閱中搜索。\n\n指定上傳者：列出該上傳者上傳的畫廊。其他選項會被忽略。\n\n指定標籤：列出含有該標籤的畫廊。其他選項會被忽略。</string>
+    <string name="search_tip">一般搜尋：就是搜尋。\n\n訂閱搜素：在訂閱中搜索。\n\n指定上傳者：列出該上傳者上傳的圖庫。其他選項會被忽略。\n\n指定標籤：列出含有該標籤的圖庫。其他選項會被忽略。</string>
 
     <string name="search_sname">搜尋圖庫</string>
     <string name="search_stags">搜尋圖庫的標籤</string>
@@ -229,7 +229,7 @@
     <string name="remove_from_favorite_success">從收藏中移除</string>
     <string name="add_to_favorite_failure">無法新增至收藏</string>
     <string name="remove_from_favorite_failure">無法從收藏中移除</string>
-    <string name="block_the_uploader">把上傳者“%s”加入濾除列表?</string>
+    <string name="filter_the_uploader">把上傳者“%s”加入濾除列表?</string>
     <string name="filter_added">已經新增篩選條件</string>
 
     <!-- Rating -->
@@ -347,21 +347,18 @@
     <string name="clear_all_history">清除所有歷史紀錄？</string>
 
     <!-- Filter -->
-    <string name="filter">篩選器</string>
-    <string name="no_filter">篩選列表將會顯示在這裡</string>
+    <string name="filter">遮蔽圖庫</string>
+    <string name="no_filter">這裡是遮蔽列表</string>
     <string name="filter_title">標題</string>
     <string name="filter_uploader">上傳者</string>
     <string name="filter_tag">標籤</string>
-    <string name="filter_tag_namespace">標籤命名空間</string>
-    <string name="delete_title_filter">要將標題篩選項目“%s”移除嗎？</string>
-    <string name="delete_uploader_filter">要將上傳者篩選項目“%s”移除嗎？</string>
-    <string name="delete_tag_filter">要將標籤篩選項目“%s”移除嗎？</string>
-    <string name="delete_filter">要將篩選項目“%s”嗎？</string>
+    <string name="filter_tag_namespace">標籤組</string>
+    <string name="delete_filter">刪除遮蔽項“%s”？</string>
     <string name="tip">提示</string>
-    <string name="add_filter">新增篩選條件</string>
+    <string name="add_filter">新增遮蔽項</string>
     <string name="show_definition">檢視定義</string>
-    <string name="filter_text">篩選文字</string>
-    <string name="filter_tip">標題篩選：排除標題含有該關鍵字的圖庫。\n\n上傳者篩選：排除該上傳者上傳的圖庫。\n\n標籤篩選：排除包含該標籤的圖庫，這會使獲取圖庫列表花費更多時間。\n\n標籤命名空間篩選：排除包含該標籤命名空間（標籤標題）的圖庫，這會使獲取圖庫列表花費更多時間。</string>
+    <string name="filter_text">遮蔽項文字</string>
+    <string name="filter_tip">該遮蔽系統會在 EHentai 網站遮蔽系統的基礎上繼續遮蔽圖庫。\n\n標題遮蔽項：排除標題含有該關鍵字的圖庫。\n\n上傳者遮蔽項：排除該上傳者上傳的圖庫。\n\n標籤遮蔽項：排除包含該標籤的圖庫，這會使獲取圖庫列表花費更多時間。\n\n標籤組遮蔽項：排除包含該標籤組的圖庫，這會使獲取圖庫列表花費更多時間。</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">設定圖形解鎖</string>
@@ -451,8 +448,8 @@
     <string name="settings_eh_show_tag_translations_summary">顯示翻譯後的標籤而非原始文字（需花費時間來下載資料檔案）</string>
     <string name="settings_eh_tag_translations_source">補充翻譯（由 EhTagTranslator 提供）</string>
     <string name="settings_eh_tag_translations_source_url">https://github.com/Mapaler/EhTagTranslator/wiki</string>
-    <string name="settings_eh_filter">篩選（已失效）</string>
-    <string name="settings_eh_filter_summary">請使用 EHentai 網站提供的過濾系統。檢視 EHentai 設定 與 我的標籤</string>
+    <string name="settings_eh_filter">遮蔽圖庫</string>
+    <string name="settings_eh_filter_summary">根據標題、上傳者、標籤遮蔽圖庫</string>
     <string name="settings_eh_cellular_network_warning">行動數據警告</string>
 
     <string name="settings_read">閱讀</string>
@@ -696,6 +693,6 @@
     <string name="settings_privacy">隱私</string>
     <string name="settings_privacy_secure">不允許螢幕擷取</string>
     <string name="settings_privacy_secure_summary">啟用後，將無法對本程式進行螢幕擷取，同時，將不會在系統任務切換器中顯示該程式的預覽內容\n\n重新啟動本程式以套用此變更</string>
-    <string name="favorite_name">收藏畫廊</string>
+    <string name="favorite_name">收藏圖庫</string>
 
 </resources>

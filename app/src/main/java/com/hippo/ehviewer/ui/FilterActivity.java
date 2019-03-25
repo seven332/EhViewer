@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo Seven
+ * Copyright 2016 Hippo Seven
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,24 @@
 
 package com.hippo.ehviewer.ui;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.client.EhFilter;
@@ -101,13 +104,115 @@ public class FilterActivity extends ToolbarActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.activity_filter, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.action_add:
+                showAddFilterDialog();
+                return true;
+            case R.id.action_tip:
+                showTipDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showTipDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.filter)
+                .setMessage(R.string.filter_tip)
+                .show();
+    }
+
+    private void showAddFilterDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.add_filter)
+                .setView(R.layout.dialog_add_filter)
+                .setPositiveButton(R.string.add, null)
+                .show();
+        AddFilterDialogHelper helper = new AddFilterDialogHelper();
+        helper.setDialog(dialog);
+    }
+
+    private void showDeleteFilterDialog(final Filter filter) {
+        String message = getString(R.string.delete_filter, filter.text);
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    if (DialogInterface.BUTTON_POSITIVE != which || null == mFilterList) {
+                        return;
+                    }
+                    mFilterList.delete(filter);
+                    if (null != mAdapter) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    updateView(true);
+                }).show();
+    }
+
+    private class AddFilterDialogHelper implements View.OnClickListener {
+
+        @Nullable
+        private AlertDialog mDialog;
+        @Nullable
+        private Spinner mSpinner;
+        @Nullable
+        private TextInputLayout mInputLayout;
+        @Nullable
+        private EditText mEditText;
+
+        public void setDialog(AlertDialog dialog) {
+            mDialog = dialog;
+            mSpinner = (Spinner) ViewUtils.$$(dialog, R.id.spinner);
+            mInputLayout = (TextInputLayout) ViewUtils.$$(dialog, R.id.text_input_layout);
+            mEditText = mInputLayout.getEditText();
+            View button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            if (null != button) {
+                button.setOnClickListener(this);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (null == mFilterList || null == mDialog || null == mSpinner ||
+                    null == mInputLayout || null == mEditText) {
+                return;
+            }
+
+            String text = mEditText.getText().toString().trim();
+            if (TextUtils.isEmpty(text)) {
+                mInputLayout.setError(getString(R.string.text_is_empty));
+                return;
+            } else {
+                mInputLayout.setError(null);
+            }
+            int mode = mSpinner.getSelectedItemPosition();
+
+            Filter filter = new Filter();
+            filter.mode = mode;
+            filter.text = text;
+            mFilterList.add(filter);
+
+            if (null != mAdapter) {
+                mAdapter.notifyDataSetChanged();
+            }
+            updateView(true);
+
+            mDialog.dismiss();
+            mDialog = null;
+            mSpinner = null;
+            mInputLayout = null;
+            mEditText = null;
         }
     }
 
@@ -124,14 +229,27 @@ public class FilterActivity extends ToolbarActivity {
             if (null != icon) {
                 icon.setOnClickListener(this);
             }
+            // click on the filter text to enable/disable it
+            text.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            if (clipboard != null) {
-                clipboard.setPrimaryClip(ClipData.newPlainText("filter", text.getText().toString()));
-                Snackbar.make(v, R.string.copied_to_clipboard, 3000).show();
+            int position = getAdapterPosition();
+            if (position < 0 || null == mFilterList) {
+                return;
+            }
+            Filter filter = mFilterList.get(position);
+            if (FilterList.MODE_HEADER != filter.mode) {
+                if (v instanceof ImageView) {
+                    showDeleteFilterDialog(filter);
+                } else if (v instanceof TextView) {
+                    mFilterList.trigger(filter);
+
+                    //for updating delete line on filter text
+                    mAdapter.notifyItemChanged(getAdapterPosition());
+                }
+
             }
         }
     }
@@ -167,7 +285,14 @@ public class FilterActivity extends ToolbarActivity {
                     break;
             }
 
-            return new FilterHolder(getLayoutInflater().inflate(layoutId, parent, false));
+            FilterHolder holder = new FilterHolder(getLayoutInflater().inflate(layoutId, parent, false));
+
+            if (R.layout.item_filter == layoutId) {
+                holder.icon.setImageDrawable(
+                        DrawableManager.getVectorDrawable(FilterActivity.this, R.drawable.v_delete_x24));
+            }
+
+            return holder;
         }
 
         @Override
@@ -314,6 +439,18 @@ public class FilterActivity extends ToolbarActivity {
             }
 
             throw new IndexOutOfBoundsException();
+        }
+
+        public void add(Filter filter) {
+            mEhFilter.addFilter(filter);
+        }
+
+        public void delete(Filter filter) {
+            mEhFilter.deleteFilter(filter);
+        }
+
+        public void trigger(Filter filter) {
+            mEhFilter.triggerFilter(filter);
         }
     }
 }

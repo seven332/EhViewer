@@ -272,8 +272,9 @@
     <string name="remove_from_favorite_success">Removed from favorites</string>
     <string name="add_to_favorite_failure">Failed to add to favorites</string>
     <string name="remove_from_favorite_failure">Failed to remove from favorites</string>
-    <string name="block_the_uploader">Add the uploader \"%s\" to filter list?</string>
-    <string name="filter_added">Filter added</string>
+    <string name="filter_the_uploader">Block the uploader \"%s\"?</string>
+    <string name="filter_the_tag">Block the tag \"%s\"?</string>
+    <string name="filter_added">Blocker added</string>
 
     <!-- Rating -->
     <string name="rating10">MASTERPIECE</string>
@@ -391,21 +392,18 @@
     <string name="clear_all_history">Clear all history?</string>
 
     <!-- Filter -->
-    <string name="filter">Filter</string>
-    <string name="no_filter">Filters will be shown here</string>
+    <string name="filter">Block gallery</string>
+    <string name="no_filter">Blockers will be shown here</string>
     <string name="filter_title">Title</string>
     <string name="filter_uploader">Uploader</string>
     <string name="filter_tag">Tag</string>
     <string name="filter_tag_namespace">Tag namespace</string>
-    <string name="delete_title_filter">Delete title filter \"%s\"?</string>
-    <string name="delete_uploader_filter">Delete uploader filter \"%s\"?</string>
-    <string name="delete_tag_filter">Delete tag filter \"%s\"?</string>
-    <string name="delete_filter">Delete filter \"%s\"?</string>
+    <string name="delete_filter">Delete blocker \"%s\"?</string>
     <string name="tip">Tip</string>
-    <string name="add_filter">Add filter</string>
+    <string name="add_filter">Add blocker</string>
     <string name="show_definition">Show definition</string>
-    <string name="filter_text">Filter text</string>
-    <string name="filter_tip">Title Filter: exclude the gallery whose title contains the word.\n\nUploader Filter: exclude the gallery which was uploaded by the uploader.\n\nTag Filter: exclude the gallery which contain the tag, it takes more time to get gallery list.\n\nTag Namespace Filter: exclude the gallery which contain the tag namespace, it takes more time to get gallery list.</string>
+    <string name="filter_text">Blocker text</string>
+    <string name="filter_tip">This blocking system filters the result of EHentai website blocking system.\n\nTitle Blocker: exclude the gallery whose title contains the word.\n\nUploader Blocker: exclude the gallery which was uploaded by the uploader.\n\nTag Blocker: exclude the gallery which contain the tag, it takes more time to get gallery list.\n\nTag Namespace Blocker: exclude the gallery which contain the tag namespace, it takes more time to get gallery list.</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">Set pattern protection</string>
@@ -495,8 +493,8 @@
     <string name="settings_eh_show_tag_translations_summary">Show tag translations instead of the original text (It takes time to download the data file)</string>
     <string name="settings_eh_tag_translations_source">Placeholder</string>
     <string name="settings_eh_tag_translations_source_url">https://placeholder</string>
-    <string name="settings_eh_filter">Filter (Invalid)</string>
-    <string name="settings_eh_filter_summary">Please use the filter system provided by EHentai website. Check EHentai settings and My tags</string>
+    <string name="settings_eh_filter">Block gallery</string>
+    <string name="settings_eh_filter_summary">Block gallery by title, uploader and tags</string>
     <string name="settings_eh_cellular_network_warning">Cellular network warning</string>
 
     <string name="settings_read">Read</string>

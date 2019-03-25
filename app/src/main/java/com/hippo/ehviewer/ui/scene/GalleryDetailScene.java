@@ -67,6 +67,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.UrlOpener;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.EhFilter;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhTagDatabase;
 import com.hippo.ehviewer.client.EhUrl;
@@ -80,6 +81,7 @@ import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.NoHAtHClientException;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
+import com.hippo.ehviewer.dao.Filter;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
@@ -479,6 +481,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mDownload.setOnClickListener(this);
         mDownload.setOnLongClickListener(this);
         mRead.setOnClickListener(this);
+
+        mUploader.setOnLongClickListener(this);
 
         mBelowHeader = mainView.findViewById(R.id.below_header);
         View belowHeader = mBelowHeader;
@@ -1319,6 +1323,51 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         }
     }
 
+    private void showFilterUploaderDialog() {
+        Context context = getContext2();
+        String uploader = getUploader();
+        if (context == null || uploader == null) {
+            return;
+        }
+
+        new AlertDialog.Builder(context)
+                .setMessage(getString(R.string.filter_the_uploader, uploader))
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    if (which != DialogInterface.BUTTON_POSITIVE) {
+                        return;
+                    }
+
+                    Filter filter = new Filter();
+                    filter.mode = EhFilter.MODE_UPLOADER;
+                    filter.text = uploader;
+                    EhFilter.getInstance().addFilter(filter);
+
+                    showTip(R.string.filter_added, LENGTH_SHORT);
+                }).show();
+    }
+
+    private void showFilterTagDialog(String tag) {
+        Context context = getContext2();
+        if (context == null) {
+            return;
+        }
+
+        new AlertDialog.Builder(context)
+                .setMessage(getString(R.string.filter_the_tag, tag))
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    if (which != DialogInterface.BUTTON_POSITIVE) {
+                        return;
+                    }
+
+                    Filter filter = new Filter();
+                    filter.mode = EhFilter.MODE_TAG;
+                    filter.text = tag;
+                    EhFilter.getInstance().addFilter(filter);
+
+                    showTip(R.string.filter_added, LENGTH_SHORT);
+                }).show();
+    }
+
     private void showTagDialog(final String tag) {
         final Context context = getContext2();
         if (null == context) {
@@ -1335,14 +1384,14 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         new AlertDialog.Builder(context)
                 .setTitle(tag)
-                .setItems(R.array.tag_menu_entries, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                UrlOpener.openUrl(context, EhUrl.getTagDefinitionUrl(tag2), false);
-                                break;
-                        }
+                .setItems(R.array.tag_menu_entries, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            UrlOpener.openUrl(context, EhUrl.getTagDefinitionUrl(tag2), false);
+                            break;
+                        case 1:
+                            showFilterTagDialog(tag);
+                            break;
                     }
                 }).show();
     }
@@ -1354,7 +1403,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             return false;
         }
 
-        if (mDownload == v) {
+        if (mUploader == v) {
+            showFilterUploaderDialog();
+        } else if (mDownload == v) {
             GalleryInfo galleryInfo = getGalleryInfo();
             if (galleryInfo != null) {
                 CommonOperations.startDownload(activity, galleryInfo, true);

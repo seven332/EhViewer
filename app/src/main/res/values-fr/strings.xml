@@ -207,8 +207,6 @@
     <string name="remove_from_favorite_success">Retirer de favoris</string>
     <string name="add_to_favorite_failure">Impossible de l\'ajouter à favoris</string>
     <string name="remove_from_favorite_failure">Impossible de la retirer de favoris</string>
-    <string name="block_the_uploader">Ajouter l\'uploader \"%s\" à la liste de filtre ?</string>
-    <string name="filter_added">Filter added</string>
 
     <!-- Rating -->
     <string name="rating10">CHEF-D\'ŒUVRE</string>
@@ -325,21 +323,12 @@
     <string name="clear_all_history">Effacer toute l\'historique ?</string>
 
     <!-- Filter -->
-    <string name="filter">Filtre</string>
-    <string name="no_filter">Vos filtres s\'afficheront ici</string>
     <string name="filter_title">Titre</string>
     <string name="filter_uploader">Uploader</string>
     <string name="filter_tag">Tag</string>
     <string name="filter_tag_namespace">Espace de nom de tag</string>
-    <string name="delete_title_filter">Supprimer le filtre de titre \"%s\" ?</string>
-    <string name="delete_uploader_filter">Supprimer le filtre d\'uploader \"%s\" ?</string>
-    <string name="delete_tag_filter">Supprimer le filtre de tag \"%s\" ?</string>
-    <string name="delete_filter">Supprimer le filtre \"%s\" ?</string>
     <string name="tip">Astuce</string>
-    <string name="add_filter">Ajouter le filtre</string>
     <string name="show_definition">Montrer expliques</string>
-    <string name="filter_text">Texte du filtre</string>
-    <string name="filter_tip">Filtre de titre : exclure les galeries dont le titre contient le mot.\n\nFiltre d\'uploader : exclure les galerie mises en ligne par cet uploader.\n\nFiltre de tag : exclure les galeries qui ont ce tag. Il vas prendre plus de temps pour charger la liste.\n\nFiltre d\'espace de nom de tag : exclure les galeries qui ont cette espace de nom de tag. Il vas prendre plus de temps pour charger la liste.</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">Définir le modéle de déverrouillage</string>
@@ -392,7 +381,6 @@
     <string name="settings_eh_excluded_tag_namespaces">Espaces de nom de tag exclues</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">Exclure espaces de nom spécifiées de une recherche de tag par défaut</string>
     <string name="settings_eh_show_jpn_title">Montrer les titres japonais</string>
-    <string name="settings_eh_filter">Filtre</string>
     <string name="settings_eh_cellular_network_warning">Avertissement de données mobiles</string>
 
     <string name="settings_read">Lecture</string>

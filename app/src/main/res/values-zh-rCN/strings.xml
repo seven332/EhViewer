@@ -229,8 +229,9 @@
     <string name="remove_from_favorite_success">移除收藏</string>
     <string name="add_to_favorite_failure">添加收藏失败</string>
     <string name="remove_from_favorite_failure">移除收藏失败</string>
-    <string name="block_the_uploader">添加上传者过滤项“%s”？</string>
-    <string name="filter_added">已添加过滤项</string>
+    <string name="filter_the_uploader">屏蔽上传者“%s”？</string>
+    <string name="filter_the_tag">屏蔽标签“%s”？</string>
+    <string name="filter_added">已添加屏蔽项</string>
 
     <!-- Rating -->
     <string name="rating10">根本把持不住</string>
@@ -347,21 +348,18 @@
     <string name="clear_all_history">清除所有阅读历史？</string>
 
     <!-- Filter -->
-    <string name="filter">过滤</string>
-    <string name="no_filter">这里是过滤列表</string>
+    <string name="filter">屏蔽画廊</string>
+    <string name="no_filter">这里是屏蔽列表</string>
     <string name="filter_title">标题</string>
     <string name="filter_uploader">上传者</string>
     <string name="filter_tag">标签</string>
     <string name="filter_tag_namespace">标签组</string>
-    <string name="delete_title_filter">删除标题过滤项“%s”？</string>
-    <string name="delete_uploader_filter">删除上传者过滤项“%s”？</string>
-    <string name="delete_tag_filter">删除标签过滤项“%s”？</string>
-    <string name="delete_filter">删除过滤项“%s”？</string>
+    <string name="delete_filter">删除屏蔽项“%s”？</string>
     <string name="tip">提示</string>
-    <string name="add_filter">添加过滤项</string>
+    <string name="add_filter">添加屏蔽项</string>
     <string name="show_definition">查看定义</string>
-    <string name="filter_text">过滤项文本</string>
-    <string name="filter_tip">标题过滤项：排除标题含有该关键字的画廊。\n\n上传者过滤项：排除该上传者上传的画廊。\n\n标签过滤项：排除包含该标签的画廊，这会使获取画廊列表花费更多时间。\n\n标签组过滤项：排除包含该标签组的画廊，这会使获取画廊列表花费更多时间。</string>
+    <string name="filter_text">屏蔽项文本</string>
+    <string name="filter_tip">该屏蔽系统会在 EHentai 网站屏蔽系统的基础上继续屏蔽画廊。\n\n标题屏蔽项：排除标题含有该关键字的画廊。\n\n上传者屏蔽项：排除该上传者上传的画廊。\n\n标签屏蔽项：排除包含该标签的画廊，这会使获取画廊列表花费更多时间。\n\n标签组屏蔽项：排除包含该标签组的画廊，这会使获取画廊列表花费更多时间。</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">设置图案保护</string>
@@ -452,8 +450,8 @@
     <string name="settings_eh_show_tag_translations_summary">显示翻译后的标签而非原始文字（需花费时间来下载数据文件）</string>
     <string name="settings_eh_tag_translations_source">补充翻译（由 EhTagTranslator 提供）</string>
     <string name="settings_eh_tag_translations_source_url">https://github.com/Mapaler/EhTagTranslator/wiki</string>
-    <string name="settings_eh_filter">过滤（已失效）</string>
-    <string name="settings_eh_filter_summary">请使用 EHentai 网站提供的过滤系统。查看 EHentai 设置 与 我的标签</string>
+    <string name="settings_eh_filter">屏蔽画廊</string>
+    <string name="settings_eh_filter_summary">根据标题、上传者、标签屏蔽画廊</string>
     <string name="settings_eh_cellular_network_warning">移动网络警告</string>
 
     <string name="settings_read">阅读</string>

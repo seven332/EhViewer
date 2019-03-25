@@ -82,7 +82,11 @@ public class EhEngine {
 
     private static final Pattern PATTERN_NEED_HATH_CLIENT = Pattern.compile("(You must have a H@H client assigned to your account to use this feature\\.)");
 
-    public static void initialize() { }
+    public static EhFilter sEhFilter;
+
+    public static void initialize() {
+        sEhFilter = EhFilter.getInstance();
+    }
 
     private static void doThrowException(Call call, int code, @Nullable Headers headers,
             @Nullable String body, Throwable e) throws Throwable {
@@ -170,6 +174,18 @@ public class EhEngine {
     }
 
     private static void fillGalleryList(@Nullable EhClient.Task task, OkHttpClient okHttpClient, List<GalleryInfo> list, String url, boolean filter) throws Throwable {
+        // Filter title and uploader
+        if (filter) {
+            for (int i = 0, n = list.size(); i < n; i++) {
+                GalleryInfo info = list.get(i);
+                if (!sEhFilter.filterTitle(info) || !sEhFilter.filterUploader(info)) {
+                    list.remove(i);
+                    i--;
+                    n--;
+                }
+            }
+        }
+
         boolean hasTags = false;
         boolean hasPages = false;
         boolean hasRated = false;
@@ -185,9 +201,23 @@ public class EhEngine {
             }
         }
 
-        boolean needApi = (Settings.getShowGalleryPages() && !hasPages) || hasRated;
+        boolean needApi = (filter && sEhFilter.needTags() && !hasTags) ||
+                (Settings.getShowGalleryPages() && !hasPages) ||
+                hasRated;
         if (needApi) {
             fillGalleryListByApi(task, okHttpClient, list, url);
+        }
+
+        // Filter tag
+        if (filter) {
+            for (int i = 0, n = list.size(); i < n; i++) {
+                GalleryInfo info = list.get(i);
+                if (!sEhFilter.filterTag(info) || !sEhFilter.filterTagNamespace(info)) {
+                    list.remove(i);
+                    i--;
+                    n--;
+                }
+            }
         }
 
         for (GalleryInfo info : list) {

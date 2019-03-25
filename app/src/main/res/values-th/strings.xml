@@ -216,8 +216,6 @@
     <string name="remove_from_favorite_success">ลบออกจากรายการโปรดแล้ว</string>
     <string name="add_to_favorite_failure">เกิดความล้มเหลวในการเพิ่มเข้าในรายการโปรด</string>
     <string name="remove_from_favorite_failure">เกิดข้อล้มเหลวในการลบออกจากรายการโปรด</string>
-    <string name="block_the_uploader">เพิ่มชื้อผู้อัพโหลด \"%s\" เข้าในตัวกรองลิสต์ไหม?</string>
-    <string name="filter_added">ตัวกรองถูกเพิ่มแล้ว</string>
 
     <!-- Rating -->
     <string name="rating10">นี้มันผลงานมาสเตอร์พีคชัดๆ!</string>
@@ -334,21 +332,12 @@
     <string name="clear_all_history">จะลบประวัติทั้งหมดเลยหรือไม่?</string>
 
     <!-- Filter -->
-    <string name="filter">ตัวกรอง</string>
-    <string name="no_filter">ตัวกรองจะอยู่ตรงนี้</string>
     <string name="filter_title">ชื่อเรื่อง</string>
     <string name="filter_uploader">ผู้อัพโหลด</string>
     <string name="filter_tag">แท็ก</string>
     <string name="filter_tag_namespace">ชื่อของแท็ก</string>
-    <string name="delete_title_filter">จะลบตัวกรองแท็ก \"%s\" หรือไม่?</string>
-    <string name="delete_uploader_filter">จะลบตัวกรองผู้อัพโหลด \"%s\" หรือไม่?</string>
-    <string name="delete_tag_filter">จะลบตัวกรองแท็ก \"%s\" หรือไม่?</string>
-    <string name="delete_filter">จะลบตัวกรอง \"%s\" หรือไม่?</string>
     <string name="tip">คำแนะนำ</string>
-    <string name="add_filter">เพิ่มตัวกรอง</string>
     <string name="show_definition">แสดงความหมาย</string>
-    <string name="filter_text">ตัวกรองข้อความ</string>
-    <string name="filter_tip">ตัวกรองชื่อเรื่อง: จะไม่แสดงแกลเลอรี่ที่มีคำเหล่านี้ให้เห็น\n\nตัวกรองผู้อัพโหลด: จะไม่แสดงแกลเลอรี่ที่ผู้อัพโหลดที่ถูกกรองได้อัพโหลดไว้\n\nตัวกรองแท็ก: จะไม่แสดงแกลเลอรี่ที่มีแท็กเหล่านี้ อาจจะใช้เวลาในการแยกออกจากรายการแกลเลอรี่\n\nตัวกรองแท็กเนมสเปซ: จะไม่แสดงแกลเลอรี่ที่เนมสเปซของแท็กนี้ อาจจะใช้เวลาในการแยกออกจากรายการแกลเลอรี่</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">ตั้้งการป้องกันแบบรูปแบบ</string>
@@ -431,7 +420,6 @@
     <string name="settings_eh_show_tag_translations_summary">แสดงแท็กการแปลภาษาแทนที่ข้อความต้นฉบับ (อาจใช้เวลามากขึ้นเพื่อดาวน์โหลดไฟล์ข้อมูล)</string>
     <string name="settings_eh_tag_translations_source">Placeholder</string>
     <string name="settings_eh_tag_translations_source_url">https://placeholder</string>
-    <string name="settings_eh_filter">ตัวกรอง</string>
     <string name="settings_eh_cellular_network_warning">เตือนการใช้เครือข่ายมือถือ</string>
 
     <string name="settings_read">การอ่าน</string>

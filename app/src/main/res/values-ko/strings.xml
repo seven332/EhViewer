@@ -214,8 +214,6 @@
     <string name="remove_from_favorite_success">즐겨찾기에서 제거했습니다.</string>
     <string name="add_to_favorite_failure">즐겨찾기에 추가하지 못했습니다.</string>
     <string name="remove_from_favorite_failure">즐겨찾기에서 제거하지 못했습니다.</string>
-    <string name="block_the_uploader">필터 목록에 \"%s\" 업로더를 추가하시겠습니까?</string>
-    <string name="filter_added">필터 추가됨</string>
 
     <!-- Gallery Info -->
     <string name="gallery_info">갤러리 정보</string>
@@ -319,21 +317,12 @@
     <string name="clear_all_history">모든 방문 기록을 지우시겠습니까?</string>
 
     <!-- Filter -->
-    <string name="filter">필터</string>
-    <string name="no_filter">필터가 여기에 표시됩니다.</string>
     <string name="filter_title">제목</string>
     <string name="filter_uploader">업로더</string>
     <string name="filter_tag">태그</string>
     <string name="filter_tag_namespace">태그 네임스페이스</string>
-    <string name="delete_title_filter">\"%s\" 제목 필터를 삭제하시겠습니까?</string>
-    <string name="delete_uploader_filter">\"%s\" 업로더 필터를 삭제하시겠습니까?</string>
-    <string name="delete_tag_filter">\"%s\" 태그 필터를 삭제하시겠습니까?</string>
-    <string name="delete_filter">\"%s\" 필터를 삭제하시겠습니까?</string>
     <string name="tip">팁</string>
-    <string name="add_filter">필터 추가</string>
     <string name="show_definition">정의 표시</string>
-    <string name="filter_text">텍스트 필터</string>
-    <string name="filter_tip">제목 필터: 제목에 해당 단어를 포함한 갤러리를 제외합니다.\n\n업로더 필터: 해당 업로더가 업로드한 갤러리를 제외합니다.\n\n태그 필터: 해당 태그를 포함한 갤러리를 제외합니다. 갤러리 목록을 불러오는 데 시간이 좀 더 걸립니다.\n\n태그 네임스페이스 필터: 해당 태그 네임스페이스를 포함한 갤러리를 제외합니다. 갤러리 목록을 불러오는 데 시간이 좀 더 걸립니다.</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">패턴 보호 사용</string>
@@ -413,7 +402,6 @@
     <string name="settings_eh_show_tag_translations_summary">영어 태그 대신 번역된 태그를 표시합니다. 데이터 파일을 다운로드하는데 시간이 걸립 수 있습니다.</string>
     <string name="settings_eh_tag_translations_source">Placeholder</string>
     <string name="settings_eh_tag_translations_source_url">https://placeholder</string>
-    <string name="settings_eh_filter">필터</string>
     <string name="settings_eh_cellular_network_warning">모바일 데이터 경고</string>
 
     <string name="settings_read">읽기</string>
