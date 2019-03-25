@@ -22,7 +22,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.dao.DownloadInfo;
@@ -448,8 +447,6 @@ public class DownloadManager implements SpiderQueen.OnSpiderListener {
         for (DownloadInfoListener l: mDownloadInfoListeners) {
             l.onAdd(info, list, list.size() - 1);
         }
-
-        Analytics.downloadGallery(galleryInfo.gid, galleryInfo.token);
     }
 
 

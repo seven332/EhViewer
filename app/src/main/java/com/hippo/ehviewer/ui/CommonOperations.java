@@ -25,7 +25,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
 import com.hippo.app.ListCheckBoxDialogBuilder;
-import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
@@ -195,7 +194,6 @@ public final class CommonOperations {
         if (slot == -1) {
             EhDB.putLocalFavorites(galleryInfo);
             listener.onSuccess(null);
-            Analytics.addGalleryToFavourite(galleryInfo.gid, galleryInfo.token);
         } else if (slot >= 0 && slot <= 9) {
             EhClient client = EhApplication.getEhClient(activity);
             EhRequest request = new EhRequest();
@@ -203,7 +201,6 @@ public final class CommonOperations {
             request.setArgs(galleryInfo.gid, galleryInfo.token, slot, "");
             request.setCallback(listener);
             client.execute(request);
-            Analytics.addGalleryToFavourite(galleryInfo.gid, galleryInfo.token);
         } else {
             listener.onFailure(new Exception()); // TODO Add text
         }

@@ -49,7 +49,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import com.hippo.android.resource.AttrResources;
-import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.BuildConfig;
 import com.hippo.ehviewer.R;
@@ -207,7 +206,6 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         } else if (ACTION_EH.equals(mAction)) {
             if (mGalleryInfo != null) {
                 mGalleryProvider = new EhGalleryProvider(this, mGalleryInfo);
-                Analytics.readGallery(mGalleryInfo.gid, mGalleryInfo.token);
             }
         } else if (Intent.ACTION_VIEW.equals(mAction)) {
             if (mUri != null) {

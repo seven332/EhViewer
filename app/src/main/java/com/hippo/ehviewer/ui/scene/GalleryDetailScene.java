@@ -58,7 +58,6 @@ import com.hippo.android.resource.AttrResources;
 import com.hippo.beerbelly.BeerBelly;
 import com.hippo.drawable.RoundSideRectDrawable;
 import com.hippo.drawerlayout.DrawerLayout;
-import com.hippo.ehviewer.Analytics;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
@@ -676,14 +675,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 .setArgs(url)
                 .setCallback(callback);
         EhApplication.getEhClient(context).execute(request);
-
-        if (mGalleryDetail != null) {
-            Analytics.viewGallery(mGalleryDetail.gid, mGalleryDetail.token);
-        } else if (mGalleryInfo != null) {
-            Analytics.viewGallery(mGalleryInfo.gid, mGalleryInfo.token);
-        } else {
-            Analytics.viewGallery(mGid, mToken);
-        }
 
         return true;
     }
@@ -1760,7 +1751,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 request.setArgs(mGalleryDetail.gid, mGalleryDetail.token, mArchiveFormParamOr, res);
                 request.setCallback(new DownloadArchiveListener(context, activity.getStageId(), getTag()));
                 EhApplication.getEhClient(context).execute(request);
-                Analytics.downloadArchive(mGalleryDetail.gid, mGalleryDetail.token);
             }
 
             if (mDialog != null) {
@@ -2014,8 +2004,6 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                     .setCallback(new RateGalleryListener(context,
                             activity.getStageId(), getTag(), mGalleryDetail.gid));
             EhApplication.getEhClient(context).execute(request);
-
-            Analytics.rateGallery(mGalleryDetail.gid, mGalleryDetail.token);
         }
     }
 
