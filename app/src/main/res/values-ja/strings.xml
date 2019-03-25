@@ -20,6 +20,7 @@
     <string name="app_name">EhViewer</string>
 
     <string name="homepage">ホームページ</string>
+    <string name="subscription">タグの購読</string>
     <string name="whats_hot">人気</string>
     <string name="favourite">お気に入り</string>
     <string name="history">閲覧履歴</string>
@@ -71,6 +72,7 @@
     <string name="error_not_found">見つかりませんでした。</string>
     <string name="error_empty">空</string>
     <string name="error_reading_failed">読み込めませんでした。</string>
+    <string name="error_invalid_archive">無効なアーカイブファイルです</string>
     <string name="error_out_of_range">範囲外です。</string>
     <string name="error_write_failed">書き込めませんでした</string>
     <string name="error_parse_error">ファイル解析に失敗しました。</string>
@@ -80,6 +82,7 @@
     <string name="error_cant_create_temp_file">一時ファイルを作成できませんでした</string>
     <string name="error_cant_save_image">画像を保存できませんでした</string>
     <string name="error_invalid_number">無効な数字です</string>
+    <string name="error_please_login_first">ログインしてください</string>
 
     <string name="app_waring">このアプリの内容はインターネットから取得したものです。その内容の一部は使用者のお体や心理に傷つける恐れがあります。それでも続行しますか？</string>
     <string name="error_username_cannot_empty">ユーザー名を入力してください。</string>
@@ -91,7 +94,7 @@
     <string name="content_layout_restore_tip">クリックしてもう一度試す</string>
     <string name="write_rationale">EhViewerはギャラリーをダウンロードするためのWRITE_EXTERNAL_STORAGE権限を請求します。許可してもらえないでしょうか？</string>
     <string name="you_rejected_me">痛い</string>
-    <string name="analytics_explain">ご使用のデバイスの情報やこのアプリの利用情報を収集するように同意しますか？収集情報はアプリ向上のために使用されます。&lt;br&gt;&lt;br&gt;データ分析サービスはGoogleアナリティクスによって提供されます。 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;にプライバシーポリシーをご覧ください。&lt;br&gt;&lt;br&gt;アプリ利用情報収集に参加すると、Android APIバージョン、デバイスモデル、言語、地域、アプリバージョンや、セッション時間などの情報は収集されます。開発者は、電話番号、電子メールアドレス、IMEI情報などを記録しないことを保証します。&lt;br&gt;&lt;br&gt;同意しない限り、データは収集されません。&lt;br&gt;&lt;br&gt;送信されたデータはGoogleアナリティクスで分析され、分析レポートにはこのアプリ開発者しかアクセスできません。</string>
+    <string name="analytics_explain">ご使用のデバイスの情報やこのアプリの利用情報を収集するように同意しますか？収集情報はアプリ向上のために使用されます。&lt;br&gt;&lt;br&gt;データ分析サービスはGoogle Analytics for Firebaseによって提供されます。 &lt;a href=&quot;https://www.google.com/policies/privacy/&quot;&gt;https://www.google.com/policies/privacy/&lt;/a&gt;にプライバシーポリシーをご覧ください。&lt;br&gt;&lt;br&gt;アプリ利用情報収集に参加すると、Android APIバージョン、デバイスモデル、言語、地域、アプリバージョンや、セッション時間などの情報は収集されます。開発者は、電話番号、電子メールアドレス、IMEI情報などを記録しないことを保証します。&lt;br&gt;&lt;br&gt;同意しない限り、データは収集されません。&lt;br&gt;&lt;br&gt;送信されたデータはGoogle Analytics for Firebaseで分析され、分析レポートにはこのアプリ開発者しかアクセスできません。</string>
     <string name="get_it">了解</string>
     <string name="accept">同意</string>
     <string name="reject">拒否</string>
@@ -107,11 +110,14 @@
     <string name="update">更新</string>
     <string name="update_plain">バージョン：%1$s\nサイズ：%2$s\n\n%3$s</string>
     <string name="update_to_date">EhViewerは既に最新バージョンです。</string>
+    <string name="update_ignore">無視</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint_exhentai">ExHentaiを検索</string>
     <string name="gallery_list_search_bar_hint_e_hentai">E-Hentaiを検索</string>
+    <string name="gallery_list_search_bar_open_gallery">ギャラリーを開く</string>
     <string name="gallery_list_empty_hit">何も見つかりませんでした。</string>
+    <string name="gallery_list_empty_hit_subscription">リストは空です。設定->EH->マイタグにてタグを購読することができます。</string>
 
     <string name="search">検索</string>
 
@@ -122,11 +128,12 @@
     <string name="search_advance">その他のオプション</string>
     <string name="search_image">画像検索</string>
     <string name="search_normal_search">一般検索</string>
+    <string name="search_subscription_search">購読検索</string>
     <string name="search_specify_uploader">アップローダを検索</string>
     <string name="search_specify_tag">タグを検索</string>
     <string name="search_enable_advance">その他のオプションを有効化</string>
 
-    <string name="search_tip">普通検索：検索します。\n\nアップローダを検索：このアップローダーがアップロードしたギャラリーをリストします。他のオプションは無視されます。\n\nタグを検索：指定したタグを含むギャラリーをリストします。他のオプションは無視されます。</string>
+    <string name="search_tip">普通検索：検索します。\n\n購読検索：購読しているタグで検索します。\n\nアップローダを検索：このアップローダーがアップロードしたギャラリーをリストします。他のオプションは無視されます。\n\nタグを検索：指定したタグを含むギャラリーをリストします。他のオプションは無視されます。</string>
 
     <string name="search_sname">ギャラリーを検索</string>
     <string name="search_stags">ギャラリータグを検索</string>
@@ -137,6 +144,13 @@
     <string name="search_sdt2">低評価タグを検索</string>
     <string name="search_sh">削除済みのギャラリーを表示</string>
     <string name="search_sr">評価の下限：</string>
+    <string name="search_sp">ページ：</string>
+    <string name="search_sp_to">から</string>
+	<string name="search_sp_suffix">まで</string>
+    <string name="search_sf">既定フィルターから下記のものを例外とする：</string>
+    <string name="search_sfl">言語</string>
+    <string name="search_sfu">アップローダ</string>
+    <string name="search_sft">タグ</string>
 
     <string name="select_image">画像を選択</string>
     <string name="search_uss">類似検索を有効化</string>
@@ -145,6 +159,9 @@
     <string name="select_image_first">画像を選択してください</string>
 
     <string name="add_to_favourites">お気に入りに追加</string>
+    <string name="remove_from_favourites">お気に入りから削除</string>
+
+    <string name="stop_downloading">ダウンロードを停止</string>
 
     <string name="quick_search">クイック検索</string>
     <string name="quick_search_tip">「+」をタップしてクイック検索を追加します</string>
@@ -206,6 +223,9 @@
     <string name="remove_from_favorite_success">お気に入りから削除しました。</string>
     <string name="add_to_favorite_failure">お気に入りに追加失敗しました。</string>
     <string name="remove_from_favorite_failure">お気に入りからの削除に失敗しました。</string>
+    <string name="filter_the_uploader">アップローダ「%s」をブロックしますか？</string>
+    <string name="filter_the_tag">タグ「%s」をブロックしますか？</string>
+    <string name="filter_added">ブロックアイテムを追加しました。</string>
 
     <!-- Rating -->
     <string name="rating10">良すぎてたまらない</string>
@@ -321,12 +341,17 @@
     <string name="clear_all_history">閲覧履歴をすべて削除しますか？</string>
 
     <!-- Filter -->
+    <string name="filter">ギャラリーをブロック</string>
     <string name="filter_title">タイトル</string>
     <string name="filter_uploader">アップローダ</string>
     <string name="filter_tag">タグ</string>
     <string name="filter_tag_namespace">タグの名前空間</string>
     <string name="tip">ヒント</string>
+    <string name="delete_filter">ブロックアイテム「%s」を削除しますか？</string>
     <string name="show_definition">ヘルプを表示</string>
+    <string name="add_filter">ブロックアイテムを追加</string>
+    <string name="filter_text">ブロックテキスト</string>
+    <string name="filter_tip">ブロックアイテムに対応するものはEHentaiのギャラリーリストから除外します。\n\nタイトルをブロック：ブロックテキストを含むギャラリーを除外します。\n\nアップローダブロック：そのアップローダのギャラリーを除外します。\n\nタグをブロック：そのタグを含むギャラリーを除外します。ギャラリーリストをロードするのにもっと時間がかかる事があります。\n\nタグ名前空間をブロック：そのタグ名前空間を含むギャラリーを除外します。ギャラリーリストをロードするのにもっと時間がかかる事があります。</string>
 
     <!-- Set Security -->
     <string name="set_pattern_protection">パターン保護を設定</string>
@@ -358,7 +383,10 @@
     <string name="settings_eh_sign_out_tip">ログアウトしました。アプリを再起動することで再度ログインします。</string>
     <string name="settings_u_config">EHentaiの設定</string>
     <string name="settings_u_config_summary">EHentaiサイト上の設定</string>
+    <string name="settings_my_tags">マイ タグ</string>
+    <string name="settings_my_tags_summary">EHentaiのWebサイトでタグを管理</string>
     <string name="settings_eh_gallery_site">ギャラリーサイト</string>
+    <string name="settings_eh_launch_page">アプリ既定画面</string>
     <string name="settings_eh_list_mode">リスト表示モード</string>
     <string name="settings_eh_list_mode_detail">詳細情報</string>
     <string name="settings_eh_list_mode_thumb">サムネイル</string>
@@ -380,6 +408,8 @@
     <string name="settings_eh_excluded_languages">言語を除外</string>
     <string name="settings_eh_excluded_languages_summary">指定した言語のギャラリーをホームページと検索から隠す</string>
     <string name="settings_eh_show_jpn_title">日本語タイトルを表示</string>
+    <string name="settings_eh_filter">ギャラリーをブロック</string>
+    <string name="settings_eh_filter_summary">タイトル、アップローダ、もしくはタグで望ましくないギャラリーを除外</string>
     <string name="settings_eh_cellular_network_warning">モバイルネットワーク警告</string>
 
     <string name="settings_read">閲覧</string>
@@ -413,6 +443,11 @@
     <string name="settings_read_custom_screen_lightness">画面の明るさを設定</string>
     <string name="settings_read_screen_lightness">画面の明るさ</string>
 
+  
+   <!-- My Tags Activity -->
+    <string name="my_tags">マイ タグ</string>
+  
+  
     <string name="settings_download">ダウンロード</string>
     <string name="settings_download_download_location">ダウンロードパス</string>
     <string name="settings_download_invalid_download_location">無効なダウンロードパス</string>
@@ -444,6 +479,8 @@
     <string name="settings_advanced">その他の設定</string>
     <string name="settings_advanced_save_parse_error_body">解析に失敗時、HTMLファイルを保存</string>
     <string name="settings_advanced_save_parse_error_body_summary">HTMLファイルに個人情報がある可能性はあります</string>
+    <string name="settings_advanced_save_crash_log">ｸﾗｯｼｭﾚﾎﾟｰﾄを保存</string>
+    <string name="settings_advanced_save_crash_log_summary">クラッシュレポートはバグ修正に役立ちます。</string>
     <string name="settings_advanced_dump_logcat">ログをエクスポート</string>
     <string name="settings_advanced_dump_logcat_summary">ログを外部ストレージに保存</string>
     <string name="settings_advanced_dump_logcat_failed">ログをエクスポートできませんでした</string>
@@ -468,6 +505,8 @@
     <string name="settings_advanced_import_data_successfully">データをインポートしました</string>
 
     <string name="settings_about">このアプリについて</string>
+    <string name="settings_about_declaration" translatable="false">EhViewer</string>
+    <string name="settings_about_declaration_summary">EhViewerはE-Hentai.orgと一切の関係がございません。</string>
     <string name="settings_about_author">開発者</string>
     <string name="settings_about_website">サイト</string>
     <string name="settings_about_source">ソース</string>
@@ -480,8 +519,19 @@
     <string name="settings_about_version">バージョン番号</string>
     <string name="settings_about_check_for_updates">更新を確認</string>
     <string name="settings_about_beta_update_channel">ベータ版を使用</string>
-    <string name="settings_about_beta_update_channel_summary">ベータ版では予期せぬエラーが発生することがあります</string>
+    <string name="settings_about_beta_update_channel_summary">ベータ版では予期せぬエラーが発生する可能性があります</string>
 
+    <string name="proxy_enable">有効にする</string>
+    <string name="proxy_enabled">有効</string>
+    <string name="proxy_disabled">無効</string>
+    <string name="proxy_direct">ダイレクト</string>
+    <string name="proxy_system">システムプロキシ</string>
+    <string name="proxy_host_or_ip">ホスト名又はIP</string>
+    <string name="proxy_port">ポート</string>
+    <string name="proxy_domain_not_supported">ドメインには対応していません</string>
+    <string name="proxy_invalid_port">入力したポートは無効です</string>
+  
+  
     <!-- ExcludedLanguagesScene -->
     <string name="excluded_languages">言語を除外</string>
     <string name="select_all">すべて選択</string>
@@ -604,8 +654,13 @@
     <string name="settings_download_media_scan_summary_off">ほとんどのギャラリーアプリはダウンロードパスの内容を表示しません</string>
     <string name="settings_download_download_origin_image_summary">有効にすると、ダウンロード制限にもっとはやく達する恐れがあります</string>
     <string name="settings_advanced_clear_download_path_cache_summary">ギャラリー ダウンロード パスは無効なようで、もう一度ダウンロードする必要があると表示されている場合は、ダウンロードパスのキャッシュをクリアしてみてください。</string>
+    <string name="clipboard_gallery_url_snack_message">クリップボードにはギャラリーURLが検出されました。</string>
+    <string name="clipboard_gallery_url_snack_action">移動</string>
     <string name="page_menu_save_to">名前を付けて保存</string>
     <string name="settings_advanced_app_language_title">アプリ言語（Language）</string>
+    <string name="settings_advanced_proxy">プロキシ</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s：%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="hosts">カスタムhosts.txt</string>
     <string name="hosts_tip">hosts.txt</string>
     <string name="hosts_host">ホスト</string>
@@ -631,6 +686,7 @@
     <string name="settings_eh_theme_light">ライト</string>
     <string name="settings_eh_theme_dark">ダーク</string>
     <string name="settings_eh_theme_black">ブラック</string>
+    <string name="settings_eh_apply_nav_bar_theme_color">ﾃｰﾏｶﾗｰをﾅﾋﾞｹﾞｰｼｮﾝﾊﾞｰに適用</string>
     <string name="settings_about_donate_message">寄付していただいても追加の機能を解禁したりしませんが、このアプリの開発を助けられます</string>
     <string name="settings_about_donate_alipay">Alipay</string>
     <string name="settings_about_donate_paypal">PayPal</string>
