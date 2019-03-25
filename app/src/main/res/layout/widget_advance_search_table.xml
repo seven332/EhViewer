@@ -170,10 +170,19 @@
             android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/advance_search_table_item_margin"
+            android:layout_marginRight="@dimen/advance_search_table_item_margin"
             android:layout_gravity="center_vertical"
             android:inputType="number"
             android:maxLines="1"
             android:imeOptions="actionNone"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/advance_search_table_item_margin"
+            android:layout_gravity="center_vertical"
+            android:text="@string/search_sp_suffix"
+            android:textColor="?android:attr/textColorPrimary"/>
     </LinearLayout>
 
     <LinearLayout

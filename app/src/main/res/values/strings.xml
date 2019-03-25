@@ -196,6 +196,8 @@
     <string name="search_sr">Minimum Rating:</string>
     <string name="search_sp">Pages:</string>
     <string name="search_sp_to">to</string>
+    <!-- A placeholder for other languages -->
+    <string name="search_sp_suffix"/>
     <string name="search_sf">Disable default filters for:</string>
     <string name="search_sfl">Language</string>
     <string name="search_sfu">Uploader</string>
