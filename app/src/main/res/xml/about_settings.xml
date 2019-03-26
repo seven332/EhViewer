@@ -34,6 +34,11 @@
       app:url="https://t.me/ehviewer"/>
 
     <com.hippo.preference.UrlPreference
+        android:key="latest_release"
+        android:title="@string/settings_about_latest_release"
+        app:url="https://github.com/seven332/EhViewer/releases/latest"/>
+
+    <com.hippo.preference.UrlPreference
         android:key="website"
         android:title="@string/settings_about_website"
         app:url="http://www.ehviewer.com"/>
