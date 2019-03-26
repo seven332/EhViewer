@@ -561,13 +561,6 @@
 
     <string name="please_wait">お待ちください</string>
 
-    <string name="proxy_enable">有効化</string>
-    <string name="proxy_enabled">有効化済み</string>
-    <string name="proxy_disabled">無効</string>
-    <string name="proxy_port">ポート</string>
-    <string name="proxy_domain_not_supported">ドメイン名には対応していません</string>
-    <string name="proxy_invalid_port">無効なポート</string>
-
     <string name="cant_get_data_dir">データフォルダを取得できませんでした</string>
     <string name="cant_find_any_data">データが見つかりません</string>
     <string name="cant_read_the_file">ファイルを読み取れませんでした</string>
