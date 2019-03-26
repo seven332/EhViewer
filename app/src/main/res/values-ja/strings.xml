@@ -14,7 +14,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
+<!-- Japanese translations by UShimamura and others -->
 <resources>
 
     <string name="app_name">EhViewer</string>
@@ -508,6 +508,7 @@
     <string name="settings_about_declaration" translatable="false">EhViewer</string>
     <string name="settings_about_declaration_summary">EhViewerはE-Hentai.orgと一切の関係がございません。</string>
     <string name="settings_about_author">開発者</string>
+    <string name="settings_about_latest_release">最新バージョン</string>
     <string name="settings_about_website">サイト</string>
     <string name="settings_about_source">ソース</string>
     <string name="settings_about_help">ヘルプ</string>
