@@ -495,9 +495,6 @@
     <string name="settings_advanced_clear_memory_cache">Vider le cache du stockage</string>
     <string name="settings_advanced_clear_memory_cache_summary">Effacer le cache des miniatures et des informations galeries</string>
     <string name="settings_advanced_read_cache_size">Taille du cache pour la lecture</string>
-    <string name="settings_advanced_proxy">Proxy</string>
-    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_privacy_pattern_protection_title">Modéle de déverrouillage</string>
     <string name="settings_privacy_pattern_protection_not_set">Aucun modéle de déverrouillage</string>
     <string name="settings_privacy_pattern_protection_set">Modéle de déverrouillage défini</string>
@@ -669,7 +666,7 @@
     <string name="page_menu_save_to">Enregistrer sous…</string>
     <string name="settings_advanced_app_language_title">Langue de l\'app (Language)</string>
     <string name="settings_advanced_built_in_hosts_title">hosts.txt integré</string>
-	<string name="settings_advanced_proxy">Serveur proxy</string>
+    <string name="settings_advanced_proxy">Serveur proxy</string>
     <string name="settings_advanced_proxy_summary_1">%1$s %2$s：%3$d</string>
     <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_advanced_built_in_hosts_summary">Mapper l\'hôte à l\'adresse IP selon les règles de l\'app\nIls pouvent être redéfinits par hosts.txt personnalisé</string>
