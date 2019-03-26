@@ -490,9 +490,6 @@
     <string name="settings_advanced_clear_memory_cache">メモリキャッシュをクリア</string>
     <string name="settings_advanced_clear_memory_cache_summary">サムネイルとギャラリー情報のメモリキャッシュをクリア</string>
     <string name="settings_advanced_read_cache_size">閲覧キャッシュのサイズ</string>
-    <string name="settings_advanced_proxy">プロキシ</string>
-    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_privacy_pattern_protection_title">パターン保護</string>
     <string name="settings_privacy_pattern_protection_not_set">パターン保護は設定されていません</string>
     <string name="settings_privacy_pattern_protection_set">パターン保護は設定されています</string>
