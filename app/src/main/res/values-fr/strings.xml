@@ -513,6 +513,7 @@
 	<string name="settings_about_declaration" translatable="false">EhViewer</string>
     <string name="settings_about_declaration_summary">EhViewer ne s'affilie à E-Hentai de aucune manière.</string>
     <string name="settings_about_author">Développeur</string>
+    <string name="settings_about_latest_release">Dernière version</string>
     <string name="settings_about_telegram">Telegram</string>
     <string name="settings_about_website">Site</string>
     <string name="settings_about_source">Source</string>
