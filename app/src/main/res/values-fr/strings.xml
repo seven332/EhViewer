@@ -13,7 +13,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
+<!-- French translations by UShimamura -->
 <resources>
 
     <string name="app_name">EhViewer</string>
@@ -21,6 +21,7 @@
     <!-- Category -->
 
     <string name="homepage">Page d\'acceuil</string>
+    <string name="subscription">Tags suivis</string>
     <string name="whats_hot">Plus vus</string>
     <string name="favourite">Favoris</string>
     <string name="history">Historique</string>
@@ -72,6 +73,7 @@
     <string name="error_not_found">Introuvable</string>
     <string name="error_empty">Vide</string>
     <string name="error_reading_failed">Échec de lecture</string>
+    <string name="error_invalid_archive">Fiche d'achives invalide</string>
     <string name="error_out_of_range">Hors de portée</string>
     <string name="error_write_failed">Échec d\'écriture</string>
     <string name="error_parse_error">Échec d\'analyse syntaxique</string>
@@ -81,6 +83,7 @@
     <string name="error_cant_create_temp_file">Impossible de créer un fiche temporaire</string>
     <string name="error_cant_save_image">Impossible d\'enregistrer l\'image</string>
     <string name="error_invalid_number">Nombre invalide</string>
+    <string name="error_please_login_first">Vous devez d\'abord vous connecter</string>
 
     <string name="app_waring">Le contenu de l\'application provient de l\'Internet, dont quelque chose peut vous causer le dommage physique ou mentale. Vous l\'avez bien compris et voulez continuer quand même.</string>
     <string name="error_username_cannot_empty">Nom d\'ultilisateur ne doit pas être une chaîne vide</string>
@@ -108,11 +111,14 @@
     <string name="update">Mettre à jour</string>
     <string name="update_plain">Version : %1$s\nTaille : %2$s\n\n%3$s</string>
     <string name="update_to_date">EhViewer est à jour.</string>
+    <string name="update_ignore">Ignorer</string>
 
     <!-- Gallery List -->
     <string name="gallery_list_search_bar_hint_exhentai">Chercher sur ExHentai</string>
     <string name="gallery_list_search_bar_hint_e_hentai">Chercher sur E-Hentai</string>
+    <string name="gallery_list_search_bar_open_gallery">Ouvrir la galerie spécifiée</string>
     <string name="gallery_list_empty_hit">Le monde est grand et le panda s\'assied tout seul.</string>
+	<string name="gallery_list_empty_hit_subscription">Vous pouvez suivre des tags à Paramètres -> EH -> Mes tags.</string>
 
     <string name="search">Chercher</string>
 
@@ -122,12 +128,13 @@
     <string name="search_normal">Recherche normale</string>
     <string name="search_advance">Options avancées</string>
     <string name="search_image">Recherche d\'une image</string>
+    <string name="search_subscription_search">Recherche dans les tags suivis</string>
     <string name="search_normal_search">Chercher</string>
     <string name="search_specify_uploader">Spécifier un uploader</string>
     <string name="search_specify_tag">Spécifier un tag</string>
     <string name="search_enable_advance">Activer options avancées</string>
 
-    <string name="search_tip">Recherche normale : faire recherche.\n\nSpécifer un uploader : faire la liste des galeries mises en ligne par l\'uploader spécifié. Autres options sont ignorées.\n\nSpécifier un tag : faire la liste des galeries qui contiennent le tag spécifié. Vous ne pouvez spécifier qu\'un tag. Autres options sont ignorées.</string>
+    <string name="search_tip">Recherche normale : faire recherche.\n\nRecherche dans les tags suivis : seulement rechercher dans les tags suivis.\n\nSpécifer un uploader : faire la liste des galeries mises en ligne par l\'uploader spécifié. Autres options sont ignorées.\n\nSpécifier un tag : faire la liste des galeries qui contiennent le tag spécifié. Vous ne pouvez spécifier qu\'un tag. Autres options sont ignorées.</string>
 
     <string name="search_sname">Chercher une galerie</string>
     <string name="search_stags">Chercher tags galerie</string>
@@ -138,6 +145,12 @@
     <string name="search_sdt2">Chercher des tags peu acceptés</string>
     <string name="search_sh">Montrer les galeries supprimées</string>
     <string name="search_sr">Minimum note :</string>
+    <string name="search_sp">Pages : </string>
+    <string name="search_sp_to">à</string>
+    <string name="search_sf">Désactiver le filtre par défaut pour les items suivants :</string>
+    <string name="search_sfl">Langue</string>
+    <string name="search_sfu">Uploader</string>
+    <string name="search_sft">Tag</string>
 
     <string name="select_image">Sélectionner une image</string>
     <string name="search_uss">Activer le scannage de similarité</string>
@@ -146,6 +159,9 @@
     <string name="select_image_first">Sélectionnez une image</string>
 
     <string name="add_to_favourites">Ajouter à favori</string>
+    <string name="remove_from_favourites">Retirer de favori</string>
+
+    <string name="stop_downloading">Arrêter le téléchargement</string>
 
     <string name="quick_search">Recherche rapide</string>
     <string name="quick_search_tip">Appuyez sur \"+\" pour ajouter une Recherche rapide</string>
@@ -207,6 +223,9 @@
     <string name="remove_from_favorite_success">Retirer de favoris</string>
     <string name="add_to_favorite_failure">Impossible de l\'ajouter à favoris</string>
     <string name="remove_from_favorite_failure">Impossible de la retirer de favoris</string>
+    <string name="filter_the_uploader">Bloquer l'uploader \"%s\" ?</string>
+    <string name="filter_the_tag">Bloquer le tag \"%s\" ?</string>
+    <string name="filter_added">Bloqué(e)</string>
 
     <!-- Rating -->
     <string name="rating10">CHEF-D\'ŒUVRE</string>
@@ -323,12 +342,18 @@
     <string name="clear_all_history">Effacer toute l\'historique ?</string>
 
     <!-- Filter -->
+	<string name="filter">Bloqueur des galeries</string>
     <string name="filter_title">Titre</string>
     <string name="filter_uploader">Uploader</string>
     <string name="filter_tag">Tag</string>
     <string name="filter_tag_namespace">Espace de nom de tag</string>
     <string name="tip">Astuce</string>
-    <string name="show_definition">Montrer expliques</string>
+	<string name="delete_filter">Supprimer le bloqueur bloqueur \"%s\" ?</string>
+    <string name="show_definition">Montrer les expliques</string>
+	<string name="add_filter">Ajouter un bloqueur</string>
+    <string name="filter_text">Texte du bloqueur</string>
+    <string name="filter_tip">Les galeries non désirées qui satisfont les critères des bloqueurs ne sont pas affichées.\n\nBloqueur du titre : exclure les galeries dont le titre contient le mot.\n\nBloqueur d\'uploader : exclure les galerie mises en ligne par cet uploader.\n\nBloqueur de tag : exclure les galeries qui ont ce tag. Il vas prendre plus de temps pour charger la liste.\n\nBloqueur d\'espace de nom de tag : exclure les galeries qui ont cette espace de nom de tag. Il vas prendre plus de temps pour charger la liste.</string>
+
 
     <!-- Set Security -->
     <string name="set_pattern_protection">Définir le modéle de déverrouillage</string>
@@ -359,7 +384,10 @@
     <string name="settings_eh_sign_out_tip">Vous vous êtes déconnecté. Redémarrez l\'application pour vous connecter</string>
     <string name="settings_u_config">Paramètres EHentai</string>
     <string name="settings_u_config_summary">Paramètres sur le site Web EHentai</string>
+	<string name="settings_my_tags">Tags suivis</string>
+    <string name="settings_my_tags_summary">Gérer les tags suivis sur le site Web EHentai</string>
     <string name="settings_eh_gallery_site">Site de galerie</string>
+	<string name="settings_eh_launch_page">Écran par défaut après le lancement</string>
     <string name="settings_eh_list_mode">Mode de liste</string>
     <string name="settings_eh_list_mode_detail">Avec détails</string>
     <string name="settings_eh_list_mode_thumb">Miniatures uniquement</string>
@@ -381,6 +409,8 @@
     <string name="settings_eh_excluded_tag_namespaces">Espaces de nom de tag exclues</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">Exclure espaces de nom spécifiées de une recherche de tag par défaut</string>
     <string name="settings_eh_show_jpn_title">Montrer les titres japonais</string>
+	<string name="settings_eh_filter">Bloqueur des galeries</string>
+    <string name="settings_eh_filter_summary">Filtrer les galerie par les titres, les uploaders ou les tags</string>
     <string name="settings_eh_cellular_network_warning">Avertissement de données mobiles</string>
 
     <string name="settings_read">Lecture</string>
@@ -413,6 +443,9 @@
     <string name="settings_read_reading_fullscreen">Plein d\'écran</string>
     <string name="settings_read_custom_screen_lightness">Personaliser la luminosité d\'écran</string>
     <string name="settings_read_screen_lightness">Luminosité d\'écran</string>
+	
+	<!-- My Tags Activity -->
+    <string name="my_tags">Tags suivis</string>
 
     <string name="settings_download">Téléchargement</string>
     <string name="settings_download_download_location">Destination de téléchargement</string>
@@ -446,21 +479,22 @@
     <string name="settings_download_clean_redundancy_done">Nettoyage complété avec succès, %d objets effacés</string>
 
     <string name="settings_advanced">Avancé</string>
-    <string name="settings_advanced_save_parse_error_body">Sauv. les HTMLs avec erreurs</string>
+    <string name="settings_advanced_save_parse_error_body">Enrég. les HTMLs avec erreurs</string>
     <string name="settings_advanced_save_parse_error_body_summary">Le fiche HTML pouvait contenir les informations personnelles</string>
+	<string name="settings_advanced_save_crash_log">Enrégistrer le rapport crash</string>
+    <string name="settings_advanced_save_crash_log_summary">Les rapports crash aident le développeur à correcter les bugs</string>
     <string name="settings_advanced_dump_logcat">Sauvegarder le journal logcat</string>
     <string name="settings_advanced_dump_logcat_summary">Sauvegarder le journal logcat au stockage externe</string>
     <string name="settings_advanced_dump_logcat_failed">Echec de sauvegarde</string>
     <string name="settings_advanced_dump_logcat_to">Fiche sauvegardé à %s</string>
     <string name="settings_advanced_clear_download_path_cache">Vider le cache de la destination de téléchargement</string>
     <string name="settings_advanced_clear_download_path_cache_summary">Quand il y a une erreur et vous devez télécharger quelque chose à nouveau, vider le cache là-dedans pouvait résoudre le problème.</string>
+	<string name="clipboard_gallery_url_snack_message">Un lien d'un galerie est détecté dans les presse-papiers. </string>
+    <string name="clipboard_gallery_url_snack_action">Aller</string>
     <string name="settings_advanced_clear_download_path_cache_message">Vider le cache ?</string>
     <string name="settings_advanced_clear_memory_cache">Vider le cache du stockage</string>
     <string name="settings_advanced_clear_memory_cache_summary">Effacer le cache des miniatures et des informations galeries</string>
     <string name="settings_advanced_read_cache_size">Taille du cache pour la lecture</string>
-    <string name="settings_advanced_proxy">Proxy</string>
-    <string name="settings_advanced_proxy_summary_1">%1$s %2$s:%3$d</string>
-    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_privacy_pattern_protection_title">Modéle de déverrouillage</string>
     <string name="settings_privacy_pattern_protection_not_set">Aucun modéle de déverrouillage</string>
     <string name="settings_privacy_pattern_protection_set">Modéle de déverrouillage défini</string>
@@ -473,7 +507,10 @@
     <string name="settings_advanced_import_data_successfully">Importation complète avec succès</string>
 
     <string name="settings_about">À propos de l\'application</string>
+	<string name="settings_about_declaration" translatable="false">EhViewer</string>
+    <string name="settings_about_declaration_summary">EhViewer ne s'affilie à E-Hentai de aucune manière.</string>
     <string name="settings_about_author">Développeur</string>
+    <string name="settings_about_latest_release">Dernière version</string>
     <string name="settings_about_telegram">Telegram</string>
     <string name="settings_about_website">Site</string>
     <string name="settings_about_source">Source</string>
@@ -492,6 +529,9 @@
     <string name="proxy_enable">Activer</string>
     <string name="proxy_enabled">Activé</string>
     <string name="proxy_disabled">Non activé</string>
+	<string name="proxy_direct">Directement</string>
+    <string name="proxy_system">Déterminé par le systéme</string>
+    <string name="proxy_host_or_ip">Nom d'hôte ou IP</string>
     <string name="proxy_port">Port</string>
     <string name="proxy_domain_not_supported">Le domaine n\'est pas compatible</string>
     <string name="proxy_invalid_port">Port invalide</string>
@@ -625,7 +665,10 @@
     <string name="invalid_ip">IP invalide</string>
     <string name="page_menu_save_to">Enregistrer sous…</string>
     <string name="settings_advanced_app_language_title">Langue de l\'app (Language)</string>
-    <string name="settings_advanced_built_in_hosts_title">"hosts.txt integré "</string>
+    <string name="settings_advanced_built_in_hosts_title">hosts.txt integré</string>
+    <string name="settings_advanced_proxy">Serveur proxy</string>
+    <string name="settings_advanced_proxy_summary_1">%1$s %2$s：%3$d</string>
+    <string name="settings_advanced_proxy_summary_2">%1$s</string>
     <string name="settings_advanced_built_in_hosts_summary">Mapper l\'hôte à l\'adresse IP selon les règles de l\'app\nIls pouvent être redéfinits par hosts.txt personnalisé</string>
     <string name="settings_advanced_custom_hosts_title">hosts.txt personalisé</string>
     <string name="settings_advanced_custom_hosts_summary">Mapper l\'hôte à l\'adresse IP\nIls pouvent redéfinir l\'hosts.txt de l\'app</string>
@@ -634,6 +677,7 @@
     <string name="settings_eh_theme_light">Blanc</string>
     <string name="settings_eh_theme_dark">Gris</string>
     <string name="settings_eh_theme_black">Noir</string>
+	<string name="settings_eh_apply_nav_bar_theme_color">Appli. la couleur du théme à la barre de navi.</string>
     <string name="settings_about_donate_message">Faire un don ne verrouille aucune fonction cachée, mais vous m\'aiderez à maintenir cette application.</string>
     <string name="settings_about_donate_alipay">Alipay</string>
     <string name="settings_about_donate_paypal">PayPal</string>
