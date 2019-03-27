@@ -547,7 +547,7 @@
     <string name="settings_about_donate_copied">Kopiert</string>
     <string name="settings_eh_identity_cookies">Konto-Cookies</string>
     <string name="settings_eh_identity_cookies_summary">Die Cookies, die dich angemeldet halten.</string>
-    <string name="settings_eh_identity_cookies_signed">Wenn jemand die folgende Informationen hat, kann er sich als du anmelden. &lt;br&gt;&lt;b&gt;ALSO GEHEIM HALTEN!&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
+    <string name="settings_eh_identity_cookies_signed">Wenn jemand die folgenden Informationen hat, kann er sich als du anmelden. &lt;br&gt;&lt;b&gt;ALSO GEHEIM HALTEN!&lt;/b&gt;&lt;br&gt;&lt;br&gt;%s</string>
     <string name="settings_eh_identity_cookies_tourist">Du hast dich noch nicht angemeldet.</string>
     <string name="settings_eh_identity_cookies_copy">Kopieren</string>
     <string name="settings_eh_show_gallery_pages">Galerieseitenzahl anzeigen</string>
