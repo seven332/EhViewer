@@ -508,6 +508,10 @@ public final class GalleryListScene extends BaseScene
             // Can't find :, or : is the last char
             return keyword;
         }
+        if (keyword.charAt(index1 + 1) == '"') {
+            // The char after : is ", the word must be quoted
+            return keyword;
+        }
         int index2 = keyword.indexOf(' ');
         if (index2 <= index1) {
             // Can't find space, or space is before :
