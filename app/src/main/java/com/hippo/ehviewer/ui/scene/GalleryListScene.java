@@ -525,7 +525,7 @@ public final class GalleryListScene extends BaseScene
     private void onUpdateUrlBuilder() {
         ListUrlBuilder builder = mUrlBuilder;
         Resources resources = getResources2();
-        if (null == resources || null == builder) {
+        if (resources == null || builder == null || mSearchLayout == null) {
             return;
         }
 
