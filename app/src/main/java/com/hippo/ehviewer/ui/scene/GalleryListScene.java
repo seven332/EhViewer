@@ -1354,7 +1354,13 @@ public final class GalleryListScene extends BaseScene
                 return;
             }
         } else {
+            int oldMode = mUrlBuilder.getMode();
+            // If it's MODE_SUBSCRIPTION, keep it
+            int newMode = oldMode == ListUrlBuilder.MODE_SUBSCRIPTION
+                    ? ListUrlBuilder.MODE_SUBSCRIPTION
+                    : ListUrlBuilder.MODE_NORMAL;
             mUrlBuilder.reset();
+            mUrlBuilder.setMode(newMode);
             mUrlBuilder.setKeyword(query);
         }
         onUpdateUrlBuilder();
