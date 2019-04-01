@@ -312,14 +312,6 @@
     <string name="no_history">Las galerías visualizadas se muestran aquí</string>
     <string name="clear_all_history">¿Limpiar historial?</string>
 
-    <!-- Filter -->
-    <string name="filter_title">Título</string>
-    <string name="filter_uploader">Uploader</string>
-    <string name="filter_tag">Etiqueta</string>
-    <string name="filter_tag_namespace">Etiqueta de namespaces</string>
-    <string name="tip">Sugerencia</string>
-    <string name="show_definition">Mostrar definición</string>
-
     <!-- Set Security -->
     <string name="set_pattern_protection">Establecer protección por patrón</string>
     <string name="set_pattern_protection_tip">Dibuje un patrón para establecer la protección por patrón. \nDéjelo en blanco para quitar la protección por patrón</string>
@@ -368,7 +360,7 @@
     <string name="settings_eh_excluded_tag_namespaces">Excluir etiquetas espacios de nombres</string>
     <string name="settings_eh_excluded_tag_namespaces_summary">Excluir ciertos espacios de nombres de una búsqueda de etiquetas por defecto</string>
     <string name="settings_eh_show_jpn_title">Mostrar títulos en japonés</string>
-	<string name="settings_eh_show_jpn_title_summary">Es necesario habilitar los títulos en japonés en la propia página de EHentai</string>
+    <string name="settings_eh_show_jpn_title_summary">Es necesario habilitar los títulos en japonés en la propia página de EHentai</string>
     <string name="settings_eh_show_gallery_pages">Mostrar número de páginas de la galería</string>
     <string name="settings_eh_show_gallery_pages_summary">Se verá cuántas páginas tiene una galería</string>
     <string name="settings_eh_filter">Filtrado de galerías</string>
@@ -427,7 +419,7 @@
     <string name="settings_download_download_origin_image_summary">¡Cuidado! Podrías recibir error 509</string>
     <string name="settings_download_restore_download_items">Restaurar los elementos de descarga</string>
     <string name="settings_download_restore_download_items_summary">Restaurar todos los elementos de descarga en la ruta de descarga</string>
-    <string name="settings_download_restoring">Restaurando...</string>
+    <string name="settings_download_restoring">Restaurando…</string>
     <string name="settings_download_restore_not_found">No se han encontrado elementos para restaurar</string>
     <string name="settings_download_restore_failed">Restauración fallida</string>
     <string name="settings_download_restore_successfully">Restauración de %d elementos completados</string>
@@ -621,11 +613,11 @@
     <string name="add_filter">Añadir etiqueta</string>
     <string name="show_definition">Ver definición</string>
     <string name="filter_text">Escribe la etiqueta</string>
-    <string name="filter_tip">Este sistema de bloqueo filtrará las galerías de EHentai que contengan la etiqueta especificada acá.\n\nBloqueo de título: excluye las galerías cuyo título contenga la palabra.\n\nBloqueo de uploader: Excluye las galerías que publicadas por el uploader.\n\nBloqueo de etiqueta: excluye galerías que contengan la etiqueta, tomará más tiempo en obtener la lista de galerías.\n\nBloqueo de etiqueta namespace: excluye galerías que contengan la etiqueta namespace, tomará más tiempo en obtener la lista de galerías. Nota: Con namespace quiere decir etiquetas como "male", "female", "misc", entre otros.<string>
-	
+    <string name="filter_tip">Este sistema de bloqueo filtrará las galerías de EHentai que contengan la etiqueta especificada acá.\n\nBloqueo de título: excluye las galerías cuyo título contenga la palabra.\n\nBloqueo de uploader: Excluye las galerías que publicadas por el uploader.\n\nBloqueo de etiqueta: excluye galerías que contengan la etiqueta, tomará más tiempo en obtener la lista de galerías.\n\nBloqueo de etiqueta namespace: excluye galerías que contengan la etiqueta namespace, tomará más tiempo en obtener la lista de galerías. Nota: Con namespace quiere decir etiquetas como "male", "female", "misc", entre otros.</string>
+
     <string name="settings_privacy_secure">Impedir capturas de pantalla</string>
     <string name="settings_privacy_secure_summary">Si habilitas esta opción no podrás hacer captura de pantalla y el sistema no mostrará una previsualización en el multitareas.\n\nDeberás reiniciar la aplicación para activar esta función.</string>
-    <string name="page_menu_save_to">Guardar a...</string>
+    <string name="page_menu_save_to">Guardar a…</string>
     <string name="enable_fingerprint">Usar huellas digitales para desbloquear</string>
     <string name="u_config">Ajustes EHentai</string>
     <string name="apply">Aplicar</string>
@@ -642,7 +634,7 @@
     <string name="invalid_host">Anfitrión inválida</string>
     <string name="invalid_ip">IP inválida</string>
     <string name="recaptcha_none">Toca acá</string>
-    <string name="recaptcha_loading">Cargando...</string>
+    <string name="recaptcha_loading">Cargando…</string>
     <string name="recaptcha_failure">Fallado</string>
     <string name="theme_light">Tema claro</string>
     <string name="theme_dark">Tema oscuro</string>
@@ -651,5 +643,5 @@
     <string name="settings_eh_theme_light">Claro</string>
     <string name="settings_eh_theme_dark">Oscuro</string>
     <string name="settings_eh_theme_black">Negro</string>
-	
+
 </resources>
