@@ -137,9 +137,17 @@ public class GalleryListParser {
                 if (result != null) {
                     gi.gid = result.gid;
                     gi.token = result.token;
-                    gi.title = a.text().trim();
                 }
             }
+
+            Element child = glname;
+            Elements children = glname.children();
+            while (children.size() != 0) {
+                child = children.get(0);
+                children = child.children();
+            }
+            gi.title = child.text().trim();
+
             Element tbody = JsoupUtils.getElementByTag(glname, "tbody");
             if (tbody != null) {
                 ArrayList<String> tags = new ArrayList<>();
