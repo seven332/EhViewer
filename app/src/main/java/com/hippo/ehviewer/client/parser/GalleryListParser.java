@@ -16,6 +16,7 @@
 
 package com.hippo.ehviewer.client.parser;
 
+import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.hippo.ehviewer.EhDB;
@@ -181,7 +182,14 @@ public class GalleryListParser {
                     gi.thumbHeight = 0;
                 }
                 // Thumb url
-                gi.thumb = EhUtils.handleThumbUrlResolution(img.attr("src"));
+                String url = img.attr("data-src");
+                if (TextUtils.isEmpty(url)) {
+                    url = img.attr("src");
+                }
+                if (TextUtils.isEmpty(url)) {
+                    url = null;
+                }
+                gi.thumb = EhUtils.handleThumbUrlResolution(url);
             }
 
             // Pages
@@ -306,7 +314,7 @@ public class GalleryListParser {
                 //noinspection unchecked
                 result.galleryInfoList = Collections.EMPTY_LIST;
                 return result;
-            } else if (body.contains("Currently Popular Recent Galleries")) {
+            } else if (d.getElementsByClass("ptt").isEmpty()) {
                 result.pages = 1;
             } else {
                 result.pages = Integer.MAX_VALUE;
