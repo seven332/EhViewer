@@ -26,7 +26,6 @@ import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.JsoupUtils;
 import com.hippo.yorozuya.NumberUtils;
-import com.hippo.yorozuya.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -126,6 +125,12 @@ public class GalleryListParser {
         Element glname = JsoupUtils.getElementByClass(e, "glname");
         if (glname != null) {
             Element a = JsoupUtils.getElementByTag(glname, "a");
+            if (a == null) {
+                Element parent = glname.parent();
+                if (parent != null && "a".equals(parent.tagName())) {
+                    a = parent;
+                }
+            }
             if (a != null) {
                 GalleryDetailUrlParser.Result result = GalleryDetailUrlParser.parse(a.attr("href"));
                 if (result != null) {
@@ -163,27 +168,28 @@ public class GalleryListParser {
         // Thumb
         Element glthumb = JsoupUtils.getElementByClass(e, "glthumb");
         if (glthumb != null) {
-            // Thumb size
-            Matcher m = PATTERN_THUMB_SIZE.matcher(glthumb.attr("style"));
-            if (m.find()) {
-                gi.thumbWidth = NumberUtils.parseIntSafely(m.group(2), 0);
-                gi.thumbHeight = NumberUtils.parseIntSafely(m.group(1), 0);
-            } else {
-                Log.w(TAG, "Can't parse gallery info thumb size");
-                gi.thumbWidth = 0;
-                gi.thumbHeight = 0;
-            }
-            // Thumb url
-            Element img = glthumb.children().first();
+            Element img = glthumb.select("div:nth-child(1)>img").first();
             if (img != null) {
+                // Thumb size
+                Matcher m = PATTERN_THUMB_SIZE.matcher(img.attr("style"));
+                if (m.find()) {
+                    gi.thumbWidth = NumberUtils.parseIntSafely(m.group(2), 0);
+                    gi.thumbHeight = NumberUtils.parseIntSafely(m.group(1), 0);
+                } else {
+                    Log.w(TAG, "Can't parse gallery info thumb size");
+                    gi.thumbWidth = 0;
+                    gi.thumbHeight = 0;
+                }
+                // Thumb url
                 gi.thumb = EhUtils.handleThumbUrlResolution(img.attr("src"));
-            } else {
-                String html = glthumb.html();
-                int index1 = html.indexOf('~');
-                int index2 = StringUtils.ordinalIndexOf(html, '~', 2);
-                if (index1 < index2) {
-                    gi.thumb = EhUtils.handleThumbUrlResolution(
-                        "https://" +StringUtils.replace(html.substring(index1 + 1, index2), "~", "/"));
+            }
+
+            // Pages
+            Element div = glthumb.select("div:nth-child(2)>div:nth-child(2)>div:nth-child(2)").first();
+            if (div != null) {
+                Matcher matcher = PATTERN_PAGES.matcher(div.text());
+                if (matcher.find()) {
+                    gi.pages = NumberUtils.parseIntSafely(matcher.group(1), 0);
                 }
             }
         }
@@ -235,6 +241,7 @@ public class GalleryListParser {
         int uploaderIndex = 0;
         int pagesIndex = 1;
         if (gl == null) {
+            // For extended
             gl = JsoupUtils.getElementByClass(e, "gl3e");
             uploaderIndex = 3;
             pagesIndex = 4;
@@ -249,6 +256,17 @@ public class GalleryListParser {
             }
             if (children.size() > pagesIndex) {
                 Matcher matcher = PATTERN_PAGES.matcher(children.get(pagesIndex).text());
+                if (matcher.find()) {
+                    gi.pages = NumberUtils.parseIntSafely(matcher.group(1), 0);
+                }
+            }
+        }
+        // For thumbnail
+        Element gl5t = JsoupUtils.getElementByClass(e, "gl5t");
+        if (gl5t != null) {
+            Element div = gl5t.select("div:nth-child(2)>div:nth-child(2)").first();
+            if (div != null) {
+                Matcher matcher = PATTERN_PAGES.matcher(div.text());
                 if (matcher.find()) {
                     gi.pages = NumberUtils.parseIntSafely(matcher.group(1), 0);
                 }

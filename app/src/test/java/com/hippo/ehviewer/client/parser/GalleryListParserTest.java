@@ -19,6 +19,7 @@ package com.hippo.ehviewer.client.parser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import com.hippo.ehviewer.client.EhUtils;
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -33,18 +34,31 @@ import org.robolectric.ParameterizedRobolectricTestRunner;
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class GalleryListParserTest {
 
-  private static final String MINIMAL = "GalleryListParserTestMinimal.html";
-  private static final String COMPAT = "GalleryListParserTestCompat.html";
-  private static final String EXTENDED = "GalleryListParserTestExtended.html";
-  private static final String THUMBNAIL = "GalleryListParserTestThumbnail.html";
+  private static final String E_MINIMAL = "GalleryListParserTestEMinimal.html";
+  private static final String E_MINIMAL_PLUS = "GalleryListParserTestEMinimalPlus.html";
+  private static final String E_COMPAT = "GalleryListParserTestECompat.html";
+  private static final String E_EXTENDED = "GalleryListParserTestEExtended.html";
+  private static final String E_THUMBNAIL = "GalleryListParserTestEThumbnail.html";
+
+  private static final String EX_MINIMAL = "GalleryListParserTestExMinimal.html";
+  private static final String EX_MINIMAL_PLUS = "GalleryListParserTestExMinimalPlus.html";
+  private static final String EX_COMPAT = "GalleryListParserTestExCompat.html";
+  private static final String EX_EXTENDED = "GalleryListParserTestExExtended.html";
+  private static final String EX_THUMBNAIL = "GalleryListParserTestExThumbnail.html";
 
   @ParameterizedRobolectricTestRunner.Parameters(name = "{index}-{0}")
   public static List data() {
     return Arrays.asList(new Object[][] {
-        { MINIMAL },
-        { COMPAT },
-        { EXTENDED },
-        { THUMBNAIL },
+        { E_MINIMAL },
+        { E_MINIMAL_PLUS },
+        { E_COMPAT },
+        { E_EXTENDED },
+        { E_THUMBNAIL },
+        { EX_MINIMAL },
+        { EX_MINIMAL_PLUS },
+        { EX_COMPAT },
+        { EX_EXTENDED },
+        { EX_THUMBNAIL },
     });
   }
 
@@ -62,7 +76,7 @@ public class GalleryListParserTest {
 
     GalleryListParser.Result result = GalleryListParser.parse(body);
 
-    assertEquals(50, result.galleryInfoList.size());
+    assertEquals(25, result.galleryInfoList.size());
 
     result.galleryInfoList.forEach(gi -> {
       assertNotEquals(0, gi.gid);
@@ -78,12 +92,19 @@ public class GalleryListParserTest {
       assertNotNull(gi.thumb);
       assertNotNull(gi.posted);
       assertNotEquals(0.0, gi.rating);
-      if (MINIMAL.equals(file) || COMPAT.equals(file) || EXTENDED.equals(file)) {
+      if (E_MINIMAL.equals(file) ||
+          E_MINIMAL_PLUS.equals(file) ||
+          E_COMPAT.equals(file) ||
+          E_EXTENDED.equals(file) ||
+          EX_MINIMAL.equals(file) ||
+          EX_MINIMAL_PLUS.equals(file) ||
+          EX_COMPAT.equals(file) ||
+          EX_EXTENDED.equals(file)) {
         assertNotNull(gi.uploader);
+      } else {
+        assertNull(gi.uploader);
       }
-      if (COMPAT.equals(file) || EXTENDED.equals(file)) {
-        assertNotEquals(0, gi.pages);
-      }
+      assertNotEquals(0, gi.pages);
     });
   }
 }
