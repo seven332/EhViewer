@@ -1087,8 +1087,8 @@ public final class GalleryListScene extends BaseScene
         boolean favourite = gi.favoriteSlot == -2;
 
         CharSequence[] items = new CharSequence[] {
-            context.getString(R.string.read),
             context.getString(download ? R.string.download : R.string.stop_downloading),
+            context.getString(R.string.read),
             context.getString(favourite ? R.string.add_to_favourites : R.string.remove_from_favourites),
         };
 
@@ -1096,13 +1096,13 @@ public final class GalleryListScene extends BaseScene
                 .setTitle(EhUtils.getSuitableTitle(gi))
                 .setItems(items, (dialog, which) -> {
                     switch (which) {
-                        case 0: // Read
+                        case 1: // Read
                             Intent intent = new Intent(activity, GalleryActivity.class);
                             intent.setAction(GalleryActivity.ACTION_EH);
                             intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, gi);
                             startActivity(intent);
                             break;
-                        case 1: // Download
+                        case 0: // Download
                             if (download) {
                                 CommonOperations.startDownload(activity, gi, false);
                             } else {
