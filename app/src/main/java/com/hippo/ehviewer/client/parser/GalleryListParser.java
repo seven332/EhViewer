@@ -345,6 +345,9 @@ public class GalleryListParser {
                     list.add(gi);
                 }
             }
+            if (list.isEmpty()) {
+                throw new ParseException("No gallery", body);
+            }
             result.galleryInfoList = list;
         } catch (Throwable e) {
             ExceptionUtils.throwIfFatal(e);
