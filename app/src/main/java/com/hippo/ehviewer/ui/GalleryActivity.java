@@ -375,6 +375,11 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         // Screen lightness
         setScreenLightness(Settings.getCustomScreenLightness(), Settings.getScreenLightness());
 
+        // Cutout
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+
         if (Settings.getGuideGallery()) {
             FrameLayout mainLayout = (FrameLayout) ViewUtils.$$(this, R.id.main);
             mainLayout.addView(new GalleryGuideView(this));
