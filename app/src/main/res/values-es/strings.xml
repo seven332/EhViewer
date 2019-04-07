@@ -197,8 +197,8 @@
     <string name="torrents">Torrents</string>
     <string name="favorited">Favorito</string>
     <string name="not_favorited">No en favoritos</string>
-    <string name="add_favorites_dialog_title">Añadir a favoritos</string>
-    <string name="remember_favorite_collection">Recordar favoritos</string>
+    <string name="add_favorites_dialog_title">Añadir a favoritos - Elige categoría</string>
+    <string name="remember_favorite_collection">Recordar categoría</string>
     <string name="remove_from_favorite_success">Eliminado de favoritos</string>
     <string name="add_to_favorite_failure">No se ha podido agregar a favoritos</string>
     <string name="remove_from_favorite_failure">Error al borrar de favoritos</string>
@@ -377,10 +377,10 @@
     <string name="settings_read_reading_direction_right_to_Left">Derecha a izquierda</string>
     <string name="settings_read_reading_direction_top_to_bottom">Arriba hacia abajo</string>
     <string name="settings_read_page_scaling">Escala de página</string>
-    <string name="settings_read_page_scaling_actual_size">Tamaño actual</string>
-    <string name="settings_read_page_scaling_fit_to_width">Ajustar a lo ancho</string>
-    <string name="settings_read_page_scaling_fit_to_height">Ajustar a la altura</string>
-    <string name="settings_read_page_scaling_fit_to_screen">Ajustar a la pantalla</string>
+    <string name="settings_read_page_scaling_actual_size">Tamaño original</string>
+    <string name="settings_read_page_scaling_fit_to_width">Ajustar a anchura</string>
+    <string name="settings_read_page_scaling_fit_to_height">Ajustar a altura</string>
+    <string name="settings_read_page_scaling_fit_to_screen">Ajustar a pantalla</string>
     <string name="settings_read_page_scaling_fixed_scale">Escala fija</string>
     <string name="settings_read_start_position">Posición de inicio</string>
     <string name="settings_read_start_position_top_left">Arriba a la izquierda</string>
@@ -389,6 +389,7 @@
     <string name="settings_read_start_position_bottom_right">Abajo a la derecha</string>
     <string name="settings_read_start_position_center">Centro</string>
     <string name="settings_read_keep_screen_on">Pantalla siempre encendida</string>
+	<string name="settings_read_show_page_interval">Mostrar intervalo de página</string>
     <string name="settings_read_show_clock">Mostrar hora</string>
     <string name="settings_read_show_progress">Mostrar progreso de lectura</string>
     <string name="settings_read_show_battery">Mostrar porcentaje de la batería</string>
@@ -610,14 +611,16 @@
     <string name="filter_tag_namespace">Etiqueta namespace</string>
     <string name="delete_filter">¿Borrar \"%s\"?</string>
     <string name="tip">Tip</string>
-    <string name="add_filter">Añadir etiqueta</string>
-    <string name="show_definition">Ver definición</string>
+    <string name="add_filter">Bloquear etiqueta</string>
+    <string name="filter_the_tag">¿Deseas bloquear la etiqueta \"%s\"?</string>
+    <string name="show_definition">Ver definición de la etiqueta</string>
+    <string name="filter_added">Etiqueta bloqueada/string>
     <string name="filter_text">Escribe la etiqueta</string>
     <string name="filter_tip">Este sistema de bloqueo filtrará las galerías de EHentai que contengan la etiqueta especificada acá.\n\nBloqueo de título: excluye las galerías cuyo título contenga la palabra.\n\nBloqueo de uploader: Excluye las galerías que publicadas por el uploader.\n\nBloqueo de etiqueta: excluye galerías que contengan la etiqueta, tomará más tiempo en obtener la lista de galerías.\n\nBloqueo de etiqueta namespace: excluye galerías que contengan la etiqueta namespace, tomará más tiempo en obtener la lista de galerías. Nota: Con namespace quiere decir etiquetas como "male", "female", "misc", entre otros.</string>
 
     <string name="settings_privacy_secure">Impedir capturas de pantalla</string>
     <string name="settings_privacy_secure_summary">Si habilitas esta opción no podrás hacer captura de pantalla y el sistema no mostrará una previsualización en el multitareas.\n\nDeberás reiniciar la aplicación para activar esta función.</string>
-    <string name="page_menu_save_to">Guardar a…</string>
+    <string name="page_menu_save_to">Guardar en…</string>
     <string name="enable_fingerprint">Usar huellas digitales para desbloquear</string>
     <string name="u_config">Ajustes EHentai</string>
     <string name="apply">Aplicar</string>
