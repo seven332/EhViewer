@@ -614,7 +614,7 @@
     <string name="add_filter">Bloquear etiqueta</string>
     <string name="filter_the_tag">¿Deseas bloquear la etiqueta \"%s\"?</string>
     <string name="show_definition">Ver definición de la etiqueta</string>
-    <string name="filter_added">Etiqueta bloqueada/string>
+    <string name="filter_added">Etiqueta bloqueada</string>
     <string name="filter_text">Escribe la etiqueta</string>
     <string name="filter_tip">Este sistema de bloqueo filtrará las galerías de EHentai que contengan la etiqueta especificada acá.\n\nBloqueo de título: excluye las galerías cuyo título contenga la palabra.\n\nBloqueo de uploader: Excluye las galerías que publicadas por el uploader.\n\nBloqueo de etiqueta: excluye galerías que contengan la etiqueta, tomará más tiempo en obtener la lista de galerías.\n\nBloqueo de etiqueta namespace: excluye galerías que contengan la etiqueta namespace, tomará más tiempo en obtener la lista de galerías. Nota: Con namespace quiere decir etiquetas como "male", "female", "misc", entre otros.</string>
 
