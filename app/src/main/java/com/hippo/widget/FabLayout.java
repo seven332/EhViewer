@@ -230,6 +230,9 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
                     int checkCount = mHidePrimaryFab ? count : count - 1;
                     for (int i = 0; i < checkCount; i++) {
                         View child = getChildAt(i);
+                        if (child.getVisibility() == GONE) {
+                            continue;
+                        }
                         child.setVisibility(expanded ? View.VISIBLE : View.INVISIBLE);
                         if (expanded) {
                             child.setAlpha(1f);
@@ -242,6 +245,9 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
 
                     for (int i = 0; i < count - 1; i++) {
                         View child = getChildAt(i);
+                        if (child.getVisibility() == GONE) {
+                            continue;
+                        }
                         setSecondaryFabAnimation(child, expanded, expanded);
                     }
                 }
