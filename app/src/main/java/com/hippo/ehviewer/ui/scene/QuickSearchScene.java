@@ -29,12 +29,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.ehviewer.EhDB;
@@ -95,26 +94,21 @@ public final class QuickSearchScene extends ToolbarScene {
         tip.setCompoundDrawables(null, drawable, null, null);
         tip.setText(R.string.no_quick_search);
 
-        // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
-        RecyclerViewTouchActionGuardManager guardManager = new RecyclerViewTouchActionGuardManager();
-        guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        guardManager.setEnabled(true);
         // drag & drop manager
         RecyclerViewDragDropManager dragDropManager = new RecyclerViewDragDropManager();
         dragDropManager.setDraggingItemShadowDrawable(
                 (NinePatchDrawable) context.getResources().getDrawable(R.drawable.shadow_8dp));
-        // swipe manager
+
         RecyclerView.Adapter adapter = new QuickSearchAdapter();
         adapter.setHasStableIds(true);
         adapter = dragDropManager.createWrappedAdapter(adapter); // wrap for dragging
         mAdapter = adapter;
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
-        mRecyclerView.hasFixedSize();
+
+        final GeneralItemAnimator animator = new DraggableItemAnimator();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(animator);
-        guardManager.attachRecyclerView(mRecyclerView);
+
         dragDropManager.attachRecyclerView(mRecyclerView);
 
         updateView();
@@ -257,7 +251,6 @@ public final class QuickSearchScene extends ToolbarScene {
             EhDB.moveQuickSearch(fromPosition, toPosition);
             final QuickSearch item = mQuickSearchList.remove(fromPosition);
             mQuickSearchList.add(toPosition, item);
-            notifyItemMoved(fromPosition, toPosition);
         }
 
         @Override

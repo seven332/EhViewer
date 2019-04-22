@@ -37,7 +37,6 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimat
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
 import com.hippo.app.EditTextDialogBuilder;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
@@ -98,25 +97,21 @@ public class DownloadLabelsScene extends ToolbarScene {
         tip.setCompoundDrawables(null, drawable, null, null);
         tip.setText(R.string.no_download_label);
 
-        // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
-        RecyclerViewTouchActionGuardManager guardManager = new RecyclerViewTouchActionGuardManager();
-        guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        guardManager.setEnabled(true);
         // drag & drop manager
         RecyclerViewDragDropManager dragDropManager = new RecyclerViewDragDropManager();
         dragDropManager.setDraggingItemShadowDrawable(
                 (NinePatchDrawable) context.getResources().getDrawable(R.drawable.shadow_8dp));
+
         RecyclerView.Adapter adapter = new LabelAdapter();
         adapter.setHasStableIds(true);
         adapter = dragDropManager.createWrappedAdapter(adapter); // wrap for dragging
         mAdapter = adapter;
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
-        mRecyclerView.hasFixedSize();
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(animator);
-        guardManager.attachRecyclerView(mRecyclerView);
+
         dragDropManager.attachRecyclerView(mRecyclerView);
 
         updateView();
@@ -382,9 +377,6 @@ public class DownloadLabelsScene extends ToolbarScene {
             }
 
             EhApplication.getDownloadManager(context).moveLabel(fromPosition, toPosition);
-            if (mAdapter != null && mList != null) {
-                notifyItemMoved(fromPosition, toPosition);
-            }
         }
 
         @Override
