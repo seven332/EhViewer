@@ -105,6 +105,19 @@ public class FabLayout extends ViewGroup implements View.OnClickListener {
         return (FloatingActionButton) getChildAt(index);
     }
 
+    public void setSecondaryFabVisibilityAt(int index, boolean visible) {
+        View fab = getSecondaryFabAt(index);
+        if (fab != null) {
+            if (visible && fab.getVisibility() == View.GONE) {
+                fab.animate().cancel();
+                fab.setVisibility(mExpanded ? View.VISIBLE : View.INVISIBLE);
+            } else if (!visible && fab.getVisibility() != View.GONE) {
+                fab.animate().cancel();
+                fab.setVisibility(View.GONE);
+            }
+        }
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         AssertUtils.assertEquals("Measure mode must be MeasureSpec.EXACTLY",
