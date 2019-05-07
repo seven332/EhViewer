@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2016 Hippo Seven
+  ~ Copyright 2016 Hippo Sevenerror_please_login_first
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -91,6 +91,7 @@
     <string name="error_cant_save_image">无法保存图片</string>
     <string name="error_invalid_number">非法数字</string>
     <string name="error_please_login_first">请先登陆</string>
+    <string name="error_empty_html">页面内容为空</string>
 
     <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的任何后果负责。\n\n未成年人应在监护人指导下使用本应用。</string>
     <string name="error_username_cannot_empty">用户名不可为空</string>

@@ -102,8 +102,10 @@ public class EhEngine {
         }
 
         if (e instanceof ParseException) {
-            if (body != null && !body.contains("<")){
+            if (body != null && !body.contains("<")) {
                 throw new EhException(body);
+            } else if (TextUtils.isEmpty(body)) {
+                throw new EhException(GetText.getString(R.string.error_empty_html));
             } else {
                 if (Settings.getSaveParseErrorBody()) {
                     AppConfig.saveParseErrorBody((ParseException) e);
