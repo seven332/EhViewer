@@ -16,7 +16,6 @@
 
 package com.hippo.ehviewer.client.parser;
 
-import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.hippo.ehviewer.Settings;
@@ -399,13 +398,23 @@ public class GalleryDetailParser {
             Element a = element.previousElementSibling();
             String name = a.attr("name");
             comment.id = Integer.parseInt(StringUtils.trim(name).substring(1));
-            // Vote up and vote down
+            // Editable, vote up and vote down
             Element c4 = JsoupUtils.getElementByClass(element, "c4");
             if (null != c4) {
-                Elements es = c4.children();
-                if (2 == es.size()) {
-                    comment.voteUp = !TextUtils.isEmpty(StringUtils.trim(es.get(0).attr("style")));
-                    comment.voteDown = !TextUtils.isEmpty(StringUtils.trim(es.get(1).attr("style")));
+                for (Element e : c4.children()) {
+                    switch (e.text()) {
+                        case "Vote+":
+                            comment.voteUpAble = true;
+                            comment.voteUpEd = !StringUtils.trim(e.attr("style")).isEmpty();
+                            break;
+                        case "Vote-":
+                            comment.voteDownAble = true;
+                            comment.voteDownEd = !StringUtils.trim(e.attr("style")).isEmpty();
+                            break;
+                        case "Edit":
+                            comment.editable = true;
+                            break;
+                    }
                 }
             }
             // Vote state

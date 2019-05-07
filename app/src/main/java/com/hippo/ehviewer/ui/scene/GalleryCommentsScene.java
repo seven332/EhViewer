@@ -358,17 +358,19 @@ public final class GalleryCommentsScene extends ToolbarScene
         List<String> menu = new ArrayList<>();
         final IntList menuId = new IntList();
         Resources resources = context.getResources();
-        if (0 == comment.id || mApiUid < 0) {
-            // 0 id is uploader comment, can't vote
-            // Not sign in, can't vote
-            menu.add(resources.getString(R.string.copy_comment_text));
-            menuId.add(R.id.copy);
-        } else {
-            menu.add(resources.getString(R.string.copy_comment_text));
-            menuId.add(R.id.copy);
-            menu.add(resources.getString(comment.voteUp ? R.string.cancel_vote_up : R.string.vote_up));
+
+        menu.add(resources.getString(R.string.copy_comment_text));
+        menuId.add(R.id.copy);
+        if (comment.editable) {
+            menu.add(resources.getString(R.string.edit_comment));
+            menuId.add(R.id.edit_comment);
+        }
+        if (comment.voteUpAble) {
+            menu.add(resources.getString(comment.voteUpEd ? R.string.cancel_vote_up : R.string.vote_up));
             menuId.add(R.id.vote_up);
-            menu.add(resources.getString(comment.voteDown ? R.string.cancel_vote_down : R.string.vote_down));
+        }
+        if (comment.voteDownAble) {
+            menu.add(resources.getString(comment.voteDownEd ? R.string.cancel_vote_down : R.string.vote_down));
             menuId.add(R.id.vote_down);
         }
         if (!TextUtils.isEmpty(comment.voteState)) {
@@ -398,6 +400,9 @@ public final class GalleryCommentsScene extends ToolbarScene
                                 break;
                             case R.id.check_vote_status:
                                 showVoteStatusDialog(context, comment.voteState);
+                                break;
+                            case R.id.edit_comment:
+                                // TODO
                                 break;
                         }
                     }
@@ -585,7 +590,7 @@ public final class GalleryCommentsScene extends ToolbarScene
                 // Request
                 EhRequest request = new EhRequest()
                         .setMethod(EhClient.METHOD_GET_COMMENT_GALLERY)
-                        .setArgs(url, comment)
+                        .setArgs(url, comment, null)
                         .setCallback(new CommentGalleryListener(context,
                                 activity.getStageId(), getTag()));
                 EhApplication.getEhClient(context).execute(request);
@@ -714,11 +719,11 @@ public final class GalleryCommentsScene extends ToolbarScene
         GalleryComment comment = mComments[position];
         comment.score = result.score;
         if (result.expectVote > 0) {
-            comment.voteUp = 0 != result.vote;
-            comment.voteDown = false;
+            comment.voteUpEd = 0 != result.vote;
+            comment.voteDownEd = false;
         } else {
-            comment.voteDown = 0 != result.vote;
-            comment.voteUp = false;
+            comment.voteDownEd = 0 != result.vote;
+            comment.voteUpEd = false;
         }
 
         mAdapter.notifyItemChanged(position);

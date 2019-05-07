@@ -278,6 +278,7 @@
     <string name="comment_successfully">留言成功</string>
     <string name="comment_failed">留言失敗</string>
     <string name="copy_comment_text">複製留言文字</string>
+    <string name="edit_comment">修改留言</string>
     <string name="vote_up">推</string>
     <string name="cancel_vote_up">收回推</string>
     <string name="vote_down">噓</string>
