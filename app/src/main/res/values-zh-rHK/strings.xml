@@ -280,6 +280,8 @@
     <string name="comment_failed">評論失敗</string>
     <string name="copy_comment_text">複製評論文字</string>
     <string name="edit_comment">修改評論</string>
+    <string name="edit_comment_successfully">評論已被修改</string>
+    <string name="edit_comment_failed">修改評論失敗</string>
     <string name="vote_up">深表贊同</string>
     <string name="cancel_vote_up">不再深表贊同</string>
     <string name="vote_down">垃圾評論</string>

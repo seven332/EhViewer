@@ -126,6 +126,10 @@ public final class GalleryCommentsScene extends ToolbarScene
     @Nullable
     private ViewTransition mViewTransition;
 
+    private Drawable mSendDrawable;
+    private Drawable mPencilDrawable;
+    private long mCommentId;
+
     private boolean mInAnimation = false;
 
     @Override
@@ -200,6 +204,9 @@ public final class GalleryCommentsScene extends ToolbarScene
         Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_sad_pandroid);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
+
+        mSendDrawable = DrawableManager.getVectorDrawable(context, R.drawable.v_send_dark_x24);
+        mPencilDrawable = DrawableManager.getVectorDrawable(context, R.drawable.v_pencil_dark_x24);
 
         mAdapter = new CommentAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -402,7 +409,10 @@ public final class GalleryCommentsScene extends ToolbarScene
                                 showVoteStatusDialog(context, comment.voteState);
                                 break;
                             case R.id.edit_comment:
-                                // TODO
+                                prepareEditComment(comment.id);
+                                if (!mInAnimation && mEditPanel != null && mEditPanel.getVisibility() != View.VISIBLE) {
+                                    showEditPanel(true);
+                                }
                                 break;
                         }
                     }
@@ -442,6 +452,20 @@ public final class GalleryCommentsScene extends ToolbarScene
             mViewTransition.showView(1, animation);
         } else {
             mViewTransition.showView(0, animation);
+        }
+    }
+
+    private void prepareNewComment() {
+        mCommentId = 0;
+        if (mSendImage != null) {
+            mSendImage.setImageDrawable(mSendDrawable);
+        }
+    }
+
+    private void prepareEditComment(long commentId) {
+        mCommentId = commentId;
+        if (mSendImage != null) {
+            mSendImage.setImageDrawable(mPencilDrawable);
         }
     }
 
@@ -574,6 +598,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         if (mFab == v) {
             if (!mInAnimation) {
+                prepareNewComment();
                 showEditPanel(true);
             }
         } else if (mSendImage == v) {
@@ -590,9 +615,9 @@ public final class GalleryCommentsScene extends ToolbarScene
                 // Request
                 EhRequest request = new EhRequest()
                         .setMethod(EhClient.METHOD_GET_COMMENT_GALLERY)
-                        .setArgs(url, comment, null)
+                        .setArgs(url, comment, mCommentId != 0 ? Long.toString(mCommentId) : null)
                         .setCallback(new CommentGalleryListener(context,
-                                activity.getStageId(), getTag()));
+                                activity.getStageId(), getTag(), mCommentId));
                 EhApplication.getEhClient(context).execute(request);
                 hideSoftInput();
                 hideEditPanel(true);
@@ -735,13 +760,16 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private static class CommentGalleryListener extends EhCallback<GalleryCommentsScene, GalleryComment[]> {
 
-        public CommentGalleryListener(Context context, int stageId, String sceneTag) {
+        private long mCommentId;
+
+        public CommentGalleryListener(Context context, int stageId, String sceneTag, long commentId) {
             super(context, stageId, sceneTag);
+            mCommentId = commentId;
         }
 
         @Override
         public void onSuccess(GalleryComment[] result) {
-            showTip(R.string.comment_successfully, LENGTH_SHORT);
+            showTip(mCommentId != 0 ? R.string.edit_comment_successfully : R.string.comment_successfully, LENGTH_SHORT);
 
             GalleryCommentsScene scene = getScene();
             if (scene != null) {
@@ -751,7 +779,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         @Override
         public void onFailure(Exception e) {
-            showTip(getContent().getString(R.string.comment_failed) + "\n" + ExceptionUtils.getReadableString(e), LENGTH_LONG);
+            showTip(getContent().getString(mCommentId != 0 ? R.string.edit_comment_failed : R.string.comment_failed) + "\n" + ExceptionUtils.getReadableString(e), LENGTH_LONG);
         }
 
         @Override

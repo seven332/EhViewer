@@ -422,10 +422,10 @@ public class EhEngine {
             OkHttpClient okHttpClient, String url, String comment, String id) throws Throwable {
         FormBody.Builder builder = new FormBody.Builder();
         if (id == null) {
-          builder.add("commenttext_new", comment);
+            builder.add("commenttext_new", comment);
         } else {
-          builder.add("commenttext_edit", comment);
-          builder.add("edit_comment", id);
+            builder.add("commenttext_edit", comment);
+            builder.add("edit_comment", id);
         }
         String origin = EhUrl.getOrigin();
         Log.d(TAG, url);

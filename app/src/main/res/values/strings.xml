@@ -326,6 +326,8 @@
     <string name="comment_failed">Failed to post the comment</string>
     <string name="copy_comment_text">Copy comment text</string>
     <string name="edit_comment">Edit comment</string>
+    <string name="edit_comment_successfully">The comment has been edited</string>
+    <string name="edit_comment_failed">Failed to edit the comment</string>
     <string name="vote_up">Vote up</string>
     <string name="cancel_vote_up">Cancel up-vote</string>
     <string name="vote_down">Vote down</string>
