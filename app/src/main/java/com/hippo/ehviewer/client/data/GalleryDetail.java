@@ -37,7 +37,7 @@ public class GalleryDetail extends GalleryInfo {
     public boolean isFavorited;
     public int ratingCount;
     public GalleryTagGroup[] tags;
-    public GalleryComment[] comments;
+    public GalleryCommentList comments;
     public int previewPages;
     public PreviewSet previewSet;
 
@@ -60,8 +60,8 @@ public class GalleryDetail extends GalleryInfo {
         dest.writeInt(this.favoriteCount);
         dest.writeByte(isFavorited ? (byte) 1 : (byte) 0);
         dest.writeInt(this.ratingCount);
-        dest.writeParcelableArray(this.tags, 0);
-        dest.writeParcelableArray(this.comments, 0);
+        dest.writeParcelableArray(this.tags, flags);
+        dest.writeParcelable(this.comments, flags);
         dest.writeInt(this.previewPages);
         dest.writeParcelable(previewSet, flags);
     }
@@ -88,12 +88,7 @@ public class GalleryDetail extends GalleryInfo {
         } else {
             this.tags = null;
         }
-        array = in.readParcelableArray(GalleryComment.class.getClassLoader());
-        if (array != null) {
-            this.comments = Arrays.copyOf(array, array.length, GalleryComment[].class);
-        } else {
-            this.comments = null;
-        }
+        this.comments = in.readParcelable(getClass().getClassLoader());
         this.previewPages = in.readInt();
         this.previewSet = in.readParcelable(PreviewSet.class.getClassLoader());
     }

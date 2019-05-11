@@ -852,7 +852,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mTorrent.setText(resources.getString(R.string.torrent_count, gd.torrentCount));
 
         bindTags(gd.tags);
-        bindComments(gd.comments);
+        bindComments(gd.comments.comments);
         bindPreviews(gd);
     }
 
@@ -1279,7 +1279,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             args.putString(GalleryCommentsScene.KEY_API_KEY, mGalleryDetail.apiKey);
             args.putLong(GalleryCommentsScene.KEY_GID, mGalleryDetail.gid);
             args.putString(GalleryCommentsScene.KEY_TOKEN, mGalleryDetail.token);
-            args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments);
+            args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments.comments);
             startScene(new Announcer(GalleryCommentsScene.class)
                     .setArgs(args)
                     .setRequestCode(this, REQUEST_CODE_COMMENT_GALLERY));
@@ -1443,7 +1443,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 if (mGalleryDetail == null) {
                     break;
                 }
-                mGalleryDetail.comments = comments;
+                mGalleryDetail.comments.comments = comments;
                 bindComments(comments);
                 break;
             default:

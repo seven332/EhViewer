@@ -24,7 +24,7 @@ import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
-import com.hippo.ehviewer.client.data.GalleryComment;
+import com.hippo.ehviewer.client.data.GalleryCommentList;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewSet;
@@ -418,7 +418,7 @@ public class EhEngine {
         }
     }
 
-    public static GalleryComment[] commentGallery(@Nullable EhClient.Task task,
+    public static GalleryCommentList commentGallery(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, String url, String comment, String id) throws Throwable {
         FormBody.Builder builder = new FormBody.Builder();
         if (id == null) {
