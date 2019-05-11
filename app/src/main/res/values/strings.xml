@@ -338,6 +338,7 @@
     <string name="cancel_vote_down_successfully">Down-vote cancelled successfully</string>
     <string name="vote_failed">Vote failed</string>
     <string name="check_vote_status">View vote details</string>
+    <string name="click_more_comments">Click to load more comments</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">Gallery Previews</string>

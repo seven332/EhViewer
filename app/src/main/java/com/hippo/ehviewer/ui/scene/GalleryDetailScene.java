@@ -28,7 +28,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.Gravity;
@@ -72,6 +71,7 @@ import com.hippo.ehviewer.client.EhTagDatabase;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryComment;
+import com.hippo.ehviewer.client.data.GalleryCommentList;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
@@ -1279,7 +1279,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             args.putString(GalleryCommentsScene.KEY_API_KEY, mGalleryDetail.apiKey);
             args.putLong(GalleryCommentsScene.KEY_GID, mGalleryDetail.gid);
             args.putString(GalleryCommentsScene.KEY_TOKEN, mGalleryDetail.token);
-            args.putParcelableArray(GalleryCommentsScene.KEY_COMMENTS, mGalleryDetail.comments.comments);
+            args.putParcelable(GalleryCommentsScene.KEY_COMMENT_LIST, mGalleryDetail.comments);
             startScene(new Announcer(GalleryCommentsScene.class)
                     .setArgs(args)
                     .setRequestCode(this, REQUEST_CODE_COMMENT_GALLERY));
@@ -1435,16 +1435,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 if (resultCode != RESULT_OK || data == null){
                     break;
                 }
-                Parcelable[] array = data.getParcelableArray(GalleryCommentsScene.KEY_COMMENTS);
-                if (!(array instanceof GalleryComment[])) {
+                GalleryCommentList comments = data.getParcelable(GalleryCommentsScene.KEY_COMMENT_LIST);
+                if (mGalleryDetail == null && comments == null) {
                     break;
                 }
-                GalleryComment[] comments = (GalleryComment[]) array;
-                if (mGalleryDetail == null) {
-                    break;
-                }
-                mGalleryDetail.comments.comments = comments;
-                bindComments(comments);
+                mGalleryDetail.comments = comments;
+                bindComments(comments.comments);
                 break;
             default:
                 super.onSceneResult(requestCode, resultCode, data);
