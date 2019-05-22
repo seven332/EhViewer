@@ -44,6 +44,7 @@ import com.hippo.ehviewer.client.parser.GalleryTokenApiParser;
 import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.client.parser.SignInParser;
+import com.hippo.ehviewer.client.parser.SuggestionParser;
 import com.hippo.ehviewer.client.parser.TorrentParser;
 import com.hippo.ehviewer.client.parser.VoteCommentParser;
 import com.hippo.network.StatusCodeException;
@@ -984,6 +985,38 @@ public class EhEngine {
             ExceptionUtils.throwIfFatal(e);
             throwException(call, code, headers, body, e);
             throw e;
+        }
+    }
+
+    public static SuggestionParser.Result[] getSuggestion(@Nullable EhClient.Task task,
+                                                          OkHttpClient okHttpClient, String keyword) throws Throwable {
+        String url = "https://zh.moegirl.org/api.php?action=opensearch&search=" + keyword;
+        String referer = "https://zh.moegirl.org/";
+        Request request = new EhRequestBuilder(url, referer)
+                .build();
+        Call call = okHttpClient.newCall(request);
+
+        try {
+            Response response = call.execute();
+            return SuggestionParser.parse(response.body().string());
+        } catch (Throwable e) {
+            Log.e(TAG, "error to get suggestion",e);
+            return new SuggestionParser.Result[]{};
+        }
+    }
+
+    public static String[] getSuggestionDetail(@Nullable EhClient.Task task,
+                                               OkHttpClient okHttpClient, String url) throws Throwable {
+        String referer = "https://zh.moegirl.org/";
+        Request request = new EhRequestBuilder(url, referer)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        try {
+            Response response = call.execute();
+            return SuggestionParser.parseDetail(response.body().string());
+        } catch (Throwable e) {
+            Log.e(TAG, "error to get suggestion",e);
+            return new String[]{};
         }
     }
 }
