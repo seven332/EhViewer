@@ -145,6 +145,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private static final String KEY_GALLERY_DETAIL = "gallery_detail";
     private static final String KEY_REQUEST_ID = "request_id";
 
+    private static final boolean TRANSITION_ANIMATION_DISABLED = true;
+
     /*---------------
      View life cycle
      ---------------*/
@@ -740,6 +742,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         int oldState = mState;
         mState = state;
+
+        animation = !TRANSITION_ANIMATION_DISABLED && animation;
 
         switch (state) {
             case STATE_NORMAL:
