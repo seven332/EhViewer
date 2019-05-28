@@ -18,7 +18,6 @@ package com.hippo.ehviewer.ui.scene;
 
 import android.animation.Animator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -30,7 +29,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
-import android.os.Parcelable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -64,6 +62,8 @@ import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.data.GalleryComment;
+import com.hippo.ehviewer.client.data.GalleryCommentList;
+import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.parser.VoteCommentParser;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.reveal.ViewAnimationUtils;
@@ -100,14 +100,14 @@ public final class GalleryCommentsScene extends ToolbarScene
     public static final String KEY_API_KEY = "api_key";
     public static final String KEY_GID = "gid";
     public static final String KEY_TOKEN = "token";
-    public static final String KEY_COMMENTS = "comments";
+    public static final String KEY_COMMENT_LIST = "comment_list";
 
     private long mApiUid;
     private String mApiKey;
     private long mGid;
     private String mToken;
     @Nullable
-    private GalleryComment[] mComments;
+    private GalleryCommentList mCommentList;
 
     @Nullable
     private EasyRecyclerView mRecyclerView;
@@ -126,7 +126,14 @@ public final class GalleryCommentsScene extends ToolbarScene
     @Nullable
     private ViewTransition mViewTransition;
 
+    private Drawable mSendDrawable;
+    private Drawable mPencilDrawable;
+    private long mCommentId;
+
     private boolean mInAnimation = false;
+
+    private boolean mShowAllComments = false;
+    private boolean mRefreshingComments = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -148,10 +155,8 @@ public final class GalleryCommentsScene extends ToolbarScene
         mApiKey = args.getString(KEY_API_KEY);
         mGid = args.getLong(KEY_GID, -1L);
         mToken = args.getString(KEY_TOKEN, null);
-        Parcelable[] parcelables = args.getParcelableArray(KEY_COMMENTS);
-        if (parcelables instanceof GalleryComment[]) {
-            mComments = (GalleryComment[]) parcelables;
-        }
+        mCommentList = args.getParcelable(KEY_COMMENT_LIST);
+        mShowAllComments = mCommentList != null && !mCommentList.hasMore;
     }
 
     private void onInit() {
@@ -163,10 +168,8 @@ public final class GalleryCommentsScene extends ToolbarScene
         mApiKey = savedInstanceState.getString(KEY_API_KEY);
         mGid = savedInstanceState.getLong(KEY_GID, -1L);
         mToken = savedInstanceState.getString(KEY_TOKEN, null);
-        Parcelable[] parcelables = savedInstanceState.getParcelableArray(KEY_COMMENTS);
-        if (parcelables instanceof GalleryComment[]) {
-            mComments = (GalleryComment[]) parcelables;
-        }
+        mCommentList = savedInstanceState.getParcelable(KEY_COMMENT_LIST);
+        mShowAllComments = mCommentList != null && !mCommentList.hasMore;
     }
 
     @Override
@@ -176,7 +179,7 @@ public final class GalleryCommentsScene extends ToolbarScene
         outState.putString(KEY_API_KEY, mApiKey);
         outState.putLong(KEY_GID, mGid);
         outState.putString(KEY_TOKEN, mToken);
-        outState.putParcelableArray(KEY_COMMENTS, mComments);
+        outState.putParcelable(KEY_COMMENT_LIST, mCommentList);
     }
 
     @Nullable
@@ -200,6 +203,9 @@ public final class GalleryCommentsScene extends ToolbarScene
         Drawable drawable = DrawableManager.getVectorDrawable(context, R.drawable.big_sad_pandroid);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         tip.setCompoundDrawables(null, drawable, null, null);
+
+        mSendDrawable = DrawableManager.getVectorDrawable(context, R.drawable.v_send_dark_x24);
+        mPencilDrawable = DrawableManager.getVectorDrawable(context, R.drawable.v_pencil_dark_x24);
 
         mAdapter = new CommentAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -350,25 +356,27 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     private void showCommentDialog(int position) {
         final Context context = getContext2();
-        if (null == context || null == mComments || position >= mComments.length || position < 0) {
+        if (context == null || mCommentList == null || mCommentList.comments == null || position >= mCommentList.comments.length || position < 0) {
             return;
         }
 
-        final GalleryComment comment = mComments[position];
+        final GalleryComment comment = mCommentList.comments[position];
         List<String> menu = new ArrayList<>();
         final IntList menuId = new IntList();
         Resources resources = context.getResources();
-        if (0 == comment.id || mApiUid < 0) {
-            // 0 id is uploader comment, can't vote
-            // Not sign in, can't vote
-            menu.add(resources.getString(R.string.copy_comment_text));
-            menuId.add(R.id.copy);
-        } else {
-            menu.add(resources.getString(R.string.copy_comment_text));
-            menuId.add(R.id.copy);
-            menu.add(resources.getString(comment.voteUp ? R.string.cancel_vote_up : R.string.vote_up));
+
+        menu.add(resources.getString(R.string.copy_comment_text));
+        menuId.add(R.id.copy);
+        if (comment.editable) {
+            menu.add(resources.getString(R.string.edit_comment));
+            menuId.add(R.id.edit_comment);
+        }
+        if (comment.voteUpAble) {
+            menu.add(resources.getString(comment.voteUpEd ? R.string.cancel_vote_up : R.string.vote_up));
             menuId.add(R.id.vote_up);
-            menu.add(resources.getString(comment.voteDown ? R.string.cancel_vote_down : R.string.vote_down));
+        }
+        if (comment.voteDownAble) {
+            menu.add(resources.getString(comment.voteDownEd ? R.string.cancel_vote_down : R.string.vote_down));
             menuId.add(R.id.vote_down);
         }
         if (!TextUtils.isEmpty(comment.voteState)) {
@@ -399,6 +407,12 @@ public final class GalleryCommentsScene extends ToolbarScene
                             case R.id.check_vote_status:
                                 showVoteStatusDialog(context, comment.voteState);
                                 break;
+                            case R.id.edit_comment:
+                                prepareEditComment(comment.id);
+                                if (!mInAnimation && mEditPanel != null && mEditPanel.getVisibility() != View.VISIBLE) {
+                                    showEditPanel(true);
+                                }
+                                break;
                         }
                     }
                 }).show();
@@ -406,24 +420,37 @@ public final class GalleryCommentsScene extends ToolbarScene
 
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
-        Activity activity = getActivity2();
+        MainActivity activity = getActivity2();
         if (null == activity) {
             return false;
         }
 
         RecyclerView.ViewHolder holder = parent.getChildViewHolder(view);
-        if (holder instanceof CommentHolder) {
-            CommentHolder commentHolder = (CommentHolder) holder;
+        if (holder instanceof ActualCommentHolder) {
+            ActualCommentHolder commentHolder = (ActualCommentHolder) holder;
             ClickableSpan span = commentHolder.comment.getCurrentSpan();
             commentHolder.comment.clearCurrentSpan();
 
             if (span instanceof URLSpan) {
                 UrlOpener.openUrl(activity, ((URLSpan) span).getURL(), true);
-                return true;
+            } else {
+                showCommentDialog(position);
+            }
+        } else if (holder instanceof MoreCommentHolder && !mRefreshingComments && mAdapter != null) {
+            mRefreshingComments = true;
+            mShowAllComments = true;
+            mAdapter.notifyItemChanged(position);
+
+            String url = getGalleryDetailUrl();
+            if (url != null) {
+                // Request
+                EhRequest request = new EhRequest()
+                    .setMethod(EhClient.METHOD_GET_GALLERY_DETAIL)
+                    .setArgs(url)
+                    .setCallback(new RefreshCommentListener(activity, activity.getStageId(), getTag()));
+                EhApplication.getEhClient(activity).execute(request);
             }
         }
-
-        showCommentDialog(position);
 
         return true;
     }
@@ -433,10 +460,24 @@ public final class GalleryCommentsScene extends ToolbarScene
             return;
         }
 
-        if (mComments == null || mComments.length <= 0) {
+        if (mCommentList == null || mCommentList.comments == null || mCommentList.comments.length <= 0) {
             mViewTransition.showView(1, animation);
         } else {
             mViewTransition.showView(0, animation);
+        }
+    }
+
+    private void prepareNewComment() {
+        mCommentId = 0;
+        if (mSendImage != null) {
+            mSendImage.setImageDrawable(mSendDrawable);
+        }
+    }
+
+    private void prepareEditComment(long commentId) {
+        mCommentId = commentId;
+        if (mSendImage != null) {
+            mSendImage.setImageDrawable(mPencilDrawable);
         }
     }
 
@@ -553,7 +594,7 @@ public final class GalleryCommentsScene extends ToolbarScene
     @Nullable
     private String getGalleryDetailUrl() {
         if (mGid != -1 && mToken != null) {
-            return EhUrl.getGalleryDetailUrl(mGid, mToken, 0, false);
+            return EhUrl.getGalleryDetailUrl(mGid, mToken, 0, mShowAllComments);
         } else {
             return null;
         }
@@ -569,6 +610,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         if (mFab == v) {
             if (!mInAnimation) {
+                prepareNewComment();
                 showEditPanel(true);
             }
         } else if (mSendImage == v) {
@@ -585,9 +627,9 @@ public final class GalleryCommentsScene extends ToolbarScene
                 // Request
                 EhRequest request = new EhRequest()
                         .setMethod(EhClient.METHOD_GET_COMMENT_GALLERY)
-                        .setArgs(url, comment)
+                        .setArgs(url, comment, mCommentId != 0 ? Long.toString(mCommentId) : null)
                         .setCallback(new CommentGalleryListener(context,
-                                activity.getStageId(), getTag()));
+                                activity.getStageId(), getTag(), mCommentId));
                 EhApplication.getEhClient(context).execute(request);
                 hideSoftInput();
                 hideEditPanel(true);
@@ -607,17 +649,63 @@ public final class GalleryCommentsScene extends ToolbarScene
         }
     }
 
-    private class CommentHolder extends RecyclerView.ViewHolder {
+    private static final int TYPE_COMMENT = 0;
+    private static final int TYPE_MORE = 1;
+    private static final int TYPE_PROGRESS = 2;
 
-        public final TextView user;
-        public final TextView time;
-        public final LinkifyTextView comment;
+    private abstract class CommentHolder extends RecyclerView.ViewHolder {
+        public CommentHolder(LayoutInflater inflater, int resId, ViewGroup parent) {
+            super(inflater.inflate(resId, parent, false));
+        }
+    }
 
-        public CommentHolder(View itemView) {
-            super(itemView);
-            user = (TextView) itemView.findViewById(R.id.user);
-            time = (TextView) itemView.findViewById(R.id.time);
-            comment = (LinkifyTextView) itemView.findViewById(R.id.comment);
+    private class ActualCommentHolder extends CommentHolder {
+
+        private final TextView user;
+        private final TextView time;
+        private final LinkifyTextView comment;
+
+        public ActualCommentHolder(LayoutInflater inflater, ViewGroup parent) {
+            super(inflater, R.layout.item_gallery_comment, parent);
+            user = itemView.findViewById(R.id.user);
+            time = itemView.findViewById(R.id.time);
+            comment = itemView.findViewById(R.id.comment);
+        }
+
+        private CharSequence generateComment(Context context, ObservedTextView textView, GalleryComment comment) {
+            SpannableStringBuilder ssb = Html.fromHtml(comment.comment, new URLImageGetter(textView,
+                EhApplication.getConaco(context)), null);
+
+            if (0 != comment.id && 0 != comment.score) {
+                int score = comment.score;
+                String scoreString = score > 0 ? "+" + score : Integer.toString(score);
+                SpannableString ss = new SpannableString(scoreString);
+                ss.setSpan(new RelativeSizeSpan(0.8f), 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new StyleSpan(Typeface.BOLD), 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new ForegroundColorSpan(AttrResources.getAttrColor(context, android.R.attr.textColorSecondary))
+                    , 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ssb.append("  ").append(ss);
+            }
+
+            return TextUrl.handleTextUrl(ssb);
+        }
+
+        public void bind(GalleryComment value) {
+            user.setText(value.user);
+            time.setText(ReadableTime.getTimeAgo(value.time));
+            comment.setText(generateComment(comment.getContext(), comment, value));
+        }
+    }
+
+    private class MoreCommentHolder extends CommentHolder {
+        public MoreCommentHolder(LayoutInflater inflater, ViewGroup parent) {
+            super(inflater, R.layout.item_gallery_comment_more, parent);
+        }
+    }
+
+    private class ProgressCommentHolder extends CommentHolder {
+        public ProgressCommentHolder(LayoutInflater inflater, ViewGroup parent) {
+            super(inflater, R.layout.item_gallery_comment_progress, parent);
         }
     }
 
@@ -631,56 +719,89 @@ public final class GalleryCommentsScene extends ToolbarScene
         }
 
         @Override
-        public CommentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new CommentHolder(mInflater.inflate(R.layout.item_gallery_comment, parent, false));
-        }
-
-        public CharSequence generateComment(Context context, ObservedTextView textView, GalleryComment comment) {
-            SpannableStringBuilder ssb = Html.fromHtml(comment.comment, new URLImageGetter(textView,
-                    EhApplication.getConaco(context)), null);
-
-            if (0 != comment.id && 0 != comment.score) {
-                int score = comment.score;
-                String scoreString = score > 0 ? "+" + score : Integer.toString(score);
-                SpannableString ss = new SpannableString(scoreString);
-                ss.setSpan(new RelativeSizeSpan(0.8f), 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                ss.setSpan(new StyleSpan(Typeface.BOLD), 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                ss.setSpan(new ForegroundColorSpan(AttrResources.getAttrColor(context, android.R.attr.textColorSecondary))
-                        , 0, scoreString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                ssb.append("  ").append(ss);
+        public CommentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            switch (viewType) {
+                case TYPE_COMMENT:
+                    return new ActualCommentHolder(mInflater, parent);
+                case TYPE_MORE:
+                    return new MoreCommentHolder(mInflater, parent);
+                case TYPE_PROGRESS:
+                    return new ProgressCommentHolder(mInflater, parent);
+                default:
+                    throw new IllegalStateException("Invalid view type: " + viewType);
             }
-
-            return TextUrl.handleTextUrl(ssb);
         }
 
         @Override
-        public void onBindViewHolder(CommentHolder holder, int position) {
+        public void onBindViewHolder(@NonNull CommentHolder holder, int position) {
             Context context = getContext2();
-            if (null == context || null == mComments) {
+            if (context == null || mCommentList == null) {
                 return;
             }
 
-            GalleryComment comment = mComments[position];
-            holder.user.setText(comment.user);
-            holder.time.setText(ReadableTime.getTimeAgo(comment.time));
-            holder.comment.setText(generateComment(context, holder.comment, comment));
+            if (holder instanceof ActualCommentHolder) {
+                ((ActualCommentHolder) holder).bind(mCommentList.comments[position]);
+            }
         }
 
         @Override
         public int getItemCount() {
-            return mComments == null ? 0 : mComments.length;
+            if (mCommentList == null || mCommentList.comments == null) {
+                return 0;
+            } else if (mCommentList.hasMore) {
+                return mCommentList.comments.length + 1;
+            } else {
+                return mCommentList.comments.length;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position >= mCommentList.comments.length) {
+                return mRefreshingComments ? TYPE_PROGRESS : TYPE_MORE;
+            } else {
+                return TYPE_COMMENT;
+            }
         }
     }
 
-    private void onCommentGallerySuccess(GalleryComment[] result) {
-        if (null == mAdapter) {
+    private void onRefreshGallerySuccess(GalleryCommentList result) {
+        if (mAdapter == null) {
             return;
         }
 
-        mComments = result;
+        mRefreshingComments = false;
+        mCommentList = result;
+        mAdapter.notifyDataSetChanged();
+
+        updateView(true);
+
+        Bundle re = new Bundle();
+        re.putParcelable(KEY_COMMENT_LIST, result);
+        setResult(SceneFragment.RESULT_OK, re);
+    }
+
+    private void onRefreshGalleryFailure() {
+        if (mAdapter == null) {
+            return;
+        }
+
+        mRefreshingComments = false;
+        int position = mAdapter.getItemCount() - 1;
+        if (position >= 0) {
+            mAdapter.notifyItemChanged(position);
+        }
+    }
+
+    private void onCommentGallerySuccess(GalleryCommentList result) {
+        if (mAdapter == null) {
+            return;
+        }
+
+        mCommentList = result;
         mAdapter.notifyDataSetChanged();
         Bundle re = new Bundle();
-        re.putParcelableArray(KEY_COMMENTS, result);
+        re.putParcelable(KEY_COMMENT_LIST, result);
         setResult(SceneFragment.RESULT_OK, re);
 
         // Remove text
@@ -692,13 +813,13 @@ public final class GalleryCommentsScene extends ToolbarScene
     }
 
     private void onVoteCommentSuccess(VoteCommentParser.Result result) {
-        if (null == mAdapter || null == mComments) {
+        if (mAdapter == null || mCommentList == null || mCommentList.comments == null ) {
             return;
         }
 
         int position = -1;
-        for (int i = 0, n = mComments.length; i < n; i++) {
-            GalleryComment comment = mComments[i];
+        for (int i = 0, n = mCommentList.comments.length; i < n; i++) {
+            GalleryComment comment = mCommentList.comments[i];
             if (comment.id == result.id) {
                 position = i;
                 break;
@@ -711,32 +832,66 @@ public final class GalleryCommentsScene extends ToolbarScene
         }
 
         // Update comment
-        GalleryComment comment = mComments[position];
+        GalleryComment comment = mCommentList.comments[position];
         comment.score = result.score;
         if (result.expectVote > 0) {
-            comment.voteUp = 0 != result.vote;
-            comment.voteDown = false;
+            comment.voteUpEd = 0 != result.vote;
+            comment.voteDownEd = false;
         } else {
-            comment.voteDown = 0 != result.vote;
-            comment.voteUp = false;
+            comment.voteDownEd = 0 != result.vote;
+            comment.voteUpEd = false;
         }
 
         mAdapter.notifyItemChanged(position);
 
         Bundle re = new Bundle();
-        re.putParcelableArray(KEY_COMMENTS, mComments);
+        re.putParcelable(KEY_COMMENT_LIST, mCommentList);
         setResult(SceneFragment.RESULT_OK, re);
     }
 
-    private static class CommentGalleryListener extends EhCallback<GalleryCommentsScene, GalleryComment[]> {
+    private static class RefreshCommentListener extends EhCallback<GalleryCommentsScene, GalleryDetail> {
 
-        public CommentGalleryListener(Context context, int stageId, String sceneTag) {
+        public RefreshCommentListener(Context context, int stageId, String sceneTag) {
             super(context, stageId, sceneTag);
         }
 
         @Override
-        public void onSuccess(GalleryComment[] result) {
-            showTip(R.string.comment_successfully, LENGTH_SHORT);
+        public void onSuccess(GalleryDetail result) {
+            GalleryCommentsScene scene = getScene();
+            if (scene != null) {
+                scene.onRefreshGallerySuccess(result.comments);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            GalleryCommentsScene scene = getScene();
+            if (scene != null) {
+                scene.onRefreshGalleryFailure();
+            }
+        }
+
+        @Override
+        public void onCancel() { }
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryCommentsScene;
+        }
+    }
+
+    private static class CommentGalleryListener extends EhCallback<GalleryCommentsScene, GalleryCommentList> {
+
+        private long mCommentId;
+
+        public CommentGalleryListener(Context context, int stageId, String sceneTag, long commentId) {
+            super(context, stageId, sceneTag);
+            mCommentId = commentId;
+        }
+
+        @Override
+        public void onSuccess(GalleryCommentList result) {
+            showTip(mCommentId != 0 ? R.string.edit_comment_successfully : R.string.comment_successfully, LENGTH_SHORT);
 
             GalleryCommentsScene scene = getScene();
             if (scene != null) {
@@ -746,7 +901,7 @@ public final class GalleryCommentsScene extends ToolbarScene
 
         @Override
         public void onFailure(Exception e) {
-            showTip(getContent().getString(R.string.comment_failed) + "\n" + ExceptionUtils.getReadableString(e), LENGTH_LONG);
+            showTip(getContent().getString(mCommentId != 0 ? R.string.edit_comment_failed : R.string.comment_failed) + "\n" + ExceptionUtils.getReadableString(e), LENGTH_LONG);
         }
 
         @Override

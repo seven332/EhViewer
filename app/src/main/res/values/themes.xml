@@ -207,13 +207,13 @@
     <!-- ============ -->
     <!-- Widget Theme -->
     <!-- ============ -->
-    <style name="CommentEditText" parent="Theme.AppCompat">
+    <style name="CommentEditText" parent="ThemeOverlay.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@android:color/white</item>
     </style>
 
-    <style name="RatingBarTheme" parent="Theme.AppCompat">
+    <style name="RatingBarTheme" parent="ThemeOverlay.AppCompat">
         <item name="colorControlNormal">@color/yellow_800</item>
         <item name="colorControlActivated">@color/yellow_800</item>
     </style>

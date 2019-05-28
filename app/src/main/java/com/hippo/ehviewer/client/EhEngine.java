@@ -24,7 +24,7 @@ import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
-import com.hippo.ehviewer.client.data.GalleryComment;
+import com.hippo.ehviewer.client.data.GalleryCommentList;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewSet;
@@ -102,8 +102,10 @@ public class EhEngine {
         }
 
         if (e instanceof ParseException) {
-            if (body != null && !body.contains("<")){
+            if (body != null && !body.contains("<")) {
                 throw new EhException(body);
+            } else if (TextUtils.isEmpty(body)) {
+                throw new EhException(GetText.getString(R.string.error_empty_html));
             } else {
                 if (Settings.getSaveParseErrorBody()) {
                     AppConfig.saveParseErrorBody((ParseException) e);
@@ -416,10 +418,15 @@ public class EhEngine {
         }
     }
 
-    public static GalleryComment[] commentGallery(@Nullable EhClient.Task task,
-            OkHttpClient okHttpClient, String url, String comment) throws Throwable {
-        FormBody.Builder builder = new FormBody.Builder()
-                .add("commenttext_new", comment);
+    public static GalleryCommentList commentGallery(@Nullable EhClient.Task task,
+            OkHttpClient okHttpClient, String url, String comment, String id) throws Throwable {
+        FormBody.Builder builder = new FormBody.Builder();
+        if (id == null) {
+            builder.add("commenttext_new", comment);
+        } else {
+            builder.add("commenttext_edit", comment);
+            builder.add("edit_comment", id);
+        }
         String origin = EhUrl.getOrigin();
         Log.d(TAG, url);
         Request request = new EhRequestBuilder(url, url, origin)

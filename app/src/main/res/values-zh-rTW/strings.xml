@@ -91,6 +91,7 @@
     <string name="error_cant_save_image">無法儲存圖片</string>
     <string name="error_invalid_number">無效的數字</string>
     <string name="error_please_login_first">請先登陸</string>
+    <string name="error_empty_html">頁面內容為空</string>
 
     <string name="app_waring">本應用程式中內容來自網際網路，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用程式的作者不會對由其所造成的任何影響負責。\n\n未成年人應在監護人指導下使用本應用程式。</string>
     <string name="error_username_cannot_empty">使用者名稱欄位不能為空</string>
@@ -277,6 +278,9 @@
     <string name="comment_successfully">留言成功</string>
     <string name="comment_failed">留言失敗</string>
     <string name="copy_comment_text">複製留言文字</string>
+    <string name="edit_comment">修改留言</string>
+    <string name="edit_comment_successfully">留言已被修改</string>
+    <string name="edit_comment_failed">修改留言失敗</string>
     <string name="vote_up">推</string>
     <string name="cancel_vote_up">收回推</string>
     <string name="vote_down">噓</string>
@@ -287,6 +291,7 @@
     <string name="cancel_vote_down_successfully">已經收回噓了</string>
     <string name="vote_failed">推噓失敗</string>
     <string name="check_vote_status">檢視推噓狀態</string>
+    <string name="click_more_comments">點選載入更多留言</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">圖庫預覽</string>

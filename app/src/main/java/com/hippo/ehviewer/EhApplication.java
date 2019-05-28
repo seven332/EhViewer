@@ -96,6 +96,8 @@ public class EhApplication extends RecordingApplication {
 
     private final List<Activity> mActivityList = new ArrayList<>();
 
+    private boolean initialized = false;
+
     public static EhApplication getInstance() {
         return instance;
     }
@@ -108,7 +110,8 @@ public class EhApplication extends RecordingApplication {
         Thread.UncaughtExceptionHandler handler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             try {
-                if (Settings.getSaveCrashLog()) {
+                // Always save crash file if onCreate() is not done
+                if (!initialized || Settings.getSaveCrashLog()) {
                     Crash.saveCrashLog(instance, e);
                 }
             } catch (Throwable ignored) { }
@@ -184,6 +187,8 @@ public class EhApplication extends RecordingApplication {
         if (DEBUG_PRINT_NATIVE_MEMORY || DEBUG_PRINT_IMAGE_COUNT) {
             debugPrint();
         }
+
+        initialized = true;
     }
 
     private void clearTempDir() {

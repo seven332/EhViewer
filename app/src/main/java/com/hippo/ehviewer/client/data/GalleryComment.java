@@ -24,8 +24,11 @@ public class GalleryComment implements Parcelable {
     // 0 for uploader comment. can't vote
     public long id;
     public int score;
-    public boolean voteUp;
-    public boolean voteDown;
+    public boolean editable;
+    public boolean voteUpAble;
+    public boolean voteUpEd;
+    public boolean voteDownAble;
+    public boolean voteDownEd;
     public String voteState;
     public long time;
     public String user;
@@ -40,8 +43,11 @@ public class GalleryComment implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.id);
         dest.writeInt(this.score);
-        dest.writeByte(voteUp ? (byte) 1 : (byte) 0);
-        dest.writeByte(voteDown ? (byte) 1 : (byte) 0);
+        dest.writeByte(editable ? (byte) 1 : (byte) 0);
+        dest.writeByte(voteUpAble ? (byte) 1 : (byte) 0);
+        dest.writeByte(voteUpEd ? (byte) 1 : (byte) 0);
+        dest.writeByte(voteDownAble ? (byte) 1 : (byte) 0);
+        dest.writeByte(voteDownEd ? (byte) 1 : (byte) 0);
         dest.writeString(this.voteState);
         dest.writeLong(this.time);
         dest.writeString(this.user);
@@ -54,8 +60,11 @@ public class GalleryComment implements Parcelable {
     protected GalleryComment(Parcel in) {
         this.id = in.readLong();
         this.score = in.readInt();
-        this.voteUp = in.readByte() != 0;
-        this.voteDown = in.readByte() != 0;
+        this.editable = in.readByte() != 0;
+        this.voteUpAble = in.readByte() != 0;
+        this.voteUpEd = in.readByte() != 0;
+        this.voteDownAble = in.readByte() != 0;
+        this.voteDownEd = in.readByte() != 0;
         this.voteState = in.readString();
         this.time = in.readLong();
         this.user = in.readString();

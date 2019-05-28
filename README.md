@@ -33,6 +33,13 @@ Linux
 The apk is in app\build\outputs\apk
 
 
+# Download
+
+[下载](https://github.com/seven332/EhViewer/releases)
+
+[Download](https://github.com/seven332/EhViewer/releases)
+
+
 # Thanks
 
 本项目受到了诸多开源项目的帮助

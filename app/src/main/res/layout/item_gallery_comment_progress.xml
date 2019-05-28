@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2015 Hippo Seven
+  ~ Copyright 2019 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,36 +17,15 @@
 
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none"
-        android:overScrollMode="never">
-
-        <include
-            layout="@layout/gallery_detail_content"/>
-
-    </ScrollView>
+    android:layout_height="wrap_content"
+    android:padding="@dimen/keyline_margin">
 
     <com.hippo.widget.ProgressView
-        android:id="@+id/progress_view"
+        android:id="@+id/progress"
         style="@style/ProgressView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
-
-    <TextView
-        android:id="@+id/tip"
-        android:layout_width="228dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:drawablePadding="8dp"
-        style="@style/TextAppearance.AppCompat.Medium"/>
 
 </FrameLayout>

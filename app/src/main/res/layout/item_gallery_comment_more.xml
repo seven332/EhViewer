@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2016 Hippo Seven
+  ~ Copyright 2019 Hippo Seven
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,20 +15,17 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/keyline_margin">
 
-    <item name="tag" type="id"/>
-    <item name="index" type="id"/>
+    <TextView
+        android:id="@+id/click_more_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/click_more_comments"/>
 
-    <item name="fragment_tag" type="id"/>
-
-    <item name="copy" type="id"/>
-    <item name="vote_up" type="id"/>
-    <item name="vote_down" type="id"/>
-    <item name="check_vote_status" type="id"/>
-    <item name="edit_comment" type="id"/>
-
-    <item name="fab_translation_y" type="id"/>
-    <item name="fab_translation_y_animator" type="id"/>
-
-</resources>
+</FrameLayout>

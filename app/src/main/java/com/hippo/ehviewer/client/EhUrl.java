@@ -67,7 +67,7 @@ public class EhUrl {
     public static final String URL_WATCHED_E = HOST_E + "watched";
     public static final String URL_WATCHED_EX = HOST_EX + "watched";
 
-    private static final String URL_PREFIX_THUMB_E = "https://ul.ehgt.org/";
+    private static final String URL_PREFIX_THUMB_E = "https://ehgt.org/";
     private static final String URL_PREFIX_THUMB_EX = "https://exhentai.org/t/";
 
     public static String getGalleryDetailUrl(long gid, String token) {

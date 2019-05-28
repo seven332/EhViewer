@@ -75,8 +75,7 @@
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_gravity="bottom"
-                android:padding="16dp"
-                app:srcCompat="@drawable/v_send_dark_x24"/>
+                android:padding="16dp"/>
 
         </LinearLayout>
     </com.hippo.reveal.RevealLinearLayout>

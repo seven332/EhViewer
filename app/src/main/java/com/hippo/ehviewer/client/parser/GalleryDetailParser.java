@@ -16,13 +16,13 @@
 
 package com.hippo.ehviewer.client.parser;
 
-import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.GalleryComment;
+import com.hippo.ehviewer.client.data.GalleryCommentList;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.LargePreviewSet;
@@ -34,6 +34,7 @@ import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.ehviewer.client.exception.PiningException;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.JsoupUtils;
+import com.hippo.util.MutableBoolean;
 import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.StringUtils;
 import java.text.DateFormat;
@@ -49,7 +50,10 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.jsoup.select.NodeTraversor;
+import org.jsoup.select.NodeVisitor;
 
 public class GalleryDetailParser {
 
@@ -67,7 +71,7 @@ public class GalleryDetailParser {
     private static final Pattern PATTERN_LARGE_PREVIEW = Pattern.compile("<div class=\"gdtl\".+?<a href=\"(.+?)\"><img alt=\"([\\d,]+)\".+?src=\"(.+?)\"");
 
     private static final GalleryTagGroup[] EMPTY_GALLERY_TAG_GROUP_ARRAY = new GalleryTagGroup[0];
-    private static final GalleryComment[] EMPTY_GALLERY_COMMENT_ARRAY = new GalleryComment[0];
+    private static final GalleryCommentList EMPTY_GALLERY_COMMENT_ARRAY = new GalleryCommentList(new GalleryComment[0], false);
 
     private static final DateFormat WEB_COMMENT_DATE_FORMAT = new SimpleDateFormat("dd MMMMM yyyy, HH:mm z", Locale.US);
 
@@ -399,13 +403,23 @@ public class GalleryDetailParser {
             Element a = element.previousElementSibling();
             String name = a.attr("name");
             comment.id = Integer.parseInt(StringUtils.trim(name).substring(1));
-            // Vote up and vote down
+            // Editable, vote up and vote down
             Element c4 = JsoupUtils.getElementByClass(element, "c4");
             if (null != c4) {
-                Elements es = c4.children();
-                if (2 == es.size()) {
-                    comment.voteUp = !TextUtils.isEmpty(StringUtils.trim(es.get(0).attr("style")));
-                    comment.voteDown = !TextUtils.isEmpty(StringUtils.trim(es.get(1).attr("style")));
+                for (Element e : c4.children()) {
+                    switch (e.text()) {
+                        case "Vote+":
+                            comment.voteUpAble = true;
+                            comment.voteUpEd = !StringUtils.trim(e.attr("style")).isEmpty();
+                            break;
+                        case "Vote-":
+                            comment.voteDownAble = true;
+                            comment.voteDownEd = !StringUtils.trim(e.attr("style")).isEmpty();
+                            break;
+                        case "Edit":
+                            comment.editable = true;
+                            break;
+                    }
                 }
             }
             // Vote state
@@ -442,7 +456,7 @@ public class GalleryDetailParser {
      * Parse comments with html parser
      */
     @NonNull
-    public static GalleryComment[] parseComments(Document document) {
+    public static GalleryCommentList parseComments(Document document) {
         try {
             Element cdiv = document.getElementById("cdiv");
             Elements c1s = cdiv.getElementsByClass("c1");
@@ -454,7 +468,22 @@ public class GalleryDetailParser {
                     list.add(comment);
                 }
             }
-            return list.toArray(new GalleryComment[list.size()]);
+
+            Element chd = cdiv.getElementById("chd");
+            MutableBoolean hasMore = new MutableBoolean(false);
+            NodeTraversor.traverse(new NodeVisitor() {
+                @Override
+                public void head(Node node, int depth) {
+                    if (node instanceof Element && ((Element) node).text().equals("click to show all")) {
+                        hasMore.value = true;
+                    }
+                }
+
+                @Override
+                public void tail(Node node, int depth) { }
+            }, chd);
+
+            return new GalleryCommentList(list.toArray(new GalleryComment[list.size()]), hasMore.value);
         } catch (Throwable e) {
             ExceptionUtils.throwIfFatal(e);
             e.printStackTrace();

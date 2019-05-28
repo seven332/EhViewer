@@ -26,6 +26,7 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -52,6 +53,8 @@ import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hippo.android.resource.AttrResources;
 import com.hippo.annotation.Implemented;
+import com.hippo.app.EditTextDialogBuilder;
+import com.hippo.drawable.AddDeleteDrawable;
 import com.hippo.drawable.DrawerArrowDrawable;
 import com.hippo.easyrecyclerview.EasyRecyclerView;
 import com.hippo.easyrecyclerview.FastScroller;
@@ -77,6 +80,7 @@ import com.hippo.refreshlayout.RefreshLayout;
 import com.hippo.ripple.Ripple;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
+import com.hippo.util.AppHelper;
 import com.hippo.util.DrawableManager;
 import com.hippo.widget.ContentLayout;
 import com.hippo.widget.FabLayout;
@@ -93,7 +97,8 @@ import java.util.List;
 public class FavoritesScene extends BaseScene implements
         EasyRecyclerView.OnItemClickListener, EasyRecyclerView.OnItemLongClickListener,
         FastScroller.OnDragHandlerListener, SearchBarMover.Helper, SearchBar.Helper,
-        FabLayout.OnClickFabListener, EasyRecyclerView.CustomChoiceListener {
+        FabLayout.OnClickFabListener, FabLayout.OnExpandListener,
+        EasyRecyclerView.CustomChoiceListener {
 
     private static final long ANIMATE_TIME = 300L;
 
@@ -124,6 +129,7 @@ public class FavoritesScene extends BaseScene implements
     @Nullable
     @ViewLifeCircle
     private DrawerArrowDrawable mLeftDrawable;
+    private AddDeleteDrawable mActionFabDrawable;
 
     @Nullable
     private EhDrawerLayout mDrawerLayout;
@@ -281,10 +287,13 @@ public class FavoritesScene extends BaseScene implements
         updateSearchBar();
         mSearchBarMover = new SearchBarMover(this, mSearchBar, mRecyclerView);
 
+        mActionFabDrawable = new AddDeleteDrawable(context, resources.getColor(R.color.primary_drawable_dark));
+        mFabLayout.getPrimaryFab().setImageDrawable(mActionFabDrawable);
         mFabLayout.setExpanded(false, false);
-        mFabLayout.setAutoCancel(false);
-        mFabLayout.setHidePrimaryFab(true);
+        mFabLayout.setAutoCancel(true);
+        mFabLayout.setHidePrimaryFab(false);
         mFabLayout.setOnClickFabListener(this);
+        mFabLayout.setOnExpandListener(this);
         addAboveSnackView(mFabLayout);
 
         // Restore search mode
@@ -542,6 +551,8 @@ public class FavoritesScene extends BaseScene implements
 
         if (mRecyclerView != null && mRecyclerView.isInCustomChoice()) {
             mRecyclerView.outOfCustomChoiceMode();
+        } else if (mFabLayout != null && mFabLayout.isExpanded()) {
+            mFabLayout.toggle();
         } else if (mSearchMode) {
             exitSearchMode(true);
         } else {
@@ -738,18 +749,85 @@ public class FavoritesScene extends BaseScene implements
     }
 
     @Override
+    public void onExpand(boolean expanded) {
+        if (expanded) {
+            mActionFabDrawable.setDelete(ANIMATE_TIME);
+        } else {
+            mActionFabDrawable.setAdd(ANIMATE_TIME);
+        }
+    }
+
+    @Override
     @Implemented(FabLayout.OnClickFabListener.class)
     public void onClickPrimaryFab(FabLayout view, FloatingActionButton fab) {
-        if (mRecyclerView != null) {
-            mRecyclerView.outOfCustomChoiceMode();
+        if (mRecyclerView != null && mFabLayout != null) {
+            if (mRecyclerView.isInCustomChoice()) {
+                mRecyclerView.outOfCustomChoiceMode();
+            } else {
+                mFabLayout.toggle();
+            }
         }
+    }
+
+    private void showGoToDialog() {
+        Context context = getContext2();
+        if (null == context || null == mHelper) {
+            return;
+        }
+
+        final int page = mHelper.getPageForTop();
+        final int pages = mHelper.getPages();
+        String hint = getString(R.string.go_to_hint, page + 1, pages);
+        final EditTextDialogBuilder builder = new EditTextDialogBuilder(context, null, hint);
+        builder.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        final AlertDialog dialog = builder.setTitle(R.string.go_to)
+            .setPositiveButton(android.R.string.ok, null)
+            .show();
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if (null == mHelper) {
+                dialog.dismiss();
+                return;
+            }
+
+            String text = builder.getText().trim();
+            int goTo;
+            try {
+                goTo = Integer.parseInt(text) - 1;
+            } catch (NumberFormatException e){
+                builder.setError(getString(R.string.error_invalid_number));
+                return;
+            }
+            if (goTo < 0 || goTo >= pages) {
+                builder.setError(getString(R.string.error_out_of_range));
+                return;
+            }
+            builder.setError(null);
+            mHelper.goTo(goTo);
+            AppHelper.hideSoftInput(dialog);
+            dialog.dismiss();
+        });
     }
 
     @Override
     @Implemented(FabLayout.OnClickFabListener.class)
     public void onClickSecondaryFab(FabLayout view, FloatingActionButton fab, int position) {
         Context context = getContext2();
-        if (null == context || null == mRecyclerView || null == mHelper || !mRecyclerView.isInCustomChoice()) {
+        if (null == context || null == mRecyclerView || null == mHelper) {
+            return;
+        }
+
+        if (!mRecyclerView.isInCustomChoice()) {
+            switch (position) {
+                case 0: // Go to
+                    if (mHelper.canGoTo()) {
+                        showGoToDialog();
+                    }
+                    break;
+                case 1: // Refresh
+                    mHelper.refresh();
+                    break;
+            }
+            view.setExpanded(false);
             return;
         }
 
@@ -765,7 +843,7 @@ public class FavoritesScene extends BaseScene implements
         }
 
         switch (position) {
-            case 0: { // Download
+            case 2: { // Download
                 Activity activity = getActivity2();
                 if (activity != null) {
                     CommonOperations.startDownload(getActivity2(), mModifyGiList, false);
@@ -776,7 +854,7 @@ public class FavoritesScene extends BaseScene implements
                 }
                 break;
             }
-            case 1: { // Delete
+            case 3: { // Delete
                 DeleteDialogHelper helper = new DeleteDialogHelper();
                 new AlertDialog.Builder(context)
                         .setTitle(R.string.delete_favorites_dialog_title)
@@ -786,7 +864,7 @@ public class FavoritesScene extends BaseScene implements
                         .show();
                 break;
             }
-            case 2: { // Move
+            case 4: { // Move
                 MoveDialogHelper helper = new MoveDialogHelper();
                 // First is local favorite, the other 10 is cloud favorite
                 String[] array = new String[11];
@@ -802,11 +880,45 @@ public class FavoritesScene extends BaseScene implements
         }
     }
 
+    private Runnable showNormalFabsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mFabLayout != null) {
+                mFabLayout.setSecondaryFabVisibilityAt(0, true);
+                mFabLayout.setSecondaryFabVisibilityAt(1, true);
+                mFabLayout.setSecondaryFabVisibilityAt(2, false);
+                mFabLayout.setSecondaryFabVisibilityAt(3, false);
+                mFabLayout.setSecondaryFabVisibilityAt(4, false);
+            }
+        }
+    };
+
+    private void showNormalFabs() {
+        // Delay showing normal fabs to avoid mutation
+        SimpleHandler.getInstance().removeCallbacks(showNormalFabsRunnable);
+        SimpleHandler.getInstance().postDelayed(showNormalFabsRunnable, 300);
+    }
+
+    private void showSelectionFabs() {
+        SimpleHandler.getInstance().removeCallbacks(showNormalFabsRunnable);
+
+        if (mFabLayout != null) {
+            mFabLayout.setSecondaryFabVisibilityAt(0, false);
+            mFabLayout.setSecondaryFabVisibilityAt(1, false);
+            mFabLayout.setSecondaryFabVisibilityAt(2, true);
+            mFabLayout.setSecondaryFabVisibilityAt(3, true);
+            mFabLayout.setSecondaryFabVisibilityAt(4, true);
+        }
+    }
+
     @Override
     @Implemented(EasyRecyclerView.CustomChoiceListener.class)
     public void onIntoCustomChoice(EasyRecyclerView view) {
         if (mFabLayout != null) {
-            mFabLayout.setExpanded(true);
+            showSelectionFabs();
+            mFabLayout.setAutoCancel(false);
+            // Delay expanding action to make layout work fine
+            SimpleHandler.getInstance().post(() -> mFabLayout.setExpanded(true));
         }
         if (mHelper != null) {
             mHelper.setRefreshLayoutEnable(false);
@@ -820,6 +932,8 @@ public class FavoritesScene extends BaseScene implements
     @Implemented(EasyRecyclerView.CustomChoiceListener.class)
     public void onOutOfCustomChoice(EasyRecyclerView view) {
         if (mFabLayout != null) {
+            showNormalFabs();
+            mFabLayout.setAutoCancel(true);
             mFabLayout.setExpanded(false);
         }
         if (mHelper != null) {
