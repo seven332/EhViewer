@@ -465,6 +465,7 @@
     <string name="settings_read_screen_rotation_default">系统默认</string>
     <string name="settings_read_screen_rotation_portrait">竖屏</string>
     <string name="settings_read_screen_rotation_landscape">横屏</string>
+    <string name="settings_read_screen_rotation_sensor">自动旋转</string>
     <string name="settings_read_reading_direction">阅读方向</string>
     <string name="settings_read_reading_direction_left_to_right">从左至右</string>
     <string name="settings_read_reading_direction_right_to_Left">从右至左</string>
