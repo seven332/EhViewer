@@ -16,17 +16,16 @@
 
 package com.hippo.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
-
 import com.hippo.ehviewer.R;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
+@SuppressLint("SimpleDateFormat")
 public final class ReadableTime {
 
     private static Resources sResources;
@@ -56,29 +55,20 @@ public final class ReadableTime {
             R.plurals.second
     };
 
-    private static final Calendar sCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+08:00"));
+    private static final Calendar sCalendar = Calendar.getInstance();
     private static final Object sCalendarLock = new Object();
 
-    private static final SimpleDateFormat DATE_FORMAT_WITHOUT_YEAR =
-            new SimpleDateFormat("MMM d", Locale.getDefault());
+    private static final SimpleDateFormat DATE_FORMAT_WITHOUT_YEAR = new SimpleDateFormat("MMM d");
+    private static final SimpleDateFormat DATE_FORMAT_WITH_YEAR = new SimpleDateFormat("MMM d, yyyy");
 
-    private static final SimpleDateFormat DATE_FORMAT_WIT_YEAR =
-            new SimpleDateFormat("yyy MMM d", Locale.getDefault());
+    private static final SimpleDateFormat DATE_FORMAT_WITHOUT_YEAR_ZH = new SimpleDateFormat("M月d日");
+    private static final SimpleDateFormat DATE_FORMAT_WITH_YEAR_ZH = new SimpleDateFormat("yyyy年M月d日");
 
-    private static final SimpleDateFormat DATE_FORMAT =
-            new SimpleDateFormat("yy-MM-dd HH:mm", Locale.getDefault());
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yy-MM-dd HH:mm");
     private static final Object sDateFormatLock1 = new Object();
 
-    private static final SimpleDateFormat FILENAMABLE_DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.getDefault());
+    private static final SimpleDateFormat FILENAMABLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
     private static final Object sDateFormatLock2 = new Object();
-
-    static {
-        // The website use GMT+08:00, so tell user the same
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
-
-        DATE_FORMAT_WITHOUT_YEAR.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
-    }
 
     public static void initialize(Context context) {
         sResources = context.getApplicationContext().getResources();
@@ -134,11 +124,12 @@ public final class ReadableTime {
                 int nowYear = sCalendar.get(Calendar.YEAR);
                 sCalendar.setTime(timeDate);
                 int timeYear = sCalendar.get(Calendar.YEAR);
+                boolean isZh = Locale.getDefault().getLanguage().equals("zh");
 
                 if (nowYear == timeYear) {
-                    return DATE_FORMAT_WITHOUT_YEAR.format(timeDate);
+                    return (isZh ? DATE_FORMAT_WITHOUT_YEAR_ZH : DATE_FORMAT_WITHOUT_YEAR).format(timeDate);
                 } else {
-                    return DATE_FORMAT_WIT_YEAR.format(timeDate);
+                    return (isZh ? DATE_FORMAT_WITH_YEAR_ZH : DATE_FORMAT_WITH_YEAR).format(timeDate);
                 }
             }
         }
