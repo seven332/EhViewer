@@ -293,6 +293,7 @@
     <string name="vote_failed">投票失敗</string>
     <string name="check_vote_status">查看投票情況</string>
     <string name="click_more_comments">點擊加載更多評論</string>
+    <string name="last_edited">上次修改時間：%s</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">畫廊預覽</string>

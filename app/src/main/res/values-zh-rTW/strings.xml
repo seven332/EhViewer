@@ -292,6 +292,7 @@
     <string name="vote_failed">推噓失敗</string>
     <string name="check_vote_status">檢視推噓狀態</string>
     <string name="click_more_comments">點選載入更多留言</string>
+    <string name="last_edited">上次修改時間：%s</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">圖庫預覽</string>

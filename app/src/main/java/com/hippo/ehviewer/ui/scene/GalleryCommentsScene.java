@@ -687,6 +687,16 @@ public final class GalleryCommentsScene extends ToolbarScene
                 ssb.append("  ").append(ss);
             }
 
+            if (comment.lastEdited != 0) {
+                String str = context.getString(R.string.last_edited, ReadableTime.getTimeAgo(comment.lastEdited));
+                SpannableString ss = new SpannableString(str);
+                ss.setSpan(new RelativeSizeSpan(0.8f), 0, str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new StyleSpan(Typeface.BOLD), 0, str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new ForegroundColorSpan(AttrResources.getAttrColor(context, android.R.attr.textColorSecondary)),
+                    0, str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ssb.append("\n\n").append(ss);
+            }
+
             return TextUrl.handleTextUrl(ssb);
         }
 

@@ -33,6 +33,7 @@ public class GalleryComment implements Parcelable {
     public long time;
     public String user;
     public String comment;
+    public long lastEdited;
 
     @Override
     public int describeContents() {
@@ -52,6 +53,7 @@ public class GalleryComment implements Parcelable {
         dest.writeLong(this.time);
         dest.writeString(this.user);
         dest.writeString(this.comment);
+        dest.writeLong(this.lastEdited);
     }
 
     public GalleryComment() {
@@ -69,6 +71,7 @@ public class GalleryComment implements Parcelable {
         this.time = in.readLong();
         this.user = in.readString();
         this.comment = in.readString();
+        this.lastEdited = in.readLong();
     }
 
     public static final Creator<GalleryComment> CREATOR = new Creator<GalleryComment>() {

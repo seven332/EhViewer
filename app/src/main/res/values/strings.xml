@@ -339,6 +339,7 @@
     <string name="vote_failed">Vote failed</string>
     <string name="check_vote_status">View vote details</string>
     <string name="click_more_comments">Click to load more comments</string>
+    <string name="last_edited">Last edited: %s</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">Gallery Previews</string>

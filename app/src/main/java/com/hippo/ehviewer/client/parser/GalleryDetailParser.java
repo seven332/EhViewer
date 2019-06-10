@@ -444,6 +444,14 @@ public class GalleryDetailParser {
             comment.user = c3.child(0).text();
             // comment
             comment.comment = JsoupUtils.getElementByClass(element, "c6").html();
+            // last edited
+            Element c8 = JsoupUtils.getElementByClass(element, "c8");
+            if (c8 != null) {
+                Element e = c8.children().first();
+                if (e != null) {
+                    comment.lastEdited = WEB_COMMENT_DATE_FORMAT.parse(temp).getTime();
+                }
+            }
             return comment;
         } catch (Throwable e) {
             ExceptionUtils.throwIfFatal(e);
