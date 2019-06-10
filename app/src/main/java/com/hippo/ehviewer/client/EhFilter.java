@@ -158,7 +158,7 @@ public final class EhFilter {
         List<Filter> filters = mTitleFilterList;
         if (null != title && filters.size() > 0) {
             for (int i = 0, n = filters.size(); i < n; i++) {
-                if (filters.get(i).enable && title.contains(filters.get(i).text)) {
+                if (filters.get(i).enable && title.toLowerCase().contains(filters.get(i).text)) {
                     return false;
                 }
             }
