@@ -59,6 +59,7 @@ import com.hippo.ehviewer.gallery.DirGalleryProvider;
 import com.hippo.ehviewer.gallery.EhGalleryProvider;
 import com.hippo.ehviewer.gallery.GalleryProvider2;
 import com.hippo.ehviewer.widget.GalleryGuideView;
+import com.hippo.ehviewer.widget.GalleryHeader;
 import com.hippo.ehviewer.widget.ReversibleSeekBar;
 import com.hippo.glgallery.GalleryPageView;
 import com.hippo.glgallery.GalleryProvider;
@@ -378,6 +379,12 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         // Cutout
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+
+            GalleryHeader galleryHeader = findViewById(R.id.gallery_header);
+            galleryHeader.setOnApplyWindowInsetsListener((v, insets) -> {
+                galleryHeader.setDisplayCutout(insets.getDisplayCutout());
+                return insets;
+            });
         }
 
         if (Settings.getGuideGallery()) {

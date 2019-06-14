@@ -26,34 +26,42 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.hippo.widget.TextClock
-        android:id="@+id/clock"
-        android:layout_width="wrap_content"
+    <com.hippo.ehviewer.widget.GalleryHeader
+        android:id="@+id/gallery_header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginTop="@dimen/gallery_widget_margin_v"
-        android:layout_marginRight="@dimen/gallery_widget_margin_h"
-        android:textColor="?android:attr/textColorSecondary"/>
+        android:layout_gravity="top">
 
-    <TextView
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/gallery_widget_margin_v"
-        android:textColor="?android:attr/textColorSecondary"/>
+        <com.hippo.widget.TextClock
+            android:id="@+id/clock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="@dimen/gallery_widget_margin_v"
+            android:layout_marginRight="@dimen/gallery_widget_margin_h"
+            android:textColor="?android:attr/textColorSecondary"/>
 
-    <com.hippo.widget.BatteryView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/battery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginTop="@dimen/gallery_widget_margin_v"
-        android:layout_marginLeft="@dimen/gallery_widget_margin_h"
-        android:drawablePadding="4dp"
-        app:color="?android:attr/textColorSecondary"
-        app:warningColor="@color/red_500"/>
+        <TextView
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/gallery_widget_margin_v"
+            android:textColor="?android:attr/textColorSecondary"/>
+
+        <com.hippo.widget.BatteryView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/battery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginTop="@dimen/gallery_widget_margin_v"
+            android:layout_marginLeft="@dimen/gallery_widget_margin_h"
+            android:drawablePadding="4dp"
+            app:color="?android:attr/textColorSecondary"
+            app:warningColor="@color/red_500"/>
+
+    </com.hippo.ehviewer.widget.GalleryHeader>
 
     <com.hippo.ehviewer.widget.SeekBarPanel
         android:id="@+id/seek_bar_panel"
