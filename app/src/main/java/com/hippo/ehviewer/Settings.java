@@ -262,7 +262,7 @@ public class Settings {
     }
 
     public static final String KEY_APPLY_NAV_BAR_THEME_COLOR = "apply_nav_bar_theme_color";
-    private static final boolean DEFAULT_APPLY_NAV_BAR_THEME_COLOR = false;
+    private static final boolean DEFAULT_APPLY_NAV_BAR_THEME_COLOR = true;
 
     public static boolean getApplyNavBarThemeColor() {
         return getBoolean(KEY_APPLY_NAV_BAR_THEME_COLOR, DEFAULT_APPLY_NAV_BAR_THEME_COLOR);
