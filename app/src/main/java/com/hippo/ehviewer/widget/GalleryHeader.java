@@ -61,11 +61,9 @@ public class GalleryHeader extends ViewGroup {
   protected void onFinishInflate() {
     super.onFinishInflate();
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-      battery = findViewById(R.id.battery);
-      progress = findViewById(R.id.progress);
-      clock = findViewById(R.id.clock);
-    }
+    battery = findViewById(R.id.battery);
+    progress = findViewById(R.id.progress);
+    clock = findViewById(R.id.clock);
   }
 
   private void measureChild(Rect rect, View view, int width, int paddingLeft, int paddingRight) {
