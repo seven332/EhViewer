@@ -39,6 +39,8 @@
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config">
 
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
         <meta-data android:name="android.max_aspect" android:value="2.1"/>
 
         <activity
