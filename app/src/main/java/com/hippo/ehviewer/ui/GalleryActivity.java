@@ -370,6 +370,9 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
             case 2:
                 orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
                 break;
+            case 3:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR;
+                break;
         }
         setRequestedOrientation(orientation);
 
@@ -840,6 +843,9 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
                     break;
                 case 2:
                     orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+                    break;
+                case 3:
+                    orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR;
                     break;
             }
             setRequestedOrientation(orientation);
