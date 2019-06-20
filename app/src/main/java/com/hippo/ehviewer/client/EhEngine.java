@@ -214,7 +214,8 @@ public class EhEngine {
         if (filter) {
             for (int i = 0, n = list.size(); i < n; i++) {
                 GalleryInfo info = list.get(i);
-                if (!sEhFilter.filterTag(info) || !sEhFilter.filterTagNamespace(info)) {
+                // Thumbnail mode need filter uploader again
+                if (!sEhFilter.filterUploader(info) || !sEhFilter.filterTag(info) || !sEhFilter.filterTagNamespace(info)) {
                     list.remove(i);
                     i--;
                     n--;
