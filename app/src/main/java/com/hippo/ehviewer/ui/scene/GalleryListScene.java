@@ -82,6 +82,7 @@ import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.ui.CommonOperations;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
+import com.hippo.ehviewer.ui.dialog.SelectItemWithIconAdapter;
 import com.hippo.ehviewer.widget.GalleryInfoContentHelper;
 import com.hippo.ehviewer.widget.SearchBar;
 import com.hippo.ehviewer.widget.SearchLayout;
@@ -1062,17 +1063,23 @@ public final class GalleryListScene extends BaseScene
         }
 
         boolean downloaded = mDownloadManager.getDownloadState(gi.gid) != DownloadInfo.STATE_INVALID;
-        boolean favourite = gi.favoriteSlot == -2;
+        boolean favourited = gi.favoriteSlot != -2;
 
         CharSequence[] items = new CharSequence[] {
             context.getString(R.string.read),
             context.getString(downloaded ? R.string.delete_downloads : R.string.download),
-            context.getString(favourite ? R.string.add_to_favourites : R.string.remove_from_favourites),
+            context.getString(favourited ? R.string.remove_from_favourites : R.string.add_to_favourites),
+        };
+
+        int[] icons = new int[] {
+            R.drawable.v_book_open_x24,
+            downloaded ? R.drawable.v_delete_x24 : R.drawable.v_download_x24,
+            favourited ? R.drawable.v_heart_broken_x24 : R.drawable.v_heart_x24,
         };
 
         new AlertDialog.Builder(context)
                 .setTitle(EhUtils.getSuitableTitle(gi))
-                .setItems(items, (dialog, which) -> {
+                .setAdapter(new SelectItemWithIconAdapter(context, items, icons), (dialog, which) -> {
                     switch (which) {
                         case 0: // Read
                             Intent intent = new Intent(activity, GalleryActivity.class);
@@ -1088,10 +1095,10 @@ public final class GalleryListScene extends BaseScene
                             }
                             break;
                         case 2: // Favorites
-                            if (favourite) {
-                                CommonOperations.addToFavorites(activity, gi, new AddToFavoriteListener(context, activity.getStageId(), getTag()));
-                            } else {
+                            if (favourited) {
                                 CommonOperations.removeFromFavorites(activity, gi, new RemoveFromFavoriteListener(context, activity.getStageId(), getTag()));
+                            } else {
+                                CommonOperations.addToFavorites(activity, gi, new AddToFavoriteListener(context, activity.getStageId(), getTag()));
                             }
                             break;
                     }
