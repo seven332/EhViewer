@@ -1061,33 +1061,12 @@ public final class GalleryListScene extends BaseScene
             return true;
         }
 
-        boolean download;
-        switch (mDownloadManager.getDownloadState(gi.gid)) {
-            default:
-            case DownloadInfo.STATE_INVALID:
-                download = true;
-                break;
-            case DownloadInfo.STATE_NONE:
-                download = true;
-                break;
-            case DownloadInfo.STATE_WAIT:
-                download = false;
-                break;
-            case DownloadInfo.STATE_DOWNLOAD:
-                download = false;
-                break;
-            case DownloadInfo.STATE_FINISH:
-                download = true;
-                break;
-            case DownloadInfo.STATE_FAILED:
-                download = true;
-                break;
-        }
+        boolean downloaded = mDownloadManager.getDownloadState(gi.gid) != DownloadInfo.STATE_INVALID;
         boolean favourite = gi.favoriteSlot == -2;
 
         CharSequence[] items = new CharSequence[] {
             context.getString(R.string.read),
-            context.getString(download ? R.string.download : R.string.stop_downloading),
+            context.getString(downloaded ? R.string.delete_downloads : R.string.download),
             context.getString(favourite ? R.string.add_to_favourites : R.string.remove_from_favourites),
         };
 
@@ -1102,10 +1081,10 @@ public final class GalleryListScene extends BaseScene
                             startActivity(intent);
                             break;
                         case 1: // Download
-                            if (download) {
-                                CommonOperations.startDownload(activity, gi, false);
+                            if (downloaded) {
+                                mDownloadManager.deleteDownload(gi.gid);
                             } else {
-                                mDownloadManager.stopDownload(gi.gid);
+                                CommonOperations.startDownload(activity, gi, false);
                             }
                             break;
                         case 2: // Favorites

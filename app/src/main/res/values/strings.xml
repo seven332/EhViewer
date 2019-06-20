@@ -214,6 +214,7 @@
     <string name="remove_from_favourites">Remove from favourites</string>
 
     <string name="stop_downloading">Stop downloading</string>
+    <string name="delete_downloads">Delete downloads</string>
 
     <string name="quick_search">Quick search</string>
     <string name="quick_search_tip">Tap \"+\" to add Quick Search</string>

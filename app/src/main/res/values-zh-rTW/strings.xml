@@ -170,6 +170,7 @@
     <string name="remove_from_favourites">移除收藏</string>
 
     <string name="stop_downloading">停止下載</string>
+    <string name="delete_downloads">刪除下載</string>
 
     <string name="quick_search">快速搜尋</string>
     <string name="quick_search_tip">點擊“+”以新增快速搜尋</string>
