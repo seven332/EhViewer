@@ -1096,7 +1096,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         if (null != keyword) {
             ListUrlBuilder lub = new ListUrlBuilder();
             lub.setMode(ListUrlBuilder.MODE_NORMAL);
-            lub.setKeyword(keyword);
+            lub.setKeyword("\"" + keyword + "\"");
             GalleryListScene.startScene(this, lub);
             return;
         }
