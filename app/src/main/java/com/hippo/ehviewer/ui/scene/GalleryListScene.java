@@ -1089,7 +1089,11 @@ public final class GalleryListScene extends BaseScene
                             break;
                         case 1: // Download
                             if (downloaded) {
-                                mDownloadManager.deleteDownload(gi.gid);
+                                new AlertDialog.Builder(context)
+                                    .setTitle(R.string.download_remove_dialog_title)
+                                    .setMessage(getString(R.string.download_remove_dialog_message, gi.title))
+                                    .setPositiveButton(android.R.string.ok, (dialog1, which1) -> mDownloadManager.deleteDownload(gi.gid))
+                                    .show();
                             } else {
                                 CommonOperations.startDownload(activity, gi, false);
                             }
