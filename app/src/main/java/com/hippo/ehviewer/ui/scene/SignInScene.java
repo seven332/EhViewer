@@ -39,7 +39,6 @@ import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.parser.ProfileParser;
 import com.hippo.ehviewer.ui.MainActivity;
-import com.hippo.ehviewer.widget.RecaptchaView;
 import com.hippo.scene.Announcer;
 import com.hippo.scene.SceneFragment;
 import com.hippo.util.ExceptionUtils;
@@ -68,8 +67,6 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
     private EditText mUsername;
     @Nullable
     private EditText mPassword;
-    private EditText mRecaptcha;
-    private RecaptchaView mRecaptchaView;
     @Nullable
     private View mRegister;
     @Nullable
@@ -127,8 +124,6 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
         mPasswordLayout = (TextInputLayout) ViewUtils.$$(loginForm, R.id.password_layout);
         mPassword = mPasswordLayout.getEditText();
         AssertUtils.assertNotNull(mPassword);
-        mRecaptcha = (EditText) ViewUtils.$$(loginForm, R.id.recaptcha);
-        mRecaptchaView = (RecaptchaView) ViewUtils.$$(loginForm, R.id.recaptcha_image);
         mRegister = ViewUtils.$$(loginForm, R.id.register);
         mSignIn = ViewUtils.$$(loginForm, R.id.sign_in);
         mSignInViaWebView = (TextView) ViewUtils.$$(loginForm, R.id.sign_in_via_webview);
@@ -284,15 +279,12 @@ public final class SignInScene extends SolidScene implements EditText.OnEditorAc
         // Clean up for sign in
         EhUtils.signOut(context);
 
-        String challenge = mRecaptchaView.getChallenge();
-        String response = mRecaptcha.getText().toString();
-
         EhCallback callback = new SignInListener(context,
                 activity.getStageId(), getTag());
         mRequestId = ((EhApplication) context.getApplicationContext()).putGlobalStuff(callback);
         EhRequest request = new EhRequest()
                 .setMethod(EhClient.METHOD_SIGN_IN)
-                .setArgs(username, password, challenge, response)
+                .setArgs(username, password)
                 .setCallback(callback);
         EhApplication.getEhClient(context).execute(request);
 

@@ -73,39 +73,12 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
+                    android:imeOptions="actionDone"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"/>
 
             </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/recaptcha_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:minWidth="@dimen/single_max_width"
-                android:hint="@string/recaptcha">
-
-                <com.hippo.widget.HackyTextInputEditText
-                    android:id="@+id/recaptcha"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionDone"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:singleLine="true"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.hippo.ehviewer.widget.RecaptchaView
-                android:id="@+id/recaptcha_image"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:minWidth="@dimen/single_max_width"
-                android:scaleType="fitCenter"/>
 
             <Space
                 android:layout_width="wrap_content"

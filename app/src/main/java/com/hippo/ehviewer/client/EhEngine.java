@@ -134,17 +134,13 @@ public class EhEngine {
     }
 
     public static String signIn(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
-            String username, String password, String recaptchaChallenge, String recaptchaResponse) throws Throwable {
+            String username, String password) throws Throwable {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("UserName", username)
                 .add("PassWord", password)
                 .add("submit", "Log me in")
                 .add("CookieDate", "1")
                 .add("temporary_https", "off");
-        if (!TextUtils.isEmpty(recaptchaChallenge) && !TextUtils.isEmpty(recaptchaResponse)) {
-            builder.add("recaptcha_challenge_field", recaptchaChallenge);
-            builder.add("recaptcha_response_field", recaptchaResponse);
-        }
         String url = EhUrl.API_SIGN_IN;
         String referer = "https://forums.e-hentai.org/index.php?act=Login&CODE=00";
         String origin = "https://forums.e-hentai.org";
