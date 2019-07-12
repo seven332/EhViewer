@@ -33,7 +33,7 @@ def parseMarkdownFile(path, prefix):
     for tr in soup.find_all('tr'):
         tds = [x for x in tr.find_all('td')]
         if len(tds) == 4:
-            x = ''.join(tds[0].strings).strip()
+            x = ''.join(tds[0].strings).strip().replace('\u200e', '')
             y = ''.join(tds[1].strings).strip()
             y = removeEmojis(y)
             if len(x) != 0 and len(y) != 0:
