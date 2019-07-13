@@ -442,6 +442,11 @@
     <string name="invalid_host">Invalid host</string>
     <string name="invalid_ip">Invalid IP</string>
 
+    <!-- DirPickerActivity -->
+    <string name="preset">Preset</string>
+    <string name="default_directory">Default directory</string>
+    <string name="application_file_directory">App file directory %d (it will be remove after uninstalling the app)</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
     <string name="page_menu_refresh">@string/refresh</string>

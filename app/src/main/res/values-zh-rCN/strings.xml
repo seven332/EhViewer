@@ -396,6 +396,11 @@
     <string name="invalid_host">无效的 host</string>
     <string name="invalid_ip">无效的 IP</string>
 
+    <!-- DirPickerActivity -->
+    <string name="preset">预设</string>
+    <string name="default_directory">默认目录</string>
+    <string name="application_file_directory">应用文件目录 %d （应用卸载后会被删除）</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
     <string name="page_menu_refresh">@string/refresh</string>

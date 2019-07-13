@@ -25,11 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import com.hippo.android.resource.AttrResources;
+import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.R;
 import com.hippo.ripple.Ripple;
 import com.hippo.widget.DirExplorer;
-import com.hippo.yorozuya.ViewUtils;
+import com.hippo.yorozuya.FileUtils;
 import java.io.File;
 
 public class DirPickerActivity extends ToolbarActivity
@@ -46,6 +49,7 @@ public class DirPickerActivity extends ToolbarActivity
     private TextView mPath;
     @Nullable
     private DirExplorer mDirExplorer;
+    private View mDefault;
     @Nullable
     private View mOk;
 
@@ -55,9 +59,10 @@ public class DirPickerActivity extends ToolbarActivity
         setContentView(R.layout.activity_dir_picker);
         setNavigationIcon(R.drawable.v_arrow_left_dark_x24);
 
-        mPath = (TextView) ViewUtils.$$(this, R.id.path);
-        mDirExplorer = (DirExplorer) ViewUtils.$$(this, R.id.dir_explorer);
-        mOk = ViewUtils.$$(this, R.id.ok);
+        mPath = findViewById(R.id.path);
+        mDirExplorer = findViewById(R.id.dir_explorer);
+        mDefault = findViewById(R.id.preset);
+        mOk = findViewById(R.id.ok);
 
         File file;
         if (null == savedInstanceState) {
@@ -71,6 +76,7 @@ public class DirPickerActivity extends ToolbarActivity
 
         Ripple.addRipple(mOk, !AttrResources.getAttrBoolean(this, R.attr.isLightTheme));
 
+        mDefault.setOnClickListener(this);
         mOk.setOnClickListener(this);
 
         mPath.setText(mDirExplorer.getCurrentFile().getPath());
@@ -126,7 +132,31 @@ public class DirPickerActivity extends ToolbarActivity
 
     @Override
     public void onClick(@NonNull View v) {
-        if (mOk == v) {
+        if (mDefault == v) {
+            File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(this, null);
+            File[] dirs = new File[externalFilesDirs.length + 1];
+            dirs[0] = AppConfig.getDefaultDownloadDir();
+            for (int i = 0; i < externalFilesDirs.length; i++) {
+                dirs[i + 1] = new File(externalFilesDirs[i], "download");
+            }
+
+            CharSequence[] items = new CharSequence[dirs.length];
+            items[0] = getString(R.string.default_directory);
+            for (int i = 1; i < items.length; i++) {
+                items[i] = getString(R.string.application_file_directory, i);
+            }
+
+            new AlertDialog.Builder(this).setItems(items, (dialog, which) -> {
+                File dir = dirs[which];
+                if (!FileUtils.ensureDirectory(dir)) {
+                    Toast.makeText(DirPickerActivity.this, R.string.directory_not_writable, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (mDirExplorer != null) {
+                    mDirExplorer.setCurrentFile(dir);
+                }
+            }).show();
+        } else if (mOk == v) {
             if (null == mDirExplorer) {
                 return;
             }
