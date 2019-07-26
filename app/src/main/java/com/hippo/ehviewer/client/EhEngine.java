@@ -77,6 +77,8 @@ public class EhEngine {
     private static final String SAD_PANDA_TYPE = "image/gif";
     private static final String SAD_PANDA_LENGTH = "9615";
 
+    private static final String KOKOMADE_URL = "https://exhentai.org/img/kokomade.jpg";
+
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
 
@@ -99,6 +101,11 @@ public class EhEngine {
                 SAD_PANDA_TYPE.equals(headers.get("Content-Type")) &&
                 SAD_PANDA_LENGTH.equals(headers.get("Content-Length"))) {
             throw new EhException("Sad Panda");
+        }
+
+        // Check kokomade
+        if (body != null && body.contains(KOKOMADE_URL)) {
+            throw new EhException("今回はここまで\n\n" + GetText.getString(R.string.kokomade_tip));
         }
 
         if (e instanceof ParseException) {
