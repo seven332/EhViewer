@@ -272,7 +272,10 @@ public class GalleryDetailParser {
         if (key.startsWith("Posted")) {
             gd.posted = value;
         } else if (key.startsWith("Parent")) {
-            gd.parent = value;
+            Element a = es.get(1).children().first();
+            if (a != null) {
+                gd.parent = a.attr("href");
+            }
         } else if (key.startsWith("Visible")) {
             gd.visible = value;
         } else if (key.startsWith("Language")) {
