@@ -1287,7 +1287,8 @@ public final class SpiderQueen implements Runnable {
                         }
                         if (isPlainTxt) {
                             error = GetText.getString(R.string.error_reading_failed);
-                            break;
+                            forceHtml = true;
+                            continue;
                         }
                     } finally {
                         if (isPipe != null) {
