@@ -61,6 +61,7 @@ import com.hippo.yorozuya.Utilities;
 import com.hippo.yorozuya.collect.SparseJLArray;
 import com.hippo.yorozuya.thread.PriorityThread;
 import com.hippo.yorozuya.thread.PriorityThreadFactory;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -1172,7 +1173,6 @@ public final class SpiderQueen implements Runnable {
                 }
 
                 // Download image
-                OutputStreamPipe pipe = null;
                 InputStream is = null;
                 try {
                     if (DEBUG_LOG) {
@@ -1208,49 +1208,91 @@ public final class SpiderQueen implements Runnable {
                         extension = GalleryProvider2.SUPPORT_IMAGE_EXTENSIONS[0];
                     }
 
-                    // Get out put pipe
-                    pipe = mSpiderDen.openOutputStreamPipe(index, extension);
-                    if (null == pipe) {
-                        // Can't get pipe
-                        error = GetText.getString(R.string.error_write_failed);
-                        response.close();
-                        break;
-                    }
-
-                    long contentLength = responseBody.contentLength();
-                    is = responseBody.byteStream();
-                    pipe.obtain();
-                    OutputStream os = pipe.open();
-
-                    final byte data[] = new byte[1024 * 4];
-                    long receivedSize = 0;
-
-                    while (!Thread.currentThread().isInterrupted()) {
-                        int bytesRead = is.read(data);
-                        if (bytesRead == -1) {
+                    OutputStreamPipe osPipe = null;
+                    try {
+                        // Get out put pipe
+                        osPipe = mSpiderDen.openOutputStreamPipe(index, extension);
+                        if (osPipe == null) {
+                            // Can't get pipe
+                            error = GetText.getString(R.string.error_write_failed);
                             response.close();
                             break;
                         }
-                        os.write(data, 0, bytesRead);
-                        receivedSize += bytesRead;
-                        // Update page percent
-                        if (contentLength > 0) {
-                            mPagePercentMap.put(index, (float) receivedSize / contentLength);
-                        }
-                        // Notify listener
-                        notifyPageDownload(index, contentLength, receivedSize, bytesRead);
-                    }
-                    os.flush();
 
-                    // check download size
-                    if (contentLength >= 0) {
-                        if (receivedSize < contentLength) {
-                            Log.e(TAG, "Can't download all of image data");
-                            error = "Incomplete";
-                            forceHtml = true;
-                            continue;
-                        } else if (receivedSize > contentLength) {
-                            Log.w(TAG, "Received data is more than contentLength");
+                        long contentLength = responseBody.contentLength();
+                        is = responseBody.byteStream();
+                        osPipe.obtain();
+                        OutputStream os = osPipe.open();
+
+                        final byte[] data = new byte[1024 * 4];
+                        long receivedSize = 0;
+
+                        while (!Thread.currentThread().isInterrupted()) {
+                            int bytesRead = is.read(data);
+                            if (bytesRead == -1) {
+                                response.close();
+                                break;
+                            }
+                            os.write(data, 0, bytesRead);
+                            receivedSize += bytesRead;
+                            // Update page percent
+                            if (contentLength > 0) {
+                                mPagePercentMap.put(index, (float) receivedSize / contentLength);
+                            }
+                            // Notify listener
+                            notifyPageDownload(index, contentLength, receivedSize, bytesRead);
+                        }
+                        os.flush();
+
+                        // check download size
+                        if (contentLength >= 0) {
+                            if (receivedSize < contentLength) {
+                                Log.e(TAG, "Can't download all of image data");
+                                error = "Incomplete";
+                                forceHtml = true;
+                                continue;
+                            } else if (receivedSize > contentLength) {
+                                Log.w(TAG, "Received data is more than contentLength");
+                            }
+                        }
+                    } finally {
+                        if (osPipe != null) {
+                            osPipe.close();
+                            osPipe.release();
+                        }
+                    }
+
+                    InputStreamPipe isPipe = null;
+                    try {
+                        // Get InputStreamPipe
+                        isPipe = mSpiderDen.openInputStreamPipe(index);
+                        if (isPipe == null) {
+                            // Can't get pipe
+                            error = GetText.getString(R.string.error_reading_failed);
+                            break;
+                        }
+
+                        // Check plain txt
+                        isPipe.obtain();
+                        InputStream inputStream = new BufferedInputStream(isPipe.open());
+                        boolean isPlainTxt = true;
+                        for (;;) {
+                            int b = inputStream.read();
+                            if (b == -1) {
+                                break;
+                            }
+                            if (b > 126) {
+                                isPlainTxt = false;
+                            }
+                        }
+                        if (isPlainTxt) {
+                            error = GetText.getString(R.string.error_reading_failed);
+                            break;
+                        }
+                    } finally {
+                        if (isPipe != null) {
+                            isPipe.close();
+                            isPipe.release();
                         }
                     }
 
@@ -1274,10 +1316,6 @@ public final class SpiderQueen implements Runnable {
                     forceHtml = true;
                 } finally {
                     IOUtils.closeQuietly(is);
-                    if (null != pipe) {
-                        pipe.close();
-                        pipe.release();
-                    }
 
                     if (DEBUG_LOG) {
                         Log.d(TAG, "End download image " + index);

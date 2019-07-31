@@ -92,6 +92,7 @@
     <string name="error_invalid_number">無效的數字</string>
     <string name="error_please_login_first">請先登陸</string>
     <string name="error_empty_html">頁面內容為空</string>
+    <string name="error_cant_get_image">無法獲取圖片</string>
 
     <string name="kokomade_tip">設定->Eh->圖庫站台->e-hentai</string>
 
