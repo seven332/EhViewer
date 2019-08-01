@@ -80,7 +80,7 @@
         android:summary="@string/settings_advanced_custom_hosts_summary"
         app:activity="com.hippo.ehviewer.ui.HostsActivity"/>
 
-    <Preference
+    <com.hippo.ehviewer.preference.ExportDataPreference
         android:key="export_data"
         android:title="@string/settings_advanced_export_data"
         android:summary="@string/settings_advanced_export_data_summary"/>

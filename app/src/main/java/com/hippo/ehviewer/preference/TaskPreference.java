@@ -166,6 +166,10 @@ public abstract class TaskPreference extends DialogPreference {
             mApplication = (EhApplication) context.getApplicationContext();
         }
 
+        public EhApplication getApplication() {
+            return mApplication;
+        }
+
         @Nullable
         public TaskPreference getPreference() {
             return mPreference;

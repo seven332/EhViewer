@@ -40,7 +40,6 @@ public class AdvancedFragment extends PreferenceFragment
     private static final String KEY_DUMP_LOGCAT = "dump_logcat";
     private static final String KEY_CLEAR_MEMORY_CACHE = "clear_memory_cache";
     private static final String KEY_APP_LANGUAGE = "app_language";
-    private static final String KEY_EXPORT_DATA = "export_data";
     private static final String KEY_IMPORT_DATA = "import_data";
 
     @Override
@@ -51,12 +50,10 @@ public class AdvancedFragment extends PreferenceFragment
         Preference dumpLogcat = findPreference(KEY_DUMP_LOGCAT);
         Preference clearMemoryCache = findPreference(KEY_CLEAR_MEMORY_CACHE);
         Preference appLanguage = findPreference(KEY_APP_LANGUAGE);
-        Preference exportData = findPreference(KEY_EXPORT_DATA);
         Preference importData = findPreference(KEY_IMPORT_DATA);
 
         dumpLogcat.setOnPreferenceClickListener(this);
         clearMemoryCache.setOnPreferenceClickListener(this);
-        exportData.setOnPreferenceClickListener(this);
         importData.setOnPreferenceClickListener(this);
 
         appLanguage.setOnPreferenceChangeListener(this);
@@ -88,18 +85,6 @@ public class AdvancedFragment extends PreferenceFragment
         } else if (KEY_CLEAR_MEMORY_CACHE.equals(key)) {
             ((EhApplication) getActivity().getApplication()).clearMemoryCache();
             Runtime.getRuntime().gc();
-        } else if (KEY_EXPORT_DATA.equals(key)) {
-            File dir = AppConfig.getExternalDataDir();
-            if (dir != null) {
-                File file = new File(dir, ReadableTime.getFilenamableTime(System.currentTimeMillis()) + ".db");
-                if (EhDB.exportDB(getActivity(), file)) {
-                    Toast.makeText(getActivity(),
-                            getString(R.string.settings_advanced_export_data_to, file.getPath()), Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            }
-            Toast.makeText(getActivity(),R.string.settings_advanced_export_data_failed, Toast.LENGTH_SHORT).show();
-            return true;
         } else if (KEY_IMPORT_DATA.equals(key)) {
             importData(getActivity());
             getActivity().setResult(Activity.RESULT_OK);
