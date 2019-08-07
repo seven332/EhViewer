@@ -116,6 +116,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+import okhttp3.HttpUrl;
 
 public class GalleryDetailScene extends BaseScene implements View.OnClickListener,
         com.hippo.ehviewer.download.DownloadManager.DownloadInfoListener,
@@ -1875,6 +1876,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                         FileUtils.sanitizeFilename(name + ".torrent"));
                 r.allowScanningByMediaScanner();
                 r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                r.addRequestHeader("Cookie", EhApplication.getEhCookieStore(context).getCookieHeader(HttpUrl.get(url)));
                 DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                 if (dm != null) {
                     try {

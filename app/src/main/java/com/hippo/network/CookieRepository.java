@@ -85,6 +85,19 @@ public class CookieRepository implements CookieJar {
     }
   }
 
+  public String getCookieHeader(HttpUrl url) {
+    List<Cookie> cookies = getCookies(url);
+    StringBuilder cookieHeader = new StringBuilder();
+    for (int i = 0, size = cookies.size(); i < size; i++) {
+      if (i > 0) {
+        cookieHeader.append("; ");
+      }
+      Cookie cookie = cookies.get(i);
+      cookieHeader.append(cookie.name()).append('=').append(cookie.value());
+    }
+    return cookieHeader.toString();
+  }
+
   public synchronized List<Cookie> getCookies(HttpUrl url) {
     List<Cookie> accepted = new ArrayList<>();
     List<Cookie> expired = new ArrayList<>();
