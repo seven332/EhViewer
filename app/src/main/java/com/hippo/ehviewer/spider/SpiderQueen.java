@@ -1283,6 +1283,7 @@ public final class SpiderQueen implements Runnable {
                             }
                             if (b > 126) {
                                 isPlainTxt = false;
+                                break;
                             }
                         }
                         if (isPlainTxt) {
