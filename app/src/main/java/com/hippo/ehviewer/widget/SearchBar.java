@@ -24,6 +24,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -42,7 +43,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.EhClient;
+import com.hippo.ehviewer.client.EhRequest;
+import com.hippo.ehviewer.client.parser.SuggestionParser;
+import com.hippo.ehviewer.ui.scene.EhCallback;
+import com.hippo.ehviewer.ui.scene.GalleryListScene;
+import com.hippo.scene.SceneFragment;
 import com.hippo.view.ViewTransition;
 import com.hippo.yorozuya.AnimationUtils;
 import com.hippo.yorozuya.MathUtils;
@@ -93,6 +102,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
     private boolean mAllowEmptySearch = true;
 
     private boolean mInAnimation;
+    private Handler mLoadSuggestionHandler;
+    private LoadSuggestionTask mLoadSuggestionTask;
 
     public SearchBar(Context context) {
         super(context);
@@ -151,6 +162,8 @@ public class SearchBar extends CardView implements View.OnClickListener,
                 return true;
             }
         });
+
+        mLoadSuggestionHandler = new Handler();
     }
 
     private void addListHeader() {
@@ -192,6 +205,13 @@ public class SearchBar extends CardView implements View.OnClickListener,
         if (scrollToTop) {
             mListView.setSelection(0);
         }
+
+
+        if(mLoadSuggestionTask != null) {
+            mLoadSuggestionHandler.removeCallbacks(mLoadSuggestionTask);
+        }
+        mLoadSuggestionTask = new LoadSuggestionTask(text);
+        mLoadSuggestionHandler.postDelayed(mLoadSuggestionTask,500);
     }
 
     public void setAllowEmptySearch(boolean allowEmptySearch) {
@@ -563,9 +583,15 @@ public class SearchBar extends CardView implements View.OnClickListener,
     public class KeywordSuggestion extends Suggestion {
 
         private String mKeyword;
+        private String mUrl;
 
         private KeywordSuggestion(String keyword) {
             mKeyword = keyword;
+        }
+
+        public KeywordSuggestion(String keyword,String url) {
+            mKeyword = keyword;
+            mUrl = url;
         }
 
         @Override
@@ -577,12 +603,109 @@ public class SearchBar extends CardView implements View.OnClickListener,
         public void onClick() {
             mEditText.setText(mKeyword);
             mEditText.setSelection(mEditText.getText().length());
+
+            if(mUrl != null) {
+                loadSuggestionsFromNetwork(mKeyword,mUrl);
+            }
         }
 
         @Override
         public void onLongClick() {
             mSearchDatabase.deleteQuery(mKeyword);
             updateSuggestions(false);
+        }
+    }
+
+    public void loadSuggestionsFromNetwork(String keyword) {
+        if (TextUtils.isEmpty(keyword)) {
+            return;
+        }
+
+        EhRequest request = new EhRequest();
+        request.setMethod(EhClient.METHOD_GET_SUGGESTION);
+        request.setCallback(new EhCallback<GalleryListScene, SuggestionParser.Result[]>(
+                getContext(),
+                getState(), (String) getTag()
+        ) {
+
+            @Override
+            public void onSuccess(SuggestionParser.Result[] result) {
+                if (mSuggestionList != null) {
+                    for (SuggestionParser.Result item : result)
+                        mSuggestionList.add(0, new KeywordSuggestion(item.keyword, item.url));
+                }
+                mSuggestionAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public boolean isInstance(SceneFragment scene) {
+                return scene instanceof GalleryListScene;
+            }
+        });
+        request.setArgs(keyword);
+        EhApplication.getEhClient(getContext()).execute(request);
+    }
+
+    public void loadSuggestionsFromNetwork(String keyword, String url) {
+        if (TextUtils.isEmpty(keyword) || TextUtils.isEmpty(url)) {
+            return;
+        }
+
+        EhRequest request = new EhRequest();
+        request.setMethod(EhClient.METHOD_GET_SUGGESTION_DETAIL);
+        request.setCallback(new EhCallback<GalleryListScene, String[]>(
+                getContext(),
+                getState(), (String) getTag()
+        ) {
+
+            @Override
+            public void onSuccess(String[] result) {
+                if (mSuggestionList != null) {
+                    for (String keyword : result)
+                        mSuggestionList.add(0, new KeywordSuggestion(keyword));
+                }
+                mSuggestionAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public boolean isInstance(SceneFragment scene) {
+                return scene instanceof GalleryListScene;
+            }
+        });
+        request.setArgs(url);
+        EhApplication.getEhClient(getContext()).execute(request);
+    }
+
+    public class LoadSuggestionTask implements Runnable {
+        private String keyword;
+
+        public LoadSuggestionTask(String keyword) {
+            this.keyword = keyword;
+        }
+
+        @Override
+        public void run() {
+            loadSuggestionsFromNetwork(keyword);
         }
     }
 }
